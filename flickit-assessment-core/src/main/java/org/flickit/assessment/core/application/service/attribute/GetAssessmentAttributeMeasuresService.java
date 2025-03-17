@@ -45,19 +45,20 @@ public class GetAssessmentAttributeMeasuresService implements GetAssessmentAttri
 
         var attributeQuestions = loadAttributeQuestionsPort.loadApplicableQuestions(param.getAssessmentId(), param.getAttributeId());
 
-        var questionsDto = attributeQuestions.stream().map(r -> {
-            var avgWeight = r.question().getImpacts().stream()
-                .mapToInt(QuestionImpact::getWeight)
-                .average()
-                .orElse(0.0); // Default to 0 if there are no impacts
+        var questionsDto = attributeQuestions.stream()
+            .map(r -> {
+                var avgWeight = r.question().getImpacts().stream()
+                    .mapToInt(QuestionImpact::getWeight)
+                    .average()
+                    .orElse(0.0); // Default to 0 if there are no impacts
 
-            return new QuestionDto(
-                r.question().getId(),
-                MathUtils.round(avgWeight, 2),
-                r.question().getMeasure().getId(),
-                r.answer()
-            );
-        }).toList();
+                return new QuestionDto(
+                    r.question().getId(),
+                    MathUtils.round(avgWeight, 2),
+                    r.question().getMeasure().getId(),
+                    r.answer()
+                );
+            }).toList();
 
         var attributeMaxPossibleScore = questionsDto.stream()
             .mapToDouble(QuestionDto::weight)
@@ -98,14 +99,11 @@ public class GetAssessmentAttributeMeasuresService implements GetAssessmentAttri
             ? (measureMaxPossibleScore / attributeMaxPossibleScore) * 100
             : 0.0;
 
-        var gainedScore = 0.0;
-
-        for (QuestionDto question : questions) {
-            var answer = question.answer();
-            if (answer != null && answer.getSelectedOption() != null) {
-                gainedScore += answer.getSelectedOption().getValue() * question.weight();
-            }
-        }
+        var gainedScore = questions.stream()
+            .mapToDouble(q -> (q.answer() != null && q.answer().getSelectedOption() != null)
+                ? q.answer().getSelectedOption().getValue() * q.weight()
+                : 0.0)
+            .sum();
 
         gainedScore = MathUtils.round(gainedScore, 2);
         var missedScore = measureMaxPossibleScore - gainedScore;

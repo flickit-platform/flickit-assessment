@@ -33,6 +33,7 @@ import java.util.UUID;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.core.adapter.out.persistence.kit.attribute.AttributeMapper.mapToDomainModel;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
@@ -192,23 +193,23 @@ public class AttributePersistenceJpaAdapter implements
     public List<LoadAttributeQuestionsPort.Result> loadApplicableQuestions(UUID assessmentId,
                                                                            long attributeId) {
         var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
-            .orElseThrow(() -> new ResourceNotFoundException(GET_ATTRIBUTE_SCORE_STATS_ASSESSMENT_RESULT_NOT_FOUND));
+            .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
 
-        var views = repository.findAttributeQuestionsAndAnswers(assessmentResult.getId(),
+        var questionIdToViewMap = repository.findAttributeQuestionsAndAnswers(assessmentResult.getId(),
             assessmentResult.getKitVersionId(),
-            attributeId);
-
-        var map = views.stream()
+                attributeId).stream()
             .collect(groupingBy(v -> v.getQuestion().getId()));
 
-        return map.values().stream()
-            .map(attributeImpactFullQuestionsViews -> {
-                var impacts = attributeImpactFullQuestionsViews.stream()
+        return questionIdToViewMap.values().stream()
+            .map(views -> {
+                var impacts = views.stream()
                     .map(i -> QuestionImpactMapper.mapToDomainModel(i.getQuestionImpact()))
                     .toList();
-                var question = QuestionMapper.mapToDomainModel(attributeImpactFullQuestionsViews.getFirst().getQuestion(), impacts);
-                var answer = AnswerMapper.mapToDomainModel(attributeImpactFullQuestionsViews.getFirst().getAnswer(),
-                    AnswerOptionMapper.mapToDomainModel(attributeImpactFullQuestionsViews.getFirst().getAnswerOption()));
+
+                var firstView = views.getFirst();
+                var question = QuestionMapper.mapToDomainModel(firstView.getQuestion(), impacts);
+                var answer = AnswerMapper.mapToDomainModel(firstView.getAnswer(),
+                    AnswerOptionMapper.mapToDomainModel(firstView.getAnswerOption()));
                 return new LoadAttributeQuestionsPort.Result(question, answer);
             })
             .toList();
