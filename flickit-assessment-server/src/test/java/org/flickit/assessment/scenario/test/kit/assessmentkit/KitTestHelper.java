@@ -38,11 +38,6 @@ public class KitTestHelper {
             .response();
     }
 
-    public void publishKit(ScenarioContext context, Long kitId) {
-        var request = UpdateKitInfoRequestDtoMother.createKitByDslRequestDto(a -> a.published(true));
-        updateInfo(context, request, kitId);
-    }
-
     public Response grantUserAccessToKit(ScenarioContext context, GrantUserAccessToKitRequestDto request, long id) {
         return given()
             .contentType(JSON)
@@ -53,5 +48,10 @@ public class KitTestHelper {
             .then()
             .extract()
             .response();
+    }
+
+    public void publishKit(ScenarioContext context, Long kitId) {
+        var request = UpdateKitInfoRequestDtoMother.createKitByDslRequestDto(a -> a.published(true));
+        updateInfo(context, request, kitId);
     }
 }
