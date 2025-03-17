@@ -73,15 +73,15 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
                 ao.value as optionValue,
                 CASE
                     WHEN ans IS NULL THEN 0.0
-                    WHEN ans.isNotApplicable = true THEN NULL
+                    WHEN ans.isNotApplicable = true THEN 0.0
                     ELSE ao.value
                 END as answerScore,
                 CASE
-                    WHEN ans.isNotApplicable = true THEN NULL
+                    WHEN ans.isNotApplicable = true THEN 0.0
                     ELSE ROUND(COALESCE(ao.value, 0.0) * qi.weight, 2)
                 END AS gainedScore,
                 CASE
-                    WHEN ans.isNotApplicable = true THEN NULL
+                    WHEN ans.isNotApplicable = true THEN 0.0
                     ELSE ROUND(qi.weight - COALESCE(ao.value, 0.0) * qi.weight, 2)
                 END AS missedScore,
                 COUNT(e.id) as evidenceCount
@@ -165,4 +165,22 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
             WHERE av.assessmentResult.assessment.id = :assessmentId
         """)
     List<AttributeMaturityLevelSubjectView> findAllByAssessmentIdWithSubjectAndMaturityLevel(@Param("assessmentId") UUID assessmentId);
+
+    @Query("""
+            SELECT
+                qsn AS question,
+                ans AS answer,
+                qi AS questionImpact,
+                ao AS answerOption
+            FROM QuestionJpaEntity qsn
+            LEFT JOIN AnswerJpaEntity ans on ans.questionId = qsn.id and ans.assessmentResult.id = :assessmentResultId
+            LEFT JOIN AnswerOptionJpaEntity ao on ans.answerOptionId = ao.id and ao.kitVersionId = :kitVersionId
+            LEFT JOIN QuestionImpactJpaEntity qi on qsn.id = qi.questionId and qsn.kitVersionId = qi.kitVersionId
+            WHERE qi.attributeId = :attributeId
+                AND qsn.kitVersionId = :kitVersionId
+                AND ans.isNotApplicable != TRUE
+        """)
+    List<AttributeImpactFullQuestionsView> findAttributeQuestionsAndAnswers(@Param("assessmentResultId") UUID assessmentResultId,
+                                                                            @Param("kitVersionId") Long kitVersionId,
+                                                                            @Param("attributeId") long attributeId);
 }

@@ -2,6 +2,8 @@ package org.flickit.assessment.scenario.test.kit.assessmentkit;
 
 import io.restassured.response.Response;
 import org.flickit.assessment.kit.adapter.in.rest.assessmentkit.CreateKitByDslRequestDto;
+import org.flickit.assessment.kit.adapter.in.rest.assessmentkit.UpdateKitInfoRequestDto;
+import org.flickit.assessment.scenario.fixture.request.UpdateKitInfoRequestDtoMother;
 import org.flickit.assessment.kit.adapter.in.rest.assessmentkit.GrantUserAccessToKitRequestDto;
 import org.flickit.assessment.scenario.test.ScenarioContext;
 import org.springframework.stereotype.Component;
@@ -22,6 +24,23 @@ public class KitTestHelper {
             .then()
             .extract()
             .response();
+    }
+
+    public Response updateInfo(ScenarioContext context, UpdateKitInfoRequestDto request, Number kitId) {
+        return given()
+            .contentType(JSON)
+            .auth().oauth2(context.getCurrentUser().getJwt())
+            .body(request)
+            .when()
+            .patch("/assessment-core/api/assessment-kits/" + kitId)
+            .then()
+            .extract()
+            .response();
+    }
+
+    public void publishKit(ScenarioContext context, Long kitId) {
+        var request = UpdateKitInfoRequestDtoMother.createKitByDslRequestDto(a -> a.published(true));
+        updateInfo(context, request, kitId);
     }
 
     public Response grantUserAccessToKit(ScenarioContext context, GrantUserAccessToKitRequestDto request, long id) {
