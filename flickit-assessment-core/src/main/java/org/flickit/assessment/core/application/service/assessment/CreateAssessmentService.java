@@ -72,10 +72,12 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
         if (!checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
+        var assessmentKit = loadAssessmentKitPort.loadAssessmentKit(param.getKitId())
+            .orElseThrow(() -> new ResourceNotFoundException(ASSESSMENT_KIT_ID_NOT_FOUND));
+
         if (checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId()).isEmpty())
             throw new ValidationException(CREATE_ASSESSMENT_KIT_NOT_ALLOWED);
 
-        var assessmentKit = loadAssessmentKitPort.loadAssessmentKit(param.getKitId());
         validateSpace(param, space, assessmentKit.getIsPrivate());
 
         UUID id = createAssessmentPort.persist(toParam(param));

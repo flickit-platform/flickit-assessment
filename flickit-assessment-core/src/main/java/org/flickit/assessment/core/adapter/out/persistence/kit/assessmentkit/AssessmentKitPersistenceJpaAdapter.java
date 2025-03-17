@@ -50,10 +50,8 @@ public class AssessmentKitPersistenceJpaAdapter implements
     }
 
     @Override
-    public AssessmentKit loadAssessmentKit(long kitId) {
-        var entity = repository.findById(kitId)
-            .orElseThrow(() -> new ResourceNotFoundException(ASSESSMENT_KIT_ID_NOT_FOUND));
-
-        return AssessmentKitMapper.mapToDomainModel(entity, null);
+    public Optional<AssessmentKit> loadAssessmentKit(long kitId) {
+        return repository.findById(kitId)
+            .map(e -> AssessmentKitMapper.mapToDomainModel(e, null));
     }
 }
