@@ -165,4 +165,22 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
             WHERE av.assessmentResult.assessment.id = :assessmentId
         """)
     List<AttributeMaturityLevelSubjectView> findAllByAssessmentIdWithSubjectAndMaturityLevel(@Param("assessmentId") UUID assessmentId);
+
+    @Query("""
+            SELECT
+                qsn AS question,
+                ans AS answer,
+                qi AS questionImpact,
+                ao AS answerOption
+            FROM QuestionJpaEntity qsn
+            LEFT JOIN AnswerJpaEntity ans on ans.questionId = qsn.id and ans.assessmentResult.id = :assessmentResultId
+            LEFT JOIN AnswerOptionJpaEntity ao on ans.answerOptionId = ao.id and ao.kitVersionId = :kitVersionId
+            LEFT JOIN QuestionImpactJpaEntity qi on qsn.id = qi.questionId and qsn.kitVersionId = qi.kitVersionId
+            WHERE qi.attributeId = :attributeId
+                AND qsn.kitVersionId = :kitVersionId
+                AND ans.isNotApplicable != TRUE
+        """)
+    List<AttributeImpactFullQuestionsView> findAttributeQuestionsAndAnswers(@Param("assessmentResultId") UUID assessmentResultId,
+                                                                            @Param("kitVersionId") Long kitVersionId,
+                                                                            @Param("attributeId") long attributeId);
 }
