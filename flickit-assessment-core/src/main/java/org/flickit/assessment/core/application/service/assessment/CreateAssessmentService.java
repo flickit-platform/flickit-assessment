@@ -83,19 +83,28 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
         UUID id = createAssessmentPort.persist(toParam(param));
         createAssessmentResult(id, assessmentKit.getKitVersion());
 
-        grantAssessmentAccesses(param, id, space.getOwnerId());
+        grantAssessmentAccesses(id, space.getOwnerId(), param.getCurrentUserId());
 
         return new Result(id, new CreateAssessmentNotificationCmd(param.getKitId(), param.getCurrentUserId()));
     }
 
     private void validateSpace(Param param, Space space, boolean isKitPrivate) {
-        if (space.getType().equals(SpaceType.BASIC) && countAssessmentsPort.countSpaceAssessments(param.getSpaceId()) >= appSpecProperties.getSpace().getMaxBasicSpaceAssessments())
-            throw new UpgradeRequiredException(CREATE_ASSESSMENT_BASIC_SPACE_ASSESSMENTS_MAX);
-        if (isKitPrivate && space.getType().equals(SpaceType.BASIC))
-            throw new UpgradeRequiredException(CREATE_ASSESSMENT_BASIC_SPACE_PRIVATE_KIT_NOT_ALLOWED);
-        if (space.getType().equals(SpaceType.PREMIUM) &&
-            space.getSubscriptionExpiry() != null && LocalDateTime.now().isAfter(space.getSubscriptionExpiry()))
+        if (space.getType() == SpaceType.BASIC) {
+            int assessmentsLimit = appSpecProperties.getSpace().getMaxBasicSpaceAssessments();
+            int assessmentsCount = countAssessmentsPort.countSpaceAssessments(param.getSpaceId());
+
+            if (assessmentsCount >= assessmentsLimit)
+                throw new UpgradeRequiredException(CREATE_ASSESSMENT_BASIC_SPACE_ASSESSMENTS_MAX);
+
+            if (isKitPrivate)
+                throw new UpgradeRequiredException(CREATE_ASSESSMENT_BASIC_SPACE_PRIVATE_KIT_NOT_ALLOWED);
+        }
+
+        if (space.getType() == SpaceType.PREMIUM &&
+            space.getSubscriptionExpiry() != null &&
+            LocalDateTime.now().isAfter(space.getSubscriptionExpiry())) {
             throw new UpgradeRequiredException(CREATE_ASSESSMENT_PREMIUM_SPACE_EXPIRED);
+        }
     }
 
     private CreateAssessmentPort.Param toParam(Param param) {
@@ -128,9 +137,9 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
         createAttributeValuePort.persistAll(attributeIds, assessmentResultId);
     }
 
-    private void grantAssessmentAccesses(Param param, UUID assessmentId, UUID spaceOwnerId) {
-        if (!Objects.equals(param.getCurrentUserId(), spaceOwnerId))
+    private void grantAssessmentAccesses(UUID assessmentId, UUID spaceOwnerId, UUID currentUserId) {
+        if (!Objects.equals(spaceOwnerId, currentUserId))
             grantUserAssessmentRolePort.persist(assessmentId, spaceOwnerId, SPACE_OWNER_ROLE.getId());
-        grantUserAssessmentRolePort.persist(assessmentId, param.getCurrentUserId(), ASSESSMENT_CREATOR_ROLE.getId());
+        grantUserAssessmentRolePort.persist(assessmentId, currentUserId, ASSESSMENT_CREATOR_ROLE.getId());
     }
 }
