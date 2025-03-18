@@ -90,7 +90,7 @@ class CreateAssessmentServiceTest {
     private final AssessmentKit publicKit = publicKit();
 
     private final Space space = SpaceMother.createBasicSpace();
-    private final Param param = createParam(Param.ParamBuilder::build);
+    private Param param = createParam(Param.ParamBuilder::build);
 
     @Test
     void testCreateAssessment_whenSpaceNotFound_thenThrowResourceNotFoundException() {
@@ -268,7 +268,7 @@ class CreateAssessmentServiceTest {
 
     @Test
     void testCreateAssessment_whenCurrentUserIsNotSpaceOwner_thenGrantAccessToSpaceOwnerToo() {
-        var param = createParam(b -> b.currentUserId(UUID.randomUUID()));
+        param = createParam(b -> b.currentUserId(UUID.randomUUID()));
         UUID expectedAssessmentId = UUID.randomUUID();
 
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
