@@ -178,7 +178,7 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
             LEFT JOIN QuestionImpactJpaEntity qi on qsn.id = qi.questionId and qsn.kitVersionId = qi.kitVersionId
             WHERE qi.attributeId = :attributeId
                 AND qsn.kitVersionId = :kitVersionId
-                AND ans.isNotApplicable != TRUE
+                AND ans.isNotApplicable IS NOT TRUE
         """)
     List<AttributeImpactFullQuestionsView> findAttributeQuestionsAndAnswers(@Param("assessmentResultId") UUID assessmentResultId,
                                                                             @Param("kitVersionId") Long kitVersionId,
