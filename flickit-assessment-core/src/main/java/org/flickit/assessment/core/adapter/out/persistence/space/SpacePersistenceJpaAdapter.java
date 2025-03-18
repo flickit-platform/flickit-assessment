@@ -2,10 +2,13 @@ package org.flickit.assessment.core.adapter.out.persistence.space;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.domain.Space;
 import org.flickit.assessment.core.application.port.out.space.LoadSpaceOwnerPort;
+import org.flickit.assessment.core.application.port.out.space.LoadSpacePort;
 import org.flickit.assessment.data.jpa.users.space.SpaceJpaRepository;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_SPACE_ID_NOT_FOUND;
@@ -14,7 +17,9 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.ASSESSMENT_ID_N
 
 @Component("coreSpacePersistenceJpaAdapter")
 @RequiredArgsConstructor
-public class SpacePersistenceJpaAdapter implements LoadSpaceOwnerPort {
+public class SpacePersistenceJpaAdapter implements
+    LoadSpaceOwnerPort,
+    LoadSpacePort {
 
     private final SpaceJpaRepository repository;
 
@@ -28,5 +33,11 @@ public class SpacePersistenceJpaAdapter implements LoadSpaceOwnerPort {
     public UUID loadOwnerId(UUID assessmentId) {
         return repository.findOwnerByAssessmentId(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND));
+    }
+
+    @Override
+    public Optional<Space> loadSpace(long spaceId) {
+        return repository.findByIdAndDeletedFalse(spaceId)
+            .map(SpaceMapper::mapToDomain);
     }
 }
