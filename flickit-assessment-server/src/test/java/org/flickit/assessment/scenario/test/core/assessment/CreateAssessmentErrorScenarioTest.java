@@ -1,7 +1,6 @@
 package org.flickit.assessment.scenario.test.core.assessment;
 
 import io.restassured.response.Response;
-import org.flickit.assessment.common.application.domain.space.SpaceType;
 import org.flickit.assessment.common.config.AppSpecProperties;
 import org.flickit.assessment.common.exception.api.ErrorResponseDto;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
@@ -57,7 +56,7 @@ class CreateAssessmentErrorScenarioTest extends AbstractScenarioTest {
 
     @Test
     void createAssessment_currentUserIsNotSpaceMember() {
-        var spaceId = createSpace(SpaceType.BASIC);
+        var spaceId = createBasicSpace();
 
         // Change currentUser which is not an owner of the expert group
         context.getNextCurrentUser();
@@ -84,7 +83,7 @@ class CreateAssessmentErrorScenarioTest extends AbstractScenarioTest {
 
     @Test
     void createAssessment_currentUserDoesNotHaveAccessToPrivateKit() {
-        var spaceId = createSpace(SpaceType.BASIC);
+        var spaceId = createBasicSpace();
 
         // Create a private kit
         var kitId = createKit(true);
@@ -123,7 +122,7 @@ class CreateAssessmentErrorScenarioTest extends AbstractScenarioTest {
 
     @Test
     void createAssessment_duplicateTitle() {
-        var spaceId = createSpace(SpaceType.BASIC);
+        var spaceId = createBasicSpace();
 
         var kitId = createKit(false);
         kitHelper.publishKit(context, kitId);
@@ -154,7 +153,7 @@ class CreateAssessmentErrorScenarioTest extends AbstractScenarioTest {
     @Test
     void createAssessment_basicAssessmentsReachedLimit() {
         var limit = appSpecProperties.getSpace().getMaxBasicSpaceAssessments();
-        var spaceId = createSpace(SpaceType.BASIC);
+        var spaceId = createBasicSpace();
 
         var kitId = createKit(false);
         kitHelper.publishKit(context, kitId);
@@ -178,7 +177,7 @@ class CreateAssessmentErrorScenarioTest extends AbstractScenarioTest {
 
     @Test
     void createAssessment_privateKitAndBasicSpace() {
-        var spaceId = createSpace(SpaceType.BASIC);
+        var spaceId = createBasicSpace();
 
         var kitId = createKit(true);
         kitHelper.publishKit(context, kitId);
@@ -209,8 +208,8 @@ class CreateAssessmentErrorScenarioTest extends AbstractScenarioTest {
         return assessmentHelper.create(context, request);
     }
 
-    private Long createSpace(SpaceType spaceType) {
-        var response = spaceHelper.create(context, createSpaceRequestDto(b-> b.type(spaceType.getCode())));
+    private Long createBasicSpace() {
+        var response = spaceHelper.create(context, createSpaceRequestDto());
         Number id = response.path("id");
         return id.longValue();
     }
