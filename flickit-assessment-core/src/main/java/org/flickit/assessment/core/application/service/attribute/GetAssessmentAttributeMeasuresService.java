@@ -105,14 +105,13 @@ public class GetAssessmentAttributeMeasuresService implements GetAssessmentAttri
                 : 0.0)
             .sum();
 
-        gainedScore = MathUtils.round(gainedScore, 2);
         var missedScore = measureMaxPossibleScore - gainedScore;
 
         return new Result.Measure(measure.getTitle(),
             MathUtils.round(impactPercentage, 2),
             measureMaxPossibleScore,
-            gainedScore,
-            missedScore,
+            MathUtils.round(gainedScore, 2),
+            MathUtils.round(missedScore, 2),
             MathUtils.round((gainedScore / attributeMaxPossibleScore) * 100, 2),
             MathUtils.round((missedScore / attributeMaxPossibleScore) * 100, 2)
         );

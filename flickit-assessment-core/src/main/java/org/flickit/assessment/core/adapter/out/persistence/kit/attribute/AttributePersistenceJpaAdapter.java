@@ -208,8 +208,12 @@ public class AttributePersistenceJpaAdapter implements
 
                 var firstView = views.getFirst();
                 var question = QuestionMapper.mapToDomainModel(firstView.getQuestion(), impacts);
-                var answer = AnswerMapper.mapToDomainModel(firstView.getAnswer(),
-                    AnswerOptionMapper.mapToDomainModel(firstView.getAnswerOption()));
+                var answerOption = firstView.getAnswerOption() != null
+                    ? AnswerOptionMapper.mapToDomainModel(firstView.getAnswerOption())
+                    : null;
+                var answer = firstView.getAnswer() != null
+                    ? AnswerMapper.mapToDomainModel(firstView.getAnswer(), answerOption)
+                    : null;
                 return new LoadAttributeQuestionsPort.Result(question, answer);
             })
             .toList();
