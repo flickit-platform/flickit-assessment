@@ -10,10 +10,10 @@ public class SpaceMother {
 
     static long id = 0;
 
-    public static Space createBasicSpaceWithOwnerId(UUID ownerId) {
+    public static Space createBasicSpace() {
         return new Space(++id,
             "title",
-            ownerId,
+            UUID.randomUUID(),
             SpaceType.BASIC,
             LocalDateTime.now());
     }
