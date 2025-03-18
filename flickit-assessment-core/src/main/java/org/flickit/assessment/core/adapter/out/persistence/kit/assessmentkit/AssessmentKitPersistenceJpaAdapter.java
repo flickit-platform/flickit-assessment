@@ -18,7 +18,6 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.ASSESSMENT_KIT_
 @RequiredArgsConstructor
 public class AssessmentKitPersistenceJpaAdapter implements
     LoadKitLastMajorModificationTimePort,
-    LoadAssessmentKitVersionIdPort,
     CheckKitAccessPort,
     LoadKitInfoPort,
     LoadAssessmentKitPort {
@@ -28,12 +27,6 @@ public class AssessmentKitPersistenceJpaAdapter implements
     @Override
     public LocalDateTime loadLastMajorModificationTime(Long kitId) {
         return repository.loadLastMajorModificationTime(kitId);
-    }
-
-    @Override
-    public Long loadVersionId(long kitId) {
-        return repository.loadKitVersionId(kitId)
-            .orElseThrow(() -> new ResourceNotFoundException(ASSESSMENT_KIT_ID_NOT_FOUND));
     }
 
     @Override
