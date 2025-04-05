@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import static org.flickit.assessment.common.exception.api.ErrorCodes.ACCESS_DENIED;
 import static org.flickit.assessment.common.exception.api.ErrorCodes.INVALID_INPUT;
 import static org.flickit.assessment.scenario.fixture.request.CreateSpaceRequestDtoMother.createSpaceRequestDto;
+import static org.flickit.assessment.scenario.fixture.request.UpdateSpaceRequestDtoMother.updateSpaceRequestDto;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -29,7 +30,7 @@ class UpdateSpaceScenarioTest extends AbstractScenarioTest {
         Number spaceId = createResponse.body().path("id");
         SpaceJpaEntity createdSpace = jpaTemplate.load(spaceId, SpaceJpaEntity.class);
 
-        var updateRequest = createSpaceRequestDto(b -> b.title("newTitle"));
+        var updateRequest = updateSpaceRequestDto(b -> b.title("newTitle"));
         spaceHelper.update(context, updateRequest, spaceId).then()
             .statusCode(200);
 
@@ -58,7 +59,7 @@ class UpdateSpaceScenarioTest extends AbstractScenarioTest {
         Number secondSpaceId = secondCreateResponse.body().path("id");
         SpaceJpaEntity secondSpace = jpaTemplate.load(secondSpaceId, SpaceJpaEntity.class);
         // Update the second space with first space's title
-        var updateRequest = createSpaceRequestDto(b -> b.title(firstCreateRequest.title()));
+        var updateRequest = updateSpaceRequestDto(b -> b.title(firstCreateRequest.title()));
         spaceHelper.update(context, updateRequest, secondSpaceId).then()
             .statusCode(200);
 
@@ -79,7 +80,7 @@ class UpdateSpaceScenarioTest extends AbstractScenarioTest {
 
         Number spaceId = createResponse.body().path("id");
 
-        var updateRequest = createSpaceRequestDto(b -> b.title("newTitle"));
+        var updateRequest = updateSpaceRequestDto(b -> b.title("newTitle"));
         // Change currentUser which is not owner (creator) of the space
         context.getNextCurrentUser();
         var error = spaceHelper.update(context, updateRequest, spaceId).then()
@@ -112,7 +113,7 @@ class UpdateSpaceScenarioTest extends AbstractScenarioTest {
 
         Number secondSpaceId = secondCreateResponse.body().path("id");
         // Update the second space's title to match the first space's title
-        var updateRequest = createSpaceRequestDto(b -> b.title(firstCreateRequest.title()));
+        var updateRequest = updateSpaceRequestDto(b -> b.title(firstCreateRequest.title()));
         var error = spaceHelper.update(context, updateRequest, secondSpaceId).then()
             .statusCode(400)
             .extract().as(ErrorResponseDto.class);
@@ -145,7 +146,7 @@ class UpdateSpaceScenarioTest extends AbstractScenarioTest {
 
         Number secondSpaceId = secondCreateResponse.body().path("id");
         // Update the second space's title to match the deleted space's title
-        var updateRequest = createSpaceRequestDto(b -> b.title(firstCreateRequest.title()));
+        var updateRequest = updateSpaceRequestDto(b -> b.title(firstCreateRequest.title()));
         spaceHelper.update(context, updateRequest, secondSpaceId).then()
             .statusCode(200);
 

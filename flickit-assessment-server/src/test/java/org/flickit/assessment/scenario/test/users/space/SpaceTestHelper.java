@@ -3,6 +3,7 @@ package org.flickit.assessment.scenario.test.users.space;
 import io.restassured.response.Response;
 import org.flickit.assessment.scenario.test.ScenarioContext;
 import org.flickit.assessment.users.adapter.in.rest.space.CreateSpaceRequestDto;
+import org.flickit.assessment.users.adapter.in.rest.space.UpdateSpaceRequestDto;
 import org.springframework.stereotype.Component;
 
 import static io.restassured.RestAssured.given;
@@ -34,7 +35,7 @@ public class SpaceTestHelper {
             .response();
     }
 
-    public Response update(ScenarioContext context, CreateSpaceRequestDto request, Number spaceId) {
+    public Response update(ScenarioContext context, UpdateSpaceRequestDto request, Number spaceId) {
         return given()
             .contentType(JSON)
             .auth().oauth2(context.getCurrentUser().getJwt())
