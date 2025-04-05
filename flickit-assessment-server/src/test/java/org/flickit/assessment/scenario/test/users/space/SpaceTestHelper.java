@@ -34,17 +34,6 @@ public class SpaceTestHelper {
             .response();
     }
 
-    public Response checkCreate(ScenarioContext context) {
-        return given()
-            .contentType(JSON)
-            .auth().oauth2(context.getCurrentUser().getJwt())
-            .when()
-            .get("/assessment-core/api/check-create-space")
-            .then()
-            .extract()
-            .response();
-    }
-
     public Response update(ScenarioContext context, CreateSpaceRequestDto request, Number spaceId) {
         return given()
             .contentType(JSON)
@@ -52,6 +41,17 @@ public class SpaceTestHelper {
             .body(request)
             .when()
             .put("/assessment-core/api/spaces/" + spaceId)
+            .then()
+            .extract()
+            .response();
+    }
+
+    public Response checkCreate(ScenarioContext context) {
+        return given()
+            .contentType(JSON)
+            .auth().oauth2(context.getCurrentUser().getJwt())
+            .when()
+            .get("/assessment-core/api/check-create-space")
             .then()
             .extract()
             .response();
