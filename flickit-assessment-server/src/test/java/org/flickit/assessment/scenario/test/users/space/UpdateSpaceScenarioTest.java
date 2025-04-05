@@ -12,7 +12,7 @@ import static org.flickit.assessment.scenario.fixture.request.CreateSpaceRequest
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class UpdateSpaceScenarioTest extends AbstractScenarioTest {
+class UpdateSpaceScenarioTest extends AbstractScenarioTest {
 
     @Autowired
     SpaceTestHelper spaceHelper;
