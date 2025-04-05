@@ -16,7 +16,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doReturn;
 
 @ExtendWith(MockitoExtension.class)
@@ -44,9 +43,6 @@ class GetKitLanguagesServiceTest {
         var result = service.getKitLanguages();
 
         assertThat(result.kitLanguages())
-            .zipSatisfy(expectedLangs, (actual, expected) -> {
-                assertEquals(expected.code(), actual.code());
-                assertEquals(expected.title(), actual.title());
-            });
+            .containsExactlyInAnyOrderElementsOf(expectedLangs);
     }
 }
