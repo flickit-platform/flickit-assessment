@@ -173,7 +173,8 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
             attribute.index(),
             attribute.weight(),
             attribute.confidenceValue(),
-            maturityLevelMap.get(attribute.maturityLevel().getId()));
+            maturityLevelMap.get(attribute.maturityLevel().getId()),
+            List.of());
     }
 
     private Advice toAdvice(UUID assessmentResultId, Locale locale) {
