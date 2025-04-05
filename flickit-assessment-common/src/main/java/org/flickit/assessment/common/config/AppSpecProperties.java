@@ -3,10 +3,15 @@ package org.flickit.assessment.common.config;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.Map;
+import java.util.Set;
+
+import static org.flickit.assessment.common.application.domain.kit.KitLanguage.EN;
+import static org.flickit.assessment.common.application.domain.kit.KitLanguage.FA;
 
 @Setter
 @Getter
@@ -54,6 +59,8 @@ public class AppSpecProperties {
     private String favIcon;
 
     private String supportEmail;
+
+    private Set<KitLanguage> supportedKitLanguages = Set.of(EN, FA);
 
     @Valid
     private Email email = new Email();
