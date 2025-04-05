@@ -43,7 +43,7 @@ public class UpdateSpaceScenarioTest extends AbstractScenarioTest {
     void updateSpace_userIsNotOwner() {
         var createRequest = createSpaceRequestDto();
         var createResponse = spaceHelper.create(context, createRequest);
-        // First invoke
+
         createResponse.then()
             .statusCode(201)
             .body("id", notNullValue());
@@ -68,19 +68,19 @@ public class UpdateSpaceScenarioTest extends AbstractScenarioTest {
     void updateSpace_titleIsDuplicated() {
         var createRequestFirst = createSpaceRequestDto();
         var createRequestSecond = createSpaceRequestDto();
-
+        // First invoke
         var createResponseFirst = spaceHelper.create(context, createRequestFirst);
         createResponseFirst.then()
             .statusCode(201)
             .body("id", notNullValue());
-
+        // Second invoke with different request
         var createResponseSecond = spaceHelper.create(context, createRequestSecond);
         createResponseSecond.then()
             .statusCode(201)
             .body("id", notNullValue());
 
         Number spaceIdSecond = createResponseSecond.body().path("id");
-
+        // Update the second space's title to match the first space's title
         var updateRequest = createSpaceRequestDto(b -> b.title(createRequestFirst.title()));
         var error = spaceHelper.update(context, updateRequest, spaceIdSecond).then()
             .statusCode(400)
