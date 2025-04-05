@@ -43,16 +43,16 @@ public class UpdateSpaceScenarioTest extends AbstractScenarioTest {
     void updateSpace_userIsNotOwner() {
         var createRequest = createSpaceRequestDto();
         var createResponse = spaceHelper.create(context, createRequest);
-
+        // First invoke
         createResponse.then()
             .statusCode(201)
             .body("id", notNullValue());
 
         Number spaceId = createResponse.body().path("id");
 
-        var editRequest = createSpaceRequestDto(b -> b.title("newTitle"));
+        var updateRequest = createSpaceRequestDto(b -> b.title("newTitle"));
         context.getNextCurrentUser();
-        var error = spaceHelper.update(context, editRequest, spaceId).then()
+        var error = spaceHelper.update(context, updateRequest, spaceId).then()
             .statusCode(403)
             .extract().as(ErrorResponseDto.class);
 
@@ -81,8 +81,8 @@ public class UpdateSpaceScenarioTest extends AbstractScenarioTest {
 
         Number spaceIdSecond = createResponseSecond.body().path("id");
 
-        var editRequest = createSpaceRequestDto(b -> b.title(createRequestFirst.title()));
-        var error = spaceHelper.update(context, editRequest, spaceIdSecond).then()
+        var updateRequest = createSpaceRequestDto(b -> b.title(createRequestFirst.title()));
+        var error = spaceHelper.update(context, updateRequest, spaceIdSecond).then()
             .statusCode(400)
             .extract().as(ErrorResponseDto.class);
 
