@@ -97,14 +97,15 @@ public class UpdateSpaceScenarioTest extends AbstractScenarioTest {
     @Test
     void updateSpace_titleIsDuplicated() {
         var firstCreateRequest = createSpaceRequestDto();
-        var secondRequestSecond = createSpaceRequestDto();
         // Create first space
         var firstCreateResponse = spaceHelper.create(context, firstCreateRequest);
         firstCreateResponse.then()
             .statusCode(201)
             .body("id", notNullValue());
+
+        var secondCreateRequest = createSpaceRequestDto();
         // Create second space with different request
-        var secondCreateResponse = spaceHelper.create(context, secondRequestSecond);
+        var secondCreateResponse = spaceHelper.create(context, secondCreateRequest);
         secondCreateResponse.then()
             .statusCode(201)
             .body("id", notNullValue());
@@ -119,7 +120,7 @@ public class UpdateSpaceScenarioTest extends AbstractScenarioTest {
         SpaceJpaEntity space = jpaTemplate.load(secondSpaceId, SpaceJpaEntity.class);
 
         assertEquals(INVALID_INPUT, error.code());
-        assertEquals(secondRequestSecond.title(), space.getTitle());
+        assertEquals(secondCreateRequest.title(), space.getTitle());
         assertEquals(space.getCreationTime(), space.getLastModificationTime());
         assertNotNull(error.message());
     }
