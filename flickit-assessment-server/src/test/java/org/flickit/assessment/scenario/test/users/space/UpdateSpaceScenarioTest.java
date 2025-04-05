@@ -66,59 +66,59 @@ public class UpdateSpaceScenarioTest extends AbstractScenarioTest {
 
     @Test
     void updateSpace_titleIsDuplicated() {
-        var createRequestFirst = createSpaceRequestDto();
-        var createRequestSecond = createSpaceRequestDto();
+        var firstCreateRequest = createSpaceRequestDto();
+        var secondRequestSecond = createSpaceRequestDto();
         // First invoke
-        var createResponseFirst = spaceHelper.create(context, createRequestFirst);
-        createResponseFirst.then()
+        var firstCreateResponse = spaceHelper.create(context, firstCreateRequest);
+        firstCreateResponse.then()
             .statusCode(201)
             .body("id", notNullValue());
         // Second invoke with different request
-        var createResponseSecond = spaceHelper.create(context, createRequestSecond);
-        createResponseSecond.then()
+        var secondCreateResponse = spaceHelper.create(context, secondRequestSecond);
+        secondCreateResponse.then()
             .statusCode(201)
             .body("id", notNullValue());
 
-        Number spaceIdSecond = createResponseSecond.body().path("id");
+        Number secondSpaceId = secondCreateResponse.body().path("id");
         // Update the second space's title to match the first space's title
-        var updateRequest = createSpaceRequestDto(b -> b.title(createRequestFirst.title()));
-        var error = spaceHelper.update(context, updateRequest, spaceIdSecond).then()
+        var updateRequest = createSpaceRequestDto(b -> b.title(firstCreateRequest.title()));
+        var error = spaceHelper.update(context, updateRequest, secondSpaceId).then()
             .statusCode(400)
             .extract().as(ErrorResponseDto.class);
 
-        SpaceJpaEntity space = jpaTemplate.load(spaceIdSecond, SpaceJpaEntity.class);
+        SpaceJpaEntity space = jpaTemplate.load(secondSpaceId, SpaceJpaEntity.class);
 
         assertEquals(INVALID_INPUT, error.code());
-        assertEquals(createRequestSecond.title(), space.getTitle());
+        assertEquals(secondRequestSecond.title(), space.getTitle());
         assertEquals(space.getCreationTime(), space.getLastModificationTime());
         assertNotNull(error.message());
     }
 
     @Test
     void updateSpace_titleIsTheSameAsDeletedSpace() {
-        var createRequestFirst = createSpaceRequestDto();
-        var createRequestSecond = createSpaceRequestDto();
+        var firstCreateRequest = createSpaceRequestDto();
+        var secondCreateRequest = createSpaceRequestDto();
         // First invoke
-        var createResponseFirst = spaceHelper.create(context, createRequestFirst);
-        createResponseFirst.then()
+        var firstCreateResponse = spaceHelper.create(context, firstCreateRequest);
+        firstCreateResponse.then()
             .statusCode(201)
             .body("id", notNullValue());
 
-        Number spaceIdFirst = createResponseFirst.body().path("id");
-        spaceHelper.delete(context, spaceIdFirst);
+        Number firstSpaceId = firstCreateResponse.body().path("id");
+        spaceHelper.delete(context, firstSpaceId);
         // Second invoke with different request
-        var createResponseSecond = spaceHelper.create(context, createRequestSecond);
-        createResponseSecond.then()
+        var secondCreateResponse = spaceHelper.create(context, secondCreateRequest);
+        secondCreateResponse.then()
             .statusCode(201)
             .body("id", notNullValue());
 
-        Number spaceIdSecond = createResponseSecond.body().path("id");
+        Number secondSpaceId = secondCreateResponse.body().path("id");
         // Update the second space's title to match the deleted space's title
-        var updateRequest = createSpaceRequestDto(b -> b.title(createRequestFirst.title()));
-        spaceHelper.update(context, updateRequest, spaceIdSecond).then()
+        var updateRequest = createSpaceRequestDto(b -> b.title(firstCreateRequest.title()));
+        spaceHelper.update(context, updateRequest, secondSpaceId).then()
             .statusCode(200);
 
-        SpaceJpaEntity space = jpaTemplate.load(spaceIdSecond, SpaceJpaEntity.class);
+        SpaceJpaEntity space = jpaTemplate.load(secondSpaceId, SpaceJpaEntity.class);
 
         assertEquals(updateRequest.title(), space.getTitle());
         assertTrue(space.getLastModificationTime().isAfter(space.getCreationTime()));
