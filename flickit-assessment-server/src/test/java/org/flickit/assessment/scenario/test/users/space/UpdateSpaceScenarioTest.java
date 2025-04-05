@@ -93,4 +93,34 @@ public class UpdateSpaceScenarioTest extends AbstractScenarioTest {
         assertEquals(space.getCreationTime(), space.getLastModificationTime());
         assertNotNull(error.message());
     }
+
+    @Test
+    void updateSpace_titleIsTheSameAsDeletedSpace() {
+        var createRequestFirst = createSpaceRequestDto();
+        var createRequestSecond = createSpaceRequestDto();
+        // First invoke
+        var createResponseFirst = spaceHelper.create(context, createRequestFirst);
+        createResponseFirst.then()
+            .statusCode(201)
+            .body("id", notNullValue());
+
+        Number spaceIdFirst = createResponseFirst.body().path("id");
+        spaceHelper.delete(context, spaceIdFirst);
+        // Second invoke with different request
+        var createResponseSecond = spaceHelper.create(context, createRequestSecond);
+        createResponseSecond.then()
+            .statusCode(201)
+            .body("id", notNullValue());
+
+        Number spaceIdSecond = createResponseSecond.body().path("id");
+        // Update the second space's title to match the deleted space's title
+        var updateRequest = createSpaceRequestDto(b -> b.title(createRequestFirst.title()));
+        spaceHelper.update(context, updateRequest, spaceIdSecond).then()
+            .statusCode(200);
+
+        SpaceJpaEntity space = jpaTemplate.load(spaceIdSecond, SpaceJpaEntity.class);
+
+        assertEquals(updateRequest.title(), space.getTitle());
+        assertTrue(space.getLastModificationTime().isAfter(space.getCreationTime()));
+    }
 }
