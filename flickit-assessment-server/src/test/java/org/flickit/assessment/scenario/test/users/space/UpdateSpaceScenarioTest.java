@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.flickit.assessment.common.exception.api.ErrorCodes.ACCESS_DENIED;
 import static org.flickit.assessment.common.exception.api.ErrorCodes.INVALID_INPUT;
+import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
 import static org.flickit.assessment.scenario.fixture.request.CreateSpaceRequestDtoMother.createSpaceRequestDto;
 import static org.flickit.assessment.scenario.fixture.request.UpdateSpaceRequestDtoMother.updateSpaceRequestDto;
 import static org.hamcrest.Matchers.notNullValue;
@@ -30,13 +31,16 @@ class UpdateSpaceScenarioTest extends AbstractScenarioTest {
         Number spaceId = createResponse.body().path("id");
         SpaceJpaEntity createdSpace = jpaTemplate.load(spaceId, SpaceJpaEntity.class);
 
-        var updateRequest = updateSpaceRequestDto(b -> b.title("newTitle"));
+        var newTitle = "new title";
+        var updateRequest = updateSpaceRequestDto(b -> b.title(newTitle));
         spaceHelper.update(context, updateRequest, spaceId).then()
             .statusCode(200);
 
         SpaceJpaEntity updatedSpace = jpaTemplate.load(spaceId, SpaceJpaEntity.class);
 
-        assertEquals("newTitle", updatedSpace.getTitle());
+        assertEquals(newTitle, updatedSpace.getTitle());
+        assertEquals(generateSlugCode(newTitle), updatedSpace.getCode());
+        assertEquals(createdSpace.getCreatedBy(), updatedSpace.getCreatedBy());
         assertTrue(updatedSpace.getLastModificationTime().isAfter(createdSpace.getLastModificationTime()));
     }
 
@@ -50,8 +54,8 @@ class UpdateSpaceScenarioTest extends AbstractScenarioTest {
         // Change currentUser
         context.getNextCurrentUser();
         var secondCreateRequest = createSpaceRequestDto();
-        var secondCreateResponse = spaceHelper.create(context, secondCreateRequest);
         // Create second space for different user
+        var secondCreateResponse = spaceHelper.create(context, secondCreateRequest);
         secondCreateResponse.then()
             .statusCode(201)
             .body("id", notNullValue());
@@ -66,6 +70,8 @@ class UpdateSpaceScenarioTest extends AbstractScenarioTest {
         SpaceJpaEntity updatedSecondSpace = jpaTemplate.load(secondSpaceId, SpaceJpaEntity.class);
 
         assertEquals(firstCreateRequest.title(), updatedSecondSpace.getTitle());
+        assertEquals(generateSlugCode(updatedSecondSpace.getTitle()), updatedSecondSpace.getCode());
+        assertEquals(secondSpace.getCreatedBy(), secondSpace.getLastModifiedBy());
         assertTrue(updatedSecondSpace.getLastModificationTime().isAfter(secondSpace.getLastModificationTime()));
     }
 
@@ -129,7 +135,6 @@ class UpdateSpaceScenarioTest extends AbstractScenarioTest {
     @Test
     void updateSpace_titleIsTheSameAsDeletedSpace() {
         var firstCreateRequest = createSpaceRequestDto();
-        var secondCreateRequest = createSpaceRequestDto();
         // Create first space
         var firstCreateResponse = spaceHelper.create(context, firstCreateRequest);
         firstCreateResponse.then()
@@ -137,7 +142,10 @@ class UpdateSpaceScenarioTest extends AbstractScenarioTest {
             .body("id", notNullValue());
 
         Number firstSpaceId = firstCreateResponse.body().path("id");
+        // Delete the first space
         spaceHelper.delete(context, firstSpaceId);
+
+        var secondCreateRequest = createSpaceRequestDto();
         // Create second space with different request
         var secondCreateResponse = spaceHelper.create(context, secondCreateRequest);
         secondCreateResponse.then()
@@ -153,6 +161,8 @@ class UpdateSpaceScenarioTest extends AbstractScenarioTest {
         SpaceJpaEntity space = jpaTemplate.load(secondSpaceId, SpaceJpaEntity.class);
 
         assertEquals(updateRequest.title(), space.getTitle());
+        assertEquals(generateSlugCode(updateRequest.title()), space.getCode());
+        assertEquals(space.getCreatedBy(), space.getLastModifiedBy());
         assertTrue(space.getLastModificationTime().isAfter(space.getCreationTime()));
     }
 }
