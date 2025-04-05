@@ -45,7 +45,7 @@ class UpdateSpaceScenarioTest extends AbstractScenarioTest {
     }
 
     @Test
-    void updateSpace_titleIsDuplicatedForDifferentUsers() {
+    void updateSpace_withSameTitleForDifferentUsers() {
         var firstCreateRequest = createSpaceRequestDto();
         var firstCreateResponse = spaceHelper.create(context, firstCreateRequest);
         // Create first space
@@ -102,7 +102,7 @@ class UpdateSpaceScenarioTest extends AbstractScenarioTest {
     }
 
     @Test
-    void updateSpace_titleIsDuplicated() {
+    void updateSpace_withSameTitle() {
         var firstCreateRequest = createSpaceRequestDto();
         // Create first space
         var firstCreateResponse = spaceHelper.create(context, firstCreateRequest);
@@ -133,7 +133,7 @@ class UpdateSpaceScenarioTest extends AbstractScenarioTest {
     }
 
     @Test
-    void updateSpace_titleIsTheSameAsDeletedSpace() {
+    void updateSpace_withSameTitleAsDeleted() {
         var firstCreateRequest = createSpaceRequestDto();
         // Create first space
         var firstCreateResponse = spaceHelper.create(context, firstCreateRequest);
