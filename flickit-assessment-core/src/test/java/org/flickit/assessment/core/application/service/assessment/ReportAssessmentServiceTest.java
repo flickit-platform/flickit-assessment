@@ -76,6 +76,7 @@ class ReportAssessmentServiceTest {
             156,
             maturityLevels,
             List.of(),
+            List.of(),
             expertGroup);
         MaturityLevel assessmentMaturityLevel = MaturityLevelMother.levelThree();
         LocalDateTime creationTime = LocalDateTime.now();

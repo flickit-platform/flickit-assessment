@@ -242,6 +242,7 @@ class GetAssessmentReportServiceTest {
             150,
             MaturityLevelMother.allLevels(),
             List.of(new QuestionnaireReportItem(14L, "questionnaire title", "questionnaire description", 1, 15)),
+            List.of(),
             new AssessmentReportItem.AssessmentKitItem.ExpertGroup(569L, "expert group", null));
     }
 
