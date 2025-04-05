@@ -16,6 +16,7 @@ import org.flickit.assessment.core.application.domain.report.QuestionnaireReport
 import org.flickit.assessment.core.application.port.in.assessmentreport.GetAssessmentReportUseCase;
 import org.flickit.assessment.core.application.port.out.adviceitem.LoadAdviceItemsPort;
 import org.flickit.assessment.core.application.port.out.advicenarration.LoadAdviceNarrationPort;
+import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentQuestionsPort;
 import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
 import org.flickit.assessment.core.test.fixture.application.AssessmentReportMother;
@@ -61,6 +62,9 @@ class GetAssessmentReportServiceTest {
 
     @Mock
     private LoadAssessmentReportPort loadAssessmentReportPort;
+
+    @Mock
+    private LoadAssessmentQuestionsPort loadAssessmentQuestionsPort;
 
     @Mock
     private ValidateAssessmentResultPort validateAssessmentResultPort;

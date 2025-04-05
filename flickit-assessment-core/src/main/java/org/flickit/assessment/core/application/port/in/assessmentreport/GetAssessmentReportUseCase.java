@@ -87,16 +87,16 @@ public interface GetAssessmentReportUseCase {
                      int weight,
                      double confidenceValue,
                      MaturityLevel maturityLevel,
-                     List<Measure> measures) {
+                     List<AttributeMeasure> attributeMeasures) {
     }
 
-    record Measure(String title,
-                   Double impactPercentage,
-                   Double maxPossibleScore,
-                   Double gainedScore,
-                   Double missedScore,
-                   Double gainedScorePercentage,
-                   Double missedScorePercentage) {
+    record AttributeMeasure(String title,
+                            Double impactPercentage,
+                            Double maxPossibleScore,
+                            Double gainedScore,
+                            Double missedScore,
+                            Double gainedScorePercentage,
+                            Double missedScorePercentage) {
     }
 
     record Advice(String narration, List<AdviceItem> adviceItems) {
