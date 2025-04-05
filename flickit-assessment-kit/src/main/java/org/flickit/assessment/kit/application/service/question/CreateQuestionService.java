@@ -7,7 +7,9 @@ import org.flickit.assessment.kit.application.domain.Question;
 import org.flickit.assessment.kit.application.port.in.question.CreateQuestionUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
+import org.flickit.assessment.kit.application.port.out.measure.LoadMeasurePort;
 import org.flickit.assessment.kit.application.port.out.question.CreateQuestionPort;
+import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairePort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,9 +22,11 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 @RequiredArgsConstructor
 public class CreateQuestionService implements CreateQuestionUseCase {
 
-    private final CreateQuestionPort createQuestionPort;
-    private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
     private final LoadKitVersionPort loadKitVersionPort;
+    private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
+    private final LoadQuestionnairePort loadQuestionnairePort;
+    private final LoadMeasurePort loadMeasurePort;
+    private final CreateQuestionPort createQuestionPort;
 
     @Override
     public long createQuestion(Param param) {
@@ -34,7 +38,9 @@ public class CreateQuestionService implements CreateQuestionUseCase {
         return createQuestionPort.persist(toParam(param));
     }
 
-    private static CreateQuestionPort.Param toParam(Param param) {
+    private CreateQuestionPort.Param toParam(Param param) {
+        var questionnaire = loadQuestionnairePort.load(param.getQuestionnaireId(), param.getKitVersionId());
+        var measure = loadMeasurePort.loadByCode(questionnaire.getCode(), param.getKitVersionId());
         return new CreateQuestionPort.Param(Question.generateCode(param.getIndex()),
             param.getTitle(),
             param.getIndex(),
@@ -43,6 +49,7 @@ public class CreateQuestionService implements CreateQuestionUseCase {
             param.getAdvisable(),
             param.getKitVersionId(),
             param.getQuestionnaireId(),
+            measure.getId(),
             null,
             param.getCurrentUserId());
     }

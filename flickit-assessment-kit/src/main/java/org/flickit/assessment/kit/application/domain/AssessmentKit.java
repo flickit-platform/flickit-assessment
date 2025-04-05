@@ -27,6 +27,7 @@ public class AssessmentKit {
     private final List<Subject> subjects;
     private final List<MaturityLevel> maturityLevels;
     private final List<Questionnaire> questionnaires;
+    private final List<Measure> measures;
     private final List<AnswerRange> reusableAnswerRanges;
     private final Long activeVersionId;
 

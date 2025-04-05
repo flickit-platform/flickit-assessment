@@ -11,6 +11,7 @@ import org.flickit.assessment.data.jpa.kit.kituseraccess.KitUserAccessJpaEntity;
 import org.flickit.assessment.data.jpa.kit.kitversion.KitVersionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaEntity;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
+import org.flickit.assessment.data.jpa.kit.measure.MeasureJpaEntity;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaEntity;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaEntity;
@@ -63,6 +64,7 @@ class CreateKitByDslScenarioTest extends AbstractScenarioTest {
     int subjectsCountBefore;
     int attributesCountBefore;
     int questionnairesCountBefore;
+    int measuresCountBefore;
     int questionsCountBefore;
     int answerRangesCountBefore;
 
@@ -72,6 +74,7 @@ class CreateKitByDslScenarioTest extends AbstractScenarioTest {
         subjectsCountBefore = jpaTemplate.count(SubjectJpaEntity.class);
         attributesCountBefore = jpaTemplate.count(AttributeJpaEntity.class);
         questionnairesCountBefore = jpaTemplate.count(QuestionnaireJpaEntity.class);
+        measuresCountBefore = jpaTemplate.count(MeasureJpaEntity.class);
         questionsCountBefore = jpaTemplate.count(QuestionJpaEntity.class);
         answerRangesCountBefore = jpaTemplate.count(AnswerRangeJpaEntity.class);
     }
@@ -327,6 +330,9 @@ class CreateKitByDslScenarioTest extends AbstractScenarioTest {
         int questionnairesCountAfter = jpaTemplate.count(QuestionnaireJpaEntity.class);
         assertEquals(kitDslModel.getQuestionnaires().size(), questionnairesCountAfter - questionnairesCountBefore);
 
+        int measuresCountAfter = jpaTemplate.count(MeasureJpaEntity.class);
+        assertEquals(kitDslModel.getQuestionnaires().size(), measuresCountAfter - measuresCountBefore);
+
         int questionsCountAfter = jpaTemplate.count(QuestionJpaEntity.class);
         assertEquals(kitDslModel.getQuestions().size(), questionsCountAfter - questionsCountBefore);
 
@@ -336,6 +342,9 @@ class CreateKitByDslScenarioTest extends AbstractScenarioTest {
         var loadedQuestionnaires = loadByKitVersionId(QuestionnaireJpaEntity.class, kitVersionId).stream()
                 .sorted(comparingInt(QuestionnaireJpaEntity::getIndex))
                 .toList();
+        var loadedMeasures = loadByKitVersionId(MeasureJpaEntity.class, kitVersionId).stream()
+            .sorted(comparingInt(MeasureJpaEntity::getIndex))
+            .toList();
 
         var questionnaireCodeToQuestionModels = kitDslModel.getQuestions().stream()
                 .collect(groupingBy(QuestionDslModel::getQuestionnaireCode));
@@ -368,6 +377,18 @@ class CreateKitByDslScenarioTest extends AbstractScenarioTest {
                             answerRanges,
                             rangeIdToOptions);
                 });
+        assertThat(loadedMeasures)
+            .zipSatisfy(dslQuestionnaires, (entity, model) -> {
+                assertEquals(model.getCode(), entity.getCode());
+                assertEquals(model.getDescription(), entity.getDescription());
+                assertEquals(model.getIndex(), entity.getIndex());
+                assertEquals(model.getTitle(), entity.getTitle());
+
+                assertNotNull(entity.getCreationTime());
+                assertNotNull(entity.getLastModificationTime());
+                assertEquals(getCurrentUserId(), entity.getCreatedBy());
+                assertEquals(getCurrentUserId(), entity.getLastModifiedBy());
+            });
     }
 
     private void assertQuestions(List<QuestionDslModel> dslQuestions,

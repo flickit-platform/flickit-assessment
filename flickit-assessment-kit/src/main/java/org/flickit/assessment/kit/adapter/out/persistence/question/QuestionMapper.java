@@ -48,6 +48,7 @@ public class QuestionMapper {
             param.mayNotBeApplicable(),
             param.advisable(),
             param.questionnaireId(),
+            param.measureId(),
             param.answerRangeId(),
             creationTime,
             creationTime,

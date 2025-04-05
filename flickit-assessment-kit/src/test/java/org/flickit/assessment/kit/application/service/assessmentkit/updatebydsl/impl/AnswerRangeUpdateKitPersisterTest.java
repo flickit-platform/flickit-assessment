@@ -50,7 +50,7 @@ class AnswerRangeUpdateKitPersisterTest {
 
     @Test
     void testOrder() {
-        assertEquals(5, persister.order());
+        assertEquals(6, persister.order());
     }
 
     @Test

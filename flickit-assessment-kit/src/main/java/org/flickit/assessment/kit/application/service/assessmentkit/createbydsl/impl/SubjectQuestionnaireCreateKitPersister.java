@@ -29,7 +29,7 @@ public class SubjectQuestionnaireCreateKitPersister implements CreateKitPersiste
 
     @Override
     public int order() {
-        return 7;
+        return 8;
     }
 
     @Override

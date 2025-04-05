@@ -7,6 +7,10 @@ import org.flickit.assessment.common.application.domain.crud.Order;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.application.domain.kitcustom.KitCustomData;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.adapter.out.persistence.answer.AnswerMapper;
+import org.flickit.assessment.core.adapter.out.persistence.kit.answeroption.AnswerOptionMapper;
+import org.flickit.assessment.core.adapter.out.persistence.kit.question.QuestionMapper;
+import org.flickit.assessment.core.adapter.out.persistence.kit.questionimpact.QuestionImpactMapper;
 import org.flickit.assessment.core.application.domain.Attribute;
 import org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreDetailUseCase;
 import org.flickit.assessment.core.application.port.out.attribute.*;
@@ -27,7 +31,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.core.adapter.out.persistence.kit.attribute.AttributeMapper.mapToDomainModel;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
@@ -38,7 +44,8 @@ public class AttributePersistenceJpaAdapter implements
     LoadAttributePort,
     LoadAttributeScoresPort,
     CountAttributesPort,
-    LoadAttributesPort {
+    LoadAttributesPort,
+    LoadAttributeQuestionsPort {
 
     private final AttributeJpaRepository repository;
     private final AssessmentResultJpaRepository assessmentResultRepository;
@@ -66,8 +73,6 @@ public class AttributePersistenceJpaAdapter implements
                 view.getQuestionIndex(),
                 view.getQuestionTitle(),
                 view.getQuestionImpact().getWeight(),
-                view.getOptionIndex(),
-                view.getOptionTitle(),
                 view.getAnswer() == null ? null : view.getAnswer().getIsNotApplicable(),
                 view.getGainedScore(),
                 view.getMissedScore(),
@@ -182,5 +187,35 @@ public class AttributePersistenceJpaAdapter implements
             .collect(toMap(
                 Attribute::getId,
                 e -> attributeIdToCustomWeight.getOrDefault(e.getId(), e.getWeight())));
+    }
+
+    @Override
+    public List<LoadAttributeQuestionsPort.Result> loadApplicableQuestions(UUID assessmentId,
+                                                                           long attributeId) {
+        var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
+            .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
+
+        var questionIdToViewMap = repository.findAttributeQuestionsAndAnswers(assessmentResult.getId(),
+            assessmentResult.getKitVersionId(),
+                attributeId).stream()
+            .collect(groupingBy(v -> v.getQuestion().getId()));
+
+        return questionIdToViewMap.values().stream()
+            .map(views -> {
+                var impacts = views.stream()
+                    .map(i -> QuestionImpactMapper.mapToDomainModel(i.getQuestionImpact()))
+                    .toList();
+
+                var firstView = views.getFirst();
+                var question = QuestionMapper.mapToDomainModel(firstView.getQuestion(), impacts);
+                var answerOption = firstView.getAnswerOption() != null
+                    ? AnswerOptionMapper.mapToDomainModel(firstView.getAnswerOption())
+                    : null;
+                var answer = firstView.getAnswer() != null
+                    ? AnswerMapper.mapToDomainModel(firstView.getAnswer(), answerOption)
+                    : null;
+                return new LoadAttributeQuestionsPort.Result(question, answer);
+            })
+            .toList();
     }
 }

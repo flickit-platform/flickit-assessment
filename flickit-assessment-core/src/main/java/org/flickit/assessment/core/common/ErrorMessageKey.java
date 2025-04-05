@@ -32,6 +32,9 @@ public class ErrorMessageKey {
     public static final String CREATE_ASSESSMENT_SPACE_ID_NOT_NULL = "create-assessment.spaceId.notNull";
     public static final String CREATE_ASSESSMENT_DUPLICATE_TITLE_AND_SPACE_ID = "create-assessment.duplicate.titleAndSpaceId";
     public static final String CREATE_ASSESSMENT_KIT_NOT_ALLOWED = "create-assessment.kit.notAllowed";
+    public static final String CREATE_ASSESSMENT_BASIC_SPACE_ASSESSMENTS_MAX = "create-assessment.basicSpaceAssessments.max";
+    public static final String CREATE_ASSESSMENT_BASIC_SPACE_PRIVATE_KIT_NOT_ALLOWED = "create-assessment.basicSpacePrivateKits.notAllowed";
+    public static final String CREATE_ASSESSMENT_PREMIUM_SPACE_EXPIRED = "create-assessment.premiumSpace.expired";
 
     public static final String CREATE_ASSESSMENT_RESULT_ASSESSMENT_ID_NOT_FOUND = "create-assessmentresult.assessmentId.notFound";
 
@@ -337,4 +340,14 @@ public class ErrorMessageKey {
     public static final String RESOLVE_ASSESSMENT_COMMENTS_ASSESSMENT_ID_NOT_NULL = "resolve-assessment-comments.assessmentId.notNull";
 
     public static final String GET_ASSESSMENT_INSIGHTS_ASSESSMENT_ID_NOT_NULL = "get-assessment-insights.assessmentId.notNull";
+
+    public static final String APPROVE_ASSESSMENT_ANSWERS_ASSESSMENT_ID_NOT_NULL = "approve-assessment-answers.assessmentId.notNull";
+
+    public static final String GET_ASSESSMENT_INSIGHTS_ISSUES_ASSESSMENT_ID_NOT_NULL = "get-assessment-insights-issues.assessmentId.notNull";
+    public static final String GET_ASSESSMENT_INSIGHTS_ISSUES_ASSESSMENT_RESULT_NOT_FOUND = "get-assessment-insights-issues.assessmentResult.notFound";
+
+    public static final String GET_ASSESSMENT_ATTRIBUTE_MEASURES_ASSESSMENT_ID_NOT_NULL = "get-assessment-attribute-measures.assessmentId.notNull";
+    public static final String GET_ASSESSMENT_ATTRIBUTE_MEASURES_ATTRIBUTE_ID_NOT_NULL = "get-assessment-attribute-measures.attributeId.notNull";
+    public static final String GET_ASSESSMENT_ATTRIBUTE_MEASURES_SORT_INVALID = "get-assessment-attribute-measures.sort.invalid";
+    public static final String GET_ASSESSMENT_ATTRIBUTE_MEASURES_INVALID = "get-assessment-attribute-measures.order.invalid";
 }

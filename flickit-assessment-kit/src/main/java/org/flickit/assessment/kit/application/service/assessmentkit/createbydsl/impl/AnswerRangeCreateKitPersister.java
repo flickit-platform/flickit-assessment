@@ -10,7 +10,9 @@ import org.flickit.assessment.kit.application.service.assessmentkit.createbydsl.
 import org.flickit.assessment.kit.application.service.assessmentkit.createbydsl.CreateKitPersisterContext;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.kit.application.service.assessmentkit.createbydsl.CreateKitPersisterContext.KEY_ANSWER_RANGES;
@@ -25,7 +27,7 @@ public class AnswerRangeCreateKitPersister implements CreateKitPersister {
 
     @Override
     public int order() {
-        return 5;
+        return 6;
     }
 
     @Override

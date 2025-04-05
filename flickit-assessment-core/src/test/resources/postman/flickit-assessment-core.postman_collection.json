@@ -86,6 +86,45 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Approve Assessment Answers",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"questionId\": 1997\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/53028c27-83f5-4c10-9105-56e2a4f58a09/approve-answers",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"53028c27-83f5-4c10-9105-56e2a4f58a09",
+								"approve-answers"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -1230,6 +1269,38 @@
 								"assessments",
 								"8280e75b-ed71-4c82-9fac-920c52efb26c",
 								"attributes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Assessment Attribute Measures",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/8280e75b-ed71-4c82-9fac-920c52efb26c/attributes/153/measures",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"8280e75b-ed71-4c82-9fac-920c52efb26c",
+								"attributes",
+								"15L",
+								"measures"
 							]
 						}
 					},
@@ -2644,6 +2715,32 @@
 								"assessments",
 								"53028c27-83f5-4c10-9105-56e2a4f58a09",
 								"regenerate-expired-insights"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Assessment Insights Issues",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/53028c27-83f5-4c10-9105-56e2a4f58a09/insights-issues",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"53028c27-83f5-4c10-9105-56e2a4f58a09",
+								"insights-issues"
 							]
 						}
 					},

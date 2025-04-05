@@ -7,8 +7,10 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
+import org.flickit.assessment.common.application.domain.notification.HasNotificationCmd;
 import org.flickit.assessment.common.application.domain.space.SpaceType;
 import org.flickit.assessment.common.validation.EnumValue;
+import org.flickit.assessment.users.application.domain.notification.CreatePremiumSpaceNotificationCmd;
 
 import java.util.UUID;
 
@@ -38,12 +40,38 @@ public interface CreateSpaceUseCase {
         @Builder
         public Param(String title, String type, UUID currentUserId) {
             this.title = title != null ? title.strip() : null;
-            this.type = type != null ? type.strip() : SpaceType.BASIC.name(); //TODO: Remove the default
+            this.type = type != null && !type.isBlank() ? type.strip() : null;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
     }
 
-    record Result(long id) {
+    /**
+     * Represents the result of creating a space.
+     */
+    sealed interface Result permits CreateBasic, CreatePremium {
+
+        /**
+         * @return the ID of the created space.
+         */
+        long id();
+    }
+
+    /**
+     * Represents the case where the created space is of type basic.
+     *
+     * @param id the ID of the created space.
+     */
+    record CreateBasic(long id) implements Result {
+    }
+
+    /**
+     * Represents the case where the created space is of type premium.
+     *
+     * @param id              the ID of the created space.
+     * @param notificationCmd the command that may trigger a notification
+     */
+    record CreatePremium(long id,
+                         CreatePremiumSpaceNotificationCmd notificationCmd) implements Result, HasNotificationCmd {
     }
 }

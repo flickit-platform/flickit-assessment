@@ -40,7 +40,7 @@ class AttributeCreateKitPersisterTest {
 
     @Test
     void testOrder() {
-        Assertions.assertEquals(4, persister.order());
+        Assertions.assertEquals(5, persister.order());
     }
 
     @Test
