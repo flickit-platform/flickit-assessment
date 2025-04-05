@@ -3,7 +3,14 @@ package org.flickit.assessment.kit.application.port.in.assessmentkit;
 import jakarta.validation.ConstraintViolationException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.common.config.AppSpecProperties;
+import org.flickit.assessment.common.util.SpringUtil;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,8 +21,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.doReturn;
 
+@ExtendWith(MockitoExtension.class)
 class UpdateKitInfoUseCaseParamTest {
+
+    @Mock
+    ApplicationContext applicationContext;
+
+    @BeforeEach
+    void prepare() {
+        var props = new AppSpecProperties();
+        doReturn(props).when(applicationContext).getBean(AppSpecProperties.class);
+        new SpringUtil(applicationContext);
+    }
 
     @Test
     void testUpdateKitInfoUseCaseParam_kitIdParamViolatesConstraints_ErrorMessage() {
