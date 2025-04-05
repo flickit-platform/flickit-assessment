@@ -9,9 +9,9 @@ import org.springframework.validation.annotation.Validated;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 
-import static org.flickit.assessment.common.application.domain.kit.KitLanguage.EN;
-import static org.flickit.assessment.common.application.domain.kit.KitLanguage.FA;
+import static java.util.stream.Collectors.toSet;
 
 @Setter
 @Getter
@@ -60,7 +60,7 @@ public class AppSpecProperties {
 
     private String supportEmail;
 
-    private Set<KitLanguage> supportedKitLanguages = Set.of(EN, FA);
+    private Set<KitLanguage> supportedKitLanguages = Stream.of(KitLanguage.values()).collect(toSet());
 
     @Valid
     private Email email = new Email();
