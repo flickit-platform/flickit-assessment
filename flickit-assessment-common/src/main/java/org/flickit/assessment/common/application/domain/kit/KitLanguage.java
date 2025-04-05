@@ -5,6 +5,14 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.EnumUtils;
 import org.flickit.assessment.common.application.MessageBundle;
+import org.flickit.assessment.common.config.AppSpecProperties;
+import org.flickit.assessment.common.util.SpringUtil;
+import org.springframework.util.CollectionUtils;
+
+import java.util.Arrays;
+import java.util.List;
+
+import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 
 @Getter
 @RequiredArgsConstructor
@@ -40,6 +48,25 @@ public enum KitLanguage {
     }
 
     public static KitLanguage getEnum(String name) {
-        return EnumUtils.getEnum(KitLanguage.class, name, getDefault());
+        var lang = EnumUtils.getEnum(KitLanguage.class, name, getDefault());
+        return isSupported(lang) ? lang : getDefault();
+    }
+
+    public static List<KitLanguage> getSupportedLanguages() {
+        AppSpecProperties appSpecProperties = SpringUtil.getBeanSafe(AppSpecProperties.class);
+
+        if (appSpecProperties == null || isEmpty(appSpecProperties.getSupportedKitLanguages()))
+            return Arrays.stream(values()).toList();
+
+        return appSpecProperties.getSupportedKitLanguages().stream().toList();
+    }
+
+    private static boolean isSupported(KitLanguage language) {
+        AppSpecProperties appSpecProperties = SpringUtil.getBeanSafe(AppSpecProperties.class);
+
+        if (appSpecProperties == null || isEmpty(appSpecProperties.getSupportedKitLanguages()))
+            return true;
+
+        return appSpecProperties.getSupportedKitLanguages().contains(language);
     }
 }
