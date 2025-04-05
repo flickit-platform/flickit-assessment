@@ -44,4 +44,16 @@ public class SpaceTestHelper {
             .extract()
             .response();
     }
+
+    public Response update(ScenarioContext context, CreateSpaceRequestDto request, Number spaceId) {
+        return given()
+            .contentType(JSON)
+            .auth().oauth2(context.getCurrentUser().getJwt())
+            .body(request)
+            .when()
+            .put("/assessment-core/api/spaces/" + spaceId)
+            .then()
+            .extract()
+            .response();
+    }
 }
