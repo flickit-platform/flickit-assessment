@@ -26,6 +26,7 @@ import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturi
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectsPort;
 import org.flickit.assessment.core.application.service.insight.assessment.CreateAssessmentInsightHelper;
 import org.flickit.assessment.core.application.service.insight.attribute.CreateAttributeAiInsightHelper;
+import org.flickit.assessment.core.application.service.insight.attribute.CreateAttributeAiInsightHelper.AttributeInsightParam;
 import org.flickit.assessment.core.application.service.insight.subject.CreateSubjectInsightsHelper;
 import org.flickit.assessment.core.application.service.insight.subject.CreateSubjectInsightsHelper.SubjectInsightsParam;
 import org.flickit.assessment.core.test.fixture.application.*;
@@ -105,7 +106,7 @@ class GenerateAllAssessmentInsightsServiceTest {
     private CreateAssessmentInsightPort createAssessmentInsightPort;
 
     @Captor
-    private ArgumentCaptor<CreateAttributeAiInsightHelper.Param> attributeHelperParamArgumentCaptor;
+    private ArgumentCaptor<AttributeInsightParam> attributeHelperParamArgumentCaptor;
 
     @Captor
     private ArgumentCaptor<List<AttributeInsight>> attributeInsightArgumentCaptor;

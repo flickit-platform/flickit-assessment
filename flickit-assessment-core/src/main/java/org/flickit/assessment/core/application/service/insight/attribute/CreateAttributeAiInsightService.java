@@ -17,6 +17,7 @@ import org.flickit.assessment.core.application.port.out.insight.attribute.Create
 import org.flickit.assessment.core.application.port.out.insight.attribute.LoadAttributeInsightPort;
 import org.flickit.assessment.core.application.port.out.insight.attribute.UpdateAttributeInsightPort;
 import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
+import org.flickit.assessment.core.application.service.insight.attribute.CreateAttributeAiInsightHelper.AttributeInsightParam;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -93,12 +94,12 @@ public class CreateAttributeAiInsightService implements CreateAttributeAiInsight
             LocalDateTime.now());
     }
 
-    private CreateAttributeAiInsightHelper.Param toCreateAiInsightParam(Param param,
-                                                                        AssessmentResult assessmentResult,
-                                                                        List<MaturityLevel> maturityLevels,
-                                                                        GetAssessmentProgressPort.Result progress,
-                                                                        Locale locale) {
-        return new CreateAttributeAiInsightHelper.Param(assessmentResult,
+    private AttributeInsightParam toCreateAiInsightParam(Param param,
+                                                         AssessmentResult assessmentResult,
+                                                         List<MaturityLevel> maturityLevels,
+                                                         GetAssessmentProgressPort.Result progress,
+                                                         Locale locale) {
+        return new AttributeInsightParam(assessmentResult,
             param.getAttributeId(),
             maturityLevels,
             progress,

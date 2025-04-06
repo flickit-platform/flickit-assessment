@@ -22,6 +22,7 @@ import org.flickit.assessment.core.application.port.out.insight.subject.UpdateSu
 import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.core.application.service.insight.assessment.CreateAssessmentInsightHelper;
 import org.flickit.assessment.core.application.service.insight.attribute.CreateAttributeAiInsightHelper;
+import org.flickit.assessment.core.application.service.insight.attribute.CreateAttributeAiInsightHelper.AttributeInsightParam;
 import org.flickit.assessment.core.application.service.insight.subject.CreateSubjectInsightsHelper;
 import org.flickit.assessment.core.application.service.insight.subject.CreateSubjectInsightsHelper.SubjectInsightsParam;
 import org.flickit.assessment.core.test.fixture.application.AssessmentInsightMother;
@@ -103,7 +104,7 @@ class RegenerateExpiredInsightsServiceTest {
     private UpdateAssessmentInsightPort updateAssessmentInsightPort;
 
     @Captor
-    private ArgumentCaptor<CreateAttributeAiInsightHelper.Param> attributeHelperParamArgumentCaptor;
+    private ArgumentCaptor<AttributeInsightParam> attributeHelperParamArgumentCaptor;
 
     @Captor
     private ArgumentCaptor<List<UpdateAttributeInsightPort.AiParam>> attributeInsightArgumentCaptor;

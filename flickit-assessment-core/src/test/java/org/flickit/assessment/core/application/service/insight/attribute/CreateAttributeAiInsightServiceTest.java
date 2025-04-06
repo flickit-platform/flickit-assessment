@@ -18,6 +18,7 @@ import org.flickit.assessment.core.application.port.out.insight.attribute.Create
 import org.flickit.assessment.core.application.port.out.insight.attribute.LoadAttributeInsightPort;
 import org.flickit.assessment.core.application.port.out.insight.attribute.UpdateAttributeInsightPort;
 import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
+import org.flickit.assessment.core.application.service.insight.attribute.CreateAttributeAiInsightHelper.AttributeInsightParam;
 import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -85,7 +86,7 @@ class CreateAttributeAiInsightServiceTest {
     private ArgumentCaptor<AttributeInsight> attributeInsightArgumentCaptor;
 
     @Captor
-    private ArgumentCaptor<CreateAttributeAiInsightHelper.Param> helperParamArgumentCaptor;
+    private ArgumentCaptor<AttributeInsightParam> helperParamArgumentCaptor;
 
     private final Attribute attribute = simpleAttribute();
     private final AssessmentResult assessmentResult = validResult();

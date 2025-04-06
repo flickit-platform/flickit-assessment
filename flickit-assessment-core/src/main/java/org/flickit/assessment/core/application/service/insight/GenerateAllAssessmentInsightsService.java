@@ -23,6 +23,7 @@ import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturi
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectsPort;
 import org.flickit.assessment.core.application.service.insight.assessment.CreateAssessmentInsightHelper;
 import org.flickit.assessment.core.application.service.insight.attribute.CreateAttributeAiInsightHelper;
+import org.flickit.assessment.core.application.service.insight.attribute.CreateAttributeAiInsightHelper.AttributeInsightParam;
 import org.flickit.assessment.core.application.service.insight.subject.CreateSubjectInsightsHelper;
 import org.flickit.assessment.core.application.service.insight.subject.CreateSubjectInsightsHelper.SubjectInsightsParam;
 import org.springframework.stereotype.Service;
@@ -91,7 +92,7 @@ public class GenerateAllAssessmentInsightsService implements GenerateAllAssessme
         var progress = getAssessmentProgressPort.getProgress(assessmentResult.getAssessment().getId());
         var attributeInsights = attributeIds.stream()
             .map(id -> {
-                var createAiInsightParam = new CreateAttributeAiInsightHelper.Param(assessmentResult,
+                var createAiInsightParam = new AttributeInsightParam(assessmentResult,
                     id,
                     maturityLevels,
                     progress,

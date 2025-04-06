@@ -10,7 +10,7 @@ import org.flickit.assessment.core.application.port.out.assessment.GetAssessment
 import org.flickit.assessment.core.application.port.out.attribute.CreateAttributeScoresFilePort;
 import org.flickit.assessment.core.application.port.out.attributevalue.LoadAttributeValuePort;
 import org.flickit.assessment.core.application.port.out.minio.UploadAttributeScoresFilePort;
-import org.flickit.assessment.core.application.service.insight.attribute.CreateAttributeAiInsightHelper.Param;
+import org.flickit.assessment.core.application.service.insight.attribute.CreateAttributeAiInsightHelper.AttributeInsightParam;
 import org.flickit.assessment.core.test.fixture.application.AttributeValueMother;
 import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
 import org.junit.jupiter.api.Test;
@@ -66,7 +66,7 @@ class CreateAttributeAiInsightHelperTest {
     private final CreateAttributeScoresFilePort.Result file = new CreateAttributeScoresFilePort.Result(new ByteArrayInputStream(fileContent.getBytes()), fileContent);
     private final AttributeValue attributeValue = AttributeValueMother.hasFullScoreOnLevel23WithWeight(1, 159L);
     private final List<MaturityLevel> maturityLevels = MaturityLevelMother.allLevels();
-    private final Param param = createParam(Param.ParamBuilder::build);
+    private final AttributeInsightParam param = createParam(AttributeInsightParam.AttributeInsightParamBuilder::build);
 
     @Test
     void testCreateAttributeAiInsightHelper_whenAssessmentProgressIsNotCompleted_thenThrowValidationException() {
@@ -160,14 +160,14 @@ class CreateAttributeAiInsightHelperTest {
         return properties;
     }
 
-    private Param createParam(Consumer<Param.ParamBuilder> changer) {
+    private AttributeInsightParam createParam(Consumer<AttributeInsightParam.AttributeInsightParamBuilder> changer) {
         var paramBuilder = paramBuilder();
         changer.accept(paramBuilder);
         return paramBuilder.build();
     }
 
-    private Param.ParamBuilder paramBuilder() {
-        return Param.builder()
+    private AttributeInsightParam.AttributeInsightParamBuilder paramBuilder() {
+        return AttributeInsightParam.builder()
             .assessmentResult(assessmentResult)
             .attributeId(attributeValue.getAttribute().getId())
             .maturityLevels(maturityLevels)
