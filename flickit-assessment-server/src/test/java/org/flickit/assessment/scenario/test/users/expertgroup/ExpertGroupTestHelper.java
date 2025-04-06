@@ -9,6 +9,7 @@ import org.flickit.assessment.users.adapter.in.rest.expertgroup.UpdateExpertGrou
 import org.springframework.stereotype.Component;
 
 import static io.restassured.RestAssured.given;
+import static io.restassured.http.ContentType.JSON;
 
 @Component
 public class ExpertGroupTestHelper {
@@ -38,19 +39,11 @@ public class ExpertGroupTestHelper {
             .response();
     }
 
-    @SneakyThrows
     public Response update(ScenarioContext context, UpdateExpertGroupRequestDto request, long id) {
-        var requestSpec = given()
-            .contentType("multipart/form-data")
+        return given()
+            .contentType(JSON)
             .auth().oauth2(context.getCurrentUser().getJwt())
-            .multiPart(Fields.title, request.title())
-            .multiPart(Fields.bio, request.bio())
-            .multiPart(Fields.about, request.about());
-
-        if (request.website() != null)
-            requestSpec.multiPart(Fields.website, request.website());
-
-        return requestSpec
+            .body(request)
             .when()
             .put("/assessment-core/api/expert-groups/" + id)
             .then()
