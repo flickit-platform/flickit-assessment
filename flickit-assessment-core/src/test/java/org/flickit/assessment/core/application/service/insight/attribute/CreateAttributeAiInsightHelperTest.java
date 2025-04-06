@@ -81,12 +81,13 @@ class CreateAttributeAiInsightHelperTest {
     @Test
     void testCreateAttributeAiInsightHelper_whenAssessmentProgressIsNotCompleted_thenThrowValidationException() {
         var incompleteProgress = new GetAssessmentProgressPort.Result(attributeInsightParam.assessmentResult().getId(), 10, 11);
-        var paramWithIncompleteProgress = createParam(b -> b.assessmentProgress(incompleteProgress));
 
-        var throwable = assertThrows(ValidationException.class, () -> helper.createAttributeAiInsight(paramWithIncompleteProgress));
+        when(getAssessmentProgressPort.getProgress(assessmentResult.getAssessment().getId())).thenReturn(incompleteProgress);
+        var throwable = assertThrows(ValidationException.class, () -> helper.createAttributeAiInsight(attributeInsightParam));
         assertEquals(CREATE_ATTRIBUTE_AI_INSIGHT_ALL_QUESTIONS_NOT_ANSWERED, throwable.getMessageKey());
 
         verifyNoInteractions(loadAttributeValuePort,
+            loadMaturityLevelsPort,
             appAiProperties,
             createAttributeScoresFilePort,
             uploadAttributeScoresFilePort,
@@ -95,6 +96,7 @@ class CreateAttributeAiInsightHelperTest {
 
     @Test
     void testCreateAttributeAiInsightHelper_whenAiDisabled_thenThrowUnsupportedOperationException() {
+        when(getAssessmentProgressPort.getProgress(assessmentResult.getAssessment().getId())).thenReturn(completeProgress);
         when(loadAttributeValuePort.load(attributeInsightParam.assessmentResult().getId(), attributeInsightParam.attributeId())).thenReturn(attributeValue);
         when(appAiProperties.isEnabled()).thenReturn(false);
 
@@ -113,7 +115,10 @@ class CreateAttributeAiInsightHelperTest {
             "Provide the result in " + attributeInsightParam.assessmentResult().getAssessment().getAssessmentKit().getLanguage().getTitle() + ".";
         var fileReportPath = "path/to/file";
 
+        when(getAssessmentProgressPort.getProgress(assessmentResult.getAssessment().getId())).thenReturn(completeProgress);
         when(loadAttributeValuePort.load(attributeInsightParam.assessmentResult().getId(), attributeInsightParam.attributeId())).thenReturn(attributeValue);
+        when(loadMaturityLevelsPort.loadByKitVersionId(attributeInsightsParam.assessmentResult().getKitVersionId()))
+            .thenReturn(maturityLevels);
         when(createAttributeScoresFilePort.generateFile(attributeValue, maturityLevels)).thenReturn(file);
         when(uploadAttributeScoresFilePort.uploadExcel(eq(file.stream()), any())).thenReturn(fileReportPath);
         when(callAiPromptPort.call(promptArgumentCaptor.capture(), classCaptor.capture())).thenReturn(aiInsight);
@@ -138,9 +143,11 @@ class CreateAttributeAiInsightHelperTest {
             " was reviewed in " + fileContent + ". " + "Provide the result in " +
             attributeInsightParam.assessmentResult().getAssessment().getAssessmentKit().getLanguage().getTitle() + ".";
 
-
+        when(getAssessmentProgressPort.getProgress(assessmentResult.getAssessment().getId())).thenReturn(completeProgress);
         when(loadAttributeValuePort.load(attributeInsightParam.assessmentResult().getId(), attributeInsightParam.attributeId())).thenReturn(attributeValue);
         when(appAiProperties.isSaveAiInputFileEnabled()).thenReturn(false);
+        when(loadMaturityLevelsPort.loadByKitVersionId(attributeInsightsParam.assessmentResult().getKitVersionId()))
+            .thenReturn(maturityLevels);
         when(createAttributeScoresFilePort.generateFile(attributeValue, maturityLevels)).thenReturn(file);
         when(callAiPromptPort.call(promptArgumentCaptor.capture(), classCaptor.capture())).thenReturn(aiInsight);
 
@@ -271,8 +278,6 @@ class CreateAttributeAiInsightHelperTest {
         return AttributeInsightParam.builder()
             .assessmentResult(assessmentResult)
             .attributeId(attributeValue.getAttribute().getId())
-            .maturityLevels(maturityLevels)
-            .assessmentProgress(completeProgress)
             .locale(Locale.of(assessmentResult.getAssessment().getAssessmentKit().getLanguage().getCode()));
     }
 
