@@ -29,8 +29,9 @@ public class Question {
             .orElse(null);
     }
 
-    public double getAvgWeight() {
+    public double getAvgWeight(long attributeId) {
         var avgWeight = getImpacts().stream()
+            .filter(i -> i.getAttributeId() == attributeId)
             .mapToInt(QuestionImpact::getWeight)
             .average()
             .orElse(0.0); // Default to 0 if there are no impacts

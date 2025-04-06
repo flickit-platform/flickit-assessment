@@ -47,7 +47,7 @@ public class GetAssessmentAttributeMeasuresService implements GetAssessmentAttri
         var questionsDto = attributeQuestions.stream()
             .map(r -> new QuestionDto(
                 r.question().getId(),
-                r.question().getAvgWeight(),
+                r.question().getAvgWeight(param.getAttributeId()),
                 r.question().getMeasure().getId(),
                 r.answer()))
             .toList();

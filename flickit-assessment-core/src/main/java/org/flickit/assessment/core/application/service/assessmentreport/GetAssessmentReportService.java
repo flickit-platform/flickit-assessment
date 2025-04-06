@@ -228,12 +228,12 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
 
         Map<Long, List<LoadAssessmentQuestionsPort.Result>> attrIdToQuestions = new HashMap<>();
 
-        for (LoadAssessmentQuestionsPort.Result question : questions) {
-            for (QuestionImpact impact : question.question().getImpacts()) {
+        for (LoadAssessmentQuestionsPort.Result r : questions) {
+            for (QuestionImpact impact : r.question().getImpacts()) {
                 var attrId = impact.getAttributeId();
                 attrIdToQuestions
                     .computeIfAbsent(attrId, k -> new ArrayList<>())
-                    .add(question);
+                    .add(r);
             }
         }
 
@@ -243,7 +243,7 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
                 entry -> entry.getValue().stream()
                     .map(r -> new QuestionDto(
                         r.question().getId(),
-                        r.question().getAvgWeight(),
+                        r.question().getAvgWeight(entry.getKey()),
                         r.question().getMeasure().getId(),
                         r.answer()))
                     .toList()
