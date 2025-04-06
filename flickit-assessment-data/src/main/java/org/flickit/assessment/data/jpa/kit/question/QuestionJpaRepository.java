@@ -211,7 +211,8 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
                 AND qi.kitVersionId = :kitVersionId
             ORDER BY qsn.questionnaireId asc, qsn.index asc
         """)
-    List<AttributeImpactfulQuestionsView> findByAttributeIdInAndKitVersionId(List<Long> attributeId, Long kitVersionId);
+    List<AttributeImpactfulQuestionsView> findByAttributeIdInAndKitVersionId(@Param("attributeIds") List<Long> attributeIds,
+                                                                             @Param("kitVersionId") Long kitVersionId);
 
     @Modifying
     @Query("""

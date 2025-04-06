@@ -29,7 +29,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
@@ -101,11 +100,12 @@ public class AttributeValuePersistenceJpaAdapter implements
         var assessmentResult = assessmentResultRepository.findById(assessmentResultId)
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
         var kitVersionId = assessmentResult.getKitVersionId();
-        var attributeValueMap = repository.findByAssessmentResult_assessment_IdAndAttributeIdIn(assessmentResultId, attributeIds).stream()
-            .collect(Collectors.toMap(AttributeValueJpaEntity::getAttributeId, Function.identity()));
-            var attributeEntities = attributeRepository.findAllByIdInAndKitVersionId(attributeIds, kitVersionId);
+        var attributeValueMap = repository
+            .findByAssessmentResult_assessment_IdAndAttributeIdIn(assessmentResult.getAssessment().getId(), attributeIds).stream()
+            .collect(toMap(AttributeValueJpaEntity::getAttributeId, Function.identity()));
+        var attributeEntities = attributeRepository.findAllByIdInAndKitVersionId(attributeIds, kitVersionId);
 
-        if(attributeEntities.size() != attributeIds.size())
+        if (attributeEntities.size() != attributeIds.size())
             throw new ResourceNotFoundException(ATTRIBUTE_ID_NOT_FOUND);
 
         var questions = loadQuestionsByAttributeIdInAndKitVersionId(attributeIds, kitVersionId);
@@ -139,7 +139,7 @@ public class AttributeValuePersistenceJpaAdapter implements
 
         var maturityLevelsMap = maturityLevelRepository.findAllByKitVersionId(kitVersionId).stream()
             .map(ml -> MaturityLevelMapper.mapToDomainModel(ml, null))
-            .collect(Collectors.toMap(MaturityLevel::getId, Function.identity()));
+            .collect(toMap(MaturityLevel::getId, Function.identity()));
 
         return attributes.stream()
             .map(attribute -> {
