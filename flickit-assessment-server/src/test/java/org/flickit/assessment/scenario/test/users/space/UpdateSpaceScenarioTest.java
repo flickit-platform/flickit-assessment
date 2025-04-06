@@ -113,7 +113,7 @@ class UpdateSpaceScenarioTest extends AbstractScenarioTest {
     void updateSpace_userIsNotOwner() {
         var createRequest = createSpaceRequestDto();
         var createResponse = spaceHelper.create(context, createRequest);
-
+        // Create space
         createResponse.then()
             .statusCode(201)
             .body("id", notNullValue());
