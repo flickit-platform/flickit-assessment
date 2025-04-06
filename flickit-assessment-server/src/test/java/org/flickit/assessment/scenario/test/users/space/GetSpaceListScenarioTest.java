@@ -18,9 +18,10 @@ class GetSpaceListScenarioTest extends AbstractScenarioTest {
     @Autowired
     SpaceTestHelper spaceHelper;
 
+    private final int pageSize = 5;
+
     @Test
     void getSpaceList() {
-        int pageSize = 5;
         int count = pageSize + 1;
         // Create spaces for the first user (will not be included in the test result)
         createSpaces(pageSize);
@@ -28,10 +29,10 @@ class GetSpaceListScenarioTest extends AbstractScenarioTest {
         context.getNextCurrentUser();
         createSpaces(count);
         // First page request
-        Map<String, Integer> firstPageQueryParams = Map.of("page", 0, "size", pageSize);
+        Map<String, Integer> firstPageQueryParams = createQueryParam(0);
         var firstPageResponse = getPaginatedSpaces(firstPageQueryParams);
         // Second page request
-        Map<String, Integer> secondPageQueryParams = Map.of("page", 1, "size", pageSize);
+        Map<String, Integer> secondPageQueryParams = createQueryParam(1);
         var secondPage = getPaginatedSpaces(secondPageQueryParams);
         // First page assertions
         assertEquals(pageSize, firstPageResponse.getSize());
@@ -55,6 +56,10 @@ class GetSpaceListScenarioTest extends AbstractScenarioTest {
             spaceHelper.create(context, createRequest)
                 .then().statusCode(201);
         }
+    }
+
+    private Map<String, Integer> createQueryParam(int page) {
+        return Map.of("page", page, "size", pageSize);
     }
 
     private PaginatedResponse getPaginatedSpaces(Map<String, Integer> queryParams) {
