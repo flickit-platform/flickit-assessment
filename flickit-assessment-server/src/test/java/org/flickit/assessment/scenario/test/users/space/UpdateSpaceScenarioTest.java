@@ -40,7 +40,7 @@ class UpdateSpaceScenarioTest extends AbstractScenarioTest {
 
         assertEquals(newTitle, updatedSpace.getTitle());
         assertEquals(generateSlugCode(newTitle), updatedSpace.getCode());
-        assertEquals(createdSpace.getCreatedBy(), updatedSpace.getCreatedBy());
+        assertEquals(context.getCurrentUser().getUserId(), updatedSpace.getLastModifiedBy());
         assertTrue(updatedSpace.getLastModificationTime().isAfter(createdSpace.getLastModificationTime()));
     }
 
@@ -71,7 +71,7 @@ class UpdateSpaceScenarioTest extends AbstractScenarioTest {
 
         assertEquals(firstCreateRequest.title(), updatedSecondSpace.getTitle());
         assertEquals(generateSlugCode(updatedSecondSpace.getTitle()), updatedSecondSpace.getCode());
-        assertEquals(secondSpace.getCreatedBy(), secondSpace.getLastModifiedBy());
+        assertEquals(context.getCurrentUser().getUserId(), secondSpace.getLastModifiedBy());
         assertTrue(updatedSecondSpace.getLastModificationTime().isAfter(secondSpace.getLastModificationTime()));
     }
 
@@ -162,7 +162,7 @@ class UpdateSpaceScenarioTest extends AbstractScenarioTest {
 
         assertEquals(updateRequest.title(), space.getTitle());
         assertEquals(generateSlugCode(updateRequest.title()), space.getCode());
-        assertEquals(space.getCreatedBy(), space.getLastModifiedBy());
+        assertEquals(context.getCurrentUser().getUserId(), space.getLastModifiedBy());
         assertTrue(space.getLastModificationTime().isAfter(space.getCreationTime()));
     }
 }
