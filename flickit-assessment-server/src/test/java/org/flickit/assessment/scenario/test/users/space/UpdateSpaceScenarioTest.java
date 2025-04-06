@@ -25,21 +25,20 @@ class UpdateSpaceScenarioTest extends AbstractScenarioTest {
         var createResponse = spaceHelper.create(context, createRequest);
 
         createResponse.then()
-            .statusCode(201)
-            .body("id", notNullValue());
+                .statusCode(201)
+                .body("id", notNullValue());
 
         Number spaceId = createResponse.body().path("id");
         SpaceJpaEntity createdSpace = jpaTemplate.load(spaceId, SpaceJpaEntity.class);
 
-        var newTitle = "new title";
-        var updateRequest = updateSpaceRequestDto(b -> b.title(newTitle));
+        var updateRequest = updateSpaceRequestDto();
         spaceHelper.update(context, updateRequest, spaceId).then()
-            .statusCode(200);
+                .statusCode(200);
 
         SpaceJpaEntity updatedSpace = jpaTemplate.load(spaceId, SpaceJpaEntity.class);
 
-        assertEquals(newTitle, updatedSpace.getTitle());
-        assertEquals(generateSlugCode(newTitle), updatedSpace.getCode());
+        assertEquals(updateRequest.title(), updatedSpace.getTitle());
+        assertEquals(generateSlugCode(updateRequest.title()), updatedSpace.getCode());
         assertEquals(context.getCurrentUser().getUserId(), updatedSpace.getLastModifiedBy());
         assertTrue(updatedSpace.getLastModificationTime().isAfter(createdSpace.getLastModificationTime()));
     }
@@ -50,22 +49,22 @@ class UpdateSpaceScenarioTest extends AbstractScenarioTest {
         var firstCreateResponse = spaceHelper.create(context, firstCreateRequest);
         // Create first space
         firstCreateResponse.then()
-            .statusCode(201);
+                .statusCode(201);
         // Change currentUser
         context.getNextCurrentUser();
         var secondCreateRequest = createSpaceRequestDto();
         // Create second space for different user
         var secondCreateResponse = spaceHelper.create(context, secondCreateRequest);
         secondCreateResponse.then()
-            .statusCode(201)
-            .body("id", notNullValue());
+                .statusCode(201)
+                .body("id", notNullValue());
 
         Number secondSpaceId = secondCreateResponse.body().path("id");
         SpaceJpaEntity secondSpace = jpaTemplate.load(secondSpaceId, SpaceJpaEntity.class);
         // Update the second space with first space's title
         var updateRequest = updateSpaceRequestDto(b -> b.title(firstCreateRequest.title()));
         spaceHelper.update(context, updateRequest, secondSpaceId).then()
-            .statusCode(200);
+                .statusCode(200);
 
         SpaceJpaEntity updatedSecondSpace = jpaTemplate.load(secondSpaceId, SpaceJpaEntity.class);
 
@@ -115,17 +114,17 @@ class UpdateSpaceScenarioTest extends AbstractScenarioTest {
         var createResponse = spaceHelper.create(context, createRequest);
         // Create space
         createResponse.then()
-            .statusCode(201)
-            .body("id", notNullValue());
+                .statusCode(201)
+                .body("id", notNullValue());
 
         Number spaceId = createResponse.body().path("id");
 
-        var updateRequest = updateSpaceRequestDto(b -> b.title("newTitle"));
+        var updateRequest = updateSpaceRequestDto();
         // Change currentUser which is not owner (creator) of the space
         context.getNextCurrentUser();
         var error = spaceHelper.update(context, updateRequest, spaceId).then()
-            .statusCode(403)
-            .extract().as(ErrorResponseDto.class);
+                .statusCode(403)
+                .extract().as(ErrorResponseDto.class);
 
         SpaceJpaEntity space = jpaTemplate.load(spaceId, SpaceJpaEntity.class);
 
@@ -141,22 +140,22 @@ class UpdateSpaceScenarioTest extends AbstractScenarioTest {
         // Create first space
         var firstCreateResponse = spaceHelper.create(context, firstCreateRequest);
         firstCreateResponse.then()
-            .statusCode(201)
-            .body("id", notNullValue());
+                .statusCode(201)
+                .body("id", notNullValue());
 
         var secondCreateRequest = createSpaceRequestDto();
         // Create second space with different request
         var secondCreateResponse = spaceHelper.create(context, secondCreateRequest);
         secondCreateResponse.then()
-            .statusCode(201)
-            .body("id", notNullValue());
+                .statusCode(201)
+                .body("id", notNullValue());
 
         Number secondSpaceId = secondCreateResponse.body().path("id");
         // Update the second space's title to match the first space's title
         var updateRequest = updateSpaceRequestDto(b -> b.title(firstCreateRequest.title()));
         var error = spaceHelper.update(context, updateRequest, secondSpaceId).then()
-            .statusCode(400)
-            .extract().as(ErrorResponseDto.class);
+                .statusCode(400)
+                .extract().as(ErrorResponseDto.class);
 
         SpaceJpaEntity space = jpaTemplate.load(secondSpaceId, SpaceJpaEntity.class);
 

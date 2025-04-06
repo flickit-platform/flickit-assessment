@@ -8,6 +8,10 @@ import java.util.function.Consumer;
 @UtilityClass
 public class UpdateSpaceRequestDtoMother {
 
+    public static UpdateSpaceRequestDto updateSpaceRequestDto() {
+        return builder().build();
+    }
+
     public static UpdateSpaceRequestDto updateSpaceRequestDto(Consumer<UpdateSpaceRequestDto.UpdateSpaceRequestDtoBuilder> changer) {
         var builder = builder();
         changer.accept(builder);
@@ -15,6 +19,7 @@ public class UpdateSpaceRequestDtoMother {
     }
 
     private static UpdateSpaceRequestDto.UpdateSpaceRequestDtoBuilder builder() {
-        return UpdateSpaceRequestDto.builder();
+        return UpdateSpaceRequestDto.builder()
+                .title("new title");
     }
 }
