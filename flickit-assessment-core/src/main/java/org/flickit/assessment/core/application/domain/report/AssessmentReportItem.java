@@ -2,6 +2,7 @@ package org.flickit.assessment.core.application.domain.report;
 
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
+import org.flickit.assessment.core.application.domain.Measure;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -31,6 +32,7 @@ public record AssessmentReportItem(UUID id,
         Integer questionsCount,
         List<MaturityLevel> maturityLevels,
         List<QuestionnaireReportItem> questionnaires,
+        List<Measure> measures,
         ExpertGroup expertGroup) {
 
         public record ExpertGroup(Long id, String title, String picture) {

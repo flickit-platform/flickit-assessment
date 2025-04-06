@@ -180,7 +180,7 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
                 AND qsn.kitVersionId = :kitVersionId
                 AND ans.isNotApplicable IS NOT TRUE
         """)
-    List<AttributeImpactFullQuestionsView> findAttributeQuestionsAndAnswers(@Param("assessmentResultId") UUID assessmentResultId,
-                                                                            @Param("kitVersionId") Long kitVersionId,
-                                                                            @Param("attributeId") long attributeId);
+    List<QuestionAnswerView> findAttributeQuestionsAndAnswers(@Param("assessmentResultId") UUID assessmentResultId,
+                                                              @Param("kitVersionId") Long kitVersionId,
+                                                              @Param("attributeId") long attributeId);
 }
