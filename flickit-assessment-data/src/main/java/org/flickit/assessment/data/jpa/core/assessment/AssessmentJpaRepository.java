@@ -1,5 +1,6 @@
 package org.flickit.assessment.data.jpa.core.assessment;
 
+import org.flickit.assessment.data.jpa.kit.attribute.QuestionAnswerView;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -164,4 +166,20 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
             WHERE a.id = :assessmentId
         """)
     Optional<Integer> loadKitLanguageByAssessmentId(@Param("assessmentId") UUID assessmentId);
+
+    @Query("""
+            SELECT
+                qsn AS question,
+                ans AS answer,
+                qi AS questionImpact,
+                ao AS answerOption
+            FROM QuestionJpaEntity qsn
+            LEFT JOIN AnswerJpaEntity ans on ans.questionId = qsn.id and ans.assessmentResult.id = :assessmentResultId
+            LEFT JOIN AnswerOptionJpaEntity ao on ans.answerOptionId = ao.id and ao.kitVersionId = :kitVersionId
+            LEFT JOIN QuestionImpactJpaEntity qi on qsn.id = qi.questionId and qsn.kitVersionId = qi.kitVersionId
+            WHERE qsn.kitVersionId = :kitVersionId
+                AND ans.isNotApplicable IS NOT TRUE
+        """)
+    List<QuestionAnswerView> findAttributeQuestionsAndAnswers(@Param("assessmentResultId") UUID assessmentResultId,
+                                                              @Param("kitVersionId") Long kitVersionId);
 }
