@@ -57,6 +57,8 @@ class GetSpaceListScenarioTest extends AbstractScenarioTest {
 
     @Test
     void getSpaceList_withDeletedSpace() {
+        final int defaultPage = 0;
+        final int defaultSize = 10;
         int count = pageSize + 1;
         // Create spaces
         createSpaces(count);
@@ -67,8 +69,8 @@ class GetSpaceListScenarioTest extends AbstractScenarioTest {
 
         // Page assertions
         assertEquals(count - 1, paginatedResponse.getItems().size());
-        assertEquals(10, paginatedResponse.getSize());
-        assertEquals(0, paginatedResponse.getPage());
+        assertEquals(defaultSize, paginatedResponse.getSize());
+        assertEquals(defaultPage, paginatedResponse.getPage());
         assertEquals(SpaceUserAccessJpaEntity.Fields.lastSeen, paginatedResponse.getSort());
         assertEquals(Sort.Direction.DESC.name().toLowerCase(), paginatedResponse.getOrder());
         assertEquals(count - 1, paginatedResponse.getTotal());
