@@ -226,16 +226,15 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
 
         var questions = loadAssessmentQuestionsPort.loadApplicableQuestions(assessmentId);
 
-        Map<Long, List<LoadAssessmentQuestionsPort.Result>> attrIdToQuestions = new HashMap<>();
-
-        for (LoadAssessmentQuestionsPort.Result r : questions) {
-            for (QuestionImpact impact : r.question().getImpacts()) {
-                var attrId = impact.getAttributeId();
-                attrIdToQuestions
-                    .computeIfAbsent(attrId, k -> new ArrayList<>())
-                    .add(r);
-            }
-        }
+        Map<Long, Set<LoadAssessmentQuestionsPort.Result>> attrIdToQuestions = questions.stream()
+            .flatMap(r -> r.question().getImpacts().stream()
+                .map(QuestionImpact::getAttributeId)
+                .distinct() // remove duplicate attributeIds per question
+                .map(attributeId -> new AbstractMap.SimpleEntry<>(attributeId, r)))
+            .collect(groupingBy(
+                Map.Entry::getKey,
+                mapping(Map.Entry::getValue, toSet())
+            ));
 
         Map<Long, List<QuestionDto>> attrIdToQuestionDtos = attrIdToQuestions.entrySet().stream()
             .collect(toMap(
