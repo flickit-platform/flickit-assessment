@@ -20,7 +20,7 @@ public class UpdateExpertGroupRequestDtoMother {
 
     private static UpdateExpertGroupRequestDto.UpdateExpertGroupRequestDtoBuilder builder() {
         return UpdateExpertGroupRequestDto.builder()
-            .title("New ExpertGroup ")
+            .title("New ExpertGroup")
             .bio("New Bio")
             .about("New About")
             .website("https://newFlickit.org");
