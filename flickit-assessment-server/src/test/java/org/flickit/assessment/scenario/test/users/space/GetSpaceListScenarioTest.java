@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import java.util.Map;
 
 import static org.flickit.assessment.scenario.fixture.request.CreateSpaceRequestDtoMother.createSpaceRequestDto;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.*;
 
 class GetSpaceListScenarioTest extends AbstractScenarioTest {
@@ -20,41 +21,49 @@ class GetSpaceListScenarioTest extends AbstractScenarioTest {
 
     private final int pageSize = 5;
 
+    private int lastSpaceId = 0;
+
     @Test
     void getSpaceList() {
-        int count = pageSize + 1;
+        int spaceCount = pageSize + 1;
         // Create spaces for the first user (will not be included in the test result)
         createSpaces(pageSize);
-        // Switch to the next user and create actual test data
+        // Switch to the next user (main user) and create actual test data
         context.getNextCurrentUser();
-        createSpaces(count);
+        createSpaces(spaceCount);
         // First page request
         Map<String, Integer> firstPageQueryParams = createQueryParam(0);
         var firstPageResponse = getPaginatedSpaces(firstPageQueryParams);
         // Second page request
         Map<String, Integer> secondPageQueryParams = createQueryParam(1);
-        var secondPage = getPaginatedSpaces(secondPageQueryParams);
+        var secondPageResponse = getPaginatedSpaces(secondPageQueryParams);
         // First page assertions
+        assertEquals(pageSize, firstPageResponse.getItems().size());
         assertEquals(pageSize, firstPageResponse.getSize());
         assertEquals(firstPageQueryParams.get("page"), firstPageResponse.getPage());
         assertEquals(firstPageQueryParams.get("size"), firstPageResponse.getSize());
         assertEquals(SpaceUserAccessJpaEntity.Fields.lastSeen, firstPageResponse.getSort());
         assertEquals(Sort.Direction.DESC.name().toLowerCase(), firstPageResponse.getOrder());
-        assertEquals(count, firstPageResponse.getTotal());
+        assertEquals(spaceCount, firstPageResponse.getTotal());
         // Second page assertions
-        assertEquals(1, secondPage.getItems().size());
-        assertEquals(secondPageQueryParams.get("page"), secondPage.getPage());
-        assertEquals(secondPageQueryParams.get("size"), secondPage.getSize());
-        assertEquals(SpaceUserAccessJpaEntity.Fields.lastSeen, secondPage.getSort());
-        assertEquals(Sort.Direction.DESC.name().toLowerCase(), secondPage.getOrder());
-        assertEquals(count, secondPage.getTotal());
+        assertEquals(1, secondPageResponse.getItems().size());
+        assertEquals(pageSize, secondPageResponse.getSize());
+        assertEquals(secondPageQueryParams.get("page"), secondPageResponse.getPage());
+        assertEquals(secondPageQueryParams.get("size"), secondPageResponse.getSize());
+        assertEquals(SpaceUserAccessJpaEntity.Fields.lastSeen, secondPageResponse.getSort());
+        assertEquals(Sort.Direction.DESC.name().toLowerCase(), secondPageResponse.getOrder());
+        assertEquals(spaceCount, secondPageResponse.getTotal());
     }
 
     private void createSpaces(int count) {
         for (int i = 0; i < count; i++) {
             var createRequest = createSpaceRequestDto(b -> b.type(SpaceType.PREMIUM.getCode()));
-            spaceHelper.create(context, createRequest)
-                .then().statusCode(201);
+            var response = spaceHelper.create(context, createRequest)
+                .then()
+                .statusCode(201)
+                .body("id", notNullValue());
+
+            lastSpaceId = response.extract().path("id");
         }
     }
 
