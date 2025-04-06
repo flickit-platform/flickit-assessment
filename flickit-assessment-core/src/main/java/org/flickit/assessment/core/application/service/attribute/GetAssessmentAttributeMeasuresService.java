@@ -9,7 +9,6 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.util.MathUtils;
 import org.flickit.assessment.core.application.domain.Answer;
 import org.flickit.assessment.core.application.domain.Measure;
-import org.flickit.assessment.core.application.domain.QuestionImpact;
 import org.flickit.assessment.core.application.port.in.attribute.GetAssessmentAttributeMeasuresUseCase;
 import org.flickit.assessment.core.application.port.in.attribute.GetAssessmentAttributeMeasuresUseCase.Param.Sort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
@@ -46,19 +45,12 @@ public class GetAssessmentAttributeMeasuresService implements GetAssessmentAttri
         var attributeQuestions = loadAttributeQuestionsPort.loadApplicableQuestions(param.getAssessmentId(), param.getAttributeId());
 
         var questionsDto = attributeQuestions.stream()
-            .map(r -> {
-                var avgWeight = r.question().getImpacts().stream()
-                    .mapToInt(QuestionImpact::getWeight)
-                    .average()
-                    .orElse(0.0); // Default to 0 if there are no impacts
-
-                return new QuestionDto(
-                    r.question().getId(),
-                    MathUtils.round(avgWeight, 2),
-                    r.question().getMeasure().getId(),
-                    r.answer()
-                );
-            }).toList();
+            .map(r -> new QuestionDto(
+                r.question().getId(),
+                r.question().getAvgWeight(param.getAttributeId()),
+                r.question().getMeasure().getId(),
+                r.answer()))
+            .toList();
 
         var attributeMaxPossibleScore = questionsDto.stream()
             .mapToDouble(QuestionDto::weight)
@@ -95,6 +87,7 @@ public class GetAssessmentAttributeMeasuresService implements GetAssessmentAttri
                                         List<QuestionDto> questions,
                                         double measureMaxPossibleScore,
                                         double attributeMaxPossibleScore) {
+        assert measureMaxPossibleScore != 0.0;
         var impactPercentage = attributeMaxPossibleScore != 0
             ? (measureMaxPossibleScore / attributeMaxPossibleScore) * 100
             : 0.0;
@@ -109,7 +102,7 @@ public class GetAssessmentAttributeMeasuresService implements GetAssessmentAttri
 
         return new Result.Measure(measure.getTitle(),
             MathUtils.round(impactPercentage, 2),
-            measureMaxPossibleScore,
+            MathUtils.round(measureMaxPossibleScore, 2),
             MathUtils.round(gainedScore, 2),
             MathUtils.round(missedScore, 2),
             MathUtils.round((gainedScore / attributeMaxPossibleScore) * 100, 2),
