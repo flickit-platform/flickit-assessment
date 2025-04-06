@@ -34,7 +34,8 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.core.adapter.out.persistence.attributevalue.AttributeValueMapper.mapToDomainModel;
-import static org.flickit.assessment.core.common.ErrorMessageKey.*;
+import static org.flickit.assessment.core.common.ErrorMessageKey.ATTRIBUTE_ID_NOT_FOUND;
+import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ATTRIBUTE_VALUE_ASSESSMENT_RESULT_ID_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
@@ -75,24 +76,7 @@ public class AttributeValuePersistenceJpaAdapter implements
 
     @Override
     public AttributeValue load(UUID assessmentResultId, Long attributeId) {
-        var attributeValueEntity = repository.findByAttributeIdAndAssessmentResultId(attributeId, assessmentResultId);
-        var kitVersionId = attributeValueEntity.getAssessmentResult().getKitVersionId();
-
-        var attributeEntity = attributeRepository.findByIdAndKitVersionId(attributeValueEntity.getAttributeId(), kitVersionId)
-            .orElseThrow(() -> new ResourceNotFoundException(ATTRIBUTE_ID_NOT_FOUND));
-        var questions = loadQuestionsByAttributeIdAndKitVersionId(attributeEntity.getId(), kitVersionId);
-        var attribute = AttributeMapper.mapToDomainModel(attributeEntity, questions);
-
-        var questionIds = questions.stream()
-            .map(Question::getId)
-            .toList();
-        var answers = loadAnswersByAssessmentResultIdAndQuestionIdIn(attributeValueEntity.getAssessmentResult(), questionIds);
-
-        var maturityLevel = maturityLevelRepository.findByIdAndKitVersionId(attributeValueEntity.getMaturityLevelId(), kitVersionId)
-            .map(ml -> MaturityLevelMapper.mapToDomainModel(ml, null))
-            .orElseThrow(() -> new ResourceNotFoundException(MATURITY_LEVEL_ID_NOT_FOUND));
-
-        return mapToDomainModel(attributeValueEntity, attribute, answers, maturityLevel);
+        return this.load(assessmentResultId, List.of(attributeId)).getFirst();
     }
 
     @Override
@@ -168,22 +152,6 @@ public class AttributeValuePersistenceJpaAdapter implements
                 AttributeMapper.mapToDomainModel(view.getAttribute()),
                 null,
                 maturityLevelMap.get(view.getAttributeValue().getMaturityLevelId())))
-            .toList();
-    }
-
-    private List<Question> loadQuestionsByAttributeIdAndKitVersionId(Long attributeId, Long kitVersionId) {
-        var questionWithImpactViews = questionRepository.findByAttributeIdAndKitVersionId(attributeId, kitVersionId);
-
-        var questionToImpactsMap = questionWithImpactViews.stream()
-            .collect(groupingBy(AttributeImpactfulQuestionsView::getQuestion));
-
-        return questionToImpactsMap.entrySet().stream()
-            .map(e -> {
-                var questionImpacts = e.getValue().stream()
-                    .map(v -> QuestionImpactMapper.mapToDomainModel(v.getQuestionImpact()))
-                    .toList();
-                return QuestionMapper.mapToDomainModel(e.getKey(), questionImpacts);
-            })
             .toList();
     }
 
