@@ -8,10 +8,7 @@ import org.flickit.assessment.core.adapter.out.persistence.kit.attribute.Attribu
 import org.flickit.assessment.core.adapter.out.persistence.kit.maturitylevel.MaturityLevelMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.question.QuestionMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.questionimpact.QuestionImpactMapper;
-import org.flickit.assessment.core.application.domain.Answer;
-import org.flickit.assessment.core.application.domain.AnswerOption;
-import org.flickit.assessment.core.application.domain.AttributeValue;
-import org.flickit.assessment.core.application.domain.Question;
+import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.port.out.attributevalue.CreateAttributeValuePort;
 import org.flickit.assessment.core.application.port.out.attributevalue.LoadAttributeValuePort;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
@@ -30,11 +27,9 @@ import org.flickit.assessment.data.jpa.kit.question.AttributeImpactfulQuestionsV
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
@@ -102,6 +97,62 @@ public class AttributeValuePersistenceJpaAdapter implements
     }
 
     @Override
+    public List<AttributeValue> load(UUID assessmentResultId, List<Long> attributeIds) {
+        var assessmentResult = assessmentResultRepository.findById(assessmentResultId)
+            .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
+        var kitVersionId = assessmentResult.getKitVersionId();
+        var attributeValueMap = repository.findByAssessmentResult_assessment_IdAndAttributeIdIn(assessmentResultId, attributeIds).stream()
+            .collect(Collectors.toMap(AttributeValueJpaEntity::getAttributeId, Function.identity()));
+            var attributeEntities = attributeRepository.findAllByIdInAndKitVersionId(attributeIds, kitVersionId);
+
+        if(attributeEntities.size() != attributeIds.size())
+            throw new ResourceNotFoundException(ATTRIBUTE_ID_NOT_FOUND);
+
+        var questions = loadQuestionsByAttributeIdInAndKitVersionId(attributeIds, kitVersionId);
+
+        var attributeIdToQuestionsMap = attributeEntities.stream()
+            .collect(toMap(AttributeJpaEntity::getId, attribute -> questions.stream()
+                .filter(q -> q.getImpacts().stream()
+                    .anyMatch(i -> Objects.equals(i.getAttributeId(), attribute.getId())))
+                .toList()));
+
+        var attributes = attributeEntities.stream()
+            .map(entity -> AttributeMapper.mapToDomainModel(entity, attributeIdToQuestionsMap.get(entity.getId())))
+            .toList();
+
+        var questionIds = questions.stream()
+            .map(Question::getId)
+            .toList();
+
+        var answers = loadAnswersByAssessmentResultIdAndQuestionIdIn(assessmentResult, questionIds);
+
+        var attributeIdToQuestionIdsMap = attributeIds.stream()
+            .collect(toMap(Function.identity(), attributeId -> attributeIdToQuestionsMap.get(attributeId).stream()
+                .map(Question::getId)
+                .toList()));
+
+        var attributeIdToAnswersMap = attributeIdToQuestionIdsMap.entrySet().stream()
+            .collect(toMap(Map.Entry::getKey,
+                entrySet -> answers.stream()
+                    .filter(answer -> entrySet.getValue().contains(answer.getQuestionId()))
+                    .toList()));
+
+        var maturityLevelsMap = maturityLevelRepository.findAllByKitVersionId(kitVersionId).stream()
+            .map(ml -> MaturityLevelMapper.mapToDomainModel(ml, null))
+            .collect(Collectors.toMap(MaturityLevel::getId, Function.identity()));
+
+        return attributes.stream()
+            .map(attribute -> {
+                var attributeValueEntity = attributeValueMap.get(attribute.getId());
+                return mapToDomainModel(attributeValueEntity,
+                    attribute,
+                    attributeIdToAnswersMap.get(attribute.getId()),
+                    maturityLevelsMap.get(attributeValueEntity.getMaturityLevelId()));
+            })
+            .toList();
+    }
+
+    @Override
     public List<AttributeValue> loadAll(UUID assessmentResultId) {
         var assessmentResult = assessmentResultRepository.findById(assessmentResultId)
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
@@ -114,14 +165,30 @@ public class AttributeValuePersistenceJpaAdapter implements
 
         return views.stream()
             .map(view -> mapToDomainModel(view.getAttributeValue(),
-                    AttributeMapper.mapToDomainModel(view.getAttribute()),
-                    null,
-                    maturityLevelMap.get(view.getAttributeValue().getMaturityLevelId())))
+                AttributeMapper.mapToDomainModel(view.getAttribute()),
+                null,
+                maturityLevelMap.get(view.getAttributeValue().getMaturityLevelId())))
             .toList();
     }
 
     private List<Question> loadQuestionsByAttributeIdAndKitVersionId(Long attributeId, Long kitVersionId) {
         var questionWithImpactViews = questionRepository.findByAttributeIdAndKitVersionId(attributeId, kitVersionId);
+
+        var questionToImpactsMap = questionWithImpactViews.stream()
+            .collect(groupingBy(AttributeImpactfulQuestionsView::getQuestion));
+
+        return questionToImpactsMap.entrySet().stream()
+            .map(e -> {
+                var questionImpacts = e.getValue().stream()
+                    .map(v -> QuestionImpactMapper.mapToDomainModel(v.getQuestionImpact()))
+                    .toList();
+                return QuestionMapper.mapToDomainModel(e.getKey(), questionImpacts);
+            })
+            .toList();
+    }
+
+    private List<Question> loadQuestionsByAttributeIdInAndKitVersionId(List<Long> attributeIds, Long kitVersionId) {
+        var questionWithImpactViews = questionRepository.findByAttributeIdInAndKitVersionId(attributeIds, kitVersionId);
 
         var questionToImpactsMap = questionWithImpactViews.stream()
             .collect(groupingBy(AttributeImpactfulQuestionsView::getQuestion));
