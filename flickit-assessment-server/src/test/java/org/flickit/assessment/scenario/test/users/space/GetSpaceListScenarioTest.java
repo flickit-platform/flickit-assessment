@@ -55,6 +55,26 @@ class GetSpaceListScenarioTest extends AbstractScenarioTest {
         assertEquals(spaceCount, secondPageResponse.getTotal());
     }
 
+    @Test
+    void getSpaceList_withDeletedSpace() {
+        int count = pageSize + 1;
+        // Create spaces
+        createSpaces(count);
+        // Delete the last created space
+        spaceHelper.delete(context, lastSpaceId);
+        // Page request with empty param
+        var paginatedResponse = getPaginatedSpaces(Map.of());
+
+        // Page assertions
+        assertEquals(count - 1, paginatedResponse.getItems().size());
+        assertEquals(10, paginatedResponse.getSize());
+        assertEquals(0, paginatedResponse.getPage());
+        assertEquals(SpaceUserAccessJpaEntity.Fields.lastSeen, paginatedResponse.getSort());
+        assertEquals(Sort.Direction.DESC.name().toLowerCase(), paginatedResponse.getOrder());
+        assertEquals(count - 1, paginatedResponse.getTotal());
+    }
+
+
     private void createSpaces(int count) {
         for (int i = 0; i < count; i++) {
             var createRequest = createSpaceRequestDto(b -> b.type(SpaceType.PREMIUM.getCode()));
