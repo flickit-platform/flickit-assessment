@@ -76,7 +76,6 @@ class GetSpaceListScenarioTest extends AbstractScenarioTest {
         assertEquals(count - 1, paginatedResponse.getTotal());
     }
 
-
     private void createSpaces(int count) {
         for (int i = 0; i < count; i++) {
             var createRequest = createSpaceRequestDto(b -> b.type(SpaceType.PREMIUM.getCode()));
