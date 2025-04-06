@@ -87,6 +87,7 @@ public class GetAssessmentAttributeMeasuresService implements GetAssessmentAttri
                                         List<QuestionDto> questions,
                                         double measureMaxPossibleScore,
                                         double attributeMaxPossibleScore) {
+        assert measureMaxPossibleScore != 0.0;
         var impactPercentage = attributeMaxPossibleScore != 0
             ? (measureMaxPossibleScore / attributeMaxPossibleScore) * 100
             : 0.0;
@@ -101,7 +102,7 @@ public class GetAssessmentAttributeMeasuresService implements GetAssessmentAttri
 
         return new Result.Measure(measure.getTitle(),
             MathUtils.round(impactPercentage, 2),
-            measureMaxPossibleScore,
+            MathUtils.round(measureMaxPossibleScore, 2),
             MathUtils.round(gainedScore, 2),
             MathUtils.round(missedScore, 2),
             MathUtils.round((gainedScore / attributeMaxPossibleScore) * 100, 2),

@@ -282,6 +282,7 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
                                           List<QuestionDto> questions,
                                           double measureMaxPossibleScore,
                                           double attributeMaxPossibleScore) {
+        assert measureMaxPossibleScore != 0.0;
         var impactPercentage = attributeMaxPossibleScore != 0
             ? (measureMaxPossibleScore / attributeMaxPossibleScore) * 100
             : 0.0;
