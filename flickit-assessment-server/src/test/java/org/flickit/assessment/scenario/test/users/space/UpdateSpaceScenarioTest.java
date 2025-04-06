@@ -76,6 +76,40 @@ class UpdateSpaceScenarioTest extends AbstractScenarioTest {
     }
 
     @Test
+    void updateSpace_withSameTitleAsDeleted() {
+        var firstCreateRequest = createSpaceRequestDto();
+        // Create first space
+        var firstCreateResponse = spaceHelper.create(context, firstCreateRequest);
+        firstCreateResponse.then()
+                .statusCode(201)
+                .body("id", notNullValue());
+
+        Number firstSpaceId = firstCreateResponse.body().path("id");
+        // Delete the first space
+        spaceHelper.delete(context, firstSpaceId);
+
+        var secondCreateRequest = createSpaceRequestDto();
+        // Create second space with different request
+        var secondCreateResponse = spaceHelper.create(context, secondCreateRequest);
+        secondCreateResponse.then()
+                .statusCode(201)
+                .body("id", notNullValue());
+
+        Number secondSpaceId = secondCreateResponse.body().path("id");
+        // Update the second space's title to match the deleted space's title
+        var updateRequest = updateSpaceRequestDto(b -> b.title(firstCreateRequest.title()));
+        spaceHelper.update(context, updateRequest, secondSpaceId).then()
+                .statusCode(200);
+
+        SpaceJpaEntity space = jpaTemplate.load(secondSpaceId, SpaceJpaEntity.class);
+
+        assertEquals(updateRequest.title(), space.getTitle());
+        assertEquals(generateSlugCode(updateRequest.title()), space.getCode());
+        assertEquals(context.getCurrentUser().getUserId(), space.getLastModifiedBy());
+        assertTrue(space.getLastModificationTime().isAfter(space.getCreationTime()));
+    }
+
+    @Test
     void updateSpace_userIsNotOwner() {
         var createRequest = createSpaceRequestDto();
         var createResponse = spaceHelper.create(context, createRequest);
@@ -130,39 +164,5 @@ class UpdateSpaceScenarioTest extends AbstractScenarioTest {
         assertEquals(secondCreateRequest.title(), space.getTitle());
         assertEquals(space.getCreationTime(), space.getLastModificationTime());
         assertNotNull(error.message());
-    }
-
-    @Test
-    void updateSpace_withSameTitleAsDeleted() {
-        var firstCreateRequest = createSpaceRequestDto();
-        // Create first space
-        var firstCreateResponse = spaceHelper.create(context, firstCreateRequest);
-        firstCreateResponse.then()
-            .statusCode(201)
-            .body("id", notNullValue());
-
-        Number firstSpaceId = firstCreateResponse.body().path("id");
-        // Delete the first space
-        spaceHelper.delete(context, firstSpaceId);
-
-        var secondCreateRequest = createSpaceRequestDto();
-        // Create second space with different request
-        var secondCreateResponse = spaceHelper.create(context, secondCreateRequest);
-        secondCreateResponse.then()
-            .statusCode(201)
-            .body("id", notNullValue());
-
-        Number secondSpaceId = secondCreateResponse.body().path("id");
-        // Update the second space's title to match the deleted space's title
-        var updateRequest = updateSpaceRequestDto(b -> b.title(firstCreateRequest.title()));
-        spaceHelper.update(context, updateRequest, secondSpaceId).then()
-            .statusCode(200);
-
-        SpaceJpaEntity space = jpaTemplate.load(secondSpaceId, SpaceJpaEntity.class);
-
-        assertEquals(updateRequest.title(), space.getTitle());
-        assertEquals(generateSlugCode(updateRequest.title()), space.getCode());
-        assertEquals(context.getCurrentUser().getUserId(), space.getLastModifiedBy());
-        assertTrue(space.getLastModificationTime().isAfter(space.getCreationTime()));
     }
 }
