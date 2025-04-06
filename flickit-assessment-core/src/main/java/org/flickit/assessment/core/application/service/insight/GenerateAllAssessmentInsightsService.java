@@ -10,7 +10,6 @@ import org.flickit.assessment.core.application.domain.Subject;
 import org.flickit.assessment.core.application.domain.insight.AttributeInsight;
 import org.flickit.assessment.core.application.domain.insight.SubjectInsight;
 import org.flickit.assessment.core.application.port.in.insight.GenerateAllAssessmentInsightsUseCase;
-import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentProgressPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributesPort;
 import org.flickit.assessment.core.application.port.out.insight.assessment.CreateAssessmentInsightPort;
@@ -19,7 +18,6 @@ import org.flickit.assessment.core.application.port.out.insight.attribute.Create
 import org.flickit.assessment.core.application.port.out.insight.attribute.LoadAttributeInsightsPort;
 import org.flickit.assessment.core.application.port.out.insight.subject.CreateSubjectInsightPort;
 import org.flickit.assessment.core.application.port.out.insight.subject.LoadSubjectInsightsPort;
-import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectsPort;
 import org.flickit.assessment.core.application.service.insight.assessment.CreateAssessmentInsightHelper;
 import org.flickit.assessment.core.application.service.insight.attribute.CreateAttributeAiInsightHelper;
@@ -47,8 +45,6 @@ public class GenerateAllAssessmentInsightsService implements GenerateAllAssessme
     private final ValidateAssessmentResultPort validateAssessmentResultPort;
     private final LoadAttributesPort loadAttributesPort;
     private final LoadAttributeInsightsPort loadAttributeInsightsPort;
-    private final LoadMaturityLevelsPort loadMaturityLevelsPort;
-    private final GetAssessmentProgressPort getAssessmentProgressPort;
     private final CreateAttributeAiInsightHelper createAttributeAiInsightHelper;
     private final CreateAttributeInsightPort createAttributeInsightPort;
     private final LoadSubjectsPort loadSubjectsPort;
