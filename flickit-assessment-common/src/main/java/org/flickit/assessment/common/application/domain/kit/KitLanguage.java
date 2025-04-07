@@ -5,6 +5,10 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.EnumUtils;
 import org.flickit.assessment.common.application.MessageBundle;
+import org.flickit.assessment.common.config.AppSpecProperties;
+import org.flickit.assessment.common.util.SpringUtil;
+
+import java.util.List;
 
 @Getter
 @RequiredArgsConstructor
@@ -40,6 +44,17 @@ public enum KitLanguage {
     }
 
     public static KitLanguage getEnum(String name) {
-        return EnumUtils.getEnum(KitLanguage.class, name, getDefault());
+        var lang = EnumUtils.getEnum(KitLanguage.class, name, getDefault());
+        return isSupported(lang) ? lang : getDefault();
+    }
+
+    public static List<KitLanguage> getSupportedLanguages() {
+        var appSpecProperties = SpringUtil.getBean(AppSpecProperties.class);
+        return appSpecProperties.getSupportedKitLanguages().stream().toList();
+    }
+
+    private static boolean isSupported(KitLanguage language) {
+        var appSpecProperties = SpringUtil.getBean(AppSpecProperties.class);
+        return appSpecProperties.getSupportedKitLanguages().contains(language);
     }
 }

@@ -1,7 +1,9 @@
 package org.flickit.assessment.kit.application.service.assessmentkit.createbydsl;
 
+import org.flickit.assessment.common.config.AppSpecProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.util.SpringUtil;
 import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.CreateKitByDslUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CreateAssessmentKitPort;
@@ -14,12 +16,14 @@ import org.flickit.assessment.kit.application.port.out.kitdsl.UpdateKitDslPort;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.GrantUserAccessToKitPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.CreateKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.minio.LoadKitDSLJsonFilePort;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationContext;
 
 import java.util.List;
 import java.util.UUID;
@@ -66,6 +70,16 @@ class CreateKitByDslServiceTest {
     private CreateKitVersionPort createKitVersionPort;
     @Mock
     private UpdateKitActiveVersionPort updateKitActiveVersionPort;
+
+    @Mock
+    ApplicationContext applicationContext;
+
+    @BeforeEach
+    void prepare() {
+        var props = new AppSpecProperties();
+        doReturn(props).when(applicationContext).getBean(AppSpecProperties.class);
+        new SpringUtil(applicationContext);
+    }
 
     @Test
     void testCreateKitByDsl_ValidInputs_CreateAndSaveKit() {
