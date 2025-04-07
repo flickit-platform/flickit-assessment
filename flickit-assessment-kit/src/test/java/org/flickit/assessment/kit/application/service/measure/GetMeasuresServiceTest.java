@@ -1,22 +1,28 @@
 package org.flickit.assessment.kit.application.service.measure;
 
+import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaEntity;
 import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.port.in.measure.GetMeasuresUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
+import org.flickit.assessment.kit.application.port.out.measure.LoadMeasurePort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Sort;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
 import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createKitVersion;
+import static org.flickit.assessment.kit.test.fixture.application.MeasureMother.measureWithTitle;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
@@ -32,6 +38,9 @@ class GetMeasuresServiceTest {
     @Mock
     CheckExpertGroupAccessPort checkExpertGroupAccessPort;
 
+    @Mock
+    LoadMeasurePort loadMeasurePort;
+
     private final GetMeasuresUseCase.Param param = createParam(GetMeasuresUseCase.Param.ParamBuilder::build);
     private final KitVersion kitVersion = createKitVersion(simpleKit());
 
@@ -43,6 +52,39 @@ class GetMeasuresServiceTest {
 
         AccessDeniedException throwable = assertThrows(AccessDeniedException.class, () -> service.getMeasures(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+    }
+
+    @Test
+    void testGetMeasure_WhenCurrentUserIsMemberOfExpertGroup_ThenGetMeasures() {
+        var measure1 = measureWithTitle("title1");
+        var measure2 = measureWithTitle("title2");
+        var items = List.of(new LoadMeasurePort.Result(measure1, 2),
+            new LoadMeasurePort.Result(measure2, 3));
+        PaginatedResponse<LoadMeasurePort.Result> pageResult = new PaginatedResponse<>(
+            items,
+            param.getPage(),
+            param.getSize(),
+            QuestionnaireJpaEntity.Fields.index,
+            Sort.Direction.ASC.name().toLowerCase(),
+            items.size()
+        );
+
+        when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
+        when(checkExpertGroupAccessPort.checkIsMember(kitVersion.getKit().getExpertGroupId(), param.getCurrentUserId()))
+            .thenReturn(true);
+        when(loadMeasurePort.loadAll(param.getKitVersionId(), param.getPage(), param.getSize()))
+            .thenReturn(pageResult);
+
+        var paginatedResponse = service.getMeasures(param);
+
+        assertNotNull(paginatedResponse);
+        assertEquals(pageResult.getItems().size(), paginatedResponse.getItems().size());
+        for (int i = 0; i < pageResult.getItems().size(); i++) {
+            var expected = pageResult.getItems().get(i);
+            var actual = paginatedResponse.getItems().get(i);
+            assertEquals(expected.measure(), actual.measure());
+            assertEquals(expected.questionsCount(), actual.questionsCount());
+        }
     }
 
     private GetMeasuresUseCase.Param createParam(Consumer<GetMeasuresUseCase.Param.ParamBuilder> changer) {
