@@ -1,5 +1,7 @@
 package org.flickit.assessment.data.jpa.kit.measure;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -45,4 +47,16 @@ public interface MeasureJpaRepository extends JpaRepository<MeasureJpaEntity, Me
                 @Param(value = "lastModificationTime") LocalDateTime lastModificationTime,
                 @Param(value = "lastModifiedBy") UUID lastModifiedBy
     );
+
+    @Query("""
+            SELECT
+                m as measure,
+                COUNT(DISTINCT question.id) as questionCount
+            FROM MeasureJpaEntity m
+            LEFT JOIN QuestionJpaEntity question ON m.id = question.measureId AND m.kitVersionId = question.kitVersionId
+            WHERE m.kitVersionId = :kitVersionId
+            GROUP BY m.id, m.kitVersionId, m.index
+            ORDER BY m.index
+        """)
+    Page<MeasureListItemView> findAllWithQuestionCountByKitVersionId(long kitVersionId, Pageable pageable);
 }
