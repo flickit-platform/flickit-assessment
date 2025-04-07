@@ -50,5 +50,3 @@ public interface GetMeasuresUseCase {
     record MeasureListItem(Measure measure, int questionsCount) {
     }
 }
-
-
