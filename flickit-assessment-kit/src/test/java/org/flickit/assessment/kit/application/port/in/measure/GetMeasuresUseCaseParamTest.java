@@ -1,8 +1,6 @@
 package org.flickit.assessment.kit.application.port.in.measure;
 
-
 import jakarta.validation.ConstraintViolationException;
-import org.flickit.assessment.kit.application.port.in.questionnaire.GetQuestionnairesUseCase;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;

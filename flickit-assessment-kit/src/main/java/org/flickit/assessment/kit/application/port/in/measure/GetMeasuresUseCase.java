@@ -22,7 +22,7 @@ public interface GetMeasuresUseCase {
 
     @Value
     @EqualsAndHashCode(callSuper = false)
-    class Param extends SelfValidating<GetMeasuresUseCase.Param> {
+    class Param extends SelfValidating<Param> {
 
         @NotNull(message = GET_MEASURES_KIT_VERSION_ID_NOT_NULL)
         Long kitVersionId;
