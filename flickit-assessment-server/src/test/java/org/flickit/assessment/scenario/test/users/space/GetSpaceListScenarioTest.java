@@ -20,12 +20,12 @@ class GetSpaceListScenarioTest extends AbstractScenarioTest {
     SpaceTestHelper spaceHelper;
 
     private final int pageSize = 5;
-
+    private final int secondPageExpertGroupCount = 1;
+    private final int spaceCount = pageSize + secondPageExpertGroupCount;
     private int lastSpaceId = 0;
 
     @Test
     void getSpaceList() {
-        int spaceCount = pageSize + 1;
         // Create spaces for the first user (will not be included in the test result)
         createSpaces(pageSize);
         // Switch to the next user (main user) and create actual test data
@@ -38,21 +38,9 @@ class GetSpaceListScenarioTest extends AbstractScenarioTest {
         Map<String, Integer> secondPageQueryParams = createQueryParam(1);
         var secondPageResponse = getPaginatedSpaces(secondPageQueryParams);
         // First page assertions
-        assertEquals(pageSize, firstPageResponse.getItems().size());
-        assertEquals(pageSize, firstPageResponse.getSize());
-        assertEquals(firstPageQueryParams.get("page"), firstPageResponse.getPage());
-        assertEquals(firstPageQueryParams.get("size"), firstPageResponse.getSize());
-        assertEquals(SpaceUserAccessJpaEntity.Fields.lastSeen, firstPageResponse.getSort());
-        assertEquals(Sort.Direction.DESC.name().toLowerCase(), firstPageResponse.getOrder());
-        assertEquals(spaceCount, firstPageResponse.getTotal());
+        assertPage(firstPageResponse, firstPageQueryParams, pageSize);
         // Second page assertions
-        assertEquals(1, secondPageResponse.getItems().size());
-        assertEquals(pageSize, secondPageResponse.getSize());
-        assertEquals(secondPageQueryParams.get("page"), secondPageResponse.getPage());
-        assertEquals(secondPageQueryParams.get("size"), secondPageResponse.getSize());
-        assertEquals(SpaceUserAccessJpaEntity.Fields.lastSeen, secondPageResponse.getSort());
-        assertEquals(Sort.Direction.DESC.name().toLowerCase(), secondPageResponse.getOrder());
-        assertEquals(spaceCount, secondPageResponse.getTotal());
+        assertPage(secondPageResponse, secondPageQueryParams, secondPageExpertGroupCount);
     }
 
     @Test
@@ -66,14 +54,16 @@ class GetSpaceListScenarioTest extends AbstractScenarioTest {
         spaceHelper.delete(context, lastSpaceId);
         // Page request with empty param
         var paginatedResponse = getPaginatedSpaces(Map.of());
-
+        Map<String, Integer> secondPageQueryParams = createQueryParam(1);
+        var secondPageResponse = getPaginatedSpaces(secondPageQueryParams);
         // Page assertions
-        assertEquals(count - 1, paginatedResponse.getItems().size());
-        assertEquals(defaultSize, paginatedResponse.getSize());
+        assertEquals(spaceCount - 1, paginatedResponse.getItems().size());
         assertEquals(defaultPage, paginatedResponse.getPage());
+        assertEquals(defaultSize, paginatedResponse.getSize());
         assertEquals(SpaceUserAccessJpaEntity.Fields.lastSeen, paginatedResponse.getSort());
         assertEquals(Sort.Direction.DESC.name().toLowerCase(), paginatedResponse.getOrder());
-        assertEquals(count - 1, paginatedResponse.getTotal());
+        assertEquals(spaceCount - 1, paginatedResponse.getTotal());
+        assertEquals(0, secondPageResponse.getItems().size());
     }
 
     private void createSpaces(int count) {
@@ -99,5 +89,14 @@ class GetSpaceListScenarioTest extends AbstractScenarioTest {
             .extract()
             .body()
             .as(PaginatedResponse.class);
+    }
+
+    private void assertPage(PaginatedResponse pageResponse, Map<String, Integer> firstPageQueryParams, int expectedSize) {
+        assertEquals(expectedSize, pageResponse.getItems().size());
+        assertEquals(firstPageQueryParams.get("page"), pageResponse.getPage());
+        assertEquals(firstPageQueryParams.get("size"), pageResponse.getSize());
+        assertEquals(SpaceUserAccessJpaEntity.Fields.lastSeen, pageResponse.getSort());
+        assertEquals(Sort.Direction.DESC.name().toLowerCase(), pageResponse.getOrder());
+        assertEquals(spaceCount, pageResponse.getTotal());
     }
 }
