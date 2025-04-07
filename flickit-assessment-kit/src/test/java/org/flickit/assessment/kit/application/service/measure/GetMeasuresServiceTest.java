@@ -55,7 +55,7 @@ class GetMeasuresServiceTest {
     }
 
     @Test
-    void testGetMeasure_WhenCurrentUserIsMemberOfExpertGroup_ThenGetMeasures() {
+    void testGetMeasure_whenCurrentUserIsMemberOfExpertGroup_thenGetMeasures() {
         var measure1 = measureWithTitle("title1");
         var measure2 = measureWithTitle("title2");
         var items = List.of(new LoadMeasurePort.Result(measure1, 2),
