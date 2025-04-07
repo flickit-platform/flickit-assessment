@@ -39,18 +39,27 @@ class GetExpertGroupListScenarioTest extends AbstractScenarioTest {
         // Second page request
         Map<String, Integer> secondPageQueryParams = createQueryParam(1);
         var secondPageResponse = getPaginatedExpertGroups(secondPageQueryParams);
-        // First page assertions
+        // Second page assertions
         assertPage(secondPageResponse, secondPageQueryParams);
     }
 
-    private void assertPage(PaginatedResponse firstPageResponse, Map<String, Integer> firstPageQueryParams) {
-        assertEquals(pageSize, firstPageResponse.getItems().size());
-        assertEquals(pageSize, firstPageResponse.getSize());
-        assertEquals(firstPageQueryParams.get("page"), firstPageResponse.getPage());
-        assertEquals(firstPageQueryParams.get("size"), firstPageResponse.getSize());
-        assertEquals(ExpertGroupAccessJpaEntity.Fields.lastSeen, firstPageResponse.getSort());
-        assertEquals(Sort.Direction.DESC.name().toLowerCase(), firstPageResponse.getOrder());
-        assertEquals(expertGroupCount, firstPageResponse.getTotal());
+    @Test
+    void getExpertGroupList_withDeletedExpertGroup() {
+        final int defaultPage = 0;
+        final int defaultSize = 10;
+        // Create expert groups
+        createExpertGroups(expertGroupCount);
+        // Delete the last created space
+        expertGroupHelper.delete(context, lastExpertGroupId);
+        // Page request with empty param
+        var paginatedResponse = getPaginatedExpertGroups(Map.of());
+        // Page assertions
+        assertEquals(expertGroupCount - 1, paginatedResponse.getItems().size());
+        assertEquals(defaultSize, paginatedResponse.getSize());
+        assertEquals(defaultPage, paginatedResponse.getPage());
+        assertEquals(ExpertGroupAccessJpaEntity.Fields.lastSeen, paginatedResponse.getSort());
+        assertEquals(Sort.Direction.DESC.name().toLowerCase(), paginatedResponse.getOrder());
+        assertEquals(expertGroupCount - 1, paginatedResponse.getTotal());
     }
 
     private void createExpertGroups(int count) {
@@ -76,5 +85,15 @@ class GetExpertGroupListScenarioTest extends AbstractScenarioTest {
             .extract()
             .body()
             .as(PaginatedResponse.class);
+    }
+
+    private void assertPage(PaginatedResponse firstPageResponse, Map<String, Integer> firstPageQueryParams) {
+        assertEquals(pageSize, firstPageResponse.getItems().size());
+        assertEquals(pageSize, firstPageResponse.getSize());
+        assertEquals(firstPageQueryParams.get("page"), firstPageResponse.getPage());
+        assertEquals(firstPageQueryParams.get("size"), firstPageResponse.getSize());
+        assertEquals(ExpertGroupAccessJpaEntity.Fields.lastSeen, firstPageResponse.getSort());
+        assertEquals(Sort.Direction.DESC.name().toLowerCase(), firstPageResponse.getOrder());
+        assertEquals(expertGroupCount, firstPageResponse.getTotal());
     }
 }
