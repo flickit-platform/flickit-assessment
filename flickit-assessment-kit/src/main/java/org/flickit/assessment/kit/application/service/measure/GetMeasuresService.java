@@ -31,8 +31,8 @@ public class GetMeasuresService implements GetMeasuresUseCase {
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         var pageResult = loadMeasurePort.loadAll(param.getKitVersionId(), param.getPage(), param.getSize());
-        List<GetMeasuresUseCase.MeasureListItem> items = pageResult.getItems().stream()
-            .map(e -> new GetMeasuresUseCase.MeasureListItem(e.measure(), e.questionsCount()))
+        List<MeasureListItem> items = pageResult.getItems().stream()
+            .map(e -> new MeasureListItem(e.measure(), e.questionsCount()))
             .toList();
 
         return new PaginatedResponse<>(
