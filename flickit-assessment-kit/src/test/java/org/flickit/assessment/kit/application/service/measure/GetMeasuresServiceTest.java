@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
 import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createKitVersion;
@@ -79,12 +80,11 @@ class GetMeasuresServiceTest {
 
         assertNotNull(paginatedResponse);
         assertEquals(pageResult.getItems().size(), paginatedResponse.getItems().size());
-        for (int i = 0; i < pageResult.getItems().size(); i++) {
-            var expected = pageResult.getItems().get(i);
-            var actual = paginatedResponse.getItems().get(i);
-            assertEquals(expected.measure(), actual.measure());
-            assertEquals(expected.questionsCount(), actual.questionsCount());
-        }
+        assertThat(paginatedResponse.getItems())
+            .zipSatisfy(items, (actual, expected) -> {
+                assertEquals(expected.measure(), actual.measure());
+                assertEquals(expected.questionsCount(), actual.questionsCount());
+            });
     }
 
     private GetMeasuresUseCase.Param createParam(Consumer<GetMeasuresUseCase.Param.ParamBuilder> changer) {
