@@ -2875,6 +2875,51 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Measure",
+			"item": [
+				{
+					"name": "Update Measures Orders",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"orders\": [\n    {\n      \"id\": 2860,\n      \"index\": 2\n    },\n    {\n      \"id\": 2845,\n      \"index\": 1\n    }\n  ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/393/measures-change-order",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"kit-versions",
+								"393",
+								"measures-change-order"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"event": [
