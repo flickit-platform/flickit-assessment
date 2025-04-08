@@ -42,7 +42,6 @@ class UpdateMeasureOrdersServiceTest {
     private final KitVersion kitVersion = createKitVersion(simpleKit());
     UpdateMeasureOrdersUseCase.Param param = createParam(UpdateMeasureOrdersUseCase.Param.ParamBuilder::build);
 
-
     @Test
     void testUpdateMeasureOrders_whenUserIsNotExpertGroupOwner_thenThrowAccessDeniedException() {
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);

@@ -84,5 +84,4 @@ class UpdateMeasureOrdersUseCaseParamTest {
                 new UpdateMeasureOrdersUseCase.MeasureParam(124L, 2)))
             .currentUserId(UUID.randomUUID());
     }
-
 }
