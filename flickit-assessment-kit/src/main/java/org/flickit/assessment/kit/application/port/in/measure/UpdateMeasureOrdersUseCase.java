@@ -1,5 +1,4 @@
-package org.flickit.assessment.kit.application.port.in.questionnaire;
-
+package org.flickit.assessment.kit.application.port.in.measure;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
