@@ -500,6 +500,13 @@ public class ErrorMessageKey {
     public static final String GET_KIT_DSL_KIT_ID_NOT_NULL = "get-kit-dsl.kitId.notNull";
     public static final String GET_KIT_DSL_NOT_AVAILABLE = "get-kit-dsl.notAvailable";
 
+    public static final String UPDATE_MEASURE_ORDERS_KIT_VERSION_ID_NOT_NULL = "update-measure-orders.kitVersionId.notNull";
+    public static final String UPDATE_MEASURE_ORDERS_ORDERS_NOT_NULL = "update-measure-orders.orders.notNull";
+    public static final String UPDATE_MEASURE_ORDERS_ORDERS_SIZE_MIN = "update-measure-orders.orders.size.min";
+    public static final String UPDATE_MEASURE_ORDERS_MEASURE_ID_NOT_NULL = "update-measure-orders.measureId.notNull";
+    public static final String UPDATE_MEASURE_ORDERS_MEASURE_INDEX_NOT_NULL = "update-measure-orders.measureIndex.notNull";
+    public static final String UPDATE_MEASURE_ORDERS_MEASURE_INDEX_MIN = "update-measure-orders.measureIndex.min";
+
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
     }
