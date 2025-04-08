@@ -510,7 +510,6 @@ public class ErrorMessageKey {
     public static final String UPDATE_MEASURE_DESCRIPTION_SIZE_MIN = "update-measure.description.size.min";
     public static final String UPDATE_MEASURE_DESCRIPTION_SIZE_MAX = "update-measure.description.size.max";
 
-
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
     }

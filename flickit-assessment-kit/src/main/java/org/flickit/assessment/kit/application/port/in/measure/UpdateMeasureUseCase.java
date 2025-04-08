@@ -44,12 +44,7 @@ public interface UpdateMeasureUseCase {
         UUID currentUserId;
 
         @Builder
-        public Param(Long kitVersionId,
-                     Long measureId,
-                     Integer index,
-                     String title,
-                     String description,
-                     UUID currentUserId) {
+        public Param(Long kitVersionId, Long measureId, Integer index, String title, String description, UUID currentUserId) {
             this.kitVersionId = kitVersionId;
             this.measureId = measureId;
             this.index = index;
