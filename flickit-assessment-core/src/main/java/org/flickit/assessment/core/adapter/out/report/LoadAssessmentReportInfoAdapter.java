@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.application.domain.kitcustom.KitCustomData;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.adapter.out.minio.MinioAdapter;
+import org.flickit.assessment.core.adapter.out.persistence.kit.measure.MeasureMapper;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.domain.report.AssessmentReportItem;
 import org.flickit.assessment.core.application.domain.report.AssessmentSubjectReportItem;
@@ -31,10 +33,13 @@ import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaReposit
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.kitcustom.KitCustomJpaRepository;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
+import org.flickit.assessment.data.jpa.kit.measure.MeasureJpaRepository;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaEntity;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaRepository;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireListItemView;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
+import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupJpaRepository;
+import org.flickit.assessment.data.jpa.users.space.SpaceJpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -57,6 +62,7 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
     private final AssessmentKitJpaRepository assessmentKitRepository;
     private final MaturityLevelJpaRepository maturityLevelRepository;
     private final SubjectJpaRepository subjectRepository;
+    private final MeasureJpaRepository measureRepository;
     private final AttributeValueJpaRepository attributeValueJpaRepository;
     private final AssessmentInsightJpaRepository assessmentInsightRepository;
     private final QuestionnaireJpaRepository questionnaireRepository;
@@ -112,14 +118,18 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             .mapToInt(QuestionnaireReportItem::questionCount)
             .sum();
 
+        var measures = measureRepository.findAllByKitVersionId(kitVersionId).stream()
+            .map(MeasureMapper::mapToDomainModel)
+            .toList();
+
         return new AssessmentReportItem.AssessmentKitItem(assessmentKitEntity.getId(),
             assessmentKitEntity.getTitle(),
             KitLanguage.valueOfById(assessmentKitEntity.getLanguageId()),
             maturityLevels.size(),
             questionsCount,
             maturityLevels,
-            questionnaireReportItems
-        );
+            questionnaireReportItems,
+            measures);
     }
 
     private QuestionnaireReportItem buildQuestionnaireReportItems(QuestionnaireListItemView itemView) {

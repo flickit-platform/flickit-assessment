@@ -1,7 +1,9 @@
 package org.flickit.assessment.kit.application.service.assessmentkit;
 
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.common.config.AppSpecProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.util.SpringUtil;
 import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.CreateAssessmentKitUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CreateAssessmentKitPort;
@@ -10,12 +12,14 @@ import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGro
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.GrantUserAccessToKitPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.CreateKitVersionPort;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationContext;
 
 import java.util.List;
 import java.util.UUID;
@@ -50,7 +54,17 @@ class CreateAssessmentKitServiceTest {
     @Mock
     private CreateKitTagRelationPort createKitTagRelationPort;
 
+    @Mock
+    ApplicationContext applicationContext;
+
     private final UUID ownerId = UUID.randomUUID();
+
+    @BeforeEach
+    void prepare() {
+        var props = new AppSpecProperties();
+        doReturn(props).when(applicationContext).getBean(AppSpecProperties.class);
+        new SpringUtil(applicationContext);
+    }
 
     @Test
     void testCreateAssessmentKit_CurrentUserDoesNotHaveAccess_ShouldFailToCreateAssessmentKit() {

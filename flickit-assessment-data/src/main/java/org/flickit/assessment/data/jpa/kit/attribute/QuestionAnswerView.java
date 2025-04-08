@@ -5,7 +5,7 @@ import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaEntity;
 
-public interface AttributeImpactFullQuestionsView {
+public interface QuestionAnswerView {
 
     QuestionJpaEntity getQuestion();
 

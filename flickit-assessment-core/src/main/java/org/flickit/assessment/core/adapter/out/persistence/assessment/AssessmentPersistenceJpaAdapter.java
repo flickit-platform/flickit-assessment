@@ -3,6 +3,10 @@ package org.flickit.assessment.core.adapter.out.persistence.assessment;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.adapter.out.persistence.answer.AnswerMapper;
+import org.flickit.assessment.core.adapter.out.persistence.kit.answeroption.AnswerOptionMapper;
+import org.flickit.assessment.core.adapter.out.persistence.kit.question.QuestionMapper;
+import org.flickit.assessment.core.adapter.out.persistence.kit.questionimpact.QuestionImpactMapper;
 import org.flickit.assessment.core.application.domain.Assessment;
 import org.flickit.assessment.core.application.domain.AssessmentListItem;
 import org.flickit.assessment.core.application.port.out.assessment.*;
@@ -28,8 +32,8 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.toMap;
-import static java.util.stream.Collectors.toSet;
+import static java.util.stream.Collectors.*;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.core.application.domain.AssessmentUserRole.ASSOCIATE;
 import static org.flickit.assessment.core.application.domain.AssessmentUserRole.MANAGER;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
@@ -44,7 +48,8 @@ public class AssessmentPersistenceJpaAdapter implements
     LoadAssessmentPort,
     DeleteAssessmentPort,
     CheckAssessmentSpaceMembershipPort,
-    CountAssessmentsPort {
+    CountAssessmentsPort,
+    LoadAssessmentQuestionsPort {
 
     private final AssessmentJpaRepository repository;
     private final AssessmentResultJpaRepository resultRepository;
@@ -247,5 +252,33 @@ public class AssessmentPersistenceJpaAdapter implements
     @Override
     public int countSpaceAssessments(long spaceId) {
         return repository.countBySpaceIdAndDeletedFalse(spaceId);
+    }
+
+    @Override
+    public List<LoadAssessmentQuestionsPort.Result> loadApplicableQuestions(UUID assessmentId) {
+        var assessmentResult = resultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
+            .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
+
+        var questionIdToViewMap = repository.findAttributeQuestionsAndAnswers(assessmentResult.getId(),
+                assessmentResult.getKitVersionId()).stream()
+            .collect(groupingBy(v -> v.getQuestion().getId()));
+
+        return questionIdToViewMap.values().stream()
+            .map(views -> {
+                var impacts = views.stream()
+                    .map(i -> QuestionImpactMapper.mapToDomainModel(i.getQuestionImpact()))
+                    .toList();
+
+                var firstView = views.getFirst();
+                var question = QuestionMapper.mapToDomainModel(firstView.getQuestion(), impacts);
+                var answerOption = firstView.getAnswerOption() != null
+                    ? AnswerOptionMapper.mapToDomainModel(firstView.getAnswerOption())
+                    : null;
+                var answer = firstView.getAnswer() != null
+                    ? AnswerMapper.mapToDomainModel(firstView.getAnswer(), answerOption)
+                    : null;
+                return new LoadAssessmentQuestionsPort.Result(question, answer);
+            })
+            .toList();
     }
 }

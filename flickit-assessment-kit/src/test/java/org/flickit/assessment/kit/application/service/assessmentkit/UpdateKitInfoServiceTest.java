@@ -1,8 +1,10 @@
 package org.flickit.assessment.kit.application.service.assessmentkit;
 
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.common.config.AppSpecProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.util.SpringUtil;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.UpdateKitInfoUseCase;
@@ -17,6 +19,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationContext;
 
 import java.util.List;
 import java.util.UUID;
@@ -41,6 +44,9 @@ class UpdateKitInfoServiceTest {
 
     @Mock
     private UpdateKitInfoPort updateKitInfoPort;
+
+    @Mock
+    ApplicationContext applicationContext;
 
     @Test
     void testUpdateKitInfo_KitNotFound_ErrorMessage() {
@@ -179,6 +185,10 @@ class UpdateKitInfoServiceTest {
 
     @Test
     void testUpdateKitInfo_EditLang_ValidResults() {
+        var props = new AppSpecProperties();
+        doReturn(props).when(applicationContext).getBean(AppSpecProperties.class);
+        new SpringUtil(applicationContext);
+
         ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
         UUID currentUserId = expertGroup.getOwnerId();
         var param = createParam(b -> b.lang("FA").currentUserId(currentUserId));
