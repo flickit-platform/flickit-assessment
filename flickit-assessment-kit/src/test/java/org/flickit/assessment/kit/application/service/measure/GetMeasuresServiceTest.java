@@ -54,6 +54,8 @@ class GetMeasuresServiceTest {
 
         AccessDeniedException throwable = assertThrows(AccessDeniedException.class, () -> service.getMeasures(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+
+        verifyNoInteractions(loadMeasurePort);
     }
 
     @Test
@@ -86,6 +88,12 @@ class GetMeasuresServiceTest {
                 assertEquals(expected.measure(), actual.measure());
                 assertEquals(expected.questionsCount(), actual.questionsCount());
             });
+
+        assertEquals(2, paginatedResponse.getTotal());
+        assertEquals(param.getSize(), paginatedResponse.getSize());
+        assertEquals(param.getPage(), paginatedResponse.getPage());
+        assertEquals(pageResult.getSort(), paginatedResponse.getSort());
+        assertEquals(pageResult.getOrder(), paginatedResponse.getOrder());
     }
 
     private GetMeasuresUseCase.Param createParam(Consumer<GetMeasuresUseCase.Param.ParamBuilder> changer) {
