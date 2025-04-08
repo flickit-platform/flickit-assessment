@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "ced9fd61",
+		"_postman_id": "178cd7e0-52e1-44db-917e-1a21e7d87311",
 		"name": "flickit-assessment-kit",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "11099181"
@@ -2869,6 +2869,52 @@
 								"{{api_path}}",
 								"kit-customs",
 								"8"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Measure",
+			"item": [
+				{
+					"name": "Update Measure",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"index\": 1,\n    \"title\": \"new title\",\n    \"description\": \"sample desc\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/393/measures/2860",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"kit-versions",
+								"393",
+								"measures",
+								"2860"
 							]
 						}
 					},
