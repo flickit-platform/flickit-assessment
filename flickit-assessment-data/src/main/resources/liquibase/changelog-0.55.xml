@@ -4,7 +4,7 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
 
-    <changeSet id="0.54-01" author="Maziyar Gerami">
+    <changeSet id="0.55-01" author="Maziyar Gerami">
         <createTable tableName="fak_kit_language">
             <column name="kit_id" type="bigint">
                 <constraints nullable="false"/>
@@ -15,13 +15,13 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="0.54-02" author="Maziyar Gerami">
+    <changeSet id="0.55-02" author="Maziyar Gerami">
         <addPrimaryKey tableName="fak_kit_language"
                        columnNames="kit_id, lang_id"
                        constraintName="pk_fak_kit_language"/>
     </changeSet>
 
-    <changeSet id="0.54-03" author="Maziyar Gerami">
+    <changeSet id="0.55-03" author="Maziyar Gerami">
         <addForeignKeyConstraint baseTableName="fak_kit_language"
                                  baseColumnNames="kit_id"
                                  constraintName="fk_fak_kitlanguage_assessmentkit"
@@ -30,7 +30,7 @@
                                  onDelete="CASCADE"/>
     </changeSet>
 
-    <changeSet id="0.54-04" author="Maziyar Gerami">
+    <changeSet id="0.55-04" author="Maziyar Gerami">
         <sql>
             INSERT INTO fak_kit_language(kit_id, lang_id)
             SELECT k.id                     AS kit_id,
