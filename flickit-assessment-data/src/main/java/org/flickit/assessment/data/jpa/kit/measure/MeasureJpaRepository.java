@@ -58,5 +58,6 @@ public interface MeasureJpaRepository extends JpaRepository<MeasureJpaEntity, Me
             GROUP BY m.id, m.kitVersionId, m.index
             ORDER BY m.index
         """)
-    Page<MeasureListItemView> findAllWithQuestionCountByKitVersionId(long kitVersionId, Pageable pageable);
+    Page<MeasureListItemView> findAllWithQuestionCountByKitVersionId(@Param(value = "kitVersionId") long kitVersionId,
+                                                                     Pageable pageable);
 }
