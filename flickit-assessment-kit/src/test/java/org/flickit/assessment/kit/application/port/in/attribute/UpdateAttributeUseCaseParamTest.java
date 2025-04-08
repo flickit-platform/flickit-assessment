@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.application.port.in.attribute;
 import jakarta.validation.ConstraintViolationException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.flickit.assessment.common.application.domain.kit.translate.AttributeTranslation;
+import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.kit.application.port.in.attribute.UpdateAttributeUseCase.Param;
 import org.junit.jupiter.api.Test;
 
@@ -85,7 +86,7 @@ class UpdateAttributeUseCaseParamTest {
 
     @Test
     void testUpdateAttributeUseCaseParam_translationLanguageViolations_ErrorMessage() {
-        var throwable = assertThrows(org.flickit.assessment.common.exception.ValidationException.class,
+        var throwable = assertThrows(ValidationException.class,
             () -> createParam(a -> a.translations(Map.of("FR", new AttributeTranslation("title", "desc")))));
         assertEquals(COMMON_KIT_LANGUAGE_NOT_VALID, throwable.getMessageKey());
     }
