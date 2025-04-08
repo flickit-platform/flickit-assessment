@@ -6,6 +6,7 @@ import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitListUseCase.Param;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CountKitListStatsPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadPublishedKitListPort;
+import org.flickit.assessment.kit.application.port.out.kitlanguage.LoadKitLanguageListPort;
 import org.flickit.assessment.kit.application.port.out.kittag.LoadKitTagListPort;
 import org.flickit.assessment.kit.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
@@ -43,6 +44,9 @@ class GetKitListServiceTest {
     private LoadKitTagListPort loadKitTagListPort;
 
     @Mock
+    private LoadKitLanguageListPort loadKitLanguageListPort;
+
+    @Mock
     private CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
     @Test
@@ -69,6 +73,8 @@ class GetKitListServiceTest {
             .thenReturn(List.of(new CountKitListStatsPort.Result(kitId, 3, 15)));
         when(loadKitTagListPort.loadByKitIds(kitIds)).thenReturn(
             List.of(new LoadKitTagListPort.Result(kitId, List.of(sampleTag))));
+        when(loadKitLanguageListPort.loadByKitIds(kitIds)).thenReturn(
+            List.of(new LoadKitLanguageListPort.Result(kitId, List.of(KitLanguage.EN))));
         when(createFileDownloadLinkPort.createDownloadLink(any(), any()))
             .thenReturn(expertGroupPictureUrl);
 
@@ -88,6 +94,7 @@ class GetKitListServiceTest {
         assertEquals(assessmentKit.isPrivate(), item.isPrivate());
         assertEquals(3, item.likes());
         assertEquals(15, item.assessmentsCount());
+        assertEquals(KitLanguage.EN.getTitle(), item.languages().getFirst());
         assertEquals(expertGroup.getId(), item.expertGroup().id());
         assertEquals(expertGroup.getTitle(), item.expertGroup().title());
         assertEquals(expertGroupPictureUrl, item.expertGroup().picture());
@@ -121,6 +128,8 @@ class GetKitListServiceTest {
             .thenReturn(List.of(new CountKitListStatsPort.Result(kitId, 3, 15)));
         when(loadKitTagListPort.loadByKitIds(kitIds)).thenReturn(
             List.of(new LoadKitTagListPort.Result(kitId, List.of(sampleTag))));
+        when(loadKitLanguageListPort.loadByKitIds(kitIds)).thenReturn(
+            List.of(new LoadKitLanguageListPort.Result(kitId, List.of(KitLanguage.EN))));
         when(createFileDownloadLinkPort.createDownloadLink(any(), any()))
             .thenReturn(expertGroupPictureUrl);
 
@@ -140,6 +149,7 @@ class GetKitListServiceTest {
         assertEquals(assessmentKit.isPrivate(), item.isPrivate());
         assertEquals(3, item.likes());
         assertEquals(15, item.assessmentsCount());
+        assertEquals(KitLanguage.EN.getTitle(), item.languages().getFirst());
         assertEquals(expertGroup.getId(), item.expertGroup().id());
         assertEquals(expertGroup.getTitle(), item.expertGroup().title());
         assertEquals(expertGroupPictureUrl, item.expertGroup().picture());
@@ -163,6 +173,7 @@ class GetKitListServiceTest {
             .thenReturn(expectedKitsPage);
         when(countKitStatsPort.countKitsStats(List.of())).thenReturn(List.of());
         when(loadKitTagListPort.loadByKitIds(List.of())).thenReturn(List.of());
+        when(loadKitLanguageListPort.loadByKitIds(List.of())).thenReturn(List.of());
 
         var kitList = service.getKitList(param);
 
