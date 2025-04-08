@@ -48,8 +48,8 @@ class UpdateMeasureServiceTest {
             .thenReturn(UUID.randomUUID());
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.updateMeasure(param));
-
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+
         verifyNoInteractions(updateMeasurePort);
     }
 
@@ -59,9 +59,9 @@ class UpdateMeasureServiceTest {
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId()))
             .thenReturn(param.getCurrentUserId());
 
-        var portParamCaptor = ArgumentCaptor.forClass(UpdateMeasurePort.Param.class);
-
         service.updateMeasure(param);
+
+        var portParamCaptor = ArgumentCaptor.forClass(UpdateMeasurePort.Param.class);
         verify(updateMeasurePort).update(portParamCaptor.capture());
 
         assertEquals(param.getMeasureId(), portParamCaptor.getValue().id());
