@@ -37,21 +37,6 @@ public class MeasurePersistenceJpaAdapter implements
     }
 
     @Override
-    public void update(Param param) {
-        if (!repository.existsByIdAndKitVersionId(param.id(), param.kitVersionId()))
-            throw new ResourceNotFoundException(MEASURE_ID_NOT_FOUND);
-
-        repository.update(param.id(),
-            param.kitVersionId(),
-            param.title(),
-            param.code(),
-            param.index(),
-            param.description(),
-            param.lastModificationTime(),
-            param.lastModifiedBy());
-    }
-
-    @Override
     public void updateOrders(UpdateOrderParam param) {
         var idToIndex = param.orders().stream()
             .collect(toMap(
