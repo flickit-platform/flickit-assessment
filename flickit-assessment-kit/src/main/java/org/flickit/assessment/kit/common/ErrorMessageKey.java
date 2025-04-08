@@ -500,6 +500,11 @@ public class ErrorMessageKey {
     public static final String GET_KIT_DSL_KIT_ID_NOT_NULL = "get-kit-dsl.kitId.notNull";
     public static final String GET_KIT_DSL_NOT_AVAILABLE = "get-kit-dsl.notAvailable";
 
+    public static final String GET_MEASURES_KIT_VERSION_ID_NOT_NULL = "get-measures.kitVersionId.notNull";
+    public static final String GET_MEASURES_PAGE_MIN = "get-measures.page.min";
+    public static final String GET_MEASURES_SIZE_MIN = "get-measures.size.min";
+    public static final String GET_MEASURES_SIZE_MAX = "get-measures.size.max";
+
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
     }
