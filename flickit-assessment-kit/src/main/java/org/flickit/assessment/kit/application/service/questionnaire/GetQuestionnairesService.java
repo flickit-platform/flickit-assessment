@@ -39,8 +39,8 @@ public class GetQuestionnairesService implements GetQuestionnairesUseCase {
             items,
             pageResult.getPage(),
             pageResult.getSize(),
-            pageResult.getOrder(),
             pageResult.getSort(),
+            pageResult.getOrder(),
             pageResult.getTotal()
         );
     }
