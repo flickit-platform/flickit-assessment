@@ -18,7 +18,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class GetQuestionnaireService implements GetQuestionnairesUseCase {
+public class GetQuestionnairesService implements GetQuestionnairesUseCase {
 
     private final LoadQuestionnairesPort loadQuestionnairesPort;
     private final LoadKitVersionPort loadKitVersionPort;
