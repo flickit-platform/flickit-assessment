@@ -25,6 +25,7 @@ import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitM
 import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createKitVersion;
 import static org.flickit.assessment.kit.test.fixture.application.MeasureMother.measureWithTitle;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -46,7 +47,7 @@ class GetMeasuresServiceTest {
     private final KitVersion kitVersion = createKitVersion(simpleKit());
 
     @Test
-    void getMeasures_whenCurrentUserIsNotMemberOfExpertGroup_thenThrowAccessDeniedException() {
+    void testGetMeasures_whenCurrentUserIsNotMemberOfExpertGroup_thenThrowAccessDeniedException() {
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(checkExpertGroupAccessPort.checkIsMember(kitVersion.getKit().getExpertGroupId(), param.getCurrentUserId()))
             .thenReturn(false);
@@ -56,7 +57,7 @@ class GetMeasuresServiceTest {
     }
 
     @Test
-    void testGetMeasure_whenCurrentUserIsMemberOfExpertGroup_thenGetMeasures() {
+    void testGetMeasures_whenCurrentUserIsMemberOfExpertGroup_thenGetMeasures() {
         var measure1 = measureWithTitle("title1");
         var measure2 = measureWithTitle("title2");
         var items = List.of(new LoadMeasurePort.Result(measure1, 2),
