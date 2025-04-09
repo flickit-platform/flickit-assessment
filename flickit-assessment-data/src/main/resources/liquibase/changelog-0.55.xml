@@ -41,7 +41,7 @@
 
     <changeSet id="0.55-05" author="Maziyar Gerami">
         <addColumn tableName="fak_assessment_kit">
-            <column name="translate" type="text">
+            <column name="translations" type="text">
                 <constraints nullable="true"/>
             </column>
         </addColumn>
@@ -49,7 +49,7 @@
 
     <changeSet id="0.55-06" author="Maziyar Gerami">
         <addColumn tableName="fak_question">
-            <column name="translate" type="text">
+            <column name="translations" type="text">
                 <constraints nullable="true"/>
             </column>
         </addColumn>
@@ -57,7 +57,7 @@
 
     <changeSet id="0.55-07" author="Maziyar Gerami">
         <addColumn tableName="fak_attribute">
-            <column name="translate" type="text">
+            <column name="translations" type="text">
                 <constraints nullable="true"/>
             </column>
         </addColumn>
@@ -65,7 +65,7 @@
 
     <changeSet id="0.55-08" author="Maziyar Gerami">
         <addColumn tableName="fak_subject">
-            <column name="translate" type="text">
+            <column name="translations" type="text">
                 <constraints nullable="true"/>
             </column>
         </addColumn>
@@ -73,7 +73,7 @@
 
     <changeSet id="0.55-09" author="Maziyar Gerami">
         <addColumn tableName="fak_maturity_level">
-            <column name="translate" type="text">
+            <column name="translations" type="text">
                 <constraints nullable="true"/>
             </column>
         </addColumn>
@@ -81,7 +81,7 @@
 
     <changeSet id="0.55-10" author="Maziyar Gerami">
         <addColumn tableName="fak_questionnaire">
-            <column name="translate" type="text">
+            <column name="translations" type="text">
                 <constraints nullable="true"/>
             </column>
         </addColumn>
@@ -89,7 +89,7 @@
 
     <changeSet id="0.55-11" author="Maziyar Gerami">
         <addColumn tableName="fak_measure">
-            <column name="translate" type="text">
+            <column name="translations" type="text">
                 <constraints nullable="true"/>
             </column>
         </addColumn>
@@ -97,7 +97,7 @@
 
     <changeSet id="0.55-12" author="Maziyar Gerami">
         <addColumn tableName="fak_answer_range">
-            <column name="translate" type="text">
+            <column name="translations" type="text">
                 <constraints nullable="true"/>
             </column>
         </addColumn>
@@ -105,7 +105,7 @@
 
     <changeSet id="0.55-13" author="Maziyar Gerami">
         <addColumn tableName="fak_answer_option">
-            <column name="translate" type="text">
+            <column name="translations" type="text">
                 <constraints nullable="true"/>
             </column>
         </addColumn>
