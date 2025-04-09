@@ -1,4 +1,4 @@
-package org.flickit.assessment.common.application.domain.kit.translate;
+package org.flickit.assessment.common.application.domain.kit.translation;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.Size;

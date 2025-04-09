@@ -1,7 +1,7 @@
 package org.flickit.assessment.kit.application.port.out.attribute;
 
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
-import org.flickit.assessment.common.application.domain.kit.translate.AttributeTranslation;
+import org.flickit.assessment.common.application.domain.kit.translation.AttributeTranslation;
 
 import java.time.LocalDateTime;
 import java.util.List;
