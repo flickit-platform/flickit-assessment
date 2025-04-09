@@ -31,6 +31,7 @@ public class QuestionnaireMapper {
             questionnaire.getIndex(),
             questionnaire.getTitle(),
             questionnaire.getDescription(),
+            null, // TODO: Consider replacing this with the actual value after editing the service.
             questionnaire.getCreationTime(),
             questionnaire.getLastModificationTime(),
             createdBy,

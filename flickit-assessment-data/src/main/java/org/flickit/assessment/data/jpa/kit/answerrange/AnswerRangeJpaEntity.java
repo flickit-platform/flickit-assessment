@@ -38,6 +38,9 @@ public class AnswerRangeJpaEntity {
     @Column(name = "reusable", nullable = false)
     private boolean reusable;
 
+    @Column(name = "translations")
+    private String translations;
+
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
 
