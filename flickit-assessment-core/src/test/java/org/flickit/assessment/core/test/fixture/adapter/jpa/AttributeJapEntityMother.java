@@ -18,6 +18,7 @@ public class AttributeJapEntityMother {
             "title" + id,
             "description" + id,
             1,
+            null, // TODO: Check if replacing with a valid JSON translate is needed after editing the service.
             creationTime,
             creationTime,
             createdBy,
