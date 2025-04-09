@@ -26,7 +26,7 @@ public class AttributeMapper {
         );
     }
 
-    public static AttributeJpaEntity mapToJpaEntity(Attribute attribute, String translations, SubjectJpaEntity subjectJpaEntity) {
+    public static AttributeJpaEntity mapToJpaEntity(Attribute attribute, SubjectJpaEntity subjectJpaEntity) {
         return new AttributeJpaEntity(
             null,
             subjectJpaEntity.getKitVersionId(),
@@ -35,7 +35,7 @@ public class AttributeMapper {
             attribute.getTitle(),
             attribute.getDescription(),
             attribute.getWeight(),
-            translations,
+            null, // TODO: Consider replacing this with the actual value after editing the service.
             attribute.getCreationTime(),
             attribute.getLastModificationTime(),
             attribute.getCreatedBy(),
