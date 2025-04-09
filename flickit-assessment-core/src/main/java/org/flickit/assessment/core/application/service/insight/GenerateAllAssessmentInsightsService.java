@@ -10,7 +10,6 @@ import org.flickit.assessment.core.application.domain.Subject;
 import org.flickit.assessment.core.application.domain.insight.AttributeInsight;
 import org.flickit.assessment.core.application.domain.insight.SubjectInsight;
 import org.flickit.assessment.core.application.port.in.insight.GenerateAllAssessmentInsightsUseCase;
-import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentProgressPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributesPort;
 import org.flickit.assessment.core.application.port.out.insight.assessment.CreateAssessmentInsightPort;
@@ -19,16 +18,15 @@ import org.flickit.assessment.core.application.port.out.insight.attribute.Create
 import org.flickit.assessment.core.application.port.out.insight.attribute.LoadAttributeInsightsPort;
 import org.flickit.assessment.core.application.port.out.insight.subject.CreateSubjectInsightPort;
 import org.flickit.assessment.core.application.port.out.insight.subject.LoadSubjectInsightsPort;
-import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectsPort;
 import org.flickit.assessment.core.application.service.insight.assessment.CreateAssessmentInsightHelper;
 import org.flickit.assessment.core.application.service.insight.attribute.CreateAttributeAiInsightHelper;
+import org.flickit.assessment.core.application.service.insight.attribute.CreateAttributeAiInsightHelper.AttributeInsightsParam;
 import org.flickit.assessment.core.application.service.insight.subject.CreateSubjectInsightsHelper;
 import org.flickit.assessment.core.application.service.insight.subject.CreateSubjectInsightsHelper.SubjectInsightsParam;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -47,8 +45,6 @@ public class GenerateAllAssessmentInsightsService implements GenerateAllAssessme
     private final ValidateAssessmentResultPort validateAssessmentResultPort;
     private final LoadAttributesPort loadAttributesPort;
     private final LoadAttributeInsightsPort loadAttributeInsightsPort;
-    private final LoadMaturityLevelsPort loadMaturityLevelsPort;
-    private final GetAssessmentProgressPort getAssessmentProgressPort;
     private final CreateAttributeAiInsightHelper createAttributeAiInsightHelper;
     private final CreateAttributeInsightPort createAttributeInsightPort;
     private final LoadSubjectsPort loadSubjectsPort;
@@ -82,24 +78,11 @@ public class GenerateAllAssessmentInsightsService implements GenerateAllAssessme
             .map(AttributeInsight::getAttributeId)
             .toList();
         attributeIds.removeAll(attributeInsightIds);
-        if (!attributeIds.isEmpty())
-            createAttributesInsight(assessmentResult, attributeIds, locale);
-    }
-
-    private void createAttributesInsight(AssessmentResult assessmentResult, List<Long> attributeIds, Locale locale) {
-        var maturityLevels = loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId());
-        var progress = getAssessmentProgressPort.getProgress(assessmentResult.getAssessment().getId());
-        var attributeInsights = attributeIds.stream()
-            .map(id -> {
-                var createAiInsightParam = new CreateAttributeAiInsightHelper.Param(assessmentResult,
-                    id,
-                    maturityLevels,
-                    progress,
-                    locale);
-                return createAttributeAiInsightHelper.createAttributeAiInsight(createAiInsightParam);
-            })
-            .toList();
-        createAttributeInsightPort.persistAll(attributeInsights);
+        if (!attributeIds.isEmpty()) {
+            var attributeAiInsights = createAttributeAiInsightHelper
+                .createAttributeAiInsights(new AttributeInsightsParam(assessmentResult, attributeIds, locale));
+            createAttributeInsightPort.persistAll(attributeAiInsights);
+        }
     }
 
     private void initSubjectsInsight(AssessmentResult assessmentResult, Locale locale) {

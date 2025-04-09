@@ -6,11 +6,9 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.CalculateNotValidException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
-import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.domain.insight.AssessmentInsight;
 import org.flickit.assessment.core.application.domain.insight.SubjectInsight;
 import org.flickit.assessment.core.application.port.in.insight.RegenerateExpiredInsightsUseCase.Param;
-import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentProgressPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributesPort;
 import org.flickit.assessment.core.application.port.out.insight.assessment.LoadAssessmentInsightPort;
@@ -19,15 +17,14 @@ import org.flickit.assessment.core.application.port.out.insight.attribute.LoadAt
 import org.flickit.assessment.core.application.port.out.insight.attribute.UpdateAttributeInsightPort;
 import org.flickit.assessment.core.application.port.out.insight.subject.LoadSubjectInsightsPort;
 import org.flickit.assessment.core.application.port.out.insight.subject.UpdateSubjectInsightPort;
-import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.core.application.service.insight.assessment.CreateAssessmentInsightHelper;
 import org.flickit.assessment.core.application.service.insight.attribute.CreateAttributeAiInsightHelper;
+import org.flickit.assessment.core.application.service.insight.attribute.CreateAttributeAiInsightHelper.AttributeInsightsParam;
 import org.flickit.assessment.core.application.service.insight.subject.CreateSubjectInsightsHelper;
 import org.flickit.assessment.core.application.service.insight.subject.CreateSubjectInsightsHelper.SubjectInsightsParam;
 import org.flickit.assessment.core.test.fixture.application.AssessmentInsightMother;
 import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.flickit.assessment.core.test.fixture.application.AttributeInsightMother;
-import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -67,16 +64,10 @@ class RegenerateExpiredInsightsServiceTest {
     private ValidateAssessmentResultPort validateAssessmentResultPort;
 
     @Mock
-    private GetAssessmentProgressPort getAssessmentProgressPort;
-
-    @Mock
     private LoadAssessmentResultPort loadAssessmentResultPort;
 
     @Mock
     private LoadAttributeInsightsPort loadAttributeInsightsPort;
-
-    @Mock
-    private LoadMaturityLevelsPort loadMaturityLevelsPort;
 
     @Mock
     private CreateAttributeAiInsightHelper createAttributeAiInsightHelper;
@@ -103,7 +94,7 @@ class RegenerateExpiredInsightsServiceTest {
     private UpdateAssessmentInsightPort updateAssessmentInsightPort;
 
     @Captor
-    private ArgumentCaptor<CreateAttributeAiInsightHelper.Param> attributeHelperParamArgumentCaptor;
+    private ArgumentCaptor<AttributeInsightsParam> attributeHelperParamArgumentCaptor;
 
     @Captor
     private ArgumentCaptor<List<UpdateAttributeInsightPort.AiParam>> attributeInsightArgumentCaptor;
@@ -117,8 +108,6 @@ class RegenerateExpiredInsightsServiceTest {
     private final Param param = createParam(Param.ParamBuilder::build);
     private final AssessmentResult assessmentResult = AssessmentResultMother.validResult();
     private final LoadAttributesPort.Result attribute = createAttribute();
-    private final List<MaturityLevel> maturityLevels = MaturityLevelMother.allLevels();
-    private final GetAssessmentProgressPort.Result progress = new GetAssessmentProgressPort.Result(param.getAssessmentId(), 10, 10);
 
     @Test
     void testRegenerateExpiredInsights_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
@@ -130,14 +119,12 @@ class RegenerateExpiredInsightsServiceTest {
         verifyNoInteractions(validateAssessmentResultPort,
             loadAssessmentResultPort,
             loadAttributeInsightsPort,
-            loadMaturityLevelsPort,
             createAttributeAiInsightHelper,
             updateAttributeInsightPort,
             loadSubjectInsightsPort,
             createSubjectInsightsHelper,
             updateSubjectInsightPort,
             loadAssessmentInsightPort,
-            getAssessmentProgressPort,
             updateAssessmentInsightPort);
     }
 
@@ -152,10 +139,8 @@ class RegenerateExpiredInsightsServiceTest {
         assertEquals(COMMON_ASSESSMENT_RESULT_NOT_FOUND, throwable.getMessage());
 
         verifyNoInteractions(validateAssessmentResultPort,
-            getAssessmentProgressPort,
             loadAttributeInsightsPort,
             createAttributeAiInsightHelper,
-            loadMaturityLevelsPort,
             updateAttributeInsightPort,
             loadSubjectInsightsPort,
             createSubjectInsightsHelper,
@@ -176,9 +161,7 @@ class RegenerateExpiredInsightsServiceTest {
         var throwable = assertThrows(CalculateNotValidException.class, () -> service.regenerateExpiredInsights(param));
         assertEquals(COMMON_ASSESSMENT_RESULT_NOT_VALID, throwable.getMessage());
 
-        verifyNoInteractions(getAssessmentProgressPort,
-            loadAttributeInsightsPort,
-            loadMaturityLevelsPort,
+        verifyNoInteractions(loadAttributeInsightsPort,
             createAttributeAiInsightHelper,
             updateAttributeInsightPort,
             loadSubjectInsightsPort,
@@ -199,12 +182,8 @@ class RegenerateExpiredInsightsServiceTest {
             .thenReturn(Optional.of(assessmentResult));
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
         when(loadAttributeInsightsPort.loadInsights(assessmentResult.getId())).thenReturn(List.of(expiredAttributeInsight));
-
-        when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId()))
-            .thenReturn(maturityLevels);
-        when(getAssessmentProgressPort.getProgress(assessmentResult.getAssessment().getId())).thenReturn(progress);
-        when(createAttributeAiInsightHelper.createAttributeAiInsight(attributeHelperParamArgumentCaptor.capture()))
-            .thenReturn(newAttributeAiInsight);
+        when(createAttributeAiInsightHelper.createAttributeAiInsights(attributeHelperParamArgumentCaptor.capture()))
+            .thenReturn(List.of(newAttributeAiInsight));
 
         when(loadSubjectInsightsPort.loadSubjectInsights(assessmentResult.getId())).thenReturn(List.of());
         when(loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId()))
@@ -213,9 +192,7 @@ class RegenerateExpiredInsightsServiceTest {
         service.regenerateExpiredInsights(param);
 
         assertEquals(assessmentResult, attributeHelperParamArgumentCaptor.getValue().assessmentResult());
-        assertEquals(expiredAttributeInsight.getAttributeId(), attributeHelperParamArgumentCaptor.getValue().attributeId());
-        assertEquals(maturityLevels, attributeHelperParamArgumentCaptor.getValue().maturityLevels());
-        assertEquals(progress, attributeHelperParamArgumentCaptor.getValue().assessmentProgress());
+        assertEquals(List.of(expiredAttributeInsight.getAttributeId()), attributeHelperParamArgumentCaptor.getValue().attributeIds());
         assertEquals(Locale.of(assessmentResult.getAssessment().getAssessmentKit().getLanguage().getCode()),
             attributeHelperParamArgumentCaptor.getValue().locale());
 
@@ -271,9 +248,7 @@ class RegenerateExpiredInsightsServiceTest {
         assertEquals(newSubjectInsight, subjectInsightArgument);
 
         verify(validateAssessmentResultPort).validate(param.getAssessmentId());
-        verifyNoInteractions(loadMaturityLevelsPort,
-            getAssessmentProgressPort,
-            createAttributeAiInsightHelper,
+        verifyNoInteractions(createAttributeAiInsightHelper,
             updateAttributeInsightPort,
             updateAssessmentInsightPort);
     }
@@ -319,9 +294,7 @@ class RegenerateExpiredInsightsServiceTest {
         assertEquals(newAssessmentInsight.isApproved(), assessmentInsightArgumentCaptor.getValue().isApproved());
 
         verify(validateAssessmentResultPort).validate(param.getAssessmentId());
-        verifyNoInteractions(loadMaturityLevelsPort,
-            getAssessmentProgressPort,
-            createAttributeAiInsightHelper,
+        verifyNoInteractions(createAttributeAiInsightHelper,
             updateAttributeInsightPort,
             createSubjectInsightsHelper,
             updateSubjectInsightPort);
