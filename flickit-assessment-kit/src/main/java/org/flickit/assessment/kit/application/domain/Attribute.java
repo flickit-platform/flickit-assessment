@@ -22,10 +22,10 @@ public class Attribute {
     private final int index;
     private final String description;
     private final int weight;
+    @Setter
+    private Map<KitLanguage, AttributeTranslation> translations;
     @EqualsAndHashCode.Exclude private final LocalDateTime creationTime;
     @EqualsAndHashCode.Exclude private final LocalDateTime lastModificationTime;
     private final UUID createdBy;
     private final UUID lastModifiedBy;
-    @Setter
-    private Map<KitLanguage, AttributeTranslation> translations;
 }
