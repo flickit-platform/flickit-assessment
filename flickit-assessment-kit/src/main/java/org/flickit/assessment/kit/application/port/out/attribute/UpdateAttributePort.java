@@ -1,7 +1,11 @@
 package org.flickit.assessment.kit.application.port.out.attribute;
 
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.common.application.domain.kit.translate.AttributeTranslation;
+
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public interface UpdateAttributePort {
@@ -16,6 +20,7 @@ public interface UpdateAttributePort {
         int index,
         String description,
         int weight,
+        Map<KitLanguage, AttributeTranslation> translations,
         LocalDateTime lastModificationTime,
         UUID lastModifiedBy,
         long subjectId) {

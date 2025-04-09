@@ -43,6 +43,7 @@ public class UpdateAttributeService implements UpdateAttributeUseCase {
             param.getIndex(),
             param.getDescription(),
             param.getWeight(),
+            param.getTranslations(),
             LocalDateTime.now(),
             param.getCurrentUserId(),
             param.getSubjectId());
