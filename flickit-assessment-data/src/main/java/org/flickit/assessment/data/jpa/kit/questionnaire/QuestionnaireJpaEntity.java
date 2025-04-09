@@ -41,6 +41,9 @@ public class QuestionnaireJpaEntity {
     @Column(name = "description", length = 500, nullable = false)
     private String description;
 
+    @Column(name = "translate")
+    private String translate;
+
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
 
