@@ -44,6 +44,9 @@ public class SubjectJpaEntity {
     @Column(name = "weight", nullable = false)
     private Integer weight = 1;
 
+    @Column(name = "translate")
+    private String translate;
+
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
 

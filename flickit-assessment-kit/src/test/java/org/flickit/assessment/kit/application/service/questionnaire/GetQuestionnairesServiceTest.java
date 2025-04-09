@@ -28,10 +28,10 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class GetQuestionnaireServiceTest {
+class GetQuestionnairesServiceTest {
 
     @InjectMocks
-    private GetQuestionnaireService service;
+    private GetQuestionnairesService service;
 
     @Mock
     private LoadQuestionnairesPort loadQuestionnairesPort;
