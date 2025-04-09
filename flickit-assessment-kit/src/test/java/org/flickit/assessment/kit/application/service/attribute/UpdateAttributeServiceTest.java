@@ -1,7 +1,7 @@
 package org.flickit.assessment.kit.application.service.attribute;
 
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
-import org.flickit.assessment.common.application.domain.kit.translate.AttributeTranslation;
+import org.flickit.assessment.common.application.domain.kit.translation.AttributeTranslation;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.port.in.attribute.UpdateAttributeUseCase.Param;

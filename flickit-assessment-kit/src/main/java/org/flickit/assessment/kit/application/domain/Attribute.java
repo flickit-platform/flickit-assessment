@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
-import org.flickit.assessment.common.application.domain.kit.translate.AttributeTranslation;
+import org.flickit.assessment.common.application.domain.kit.translation.AttributeTranslation;
 
 import java.time.LocalDateTime;
 import java.util.Map;

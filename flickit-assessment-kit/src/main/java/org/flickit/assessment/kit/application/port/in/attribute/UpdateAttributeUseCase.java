@@ -9,7 +9,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
-import org.flickit.assessment.common.application.domain.kit.translate.AttributeTranslation;
+import org.flickit.assessment.common.application.domain.kit.translation.AttributeTranslation;
 
 import java.util.Map;
 import java.util.UUID;

@@ -1,6 +1,6 @@
 package org.flickit.assessment.kit.adapter.in.rest.attribute;
 
-import org.flickit.assessment.common.application.domain.kit.translate.AttributeTranslation;
+import org.flickit.assessment.common.application.domain.kit.translation.AttributeTranslation;
 
 import java.util.Map;
 
