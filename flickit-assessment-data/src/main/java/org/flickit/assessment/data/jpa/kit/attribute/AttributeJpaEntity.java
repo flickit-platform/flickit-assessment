@@ -44,6 +44,9 @@ public class AttributeJpaEntity {
     @Column(name = "weight", nullable = false)
     private Integer weight;
 
+    @Column(name = "translate")
+    private String translate;
+
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
 
