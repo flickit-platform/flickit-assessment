@@ -85,29 +85,29 @@ class UpdateAttributeUseCaseParamTest {
     }
 
     @Test
-    void testUpdateAttributeUseCaseParam_translationLanguageViolations_ErrorMessage() {
+    void testUpdateAttributeUseCaseParam_translationsLanguageViolations_ErrorMessage() {
         var throwable = assertThrows(ValidationException.class,
             () -> createParam(a -> a.translations(Map.of("FR", new AttributeTranslation("title", "desc")))));
         assertEquals(COMMON_KIT_LANGUAGE_NOT_VALID, throwable.getMessageKey());
     }
 
     @Test
-    void testUpdateAttributeUseCaseParam_translationFieldsViolations_ErrorMessage() {
+    void testUpdateAttributeUseCaseParam_translationsFieldsViolations_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(a -> a.translations(Map.of("EN", new AttributeTranslation("t", "desc")))));
-        assertThat(throwable).hasMessage("translations[EN].title: " + TRANSLATE_ATTRIBUTE_TITLE_SIZE_MIN);
+        assertThat(throwable).hasMessage("translations[EN].title: " + TRANSLATION_ATTRIBUTE_TITLE_SIZE_MIN);
 
         throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(a -> a.translations(Map.of("EN", new AttributeTranslation(RandomStringUtils.randomAlphabetic(101), "desc")))));
-        assertThat(throwable).hasMessage("translations[EN].title: " + TRANSLATE_ATTRIBUTE_TITLE_SIZE_MAX);
+        assertThat(throwable).hasMessage("translations[EN].title: " + TRANSLATION_ATTRIBUTE_TITLE_SIZE_MAX);
 
         throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(a -> a.translations(Map.of("EN", new AttributeTranslation("title", "de")))));
-        assertThat(throwable).hasMessage("translations[EN].description: " + TRANSLATE_ATTRIBUTE_DESCRIPTION_SIZE_MIN);
+        assertThat(throwable).hasMessage("translations[EN].description: " + TRANSLATION_ATTRIBUTE_DESCRIPTION_SIZE_MIN);
 
         throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(a -> a.translations(Map.of("EN", new AttributeTranslation("title", RandomStringUtils.randomAlphabetic(501))))));
-        assertThat(throwable).hasMessage("translations[EN].description: " + TRANSLATE_ATTRIBUTE_DESCRIPTION_SIZE_MAX);
+        assertThat(throwable).hasMessage("translations[EN].description: " + TRANSLATION_ATTRIBUTE_DESCRIPTION_SIZE_MAX);
     }
 
     @Test

@@ -33,8 +33,8 @@ public class ErrorMessageKey {
 
     public static final String COMMON_KIT_LANGUAGE_NOT_VALID = "kit-language.notValid";
 
-    public static final String TRANSLATE_ATTRIBUTE_TITLE_SIZE_MIN = "translate-attribute.title.size.min";
-    public static final String TRANSLATE_ATTRIBUTE_TITLE_SIZE_MAX = "translate-attribute.title.size.max";
-    public static final String TRANSLATE_ATTRIBUTE_DESCRIPTION_SIZE_MIN = "translate-attribute.description.size.min";
-    public static final String TRANSLATE_ATTRIBUTE_DESCRIPTION_SIZE_MAX = "translate-attribute.description.size.max";
+    public static final String TRANSLATION_ATTRIBUTE_TITLE_SIZE_MIN = "translations-attribute.title.size.min";
+    public static final String TRANSLATION_ATTRIBUTE_TITLE_SIZE_MAX = "translations-attribute.title.size.max";
+    public static final String TRANSLATION_ATTRIBUTE_DESCRIPTION_SIZE_MIN = "translations-attribute.description.size.min";
+    public static final String TRANSLATION_ATTRIBUTE_DESCRIPTION_SIZE_MAX = "translations-attribute.description.size.max";
 }
