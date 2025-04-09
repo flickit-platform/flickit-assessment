@@ -3,7 +3,6 @@ package org.flickit.assessment.kit.application.service.assessmentkit.updatebydsl
 import org.flickit.assessment.kit.application.domain.Measure;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.port.out.measure.CreateMeasurePort;
-import org.flickit.assessment.kit.application.port.out.measure.UpdateMeasurePort;
 import org.flickit.assessment.kit.application.service.assessmentkit.updatebydsl.UpdateKitPersisterContext;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,9 +32,6 @@ class MeasureUpdateKitPersisterTest {
     @Mock
     private CreateMeasurePort createMeasurePort;
 
-    @Mock
-    private UpdateMeasurePort updateMeasurePort;
-
     @Test
     void testOrder() {
         assertEquals(4, persister.order());
@@ -63,7 +59,7 @@ class MeasureUpdateKitPersisterTest {
         assertNotNull(codeToIdMap);
         assertEquals(2, codeToIdMap.keySet().size());
 
-        verifyNoInteractions(createMeasurePort, updateMeasurePort);
+        verifyNoInteractions(createMeasurePort);
     }
 
     @Test
@@ -100,12 +96,10 @@ class MeasureUpdateKitPersisterTest {
         assertEquals(dslQTwo.getDescription(), measureArgumentCaptor.getValue().getDescription());
         assertNotNull(measureArgumentCaptor.getValue().getCreationTime());
         assertNotNull(measureArgumentCaptor.getValue().getLastModificationTime());
-
-        verifyNoInteractions(updateMeasurePort);
     }
 
     @Test
-    void testMeasureUpdateKitPersister_whenSecondQuestionnaireTitleIsChanged_thenUpdateMeasure() {
+    void testMeasureUpdateKitPersister_whenSecondQuestionnaireTitleIsChanged_thenDoNothing() {
         var questionnaire1 = questionnaireWithTitle("Clean Architecture");
         var questionnaire2 = questionnaireWithTitle("Old Code Quality");
         var savedMeasure1 = measureFromQuestionnaire(questionnaire1);
@@ -126,20 +120,6 @@ class MeasureUpdateKitPersisterTest {
         Map<String, Long> codeToIdMap = ctx.get(KEY_MEASURE);
         assertNotNull(codeToIdMap);
         assertEquals(2, codeToIdMap.keySet().size());
-
-        var updateParamArgumentCaptor = ArgumentCaptor.forClass(UpdateMeasurePort.Param.class);
-
-        verify(updateMeasurePort, times(1))
-            .update(updateParamArgumentCaptor.capture());
-
-        assertEquals(savedMeasure2.getId(), updateParamArgumentCaptor.getValue().id());
-        assertEquals(savedKit.getActiveVersionId(), updateParamArgumentCaptor.getValue().kitVersionId());
-        assertEquals(dslQTwo.getTitle(), updateParamArgumentCaptor.getValue().title());
-        assertEquals(dslQTwo.getCode(), updateParamArgumentCaptor.getValue().code());
-        assertEquals(dslQTwo.getIndex(), updateParamArgumentCaptor.getValue().index());
-        assertEquals(dslQTwo.getDescription(), updateParamArgumentCaptor.getValue().description());
-        assertNotNull(updateParamArgumentCaptor.getValue().lastModificationTime());
-        assertEquals(currentUserId, updateParamArgumentCaptor.getValue().lastModifiedBy());
 
         verifyNoInteractions(createMeasurePort);
     }

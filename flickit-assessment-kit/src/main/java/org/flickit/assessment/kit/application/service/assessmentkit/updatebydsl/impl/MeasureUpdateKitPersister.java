@@ -7,7 +7,6 @@ import org.flickit.assessment.kit.application.domain.Measure;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.QuestionnaireDslModel;
 import org.flickit.assessment.kit.application.port.out.measure.CreateMeasurePort;
-import org.flickit.assessment.kit.application.port.out.measure.UpdateMeasurePort;
 import org.flickit.assessment.kit.application.service.assessmentkit.updatebydsl.UpdateKitPersister;
 import org.flickit.assessment.kit.application.service.assessmentkit.updatebydsl.UpdateKitPersisterContext;
 import org.flickit.assessment.kit.application.service.assessmentkit.updatebydsl.UpdateKitPersisterResult;
@@ -30,7 +29,6 @@ import static org.flickit.assessment.kit.application.service.assessmentkit.updat
 public class MeasureUpdateKitPersister implements UpdateKitPersister {
 
     private final CreateMeasurePort createMeasurePort;
-    private final UpdateMeasurePort updateMeasurePort;
 
     @Override
     public int order() {
@@ -64,11 +62,7 @@ public class MeasureUpdateKitPersister implements UpdateKitPersister {
             finalMeasures.add(createMeasure(dslQuestionnaireCodesMap.get(i),
                 savedKit.getActiveVersionId(),
                 currentUserId)));
-        sameMeasuresCodes.forEach(i ->
-            finalMeasures.add(updateMeasure(savedKit.getActiveVersionId(),
-                savedMeasureCodesMap.get(i),
-                dslQuestionnaireCodesMap.get(i),
-                currentUserId)));
+        sameMeasuresCodes.forEach(i -> finalMeasures.add(savedMeasureCodesMap.get(i)));
 
         var measureCodeToIdMap = finalMeasures.stream().collect(toMap(Measure::getCode, Measure::getId));
         ctx.put(KEY_MEASURE, measureCodeToIdMap);
@@ -100,37 +94,5 @@ public class MeasureUpdateKitPersister implements UpdateKitPersister {
             createParam.getCreationTime(),
             createParam.getLastModificationTime()
         );
-    }
-
-    private Measure updateMeasure(long kitVersionId,
-                                  Measure savedMeasure,
-                                  QuestionnaireDslModel dslQuestionnaire,
-                                  UUID currentUserId) {
-        if (!savedMeasure.getTitle().equals(dslQuestionnaire.getTitle()) ||
-            !savedMeasure.getDescription().equals(dslQuestionnaire.getDescription()) ||
-            savedMeasure.getIndex() != dslQuestionnaire.getIndex()) {
-            var updateParam = new UpdateMeasurePort.Param(
-                savedMeasure.getId(),
-                kitVersionId,
-                dslQuestionnaire.getTitle(),
-                dslQuestionnaire.getCode(),
-                dslQuestionnaire.getIndex(),
-                dslQuestionnaire.getDescription(),
-                LocalDateTime.now(),
-                currentUserId);
-
-            updateMeasurePort.update(updateParam);
-            log.debug("Measure[id={}, code={}] updated.", savedMeasure.getId(), savedMeasure.getCode());
-
-            return new Measure(updateParam.id(),
-                savedMeasure.getCode(),
-                updateParam.title(),
-                updateParam.index(),
-                updateParam.description(),
-                savedMeasure.getCreationTime(),
-                updateParam.lastModificationTime()
-            );
-        }
-        return savedMeasure;
     }
 }
