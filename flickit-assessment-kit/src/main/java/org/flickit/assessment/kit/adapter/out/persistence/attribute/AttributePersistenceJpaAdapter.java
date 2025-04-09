@@ -1,6 +1,8 @@
 package org.flickit.assessment.kit.adapter.out.persistence.attribute;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
@@ -38,12 +40,15 @@ public class AttributePersistenceJpaAdapter implements
     private final AttributeJpaRepository repository;
     private final SubjectJpaRepository subjectRepository;
     private final KitDbSequenceGenerators sequenceGenerators;
+    private final ObjectMapper objectMapper;
 
     @Override
+    @SneakyThrows
     public void update(UpdateAttributePort.Param param) {
         if (!repository.existsByIdAndKitVersionId(param.id(), param.kitVersionId()))
             throw new ResourceNotFoundException(ATTRIBUTE_ID_NOT_FOUND);
 
+        var translations = objectMapper.writeValueAsString(param.translations());
         repository.update(param.id(),
             param.kitVersionId(),
             param.code(),
@@ -51,6 +56,7 @@ public class AttributePersistenceJpaAdapter implements
             param.index(),
             param.description(),
             param.weight(),
+            translations,
             param.lastModificationTime(),
             param.lastModifiedBy(),
             param.subjectId());
@@ -82,12 +88,14 @@ public class AttributePersistenceJpaAdapter implements
     }
 
     @Override
+    @SneakyThrows
     public Long persist(Attribute attribute, Long subjectId, Long kitVersionId) {
         var subjectEntityId = new SubjectJpaEntity.EntityId(subjectId, kitVersionId);
-        SubjectJpaEntity subjectJpaEntity = subjectRepository.findById(subjectEntityId)
+        var subjectJpaEntity = subjectRepository.findById(subjectEntityId)
             .orElseThrow(() -> new ResourceNotFoundException(CREATE_ATTRIBUTE_SUBJECT_ID_NOT_FOUND));
 
-        var entity = mapToJpaEntity(attribute, subjectJpaEntity);
+        var translations = objectMapper.writeValueAsString(attribute.getTranslations());
+        var entity = mapToJpaEntity(attribute, translations, subjectJpaEntity);
         entity.setId(sequenceGenerators.generateAttributeId());
         return repository.save(entity).getId();
     }
