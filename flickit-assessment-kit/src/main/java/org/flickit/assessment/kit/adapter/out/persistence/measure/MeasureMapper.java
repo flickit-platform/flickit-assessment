@@ -29,6 +29,7 @@ public class MeasureMapper {
             measure.getCode(),
             measure.getIndex(),
             measure.getDescription(),
+            null, // TODO: Consider replacing this with the actual value after editing the service.
             measure.getCreationTime(),
             measure.getLastModificationTime(),
             createdBy,
