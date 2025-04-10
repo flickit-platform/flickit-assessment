@@ -94,5 +94,11 @@ class GetAnswerHistoryListServiceTest {
         assertEquals(history1.getCreatedBy().getId(), result.getItems().get(1).createdBy().id());
         assertEquals(history1.getCreatedBy().getDisplayName(), result.getItems().get(1).createdBy().displayName());
         assertEquals(picDownloadLink, result.getItems().get(1).createdBy().pictureLink());
+
+        assertEquals(2, result.getTotal());
+        assertEquals(param.getSize(), result.getSize());
+        assertEquals(param.getPage(), result.getPage());
+        assertEquals(expected.getSort(), result.getSort());
+        assertEquals(expected.getOrder(), result.getOrder());
     }
 }
