@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.application.domain.kitcustom.KitCustomData;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.adapter.out.minio.MinioAdapter;
 import org.flickit.assessment.core.adapter.out.persistence.kit.measure.MeasureMapper;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.domain.report.AssessmentReportItem;
@@ -38,8 +37,6 @@ import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaEntity;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaRepository;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireListItemView;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
-import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupJpaRepository;
-import org.flickit.assessment.data.jpa.users.space.SpaceJpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -86,8 +83,6 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             .map(AssessmentInsightJpaEntity::getInsight)
             .orElse(null);
 
-        var questionnaireViews = questionnaireRepository.findAllWithQuestionCountByKitVersionId(assessmentResultEntity.getKitVersionId(), null).getContent();
-
         var kitVersionId = assessmentResultEntity.getKitVersionId();
         var maturityLevels = maturityLevelRepository.findAllByKitVersionIdOrderByIndex(kitVersionId)
             .stream().map(e -> mapToDomainModel(e, null)).toList();
@@ -99,7 +94,7 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             assessmentResultEntity.getId(),
             assessment.getTitle(),
             assessmentInsight,
-            buildAssessmentKitItem(assessmentKitEntity, maturityLevels, questionnaireViews),
+            buildAssessmentKitItem(kitVersionId, assessmentKitEntity, maturityLevels),
             idToMaturityLevel.get(assessmentResultEntity.getMaturityLevelId()),
             assessmentResultEntity.getConfidenceValue(),
             assessment.getCreationTime()
@@ -110,10 +105,11 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
         return new Result(assessmentReportItem, subjects);
     }
 
-    private AssessmentReportItem.AssessmentKitItem buildAssessmentKitItem(AssessmentKitJpaEntity assessmentKitEntity,
-                                                                          List<MaturityLevel> maturityLevels,
-                                                                          List<QuestionnaireListItemView> questionnaireItemViews) {
-        var questionnaireReportItems = questionnaireItemViews.stream().map(this::buildQuestionnaireReportItems).toList();
+    private AssessmentReportItem.AssessmentKitItem buildAssessmentKitItem(long kitVersionId,
+                                                                          AssessmentKitJpaEntity assessmentKitEntity,
+                                                                          List<MaturityLevel> maturityLevels) {
+        var questionnaireViews = questionnaireRepository.findAllWithQuestionCountByKitVersionId(kitVersionId, null).getContent();
+        var questionnaireReportItems = questionnaireViews.stream().map(this::buildQuestionnaireReportItems).toList();
         int questionsCount = questionnaireReportItems.stream()
             .mapToInt(QuestionnaireReportItem::questionCount)
             .sum();
