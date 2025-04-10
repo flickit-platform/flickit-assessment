@@ -146,10 +146,10 @@ class GetExpertGroupMembersServiceTest {
     @Test
     void testGetExpertGroupMembers_CurrentUserIsOwnerAndStatusIsPending_ThenReturnPendingMembers() {
         var param = createParam(b -> b.currentUserId(expertGroup.getOwnerId()).status(PENDING.name()));
-        LoadExpertGroupMembersPort.Member member1 = createMember(UUID.randomUUID(), PENDING);
-        LoadExpertGroupMembersPort.Member member2 = createMember(UUID.randomUUID(), PENDING);
+        LoadExpertGroupMembersPort.Member pendingMember1 = createMember(UUID.randomUUID(), PENDING);
+        LoadExpertGroupMembersPort.Member pendingMember2 = createMember(UUID.randomUUID(), PENDING);
 
-        var paginatedResult = new PaginatedResponse<>(List.of(member1, member2),
+        var paginatedResult = new PaginatedResponse<>(List.of(pendingMember1, pendingMember2),
             param.getPage(),
             param.getSize(),
             "title",
@@ -178,8 +178,8 @@ class GetExpertGroupMembersServiceTest {
                 assertEquals(expected.status(), actual.status().ordinal());
                 assertNotNull(actual.pictureLink());
             });
-        verify(createFileDownloadLinkPort).createDownloadLink(member1.picture(), Duration.ofDays(1));
-        verify(createFileDownloadLinkPort).createDownloadLink(member2.picture(), Duration.ofDays(1));
+        verify(createFileDownloadLinkPort).createDownloadLink(pendingMember1.picture(), Duration.ofDays(1));
+        verify(createFileDownloadLinkPort).createDownloadLink(pendingMember2.picture(), Duration.ofDays(1));
     }
 
     private LoadExpertGroupMembersPort.Member createMember(UUID memberId, ExpertGroupAccessStatus status) {
