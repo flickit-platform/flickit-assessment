@@ -62,7 +62,8 @@ public interface GetKitListUseCase {
         int likes,
         int assessmentsCount,
         ExpertGroup expertGroup,
-        List<KitTag> tags) {
+        List<KitTag> tags,
+        List<String> languages) {
 
         public record ExpertGroup(
             long id,
