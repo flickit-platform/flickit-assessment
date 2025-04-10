@@ -22,6 +22,7 @@ public class AnswerRangeMapper {
             param.title(),
             param.code(),
             param.reusable(),
+            null, // TODO: Consider replacing this with the actual value after editing the service.
             creationTime,
             creationTime,
             param.createdBy(),

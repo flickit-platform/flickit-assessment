@@ -38,6 +38,7 @@ public class UpdateAttributeRestController {
             requestDto.description(),
             requestDto.weight(),
             requestDto.subjectId(),
+            requestDto.translations(),
             currentUserId);
     }
 }

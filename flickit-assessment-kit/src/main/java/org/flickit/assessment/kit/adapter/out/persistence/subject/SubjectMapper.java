@@ -40,6 +40,7 @@ public class SubjectMapper {
             param.title(),
             param.description(),
             param.weight(),
+            null, // TODO: Consider replacing this with the actual value after editing the service.
             creationTime,
             creationTime,
             param.createdBy(),

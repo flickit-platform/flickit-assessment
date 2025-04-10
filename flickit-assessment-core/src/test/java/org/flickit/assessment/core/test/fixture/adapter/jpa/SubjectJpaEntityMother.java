@@ -16,6 +16,7 @@ public class SubjectJpaEntityMother {
             "title" + subjectId,
             "description" + subjectId,
             1,
+            null, // TODO: Check if replacing with a valid JSON translations is needed after editing the service.
             creationTime,
             creationTime,
             null,

@@ -41,6 +41,9 @@ public class AnswerOptionJpaEntity {
     @Column(name = "value", nullable = false)
     private Double value;
 
+    @Column(name = "translations")
+    private String translations;
+
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
 
