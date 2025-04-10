@@ -70,14 +70,14 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
     @Override
     public Result load(UUID assessmentId) {
         if (!assessmentRepository.existsByIdAndDeletedFalse(assessmentId))
-            throw new ResourceNotFoundException(REPORT_ASSESSMENT_ASSESSMENT_ID_NOT_FOUND);
+            throw new ResourceNotFoundException(GET_ASSESSMENT_REPORT_ASSESSMENT_ID_NOT_FOUND);
 
         var assessmentResultEntity = assessmentResultRepo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
-            .orElseThrow(() -> new ResourceNotFoundException(REPORT_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND));
+            .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_REPORT_ASSESSMENT_RESULT_NOT_FOUND));
 
         var assessment = assessmentResultEntity.getAssessment();
         var assessmentKitEntity = assessmentKitRepository.findById(assessment.getAssessmentKitId())
-            .orElseThrow(() -> new ResourceNotFoundException(REPORT_ASSESSMENT_ASSESSMENT_KIT_NOT_FOUND));
+            .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_REPORT_ASSESSMENT_KIT_NOT_FOUND));
 
         var assessmentInsight = assessmentInsightRepository.findByAssessmentResultId(assessmentResultEntity.getId())
             .map(AssessmentInsightJpaEntity::getInsight)
