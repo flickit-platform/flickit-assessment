@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.flickit.assessment.users.application.domain.ExpertGroupAccessStatus.ACTIVE;
 import static org.flickit.assessment.users.application.domain.ExpertGroupAccessStatus.PENDING;
 import static org.flickit.assessment.users.test.fixture.application.ExpertGroupMother.createExpertGroup;
@@ -44,14 +45,12 @@ class GetExpertGroupMembersServiceTest {
 
     private final ExpertGroup expertGroup = createExpertGroup("picturePath", UUID.randomUUID());
     private final String expectedDownloadLink = "downloadLink";
+    private final LoadExpertGroupMembersPort.Member member1 = createMember(UUID.randomUUID(), ExpertGroupAccessStatus.ACTIVE);
+    private final LoadExpertGroupMembersPort.Member member2 = createMember(expertGroup.getOwnerId(), ExpertGroupAccessStatus.ACTIVE);
 
     @Test
     void testGetExpertGroupMembers_WhenCurrentUserIsOwnerAndNoStatusIsGiven_ThenReturnActiveMembers() {
         var param = createParam(b -> b.status(null).currentUserId(expertGroup.getOwnerId()));
-
-        LoadExpertGroupMembersPort.Member member1 = createMember(UUID.randomUUID(), ExpertGroupAccessStatus.ACTIVE);
-        LoadExpertGroupMembersPort.Member member2 = createMember(expertGroup.getOwnerId(), ExpertGroupAccessStatus.ACTIVE);
-
         var paginatedResult = new PaginatedResponse<>(List.of(member1, member2),
             param.getPage(),
             param.getSize(),
@@ -73,11 +72,17 @@ class GetExpertGroupMembersServiceTest {
         assertTrue(result.getItems().getFirst().deletable());
         assertFalse(result.getItems().getLast().deletable());
         assertEquals(paginatedResult.getTotal(), result.getTotal());
-        for (GetExpertGroupMembersUseCase.Member member : result.getItems()) {
-            assertNotNull(member.email());
-            assertNotNull(member.inviteExpirationDate());
-            assertEquals(ACTIVE, member.status());
-        }
+
+        assertThat(result.getItems())
+            .zipSatisfy(paginatedResult.getItems(), (actual, expected) -> {
+                assertEquals(expected.id(), actual.id());
+                assertEquals(expected.email(), actual.email());
+                assertEquals(expected.bio(), actual.bio());
+                assertEquals(expected.displayName(), actual.displayName());
+                assertEquals(expected.inviteExpirationDate(), actual.inviteExpirationDate());
+                assertEquals(expected.status(), actual.status().ordinal());
+                assertNotNull(actual.pictureLink());
+            });
 
         verify(createFileDownloadLinkPort).createDownloadLink(member1.picture(), Duration.ofDays(1));
         verify(createFileDownloadLinkPort).createDownloadLink(member2.picture(), Duration.ofDays(1));
@@ -86,9 +91,6 @@ class GetExpertGroupMembersServiceTest {
     @Test
     void testGetExpertGroupMembers_WhenCurrentUserIsNotOwnerAndNoStatusIsGiven_ThenReturnActiveMembers() {
         var param = createParam(b -> b.status(null));
-        LoadExpertGroupMembersPort.Member member1 = createMember(UUID.randomUUID(), ACTIVE);
-        LoadExpertGroupMembersPort.Member member2 = createMember(expertGroup.getOwnerId(), ACTIVE);
-
         var paginatedResult = new PaginatedResponse<>(List.of(member1, member2),
             param.getPage(),
             param.getSize(),
@@ -110,11 +112,17 @@ class GetExpertGroupMembersServiceTest {
         assertFalse(result.getItems().getFirst().deletable());
         assertFalse(result.getItems().getLast().deletable());
         assertEquals(paginatedResult.getTotal(), result.getTotal());
-        for (GetExpertGroupMembersUseCase.Member member : result.getItems()) {
-            assertNull(member.email());
-            assertNotNull(member.inviteExpirationDate());
-            assertEquals(ACTIVE, member.status());
-        }
+        assertThat(result.getItems())
+            .zipSatisfy(paginatedResult.getItems(), (actual, expected) -> {
+                assertEquals(expected.id(), actual.id());
+                assertEquals(expected.bio(), actual.bio());
+                assertEquals(expected.displayName(), actual.displayName());
+                assertEquals(expected.inviteExpirationDate(), actual.inviteExpirationDate());
+                assertEquals(expected.status(), actual.status().ordinal());
+                assertNull(actual.email());
+                assertNotNull(actual.pictureLink());
+            });
+
         verify(createFileDownloadLinkPort).createDownloadLink(member1.picture(), Duration.ofDays(1));
         verify(createFileDownloadLinkPort).createDownloadLink(member2.picture(), Duration.ofDays(1));
     }
@@ -160,12 +168,16 @@ class GetExpertGroupMembersServiceTest {
         assertEquals(paginatedResult.getSort(), result.getSort());
         assertEquals(paginatedResult.getOrder(), result.getOrder());
         assertEquals(paginatedResult.getTotal(), result.getTotal());
-        for (GetExpertGroupMembersUseCase.Member member : result.getItems()) {
-            assertTrue(member.deletable());
-            assertNotNull(member.email());
-            assertNotNull(member.inviteExpirationDate());
-            assertEquals(PENDING, member.status());
-        }
+        assertThat(result.getItems())
+            .zipSatisfy(paginatedResult.getItems(), (actual, expected) -> {
+                assertEquals(expected.id(), actual.id());
+                assertEquals(expected.email(), actual.email());
+                assertEquals(expected.bio(), actual.bio());
+                assertEquals(expected.displayName(), actual.displayName());
+                assertEquals(expected.inviteExpirationDate(), actual.inviteExpirationDate());
+                assertEquals(expected.status(), actual.status().ordinal());
+                assertNotNull(actual.pictureLink());
+            });
         verify(createFileDownloadLinkPort).createDownloadLink(member1.picture(), Duration.ofDays(1));
         verify(createFileDownloadLinkPort).createDownloadLink(member2.picture(), Duration.ofDays(1));
     }
