@@ -148,7 +148,7 @@ class GetAssessmentReportServiceTest {
         var assessmentReport = createAssessmentReportItem(param);
         var attributeReportItem = new AttributeReportItem(15L, "Agility", "agility of team",
             "in very good state", 1, 3, 63.0, levelThree());
-        var subjects = List.of(new AssessmentSubjectReportItem(2L, "team", 2, "subjectDesc2",
+        var subjects = List.of(new AssessmentSubjectReportItem(2L, "team", 2,
             "subject Insight", 58.6, levelTwo(), List.of(attributeReportItem)));
         var assessmentReportInfo = new LoadAssessmentReportInfoPort.Result(assessmentReport, subjects);
         var adviceNarration = "assessor narration";
@@ -203,7 +203,7 @@ class GetAssessmentReportServiceTest {
         var teamLevel = levelTwo();
         var attributeReportItem = new AttributeReportItem(15L, "Agility", "agility of team",
             "in very good state", 1, 3, 63.0, levelThree());
-        var subjects = List.of(new AssessmentSubjectReportItem(2L, "team", 2, "subjectDesc2",
+        var subjects = List.of(new AssessmentSubjectReportItem(2L, "team", 2,
             "subject Insight", 58.6, teamLevel, List.of(attributeReportItem)));
         var assessmentReportInfo = new LoadAssessmentReportInfoPort.Result(assessmentReport, subjects);
         AssessmentReport report = publishedReportWithMetadata(fullMetadata());
@@ -242,34 +242,26 @@ class GetAssessmentReportServiceTest {
     }
 
     private AssessmentReportItem createAssessmentReportItem(GetAssessmentReportUseCase.Param param) {
-        AssessmentReportItem.Space space = new AssessmentReportItem.Space(1563L, "Space");
         return new AssessmentReportItem(param.getAssessmentId(),
             UUID.randomUUID(),
             "assessmentTitle",
-            "shortAssessmentTitle",
             "assessment insight",
             createAssessmentKit(),
             levelTwo(),
             1.5,
-            true,
-            true,
-            LocalDateTime.now(),
-            LocalDateTime.now(),
-            space);
+            LocalDateTime.now()
+        );
     }
 
     private AssessmentReportItem.AssessmentKitItem createAssessmentKit() {
         return new AssessmentReportItem.AssessmentKitItem(15L,
             "kit title",
-            "kit summary",
-            "about",
             KitLanguage.FA,
             5,
             150,
             MaturityLevelMother.allLevels(),
             List.of(new QuestionnaireReportItem(14L, "questionnaire title", "questionnaire description", 1, 15)),
-            List.of(createMeasure(), createMeasure()),
-            new AssessmentReportItem.AssessmentKitItem.ExpertGroup(569L, "expert group", null));
+            List.of(createMeasure(), createMeasure()));
     }
 
     private GetAssessmentReportUseCase.Param createParam(Consumer<GetAssessmentReportUseCase.Param.ParamBuilder> changer) {
