@@ -55,6 +55,7 @@ public class UpdateQuestionService implements UpdateQuestionUseCase {
             param.getMayNotBeApplicable(),
             param.getAdvisable(),
             param.getAnswerRangeId(),
+            param.getTranslations(),
             LocalDateTime.now(),
             param.getCurrentUserId()));
     }

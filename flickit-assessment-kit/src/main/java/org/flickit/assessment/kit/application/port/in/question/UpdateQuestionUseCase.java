@@ -14,6 +14,8 @@ import java.util.Map;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_KIT_LANGUAGE_NOT_VALID;
+import static org.flickit.assessment.common.validation.EnumValidateUtils.validateAndConvert;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 public interface UpdateQuestionUseCase {
@@ -65,7 +67,7 @@ public interface UpdateQuestionUseCase {
                      Boolean mayNotBeApplicable,
                      Boolean advisable,
                      Long answerRangeId,
-                     Map<KitLanguage, QuestionTranslation> translations,
+                     Map<String, QuestionTranslation> translations,
                      UUID currentUserId) {
             this.kitVersionId = kitVersionId;
             this.questionId = questionId;
@@ -75,7 +77,7 @@ public interface UpdateQuestionUseCase {
             this.mayNotBeApplicable = mayNotBeApplicable;
             this.advisable = advisable;
             this.answerRangeId = answerRangeId;
-            this.translations = translations;
+            this.translations = validateAndConvert(translations,KitLanguage.class, COMMON_KIT_LANGUAGE_NOT_VALID);
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
