@@ -50,7 +50,7 @@ public class QuestionJpaEntity {
     @Column(name = "questionnaire_id", nullable = false)
     private Long questionnaireId;
 
-    @Column(name = "measure_id", nullable = false)
+    @Column(name = "measure_id")
     private Long measureId;
 
     @Column(name = "answer_range_id")
