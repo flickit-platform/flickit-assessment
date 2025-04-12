@@ -26,7 +26,8 @@ public class MaturityLevelMapper {
             entity.getTitle(),
             entity.getIndex(),
             entity.getDescription(),
-            entity.getValue()
+            entity.getValue(),
+            null
         );
     }
 

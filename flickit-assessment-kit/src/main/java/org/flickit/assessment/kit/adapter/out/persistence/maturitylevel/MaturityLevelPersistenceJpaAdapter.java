@@ -1,6 +1,8 @@
 package org.flickit.assessment.kit.adapter.out.persistence.maturitylevel;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaRepository;
@@ -18,7 +20,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.kit.adapter.out.persistence.maturitylevel.MaturityLevelMapper.mapToDomainModel;
 import static org.flickit.assessment.kit.adapter.out.persistence.maturitylevel.MaturityLevelMapper.mapToJpaEntityToPersist;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.MATURITY_LEVEL_ID_NOT_FOUND;
@@ -35,6 +37,7 @@ public class MaturityLevelPersistenceJpaAdapter implements
     private final MaturityLevelJpaRepository repository;
     private final LevelCompetenceJpaRepository levelCompetenceRepository;
     private final KitDbSequenceGenerators sequenceGenerators;
+    private final ObjectMapper objectMapper;
 
     @Override
     public Long persist(MaturityLevel level, Long kitVersionId, UUID createdBy) {
@@ -77,12 +80,22 @@ public class MaturityLevelPersistenceJpaAdapter implements
     }
 
     @Override
+    @SneakyThrows
     public void update(MaturityLevel maturityLevel, Long kitVersionId, LocalDateTime lastModificationTime, UUID lastModifiedBy) {
         if (!repository.existsByIdAndKitVersionId(maturityLevel.getId(), kitVersionId))
             throw new ResourceNotFoundException(MATURITY_LEVEL_ID_NOT_FOUND);
 
-        repository.update(maturityLevel.getId(), kitVersionId, maturityLevel.getCode(), maturityLevel.getIndex(), maturityLevel.getTitle(),
-            maturityLevel.getDescription(), maturityLevel.getValue(), lastModificationTime, lastModifiedBy);
+        var translations = objectMapper.writeValueAsString(maturityLevel.getTranslations());
+        repository.update(maturityLevel.getId(),
+            kitVersionId,
+            maturityLevel.getCode(),
+            maturityLevel.getIndex(),
+            maturityLevel.getTitle(),
+            maturityLevel.getDescription(),
+            maturityLevel.getValue(),
+            translations,
+            lastModificationTime,
+            lastModifiedBy);
     }
 
     @Override
