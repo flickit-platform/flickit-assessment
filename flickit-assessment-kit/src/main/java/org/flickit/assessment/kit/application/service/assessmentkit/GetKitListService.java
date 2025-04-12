@@ -9,6 +9,7 @@ import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitListUs
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CountKitListStatsPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadPublishedKitListPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadPublishedKitListPort.Result;
+import org.flickit.assessment.kit.application.port.out.kitlanguage.LoadKitLanguagesPort;
 import org.flickit.assessment.kit.application.port.out.kittag.LoadKitTagListPort;
 import org.flickit.assessment.kit.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.springframework.stereotype.Service;
@@ -34,6 +35,7 @@ public class GetKitListService implements GetKitListUseCase {
     private final LoadPublishedKitListPort loadPublishedKitListPort;
     private final CountKitListStatsPort countKitStatsPort;
     private final LoadKitTagListPort loadKitTagListPort;
+    private final LoadKitLanguagesPort loadKitLanguagesPort;
     private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
     @Override
@@ -57,10 +59,13 @@ public class GetKitListService implements GetKitListUseCase {
         var idToKitTagsMap = loadKitTagListPort.loadByKitIds(ids).stream()
             .collect(Collectors.groupingBy(LoadKitTagListPort.Result::kitId));
 
+        var idToKitLanguagesMap = loadKitLanguagesPort.loadByKitIds(ids);
+
         var items = kitsPage.getItems().stream()
             .map(item -> toAssessmentKit(item,
                 idToStatsMap.get(item.kit().getId()),
-                idToKitTagsMap.get(item.kit().getId())))
+                idToKitTagsMap.get(item.kit().getId()),
+                idToKitLanguagesMap.get(item.kit().getId())))
             .toList();
 
         return new PaginatedResponse<>(
@@ -84,7 +89,8 @@ public class GetKitListService implements GetKitListUseCase {
 
     private KitListItem toAssessmentKit(Result item,
                                         CountKitListStatsPort.Result stats,
-                                        List<LoadKitTagListPort.Result> kitTags) {
+                                        List<LoadKitTagListPort.Result> kitTags,
+                                        List<KitLanguage> kitLanguages) {
         return new KitListItem(
             item.kit().getId(),
             item.kit().getTitle(),
@@ -95,6 +101,9 @@ public class GetKitListService implements GetKitListUseCase {
             toExpertGroup(item.expertGroup()),
             kitTags.stream()
                 .flatMap(result -> result.kitTags().stream())
+                .toList(),
+            kitLanguages.stream()
+                .map(KitLanguage::getTitle)
                 .toList());
     }
 
