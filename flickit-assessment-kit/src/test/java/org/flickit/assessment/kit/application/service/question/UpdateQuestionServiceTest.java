@@ -1,5 +1,6 @@
 package org.flickit.assessment.kit.application.service.question;
 
+import org.flickit.assessment.common.application.domain.kit.translation.QuestionTranslation;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.kit.application.domain.KitVersion;
@@ -18,6 +19,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -54,7 +56,7 @@ class UpdateQuestionServiceTest {
     private final KitVersion kitVersion = createKitVersion(simpleKit());
 
     @Test
-    void testUpdateQuestion_WhenCurrentUserIsNotExpertGroupOwner_ThenThrowAccessDeniedException() {
+    void testUpdateQuestion_whenCurrentUserIsNotExpertGroupOwner_thenThrowAccessDeniedException() {
         var param = createParam(UpdateQuestionUseCase.Param.ParamBuilder::build);
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
@@ -67,7 +69,7 @@ class UpdateQuestionServiceTest {
     }
 
     @Test
-    void testUpdateQuestion_WhenCurrentUserIsOwner_ThenUpdateQuestion() {
+    void testUpdateQuestion_whenCurrentUserIsOwner_thenUpdateQuestion() {
         var param = createParam(b -> b.currentUserId(ownerId));
         Question question = QuestionMother.createQuestion(param.getAnswerRangeId());
 
@@ -88,6 +90,7 @@ class UpdateQuestionServiceTest {
         assertEquals(param.getHint(), outPortParam.getValue().hint());
         assertEquals(param.getMayNotBeApplicable(), outPortParam.getValue().mayNotBeApplicable());
         assertEquals(param.getAdvisable(), outPortParam.getValue().advisable());
+        assertEquals(param.getTranslations(), outPortParam.getValue().translations());
         assertEquals(param.getCurrentUserId(), outPortParam.getValue().lastModifiedBy());
         assertNotNull(outPortParam.getValue().lastModificationTime());
 
@@ -95,7 +98,7 @@ class UpdateQuestionServiceTest {
     }
 
     @Test
-    void testUpdateQuestion_WhenAnswerRangeIdUpdatedAndKitIsUsedInAssessments_ThenThrowException() {
+    void testUpdateQuestion_whenAnswerRangeIdUpdatedAndKitIsUsedInAssessments_thenThrowException() {
         var param = createParam(b -> b.currentUserId(ownerId));
         Question question = QuestionMother.createQuestion(param.getAnswerRangeId() + 1);
 
@@ -111,7 +114,7 @@ class UpdateQuestionServiceTest {
     }
 
     @Test
-    void testUpdateQuestion_WhenAnswerRangeIdUpdatedAndKitIsNotUsedInAssessments_ThenThrowException() {
+    void testUpdateQuestion_whenAnswerRangeIdUpdatedAndKitIsNotUsedInAssessments_thenThrowException() {
         var param = createParam(b -> b.currentUserId(ownerId));
         Question question = QuestionMother.createQuestion(param.getAnswerRangeId() + 1);
 
@@ -132,12 +135,13 @@ class UpdateQuestionServiceTest {
         assertEquals(param.getHint(), outPortParam.getValue().hint());
         assertEquals(param.getMayNotBeApplicable(), outPortParam.getValue().mayNotBeApplicable());
         assertEquals(param.getAdvisable(), outPortParam.getValue().advisable());
+        assertEquals(param.getTranslations(), outPortParam.getValue().translations());
         assertEquals(param.getCurrentUserId(), outPortParam.getValue().lastModifiedBy());
         assertNotNull(outPortParam.getValue().lastModificationTime());
     }
 
     @Test
-    void testUpdateQuestion_WhenAnswerRangeIdOfQuestionIsNUll_ThenUpdateQuestion() {
+    void testUpdateQuestion_whenAnswerRangeIdOfQuestionIsNUll_thenUpdateQuestion() {
         var param = createParam(b -> b.currentUserId(ownerId));
         Question question = QuestionMother.createQuestion(null);
 
@@ -158,6 +162,7 @@ class UpdateQuestionServiceTest {
         assertEquals(param.getHint(), outPortParam.getValue().hint());
         assertEquals(param.getMayNotBeApplicable(), outPortParam.getValue().mayNotBeApplicable());
         assertEquals(param.getAdvisable(), outPortParam.getValue().advisable());
+        assertEquals(param.getTranslations(), outPortParam.getValue().translations());
         assertEquals(param.getCurrentUserId(), outPortParam.getValue().lastModifiedBy());
         assertNotNull(outPortParam.getValue().lastModificationTime());
     }
@@ -178,6 +183,7 @@ class UpdateQuestionServiceTest {
             .mayNotBeApplicable(true)
             .answerRangeId(15L)
             .advisable(false)
+            .translations(Map.of("EN", new QuestionTranslation("title", "desc")))
             .currentUserId(UUID.randomUUID());
     }
 }
