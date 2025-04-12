@@ -75,4 +75,8 @@
             </column>
         </addColumn>
     </changeSet>
+
+    <changeSet id="0.56-10" author="Mahdi Rezazadeh">
+        <dropNotNullConstraint tableName="fak_question" columnName="measure_id"/>
+    </changeSet>
 </databaseChangeLog>
