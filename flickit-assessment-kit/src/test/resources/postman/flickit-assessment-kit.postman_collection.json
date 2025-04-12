@@ -251,6 +251,65 @@
 					"response": []
 				},
 				{
+					"name": "Get Kit Languages",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/kit-languages",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"kit-languages"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Kit List",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessment-kits?isPrivate=true",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessment-kits"
+							],
+							"query": [
+								{
+									"key": "isPrivate",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Get Kit Minimal Info",
 					"request": {
 						"method": "GET",
@@ -559,65 +618,6 @@
 								"assessment-kits",
 								"393",
 								"clone"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Kit Languages",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept-Language",
-								"value": "{{accept_language}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/kit-languages",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"kit-languages"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Kit List",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}",
-								"type": "text"
-							},
-							{
-								"key": "Accept-Language",
-								"value": "{{accept_language}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessment-kits?isPrivate=true",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessment-kits"
-							],
-							"query": [
-								{
-									"key": "isPrivate",
-									"value": "true"
-								}
 							]
 						}
 					},
