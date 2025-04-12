@@ -1444,7 +1444,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"index\": 26,\n    \"title\": \"update question title\",\n    \"hint\": \"new hint\",\n    \"mayNotBeApplicable\": true,\n    \"advisable\": false,\n    \"answerRangeId\": 1618\n}",
+							"raw": "{\n    \"index\": 26,\n    \"title\": \"update question title\",\n    \"hint\": \"new hint\",\n    \"mayNotBeApplicable\": true,\n    \"advisable\": false,\n    \"answerRangeId\": 1618,\n        \"translations\": {\n        \"FA\": {\n            \"title\": \"عنوان\",\n            \"hint\": \"راهنما\"\n        }\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
