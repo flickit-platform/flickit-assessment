@@ -56,6 +56,9 @@ public class QuestionJpaEntity {
     @Column(name = "answer_range_id")
     private Long answerRangeId;
 
+    @Column(name = "translations")
+    private String translations;
+
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
 

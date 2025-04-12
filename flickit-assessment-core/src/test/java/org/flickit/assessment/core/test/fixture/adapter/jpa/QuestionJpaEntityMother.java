@@ -23,6 +23,7 @@ public class QuestionJpaEntityMother {
             questionnaireId,
             measureId,
             null,
+            null, // TODO: Check if replacing with a valid JSON translations is needed after editing the service.
             creationTime,
             creationTime,
             UUID.randomUUID(),
