@@ -4,7 +4,7 @@ import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 
 import java.util.List;
 
-public interface LoadKitLanguageListPort {
+public interface LoadKitLanguagesPort {
 
     List<Result> loadByKitIds(List<Long> kitIds);
 

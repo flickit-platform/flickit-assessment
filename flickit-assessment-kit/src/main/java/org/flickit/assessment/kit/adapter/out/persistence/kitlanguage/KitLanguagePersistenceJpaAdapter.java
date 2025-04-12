@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.data.jpa.kit.kitlanguage.KitLanguageJpaEntity;
 import org.flickit.assessment.data.jpa.kit.kitlanguage.KitLanguageJpaRepository;
-import org.flickit.assessment.kit.application.port.out.kitlanguage.LoadKitLanguageListPort;
+import org.flickit.assessment.kit.application.port.out.kitlanguage.LoadKitLanguagesPort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -14,7 +14,7 @@ import static java.util.stream.Collectors.*;
 @Component
 @RequiredArgsConstructor
 public class KitLanguagePersistenceJpaAdapter implements
-    LoadKitLanguageListPort {
+    LoadKitLanguagesPort {
 
     private final KitLanguageJpaRepository repository;
 
