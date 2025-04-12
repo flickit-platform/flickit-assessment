@@ -75,4 +75,11 @@
             </column>
         </addColumn>
     </changeSet>
+
+    <changeSet id="0.56-10" author="Maziyar Gerami">
+        <addUniqueConstraint columnNames="kit_version_id, index"
+                             constraintName="uq_fak_measure_index_kitversionid"
+                             tableName="fak_measure"
+                             initiallyDeferred="true"/>
+    </changeSet>
 </databaseChangeLog>
