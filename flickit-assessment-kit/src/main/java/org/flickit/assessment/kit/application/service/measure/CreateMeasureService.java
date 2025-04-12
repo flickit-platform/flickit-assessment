@@ -27,13 +27,14 @@ public class CreateMeasureService implements CreateMeasureUseCase {
     private final CreateMeasurePort createMeasurePort;
 
     @Override
-    public long createMeasure(Param param) {
+    public Result createMeasure(Param param) {
         KitVersion kitVersion = loadKitVersionPort.load(param.getKitVersionId());
         UUID ownerId = loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId());
         if (!ownerId.equals(param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        return createMeasurePort.persist(toMeasure(param), param.getKitVersionId(), param.getCurrentUserId());
+        long id = createMeasurePort.persist(toMeasure(param), param.getKitVersionId(), param.getCurrentUserId());
+        return new Result(id);
     }
 
     private Measure toMeasure(Param param) {

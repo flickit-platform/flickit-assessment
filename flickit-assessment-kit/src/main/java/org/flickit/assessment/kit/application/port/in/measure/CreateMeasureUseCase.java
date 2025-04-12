@@ -15,7 +15,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.CREATE_MEASURE_D
 
 public interface CreateMeasureUseCase {
 
-    long createMeasure(Param param);
+    Result createMeasure(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = true)

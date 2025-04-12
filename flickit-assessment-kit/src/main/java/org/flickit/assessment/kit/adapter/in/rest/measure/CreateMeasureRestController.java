@@ -24,8 +24,8 @@ public class CreateMeasureRestController {
     public ResponseEntity<Result> createMeasure(@PathVariable("kitVersionId") Long kitVersionId,
                                                 @RequestBody CreateMeasureRequestDto requestDto) {
         UUID currentUserId = userContext.getUser().id();
-        long measureId = useCase.createMeasure(toParam(kitVersionId, requestDto, currentUserId));
-        return new ResponseEntity<>(new Result(measureId), HttpStatus.CREATED);
+        var result = useCase.createMeasure(toParam(kitVersionId, requestDto, currentUserId));
+        return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 
     private Param toParam(Long kitVersionId,

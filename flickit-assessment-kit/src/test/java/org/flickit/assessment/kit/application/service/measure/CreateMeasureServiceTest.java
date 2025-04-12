@@ -3,7 +3,6 @@ package org.flickit.assessment.kit.application.service.measure;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.domain.Measure;
-import org.flickit.assessment.kit.application.domain.Measure;
 import org.flickit.assessment.kit.application.port.in.measure.CreateMeasureUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
@@ -67,10 +66,10 @@ class CreateMeasureServiceTest {
         when(createMeasurePort.persist(measureCaptor.capture(), eq(param.getKitVersionId()), eq(param.getCurrentUserId())))
             .thenReturn(measureId);
 
-        long actualMeasureId = createMeasureService.createMeasure(param);
+        var result = createMeasureService.createMeasure(param);
         verify(createMeasurePort).persist(measureCaptor.capture(), eq(param.getKitVersionId()), eq(param.getCurrentUserId()));
 
-        assertEquals(measureId, actualMeasureId);
+        assertEquals(measureId, result.id());
         assertEquals(param.getTitle(), measureCaptor.getValue().getTitle());
         assertEquals(param.getDescription(), measureCaptor.getValue().getDescription());
         assertEquals(param.getIndex(), measureCaptor.getValue().getIndex());
