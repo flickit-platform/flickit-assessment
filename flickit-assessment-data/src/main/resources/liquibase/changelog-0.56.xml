@@ -82,4 +82,18 @@
                              tableName="fak_measure"
                              initiallyDeferred="true"/>
     </changeSet>
+
+    <changeSet id="0.56-11" author="Maziyar Gerami">
+        <addUniqueConstraint columnNames="kit_version_id, code"
+                             constraintName="uq_fak_measure_code_kitversionid"
+                             tableName="fak_measure"
+                             initiallyDeferred="true"/>
+    </changeSet>
+
+    <changeSet id="0.56-12" author="Maziyar Gerami">
+        <addUniqueConstraint columnNames="kit_version_id, title"
+                             constraintName="uq_fak_measure_title_kitversionid"
+                             tableName="fak_measure"
+                             initiallyDeferred="true"/>
+    </changeSet>
 </databaseChangeLog>

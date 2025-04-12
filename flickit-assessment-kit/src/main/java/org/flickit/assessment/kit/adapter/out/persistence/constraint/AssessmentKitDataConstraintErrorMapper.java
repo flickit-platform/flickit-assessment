@@ -49,7 +49,10 @@ public class AssessmentKitDataConstraintErrorMapper implements DataConstraintErr
         entry("uq_fak_kitcustom_code_kitid", CREATE_KIT_CUSTOM_TITLE_DUPLICATE),
         entry("uq_fak_kitversion_kitId_statusversion", CREATE_ASSESSMENT_KIT_STATUS_DUPLICATE),
         entry("uq_fak_answer_range_code_kitversionid", CREATE_ANSWER_RANGE_TITLE_DUPLICATE),
-        entry("uq_fak_measure_index_kitversionid", CREATE_MEASURE_INDEX_DUPLICATE));
+        entry("uq_fak_measure_index_kitversionid", CREATE_MEASURE_INDEX_DUPLICATE),
+        entry("uq_fak_measure_code_kitversionid", CREATE_MEASURE_TITLE_DUPLICATE),
+        entry("uq_fak_measure_title_kitversionid", CREATE_MEASURE_TITLE_DUPLICATE)
+        );
 
     @Override
     public boolean contains(String constraintName) {
