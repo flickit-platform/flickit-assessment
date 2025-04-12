@@ -43,7 +43,7 @@ class CreateMeasureServiceTest {
     private final KitVersion kitVersion = createKitVersion(simpleKit());
 
     @Test
-    void testCreateMeasure_whenCurrentUserIsNotOwner_ShouldThrowAccessDeniedException() {
+    void testCreateMeasure_whenCurrentUserIsNotExpertGroupOwner_thenThrowAccessDeniedException() {
         var param = createParam(CreateMeasureUseCase.Param.ParamBuilder::build);
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
@@ -56,7 +56,7 @@ class CreateMeasureServiceTest {
     }
 
     @Test
-    void testCreateMeasure_whenCurrentUserIsOwner_thenCreateMeasure() {
+    void testCreateMeasure_whenCurrentUserIsExpertGroupOwner_thenCreateMeasure() {
         long measureId = 123;
         var param = createParam(b -> b.currentUserId(ownerId));
 
