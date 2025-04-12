@@ -37,6 +37,7 @@ public class UpdateQuestionRestController {
             requestDto.mayNotBeApplicable(),
             requestDto.advisable(),
             requestDto.answerRangeId(),
+            requestDto.translations(),
             currentUserId);
     }
 }
