@@ -31,6 +31,7 @@ public class AnswerOptionMapper {
             param.title(),
             param.answerRangeId(),
             param.value(),
+            null, // TODO: Consider replacing this with the actual value after editing the service.
             creationTime,
             creationTime,
             param.createdBy(),

@@ -50,6 +50,7 @@ public class QuestionMapper {
             param.questionnaireId(),
             param.measureId(),
             param.answerRangeId(),
+            null, // TODO: Consider replacing this with the actual value after editing the service.
             creationTime,
             creationTime,
             param.createdBy(),
