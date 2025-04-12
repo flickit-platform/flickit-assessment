@@ -7,9 +7,7 @@ import org.flickit.assessment.kit.application.domain.Questionnaire;
 import org.flickit.assessment.kit.application.port.in.question.CreateQuestionUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
-import org.flickit.assessment.kit.application.port.out.measure.LoadMeasurePort;
 import org.flickit.assessment.kit.application.port.out.question.CreateQuestionPort;
-import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairePort;
 import org.flickit.assessment.kit.test.fixture.application.QuestionnaireMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -43,12 +41,6 @@ class CreateQuestionServiceTest {
     @Mock
     private LoadKitVersionPort loadKitVersionPort;
 
-    @Mock
-    private LoadQuestionnairePort loadQuestionnairePort;
-
-    @Mock
-    private LoadMeasurePort loadMeasurePort;
-
     private final UUID ownerId = UUID.randomUUID();
     private final KitVersion kitVersion = createKitVersion(simpleKit());
     private final Questionnaire questionnaire = QuestionnaireMother.questionnaireWithTitle("Questionnaire");
@@ -63,7 +55,7 @@ class CreateQuestionServiceTest {
 
         assertThrows(AccessDeniedException.class, () -> createQuestionService.createQuestion(param));
 
-        verifyNoInteractions(loadQuestionnairePort, loadMeasurePort, createQuestionPort);
+        verifyNoInteractions(createQuestionPort);
     }
 
     @Test
@@ -73,8 +65,6 @@ class CreateQuestionServiceTest {
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
-        when(loadQuestionnairePort.load(param.getQuestionnaireId(), param.getKitVersionId())).thenReturn(questionnaire);
-        when(loadMeasurePort.loadByCode(questionnaire.getCode(), param.getKitVersionId())).thenReturn(measure);
         when(createQuestionPort.persist(any(CreateQuestionPort.Param.class))).thenReturn(questionId);
 
         long actualQuestionId = createQuestionService.createQuestion(param);
