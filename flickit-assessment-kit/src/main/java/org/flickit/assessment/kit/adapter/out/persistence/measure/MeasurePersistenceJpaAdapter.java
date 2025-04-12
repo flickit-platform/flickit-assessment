@@ -15,7 +15,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.UUID;
 
 import static java.util.stream.Collectors.toMap;
@@ -79,13 +78,6 @@ public class MeasurePersistenceJpaAdapter implements
         return repository.findByCodeAndKitVersionId(code, kitVersionId)
             .map(MeasureMapper::mapToDomainModel)
             .orElseThrow(() -> new ResourceNotFoundException(MEASURE_ID_NOT_FOUND));
-    }
-
-    @Override
-    public List<Measure> loadAll(Long kitVersionId) {
-        return repository.findAllByKitVersionIdOrderByIndex(kitVersionId).stream()
-            .map(MeasureMapper::mapToDomainModel)
-            .toList();
     }
 
     @Override
