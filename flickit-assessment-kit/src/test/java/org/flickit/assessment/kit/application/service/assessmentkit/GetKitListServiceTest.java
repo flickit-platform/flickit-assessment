@@ -20,6 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Sort;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -74,7 +75,7 @@ class GetKitListServiceTest {
         when(loadKitTagListPort.loadByKitIds(kitIds)).thenReturn(
             List.of(new LoadKitTagListPort.Result(kitId, List.of(sampleTag))));
         when(loadKitLanguagesPort.loadByKitIds(kitIds)).thenReturn(
-            List.of(new LoadKitLanguagesPort.Result(kitId, List.of(KitLanguage.EN))));
+            Map.of(kitId, List.of(KitLanguage.EN)));
         when(createFileDownloadLinkPort.createDownloadLink(any(), any()))
             .thenReturn(expertGroupPictureUrl);
 
@@ -129,7 +130,7 @@ class GetKitListServiceTest {
         when(loadKitTagListPort.loadByKitIds(kitIds)).thenReturn(
             List.of(new LoadKitTagListPort.Result(kitId, List.of(sampleTag))));
         when(loadKitLanguagesPort.loadByKitIds(kitIds)).thenReturn(
-            List.of(new LoadKitLanguagesPort.Result(kitId, List.of(KitLanguage.EN))));
+            Map.of(kitId, List.of(KitLanguage.EN)));
         when(createFileDownloadLinkPort.createDownloadLink(any(), any()))
             .thenReturn(expertGroupPictureUrl);
 
@@ -173,7 +174,7 @@ class GetKitListServiceTest {
             .thenReturn(expectedKitsPage);
         when(countKitStatsPort.countKitsStats(List.of())).thenReturn(List.of());
         when(loadKitTagListPort.loadByKitIds(List.of())).thenReturn(List.of());
-        when(loadKitLanguagesPort.loadByKitIds(List.of())).thenReturn(List.of());
+        when(loadKitLanguagesPort.loadByKitIds(List.of())).thenReturn(Map.of());
 
         var kitList = service.getKitList(param);
 

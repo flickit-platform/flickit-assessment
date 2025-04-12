@@ -59,8 +59,7 @@ public class GetKitListService implements GetKitListUseCase {
         var idToKitTagsMap = loadKitTagListPort.loadByKitIds(ids).stream()
             .collect(Collectors.groupingBy(LoadKitTagListPort.Result::kitId));
 
-        var idToKitLanguagesMap = loadKitLanguagesPort.loadByKitIds(ids).stream()
-            .collect(Collectors.groupingBy(LoadKitLanguagesPort.Result::kitId));
+        var idToKitLanguagesMap = loadKitLanguagesPort.loadByKitIds(ids);
 
         var items = kitsPage.getItems().stream()
             .map(item -> toAssessmentKit(item,
@@ -91,7 +90,7 @@ public class GetKitListService implements GetKitListUseCase {
     private KitListItem toAssessmentKit(Result item,
                                         CountKitListStatsPort.Result stats,
                                         List<LoadKitTagListPort.Result> kitTags,
-                                        List<LoadKitLanguagesPort.Result> kitLanguages) {
+                                        List<KitLanguage> kitLanguages) {
         return new KitListItem(
             item.kit().getId(),
             item.kit().getTitle(),
@@ -104,7 +103,6 @@ public class GetKitListService implements GetKitListUseCase {
                 .flatMap(result -> result.kitTags().stream())
                 .toList(),
             kitLanguages.stream()
-                .flatMap(result -> result.kitLanguages().stream())
                 .map(KitLanguage::getTitle)
                 .toList());
     }

@@ -8,6 +8,7 @@ import org.flickit.assessment.kit.application.port.out.kitlanguage.LoadKitLangua
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 
 import static java.util.stream.Collectors.*;
 
@@ -19,13 +20,9 @@ public class KitLanguagePersistenceJpaAdapter implements
     private final KitLanguageJpaRepository repository;
 
     @Override
-    public List<Result> loadByKitIds(List<Long> kitIds) {
-        var kitIdToLanguagesMap = repository.findAllByKitIdIn(kitIds).stream()
+    public Map<Long, List<KitLanguage>> loadByKitIds(List<Long> kitIds) {
+        return repository.findAllByKitIdIn(kitIds).stream()
             .collect(groupingBy(KitLanguageJpaEntity::getKitId,
                 mapping(e -> KitLanguage.valueOfById(e.getLangId()), toList())));
-
-        return kitIdToLanguagesMap.entrySet().stream()
-            .map(entry -> new Result(entry.getKey(), entry.getValue()))
-            .toList();
     }
 }
