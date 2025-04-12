@@ -2880,7 +2880,53 @@
 			"name": "Measure",
 			"item": [
 				{
-					"name": "Update Measures Orders",
+					"name": "Get Measures",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/393/measures?page=0&size=20",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"kit-versions",
+								"393",
+								"measures"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "20"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Measure",
+			"item": [
+				{
+					"name": "Update Measure",
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -2897,7 +2943,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"orders\": [\n    {\n      \"id\": 2860,\n      \"index\": 2\n    },\n    {\n      \"id\": 2845,\n      \"index\": 1\n    }\n  ]\n}",
+							"raw": "{\n    \"index\": 1,\n    \"title\": \"new title\",\n    \"description\": \"sample desc\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2905,7 +2951,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/{{api_path}}/kit-versions/393/measures-change-order",
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/393/measures/2860",
 							"host": [
 								"{{base_url}}"
 							],
@@ -2913,7 +2959,8 @@
 								"{{api_path}}",
 								"kit-versions",
 								"393",
-								"measures-change-order"
+								"measures",
+								"2860"
 							]
 						}
 					},

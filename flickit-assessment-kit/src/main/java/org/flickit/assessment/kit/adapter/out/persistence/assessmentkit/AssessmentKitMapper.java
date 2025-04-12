@@ -26,6 +26,7 @@ public class AssessmentKitMapper {
             param.isPrivate(),
             param.expertGroupId(),
             param.lang().getId(),
+            null, // TODO: Consider replacing this with the actual value after editing the service.
             LocalDateTime.now(),
             LocalDateTime.now(),
             param.createdBy(),
@@ -47,6 +48,7 @@ public class AssessmentKitMapper {
             param.isPrivate() != null ? param.isPrivate() : entity.getIsPrivate(),
             entity.getExpertGroupId(),
             param.lang() != null ? param.lang().getId() : entity.getLanguageId(),
+            null, // TODO: Consider replacing this with the actual value after editing the service.
             entity.getCreationTime(),
             param.lastModificationTime(),
             entity.getCreatedBy(),

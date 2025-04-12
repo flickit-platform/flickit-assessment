@@ -59,6 +59,7 @@ public class MaturityLevelMapper {
             level.getTitle(),
             level.getDescription(),
             level.getValue(),
+            null, // TODO: Consider replacing this with the actual value after editing the service.
             creationTime,
             creationTime,
             createdBy,
