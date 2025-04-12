@@ -5,8 +5,6 @@ import org.flickit.assessment.kit.application.domain.Measure;
 
 public interface LoadMeasurePort {
 
-    Measure loadByCode(String code, Long kitVersionId);
-
     PaginatedResponse<Result> loadAll(long kitVersionId, int page, int size);
 
     record Result(Measure measure, int questionsCount) {

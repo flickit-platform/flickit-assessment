@@ -74,13 +74,6 @@ public class MeasurePersistenceJpaAdapter implements
     }
 
     @Override
-    public Measure loadByCode(String code, Long kitVersionId) {
-        return repository.findByCodeAndKitVersionId(code, kitVersionId)
-            .map(MeasureMapper::mapToDomainModel)
-            .orElseThrow(() -> new ResourceNotFoundException(MEASURE_ID_NOT_FOUND));
-    }
-
-    @Override
     public PaginatedResponse<LoadMeasurePort.Result> loadAll(long kitVersionId, int page, int size) {
         var pageResult = repository.findAllWithQuestionCountByKitVersionId(kitVersionId, PageRequest.of(page, size));
         var items = pageResult.getContent().stream()
