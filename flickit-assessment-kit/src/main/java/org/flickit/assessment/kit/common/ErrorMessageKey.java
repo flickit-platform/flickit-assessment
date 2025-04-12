@@ -522,6 +522,15 @@ public class ErrorMessageKey {
     public static final String UPDATE_MEASURE_ORDERS_MEASURE_INDEX_NOT_NULL = "update-measure-orders.measureIndex.notNull";
     public static final String UPDATE_MEASURE_ORDERS_MEASURE_INDEX_MIN = "update-measure-orders.measureIndex.min";
 
+    public static final String CREATE_MEASURE_KIT_VERSION_ID_NOT_NULL = "create-measure.kitVersionId.notNull";
+    public static final String CREATE_MEASURE_INDEX_NOT_NULL = "create-measure.index.notNull";
+    public static final String CREATE_MEASURE_TITLE_NOT_NULL = "create-measure.title.notNull";
+    public static final String CREATE_MEASURE_TITLE_SIZE_MIN = "create-measure.title.size.min";
+    public static final String CREATE_MEASURE_TITLE_SIZE_MAX = "create-measure.title.size.max";
+    public static final String CREATE_MEASURE_DESCRIPTION_NOT_NULL = "create-measure.description.notNull";
+    public static final String CREATE_MEASURE_DESCRIPTION_SIZE_MIN = "create-measure.description.size.min";
+    public static final String CREATE_MEASURE_DESCRIPTION_SIZE_MAX = "create-measure.description.size.max";
+
     public static final String CREATE_MEASURE_INDEX_DUPLICATE = "create-measure.index.duplicate";
     public static final String CREATE_MEASURE_TITLE_DUPLICATE = "create-measure.title.duplicate";
 
