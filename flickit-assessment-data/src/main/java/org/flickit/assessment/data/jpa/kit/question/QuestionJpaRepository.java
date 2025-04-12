@@ -237,7 +237,6 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
             FROM QuestionJpaEntity q
             JOIN QuestionnaireJpaEntity qr ON q.questionnaireId = qr.id AND qr.kitVersionId = q.kitVersionId
             WHERE q.kitVersionId = :kitVersionId and q.measureId IS NULL
-
         """)
     List<QuestionQuestionnaireView> findAllByKitVersionIdAndWithoutMeasure(@Param("kitVersionId") long kitVersionId);
 }

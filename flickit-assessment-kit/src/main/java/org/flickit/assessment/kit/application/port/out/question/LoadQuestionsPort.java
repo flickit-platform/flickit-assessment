@@ -10,9 +10,9 @@ public interface LoadQuestionsPort {
 
     List<Result> loadQuestionsWithoutAnswerRange(long kitVersionId);
 
-    List<Result> loadQuestionsWithoutMeasure(long kitVersionId);
-
     List<Result> loadQuestionsWithoutImpact(long kitVersionId);
+
+    List<Result> loadQuestionsWithoutMeasure(long kitVersionId);
 
     record Result(int questionIndex, long questionnaireId, String questionnaireTitle) {
     }
