@@ -1,5 +1,7 @@
 package org.flickit.assessment.common.validation;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.EnumUtils;
 import org.flickit.assessment.common.exception.ValidationException;
 
@@ -7,6 +9,7 @@ import java.util.Map;
 
 import static java.util.stream.Collectors.toMap;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class EnumValidateUtils {
 
     public static <E extends Enum<E>, V> Map<E, V> validateAndConvert(Map<String, V> input,
