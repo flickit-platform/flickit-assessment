@@ -37,4 +37,9 @@ public class ErrorMessageKey {
     public static final String TRANSLATION_ATTRIBUTE_TITLE_SIZE_MAX = "translations-attribute.title.size.max";
     public static final String TRANSLATION_ATTRIBUTE_DESCRIPTION_SIZE_MIN = "translations-attribute.description.size.min";
     public static final String TRANSLATION_ATTRIBUTE_DESCRIPTION_SIZE_MAX = "translations-attribute.description.size.max";
+
+    public static final String TRANSLATION_MATURITY_LEVEL_TITLE_SIZE_MIN = "translations-maturity-level.title.size.min";
+    public static final String TRANSLATION_MATURITY_LEVEL_TITLE_SIZE_MAX = "translations-maturity-level.title.size.max";
+    public static final String TRANSLATION_MATURITY_LEVEL_DESCRIPTION_SIZE_MIN = "translations-maturity-level.description.size.min";
+    public static final String TRANSLATION_MATURITY_LEVEL_DESCRIPTION_SIZE_MAX = "translations-maturity-level.description.size.max";
 }
