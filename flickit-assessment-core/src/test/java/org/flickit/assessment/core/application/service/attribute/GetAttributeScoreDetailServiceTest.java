@@ -142,6 +142,8 @@ class GetAttributeScoreDetailServiceTest {
                     assertEquals(0, actual.answer().gainedScorePercentage());
                     assertEquals(0, actual.answer().missedScorePercentage());
                 } else {
+                    assertEquals(expected.optionIndex(), actual.answer().index());
+                    assertEquals(expected.optionTitle(), actual.answer().title());
                     var expectedGainedScorePercentage = MathUtils.round((expected.gainedScore() / expectedMaxPossibleScore) * 100, 2);
                     var expectedMissedScorePercentage = MathUtils.round((expected.missedScore() / expectedMaxPossibleScore) * 100, 2);
                     assertEquals(expected.gainedScore(), actual.answer().gainedScore());
@@ -188,6 +190,8 @@ class GetAttributeScoreDetailServiceTest {
             1,
             "Do you have CI/CD?",
             weight,
+            1,
+            "option title",
             Boolean.FALSE,
             weight * score,
             score,
@@ -204,6 +208,8 @@ class GetAttributeScoreDetailServiceTest {
             1,
             "Do you have CI/CD?",
             4,
+            null,
+            null,
             Boolean.FALSE,
             0.0,
             (double) weight,
@@ -219,6 +225,8 @@ class GetAttributeScoreDetailServiceTest {
             1,
             "Do you have CI/CD?",
             1,
+            null,
+            null,
             Boolean.TRUE,
             0.0,
             0.0,
