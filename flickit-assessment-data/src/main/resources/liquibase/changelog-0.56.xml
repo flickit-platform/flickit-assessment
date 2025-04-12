@@ -96,4 +96,8 @@
                              tableName="fak_measure"
                              initiallyDeferred="true"/>
     </changeSet>
+
+    <changeSet id="0.56-13" author="Mahdi Rezazadeh">
+        <dropNotNullConstraint tableName="fak_question" columnName="measure_id"/>
+    </changeSet>
 </databaseChangeLog>
