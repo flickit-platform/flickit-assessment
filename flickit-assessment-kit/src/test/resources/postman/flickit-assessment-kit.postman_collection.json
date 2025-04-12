@@ -785,7 +785,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"title\": \"title\",\r\n    \"description\": \"description\",\r\n    \"subjectId\": \"3\",\r\n    \"index\": \"2\",\r\n    \"weight\": \"1\"\r\n}",
+							"raw": "{\r\n    \"title\": \"title\",\r\n    \"description\": \"description\",\r\n    \"subjectId\": \"3\",\r\n    \"index\": \"2\",\r\n    \"weight\": \"1\",\r\n    \"translations\": {\r\n        \"EN\": {\r\n            \"title\": \"Title 2\",\r\n            \"description\": \"description 2\"\r\n        }\r\n    }\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
