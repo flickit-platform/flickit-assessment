@@ -50,4 +50,7 @@ public interface CreateMeasureUseCase {
             this.validateSelf();
         }
     }
+
+    record Result(long id){
+    }
 }
