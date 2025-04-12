@@ -1,5 +1,6 @@
 package org.flickit.assessment.kit.application.service.subject;
 
+import org.flickit.assessment.common.application.domain.kit.translation.SubjectTranslation;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.port.in.subject.UpdateSubjectUseCase;
@@ -13,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -74,6 +76,7 @@ class UpdateSubjectServiceTest {
         assertEquals(param.getIndex(), updateParamCaptor.getValue().index());
         assertEquals(param.getDescription(), updateParamCaptor.getValue().description());
         assertEquals(param.getWeight(), updateParamCaptor.getValue().weight());
+        assertEquals(param.getTranslations(), updateParamCaptor.getValue().translations());
         assertEquals(param.getCurrentUserId(), updateParamCaptor.getValue().lastModifiedBy());
         assertNotNull(updateParamCaptor.getValue().lastModificationTime());
     }
@@ -92,6 +95,7 @@ class UpdateSubjectServiceTest {
             .title("subject title")
             .description("subject description")
             .weight(1)
+            .translations(Map.of("EN", new SubjectTranslation("titl", "desc")))
             .currentUserId(UUID.randomUUID());
     }
 }
