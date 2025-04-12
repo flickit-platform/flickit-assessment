@@ -2,13 +2,10 @@ package org.flickit.assessment.kit.application.service.question;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.KitVersion;
-import org.flickit.assessment.kit.application.domain.Measure;
-import org.flickit.assessment.kit.application.domain.Questionnaire;
 import org.flickit.assessment.kit.application.port.in.question.CreateQuestionUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.question.CreateQuestionPort;
-import org.flickit.assessment.kit.test.fixture.application.QuestionnaireMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -21,7 +18,6 @@ import java.util.function.Consumer;
 
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
 import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createKitVersion;
-import static org.flickit.assessment.kit.test.fixture.application.MeasureMother.measureFromQuestionnaire;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -43,8 +39,6 @@ class CreateQuestionServiceTest {
 
     private final UUID ownerId = UUID.randomUUID();
     private final KitVersion kitVersion = createKitVersion(simpleKit());
-    private final Questionnaire questionnaire = QuestionnaireMother.questionnaireWithTitle("Questionnaire");
-    private final Measure measure = measureFromQuestionnaire(questionnaire);
 
     @Test
     void testCreateQuestionService_WhenCurrentUserIsNotExpertGroupOwner_ThenThrowAccessDeniedException() {
@@ -81,7 +75,8 @@ class CreateQuestionServiceTest {
         assertEquals(param.getMayNotBeApplicable(), outPortParam.getValue().mayNotBeApplicable());
         assertEquals(param.getAdvisable(), outPortParam.getValue().advisable());
         assertEquals(param.getQuestionnaireId(), outPortParam.getValue().questionnaireId());
-        assertEquals(measure.getId(), outPortParam.getValue().measureId());
+        assertNull(outPortParam.getValue().measureId());
+        assertNull(outPortParam.getValue().answerRangeId());
         assertEquals(param.getCurrentUserId(), outPortParam.getValue().createdBy());
     }
 
