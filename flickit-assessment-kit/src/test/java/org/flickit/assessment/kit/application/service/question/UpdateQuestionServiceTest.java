@@ -141,25 +141,26 @@ class UpdateQuestionServiceTest {
 
     @Test
     void testUpdateQuestion_whenAnswerRangeIdOfQuestionIsNUll_thenUpdateQuestion() {
-        var paramWithMeasureId = createParam(b -> b.measureId(12L));
         Question question = createQuestion(null);
 
-        when(loadKitVersionPort.load(paramWithMeasureId.getKitVersionId())).thenReturn(kitVersion);
+        when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
-        when(loadQuestionPort.load(paramWithMeasureId.getQuestionId(), paramWithMeasureId.getKitVersionId())).thenReturn(question);
+        when(loadQuestionPort.load(param.getQuestionId(), param.getKitVersionId())).thenReturn(question);
 
-        service.updateQuestion(paramWithMeasureId);
+        service.updateQuestion(param);
 
         verify(updateQuestionPort).update(outPortParam.capture());
         assertNotNull(outPortParam.getValue());
-        assertEquals(paramWithMeasureId.getQuestionId(), outPortParam.getValue().id());
-        assertEquals(paramWithMeasureId.getKitVersionId(), outPortParam.getValue().kitVersionId());
-        assertEquals(paramWithMeasureId.getIndex(), outPortParam.getValue().index());
-        assertEquals(paramWithMeasureId.getTitle(), outPortParam.getValue().title());
-        assertEquals(paramWithMeasureId.getHint(), outPortParam.getValue().hint());
-        assertEquals(paramWithMeasureId.getMayNotBeApplicable(), outPortParam.getValue().mayNotBeApplicable());
-        assertEquals(paramWithMeasureId.getAdvisable(), outPortParam.getValue().advisable());
-        assertEquals(paramWithMeasureId.getCurrentUserId(), outPortParam.getValue().lastModifiedBy());
+        assertEquals(param.getQuestionId(), outPortParam.getValue().id());
+        assertEquals(param.getKitVersionId(), outPortParam.getValue().kitVersionId());
+        assertEquals(param.getIndex(), outPortParam.getValue().index());
+        assertEquals(param.getTitle(), outPortParam.getValue().title());
+        assertEquals(param.getHint(), outPortParam.getValue().hint());
+        assertEquals(param.getMayNotBeApplicable(), outPortParam.getValue().mayNotBeApplicable());
+        assertEquals(param.getAdvisable(), outPortParam.getValue().advisable());
+        assertEquals(param.getAnswerRangeId(), outPortParam.getValue().answerRangeId());
+        assertEquals(param.getMeasureId(), outPortParam.getValue().measureId());
+        assertEquals(param.getCurrentUserId(), outPortParam.getValue().lastModifiedBy());
         assertNotNull(outPortParam.getValue().lastModificationTime());
     }
 
@@ -178,6 +179,7 @@ class UpdateQuestionServiceTest {
             .hint("new hint")
             .mayNotBeApplicable(true)
             .answerRangeId(15L)
+            .measureId(15L)
             .advisable(false)
             .currentUserId(ownerId);
     }
