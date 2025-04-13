@@ -218,7 +218,10 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
                            @Param("lastModifiedBy") UUID lastModifiedBy);
 
     @Query("""
-            SELECT q.index AS questionIndex, qn.id AS questionnaireId, qn.title AS questionnaireTitle
+            SELECT
+                q.index AS questionIndex,
+                qn.id AS questionnaireId,
+                qn.title AS questionnaireTitle
             FROM QuestionJpaEntity q
             JOIN QuestionnaireJpaEntity qn ON qn.id = q.questionnaireId AND qn.kitVersionId = q.kitVersionId
             WHERE q.kitVersionId = :kitVersionId AND q.answerRangeId IS NULL
@@ -226,11 +229,25 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
     List<QuestionQuestionnaireView> findAllByKitVersionIdAndWithoutAnswerRange(long kitVersionId);
 
     @Query("""
-            SELECT q.index as questionIndex, q.questionnaireId as questionnaireId, qr.title as questionnaireTitle
+            SELECT
+                q.index as questionIndex,
+                q.questionnaireId as questionnaireId,
+                qr.title as questionnaireTitle
             FROM QuestionJpaEntity q
             JOIN QuestionnaireJpaEntity qr ON q.questionnaireId = qr.id AND qr.kitVersionId = q.kitVersionId
             LEFT JOIN QuestionImpactJpaEntity qi ON qi.questionId = q.id AND qi.kitVersionId = q.kitVersionId
             WHERE q.kitVersionId = :kitVersionId AND qi.id IS null
         """)
     List<QuestionQuestionnaireView> findAllByKitVersionIdAndWithoutImpact(@Param("kitVersionId") long kitVersionId);
+
+    @Query("""
+            SELECT
+                q.index as questionIndex,
+                q.questionnaireId as questionnaireId,
+                qr.title as questionnaireTitle
+            FROM QuestionJpaEntity q
+            JOIN QuestionnaireJpaEntity qr ON q.questionnaireId = qr.id AND qr.kitVersionId = q.kitVersionId
+            WHERE q.kitVersionId = :kitVersionId and q.measureId IS NULL
+        """)
+    List<QuestionQuestionnaireView> findAllByKitVersionIdAndWithoutMeasure(@Param("kitVersionId") long kitVersionId);
 }
