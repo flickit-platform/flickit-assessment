@@ -1,10 +1,10 @@
 package org.flickit.assessment.common.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import groovyjarjarantlr4.v4.runtime.misc.Nullable;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
-import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 
 import java.util.Collections;
 import java.util.Map;
@@ -28,11 +28,10 @@ public class JsonUtils {
     }
 
     @SneakyThrows
-    public static <V> Map<KitLanguage, V> toTranslations(String translations, Class<V> translationsType) {
-        if (translations == null) {
+    public static <K, V> Map<K, V> fromJsonToMap(@Nullable String json, Class<K> keyType, Class<V> valueType) {
+        if (json == null)
             return Collections.emptyMap();
-        }
-        var type = objectMapper.getTypeFactory().constructMapType(Map.class, KitLanguage.class, translationsType);
-        return objectMapper.readValue(translations, type);
+        var type = objectMapper.getTypeFactory().constructMapType(Map.class, keyType, valueType);
+        return objectMapper.readValue(json, type);
     }
 }
