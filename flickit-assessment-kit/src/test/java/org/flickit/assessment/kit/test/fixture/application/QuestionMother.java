@@ -12,7 +12,6 @@ public class QuestionMother {
 
     private static Long id = 134L;
     private static int index = 1;
-    private static final Long measureId =20L;
 
     public static Question createQuestion(String code, String title, int index, String hint, boolean mayNotBeApplicable, boolean advisable, Long answerRangeId, Long questionnaireId) {
         return new Question(
@@ -24,7 +23,7 @@ public class QuestionMother {
             mayNotBeApplicable,
             advisable,
             answerRangeId,
-            measureId,
+            20L,
             questionnaireId,
             LocalDateTime.now(),
             LocalDateTime.now()
@@ -49,7 +48,7 @@ public class QuestionMother {
             true,
             true,
             answerRangeId,
-            measureId,
+            20L,
             questionnaireId,
             LocalDateTime.now(),
             LocalDateTime.now()

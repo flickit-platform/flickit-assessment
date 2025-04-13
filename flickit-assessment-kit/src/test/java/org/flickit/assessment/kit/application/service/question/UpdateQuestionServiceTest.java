@@ -161,9 +161,9 @@ class UpdateQuestionServiceTest {
     }
 
     private UpdateQuestionUseCase.Param createParam(Consumer<UpdateQuestionUseCase.Param.ParamBuilder> changer) {
-        var param = paramBuilder();
-        changer.accept(param);
-        return param.build();
+        var paramBuilder = paramBuilder();
+        changer.accept(paramBuilder);
+        return paramBuilder.build();
     }
 
     private UpdateQuestionUseCase.Param.ParamBuilder paramBuilder() {
