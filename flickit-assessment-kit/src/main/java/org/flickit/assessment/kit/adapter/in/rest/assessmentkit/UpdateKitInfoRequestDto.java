@@ -2,7 +2,7 @@ package org.flickit.assessment.kit.adapter.in.rest.assessmentkit;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Builder;
-import org.flickit.assessment.common.application.domain.kit.translation.AttributeTranslation;
+import org.flickit.assessment.common.application.domain.kit.translation.KitTranslation;
 
 import java.util.List;
 import java.util.Map;
@@ -16,5 +16,5 @@ public record UpdateKitInfoRequestDto(@JsonIgnoreProperties(ignoreUnknown = true
                                       @JsonIgnoreProperties(ignoreUnknown = true) Double price,
                                       @JsonIgnoreProperties(ignoreUnknown = true) String about,
                                       @JsonIgnoreProperties(ignoreUnknown = true) List<Long> tags,
-                                      @JsonIgnoreProperties(ignoreUnknown = true) Map<String, AttributeTranslation> translations) {
+                                      @JsonIgnoreProperties(ignoreUnknown = true) Map<String, KitTranslation> translations) {
 }

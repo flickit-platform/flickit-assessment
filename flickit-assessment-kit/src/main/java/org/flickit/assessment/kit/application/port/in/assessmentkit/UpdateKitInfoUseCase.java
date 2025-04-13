@@ -8,7 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
-import org.flickit.assessment.common.application.domain.kit.translation.AttributeTranslation;
+import org.flickit.assessment.common.application.domain.kit.translation.KitTranslation;
 import org.flickit.assessment.common.validation.EnumValue;
 
 import java.util.List;
@@ -56,7 +56,7 @@ public interface UpdateKitInfoUseCase {
         List<Long> tags;
 
         @Valid
-        Map<KitLanguage, AttributeTranslation> translations;
+        Map<KitLanguage, KitTranslation> translations;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
@@ -71,7 +71,7 @@ public interface UpdateKitInfoUseCase {
                      Double price,
                      String about,
                      List<Long> tags,
-                     Map<String, AttributeTranslation> translations,
+                     Map<String, KitTranslation> translations,
                      UUID currentUserId) {
             this.kitId = kitId;
             this.title = title;
