@@ -114,7 +114,7 @@ class CreateSubjectUseCaseParamTest {
             .title("Team")
             .description("team description")
             .weight(2)
-            .translations(Map.of("EN", new SubjectTranslation("titl", "desc")))
+            .translations(Map.of("EN", new SubjectTranslation("title", "desc")))
             .currentUserId(UUID.randomUUID());
     }
 }

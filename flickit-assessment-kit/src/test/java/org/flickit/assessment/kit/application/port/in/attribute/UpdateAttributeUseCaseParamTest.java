@@ -132,7 +132,7 @@ class UpdateAttributeUseCaseParamTest {
             .subjectId(18L)
             .index(2)
             .weight(1)
-            .translations(Map.of("EN", new AttributeTranslation("titl", "desc")))
+            .translations(Map.of("EN", new AttributeTranslation("title", "desc")))
             .currentUserId(UUID.randomUUID());
     }
 }

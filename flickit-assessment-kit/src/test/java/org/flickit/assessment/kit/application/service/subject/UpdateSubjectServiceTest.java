@@ -95,7 +95,7 @@ class UpdateSubjectServiceTest {
             .title("subject title")
             .description("subject description")
             .weight(1)
-            .translations(Map.of("EN", new SubjectTranslation("titl", "desc")))
+            .translations(Map.of("EN", new SubjectTranslation("title", "desc")))
             .currentUserId(UUID.randomUUID());
     }
 }

@@ -121,7 +121,7 @@ class CreateAttributeUseCaseParamTest {
             .description("desc")
             .weight(2)
             .subjectId(1L)
-            .translations(Map.of("EN", new AttributeTranslation("titl", "desc")))
+            .translations(Map.of("EN", new AttributeTranslation("title", "desc")))
             .currentUserId(UUID.randomUUID());
     }
 }
