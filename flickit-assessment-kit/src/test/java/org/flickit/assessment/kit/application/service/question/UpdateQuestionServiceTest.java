@@ -14,6 +14,7 @@ import org.flickit.assessment.kit.test.fixture.application.QuestionMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -26,7 +27,6 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_QUESTION_
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
 import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createKitVersion;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -50,53 +50,28 @@ class UpdateQuestionServiceTest {
     @Mock
     private CountKitAssessmentsPort countKitAssessmentsPort;
 
+    @Captor
+    private ArgumentCaptor<UpdateQuestionPort.Param> outPortParam;
+
     private final UUID ownerId = UUID.randomUUID();
     private final KitVersion kitVersion = createKitVersion(simpleKit());
+    private final UpdateQuestionUseCase.Param param = createParam(UpdateQuestionUseCase.Param.ParamBuilder::build);
 
     @Test
-    void testUpdateQuestion_WhenCurrentUserIsNotExpertGroupOwner_ThenThrowAccessDeniedException() {
-        var param = createParam(UpdateQuestionUseCase.Param.ParamBuilder::build);
+    void testUpdateQuestion_whenCurrentUserIsNotExpertGroupOwner_thenThrowAccessDeniedException() {
+        var paramUserNotOwner = createParam(b -> b.currentUserId(UUID.randomUUID()));
 
-        when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
+        when(loadKitVersionPort.load(paramUserNotOwner.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
 
-        AccessDeniedException throwable = assertThrows(AccessDeniedException.class, () -> service.updateQuestion(param));
+        AccessDeniedException throwable = assertThrows(AccessDeniedException.class, () -> service.updateQuestion(paramUserNotOwner));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
         verifyNoInteractions(loadQuestionPort, updateQuestionPort, countKitAssessmentsPort);
     }
 
     @Test
-    void testUpdateQuestion_WhenCurrentUserIsOwner_ThenUpdateQuestion() {
-        var param = createParam(b -> b.currentUserId(ownerId));
-        Question question = QuestionMother.createQuestion(param.getAnswerRangeId());
-
-        when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
-        when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
-        when(loadQuestionPort.load(param.getQuestionId(), param.getKitVersionId())).thenReturn(question);
-        doNothing().when(updateQuestionPort).update(any(UpdateQuestionPort.Param.class));
-
-        service.updateQuestion(param);
-
-        ArgumentCaptor<UpdateQuestionPort.Param> outPortParam = ArgumentCaptor.forClass(UpdateQuestionPort.Param.class);
-        verify(updateQuestionPort).update(outPortParam.capture());
-        assertNotNull(outPortParam.getValue());
-        assertEquals(param.getQuestionId(), outPortParam.getValue().id());
-        assertEquals(param.getKitVersionId(), outPortParam.getValue().kitVersionId());
-        assertEquals(param.getIndex(), outPortParam.getValue().index());
-        assertEquals(param.getTitle(), outPortParam.getValue().title());
-        assertEquals(param.getHint(), outPortParam.getValue().hint());
-        assertEquals(param.getMayNotBeApplicable(), outPortParam.getValue().mayNotBeApplicable());
-        assertEquals(param.getAdvisable(), outPortParam.getValue().advisable());
-        assertEquals(param.getCurrentUserId(), outPortParam.getValue().lastModifiedBy());
-        assertNotNull(outPortParam.getValue().lastModificationTime());
-
-        verifyNoInteractions(countKitAssessmentsPort);
-    }
-
-    @Test
-    void testUpdateQuestion_WhenAnswerRangeIdUpdatedAndKitIsUsedInAssessments_ThenThrowException() {
-        var param = createParam(b -> b.currentUserId(ownerId));
+    void testUpdateQuestion_whenAnswerRangeIdUpdatedAndKitIsUsedInAssessments_thenThrowException() {
         Question question = QuestionMother.createQuestion(param.getAnswerRangeId() + 1);
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
@@ -111,8 +86,34 @@ class UpdateQuestionServiceTest {
     }
 
     @Test
-    void testUpdateQuestion_WhenAnswerRangeIdUpdatedAndKitIsNotUsedInAssessments_ThenThrowException() {
-        var param = createParam(b -> b.currentUserId(ownerId));
+    void testUpdateQuestion_whenCurrentUserIsOwner_thenUpdateQuestion() {
+        var paramWithMeasureId = createParam(b -> b.measureId(12L));
+        Question question = QuestionMother.createQuestion(paramWithMeasureId.getAnswerRangeId());
+
+        when(loadKitVersionPort.load(paramWithMeasureId.getKitVersionId())).thenReturn(kitVersion);
+        when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
+        when(loadQuestionPort.load(paramWithMeasureId.getQuestionId(), paramWithMeasureId.getKitVersionId())).thenReturn(question);
+
+        service.updateQuestion(paramWithMeasureId);
+
+        verify(updateQuestionPort).update(outPortParam.capture());
+        assertNotNull(outPortParam.getValue());
+        assertEquals(paramWithMeasureId.getQuestionId(), outPortParam.getValue().id());
+        assertEquals(paramWithMeasureId.getKitVersionId(), outPortParam.getValue().kitVersionId());
+        assertEquals(paramWithMeasureId.getIndex(), outPortParam.getValue().index());
+        assertEquals(paramWithMeasureId.getTitle(), outPortParam.getValue().title());
+        assertEquals(paramWithMeasureId.getHint(), outPortParam.getValue().hint());
+        assertEquals(paramWithMeasureId.getMayNotBeApplicable(), outPortParam.getValue().mayNotBeApplicable());
+        assertEquals(paramWithMeasureId.getAdvisable(), outPortParam.getValue().advisable());
+        assertEquals(paramWithMeasureId.getMeasureId(), outPortParam.getValue().measureId());
+        assertEquals(paramWithMeasureId.getCurrentUserId(), outPortParam.getValue().lastModifiedBy());
+        assertNotNull(outPortParam.getValue().lastModificationTime());
+
+        verifyNoInteractions(countKitAssessmentsPort);
+    }
+
+    @Test
+    void testUpdateQuestion_whenAnswerRangeIdUpdatedAndKitIsNotUsedInAssessments_thenThrowException() {
         Question question = QuestionMother.createQuestion(param.getAnswerRangeId() + 1);
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
@@ -122,7 +123,6 @@ class UpdateQuestionServiceTest {
 
         service.updateQuestion(param);
 
-        ArgumentCaptor<UpdateQuestionPort.Param> outPortParam = ArgumentCaptor.forClass(UpdateQuestionPort.Param.class);
         verify(updateQuestionPort).update(outPortParam.capture());
         assertNotNull(outPortParam.getValue());
         assertEquals(param.getQuestionId(), outPortParam.getValue().id());
@@ -137,28 +137,26 @@ class UpdateQuestionServiceTest {
     }
 
     @Test
-    void testUpdateQuestion_WhenAnswerRangeIdOfQuestionIsNUll_ThenUpdateQuestion() {
-        var param = createParam(b -> b.currentUserId(ownerId));
+    void testUpdateQuestion_whenAnswerRangeIdOfQuestionIsNUll_thenUpdateQuestion() {
+        var paramWithMeasureId = createParam(b -> b.measureId(12L));
         Question question = QuestionMother.createQuestion(null);
 
-        when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
+        when(loadKitVersionPort.load(paramWithMeasureId.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
-        when(loadQuestionPort.load(param.getQuestionId(), param.getKitVersionId())).thenReturn(question);
-        doNothing().when(updateQuestionPort).update(any(UpdateQuestionPort.Param.class));
+        when(loadQuestionPort.load(paramWithMeasureId.getQuestionId(), paramWithMeasureId.getKitVersionId())).thenReturn(question);
 
-        service.updateQuestion(param);
+        service.updateQuestion(paramWithMeasureId);
 
-        ArgumentCaptor<UpdateQuestionPort.Param> outPortParam = ArgumentCaptor.forClass(UpdateQuestionPort.Param.class);
         verify(updateQuestionPort).update(outPortParam.capture());
         assertNotNull(outPortParam.getValue());
-        assertEquals(param.getQuestionId(), outPortParam.getValue().id());
-        assertEquals(param.getKitVersionId(), outPortParam.getValue().kitVersionId());
-        assertEquals(param.getIndex(), outPortParam.getValue().index());
-        assertEquals(param.getTitle(), outPortParam.getValue().title());
-        assertEquals(param.getHint(), outPortParam.getValue().hint());
-        assertEquals(param.getMayNotBeApplicable(), outPortParam.getValue().mayNotBeApplicable());
-        assertEquals(param.getAdvisable(), outPortParam.getValue().advisable());
-        assertEquals(param.getCurrentUserId(), outPortParam.getValue().lastModifiedBy());
+        assertEquals(paramWithMeasureId.getQuestionId(), outPortParam.getValue().id());
+        assertEquals(paramWithMeasureId.getKitVersionId(), outPortParam.getValue().kitVersionId());
+        assertEquals(paramWithMeasureId.getIndex(), outPortParam.getValue().index());
+        assertEquals(paramWithMeasureId.getTitle(), outPortParam.getValue().title());
+        assertEquals(paramWithMeasureId.getHint(), outPortParam.getValue().hint());
+        assertEquals(paramWithMeasureId.getMayNotBeApplicable(), outPortParam.getValue().mayNotBeApplicable());
+        assertEquals(paramWithMeasureId.getAdvisable(), outPortParam.getValue().advisable());
+        assertEquals(paramWithMeasureId.getCurrentUserId(), outPortParam.getValue().lastModifiedBy());
         assertNotNull(outPortParam.getValue().lastModificationTime());
     }
 
@@ -178,6 +176,6 @@ class UpdateQuestionServiceTest {
             .mayNotBeApplicable(true)
             .answerRangeId(15L)
             .advisable(false)
-            .currentUserId(UUID.randomUUID());
+            .currentUserId(ownerId);
     }
 }
