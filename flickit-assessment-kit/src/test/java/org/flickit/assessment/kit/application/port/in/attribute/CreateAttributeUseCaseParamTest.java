@@ -1,14 +1,17 @@
 package org.flickit.assessment.kit.application.port.in.attribute;
 
 import jakarta.validation.ConstraintViolationException;
-import org.apache.commons.lang3.RandomStringUtils;
+import org.flickit.assessment.common.application.domain.kit.translation.AttributeTranslation;
+import org.flickit.assessment.common.exception.ValidationException;
 import org.junit.jupiter.api.Test;
 
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
+import static org.flickit.assessment.common.error.ErrorMessageKey.*;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -39,7 +42,7 @@ class CreateAttributeUseCaseParamTest {
         assertThat(throwable).hasMessage("title: " + CREATE_ATTRIBUTE_TITLE_MIN_SIZE);
 
         throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.title(RandomStringUtils.randomAlphabetic(101))));
+            () -> createParam(b -> b.title(randomAlphabetic(101))));
         assertThat(throwable).hasMessage("title: " + CREATE_ATTRIBUTE_TITLE_MAX_SIZE);
     }
 
@@ -54,7 +57,7 @@ class CreateAttributeUseCaseParamTest {
         assertThat(throwable).hasMessage("description: " + CREATE_ATTRIBUTE_DESCRIPTION_SIZE_MIN);
 
         throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.description(RandomStringUtils.randomAlphabetic(501))));
+            () -> createParam(b -> b.description(randomAlphabetic(501))));
         assertThat(throwable).hasMessage("description: " + CREATE_ATTRIBUTE_DESCRIPTION_SIZE_MAX);
     }
 
@@ -69,6 +72,32 @@ class CreateAttributeUseCaseParamTest {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.subjectId(null)));
         assertThat(throwable).hasMessage("subjectId: " + CREATE_ATTRIBUTE_SUBJECT_ID_NOT_NULL);
+    }
+
+    @Test
+    void testCreateAttributeUseCaseParam_translationsLanguageViolations_ErrorMessage() {
+        var throwable = assertThrows(ValidationException.class,
+            () -> createParam(a -> a.translations(Map.of("FR", new AttributeTranslation("title", "desc")))));
+        assertEquals(COMMON_KIT_LANGUAGE_NOT_VALID, throwable.getMessageKey());
+    }
+
+    @Test
+    void testCreateAttributeUseCaseParam_translationsFieldsViolations_ErrorMessage() {
+        var throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(a -> a.translations(Map.of("EN", new AttributeTranslation("t", "desc")))));
+        assertThat(throwable).hasMessage("translations[EN].title: " + TRANSLATION_ATTRIBUTE_TITLE_SIZE_MIN);
+
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(a -> a.translations(Map.of("EN", new AttributeTranslation(randomAlphabetic(101), "desc")))));
+        assertThat(throwable).hasMessage("translations[EN].title: " + TRANSLATION_ATTRIBUTE_TITLE_SIZE_MAX);
+
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(a -> a.translations(Map.of("EN", new AttributeTranslation("title", "de")))));
+        assertThat(throwable).hasMessage("translations[EN].description: " + TRANSLATION_ATTRIBUTE_DESCRIPTION_SIZE_MIN);
+
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(a -> a.translations(Map.of("EN", new AttributeTranslation("title", randomAlphabetic(501))))));
+        assertThat(throwable).hasMessage("translations[EN].description: " + TRANSLATION_ATTRIBUTE_DESCRIPTION_SIZE_MAX);
     }
 
     @Test
@@ -92,6 +121,7 @@ class CreateAttributeUseCaseParamTest {
             .description("desc")
             .weight(2)
             .subjectId(1L)
+            .translations(Map.of("EN", new AttributeTranslation("titl", "desc")))
             .currentUserId(UUID.randomUUID());
     }
 }
