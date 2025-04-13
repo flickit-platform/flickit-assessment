@@ -20,6 +20,7 @@ public interface UpdateQuestionPort {
                  Boolean mayNotBeApplicable,
                  Boolean advisable,
                  Long answerRangeId,
+                 Long measureId,
                  LocalDateTime lastModificationTime,
                  UUID lastModifiedBy) {
     }

@@ -26,7 +26,7 @@ public class QuestionMapper {
             entity.getMayNotBeApplicable(),
             entity.getAdvisable(),
             entity.getAnswerRangeId(),
-            null,
+            entity.getMeasureId(),
             entity.getQuestionnaireId(),
             entity.getCreationTime(),
             entity.getLastModificationTime()
