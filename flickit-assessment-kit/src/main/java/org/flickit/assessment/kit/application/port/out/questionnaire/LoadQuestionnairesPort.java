@@ -18,11 +18,10 @@ public interface LoadQuestionnairesPort {
      */
     List<Questionnaire> loadByKitId(Long kitId);
 
-    List<Questionnaire> loadQuestionnairesWithoutQuestion (long kitVersionId);
+    List<Questionnaire> loadQuestionnairesWithoutQuestion(long kitVersionId);
 
     PaginatedResponse<Result> loadAllByKitVersionId(long kitVersionId, int page, int size);
 
-    List<Questionnaire> loadAll(long kitVersionId);
-
-    record Result(Questionnaire questionnaire, int questionsCount) {}
+    record Result(Questionnaire questionnaire, int questionsCount) {
+    }
 }

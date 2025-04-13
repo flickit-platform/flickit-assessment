@@ -1,12 +1,11 @@
-package org.flickit.assessment.kit.application.service.questionnaire;
+package org.flickit.assessment.kit.application.service.measure;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.kit.application.port.in.questionnaire.UpdateQuestionnaireOrdersUseCase;
+import org.flickit.assessment.kit.application.port.in.measure.UpdateMeasureOrdersUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
-import org.flickit.assessment.kit.application.port.out.questionnaire.UpdateQuestionnairePort;
-import org.flickit.assessment.kit.application.port.out.questionnaire.UpdateQuestionnairePort.UpdateOrderParam.QuestionnaireOrder;
+import org.flickit.assessment.kit.application.port.out.measure.UpdateMeasurePort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,28 +16,28 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class UpdateQuestionnaireOrdersService implements UpdateQuestionnaireOrdersUseCase {
+public class UpdateMeasureOrdersService implements UpdateMeasureOrdersUseCase {
 
     private final LoadKitVersionPort loadKitVersionPort;
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
-    private final UpdateQuestionnairePort updateQuestionnairePort;
+    private final UpdateMeasurePort updateMeasurePort;
 
     @Override
     public void changeOrders(Param param) {
         var kitVersion = loadKitVersionPort.load(param.getKitVersionId());
         var ownerId = loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId());
-
         if (!ownerId.equals(param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        updateQuestionnairePort.updateOrders(toUpdatePortParam(param));
+        updateMeasurePort.updateOrders(toUpdateParam(param));
     }
 
-    private UpdateQuestionnairePort.UpdateOrderParam toUpdatePortParam(Param param) {
-        var questionnaireOrders = param.getOrders().stream()
-            .map(e -> new QuestionnaireOrder(e.getId(), e.getIndex()))
+    private UpdateMeasurePort.UpdateOrderParam toUpdateParam(Param param) {
+        var measureOrders = param.getOrders().stream()
+            .map(e -> new UpdateMeasurePort.UpdateOrderParam.MeasureOrder(e.getId(), e.getIndex()))
             .toList();
-        return new UpdateQuestionnairePort.UpdateOrderParam(questionnaireOrders,
+
+        return new UpdateMeasurePort.UpdateOrderParam(measureOrders,
             param.getKitVersionId(),
             LocalDateTime.now(),
             param.getCurrentUserId());
