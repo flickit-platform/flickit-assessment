@@ -1,14 +1,15 @@
-package org.flickit.assessment.kit.application.service.questionnaire;
+package org.flickit.assessment.kit.application.service.measure;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.KitVersion;
-import org.flickit.assessment.kit.application.domain.Questionnaire;
-import org.flickit.assessment.kit.application.port.in.questionnaire.CreateQuestionnaireUseCase;
+import org.flickit.assessment.kit.application.domain.Measure;
+import org.flickit.assessment.kit.application.port.in.measure.CreateMeasureUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
-import org.flickit.assessment.kit.application.port.out.questionnaire.CreateQuestionnairePort;
+import org.flickit.assessment.kit.application.port.out.measure.CreateMeasurePort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -19,20 +20,18 @@ import java.util.function.Consumer;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
 import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createKitVersion;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class CreateQuestionnaireServiceTest {
+class CreateMeasureServiceTest {
 
     @InjectMocks
-    private CreateQuestionnaireService createQuestionnaireService;
+    private CreateMeasureService createMeasureService;
 
     @Mock
-    private CreateQuestionnairePort createQuestionnairePort;
+    private CreateMeasurePort createMeasurePort;
 
     @Mock
     private LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
@@ -44,38 +43,48 @@ class CreateQuestionnaireServiceTest {
     private final KitVersion kitVersion = createKitVersion(simpleKit());
 
     @Test
-    void testCreateQuestionnaire_WhenCurrentUserIsNotOwner_ShouldThrowAccessDeniedException() {
-        var param = createParam(CreateQuestionnaireUseCase.Param.ParamBuilder::build);
+    void testCreateMeasure_whenCurrentUserIsNotExpertGroupOwner_thenThrowAccessDeniedException() {
+        var param = createParam(CreateMeasureUseCase.Param.ParamBuilder::build);
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
 
-        var throwable = assertThrows(AccessDeniedException.class, () -> createQuestionnaireService.createQuestionnaire(param));
+        var throwable = assertThrows(AccessDeniedException.class, () -> createMeasureService.createMeasure(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+
+        verifyNoInteractions(createMeasurePort);
     }
 
     @Test
-    void testCreateQuestionnaire_WhenCurrentUserIsOwner_ThenCreateQuestionnaire() {
-        long questionnaireId = 123L;
+    void testCreateMeasure_whenCurrentUserIsExpertGroupOwner_thenCreateMeasure() {
+        long measureId = 123;
         var param = createParam(b -> b.currentUserId(ownerId));
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
-        when(createQuestionnairePort.persist(any(Questionnaire.class), eq(param.getKitVersionId()), eq(param.getCurrentUserId())))
-            .thenReturn(questionnaireId);
+        ArgumentCaptor<Measure> measureCaptor = ArgumentCaptor.forClass(Measure.class);
+        when(createMeasurePort.persist(measureCaptor.capture(), eq(param.getKitVersionId()), eq(param.getCurrentUserId())))
+            .thenReturn(measureId);
 
-        long actualQuestionnaireId = createQuestionnaireService.createQuestionnaire(param);
-        assertEquals(questionnaireId, actualQuestionnaireId);
+        var result = createMeasureService.createMeasure(param);
+        verify(createMeasurePort).persist(measureCaptor.capture(), eq(param.getKitVersionId()), eq(param.getCurrentUserId()));
+
+        assertEquals(measureId, result.id());
+        assertEquals(param.getTitle(), measureCaptor.getValue().getTitle());
+        assertEquals(param.getDescription(), measureCaptor.getValue().getDescription());
+        assertEquals(param.getIndex(), measureCaptor.getValue().getIndex());
+        assertNotNull(measureCaptor.getValue().getCreationTime());
+        assertNotNull(measureCaptor.getValue().getLastModificationTime());
     }
 
-    private CreateQuestionnaireUseCase.Param createParam(Consumer<CreateQuestionnaireUseCase.Param.ParamBuilder> changer) {
+    private CreateMeasureUseCase.Param createParam(Consumer<CreateMeasureUseCase.Param.ParamBuilder> changer) {
         var paramBuilder = paramBuilder();
         changer.accept(paramBuilder);
         return paramBuilder.build();
     }
 
-    private CreateQuestionnaireUseCase.Param.ParamBuilder paramBuilder() {
-        return CreateQuestionnaireUseCase.Param.builder()
+    private CreateMeasureUseCase.Param.ParamBuilder paramBuilder() {
+        return CreateMeasureUseCase.Param.builder()
             .kitVersionId(1L)
             .index(1)
             .title("title")

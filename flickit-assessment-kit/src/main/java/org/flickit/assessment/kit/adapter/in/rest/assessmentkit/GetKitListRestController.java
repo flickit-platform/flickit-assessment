@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.adapter.in.rest.kitdsl;
+package org.flickit.assessment.kit.adapter.in.rest.assessmentkit;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
