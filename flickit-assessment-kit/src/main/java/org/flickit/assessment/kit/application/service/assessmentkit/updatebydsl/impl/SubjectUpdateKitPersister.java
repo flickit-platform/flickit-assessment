@@ -78,6 +78,7 @@ public class SubjectUpdateKitPersister implements UpdateKitPersister {
             dslSubject.getTitle(),
             dslSubject.getIndex(),
             dslSubject.getWeight(),
+            null,
             dslSubject.getDescription(),
             kitVersionId,
             currentUserId
