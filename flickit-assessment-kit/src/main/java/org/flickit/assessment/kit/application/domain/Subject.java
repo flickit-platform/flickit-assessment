@@ -23,7 +23,8 @@ public class Subject {
     private final int index;
     private final Integer weight;
     private final String description;
-    private final Map<KitLanguage, SubjectTranslation> translations;
+    @Setter
+    private Map<KitLanguage, SubjectTranslation> translations;
     @Setter
     private List<Attribute> attributes;
     private final UUID createdBy;

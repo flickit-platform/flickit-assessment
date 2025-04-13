@@ -24,7 +24,6 @@ public class SubjectMother {
             index++,
             weight++,
             "Description",
-            Map.of(KitLanguage.FA, new SubjectTranslation("translated title", "translated desc")),
             UUID.randomUUID(),
             UUID.randomUUID(),
             LocalDateTime.now(),
