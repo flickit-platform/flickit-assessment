@@ -3,7 +3,6 @@ package org.flickit.assessment.data.jpa.kit.assessmentkit;
 import jakarta.annotation.Nullable;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -107,7 +106,7 @@ public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJ
             WHERE k.published = TRUE
                 AND (k.isPrivate = FALSE OR (k.isPrivate = TRUE AND kua.userId = :userId))
                 AND (:languageIds IS NULL OR k.languageId IN :languageIds)
-            ORDER BY k.isPrivate, k.title
+            ORDER BY k.isPrivate DESC, k.title
         """)
     Page<KitWithExpertGroupView> findAllPublishedOrderByTitle(@Param("userId")
                                                               UUID userId,
@@ -154,7 +153,7 @@ public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJ
         @Param("userId") UUID userId,
         @Param("includeUnpublished") boolean includeUnpublishedKits,
         @Param("updatingStatusId") int updatingStatusId,
-        PageRequest pageable);
+        Pageable pageable);
 
     @Query("""
             SELECT k.kitVersionId
