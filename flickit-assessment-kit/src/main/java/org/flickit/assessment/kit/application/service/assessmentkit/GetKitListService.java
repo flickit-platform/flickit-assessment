@@ -44,8 +44,13 @@ public class GetKitListService implements GetKitListUseCase {
         PaginatedResponse<LoadPublishedKitListPort.Result> kitsPage;
         if (Boolean.FALSE.equals(param.getIsPrivate()))
             kitsPage = loadPublishedKitListPort.loadPublicKits(kitLanguages, param.getPage(), param.getSize());
-        else
+        else if (Boolean.TRUE.equals(param.getIsPrivate()))
             kitsPage = loadPublishedKitListPort.loadPrivateKits(param.getCurrentUserId(),
+                kitLanguages,
+                param.getPage(),
+                param.getSize());
+        else
+            kitsPage = loadPublishedKitListPort.loadPrivateAndPublicKits(param.getCurrentUserId(),
                 kitLanguages,
                 param.getPage(),
                 param.getSize());
