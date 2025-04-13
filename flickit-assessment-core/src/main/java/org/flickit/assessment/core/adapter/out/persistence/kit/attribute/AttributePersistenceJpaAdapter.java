@@ -1,12 +1,11 @@
 package org.flickit.assessment.core.adapter.out.persistence.kit.attribute;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.flickit.assessment.common.application.domain.crud.Order;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.application.domain.kitcustom.KitCustomData;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.util.JsonUtils;
 import org.flickit.assessment.core.adapter.out.persistence.answer.AnswerMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.answeroption.AnswerOptionMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.question.QuestionMapper;
@@ -166,7 +165,6 @@ public class AttributePersistenceJpaAdapter implements
             .toList();
     }
 
-    @SneakyThrows
     private Map<Long, Integer> getAttributeIdToWeightMap(List<Attribute> attributes, long kitId, Long kitCustomId) {
         if (kitCustomId == null)
             return attributes.stream()
@@ -175,8 +173,7 @@ public class AttributePersistenceJpaAdapter implements
         var kitCustomEntity = kitCustomRepository.findByIdAndKitId(kitCustomId, kitId)
             .orElseThrow(() -> new ResourceNotFoundException(KIT_CUSTOM_ID_NOT_FOUND));
 
-        KitCustomData kitCustomData = new ObjectMapper()
-            .readValue(kitCustomEntity.getCustomData(), KitCustomData.class);
+        var kitCustomData = JsonUtils.fromJson(kitCustomEntity.getCustomData(), KitCustomData.class);
 
         if (kitCustomData == null || kitCustomData.attributes() == null)
             return attributes.stream()
@@ -198,7 +195,7 @@ public class AttributePersistenceJpaAdapter implements
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
 
         var questionIdToViewMap = repository.findAttributeQuestionsAndAnswers(assessmentResult.getId(),
-            assessmentResult.getKitVersionId(),
+                assessmentResult.getKitVersionId(),
                 attributeId).stream()
             .collect(groupingBy(v -> v.getQuestion().getId()));
 

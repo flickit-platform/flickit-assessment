@@ -1,10 +1,13 @@
 package org.flickit.assessment.kit.test.fixture.application;
 
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.common.application.domain.kit.translation.SubjectTranslation;
 import org.flickit.assessment.kit.application.domain.Attribute;
 import org.flickit.assessment.kit.application.domain.Subject;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public class SubjectMother {
@@ -21,6 +24,7 @@ public class SubjectMother {
             index++,
             weight++,
             "Description",
+            Map.of(KitLanguage.FA, new SubjectTranslation("translated title", "translated desc")),
             UUID.randomUUID(),
             UUID.randomUUID(),
             LocalDateTime.now(),
@@ -36,6 +40,7 @@ public class SubjectMother {
             index++,
             weight++,
             "Description",
+            Map.of(KitLanguage.FA, new SubjectTranslation("translated title", "translated desc")),
             attributes,
             UUID.randomUUID(),
             UUID.randomUUID(),
@@ -52,6 +57,7 @@ public class SubjectMother {
             index++,
             weight++,
             "Description",
+            Map.of(KitLanguage.FA, new SubjectTranslation("translated title", "translated desc")),
             attributes,
             UUID.randomUUID(),
             UUID.randomUUID(),

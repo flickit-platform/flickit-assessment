@@ -59,8 +59,8 @@ class AttributeCreateKitPersisterTest {
         CreateKitPersisterContext context = new CreateKitPersisterContext();
         context.put(KEY_SUBJECTS, Map.of(subject.getCode(), subject.getId()));
 
-        Attribute attrOneNoId = new Attribute(null, attrOne.getCode(), attrOne.getTitle(), attrOne.getIndex(), attrOne.getDescription(), attrOne.getWeight(), attrOne.getCreationTime(), attrOne.getLastModificationTime(), CURRENT_USER_ID, CURRENT_USER_ID);
-        Attribute attrTwoNoId = new Attribute(null, attrTwo.getCode(), attrTwo.getTitle(), attrTwo.getIndex(), attrTwo.getDescription(), attrTwo.getWeight(), attrTwo.getCreationTime(), attrTwo.getLastModificationTime(), CURRENT_USER_ID, CURRENT_USER_ID);
+        Attribute attrOneNoId = new Attribute(null, attrOne.getCode(), attrOne.getTitle(), attrOne.getIndex(), attrOne.getDescription(), attrOne.getWeight(), null, attrOne.getCreationTime(), attrOne.getLastModificationTime(), CURRENT_USER_ID, CURRENT_USER_ID);
+        Attribute attrTwoNoId = new Attribute(null, attrTwo.getCode(), attrTwo.getTitle(), attrTwo.getIndex(), attrTwo.getDescription(), attrTwo.getWeight(), null, attrTwo.getCreationTime(), attrTwo.getLastModificationTime(), CURRENT_USER_ID, CURRENT_USER_ID);
         when(createAttributePort.persist(attrOneNoId, subject.getId(), KIT_ID)).thenReturn(attrOne.getId());
         when(createAttributePort.persist(attrTwoNoId, subject.getId(), KIT_ID)).thenReturn(attrTwo.getId());
 
