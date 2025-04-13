@@ -1,7 +1,9 @@
 package org.flickit.assessment.kit.adapter.out.persistence.assessmentkit;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
@@ -68,6 +70,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
     private final KitTagRelationJpaRepository kitTagRelationRepository;
     private final KitDbSequenceGenerators sequenceGenerators;
     private final KitLanguageJpaRepository kitLanguageRepository;
+    private final ObjectMapper objectMapper;
 
     @Override
     public PaginatedResponse<LoadKitUsersPort.KitUser> loadKitUsers(LoadKitUsersPort.Param param) {
@@ -151,14 +154,15 @@ public class AssessmentKitPersistenceJpaAdapter implements
     }
 
     @Override
+    @SneakyThrows
     public void update(UpdateKitInfoPort.Param param) {
         var kitEntity = repository.findById(param.kitId())
             .orElseThrow(() -> new ResourceNotFoundException(UPDATE_KIT_INFO_KIT_ID_NOT_FOUND));
 
         if (param.tags() != null)
             updateKitTags(param.kitId(), param.tags());
-
-        var toBeUpdatedEntity = AssessmentKitMapper.toJpaEntity(kitEntity, param);
+        var translations = objectMapper.writeValueAsString(param.translations());
+        var toBeUpdatedEntity = AssessmentKitMapper.toJpaEntity(kitEntity, param, translations);
         repository.save(toBeUpdatedEntity);
     }
 

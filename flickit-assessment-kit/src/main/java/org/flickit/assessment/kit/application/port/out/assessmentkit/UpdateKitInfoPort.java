@@ -1,8 +1,10 @@
 package org.flickit.assessment.kit.application.port.out.assessmentkit;
 
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.common.application.domain.kit.translation.AttributeTranslation;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -20,6 +22,7 @@ public interface UpdateKitInfoPort {
                  Double price,
                  String about,
                  Set<Long> tags,
+                 Map<KitLanguage, AttributeTranslation> translations,
                  UUID currentUserId,
                  LocalDateTime lastModificationTime) {
     }

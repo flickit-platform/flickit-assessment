@@ -37,7 +37,7 @@ public class AssessmentKitMapper {
         );
     }
 
-    public static AssessmentKitJpaEntity toJpaEntity(AssessmentKitJpaEntity entity, UpdateKitInfoPort.Param param) {
+    public static AssessmentKitJpaEntity toJpaEntity(AssessmentKitJpaEntity entity, UpdateKitInfoPort.Param param, String translations) {
         return new AssessmentKitJpaEntity(
             entity.getId(),
             param.code() != null ? param.code() : entity.getCode(),
@@ -48,7 +48,7 @@ public class AssessmentKitMapper {
             param.isPrivate() != null ? param.isPrivate() : entity.getIsPrivate(),
             entity.getExpertGroupId(),
             param.lang() != null ? param.lang().getId() : entity.getLanguageId(),
-            null, // TODO: Consider replacing this with the actual value after editing the service.
+            translations,
             entity.getCreationTime(),
             param.lastModificationTime(),
             entity.getCreatedBy(),
