@@ -8,6 +8,8 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.CountKitStatsView;
+import org.flickit.assessment.data.jpa.kit.kitlanguage.KitLanguageJpaEntity;
+import org.flickit.assessment.data.jpa.kit.kitlanguage.KitLanguageJpaRepository;
 import org.flickit.assessment.data.jpa.kit.kittagrelation.KitTagRelationJpaEntity;
 import org.flickit.assessment.data.jpa.kit.kittagrelation.KitTagRelationJpaRepository;
 import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
@@ -65,6 +67,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
     private final ExpertGroupJpaRepository expertGroupRepository;
     private final KitTagRelationJpaRepository kitTagRelationRepository;
     private final KitDbSequenceGenerators sequenceGenerators;
+    private final KitLanguageJpaRepository kitLanguageRepository;
 
     @Override
     public PaginatedResponse<LoadKitUsersPort.KitUser> loadKitUsers(LoadKitUsersPort.Param param) {
@@ -121,9 +124,14 @@ public class AssessmentKitPersistenceJpaAdapter implements
 
     @Override
     public Long persist(CreateAssessmentKitPort.Param param) {
+        long kitId = sequenceGenerators.generateKitId();
         AssessmentKitJpaEntity kitEntity = AssessmentKitMapper.toJpaEntity(param);
-        kitEntity.setId(sequenceGenerators.generateKitId());
-        return repository.save(kitEntity).getId();
+        kitEntity.setId(kitId);
+        repository.save(kitEntity);
+
+        KitLanguageJpaEntity languageEntity = new KitLanguageJpaEntity(kitId, kitEntity.getLanguageId());
+        kitLanguageRepository.save(languageEntity);
+        return kitId;
     }
 
     @Override

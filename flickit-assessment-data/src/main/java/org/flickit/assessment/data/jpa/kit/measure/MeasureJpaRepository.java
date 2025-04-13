@@ -1,5 +1,7 @@
 package org.flickit.assessment.data.jpa.kit.measure;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -8,7 +10,6 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 public interface MeasureJpaRepository extends JpaRepository<MeasureJpaEntity, MeasureJpaEntity.EntityId> {
@@ -18,8 +19,6 @@ public interface MeasureJpaRepository extends JpaRepository<MeasureJpaEntity, Me
     List<MeasureJpaEntity> findAllByKitVersionIdOrderByIndex(Long activeVersionId);
 
     boolean existsByIdAndKitVersionId(long id, long kitVersionId);
-
-    Optional<MeasureJpaEntity> findByCodeAndKitVersionId(String code, Long kitVersionId);
 
     void deleteByIdAndKitVersionId(long measureId, long kitVersionId);
 
@@ -45,4 +44,17 @@ public interface MeasureJpaRepository extends JpaRepository<MeasureJpaEntity, Me
                 @Param(value = "lastModificationTime") LocalDateTime lastModificationTime,
                 @Param(value = "lastModifiedBy") UUID lastModifiedBy
     );
+
+    @Query("""
+            SELECT
+                m as measure,
+                COUNT(DISTINCT question.id) as questionCount
+            FROM MeasureJpaEntity m
+            LEFT JOIN QuestionJpaEntity question ON m.id = question.measureId AND m.kitVersionId = question.kitVersionId
+            WHERE m.kitVersionId = :kitVersionId
+            GROUP BY m.id, m.kitVersionId, m.index
+            ORDER BY m.index
+        """)
+    Page<MeasureListItemView> findAllWithQuestionCountByKitVersionId(@Param(value = "kitVersionId") long kitVersionId,
+                                                                     Pageable pageable);
 }

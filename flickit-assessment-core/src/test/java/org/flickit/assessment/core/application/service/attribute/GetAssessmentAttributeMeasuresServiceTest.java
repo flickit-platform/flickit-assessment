@@ -49,7 +49,7 @@ class GetAssessmentAttributeMeasuresServiceTest {
     @Mock
     private LoadAttributeQuestionsPort loadAttributeQuestionsPort;
 
-    private final Param param = createParam(Param.ParamBuilder::build);
+    private Param param = createParam(Param.ParamBuilder::build);
 
     @Test
     void testGetAssessmentAttributeMeasures_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
@@ -84,6 +84,7 @@ class GetAssessmentAttributeMeasuresServiceTest {
         var question3 = QuestionMother.withMeasure(measure2);
         var answer1 = AnswerMother.fullScore(question1.getId());
         var answer2 = AnswerMother.noScore(question2.getId());
+        param = createParam(b -> b.attributeId(question1.getImpacts().getFirst().getAttributeId()));
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ATTRIBUTE_MEASURES))
             .thenReturn(true);

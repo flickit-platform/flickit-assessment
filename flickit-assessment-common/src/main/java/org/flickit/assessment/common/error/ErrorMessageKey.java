@@ -30,4 +30,11 @@ public class ErrorMessageKey {
     public static final String INVITE_TO_REGISTER_EMAIL_SUBJECT = "invite-to-register.email.subject";
     public static final String INVITE_TO_REGISTER_EMAIL_BODY = "invite-to-register.email.body";
     public static final String INVITE_TO_REGISTER_EMAIL_BODY_WITHOUT_SUPPORT_EMAIL = "invite-to-register.email.body.without.support.email";
+
+    public static final String COMMON_KIT_LANGUAGE_NOT_VALID = "kit-language.notValid";
+
+    public static final String TRANSLATION_ATTRIBUTE_TITLE_SIZE_MIN = "translations-attribute.title.size.min";
+    public static final String TRANSLATION_ATTRIBUTE_TITLE_SIZE_MAX = "translations-attribute.title.size.max";
+    public static final String TRANSLATION_ATTRIBUTE_DESCRIPTION_SIZE_MIN = "translations-attribute.description.size.min";
+    public static final String TRANSLATION_ATTRIBUTE_DESCRIPTION_SIZE_MAX = "translations-attribute.description.size.max";
 }

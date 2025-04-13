@@ -251,6 +251,65 @@
 					"response": []
 				},
 				{
+					"name": "Get Kit Languages",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/kit-languages",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"kit-languages"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Kit List",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessment-kits?isPrivate=true",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessment-kits"
+							],
+							"query": [
+								{
+									"key": "isPrivate",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Get Kit Minimal Info",
 					"request": {
 						"method": "GET",
@@ -565,65 +624,6 @@
 					"response": []
 				},
 				{
-					"name": "Get Kit Languages",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept-Language",
-								"value": "{{accept_language}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/kit-languages",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"kit-languages"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Kit List",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}",
-								"type": "text"
-							},
-							{
-								"key": "Accept-Language",
-								"value": "{{accept_language}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessment-kits?isPrivate=true",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessment-kits"
-							],
-							"query": [
-								{
-									"key": "isPrivate",
-									"value": "true"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "Get Kit Detail",
 					"request": {
 						"method": "GET",
@@ -785,7 +785,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"title\": \"title\",\r\n    \"description\": \"description\",\r\n    \"subjectId\": \"3\",\r\n    \"index\": \"2\",\r\n    \"weight\": \"1\"\r\n}",
+							"raw": "{\r\n    \"title\": \"title\",\r\n    \"description\": \"description\",\r\n    \"subjectId\": \"3\",\r\n    \"index\": \"2\",\r\n    \"weight\": \"1\",\r\n    \"translations\": {\r\n        \"EN\": {\r\n            \"title\": \"Title 2\",\r\n            \"description\": \"description 2\"\r\n        }\r\n    }\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2869,6 +2869,178 @@
 								"{{api_path}}",
 								"kit-customs",
 								"8"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Measure",
+			"item": [
+				{
+					"name": "Get Measures",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/393/measures?page=0&size=20",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"kit-versions",
+								"393",
+								"measures"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "20"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Measure",
+			"item": [
+				{
+					"name": "Update Measure",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"index\": 1,\n    \"title\": \"new title\",\n    \"description\": \"sample desc\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/393/measures/2860",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"kit-versions",
+								"393",
+								"measures",
+								"2860"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Measure Orders",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"orders\": [\n    {\n      \"id\": 2342,\n      \"index\": 2\n    },\n    {\n      \"id\": 2343,\n      \"index\": 1\n    }\n  ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/309/measures-change-order",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"kit-versions",
+								"309",
+								"measures-change-order"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Measure",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"index\": 30,\n    \"title\": \"Test Quality\",\n    \"description\": \"Test Quality Description\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/393/measures",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"kit-versions",
+								"393",
+								"measures"
 							]
 						}
 					},

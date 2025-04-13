@@ -500,6 +500,40 @@ public class ErrorMessageKey {
     public static final String GET_KIT_DSL_KIT_ID_NOT_NULL = "get-kit-dsl.kitId.notNull";
     public static final String GET_KIT_DSL_NOT_AVAILABLE = "get-kit-dsl.notAvailable";
 
+    public static final String GET_MEASURES_KIT_VERSION_ID_NOT_NULL = "get-measures.kitVersionId.notNull";
+    public static final String GET_MEASURES_PAGE_MIN = "get-measures.page.min";
+    public static final String GET_MEASURES_SIZE_MIN = "get-measures.size.min";
+    public static final String GET_MEASURES_SIZE_MAX = "get-measures.size.max";
+
+    public static final String UPDATE_MEASURE_KIT_VERSION_ID_NOT_NULL = "update-measure.kitVersionId.notNull";
+    public static final String UPDATE_MEASURE_MEASURE_ID_NOT_NULL = "update-measure.measureId.notNull";
+    public static final String UPDATE_MEASURE_INDEX_NOT_NULL = "update-measure.index.notNull";
+    public static final String UPDATE_MEASURE_TITLE_NOT_NULL = "update-measure.title.notNull";
+    public static final String UPDATE_MEASURE_TITLE_SIZE_MIN = "update-measure.title.size.min";
+    public static final String UPDATE_MEASURE_TITLE_SIZE_MAX = "update-measure.title.size.max";
+    public static final String UPDATE_MEASURE_DESCRIPTION_NOT_NULL = "update-measure.description.notNull";
+    public static final String UPDATE_MEASURE_DESCRIPTION_SIZE_MIN = "update-measure.description.size.min";
+    public static final String UPDATE_MEASURE_DESCRIPTION_SIZE_MAX = "update-measure.description.size.max";
+
+    public static final String UPDATE_MEASURE_ORDERS_KIT_VERSION_ID_NOT_NULL = "update-measure-orders.kitVersionId.notNull";
+    public static final String UPDATE_MEASURE_ORDERS_ORDERS_NOT_NULL = "update-measure-orders.orders.notNull";
+    public static final String UPDATE_MEASURE_ORDERS_ORDERS_SIZE_MIN = "update-measure-orders.orders.size.min";
+    public static final String UPDATE_MEASURE_ORDERS_MEASURE_ID_NOT_NULL = "update-measure-orders.measureId.notNull";
+    public static final String UPDATE_MEASURE_ORDERS_MEASURE_INDEX_NOT_NULL = "update-measure-orders.measureIndex.notNull";
+    public static final String UPDATE_MEASURE_ORDERS_MEASURE_INDEX_MIN = "update-measure-orders.measureIndex.min";
+
+    public static final String CREATE_MEASURE_KIT_VERSION_ID_NOT_NULL = "create-measure.kitVersionId.notNull";
+    public static final String CREATE_MEASURE_INDEX_NOT_NULL = "create-measure.index.notNull";
+    public static final String CREATE_MEASURE_TITLE_NOT_NULL = "create-measure.title.notNull";
+    public static final String CREATE_MEASURE_TITLE_SIZE_MIN = "create-measure.title.size.min";
+    public static final String CREATE_MEASURE_TITLE_SIZE_MAX = "create-measure.title.size.max";
+    public static final String CREATE_MEASURE_DESCRIPTION_NOT_NULL = "create-measure.description.notNull";
+    public static final String CREATE_MEASURE_DESCRIPTION_SIZE_MIN = "create-measure.description.size.min";
+    public static final String CREATE_MEASURE_DESCRIPTION_SIZE_MAX = "create-measure.description.size.max";
+
+    public static final String CREATE_MEASURE_INDEX_DUPLICATE = "create-measure.index.duplicate";
+    public static final String CREATE_MEASURE_TITLE_DUPLICATE = "create-measure.title.duplicate";
+
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
     }
