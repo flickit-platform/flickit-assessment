@@ -94,7 +94,8 @@ public class AttributePersistenceJpaAdapter implements
         var subjectJpaEntity = subjectRepository.findById(subjectEntityId)
             .orElseThrow(() -> new ResourceNotFoundException(CREATE_ATTRIBUTE_SUBJECT_ID_NOT_FOUND));
 
-        var entity = mapToJpaEntity(attribute, subjectJpaEntity);
+        var translations = objectMapper.writeValueAsString(attribute.getTranslations());
+        var entity = mapToJpaEntity(attribute, subjectJpaEntity, translations);
         entity.setId(sequenceGenerators.generateAttributeId());
         return repository.save(entity).getId();
     }
