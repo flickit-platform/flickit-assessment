@@ -10,7 +10,6 @@ import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGro
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.question.LoadQuestionPort;
 import org.flickit.assessment.kit.application.port.out.question.UpdateQuestionPort;
-import org.flickit.assessment.kit.test.fixture.application.QuestionMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -26,6 +25,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_QUESTION_ANSWER_RANGE_ID_NOT_UPDATABLE;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
 import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createKitVersion;
+import static org.flickit.assessment.kit.test.fixture.application.QuestionMother.createQuestion;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -55,31 +55,31 @@ class UpdateQuestionServiceTest {
 
     private final UUID ownerId = UUID.randomUUID();
     private final KitVersion kitVersion = createKitVersion(simpleKit());
-    private final UpdateQuestionUseCase.Param param = createParam(UpdateQuestionUseCase.Param.ParamBuilder::build);
+    private UpdateQuestionUseCase.Param param = createParam(UpdateQuestionUseCase.Param.ParamBuilder::build);
 
     @Test
     void testUpdateQuestion_whenCurrentUserIsNotExpertGroupOwner_thenThrowAccessDeniedException() {
-        var paramUserNotOwner = createParam(b -> b.currentUserId(UUID.randomUUID()));
+        param = createParam(b -> b.currentUserId(UUID.randomUUID()));
 
-        when(loadKitVersionPort.load(paramUserNotOwner.getKitVersionId())).thenReturn(kitVersion);
+        when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
 
-        AccessDeniedException throwable = assertThrows(AccessDeniedException.class, () -> service.updateQuestion(paramUserNotOwner));
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.updateQuestion(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
         verifyNoInteractions(loadQuestionPort, updateQuestionPort, countKitAssessmentsPort);
     }
 
     @Test
-    void testUpdateQuestion_whenAnswerRangeIdUpdatedAndKitIsUsedInAssessments_thenThrowException() {
-        Question question = QuestionMother.createQuestion(param.getAnswerRangeId() + 1);
+    void testUpdateQuestion_whenAnswerRangeIdUpdatedAndKitIsUsedInAssessments_thenThrowValidationException() {
+        Question question = createQuestion(param.getAnswerRangeId() + 1);
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
         when(loadQuestionPort.load(param.getQuestionId(), param.getKitVersionId())).thenReturn(question);
         when(countKitAssessmentsPort.count(kitVersion.getKit().getId())).thenReturn(1L);
 
-        ValidationException throwable = assertThrows(ValidationException.class, () -> service.updateQuestion(param));
+        var throwable = assertThrows(ValidationException.class, () -> service.updateQuestion(param));
         assertEquals(UPDATE_QUESTION_ANSWER_RANGE_ID_NOT_UPDATABLE, throwable.getMessageKey());
 
         verifyNoInteractions(updateQuestionPort);
@@ -87,34 +87,35 @@ class UpdateQuestionServiceTest {
 
     @Test
     void testUpdateQuestion_whenCurrentUserIsOwner_thenUpdateQuestion() {
-        var paramWithMeasureId = createParam(b -> b.measureId(12L));
-        Question question = QuestionMother.createQuestion(paramWithMeasureId.getAnswerRangeId());
+        param = createParam(b -> b.measureId(12L));
+        Question question = createQuestion(param.getAnswerRangeId());
 
-        when(loadKitVersionPort.load(paramWithMeasureId.getKitVersionId())).thenReturn(kitVersion);
+        when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
-        when(loadQuestionPort.load(paramWithMeasureId.getQuestionId(), paramWithMeasureId.getKitVersionId())).thenReturn(question);
+        when(loadQuestionPort.load(param.getQuestionId(), param.getKitVersionId())).thenReturn(question);
 
-        service.updateQuestion(paramWithMeasureId);
+        service.updateQuestion(param);
 
         verify(updateQuestionPort).update(outPortParam.capture());
         assertNotNull(outPortParam.getValue());
-        assertEquals(paramWithMeasureId.getQuestionId(), outPortParam.getValue().id());
-        assertEquals(paramWithMeasureId.getKitVersionId(), outPortParam.getValue().kitVersionId());
-        assertEquals(paramWithMeasureId.getIndex(), outPortParam.getValue().index());
-        assertEquals(paramWithMeasureId.getTitle(), outPortParam.getValue().title());
-        assertEquals(paramWithMeasureId.getHint(), outPortParam.getValue().hint());
-        assertEquals(paramWithMeasureId.getMayNotBeApplicable(), outPortParam.getValue().mayNotBeApplicable());
-        assertEquals(paramWithMeasureId.getAdvisable(), outPortParam.getValue().advisable());
-        assertEquals(paramWithMeasureId.getMeasureId(), outPortParam.getValue().measureId());
-        assertEquals(paramWithMeasureId.getCurrentUserId(), outPortParam.getValue().lastModifiedBy());
+        assertEquals(param.getQuestionId(), outPortParam.getValue().id());
+        assertEquals(param.getKitVersionId(), outPortParam.getValue().kitVersionId());
+        assertEquals(param.getIndex(), outPortParam.getValue().index());
+        assertEquals(param.getTitle(), outPortParam.getValue().title());
+        assertEquals(param.getHint(), outPortParam.getValue().hint());
+        assertEquals(param.getMayNotBeApplicable(), outPortParam.getValue().mayNotBeApplicable());
+        assertEquals(param.getAdvisable(), outPortParam.getValue().advisable());
+        assertEquals(param.getAnswerRangeId(), outPortParam.getValue().answerRangeId());
+        assertEquals(param.getMeasureId(), outPortParam.getValue().measureId());
+        assertEquals(param.getCurrentUserId(), outPortParam.getValue().lastModifiedBy());
         assertNotNull(outPortParam.getValue().lastModificationTime());
 
         verifyNoInteractions(countKitAssessmentsPort);
     }
 
     @Test
-    void testUpdateQuestion_whenAnswerRangeIdUpdatedAndKitIsNotUsedInAssessments_thenThrowException() {
-        Question question = QuestionMother.createQuestion(param.getAnswerRangeId() + 1);
+    void testUpdateQuestion_whenAnswerRangeIdUpdatedAndKitIsNotUsedInAssessments_thenUpdateQuestion() {
+        Question question = createQuestion(param.getAnswerRangeId() + 1);
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
@@ -132,6 +133,8 @@ class UpdateQuestionServiceTest {
         assertEquals(param.getHint(), outPortParam.getValue().hint());
         assertEquals(param.getMayNotBeApplicable(), outPortParam.getValue().mayNotBeApplicable());
         assertEquals(param.getAdvisable(), outPortParam.getValue().advisable());
+        assertEquals(param.getAnswerRangeId(), outPortParam.getValue().answerRangeId());
+        assertEquals(param.getMeasureId(), outPortParam.getValue().measureId());
         assertEquals(param.getCurrentUserId(), outPortParam.getValue().lastModifiedBy());
         assertNotNull(outPortParam.getValue().lastModificationTime());
     }
@@ -139,7 +142,7 @@ class UpdateQuestionServiceTest {
     @Test
     void testUpdateQuestion_whenAnswerRangeIdOfQuestionIsNUll_thenUpdateQuestion() {
         var paramWithMeasureId = createParam(b -> b.measureId(12L));
-        Question question = QuestionMother.createQuestion(null);
+        Question question = createQuestion(null);
 
         when(loadKitVersionPort.load(paramWithMeasureId.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
