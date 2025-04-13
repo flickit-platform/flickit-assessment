@@ -1,10 +1,9 @@
 package org.flickit.assessment.kit.adapter.out.persistence.subject;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.util.JsonUtils;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
 import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
@@ -41,7 +40,6 @@ public class SubjectPersistenceJpaAdapter implements
     private final SubjectJpaRepository repository;
     private final AttributeJpaRepository attributeRepository;
     private final KitDbSequenceGenerators sequenceGenerators;
-    private final ObjectMapper objectMapper;
 
     @Override
     public void update(UpdateSubjectByDslPort.Param param) {
@@ -152,12 +150,11 @@ public class SubjectPersistenceJpaAdapter implements
     }
 
     @Override
-    @SneakyThrows
     public void update(UpdateSubjectPort.Param param) {
         if (!repository.existsByIdAndKitVersionId(param.id(), param.kitVersionId()))
             throw new ResourceNotFoundException(SUBJECT_ID_NOT_FOUND);
 
-        var translations = objectMapper.writeValueAsString(param.translations());
+        var translations = JsonUtils.toJson(param.translations());
         repository.update(param.id(),
             param.kitVersionId(),
             param.code(),
