@@ -159,6 +159,61 @@ class GetKitListServiceTest {
     }
 
     @Test
+    void testGetKitList_GettingAllKitsValidParams_ValidResult() {
+        var param = createParam(p -> p
+            .langs(null)
+            .isPrivate(null));
+        var assessmentKit = AssessmentKitMother.simpleKit();
+        var kitId = assessmentKit.getId();
+        var kitIds = List.of(kitId);
+        var expertGroup = ExpertGroupMother.createExpertGroup();
+        var expertGroupPictureUrl = "https://picureLink";
+        var expectedKitsPage = new PaginatedResponse<>(
+            List.of(new LoadPublishedKitListPort.Result(assessmentKit, expertGroup)),
+            0,
+            10,
+            AssessmentKitJpaEntity.Fields.title,
+            Sort.Direction.ASC.name().toLowerCase(),
+            1
+        );
+        var sampleTag = KitTagMother.createKitTag("sample tag");
+
+        when(loadPublishedKitListPort.loadPrivateAndPublicKits(param.getCurrentUserId(), null, param.getPage(), param.getSize()))
+            .thenReturn(expectedKitsPage);
+        when(countKitStatsPort.countKitsStats(kitIds))
+            .thenReturn(List.of(new CountKitListStatsPort.Result(kitId, 3, 15)));
+        when(loadKitTagListPort.loadByKitIds(kitIds)).thenReturn(
+            List.of(new LoadKitTagListPort.Result(kitId, List.of(sampleTag))));
+        when(loadKitLanguagesPort.loadByKitIds(kitIds)).thenReturn(
+            Map.of(kitId, List.of(KitLanguage.EN)));
+        when(createFileDownloadLinkPort.createDownloadLink(any(), any()))
+            .thenReturn(expertGroupPictureUrl);
+
+        var kitList = service.getKitList(param);
+
+        assertEquals(expectedKitsPage.getPage(), kitList.getPage());
+        assertEquals(expectedKitsPage.getSize(), kitList.getSize());
+        assertEquals(expectedKitsPage.getSort(), kitList.getSort());
+        assertEquals(expectedKitsPage.getOrder(), kitList.getOrder());
+        assertEquals(expectedKitsPage.getTotal(), kitList.getTotal());
+        assertEquals(expectedKitsPage.getItems().size(), kitList.getItems().size());
+
+        var item = kitList.getItems().getFirst();
+        assertEquals(assessmentKit.getId(), item.id());
+        assertEquals(assessmentKit.getTitle(), item.title());
+        assertEquals(assessmentKit.getSummary(), item.summary());
+        assertEquals(assessmentKit.isPrivate(), item.isPrivate());
+        assertEquals(3, item.likes());
+        assertEquals(15, item.assessmentsCount());
+        assertEquals(KitLanguage.EN.getTitle(), item.languages().getFirst());
+        assertEquals(expertGroup.getId(), item.expertGroup().id());
+        assertEquals(expertGroup.getTitle(), item.expertGroup().title());
+        assertEquals(expertGroupPictureUrl, item.expertGroup().picture());
+
+        verify(loadPublishedKitListPort, never()).loadPublicKits(isNull(), anyInt(), anyInt());
+    }
+
+    @Test
     void testGetKitList_GettingPrivateKitsValidParams_EmptyResult() {
         var param = createParam(p -> p.isPrivate(true));
 
