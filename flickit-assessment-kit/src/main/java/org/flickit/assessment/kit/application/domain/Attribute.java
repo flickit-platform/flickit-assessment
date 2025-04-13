@@ -1,9 +1,6 @@
 package org.flickit.assessment.kit.application.domain;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.application.domain.kit.translation.AttributeTranslation;
 
@@ -13,6 +10,7 @@ import java.util.UUID;
 
 @Getter
 @RequiredArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode
 public class Attribute {
 
