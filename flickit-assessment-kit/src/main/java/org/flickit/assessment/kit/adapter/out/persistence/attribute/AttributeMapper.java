@@ -2,7 +2,6 @@ package org.flickit.assessment.kit.adapter.out.persistence.attribute;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.flickit.assessment.common.application.domain.kit.translation.AttributeTranslation;
 import org.flickit.assessment.common.util.JsonUtils;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJoinAttributeView;
@@ -21,7 +20,6 @@ public class AttributeMapper {
             entity.getIndex(),
             entity.getDescription(),
             entity.getWeight(),
-            JsonUtils.toTranslations(entity.getTranslations(), AttributeTranslation.class),
             entity.getCreationTime(),
             entity.getLastModificationTime(),
             entity.getCreatedBy(),

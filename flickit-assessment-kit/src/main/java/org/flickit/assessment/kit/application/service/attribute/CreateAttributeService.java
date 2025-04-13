@@ -39,11 +39,11 @@ public class CreateAttributeService implements CreateAttributeUseCase {
             param.getIndex(),
             param.getDescription(),
             param.getWeight(),
-            param.getTranslations(),
             LocalDateTime.now(),
             LocalDateTime.now(),
             param.getCurrentUserId(),
             param.getCurrentUserId());
+        attribute.setTranslations(param.getTranslations());
 
         return createAttributePort.persist(attribute, param.getSubjectId(), param.getKitVersionId());
     }

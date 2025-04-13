@@ -124,7 +124,6 @@ public class AttributeUpdateKitPersister implements UpdateKitPersister {
             dslAttribute.getIndex(),
             dslAttribute.getDescription(),
             dslAttribute.getWeight(),
-            null,
             LocalDateTime.now(),
             LocalDateTime.now(),
             createdBy,

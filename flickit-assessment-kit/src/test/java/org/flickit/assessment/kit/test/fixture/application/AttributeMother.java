@@ -1,11 +1,8 @@
 package org.flickit.assessment.kit.test.fixture.application;
 
-import org.flickit.assessment.common.application.domain.kit.KitLanguage;
-import org.flickit.assessment.common.application.domain.kit.translation.AttributeTranslation;
 import org.flickit.assessment.kit.application.domain.Attribute;
 
 import java.time.LocalDateTime;
-import java.util.Map;
 import java.util.UUID;
 
 public class AttributeMother {
@@ -21,7 +18,6 @@ public class AttributeMother {
             index++,
             "Description",
             1,
-            Map.of(KitLanguage.FA, new AttributeTranslation("translated title", "translated desc")),
             LocalDateTime.now(),
             LocalDateTime.now(),
             UUID.randomUUID(),
@@ -37,7 +33,6 @@ public class AttributeMother {
             index,
             description,
             weight,
-            Map.of(KitLanguage.FA, new AttributeTranslation("translated title", "translated desc")),
             LocalDateTime.now(),
             LocalDateTime.now(),
             UUID.randomUUID(),

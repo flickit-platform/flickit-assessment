@@ -23,7 +23,7 @@ public class Attribute {
     private final String description;
     private final int weight;
     @Setter
-    private final Map<KitLanguage, AttributeTranslation> translations;
+    private Map<KitLanguage, AttributeTranslation> translations;
     @EqualsAndHashCode.Exclude private final LocalDateTime creationTime;
     @EqualsAndHashCode.Exclude private final LocalDateTime lastModificationTime;
     private final UUID createdBy;

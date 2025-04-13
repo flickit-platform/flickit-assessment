@@ -55,7 +55,6 @@ public class AttributeCreateKitPersister implements CreateKitPersister {
             dslAttribute.getIndex(),
             dslAttribute.getDescription(),
             dslAttribute.getWeight(),
-            null,
             LocalDateTime.now(),
             LocalDateTime.now(),
             currentUserId,
