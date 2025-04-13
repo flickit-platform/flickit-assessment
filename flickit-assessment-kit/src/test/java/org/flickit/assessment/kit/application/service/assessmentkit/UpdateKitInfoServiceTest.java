@@ -91,6 +91,7 @@ class UpdateKitInfoServiceTest {
         assertEquals(param.getKitId(), portParam.getValue().kitId());
         assertEquals(param.getTitle(), portParam.getValue().title());
         assertEquals(newCode, portParam.getValue().code());
+        assertEquals(param.getTranslations(), portParam.getValue().translations());
     }
 
     @Test
@@ -109,6 +110,7 @@ class UpdateKitInfoServiceTest {
 
         assertEquals(param.getKitId(), portParam.getValue().kitId());
         assertEquals(param.getSummary(), portParam.getValue().summary());
+        assertEquals(param.getTranslations(), portParam.getValue().translations());
     }
 
     @Test
@@ -127,6 +129,7 @@ class UpdateKitInfoServiceTest {
 
         assertEquals(param.getKitId(), portParam.getValue().kitId());
         assertEquals(param.getPublished(), portParam.getValue().published());
+        assertEquals(param.getTranslations(), portParam.getValue().translations());
     }
 
     @Test
@@ -145,6 +148,7 @@ class UpdateKitInfoServiceTest {
 
         assertEquals(param.getKitId(), portParam.getValue().kitId());
         assertEquals(param.getIsPrivate(), portParam.getValue().isPrivate());
+        assertEquals(param.getTranslations(), portParam.getValue().translations());
     }
 
     @Test
@@ -163,6 +167,7 @@ class UpdateKitInfoServiceTest {
 
         assertEquals(param.getKitId(), portParam.getValue().kitId());
         assertEquals(param.getPrice(), portParam.getValue().price());
+        assertEquals(param.getTranslations(), portParam.getValue().translations());
     }
 
     @Test
@@ -181,6 +186,7 @@ class UpdateKitInfoServiceTest {
 
         assertEquals(param.getKitId(), portParam.getValue().kitId());
         assertEquals(param.getAbout(), portParam.getValue().about());
+        assertEquals(param.getTranslations(), portParam.getValue().translations());
     }
 
     @Test
@@ -203,6 +209,7 @@ class UpdateKitInfoServiceTest {
 
         assertEquals(param.getKitId(), portParam.getValue().kitId());
         assertEquals(KitLanguage.valueOf(param.getLang()), portParam.getValue().lang());
+        assertEquals(param.getTranslations(), portParam.getValue().translations());
     }
 
     @Test
@@ -221,6 +228,7 @@ class UpdateKitInfoServiceTest {
 
         assertEquals(param.getKitId(), portParam.getValue().kitId());
         assertIterableEquals(param.getTags(), portParam.getValue().tags());
+        assertEquals(param.getTranslations(), portParam.getValue().translations());
     }
 
     @Test

@@ -1,5 +1,6 @@
 package org.flickit.assessment.kit.application.port.in.assessmentkit;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
@@ -7,12 +8,16 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.common.application.domain.kit.translation.AttributeTranslation;
 import org.flickit.assessment.common.validation.EnumValue;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_KIT_LANGUAGE_NOT_VALID;
+import static org.flickit.assessment.common.validation.EnumValidateUtils.validateAndConvert;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 public interface UpdateKitInfoUseCase {
@@ -50,6 +55,9 @@ public interface UpdateKitInfoUseCase {
         @Size(min = 1, message = UPDATE_KIT_INFO_TAGS_SIZE_MIN)
         List<Long> tags;
 
+        @Valid
+        Map<KitLanguage, AttributeTranslation> translations;
+
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
@@ -63,9 +71,9 @@ public interface UpdateKitInfoUseCase {
                      Double price,
                      String about,
                      List<Long> tags,
+                     Map<String, AttributeTranslation> translations,
                      UUID currentUserId) {
             this.kitId = kitId;
-            this.currentUserId = currentUserId;
             this.title = title;
             this.summary = summary;
             this.lang = lang != null ? KitLanguage.getEnum(lang).name() : null;
@@ -74,6 +82,8 @@ public interface UpdateKitInfoUseCase {
             this.price = price;
             this.about = about;
             this.tags = tags;
+            this.translations = validateAndConvert(translations, KitLanguage.class, COMMON_KIT_LANGUAGE_NOT_VALID);
+            this.currentUserId = currentUserId;
             this.validateSelf();
         }
     }

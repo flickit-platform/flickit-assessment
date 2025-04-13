@@ -61,6 +61,7 @@ public class UpdateKitInfoService implements UpdateKitInfoUseCase {
             param.getPrice(),
             param.getAbout(),
             param.getTags() != null ? new HashSet<>(param.getTags()) : null,
+            param.getTranslations(),
             param.getCurrentUserId(),
             LocalDateTime.now()
         );
