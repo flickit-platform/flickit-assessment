@@ -51,7 +51,8 @@ public class AssessmentKitDataConstraintErrorMapper implements DataConstraintErr
         entry("uq_fak_answer_range_code_kitversionid", CREATE_ANSWER_RANGE_TITLE_DUPLICATE),
         entry("uq_fak_measure_index_kitversionid", CREATE_MEASURE_INDEX_DUPLICATE),
         entry("uq_fak_measure_code_kitversionid", CREATE_MEASURE_TITLE_DUPLICATE),
-        entry("uq_fak_measure_title_kitversionid", CREATE_MEASURE_TITLE_DUPLICATE)
+        entry("uq_fak_measure_title_kitversionid", CREATE_MEASURE_TITLE_DUPLICATE),
+        entry("fk_fak_question_measure", MEASURE_ID_NOT_FOUND)
         );
 
     @Override
