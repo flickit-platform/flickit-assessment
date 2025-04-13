@@ -1,5 +1,6 @@
 package org.flickit.assessment.kit.application.service.subject;
 
+import org.flickit.assessment.common.application.domain.kit.translation.SubjectTranslation;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.port.in.subject.CreateSubjectUseCase;
@@ -8,10 +9,12 @@ import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersion
 import org.flickit.assessment.kit.application.port.out.subject.CreateSubjectPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -21,7 +24,7 @@ import static org.flickit.assessment.kit.test.fixture.application.KitVersionMoth
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CreateSubjectServiceTest {
@@ -62,6 +65,18 @@ class CreateSubjectServiceTest {
         when(createSubjectPort.persist(any(CreateSubjectPort.Param.class))).thenReturn(subjectId);
 
         long createdSubjectId = service.createSubject(param);
+
+        var createParamArgument = ArgumentCaptor.forClass(CreateSubjectPort.Param.class);
+        verify(createSubjectPort, times(1)).persist(createParamArgument.capture());
+        assertEquals(param.getKitVersionId(), createParamArgument.getValue().kitVersionId());
+        assertEquals(param.getIndex(), createParamArgument.getValue().index());
+        assertEquals(param.getTitle(), createParamArgument.getValue().title());
+        assertEquals(param.getDescription(), createParamArgument.getValue().description());
+        assertEquals(param.getWeight(), createParamArgument.getValue().weight());
+        assertEquals(param.getKitVersionId(), createParamArgument.getValue().kitVersionId());
+        assertEquals(param.getTranslations(), createParamArgument.getValue().translations());
+        assertEquals(param.getCurrentUserId(), createParamArgument.getValue().createdBy());
+
         assertEquals(subjectId, createdSubjectId);
     }
 
@@ -78,6 +93,7 @@ class CreateSubjectServiceTest {
             .title("Team")
             .description("team description")
             .weight(2)
+            .translations(Map.of("EN", new SubjectTranslation("titl", "desc")))
             .currentUserId(UUID.randomUUID());
     }
 }
