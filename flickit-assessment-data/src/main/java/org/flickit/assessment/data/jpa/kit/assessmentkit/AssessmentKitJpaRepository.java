@@ -100,6 +100,23 @@ public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJ
                                                                                 Pageable pageable);
 
     @Query("""
+            SELECT DISTINCT(k) AS kit, g AS expertGroup
+            FROM AssessmentKitJpaEntity k
+            LEFT JOIN ExpertGroupJpaEntity g ON k.expertGroupId = g.id
+            JOIN KitUserAccessJpaEntity kua ON k.id = kua.kitId
+            WHERE k.published = TRUE
+                AND (k.isPrivate = FALSE OR (k.isPrivate = TRUE AND kua.userId = :userId))
+                AND (:languageIds IS NULL OR k.languageId IN :languageIds)
+            ORDER BY k.isPrivate, k.title
+        """)
+    Page<KitWithExpertGroupView> findAllPublishedOrderByTitle(@Param("userId")
+                                                              UUID userId,
+                                                              @Nullable
+                                                              @Param("languageIds")
+                                                              Collection<Integer> languageIds,
+                                                              Pageable pageable);
+
+    @Query("""
             SELECT
                 k.id AS id,
                 COUNT(DISTINCT l.userId) AS likeCount,
