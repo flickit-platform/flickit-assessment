@@ -9,7 +9,6 @@ import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadPublish
 import org.flickit.assessment.kit.application.port.out.kitlanguage.LoadKitLanguagesPort;
 import org.flickit.assessment.kit.application.port.out.kittag.LoadKitTagListPort;
 import org.flickit.assessment.kit.application.port.out.minio.CreateFileDownloadLinkPort;
-import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
 import org.flickit.assessment.kit.test.fixture.application.ExpertGroupMother;
 import org.flickit.assessment.kit.test.fixture.application.KitTagMother;
 import org.junit.jupiter.api.Test;
@@ -25,7 +24,9 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.privateKit;
+import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -51,9 +52,9 @@ class GetKitListServiceTest {
     private CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
     @Test
-    void testGetKitList_GettingPublicKitsValidParams_ValidResult() {
+    void testGetKitList_whenPublicKitsAreWanted_thenReturnPublicKits() {
         var param = createParam(Param.ParamBuilder::build);
-        var assessmentKit = AssessmentKitMother.simpleKit();
+        var assessmentKit = simpleKit();
         var kitId = assessmentKit.getId();
         var kitIds = List.of(kitId);
         var expertGroup = ExpertGroupMother.createExpertGroup();
@@ -92,7 +93,7 @@ class GetKitListServiceTest {
         assertEquals(assessmentKit.getId(), item.id());
         assertEquals(assessmentKit.getTitle(), item.title());
         assertEquals(assessmentKit.getSummary(), item.summary());
-        assertEquals(assessmentKit.isPrivate(), item.isPrivate());
+        assertFalse(item.isPrivate());
         assertEquals(3, item.likes());
         assertEquals(15, item.assessmentsCount());
         assertEquals(KitLanguage.EN.getTitle(), item.languages().getFirst());
@@ -104,11 +105,11 @@ class GetKitListServiceTest {
     }
 
     @Test
-    void testGetKitList_GettingPrivateKitsValidParams_ValidResult() {
+    void testGetKitList_whenPrivateKitsAreWanted_thenReturnPrivateKits() {
         var param = createParam(p -> p
             .isPrivate(true)
             .langs(null));
-        var assessmentKit = AssessmentKitMother.simpleKit();
+        var assessmentKit = privateKit();
         var kitId = assessmentKit.getId();
         var kitIds = List.of(kitId);
         var expertGroup = ExpertGroupMother.createExpertGroup();
@@ -147,7 +148,7 @@ class GetKitListServiceTest {
         assertEquals(assessmentKit.getId(), item.id());
         assertEquals(assessmentKit.getTitle(), item.title());
         assertEquals(assessmentKit.getSummary(), item.summary());
-        assertEquals(assessmentKit.isPrivate(), item.isPrivate());
+        assertTrue(item.isPrivate());
         assertEquals(3, item.likes());
         assertEquals(15, item.assessmentsCount());
         assertEquals(KitLanguage.EN.getTitle(), item.languages().getFirst());
@@ -159,11 +160,11 @@ class GetKitListServiceTest {
     }
 
     @Test
-    void testGetKitList_GettingAllKitsValidParams_ValidResult() {
+    void testGetKitList_whenAllPublishedKitsAreWanted_thenReturnAllKits() {
         var param = createParam(p -> p
             .langs(null)
             .isPrivate(null));
-        var assessmentKit = AssessmentKitMother.simpleKit();
+        var assessmentKit = simpleKit();
         var kitId = assessmentKit.getId();
         var kitIds = List.of(kitId);
         var expertGroup = ExpertGroupMother.createExpertGroup();
@@ -214,7 +215,7 @@ class GetKitListServiceTest {
     }
 
     @Test
-    void testGetKitList_GettingPrivateKitsValidParams_EmptyResult() {
+    void testGetKitList_whenNoKitIsFound_thenReturnEmptyResult() {
         var param = createParam(p -> p.isPrivate(true));
 
         var expectedKitsPage = new PaginatedResponse<LoadPublishedKitListPort.Result>(List.of(),
