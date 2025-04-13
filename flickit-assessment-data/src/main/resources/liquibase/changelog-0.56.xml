@@ -104,7 +104,7 @@
     <changeSet id="0.56-14" author="Maziyar Gerami">
         <createTable tableName="fak_kit_banner">
             <column name="id" type="uuid">
-                <constraints nullable="false"/>
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_fak_kit_banner"/>
             </column>
             <column name="kit_id" type="bigint">
                 <constraints nullable="false"/>
