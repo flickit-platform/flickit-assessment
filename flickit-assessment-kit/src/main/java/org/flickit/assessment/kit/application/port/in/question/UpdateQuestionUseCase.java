@@ -52,6 +52,8 @@ public interface UpdateQuestionUseCase {
 
         Long answerRangeId;
 
+        Long measureId;
+
         @Valid
         Map<KitLanguage, QuestionTranslation> translations;
 
@@ -67,6 +69,7 @@ public interface UpdateQuestionUseCase {
                      Boolean mayNotBeApplicable,
                      Boolean advisable,
                      Long answerRangeId,
+                     Long measureId,
                      Map<String, QuestionTranslation> translations,
                      UUID currentUserId) {
             this.kitVersionId = kitVersionId;
@@ -77,6 +80,7 @@ public interface UpdateQuestionUseCase {
             this.mayNotBeApplicable = mayNotBeApplicable;
             this.advisable = advisable;
             this.answerRangeId = answerRangeId;
+            this.measureId = measureId;
             this.translations = validateAndConvert(translations,KitLanguage.class, COMMON_KIT_LANGUAGE_NOT_VALID);
             this.currentUserId = currentUserId;
             this.validateSelf();

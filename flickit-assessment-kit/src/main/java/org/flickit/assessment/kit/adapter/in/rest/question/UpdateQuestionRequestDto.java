@@ -10,5 +10,6 @@ public record UpdateQuestionRequestDto(Integer index,
                                        Boolean mayNotBeApplicable,
                                        Boolean advisable,
                                        Long answerRangeId,
+                                       Long measureId,
                                        Map<String, QuestionTranslation> translations) {
 }

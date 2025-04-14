@@ -74,6 +74,7 @@ public class QuestionPersistenceJpaAdapter implements
             param.mayNotBeApplicable(),
             param.advisable(),
             param.answerRangeId(),
+            param.measureId(),
             translations,
             param.lastModificationTime(),
             param.lastModifiedBy());
@@ -139,6 +140,14 @@ public class QuestionPersistenceJpaAdapter implements
     @Override
     public List<LoadQuestionsPort.Result> loadQuestionsWithoutAnswerRange(long kitVersionId) {
         return repository.findAllByKitVersionIdAndWithoutAnswerRange(kitVersionId)
+            .stream()
+            .map(QuestionMapper::mapToPortResult)
+            .toList();
+    }
+
+    @Override
+    public List<LoadQuestionsPort.Result> loadQuestionsWithoutMeasure(long kitVersionId) {
+        return repository.findAllByKitVersionIdAndWithoutMeasure(kitVersionId)
             .stream()
             .map(QuestionMapper::mapToPortResult)
             .toList();

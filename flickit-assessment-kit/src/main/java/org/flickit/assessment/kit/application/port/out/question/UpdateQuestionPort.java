@@ -24,6 +24,7 @@ public interface UpdateQuestionPort {
                  Boolean mayNotBeApplicable,
                  Boolean advisable,
                  Long answerRangeId,
+                 Long measureId,
                  Map<KitLanguage, QuestionTranslation> translations,
                  LocalDateTime lastModificationTime,
                  UUID lastModifiedBy) {

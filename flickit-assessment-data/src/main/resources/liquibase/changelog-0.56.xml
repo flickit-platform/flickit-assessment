@@ -75,4 +75,55 @@
             </column>
         </addColumn>
     </changeSet>
+
+    <changeSet id="0.56-10" author="Maziyar Gerami">
+        <addUniqueConstraint columnNames="kit_version_id, index"
+                             constraintName="uq_fak_measure_index_kitversionid"
+                             tableName="fak_measure"
+                             initiallyDeferred="true"/>
+    </changeSet>
+
+    <changeSet id="0.56-11" author="Maziyar Gerami">
+        <addUniqueConstraint columnNames="kit_version_id, code"
+                             constraintName="uq_fak_measure_code_kitversionid"
+                             tableName="fak_measure"
+                             initiallyDeferred="true"/>
+    </changeSet>
+
+    <changeSet id="0.56-12" author="Maziyar Gerami">
+        <addUniqueConstraint columnNames="kit_version_id, title"
+                             constraintName="uq_fak_measure_title_kitversionid"
+                             tableName="fak_measure"
+                             initiallyDeferred="true"/>
+    </changeSet>
+
+    <changeSet id="0.56-13" author="Mahdi Rezazadeh">
+        <dropNotNullConstraint tableName="fak_question" columnName="measure_id"/>
+    </changeSet>
+
+    <changeSet id="0.56-14" author="Maziyar Gerami">
+        <createTable tableName="fak_kit_banner">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_fak_kit_banner"/>
+            </column>
+            <column name="kit_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="path" type="varchar(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="in_slider" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.56-15" author="Maziyar Gerami">
+        <addForeignKeyConstraint baseTableName="fak_kit_banner"
+                                 baseColumnNames="kit_id"
+                                 referencedTableName="fak_assessment_kit"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fak_kitbanner_assessmentkit"/>
+    </changeSet>
+
 </databaseChangeLog>

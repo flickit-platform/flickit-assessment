@@ -24,6 +24,7 @@ public class Question {
     @Setter
     private List<QuestionImpact> impacts;
     private final Long answerRangeId;
+    private final Long measureId;
     @Setter
     private List<AnswerOption> options;
     private final Long questionnaireId;

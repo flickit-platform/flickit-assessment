@@ -2,12 +2,10 @@ package org.flickit.assessment.kit.application.service.questionnaire;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.KitVersion;
-import org.flickit.assessment.kit.application.domain.Measure;
 import org.flickit.assessment.kit.application.domain.Questionnaire;
 import org.flickit.assessment.kit.application.port.in.questionnaire.CreateQuestionnaireUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
-import org.flickit.assessment.kit.application.port.out.measure.CreateMeasurePort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.CreateQuestionnairePort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,9 +35,6 @@ class CreateQuestionnaireServiceTest {
     private CreateQuestionnairePort createQuestionnairePort;
 
     @Mock
-    private CreateMeasurePort createMeasurePort;
-
-    @Mock
     private LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
 
     @Mock
@@ -62,15 +57,12 @@ class CreateQuestionnaireServiceTest {
     @Test
     void testCreateQuestionnaire_WhenCurrentUserIsOwner_ThenCreateQuestionnaire() {
         long questionnaireId = 123L;
-        long measureId = 321L;
         var param = createParam(b -> b.currentUserId(ownerId));
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
         when(createQuestionnairePort.persist(any(Questionnaire.class), eq(param.getKitVersionId()), eq(param.getCurrentUserId())))
             .thenReturn(questionnaireId);
-        when(createMeasurePort.persist(any(Measure.class), eq(param.getKitVersionId()), eq(param.getCurrentUserId())))
-            .thenReturn(measureId);
 
         long actualQuestionnaireId = createQuestionnaireService.createQuestionnaire(param);
         assertEquals(questionnaireId, actualQuestionnaireId);

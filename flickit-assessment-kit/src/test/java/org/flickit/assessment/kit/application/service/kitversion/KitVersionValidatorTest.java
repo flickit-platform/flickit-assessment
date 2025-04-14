@@ -50,7 +50,7 @@ class KitVersionValidatorTest {
 
     @Test
     void testValidate() {
-        var kitKitVersionId = 123L;
+        var kitVersionId = 123L;
 
         var loadQuestionsPortResult = List.of(new LoadQuestionsPort.Result(1, 100L, "Q100Title"),
             new LoadQuestionsPort.Result(2, 200L, "Q100Title"));
@@ -64,6 +64,8 @@ class KitVersionValidatorTest {
             MessageBundle.message(VALIDATE_KIT_VERSION_QUESTION_IMPACT_NOT_NULL, loadQuestionsPortResult.getLast().questionIndex(), loadQuestionsPortResult.getLast().questionnaireTitle()),
             MessageBundle.message(VALIDATE_KIT_VERSION_QUESTION_ANSWER_RANGE_NOT_NULL, loadQuestionsPortResult.getFirst().questionIndex(), loadQuestionsPortResult.getFirst().questionnaireTitle()),
             MessageBundle.message(VALIDATE_KIT_VERSION_QUESTION_ANSWER_RANGE_NOT_NULL, loadQuestionsPortResult.getLast().questionIndex(), loadQuestionsPortResult.getLast().questionnaireTitle()),
+            MessageBundle.message(VALIDATE_KIT_VERSION_QUESTION_MEASURE_NOT_NULL, loadQuestionsPortResult.getFirst().questionIndex(), loadQuestionsPortResult.getFirst().questionnaireTitle()),
+            MessageBundle.message(VALIDATE_KIT_VERSION_QUESTION_MEASURE_NOT_NULL, loadQuestionsPortResult.getLast().questionIndex(), loadQuestionsPortResult.getLast().questionnaireTitle()),
             MessageBundle.message(VALIDATE_KIT_VERSION_ANSWER_RANGE_LOW_OPTIONS, listOfAnswerRanges.getFirst().getTitle()),
             MessageBundle.message(VALIDATE_KIT_VERSION_SUBJECT_ATTRIBUTE_NOT_NULL, listOfSubjects.getFirst().getTitle()),
             MessageBundle.message(VALIDATE_KIT_VERSION_SUBJECT_ATTRIBUTE_NOT_NULL, listOfSubjects.getLast().getTitle()),
@@ -75,16 +77,17 @@ class KitVersionValidatorTest {
             MessageBundle.message(VALIDATE_KIT_VERSION_MATURITY_LEVEL_NOT_NULL)
         );
 
-        when(loadQuestionsPort.loadQuestionsWithoutImpact(kitKitVersionId)).thenReturn(loadQuestionsPortResult);
-        when(loadQuestionsPort.loadQuestionsWithoutAnswerRange(kitKitVersionId)).thenReturn(loadQuestionsPortResult);
-        when(loadAnswerRangesPort.loadAnswerRangesWithNotEnoughOptions(kitKitVersionId)).thenReturn(listOfAnswerRanges);
-        when(loadSubjectsPort.loadSubjectsWithoutAttribute(kitKitVersionId)).thenReturn(listOfSubjects);
-        when(loadAttributesPort.loadUnimpactedAttributes(kitKitVersionId)).thenReturn(listOfAttributes);
-        when(countKitVersionStatsPort.countKitVersionStats(kitKitVersionId)).thenReturn(new CountKitVersionStatsPort.Result(0, 0, 0, 0));
-        when(loadQuestionnairesPort.loadQuestionnairesWithoutQuestion(kitKitVersionId)).thenReturn(listOfQuestionnaire);
+        when(loadQuestionsPort.loadQuestionsWithoutImpact(kitVersionId)).thenReturn(loadQuestionsPortResult);
+        when(loadQuestionsPort.loadQuestionsWithoutAnswerRange(kitVersionId)).thenReturn(loadQuestionsPortResult);
+        when(loadAnswerRangesPort.loadAnswerRangesWithNotEnoughOptions(kitVersionId)).thenReturn(listOfAnswerRanges);
+        when(loadSubjectsPort.loadSubjectsWithoutAttribute(kitVersionId)).thenReturn(listOfSubjects);
+        when(loadAttributesPort.loadUnimpactedAttributes(kitVersionId)).thenReturn(listOfAttributes);
+        when(countKitVersionStatsPort.countKitVersionStats(kitVersionId)).thenReturn(new CountKitVersionStatsPort.Result(0, 0, 0, 0));
+        when(loadQuestionnairesPort.loadQuestionnairesWithoutQuestion(kitVersionId)).thenReturn(listOfQuestionnaire);
+        when(loadQuestionsPort.loadQuestionsWithoutMeasure(kitVersionId)).thenReturn(loadQuestionsPortResult);
 
-        var result = validator.validate(kitKitVersionId);
-        assertEquals(15, result.size());
+        var result = validator.validate(kitVersionId);
+        assertEquals(17, result.size());
         assertThat(result).containsAll(expectedErrors);
     }
 }
