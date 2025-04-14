@@ -21,8 +21,8 @@ import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.CREATE_ANSWER_RANGE_OPTION_ANSWER_RANGE_NON_REUSABLE;
-import static org.flickit.assessment.kit.test.fixture.application.AnswerRangeMother.createReusableAnswerRangeWithTwoOptions;
 import static org.flickit.assessment.kit.test.fixture.application.AnswerRangeMother.createNonReusableAnswerRangeWithTwoOptions;
+import static org.flickit.assessment.kit.test.fixture.application.AnswerRangeMother.createReusableAnswerRangeWithTwoOptions;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
 import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createKitVersion;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -100,6 +100,7 @@ class CreateAnswerRangeOptionServiceTest {
         assertEquals(param.getTitle(), createPortCaptor.getValue().title());
         assertEquals(param.getAnswerRangeId(), createPortCaptor.getValue().answerRangeId());
         assertEquals(param.getValue(), createPortCaptor.getValue().value());
+        assertEquals(param.getTranslations(), createPortCaptor.getValue().translation());
         assertEquals(param.getCurrentUserId(), createPortCaptor.getValue().createdBy());
     }
 
