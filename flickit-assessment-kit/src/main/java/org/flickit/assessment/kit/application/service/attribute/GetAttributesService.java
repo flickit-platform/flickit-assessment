@@ -50,6 +50,7 @@ public class GetAttributesService implements GetAttributesUseCase {
             attribute.getTitle(),
             attribute.getDescription(),
             attribute.getWeight(),
-            new AttributeSubject(subject.getId(), subject.getTitle()));
+            new AttributeSubject(subject.getId(), subject.getTitle()),
+            attribute.getTranslations());
     }
 }
