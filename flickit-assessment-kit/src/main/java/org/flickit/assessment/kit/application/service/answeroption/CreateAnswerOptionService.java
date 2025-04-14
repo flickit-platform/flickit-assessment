@@ -81,6 +81,7 @@ public class CreateAnswerOptionService implements CreateAnswerOptionUseCase {
             param.getIndex(),
             answerRangeId,
             param.getValue(),
+            param.getTranslations(),
             param.getKitVersionId(),
             param.getCurrentUserId());
     }
