@@ -206,6 +206,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             questionnaireId,
             measureId,
             answerRangeId,
+            null,
             currentUserId);
     }
 

@@ -1,15 +1,21 @@
 package org.flickit.assessment.kit.application.port.in.question;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.common.application.domain.kit.translation.QuestionTranslation;
 
+import java.util.Map;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_KIT_LANGUAGE_NOT_VALID;
+import static org.flickit.assessment.common.validation.EnumValidateUtils.validateAndConvert;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 public interface CreateQuestionUseCase {
@@ -44,6 +50,9 @@ public interface CreateQuestionUseCase {
         @NotNull(message = CREATE_QUESTION_QUESTIONNAIRE_ID_NOT_NULL)
         Long questionnaireId;
 
+        @Valid
+        Map<KitLanguage, QuestionTranslation> translations;
+
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
@@ -55,6 +64,7 @@ public interface CreateQuestionUseCase {
                      Boolean mayNotBeApplicable,
                      Boolean advisable,
                      Long questionnaireId,
+                     Map<String, QuestionTranslation> translations,
                      UUID currentUserId) {
             this.kitVersionId = kitVersionId;
             this.index = index;
@@ -63,6 +73,7 @@ public interface CreateQuestionUseCase {
             this.mayNotBeApplicable = mayNotBeApplicable;
             this.advisable = advisable;
             this.questionnaireId = questionnaireId;
+            this.translations = validateAndConvert(translations, KitLanguage.class, COMMON_KIT_LANGUAGE_NOT_VALID);
             this.currentUserId = currentUserId;
             this.validateSelf();
         }

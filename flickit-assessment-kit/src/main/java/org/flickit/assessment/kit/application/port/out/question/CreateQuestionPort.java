@@ -1,5 +1,9 @@
 package org.flickit.assessment.kit.application.port.out.question;
 
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.common.application.domain.kit.translation.QuestionTranslation;
+
+import java.util.Map;
 import java.util.UUID;
 
 public interface CreateQuestionPort {
@@ -17,6 +21,7 @@ public interface CreateQuestionPort {
         Long questionnaireId,
         Long measureId,
         Long answerRangeId,
+        Map<KitLanguage, QuestionTranslation> translations,
         UUID createdBy) {
     }
 }

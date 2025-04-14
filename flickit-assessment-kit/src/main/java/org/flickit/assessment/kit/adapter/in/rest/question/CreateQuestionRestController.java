@@ -37,6 +37,7 @@ public class CreateQuestionRestController {
             requestDto.mayNotBeApplicable(),
             requestDto.advisable(),
             requestDto.questionnaireId(),
+            requestDto.translations(),
             currentUserId);
     }
 }
