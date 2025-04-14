@@ -2943,7 +2943,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"index\": 1,\n    \"title\": \"new title\",\n    \"description\": \"sample desc\"\n}",
+							"raw": "{\n    \"index\": 1,\n    \"title\": \"new title\",\n    \"description\": \"sample desc\",\n    \"translations\": {\n        \"EN\": {\n            \"title\": \"Title 2\",\n            \"description\": \"description 2\"\n        }\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3024,7 +3024,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"index\": 30,\n    \"title\": \"Test Quality\",\n    \"description\": \"Test Quality Description\"\n}",
+							"raw": "{\n    \"index\": 30,\n    \"title\": \"Test Quality\",\n    \"description\": \"Test Quality Description\",\n    \"translations\": {\n        \"EN\": {\n            \"title\": \"Title 2\",\n            \"description\": \"description 2\"\n        }\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
