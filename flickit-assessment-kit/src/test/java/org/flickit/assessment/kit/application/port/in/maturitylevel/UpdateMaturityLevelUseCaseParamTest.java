@@ -123,7 +123,7 @@ class UpdateMaturityLevelUseCaseParamTest {
             .index(3)
             .description("team description")
             .value(2)
-            .translations(Map.of("EN", new MaturityLevelTranslation("titl", "desc")))
+            .translations(Map.of("EN", new MaturityLevelTranslation("title", "desc")))
             .currentUserId(UUID.randomUUID());
     }
 }
