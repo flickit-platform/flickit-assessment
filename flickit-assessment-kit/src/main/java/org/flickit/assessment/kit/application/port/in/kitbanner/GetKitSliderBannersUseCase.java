@@ -6,9 +6,13 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 
+import java.util.List;
+
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 public interface GetKitSliderBannersUseCase {
+
+    List<Result> getSliderBanners();
 
     @Value
     @EqualsAndHashCode(callSuper = false)
@@ -22,5 +26,8 @@ public interface GetKitSliderBannersUseCase {
             this.langId = langId;
             this.validateSelf();
         }
+    }
+
+    record Result(long kitId, String banner){
     }
 }
