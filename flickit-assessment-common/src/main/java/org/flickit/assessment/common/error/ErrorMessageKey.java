@@ -42,4 +42,9 @@ public class ErrorMessageKey {
     public static final String TRANSLATION_SUBJECT_TITLE_SIZE_MAX = "translations-subject.title.size.max";
     public static final String TRANSLATION_SUBJECT_DESCRIPTION_SIZE_MIN = "translations-subject.description.size.min";
     public static final String TRANSLATION_SUBJECT_DESCRIPTION_SIZE_MAX = "translations-subject.description.size.max";
+
+    public static final String TRANSLATION_MEASURE_TITLE_SIZE_MIN = "translations-measure.title.size.min";
+    public static final String TRANSLATION_MEASURE_TITLE_SIZE_MAX = "translations-measure.title.size.max";
+    public static final String TRANSLATION_MEASURE_DESCRIPTION_SIZE_MIN = "translations-measure.description.size.min";
+    public static final String TRANSLATION_MEASURE_DESCRIPTION_SIZE_MAX = "translations-measure.description.size.max";
 }
