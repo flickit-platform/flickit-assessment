@@ -52,6 +52,7 @@ public class CreateAnswerRangeOptionService implements CreateAnswerRangeOptionUs
             param.getIndex(),
             param.getAnswerRangeId(),
             param.getValue(),
+            param.getTranslations(),
             param.getKitVersionId(),
             param.getCurrentUserId());
     }
