@@ -2,7 +2,7 @@ package org.flickit.assessment.kit.application.service.answeroption;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.KitVersion;
-import org.flickit.assessment.kit.application.port.in.answeroption.UpdateAnswerOptionUseCase;
+import org.flickit.assessment.kit.application.port.in.answeroption.UpdateAnswerOptionUseCase.Param;
 import org.flickit.assessment.kit.application.port.out.answeroption.UpdateAnswerOptionPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
@@ -42,7 +42,7 @@ class UpdateAnswerOptionServiceTest {
 
     @Test
     void testUpdateAnswerOption_WhenCurrentUserIsNotExpertGroupOwner_ThenThrowAccessDeniedException() {
-        var param = createParam(UpdateAnswerOptionUseCase.Param.ParamBuilder::build);
+        var param = createParam(Param.ParamBuilder::build);
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
@@ -70,18 +70,19 @@ class UpdateAnswerOptionServiceTest {
         assertEquals(param.getIndex(), captor.getValue().index());
         assertEquals(param.getTitle(), captor.getValue().title());
         assertEquals(param.getValue(), captor.getValue().value());
+        assertEquals(param.getTranslations(), captor.getValue().translations());
         assertEquals(param.getCurrentUserId(), captor.getValue().lastModifiedBy());
         assertNotNull(captor.getValue().lastModifiedBy());
     }
 
-    private UpdateAnswerOptionUseCase.Param createParam(Consumer<UpdateAnswerOptionUseCase.Param.ParamBuilder> changer) {
+    private Param createParam(Consumer<Param.ParamBuilder> changer) {
         var paramBuilder = paramBuilder();
         changer.accept(paramBuilder);
         return paramBuilder.build();
     }
 
-    private UpdateAnswerOptionUseCase.Param.ParamBuilder paramBuilder() {
-        return UpdateAnswerOptionUseCase.Param.builder()
+    private Param.ParamBuilder paramBuilder() {
+        return Param.builder()
             .kitVersionId(kitVersion.getId())
             .answerOptionId(1L)
             .index(1)
@@ -89,5 +90,4 @@ class UpdateAnswerOptionServiceTest {
             .value(1d)
             .currentUserId(UUID.randomUUID());
     }
-
 }
