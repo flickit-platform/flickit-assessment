@@ -130,6 +130,7 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
             newLevel.getIndex(),
             newLevel.getDescription(),
             newLevel.getValue(),
+            null,
             null
         );
 
@@ -143,6 +144,7 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
             newLevel.getIndex(),
             newLevel.getDescription(),
             newLevel.getValue(),
+            null,
             null
         );
     }
@@ -162,6 +164,7 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
             newLevel.getIndex(),
             newLevel.getDescription(),
             newLevel.getValue(),
+            savedLevel.getTranslations(),
             null
         );
     }
