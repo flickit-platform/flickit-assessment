@@ -2219,7 +2219,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"index\": 6,\n    \"title\": \"Perfect\",\n    \"description\": \"description\",\n    \"value\": 6\n}",
+							"raw": "{\n    \"index\": 6,\n    \"title\": \"Perfect\",\n    \"description\": \"description\",\n    \"value\": 6,\n    \"translations\": {\n        \"EN\": {\n            \"title\": \"Perfecttttooo\",\n            \"description\": \"description\"\n        }\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
