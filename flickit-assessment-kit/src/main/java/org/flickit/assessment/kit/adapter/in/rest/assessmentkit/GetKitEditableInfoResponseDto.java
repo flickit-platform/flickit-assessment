@@ -1,6 +1,7 @@
 package org.flickit.assessment.kit.adapter.in.rest.assessmentkit;
 
 import org.flickit.assessment.kit.application.domain.KitTag;
+import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitEditableInfoUseCase.KitEditableInfo.Language;
 
 import java.util.List;
 
@@ -14,5 +15,6 @@ public record GetKitEditableInfoResponseDto(Long id,
                                             String about,
                                             List<KitTag> tags,
                                             boolean editable,
-                                            boolean hasActiveVersion) {
+                                            boolean hasActiveVersion,
+                                            List<Language> languages) {
 }

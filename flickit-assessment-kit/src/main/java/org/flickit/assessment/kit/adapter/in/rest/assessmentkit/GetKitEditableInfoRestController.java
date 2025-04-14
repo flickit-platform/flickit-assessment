@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.adapter.in.rest.assessmentkit;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitEditableInfoUseCase;
+import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitEditableInfoUseCase.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,8 +26,8 @@ public class GetKitEditableInfoRestController {
         return new ResponseEntity<>(toResponse(kitEditableInfo), HttpStatus.OK);
     }
 
-    private GetKitEditableInfoUseCase.Param toParam(Long kitId, UUID currentUserId) {
-        return new GetKitEditableInfoUseCase.Param(kitId, currentUserId);
+    private Param toParam(Long kitId, UUID currentUserId) {
+        return new Param(kitId, currentUserId);
     }
 
     private GetKitEditableInfoResponseDto toResponse(GetKitEditableInfoUseCase.KitEditableInfo kitEditableInfo) {
@@ -41,7 +42,8 @@ public class GetKitEditableInfoRestController {
             kitEditableInfo.about(),
             kitEditableInfo.tags(),
             kitEditableInfo.editable(),
-            kitEditableInfo.hasActiveVersion()
+            kitEditableInfo.hasActiveVersion(),
+            kitEditableInfo.languages()
         );
     }
 }
