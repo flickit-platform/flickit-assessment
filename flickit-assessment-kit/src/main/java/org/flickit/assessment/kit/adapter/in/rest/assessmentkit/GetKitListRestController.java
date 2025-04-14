@@ -24,7 +24,7 @@ public class GetKitListRestController {
 
     @GetMapping("/assessment-kits")
     public ResponseEntity<PaginatedResponse<KitListItem>> getKitList(
-        @RequestParam(required = false) Boolean isPrivate, // validated in the use-case param
+        @RequestParam(required = false) Boolean isPrivate,
         @RequestParam(required = false) Set<String> langs,
         @RequestParam(defaultValue = "50") int size,
         @RequestParam(defaultValue = "0") int page) {

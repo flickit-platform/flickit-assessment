@@ -50,8 +50,8 @@ class SubjectCreateKitPersisterTest {
             .subjects(List.of(dslSubjectOne, dslSubjectTwo))
             .build();
 
-        var subjectOneParam = new CreateSubjectPort.Param(subjectOne.getCode(), subjectOne.getTitle(), subjectOne.getIndex(), 1, subjectOne.getDescription(), KIT_ID, CURRENT_USER_ID);
-        var subjectTwoParam = new CreateSubjectPort.Param(subjectTwo.getCode(), subjectTwo.getTitle(), subjectTwo.getIndex(), 1, subjectTwo.getDescription(), KIT_ID, CURRENT_USER_ID);
+        var subjectOneParam = new CreateSubjectPort.Param(subjectOne.getCode(), subjectOne.getTitle(), subjectOne.getIndex(), 1, null, subjectOne.getDescription(), KIT_ID, CURRENT_USER_ID);
+        var subjectTwoParam = new CreateSubjectPort.Param(subjectTwo.getCode(), subjectTwo.getTitle(), subjectTwo.getIndex(), 1, null, subjectTwo.getDescription(), KIT_ID, CURRENT_USER_ID);
         when(createSubjectPort.persist(subjectOneParam)).thenReturn(subjectOne.getId());
         when(createSubjectPort.persist(subjectTwoParam)).thenReturn(subjectTwo.getId());
 

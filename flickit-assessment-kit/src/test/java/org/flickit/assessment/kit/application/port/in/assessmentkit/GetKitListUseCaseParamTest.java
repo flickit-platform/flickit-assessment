@@ -17,13 +17,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class GetKitListUseCaseParamTest {
 
     @Test
-    void testGetAssessmentKitListUseCaseParam_IsPrivateParamViolatesConstraint_ErrorMessage() {
-        var throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.isPrivate(null)));
-        assertThat(throwable).hasMessage("isPrivate: " + GET_KIT_LIST_IS_PRIVATE_NOT_NULL);
-    }
-
-    @Test
     void testGetAssessmentKitListUseCaseParam_LangsParamViolatesConstraint_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.langs(Set.of("invalid"))));

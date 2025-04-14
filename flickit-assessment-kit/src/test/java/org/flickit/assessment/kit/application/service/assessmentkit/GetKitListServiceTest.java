@@ -9,7 +9,6 @@ import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadPublish
 import org.flickit.assessment.kit.application.port.out.kitlanguage.LoadKitLanguagesPort;
 import org.flickit.assessment.kit.application.port.out.kittag.LoadKitTagListPort;
 import org.flickit.assessment.kit.application.port.out.minio.CreateFileDownloadLinkPort;
-import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
 import org.flickit.assessment.kit.test.fixture.application.ExpertGroupMother;
 import org.flickit.assessment.kit.test.fixture.application.KitTagMother;
 import org.junit.jupiter.api.Test;
@@ -25,7 +24,9 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.privateKit;
+import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -51,9 +52,9 @@ class GetKitListServiceTest {
     private CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
     @Test
-    void testGetKitList_GettingPublicKitsValidParams_ValidResult() {
+    void testGetKitList_whenPublicKitsAreWanted_thenReturnPublicKits() {
         var param = createParam(Param.ParamBuilder::build);
-        var assessmentKit = AssessmentKitMother.simpleKit();
+        var assessmentKit = simpleKit();
         var kitId = assessmentKit.getId();
         var kitIds = List.of(kitId);
         var expertGroup = ExpertGroupMother.createExpertGroup();
@@ -92,7 +93,7 @@ class GetKitListServiceTest {
         assertEquals(assessmentKit.getId(), item.id());
         assertEquals(assessmentKit.getTitle(), item.title());
         assertEquals(assessmentKit.getSummary(), item.summary());
-        assertEquals(assessmentKit.isPrivate(), item.isPrivate());
+        assertFalse(item.isPrivate());
         assertEquals(3, item.likes());
         assertEquals(15, item.assessmentsCount());
         assertEquals(KitLanguage.EN.getTitle(), item.languages().getFirst());
@@ -104,11 +105,11 @@ class GetKitListServiceTest {
     }
 
     @Test
-    void testGetKitList_GettingPrivateKitsValidParams_ValidResult() {
+    void testGetKitList_whenPrivateKitsAreWanted_thenReturnPrivateKits() {
         var param = createParam(p -> p
             .isPrivate(true)
             .langs(null));
-        var assessmentKit = AssessmentKitMother.simpleKit();
+        var assessmentKit = privateKit();
         var kitId = assessmentKit.getId();
         var kitIds = List.of(kitId);
         var expertGroup = ExpertGroupMother.createExpertGroup();
@@ -147,6 +148,61 @@ class GetKitListServiceTest {
         assertEquals(assessmentKit.getId(), item.id());
         assertEquals(assessmentKit.getTitle(), item.title());
         assertEquals(assessmentKit.getSummary(), item.summary());
+        assertTrue(item.isPrivate());
+        assertEquals(3, item.likes());
+        assertEquals(15, item.assessmentsCount());
+        assertEquals(KitLanguage.EN.getTitle(), item.languages().getFirst());
+        assertEquals(expertGroup.getId(), item.expertGroup().id());
+        assertEquals(expertGroup.getTitle(), item.expertGroup().title());
+        assertEquals(expertGroupPictureUrl, item.expertGroup().picture());
+
+        verify(loadPublishedKitListPort, never()).loadPublicKits(isNull(), anyInt(), anyInt());
+    }
+
+    @Test
+    void testGetKitList_whenAllPublishedKitsAreWanted_thenReturnAllKits() {
+        var param = createParam(p -> p
+            .langs(null)
+            .isPrivate(null));
+        var assessmentKit = simpleKit();
+        var kitId = assessmentKit.getId();
+        var kitIds = List.of(kitId);
+        var expertGroup = ExpertGroupMother.createExpertGroup();
+        var expertGroupPictureUrl = "https://picureLink";
+        var expectedKitsPage = new PaginatedResponse<>(
+            List.of(new LoadPublishedKitListPort.Result(assessmentKit, expertGroup)),
+            0,
+            10,
+            AssessmentKitJpaEntity.Fields.title,
+            Sort.Direction.ASC.name().toLowerCase(),
+            1
+        );
+        var sampleTag = KitTagMother.createKitTag("sample tag");
+
+        when(loadPublishedKitListPort.loadPrivateAndPublicKits(param.getCurrentUserId(), null, param.getPage(), param.getSize()))
+            .thenReturn(expectedKitsPage);
+        when(countKitStatsPort.countKitsStats(kitIds))
+            .thenReturn(List.of(new CountKitListStatsPort.Result(kitId, 3, 15)));
+        when(loadKitTagListPort.loadByKitIds(kitIds)).thenReturn(
+            List.of(new LoadKitTagListPort.Result(kitId, List.of(sampleTag))));
+        when(loadKitLanguagesPort.loadByKitIds(kitIds)).thenReturn(
+            Map.of(kitId, List.of(KitLanguage.EN)));
+        when(createFileDownloadLinkPort.createDownloadLink(any(), any()))
+            .thenReturn(expertGroupPictureUrl);
+
+        var kitList = service.getKitList(param);
+
+        assertEquals(expectedKitsPage.getPage(), kitList.getPage());
+        assertEquals(expectedKitsPage.getSize(), kitList.getSize());
+        assertEquals(expectedKitsPage.getSort(), kitList.getSort());
+        assertEquals(expectedKitsPage.getOrder(), kitList.getOrder());
+        assertEquals(expectedKitsPage.getTotal(), kitList.getTotal());
+        assertEquals(expectedKitsPage.getItems().size(), kitList.getItems().size());
+
+        var item = kitList.getItems().getFirst();
+        assertEquals(assessmentKit.getId(), item.id());
+        assertEquals(assessmentKit.getTitle(), item.title());
+        assertEquals(assessmentKit.getSummary(), item.summary());
         assertEquals(assessmentKit.isPrivate(), item.isPrivate());
         assertEquals(3, item.likes());
         assertEquals(15, item.assessmentsCount());
@@ -159,7 +215,7 @@ class GetKitListServiceTest {
     }
 
     @Test
-    void testGetKitList_GettingPrivateKitsValidParams_EmptyResult() {
+    void testGetKitList_whenNoKitIsFound_thenReturnEmptyResult() {
         var param = createParam(p -> p.isPrivate(true));
 
         var expectedKitsPage = new PaginatedResponse<LoadPublishedKitListPort.Result>(List.of(),
