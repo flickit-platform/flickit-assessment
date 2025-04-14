@@ -60,6 +60,7 @@ public interface AnswerOptionJpaRepository extends JpaRepository<AnswerOptionJpa
             SET a.index = :index,
                 a.title = :title,
                 a.value = :value,
+                a.translations = :translations,
                 a.lastModificationTime = :lastModificationTime,
                 a.lastModifiedBy = :lastModifiedBy
             WHERE a.id = :id AND a.kitVersionId = :kitVersionId
@@ -69,6 +70,7 @@ public interface AnswerOptionJpaRepository extends JpaRepository<AnswerOptionJpa
                 @Param("index") int index,
                 @Param("title") String title,
                 @Param("value") double value,
+                @Param("translations") String translations,
                 @Param("lastModificationTime") LocalDateTime lastModificationTime,
                 @Param("lastModifiedBy") UUID lastModifiedBy);
 }
