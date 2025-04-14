@@ -63,7 +63,6 @@ public class QuestionPersistenceJpaAdapter implements
         if (!repository.existsByIdAndKitVersionId(param.id(), param.kitVersionId()))
             throw new ResourceNotFoundException(QUESTION_ID_NOT_FOUND);
 
-        var translations = JsonUtils.toJson(param.translations());
         repository.update(param.id(),
             param.kitVersionId(),
             param.title(),
@@ -74,7 +73,7 @@ public class QuestionPersistenceJpaAdapter implements
             param.advisable(),
             param.answerRangeId(),
             param.measureId(),
-            translations,
+            JsonUtils.toJson(param.translations()),
             param.lastModificationTime(),
             param.lastModifiedBy());
     }
