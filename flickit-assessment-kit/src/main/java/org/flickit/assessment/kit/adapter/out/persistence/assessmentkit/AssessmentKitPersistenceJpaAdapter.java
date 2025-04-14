@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.common.util.JsonUtils;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.CountKitStatsView;
@@ -159,8 +158,8 @@ public class AssessmentKitPersistenceJpaAdapter implements
 
         if (param.tags() != null)
             updateKitTags(param.kitId(), param.tags());
-        var translations = JsonUtils.toJson(param.translations());
-        var toBeUpdatedEntity = AssessmentKitMapper.toJpaEntity(kitEntity, param, translations);
+
+        var toBeUpdatedEntity = AssessmentKitMapper.toJpaEntity(kitEntity, param);
         repository.save(toBeUpdatedEntity);
     }
 

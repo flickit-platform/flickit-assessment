@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.adapter.out.persistence.assessmentkit;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.common.util.JsonUtils;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.KitWithDraftVersionIdView;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
@@ -37,7 +38,7 @@ public class AssessmentKitMapper {
         );
     }
 
-    public static AssessmentKitJpaEntity toJpaEntity(AssessmentKitJpaEntity entity, UpdateKitInfoPort.Param param, String translations) {
+    public static AssessmentKitJpaEntity toJpaEntity(AssessmentKitJpaEntity entity, UpdateKitInfoPort.Param param) {
         return new AssessmentKitJpaEntity(
             entity.getId(),
             param.code() != null ? param.code() : entity.getCode(),
@@ -48,7 +49,7 @@ public class AssessmentKitMapper {
             param.isPrivate() != null ? param.isPrivate() : entity.getIsPrivate(),
             entity.getExpertGroupId(),
             param.lang() != null ? param.lang().getId() : entity.getLanguageId(),
-            translations,
+            JsonUtils.toJson(param.translations()),
             entity.getCreationTime(),
             param.lastModificationTime(),
             entity.getCreatedBy(),
