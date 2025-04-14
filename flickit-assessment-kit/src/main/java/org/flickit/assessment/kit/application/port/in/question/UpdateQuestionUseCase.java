@@ -75,13 +75,13 @@ public interface UpdateQuestionUseCase {
             this.kitVersionId = kitVersionId;
             this.questionId = questionId;
             this.index = index;
-            this.title = title != null && !title.isBlank() ? title.trim(): null;
-            this.hint = hint != null && !hint.isBlank() ? hint.trim(): null;
+            this.title = title != null && !title.isBlank() ? title.trim() : null;
+            this.hint = hint != null && !hint.isBlank() ? hint.trim() : null;
             this.mayNotBeApplicable = mayNotBeApplicable;
             this.advisable = advisable;
             this.answerRangeId = answerRangeId;
             this.measureId = measureId;
-            this.translations = validateAndConvert(translations,KitLanguage.class, COMMON_KIT_LANGUAGE_NOT_VALID);
+            this.translations = validateAndConvert(translations, KitLanguage.class, COMMON_KIT_LANGUAGE_NOT_VALID);
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
