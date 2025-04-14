@@ -200,6 +200,7 @@ class QuestionCreateKitPersisterTest {
             option.getIndex(),
             option.getAnswerRangeId(),
             option.getValue(),
+            null,
             kitVersionId,
             currentUserId);
     }
