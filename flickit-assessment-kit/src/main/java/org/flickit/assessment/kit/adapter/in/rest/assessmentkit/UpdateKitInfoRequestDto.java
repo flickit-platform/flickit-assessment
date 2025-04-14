@@ -16,5 +16,6 @@ public record UpdateKitInfoRequestDto(@JsonIgnoreProperties(ignoreUnknown = true
                                       @JsonIgnoreProperties(ignoreUnknown = true) Double price,
                                       @JsonIgnoreProperties(ignoreUnknown = true) String about,
                                       @JsonIgnoreProperties(ignoreUnknown = true) List<Long> tags,
-                                      @JsonIgnoreProperties(ignoreUnknown = true) Map<String, KitTranslation> translations) {
+                                      @JsonIgnoreProperties(ignoreUnknown = true) Map<String, KitTranslation> translations,
+                                      @JsonIgnoreProperties(ignoreUnknown = true) Boolean removeTranslations) {
 }

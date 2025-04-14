@@ -40,6 +40,7 @@ public class UpdateKitInfoRestController {
             request.about(),
             request.tags(),
             request.translations(),
+            request.removeTranslations(),
             currentUserId
         );
     }

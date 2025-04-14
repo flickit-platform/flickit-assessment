@@ -72,6 +72,7 @@ public interface UpdateKitInfoUseCase {
                      String about,
                      List<Long> tags,
                      Map<String, KitTranslation> translations,
+                     Boolean removeTranslations,
                      UUID currentUserId) {
             this.kitId = kitId;
             this.title = title;
@@ -82,7 +83,9 @@ public interface UpdateKitInfoUseCase {
             this.price = price;
             this.about = about;
             this.tags = tags;
-            this.translations = validateAndConvert(translations, KitLanguage.class, COMMON_KIT_LANGUAGE_NOT_VALID);
+            this.translations = removeTranslations != null && removeTranslations
+                ? null
+                : validateAndConvert(translations, KitLanguage.class, COMMON_KIT_LANGUAGE_NOT_VALID);
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
