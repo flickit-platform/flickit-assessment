@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.adapter.in.rest.answeroption;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
 import org.flickit.assessment.kit.application.port.in.answeroption.UpdateAnswerOptionUseCase;
+import org.flickit.assessment.kit.application.port.in.answeroption.UpdateAnswerOptionUseCase.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,15 +29,16 @@ public class UpdateAnswerOptionRestController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private UpdateAnswerOptionUseCase.Param toParam(Long kitVersionId,
-                                                    Long answerOptionId,
-                                                    UUID currentUserId,
-                                                    AnswerOptionRequestDto dto) {
-        return new UpdateAnswerOptionUseCase.Param(kitVersionId,
+    private Param toParam(Long kitVersionId,
+                          Long answerOptionId,
+                          UUID currentUserId,
+                          AnswerOptionRequestDto dto) {
+        return new Param(kitVersionId,
             answerOptionId,
             dto.index(),
             dto.title(),
             dto.value(),
+            dto.translations(),
             currentUserId);
     }
 }

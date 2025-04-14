@@ -1,3 +1,11 @@
 package org.flickit.assessment.kit.adapter.in.rest.answeroption;
 
-public record AnswerOptionRequestDto(Integer index, String title, Double value) {}
+import org.flickit.assessment.common.application.domain.kit.translation.AnswerOptionTranslation;
+
+import java.util.Map;
+
+public record AnswerOptionRequestDto(Integer index,
+                                     String title,
+                                     Double value,
+                                     Map<String, AnswerOptionTranslation> translations) {
+}
