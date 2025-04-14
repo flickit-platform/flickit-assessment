@@ -30,7 +30,9 @@ public class GetAttributesService implements GetAttributesUseCase {
 
         var paginatedResponse = loadAttributesPort.loadByKitVersionId(param.getKitVersionId(), param.getSize(), param.getPage());
 
-        var items = paginatedResponse.getItems().stream().map(this::mapToAttributeListItem).toList();
+        var items = paginatedResponse.getItems().stream()
+            .map(this::mapToAttributeListItem)
+            .toList();
         return new PaginatedResponse<>(
             items,
             paginatedResponse.getPage(),
