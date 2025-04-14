@@ -1,6 +1,10 @@
 package org.flickit.assessment.kit.application.port.out.answeroption;
 
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.common.application.domain.kit.translation.AnswerOptionTranslation;
+
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.UUID;
 
 public interface UpdateAnswerOptionPort {
@@ -13,8 +17,10 @@ public interface UpdateAnswerOptionPort {
         int index,
         String title,
         double value,
+        Map<KitLanguage, AnswerOptionTranslation> translations,
         LocalDateTime lastModificationTime,
-        UUID lastModifiedBy) {}
+        UUID lastModifiedBy) {
+    }
 
     void updateTitle(UpdateTitleParam param);
 
