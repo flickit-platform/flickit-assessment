@@ -19,7 +19,8 @@ public class MaturityLevel {
     private final int index;
     private final String description;
     private final int value;
-    private final Map<KitLanguage, MaturityLevelTranslation> translations;
+    @Setter
+    private Map<KitLanguage, MaturityLevelTranslation> translations;
     @Setter
     private List<MaturityLevelCompetence> competences;
 }
