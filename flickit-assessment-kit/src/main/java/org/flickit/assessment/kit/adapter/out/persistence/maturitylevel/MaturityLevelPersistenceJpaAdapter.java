@@ -1,10 +1,9 @@
 package org.flickit.assessment.kit.adapter.out.persistence.maturitylevel;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.util.JsonUtils;
 import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaRepository;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity.EntityId;
@@ -37,7 +36,6 @@ public class MaturityLevelPersistenceJpaAdapter implements
     private final MaturityLevelJpaRepository repository;
     private final LevelCompetenceJpaRepository levelCompetenceRepository;
     private final KitDbSequenceGenerators sequenceGenerators;
-    private final ObjectMapper objectMapper;
 
     @Override
     public Long persist(MaturityLevel level, Long kitVersionId, UUID createdBy) {
@@ -72,6 +70,7 @@ public class MaturityLevelPersistenceJpaAdapter implements
             x.setTitle(newLevel.getTitle());
             x.setValue(newLevel.getValue());
             x.setDescription(newLevel.getDescription());
+            x.setTranslations(JsonUtils.toJson(newLevel.getTranslations()));
             x.setLastModificationTime(LocalDateTime.now());
             x.setLastModifiedBy(lastModifiedBy);
         });
@@ -80,12 +79,10 @@ public class MaturityLevelPersistenceJpaAdapter implements
     }
 
     @Override
-    @SneakyThrows
     public void update(MaturityLevel maturityLevel, Long kitVersionId, LocalDateTime lastModificationTime, UUID lastModifiedBy) {
         if (!repository.existsByIdAndKitVersionId(maturityLevel.getId(), kitVersionId))
             throw new ResourceNotFoundException(MATURITY_LEVEL_ID_NOT_FOUND);
 
-        var translations = objectMapper.writeValueAsString(maturityLevel.getTranslations());
         repository.update(maturityLevel.getId(),
             kitVersionId,
             maturityLevel.getCode(),
@@ -93,7 +90,7 @@ public class MaturityLevelPersistenceJpaAdapter implements
             maturityLevel.getTitle(),
             maturityLevel.getDescription(),
             maturityLevel.getValue(),
-            translations,
+            JsonUtils.toJson(maturityLevel.getTranslations()),
             lastModificationTime,
             lastModifiedBy);
     }
