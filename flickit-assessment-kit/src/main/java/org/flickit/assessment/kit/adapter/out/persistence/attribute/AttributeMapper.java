@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.adapter.out.persistence.attribute;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.flickit.assessment.common.util.JsonUtils;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJoinAttributeView;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
@@ -35,7 +36,7 @@ public class AttributeMapper {
             attribute.getTitle(),
             attribute.getDescription(),
             attribute.getWeight(),
-            null, // TODO: Consider replacing this with the actual value after editing the service.
+            JsonUtils.toJson(attribute.getTranslations()),
             attribute.getCreationTime(),
             attribute.getLastModificationTime(),
             attribute.getCreatedBy(),

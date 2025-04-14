@@ -48,6 +48,7 @@ public class SubjectCreateKitPersister implements CreateKitPersister {
             newSubject.getTitle(),
             newSubject.getIndex(),
             newSubject.getWeight(),
+            null,
             newSubject.getDescription(),
             kitVersionId,
             currentUserId

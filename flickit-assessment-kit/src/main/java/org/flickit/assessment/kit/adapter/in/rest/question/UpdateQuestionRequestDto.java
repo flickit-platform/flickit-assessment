@@ -5,5 +5,6 @@ public record UpdateQuestionRequestDto(Integer index,
                                        String hint,
                                        Boolean mayNotBeApplicable,
                                        Boolean advisable,
-                                       Long answerRangeId) {
+                                       Long answerRangeId,
+                                       Long measureId) {
 }
