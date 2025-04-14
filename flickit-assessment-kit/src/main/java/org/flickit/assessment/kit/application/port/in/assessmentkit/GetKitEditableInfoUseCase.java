@@ -46,6 +46,10 @@ public interface GetKitEditableInfoUseCase {
         String about,
         List<KitTag> tags,
         boolean editable,
-        boolean hasActiveVersion) {
+        boolean hasActiveVersion,
+        List<Language> languages) {
+        public record Language(String code,
+                               String title) {
+        }
     }
 }
