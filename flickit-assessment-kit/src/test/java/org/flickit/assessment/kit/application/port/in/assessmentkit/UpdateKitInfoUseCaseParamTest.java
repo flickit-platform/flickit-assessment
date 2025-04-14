@@ -97,27 +97,12 @@ class UpdateKitInfoUseCaseParamTest {
 
     @Test
     void testUpdateKitInfoUseCaseParam_translationsLanguageViolations_ErrorMessage() {
-        assertDoesNotThrow(() -> createParam(a -> {
-            a.translations(Map.of("FR", new KitTranslation("title", "summary", "about")));
-            a.removeTranslations(true);
-        }));
-
         var throwable = assertThrows(ValidationException.class,
             () -> createParam(a -> {
                 a.translations(Map.of("FR", new KitTranslation("title", "summary", "about")));
                 a.removeTranslations(false);
             }));
         assertEquals(COMMON_KIT_LANGUAGE_NOT_VALID, throwable.getMessageKey());
-    }
-
-    @Test
-    void testUpdateKitInfoUseCaseParam_removeTranslationsParamIsTrue_translationsShouldBeNull() {
-        var param = createParam(a -> {
-            a.translations(Map.of("EN", new KitTranslation("title", "summary", "about")));
-            a.removeTranslations(true);
-        });
-
-        assertNull(param.getTranslations());
     }
 
     @Test

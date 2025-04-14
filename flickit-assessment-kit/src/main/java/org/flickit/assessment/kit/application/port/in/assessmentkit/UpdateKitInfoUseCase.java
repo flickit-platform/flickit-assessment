@@ -58,6 +58,8 @@ public interface UpdateKitInfoUseCase {
         @Valid
         Map<KitLanguage, KitTranslation> translations;
 
+        Boolean removeTranslations;
+
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
@@ -83,9 +85,8 @@ public interface UpdateKitInfoUseCase {
             this.price = price;
             this.about = about;
             this.tags = tags;
-            this.translations = removeTranslations != null && removeTranslations
-                ? null
-                : validateAndConvert(translations, KitLanguage.class, COMMON_KIT_LANGUAGE_NOT_VALID);
+            this.translations = validateAndConvert(translations, KitLanguage.class, COMMON_KIT_LANGUAGE_NOT_VALID);
+            this.removeTranslations = Boolean.TRUE.equals(removeTranslations);
             this.currentUserId = currentUserId;
             this.validateSelf();
         }

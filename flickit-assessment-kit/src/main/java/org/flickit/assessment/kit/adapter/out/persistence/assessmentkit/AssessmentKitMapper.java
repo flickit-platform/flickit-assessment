@@ -49,9 +49,7 @@ public class AssessmentKitMapper {
             param.isPrivate() != null ? param.isPrivate() : entity.getIsPrivate(),
             entity.getExpertGroupId(),
             param.lang() != null ? param.lang().getId() : entity.getLanguageId(),
-            param.translations() == null
-                ? null
-                : JsonUtils.toJson(param.translations()),
+            JsonUtils.toJson(param.translations()),
             entity.getCreationTime(),
             param.lastModificationTime(),
             entity.getCreatedBy(),
