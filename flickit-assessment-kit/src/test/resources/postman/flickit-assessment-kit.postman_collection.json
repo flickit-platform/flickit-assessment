@@ -2219,7 +2219,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"index\": 6,\n    \"title\": \"Perfect\",\n    \"description\": \"description\",\n    \"value\": 6\n}",
+							"raw": "{\n    \"index\": 6,\n    \"title\": \"Perfect\",\n    \"description\": \"description\",\n    \"value\": 6,\n    \"translations\": {\n        \"EN\": {\n            \"title\": \"Perfecttttooo\",\n            \"description\": \"description\"\n        }\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2259,7 +2259,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"index\": 17,\r\n    \"title\": \"Perfectttt\",\r\n    \"description\": \"descrippption\",\r\n    \"value\": 166\r\n}",
+							"raw": "{\r\n    \"index\": 17,\r\n    \"title\": \"Perfectttt\",\r\n    \"description\": \"descrippption\",\r\n    \"value\": 166,\n    \"translations\": {\n        \"EN\": {\n            \"title\": \"Perfecttttooo\",\n            \"description\": \"description\"\n        }\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
