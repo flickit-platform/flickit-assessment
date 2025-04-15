@@ -60,15 +60,15 @@ public interface UpdateKitInfoUseCase {
         @Valid
         Map<KitLanguage, KitTranslation> translations;
 
-        Boolean removeTranslations;
+        boolean removeTranslations;
+
+        @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
+        UUID currentUserId;
 
         @AssertTrue(message = UPDATE_KIT_INFO_TRANSLATIONS_INCORRECT)
         boolean isTranslationFieldCorrect() {
             return !removeTranslations || isEmpty(translations);
         }
-
-        @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
-        UUID currentUserId;
 
         @Builder
         public Param(Long kitId,
@@ -81,7 +81,7 @@ public interface UpdateKitInfoUseCase {
                      String about,
                      List<Long> tags,
                      Map<String, KitTranslation> translations,
-                     Boolean removeTranslations,
+                     boolean removeTranslations,
                      UUID currentUserId) {
             this.kitId = kitId;
             this.title = title;
@@ -93,7 +93,7 @@ public interface UpdateKitInfoUseCase {
             this.about = about;
             this.tags = tags;
             this.translations = validateAndConvert(translations, KitLanguage.class, COMMON_KIT_LANGUAGE_NOT_VALID);
-            this.removeTranslations = Boolean.TRUE.equals(removeTranslations);
+            this.removeTranslations = removeTranslations;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
