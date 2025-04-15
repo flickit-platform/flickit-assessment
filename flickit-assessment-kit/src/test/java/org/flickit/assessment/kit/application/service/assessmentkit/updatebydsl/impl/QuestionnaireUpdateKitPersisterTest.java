@@ -10,6 +10,7 @@ import org.flickit.assessment.kit.application.service.assessmentkit.updatebydsl.
 import org.flickit.assessment.kit.application.service.assessmentkit.updatebydsl.UpdateKitPersisterResult;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -60,7 +61,7 @@ class QuestionnaireUpdateKitPersisterTest {
         assertFalse(result.isMajorUpdate());
         Map<String, Long> codeToIdMap = ctx.get(KEY_QUESTIONNAIRES);
         assertNotNull(codeToIdMap);
-        assertEquals(2, codeToIdMap.keySet().size());
+        assertEquals(2, codeToIdMap.size());
 
         verifyNoInteractions(createQuestionnairePort, updateQuestionnairePort);
     }
@@ -83,10 +84,17 @@ class QuestionnaireUpdateKitPersisterTest {
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
         UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
 
+        var createPortArgument = ArgumentCaptor.forClass(Questionnaire.class);
+        verify(createQuestionnairePort, times(1)).persist(createPortArgument.capture(), anyLong(), any(UUID.class));
+        assertEquals(newQuestionnaire.getIndex(), createPortArgument.getValue().getIndex());
+        assertEquals(newQuestionnaire.getTitle(), createPortArgument.getValue().getTitle());
+        assertEquals(newQuestionnaire.getDescription(), createPortArgument.getValue().getDescription());
+        assertNull(createPortArgument.getValue().getTranslations());
+
         assertTrue(result.isMajorUpdate());
         Map<String, Long> codeToIdMap = ctx.get(KEY_QUESTIONNAIRES);
         assertNotNull(codeToIdMap);
-        assertEquals(2, codeToIdMap.keySet().size());
+        assertEquals(2, codeToIdMap.size());
 
         verifyNoInteractions(updateQuestionnairePort);
     }
@@ -106,10 +114,22 @@ class QuestionnaireUpdateKitPersisterTest {
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
         UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
 
+        var updatePortParam = ArgumentCaptor.forClass(UpdateQuestionnairePort.Param.class);
+        verify(updateQuestionnairePort).update(updatePortParam.capture());
+        assertNotNull(updatePortParam.getValue());
+        assertEquals(savedQuestionnaire2.getId(), updatePortParam.getValue().id());
+        assertEquals(savedKit.getActiveVersionId(), updatePortParam.getValue().kitVersionId());
+        assertEquals(dslQTwo.getTitle(), updatePortParam.getValue().title());
+        assertEquals(dslQTwo.getIndex(), updatePortParam.getValue().index());
+        assertEquals(dslQTwo.getDescription(), updatePortParam.getValue().description());
+        assertEquals(savedQuestionnaire2.getTranslations(), updatePortParam.getValue().translations());
+        assertNotNull(updatePortParam.getValue().lastModifiedBy());
+        assertNotNull(updatePortParam.getValue().lastModificationTime());
+
         assertFalse(result.isMajorUpdate());
         Map<String, Long> codeToIdMap = ctx.get(KEY_QUESTIONNAIRES);
         assertNotNull(codeToIdMap);
-        assertEquals(2, codeToIdMap.keySet().size());
+        assertEquals(2, codeToIdMap.size());
 
         verifyNoInteractions(createQuestionnairePort);
     }
