@@ -2418,7 +2418,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"questionId\": 3,\n    \"index\": \"1\",\n    \"title\": \"Yes\",\n    \"value\": 0.5\n}",
+							"raw": "{\n    \"questionId\": 3,\n    \"index\": \"1\",\n    \"title\": \"Yes\",\n    \"value\": 0.5,\n    \"translations\": {\n        \"EN\": {\n            \"title\": \"Title 2\"\n        }\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2491,7 +2491,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"index\": 5,\n    \"title\": \"new option\",\n    \"value\": 1.6\n}",
+							"raw": "{\n    \"index\": 5,\n    \"title\": \"new option\",\n    \"value\": 1.6,\n    \"translations\": {\n        \"EN\": {\n            \"title\": \"Title 2\"\n        }\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2569,7 +2569,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"answerRangeId\": 3,\n    \"index\": \"1\",\n    \"title\": \"Yes\",\n    \"value\": 0.5\n}",
+							"raw": "{\n    \"answerRangeId\": 3,\n    \"index\": \"1\",\n    \"title\": \"Yes\",\n    \"value\": 0.5,\n    \"translations\": {\n        \"EN\": {\n            \"title\": \"Title 2\"\n        }\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
