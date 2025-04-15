@@ -1,5 +1,6 @@
 package org.flickit.assessment.kit.application.port.in.question;
 
+import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -51,6 +52,7 @@ public interface CreateQuestionUseCase {
         Long questionnaireId;
 
         @Valid
+        @Nullable
         Map<KitLanguage, QuestionTranslation> translations;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
