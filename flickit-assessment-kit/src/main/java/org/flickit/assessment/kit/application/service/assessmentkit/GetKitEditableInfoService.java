@@ -32,7 +32,6 @@ public class GetKitEditableInfoService implements GetKitEditableInfoUseCase {
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         var assessmentKit = loadAssessmentKitPort.load(param.getKitId());
-        var mainLanguage = toLanguage(assessmentKit.getLanguage());
         var tags = loadKitTagListPort.loadByKitId(param.getKitId());
         var languages = loadKitLanguagesPort.loadByKitId(param.getKitId()).stream()
             .map(this::toLanguage)
@@ -42,7 +41,7 @@ public class GetKitEditableInfoService implements GetKitEditableInfoUseCase {
             assessmentKit.getId(),
             assessmentKit.getTitle(),
             assessmentKit.getSummary(),
-            mainLanguage,
+            toLanguage(assessmentKit.getLanguage()),
             assessmentKit.isPublished(),
             assessmentKit.isPrivate(),
             0D,
