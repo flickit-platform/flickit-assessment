@@ -36,7 +36,7 @@ public class KitLanguagePersistenceJpaAdapter implements
     }
 
     @Override
-    public void persist(Long kitId, Integer langId) {
+    public void persist(long kitId, int langId) {
         repository.save(new KitLanguageJpaEntity(kitId, langId));
     }
 }
