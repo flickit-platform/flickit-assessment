@@ -206,6 +206,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             questionnaireId,
             measureId,
             answerRangeId,
+            null,
             currentUserId);
     }
 
@@ -274,6 +275,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
                 dslQuestion.isAdvisable(),
                 savedQuestion.getAnswerRangeId(),
                 savedQuestion.getMeasureId(),
+                savedQuestion.getTranslations(),
                 LocalDateTime.now(),
                 currentUserId
             );

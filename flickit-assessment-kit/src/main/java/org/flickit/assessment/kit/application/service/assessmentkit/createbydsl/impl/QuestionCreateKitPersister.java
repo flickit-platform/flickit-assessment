@@ -106,6 +106,7 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
             questionnaireId,
             measureId,
             answerRangeId,
+            null,
             currentUserId
         );
 
