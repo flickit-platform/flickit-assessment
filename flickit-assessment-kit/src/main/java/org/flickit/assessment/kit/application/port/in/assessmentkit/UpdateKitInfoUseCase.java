@@ -63,7 +63,7 @@ public interface UpdateKitInfoUseCase {
         Boolean removeTranslations;
 
         @AssertTrue(message = UPDATE_KIT_INFO_TRANSLATIONS_INCORRECT)
-        boolean isTranslationFieldsCorrect() {
+        boolean isTranslationFieldCorrect() {
             return !removeTranslations || isEmpty(translations);
         }
 
