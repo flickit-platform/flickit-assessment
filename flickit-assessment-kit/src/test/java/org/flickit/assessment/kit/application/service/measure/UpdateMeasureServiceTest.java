@@ -1,5 +1,6 @@
 package org.flickit.assessment.kit.application.service.measure;
 
+import org.flickit.assessment.common.application.domain.kit.translation.MeasureTranslation;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.port.in.measure.UpdateMeasureUseCase;
@@ -13,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -70,6 +72,7 @@ class UpdateMeasureServiceTest {
         assertEquals(generateCode(param.getTitle()), portParamCaptor.getValue().code());
         assertEquals(param.getIndex(), portParamCaptor.getValue().index());
         assertEquals(param.getDescription(), portParamCaptor.getValue().description());
+        assertEquals(param.getTranslations(), portParamCaptor.getValue().translations());
         assertNotNull(portParamCaptor.getValue().lastModificationTime());
         assertEquals(param.getCurrentUserId(), portParamCaptor.getValue().lastModifiedBy());
     }
@@ -87,6 +90,7 @@ class UpdateMeasureServiceTest {
             .title("abc")
             .index(1)
             .description("description")
+            .translations(Map.of("EN", new MeasureTranslation("title", "desc")))
             .currentUserId(UUID.randomUUID());
     }
 }

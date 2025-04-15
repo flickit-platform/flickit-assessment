@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.adapter.out.persistence.measure;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.flickit.assessment.common.util.JsonUtils;
 import org.flickit.assessment.data.jpa.kit.measure.MeasureJpaEntity;
 import org.flickit.assessment.kit.application.domain.Measure;
 
@@ -29,7 +30,7 @@ public class MeasureMapper {
             measure.getCode(),
             measure.getIndex(),
             measure.getDescription(),
-            null, // TODO: Consider replacing this with the actual value after editing the service.
+            JsonUtils.toJson(measure.getTranslations()),
             measure.getCreationTime(),
             measure.getLastModificationTime(),
             createdBy,
