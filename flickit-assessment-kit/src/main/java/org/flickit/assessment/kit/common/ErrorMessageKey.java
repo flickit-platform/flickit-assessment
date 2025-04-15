@@ -535,6 +535,9 @@ public class ErrorMessageKey {
     public static final String CREATE_MEASURE_INDEX_DUPLICATE = "create-measure.index.duplicate";
     public static final String CREATE_MEASURE_TITLE_DUPLICATE = "create-measure.title.duplicate";
 
+    public static final String GET_KIT_SLIDER_BANNERS_LANG_NOT_NULL = "get-kit-slider-banners.lang.notNull";
+    public static final String GET_KIT_SLIDER_BANNERS_LANGUAGE_INVALID = "get-kit-slider-banners.lang.invalid";
+
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
     }
