@@ -35,6 +35,7 @@ public class CreateAnswerRangeOptionRestController {
             requestDto.index(),
             requestDto.title(),
             requestDto.value(),
+            requestDto.translations(),
             currentUserId);
     }
 
