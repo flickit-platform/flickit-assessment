@@ -44,8 +44,8 @@ public interface UpdateAnswerOptionUseCase {
         @NotNull(message = UPDATE_ANSWER_OPTION_VALUE_NOT_NULL)
         Double value;
 
-        @Nullable
         @Valid
+        @Nullable
         Map<KitLanguage, AnswerOptionTranslation> translations;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
