@@ -105,6 +105,7 @@ public class ErrorMessageKey {
     public static final String UPDATE_KIT_INFO_TAGS_SIZE_MIN = "update-kit-info.tags.size.min";
     public static final String UPDATE_KIT_INFO_TAG_ID_NOT_FOUND = "update-kit-info.tagId.notFound";
     public static final String UPDATE_KIT_INFO_KIT_LANGUAGE_INVALID = "update-kit-info.kitLanguage.invalid";
+    public static final String UPDATE_KIT_INFO_TRANSLATIONS_INCORRECT = "update-kit-info.translations.incorrect";
 
     public static final String GET_KIT_DETAIL_KIT_ID_NOT_NULL = "get-kit-detail.kitId.notNull";
 

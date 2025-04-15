@@ -1,6 +1,7 @@
 package org.flickit.assessment.kit.application.port.in.assessmentkit;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static io.jsonwebtoken.lang.Collections.isEmpty;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_KIT_LANGUAGE_NOT_VALID;
 import static org.flickit.assessment.common.validation.EnumValidateUtils.validateAndConvert;
@@ -59,6 +61,11 @@ public interface UpdateKitInfoUseCase {
         Map<KitLanguage, KitTranslation> translations;
 
         Boolean removeTranslations;
+
+        @AssertTrue(message = UPDATE_KIT_INFO_TRANSLATIONS_INCORRECT)
+        boolean isTranslationFieldsCorrect() {
+            return !removeTranslations || isEmpty(translations);
+        }
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
