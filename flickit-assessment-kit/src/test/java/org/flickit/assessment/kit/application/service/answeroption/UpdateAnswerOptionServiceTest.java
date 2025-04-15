@@ -1,5 +1,6 @@
 package org.flickit.assessment.kit.application.service.answeroption;
 
+import org.flickit.assessment.common.application.domain.kit.translation.AnswerOptionTranslation;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.port.in.answeroption.UpdateAnswerOptionUseCase.Param;
@@ -13,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -88,6 +90,7 @@ class UpdateAnswerOptionServiceTest {
             .index(1)
             .title("answerOptionTitle")
             .value(1d)
+            .translations(Map.of("EN", new AnswerOptionTranslation("title")))
             .currentUserId(UUID.randomUUID());
     }
 }
