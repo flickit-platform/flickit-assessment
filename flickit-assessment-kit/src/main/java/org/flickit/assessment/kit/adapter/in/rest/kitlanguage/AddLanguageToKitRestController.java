@@ -3,10 +3,13 @@ package org.flickit.assessment.kit.adapter.in.rest.kitlanguage;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
 import org.flickit.assessment.kit.application.port.in.kitlanguage.AddLanguageToKitUseCase;
-import org.flickit.assessment.kit.application.port.in.kitlanguage.AddLanguageToKitUseCase.*;
+import org.flickit.assessment.kit.application.port.in.kitlanguage.AddLanguageToKitUseCase.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
 
@@ -26,8 +29,6 @@ public class AddLanguageToKitRestController {
     }
 
     private Param toParam(long kitId, String lang, UUID currentUserId) {
-        return new Param(kitId,
-            lang,
-            currentUserId);
+        return new Param(kitId, lang, currentUserId);
     }
 }

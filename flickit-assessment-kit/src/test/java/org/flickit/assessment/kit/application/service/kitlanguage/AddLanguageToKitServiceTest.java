@@ -42,7 +42,7 @@ class AddLanguageToKitServiceTest {
     AssessmentKit assessmentKit = AssessmentKitMother.simpleKit();
 
     @Test
-    void testAddLanguageToKit_whenUserIsNotOwner_throwAccessDeniedException() {
+    void testAddLanguageToKit_whenUserIsNotOwner_thenThrowAccessDeniedException() {
         param = createParam(b -> b.currentUserId(UUID.randomUUID()));
 
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(assessmentKit);
