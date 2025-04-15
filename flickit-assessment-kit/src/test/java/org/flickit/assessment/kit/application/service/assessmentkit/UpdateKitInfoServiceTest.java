@@ -57,7 +57,6 @@ class UpdateKitInfoServiceTest {
     ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
     UpdateKitInfoUseCase.Param param = createParam(UpdateKitInfoUseCase.Param.ParamBuilder::build);
 
-
     @Test
     void testUpdateKitInfo_KitNotFound_ErrorMessage() {
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenThrow(new ResourceNotFoundException(KIT_ID_NOT_FOUND));
