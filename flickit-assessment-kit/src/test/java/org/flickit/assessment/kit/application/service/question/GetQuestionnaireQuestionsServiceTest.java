@@ -48,7 +48,7 @@ class GetQuestionnaireQuestionsServiceTest {
     private final KitVersion kitVersion = createKitVersion(simpleKit());
 
     @Test
-    void testGetQuestionnaireQuestions_WhenCurrentUserIsNotExpertGroupOwner_ThenThrowAccessDeniedException() {
+    void testGetQuestionnaireQuestions_whenCurrentUserIsNotExpertGroupOwner_thenThrowAccessDeniedException() {
         var param = createParam(GetQuestionnaireQuestionsUseCase.Param.ParamBuilder::build);
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
@@ -62,7 +62,7 @@ class GetQuestionnaireQuestionsServiceTest {
     }
 
     @Test
-    void testGetQuestionnaireQuestions_WhenCurrentUserIsExpertGroupOwner_ThenGetQuestionnaireQuestions() {
+    void testGetQuestionnaireQuestions_whenCurrentUserIsExpertGroupOwner_thenGetQuestionnaireQuestions() {
         var param = createParam(b -> b.currentUserId(ownerId));
         Question question1 = createQuestion();
         Question question2 = createQuestion(null);
@@ -97,6 +97,7 @@ class GetQuestionnaireQuestionsServiceTest {
                 assertEquals(expected.getMayNotBeApplicable(), actual.mayNotBeApplicable());
                 assertEquals(expected.getAdvisable(), actual.advisable());
                 assertEquals(expected.getAnswerRangeId(), actual.answerRangeId());
+                assertEquals(expected.getMeasureId(), actual.measureId());
             });
 
         assertEquals(pageResult.getItems().size(), paginatedResponse.getTotal());

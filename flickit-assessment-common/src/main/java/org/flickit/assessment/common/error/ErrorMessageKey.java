@@ -30,4 +30,33 @@ public class ErrorMessageKey {
     public static final String INVITE_TO_REGISTER_EMAIL_SUBJECT = "invite-to-register.email.subject";
     public static final String INVITE_TO_REGISTER_EMAIL_BODY = "invite-to-register.email.body";
     public static final String INVITE_TO_REGISTER_EMAIL_BODY_WITHOUT_SUPPORT_EMAIL = "invite-to-register.email.body.without.support.email";
+
+    public static final String COMMON_KIT_LANGUAGE_NOT_VALID = "kit-language.notValid";
+
+    public static final String TRANSLATION_ATTRIBUTE_TITLE_SIZE_MIN = "translations-attribute.title.size.min";
+    public static final String TRANSLATION_ATTRIBUTE_TITLE_SIZE_MAX = "translations-attribute.title.size.max";
+    public static final String TRANSLATION_ATTRIBUTE_DESCRIPTION_SIZE_MIN = "translations-attribute.description.size.min";
+    public static final String TRANSLATION_ATTRIBUTE_DESCRIPTION_SIZE_MAX = "translations-attribute.description.size.max";
+
+    public static final String TRANSLATION_SUBJECT_TITLE_SIZE_MIN = "translations-subject.title.size.min";
+    public static final String TRANSLATION_SUBJECT_TITLE_SIZE_MAX = "translations-subject.title.size.max";
+    public static final String TRANSLATION_SUBJECT_DESCRIPTION_SIZE_MIN = "translations-subject.description.size.min";
+    public static final String TRANSLATION_SUBJECT_DESCRIPTION_SIZE_MAX = "translations-subject.description.size.max";
+
+    public static final String TRANSLATION_ASSESSMENT_KIT_TITLE_SIZE_MIN = "translations-assessmentKit.title.size.min";
+    public static final String TRANSLATION_ASSESSMENT_KIT_TITLE_SIZE_MAX = "translations-assessmentKit.title.size.max";
+    public static final String TRANSLATION_ASSESSMENT_KIT_SUMMARY_SIZE_MIN = "translations-assessmentKit.summary.size.min";
+    public static final String TRANSLATION_ASSESSMENT_KIT_SUMMARY_SIZE_MAX = "translations-assessmentKit.summary.size.max";
+    public static final String TRANSLATION_ASSESSMENT_KIT_ABOUT_SIZE_MIN = "translations-assessmentKit.about.size.min";
+    public static final String TRANSLATION_ASSESSMENT_KIT_ABOUT_SIZE_MAX = "translations-assessmentKit.about.size.max";
+
+    public static final String TRANSLATION_QUESTION_TITLE_SIZE_MIN = "translations-question.title.size.min";
+    public static final String TRANSLATION_QUESTION_TITLE_SIZE_MAX = "translations-question.title.size.max";
+    public static final String TRANSLATION_QUESTION_HINT_SIZE_MIN = "translations-question.hint.size.min";
+    public static final String TRANSLATION_QUESTION_HINT_SIZE_MAX = "translations-question.hint.size.max";
+
+    public static final String TRANSLATION_MATURITY_LEVEL_TITLE_SIZE_MIN = "translations-maturity-level.title.size.min";
+    public static final String TRANSLATION_MATURITY_LEVEL_TITLE_SIZE_MAX = "translations-maturity-level.title.size.max";
+    public static final String TRANSLATION_MATURITY_LEVEL_DESCRIPTION_SIZE_MIN = "translations-maturity-level.description.size.min";
+    public static final String TRANSLATION_MATURITY_LEVEL_DESCRIPTION_SIZE_MAX = "translations-maturity-level.description.size.max";
 }

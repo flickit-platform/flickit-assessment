@@ -38,5 +38,4 @@
             FROM fak_assessment_kit k
         </sql>
     </changeSet>
-
 </databaseChangeLog>

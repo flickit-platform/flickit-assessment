@@ -74,6 +74,11 @@ public class KitVersionValidator {
             .map(e -> MessageBundle.message(VALIDATE_KIT_VERSION_QUESTION_ANSWER_RANGE_NOT_NULL, e.questionIndex(), e.questionnaireTitle()))
             .toList());
 
+        errors.addAll(loadQuestionsPort.loadQuestionsWithoutMeasure(kitVersionId)
+            .stream()
+            .map(e -> MessageBundle.message(VALIDATE_KIT_VERSION_QUESTION_MEASURE_NOT_NULL, e.questionIndex(), e.questionnaireTitle()))
+            .toList());
+
         return errors;
     }
 }

@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.adapter.out.persistence.assessmentkit;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.common.util.JsonUtils;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.KitWithDraftVersionIdView;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
@@ -11,6 +12,8 @@ import org.flickit.assessment.kit.application.port.out.assessmentkit.UpdateKitIn
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+
+import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AssessmentKitMapper {
@@ -26,6 +29,7 @@ public class AssessmentKitMapper {
             param.isPrivate(),
             param.expertGroupId(),
             param.lang().getId(),
+            null, // TODO: Consider replacing this with the actual value after editing the service.
             LocalDateTime.now(),
             LocalDateTime.now(),
             param.createdBy(),
@@ -37,6 +41,9 @@ public class AssessmentKitMapper {
     }
 
     public static AssessmentKitJpaEntity toJpaEntity(AssessmentKitJpaEntity entity, UpdateKitInfoPort.Param param) {
+        var translations = param.isRemoveTranslations() ?
+            null :
+            isNotEmpty(param.translations()) ? JsonUtils.toJson(param.translations()) : entity.getTranslations();
         return new AssessmentKitJpaEntity(
             entity.getId(),
             param.code() != null ? param.code() : entity.getCode(),
@@ -47,6 +54,7 @@ public class AssessmentKitMapper {
             param.isPrivate() != null ? param.isPrivate() : entity.getIsPrivate(),
             entity.getExpertGroupId(),
             param.lang() != null ? param.lang().getId() : entity.getLanguageId(),
+            translations,
             entity.getCreationTime(),
             param.lastModificationTime(),
             entity.getCreatedBy(),

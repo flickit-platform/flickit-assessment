@@ -10,7 +10,6 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 public interface MeasureJpaRepository extends JpaRepository<MeasureJpaEntity, MeasureJpaEntity.EntityId> {
@@ -20,8 +19,6 @@ public interface MeasureJpaRepository extends JpaRepository<MeasureJpaEntity, Me
     List<MeasureJpaEntity> findAllByKitVersionIdOrderByIndex(Long activeVersionId);
 
     boolean existsByIdAndKitVersionId(long id, long kitVersionId);
-
-    Optional<MeasureJpaEntity> findByCodeAndKitVersionId(String code, Long kitVersionId);
 
     void deleteByIdAndKitVersionId(long measureId, long kitVersionId);
 

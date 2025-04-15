@@ -39,6 +39,7 @@ public class CreateAttributeService implements CreateAttributeUseCase {
             param.getIndex(),
             param.getDescription(),
             param.getWeight(),
+            param.getTranslations(),
             LocalDateTime.now(),
             LocalDateTime.now(),
             param.getCurrentUserId(),
