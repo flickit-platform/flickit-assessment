@@ -3087,6 +3087,51 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Kit Language",
+			"item": [
+				{
+					"name": "Add Kit Language to Kit",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"lang\" : \"FA\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessment-kits/386/add-language",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessment-kits",
+								"386",
+								"add-language"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"event": [
