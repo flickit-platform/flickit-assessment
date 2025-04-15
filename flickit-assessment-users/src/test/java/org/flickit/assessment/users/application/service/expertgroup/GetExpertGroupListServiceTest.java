@@ -5,6 +5,7 @@ import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 import org.flickit.assessment.users.application.port.in.expertgroup.GetExpertGroupListUseCase;
 import org.flickit.assessment.users.application.port.in.expertgroup.GetExpertGroupListUseCase.Member;
+import org.flickit.assessment.users.application.port.in.expertgroup.GetExpertGroupListUseCase.Param;
 import org.flickit.assessment.users.application.port.out.expertgroup.LoadExpertGroupListPort;
 import org.flickit.assessment.users.application.port.out.expertgroup.LoadExpertGroupListPort.Result;
 import org.flickit.assessment.users.application.port.out.minio.CreateFileDownloadLinkPort;
@@ -20,8 +21,9 @@ import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -39,15 +41,12 @@ class GetExpertGroupListServiceTest {
     private CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
     private static long expertGroupId = 123;
-    private final int page = 0;
-    private final int size = 10;
-    private final UUID currentUserId = UUID.randomUUID();
-    private final GetExpertGroupListUseCase.Param param = new GetExpertGroupListUseCase.Param(size, page, currentUserId);
+    private final Param param = createParam(Param.ParamBuilder::build);
 
     @Test
     void testGetExpertGroupList_ValidInputs_ValidResults() {
         var expertGroup1 = createExpertGroup(UUID.randomUUID());
-        var expertGroup2 = createExpertGroup(currentUserId);
+        var expertGroup2 = createExpertGroup(param.getCurrentUserId());
         List<Result> expertGroups = List.of(expertGroup1, expertGroup2);
 
         List<GetExpertGroupListUseCase.ExpertGroupListItem> expertGroupListItems = List.of(
@@ -56,8 +55,8 @@ class GetExpertGroupListServiceTest {
 
         PaginatedResponse<Result> paginatedResponse = new PaginatedResponse<>(
             expertGroups,
-            page,
-            size,
+            param.getPage(),
+            param.getSize(),
             UserJpaEntity.Fields.displayName,
             Sort.Direction.ASC.name().toLowerCase(),
             expertGroups.size());
@@ -74,8 +73,8 @@ class GetExpertGroupListServiceTest {
         ArgumentCaptor<LoadExpertGroupListPort.Param> loadPortParam = ArgumentCaptor.forClass(LoadExpertGroupListPort.Param.class);
         verify(loadExpertGroupListPort).loadExpertGroupList(loadPortParam.capture());
 
-        assertEquals(page, loadPortParam.getValue().page());
-        assertEquals(size, loadPortParam.getValue().size());
+        assertEquals(param.getPage(), loadPortParam.getValue().page());
+        assertEquals(param.getSize(), loadPortParam.getValue().size());
         assertEquals(expertGroupListItems, result.getItems());
 
         assertPaginationProperties(expertGroups, result);
@@ -86,8 +85,8 @@ class GetExpertGroupListServiceTest {
         List<Result> expertGroupListItems = Collections.emptyList();
         PaginatedResponse<Result> paginatedResponse = new PaginatedResponse<>(
             expertGroupListItems,
-            page,
-            size,
+            param.getPage(),
+            param.getSize(),
             UserJpaEntity.Fields.displayName,
             Sort.Direction.ASC.name().toLowerCase(),
             0);
@@ -100,8 +99,8 @@ class GetExpertGroupListServiceTest {
         ArgumentCaptor<LoadExpertGroupListPort.Param> loadPortParam = ArgumentCaptor.forClass(LoadExpertGroupListPort.Param.class);
         verify(loadExpertGroupListPort).loadExpertGroupList(loadPortParam.capture());
 
-        assertEquals(page, loadPortParam.getValue().page());
-        assertEquals(size, loadPortParam.getValue().size());
+        assertEquals(param.getPage(), loadPortParam.getValue().page());
+        assertEquals(param.getSize(), loadPortParam.getValue().size());
         assertEquals(Collections.emptyList(), result.getItems());
 
         assertPaginationProperties(expertGroupListItems, result);
@@ -138,6 +137,19 @@ class GetExpertGroupListServiceTest {
         assertEquals(param.getPage(), paginatedResponse.getPage());
         assertEquals(UserJpaEntity.Fields.displayName, paginatedResponse.getSort());
         assertEquals(Order.ASC.getTitle(), paginatedResponse.getOrder());
+    }
+
+    private Param createParam(Consumer<GetExpertGroupListUseCase.Param.ParamBuilder> changer) {
+        var paramBuilder = paramBuilder();
+        changer.accept(paramBuilder);
+        return paramBuilder.build();
+    }
+
+    private Param.ParamBuilder paramBuilder() {
+        return Param.builder()
+            .size(10)
+            .page(0)
+            .currentUserId(UUID.randomUUID());
     }
 }
 
