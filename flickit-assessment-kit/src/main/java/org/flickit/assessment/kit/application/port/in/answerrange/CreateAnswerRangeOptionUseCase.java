@@ -1,6 +1,7 @@
 package org.flickit.assessment.kit.application.port.in.answerrange;
 
 import io.jsonwebtoken.lang.Strings;
+import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -44,6 +45,7 @@ public interface CreateAnswerRangeOptionUseCase {
         @NotNull(message = CREATE_ANSWER_RANGE_OPTION_VALUE_NOT_NULL)
         Double value;
 
+        @Nullable
         @Valid
         Map<KitLanguage, AnswerOptionTranslation> translations;
 

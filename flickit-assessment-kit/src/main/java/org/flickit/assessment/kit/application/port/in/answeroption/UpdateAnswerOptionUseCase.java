@@ -1,5 +1,6 @@
 package org.flickit.assessment.kit.application.port.in.answeroption;
 
+import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -43,6 +44,7 @@ public interface UpdateAnswerOptionUseCase {
         @NotNull(message = UPDATE_ANSWER_OPTION_VALUE_NOT_NULL)
         Double value;
 
+        @Nullable
         @Valid
         Map<KitLanguage, AnswerOptionTranslation> translations;
 
