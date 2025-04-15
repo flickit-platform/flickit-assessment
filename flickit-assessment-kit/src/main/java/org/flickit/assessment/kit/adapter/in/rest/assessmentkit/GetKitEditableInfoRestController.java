@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.adapter.in.rest.assessmentkit;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitEditableInfoUseCase;
+import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitEditableInfoUseCase.KitEditableInfo;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitEditableInfoUseCase.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,30 +21,13 @@ public class GetKitEditableInfoRestController {
     private final UserContext userContext;
 
     @GetMapping("/assessment-kits/{kitId}/info")
-    public ResponseEntity<GetKitEditableInfoResponseDto> getKitEditableInfo(@PathVariable("kitId") Long kitId) {
-        UUID currentUserId = userContext.getUser().id();
+    public ResponseEntity<KitEditableInfo> getKitEditableInfo(@PathVariable("kitId") Long kitId) {
+        var currentUserId = userContext.getUser().id();
         var kitEditableInfo = useCase.getKitEditableInfo(toParam(kitId, currentUserId));
-        return new ResponseEntity<>(toResponse(kitEditableInfo), HttpStatus.OK);
+        return new ResponseEntity<>(kitEditableInfo, HttpStatus.OK);
     }
 
     private Param toParam(Long kitId, UUID currentUserId) {
         return new Param(kitId, currentUserId);
-    }
-
-    private GetKitEditableInfoResponseDto toResponse(GetKitEditableInfoUseCase.KitEditableInfo kitEditableInfo) {
-        return new GetKitEditableInfoResponseDto(
-            kitEditableInfo.id(),
-            kitEditableInfo.title(),
-            kitEditableInfo.summary(),
-            kitEditableInfo.lang(),
-            kitEditableInfo.published(),
-            kitEditableInfo.isPrivate(),
-            kitEditableInfo.price(),
-            kitEditableInfo.about(),
-            kitEditableInfo.tags(),
-            kitEditableInfo.editable(),
-            kitEditableInfo.hasActiveVersion(),
-            kitEditableInfo.languages()
-        );
     }
 }
