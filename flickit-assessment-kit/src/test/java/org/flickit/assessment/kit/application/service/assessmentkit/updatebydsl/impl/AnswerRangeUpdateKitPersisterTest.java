@@ -193,7 +193,7 @@ class AnswerRangeUpdateKitPersisterTest {
 
         UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit, currentUserId);
 
-        ArgumentCaptor<UpdateAnswerOptionPort.Param> updateOptionParamCaptor = ArgumentCaptor.forClass(UpdateAnswerOptionPort.Param.class);
+        var updateOptionParamCaptor = ArgumentCaptor.forClass(UpdateAnswerOptionPort.Param.class);
         verify(updateAnswerOptionPort).update(updateOptionParamCaptor.capture());
 
         assertEquals(answerRange.getAnswerOptions().getLast().getId(), updateOptionParamCaptor.getValue().answerOptionId());
@@ -201,6 +201,7 @@ class AnswerRangeUpdateKitPersisterTest {
         assertEquals(newAnswerOption.getIndex(), updateOptionParamCaptor.getValue().index());
         assertEquals(newAnswerOption.getCaption(), updateOptionParamCaptor.getValue().title());
         assertEquals(newAnswerOption.getValue(), updateOptionParamCaptor.getValue().value());
+        assertEquals(answerRange.getAnswerOptions().getLast().getTranslations(), updateOptionParamCaptor.getValue().translations());
         assertNotNull(updateOptionParamCaptor.getValue().lastModificationTime());
         assertEquals(currentUserId, updateOptionParamCaptor.getValue().lastModifiedBy());
 
