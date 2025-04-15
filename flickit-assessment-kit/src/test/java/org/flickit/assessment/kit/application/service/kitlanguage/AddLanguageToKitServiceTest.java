@@ -18,8 +18,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -59,7 +58,7 @@ class AddLanguageToKitServiceTest {
         when(loadExpertGroupOwnerPort.loadOwnerId(assessmentKit.getExpertGroupId())).thenReturn(ownerId);
         doNothing().when(createKitLanguagePort).persist(param.getKitId(), KitLanguage.valueOf(param.getLang()).getId());
 
-        service.addLanguageToKit(param);
+        assertDoesNotThrow(() -> service.addLanguageToKit(param));
     }
 
     private AddLanguageToKitUseCase.Param createParam(Consumer<AddLanguageToKitUseCase.Param.ParamBuilder> changer) {
@@ -70,8 +69,8 @@ class AddLanguageToKitServiceTest {
 
     private AddLanguageToKitUseCase.Param.ParamBuilder paramBuilder() {
         return AddLanguageToKitUseCase.Param.builder()
-            .kitId(1L)
-            .lang("FA")
-            .currentUserId(ownerId);
+                .kitId(1L)
+                .lang("FA")
+                .currentUserId(ownerId);
     }
 }
