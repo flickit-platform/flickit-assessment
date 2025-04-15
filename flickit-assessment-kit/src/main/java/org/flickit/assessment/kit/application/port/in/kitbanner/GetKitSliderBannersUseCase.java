@@ -15,7 +15,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_SLIDER_B
 
 public interface GetKitSliderBannersUseCase {
 
-    List<Result> getSliderBanners();
+    List<Result> getSliderBanners(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
