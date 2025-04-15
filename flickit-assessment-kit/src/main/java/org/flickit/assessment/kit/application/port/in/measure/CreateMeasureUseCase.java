@@ -1,5 +1,6 @@
 package org.flickit.assessment.kit.application.port.in.measure;
 
+import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -43,6 +44,7 @@ public interface CreateMeasureUseCase {
         String description;
 
         @Valid
+        @Nullable
         Map<KitLanguage, MeasureTranslation> translations;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
