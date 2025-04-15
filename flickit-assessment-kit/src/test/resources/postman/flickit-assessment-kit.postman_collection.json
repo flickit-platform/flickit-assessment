@@ -571,7 +571,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"New title\"\n}",
+							"raw": "{\n    \"title\": \"New title\",\n    \"removeTranslations\" : true,\n    \"translations\": {\n        \"EN\": {\n            \"title\": \"title\",\n            \"summary\": \"summary\",\n            \"about\" : \"about\"\n        }\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
