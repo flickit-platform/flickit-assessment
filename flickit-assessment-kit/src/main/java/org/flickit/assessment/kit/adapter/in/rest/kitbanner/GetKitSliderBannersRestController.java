@@ -18,7 +18,7 @@ public class GetKitSliderBannersRestController {
     private final GetKitSliderBannersUseCase useCase;
 
     @GetMapping("/assessment-kits-banners")
-    public ResponseEntity<List<Result>> getBanners(@RequestParam("lang") String lang) {
+    public ResponseEntity<List<Result>> getBanners(@RequestParam(value = "lang", required = false) String lang) {
         List<Result> banners = useCase.getSliderBanners(new Param(lang));
         return new ResponseEntity<>(banners, HttpStatus.OK);
     }
