@@ -59,4 +59,9 @@ public class ErrorMessageKey {
     public static final String TRANSLATION_MATURITY_LEVEL_TITLE_SIZE_MAX = "translations-maturity-level.title.size.max";
     public static final String TRANSLATION_MATURITY_LEVEL_DESCRIPTION_SIZE_MIN = "translations-maturity-level.description.size.min";
     public static final String TRANSLATION_MATURITY_LEVEL_DESCRIPTION_SIZE_MAX = "translations-maturity-level.description.size.max";
+
+    public static final String TRANSLATION_QUESTIONNAIRE_TITLE_SIZE_MIN = "translations-questionnaire.title.size.min";
+    public static final String TRANSLATION_QUESTIONNAIRE_TITLE_SIZE_MAX = "translations-questionnaire.title.size.max";
+    public static final String TRANSLATION_QUESTIONNAIRE_DESCRIPTION_SIZE_MIN = "translations-questionnaire.description.size.min";
+    public static final String TRANSLATION_QUESTIONNAIRE_DESCRIPTION_SIZE_MAX = "translations-questionnaire.description.size.max";
 }
