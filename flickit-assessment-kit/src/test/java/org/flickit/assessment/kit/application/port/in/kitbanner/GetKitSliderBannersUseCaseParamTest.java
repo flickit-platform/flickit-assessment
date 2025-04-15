@@ -6,16 +6,21 @@ import org.junit.jupiter.api.Test;
 import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_SLIDER_BANNERS_LANG_ID_NOT_NULL;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_SLIDER_BANNERS_LANGUAGE_INVALID;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_SLIDER_BANNERS_LANG_NOT_NULL;
 import static org.junit.jupiter.api.Assertions.*;
 
 class GetKitSliderBannersUseCaseParamTest {
 
     @Test
-    void testGetKitSliderBannersUseCaseParam_kitIdParamViolate_ErrorMessage() {
+    void testGetKitSliderBannersUseCaseParam_langParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.langId(null)));
-        assertThat(throwable).hasMessage("langId: " + GET_KIT_SLIDER_BANNERS_LANG_ID_NOT_NULL);
+                () -> createParam(b -> b.lang(null)));
+        assertThat(throwable).hasMessage("lang: " + GET_KIT_SLIDER_BANNERS_LANG_NOT_NULL);
+
+        throwable = assertThrows(ConstraintViolationException.class,
+                () -> createParam(b -> b.lang("FR")));
+        assertThat(throwable).hasMessage("lang: " + GET_KIT_SLIDER_BANNERS_LANGUAGE_INVALID);
     }
 
     private GetKitSliderBannersUseCase.Param createParam(Consumer<GetKitSliderBannersUseCase.Param.ParamBuilder> changer) {
@@ -26,6 +31,6 @@ class GetKitSliderBannersUseCaseParamTest {
 
     private GetKitSliderBannersUseCase.Param.ParamBuilder paramBuilder() {
         return GetKitSliderBannersUseCase.Param.builder()
-            .langId(1);
+                .lang("FA");
     }
 }
