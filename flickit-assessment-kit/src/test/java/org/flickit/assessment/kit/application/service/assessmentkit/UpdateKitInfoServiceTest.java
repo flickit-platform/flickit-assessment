@@ -208,9 +208,9 @@ class UpdateKitInfoServiceTest {
     }
 
     private UpdateKitInfoUseCase.Param createParam(Consumer<Param.ParamBuilder> changer) {
-        var param = paramBuilder();
-        changer.accept(param);
-        return param.build();
+        var paramBuilder = paramBuilder();
+        changer.accept(paramBuilder);
+        return paramBuilder.build();
     }
 
     private UpdateKitInfoUseCase.Param.ParamBuilder paramBuilder() {
