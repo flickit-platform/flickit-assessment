@@ -39,7 +39,7 @@ public interface GetKitEditableInfoUseCase {
         Long id,
         String title,
         String summary,
-        String lang,
+        Language mainLanguage,
         Boolean published,
         Boolean isPrivate,
         Double price,
