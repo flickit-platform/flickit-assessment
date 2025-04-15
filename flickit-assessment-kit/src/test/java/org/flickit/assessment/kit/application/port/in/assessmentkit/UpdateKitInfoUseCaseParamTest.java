@@ -106,13 +106,13 @@ class UpdateKitInfoUseCaseParamTest {
     }
 
     @Test
-    void testUpdateKitInfoUseCaseParam_translationsFieldsIsNotCorrect_ErrorMessage() {
+    void testUpdateKitInfoUseCaseParam_translationsFieldIsNotCorrect_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(a -> {
                 a.translations(Map.of("EN", new KitTranslation("title", "summary", "about")));
                 a.removeTranslations(true);
             }));
-        assertThat(throwable).hasMessage("translationFieldsCorrect: " + UPDATE_KIT_INFO_TRANSLATIONS_INCORRECT);
+        assertThat(throwable).hasMessage("translationFieldCorrect: " + UPDATE_KIT_INFO_TRANSLATIONS_INCORRECT);
     }
 
     @Test
