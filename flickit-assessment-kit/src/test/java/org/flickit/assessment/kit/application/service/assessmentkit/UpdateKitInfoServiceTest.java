@@ -79,7 +79,7 @@ class UpdateKitInfoServiceTest {
 
     @Test
     void testUpdateKitInfo_EditTitle_ValidResults() {
-        param = createParam(b -> b.title("new title").removeTranslations(true));
+        param = createParam(b -> b.title("new title").removeTranslations(true).translations(null));
         String newCode = generateSlugCode(param.getTitle());
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
