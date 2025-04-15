@@ -23,7 +23,7 @@ public class UpdateAnswerOptionRestController {
     @PutMapping("/kit-versions/{kitVersionId}/answer-options/{answerOptionId}")
     public ResponseEntity<Void> updateAnswerOption(@PathVariable("kitVersionId") Long kitVersionId,
                                                    @PathVariable("answerOptionId") Long answerOptionId,
-                                                   @RequestBody AnswerOptionRequestDto requestDto) {
+                                                   @RequestBody UpdateAnswerOptionRequestDto requestDto) {
         UUID currentUserId = userContext.getUser().id();
         useCase.updateAnswerOption(toParam(kitVersionId, answerOptionId, currentUserId, requestDto));
         return new ResponseEntity<>(HttpStatus.OK);
@@ -32,7 +32,7 @@ public class UpdateAnswerOptionRestController {
     private Param toParam(Long kitVersionId,
                           Long answerOptionId,
                           UUID currentUserId,
-                          AnswerOptionRequestDto dto) {
+                          UpdateAnswerOptionRequestDto dto) {
         return new Param(kitVersionId,
             answerOptionId,
             dto.index(),
