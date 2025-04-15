@@ -1,10 +1,11 @@
 package org.flickit.assessment.kit.application.service.answerrange;
 
+import org.flickit.assessment.common.application.domain.kit.translation.AnswerOptionTranslation;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.kit.application.domain.AnswerRange;
 import org.flickit.assessment.kit.application.domain.KitVersion;
-import org.flickit.assessment.kit.application.port.in.answerrange.CreateAnswerRangeOptionUseCase;
+import org.flickit.assessment.kit.application.port.in.answerrange.CreateAnswerRangeOptionUseCase.Param;
 import org.flickit.assessment.kit.application.port.out.answeroption.CreateAnswerOptionPort;
 import org.flickit.assessment.kit.application.port.out.answerrange.LoadAnswerRangePort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
@@ -16,13 +17,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.CREATE_ANSWER_RANGE_OPTION_ANSWER_RANGE_NON_REUSABLE;
-import static org.flickit.assessment.kit.test.fixture.application.AnswerRangeMother.createReusableAnswerRangeWithTwoOptions;
 import static org.flickit.assessment.kit.test.fixture.application.AnswerRangeMother.createNonReusableAnswerRangeWithTwoOptions;
+import static org.flickit.assessment.kit.test.fixture.application.AnswerRangeMother.createReusableAnswerRangeWithTwoOptions;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
 import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createKitVersion;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -53,7 +55,7 @@ class CreateAnswerRangeOptionServiceTest {
 
     @Test
     void testCreateAnswerRangeOption_WhenCurrentUserIsNotOwner_ThrowAccessDeniedException() {
-        var param = createParam(CreateAnswerRangeOptionUseCase.Param.ParamBuilder::build);
+        var param = createParam(Param.ParamBuilder::build);
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
@@ -100,22 +102,24 @@ class CreateAnswerRangeOptionServiceTest {
         assertEquals(param.getTitle(), createPortCaptor.getValue().title());
         assertEquals(param.getAnswerRangeId(), createPortCaptor.getValue().answerRangeId());
         assertEquals(param.getValue(), createPortCaptor.getValue().value());
+        assertEquals(param.getTranslations(), createPortCaptor.getValue().translation());
         assertEquals(param.getCurrentUserId(), createPortCaptor.getValue().createdBy());
     }
 
-    private CreateAnswerRangeOptionUseCase.Param createParam(Consumer<CreateAnswerRangeOptionUseCase.Param.ParamBuilder> changer) {
+    private Param createParam(Consumer<Param.ParamBuilder> changer) {
         var paramBuilder = paramBuilder();
         changer.accept(paramBuilder);
         return paramBuilder.build();
     }
 
-    private CreateAnswerRangeOptionUseCase.Param.ParamBuilder paramBuilder() {
-        return CreateAnswerRangeOptionUseCase.Param.builder()
+    private Param.ParamBuilder paramBuilder() {
+        return Param.builder()
             .kitVersionId(kitVersion.getId())
             .answerRangeId(5163L)
             .index(3)
             .title("first")
             .value(0.5D)
+            .translations(Map.of("EN", new AnswerOptionTranslation("title")))
             .currentUserId(UUID.randomUUID());
     }
 }

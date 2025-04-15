@@ -4,8 +4,7 @@ import org.flickit.assessment.common.application.domain.kit.translation.AnswerOp
 
 import java.util.Map;
 
-public record CreateAnswerOptionRequestDto(Long questionId,
-                                           Integer index,
+public record UpdateAnswerOptionRequestDto(Integer index,
                                            String title,
                                            Double value,
                                            Map<String, AnswerOptionTranslation> translations) {

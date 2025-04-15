@@ -64,4 +64,7 @@ public class ErrorMessageKey {
     public static final String TRANSLATION_MEASURE_TITLE_SIZE_MAX = "translations-measure.title.size.max";
     public static final String TRANSLATION_MEASURE_DESCRIPTION_SIZE_MIN = "translations-measure.description.size.min";
     public static final String TRANSLATION_MEASURE_DESCRIPTION_SIZE_MAX = "translations-measure.description.size.max";
+
+    public static final String TRANSLATION_ANSWER_OPTION_TITLE_SIZE_MIN = "translations-answer-option.title.size.min";
+    public static final String TRANSLATION_ANSWER_OPTION_TITLE_SIZE_MAX = "translations-answer-option.title.size.max";
 }
