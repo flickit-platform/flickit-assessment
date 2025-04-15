@@ -34,6 +34,7 @@ public interface QuestionnaireJpaRepository extends JpaRepository<QuestionnaireJ
                 q.code = :code,
                 q.index = :index,
                 q.description = :description,
+                q.translations = :translations,
                 q.lastModificationTime = :lastModificationTime,
                 q.lastModifiedBy = :lastModifiedBy
             WHERE q.id = :id AND q.kitVersionId = :kitVersionId
@@ -44,6 +45,7 @@ public interface QuestionnaireJpaRepository extends JpaRepository<QuestionnaireJ
                 @Param(value = "code") String code,
                 @Param(value = "index") int index,
                 @Param(value = "description") String description,
+                @Param(value = "translations") String translations,
                 @Param(value = "lastModificationTime") LocalDateTime lastModificationTime,
                 @Param(value = "lastModifiedBy") UUID lastModifiedBy
     );
