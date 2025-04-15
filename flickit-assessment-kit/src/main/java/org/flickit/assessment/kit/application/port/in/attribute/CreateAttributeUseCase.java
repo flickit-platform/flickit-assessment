@@ -1,5 +1,6 @@
 package org.flickit.assessment.kit.application.port.in.attribute;
 
+import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -51,6 +52,7 @@ public interface CreateAttributeUseCase {
         Long subjectId;
 
         @Valid
+        @Nullable
         Map<KitLanguage, AttributeTranslation> translations;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)

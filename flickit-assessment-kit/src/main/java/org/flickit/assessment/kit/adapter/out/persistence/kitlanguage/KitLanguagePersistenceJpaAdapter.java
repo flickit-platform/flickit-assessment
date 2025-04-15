@@ -25,4 +25,11 @@ public class KitLanguagePersistenceJpaAdapter implements
             .collect(groupingBy(KitLanguageJpaEntity::getKitId,
                 mapping(e -> KitLanguage.valueOfById(e.getLangId()), toList())));
     }
+
+    @Override
+    public List<KitLanguage> loadByKitId(long kitId) {
+        return repository.findAllByKitId(kitId).stream()
+            .map(e -> KitLanguage.valueOfById(e.getLangId()))
+            .toList();
+    }
 }
