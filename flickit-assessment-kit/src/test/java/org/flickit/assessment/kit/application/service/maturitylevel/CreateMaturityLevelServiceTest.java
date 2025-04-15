@@ -9,6 +9,7 @@ import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersion
 import org.flickit.assessment.kit.application.port.out.maturitylevel.CreateMaturityLevelPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -19,11 +20,10 @@ import java.util.function.Consumer;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
 import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createKitVersion;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CreateMaturityLevelServiceTest {
@@ -64,6 +64,18 @@ class CreateMaturityLevelServiceTest {
         when(createMaturityLevelPort.persist(any(MaturityLevel.class), anyLong(), any(UUID.class))).thenReturn(levelId);
 
         long actualLevelId = service.createMaturityLevel(param);
+
+        var maturityLevelArgument = ArgumentCaptor.forClass(MaturityLevel.class);
+        verify(createMaturityLevelPort, times(1))
+            .persist(maturityLevelArgument.capture(), eq(param.getKitVersionId()), eq(param.getCurrentUserId()));
+
+        assertNull(maturityLevelArgument.getValue().getId());
+        assertEquals(param.getIndex(), maturityLevelArgument.getValue().getIndex());
+        assertEquals(param.getTitle(), maturityLevelArgument.getValue().getTitle());
+        assertEquals(param.getDescription(), maturityLevelArgument.getValue().getDescription());
+        assertEquals(param.getValue(), maturityLevelArgument.getValue().getValue());
+        assertEquals(param.getTranslations(), maturityLevelArgument.getValue().getTranslations());
+
         assertEquals(levelId, actualLevelId);
     }
 
