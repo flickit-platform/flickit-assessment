@@ -1,5 +1,6 @@
 package org.flickit.assessment.kit.application.service.measure;
 
+import org.flickit.assessment.common.application.domain.kit.translation.MeasureTranslation;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.domain.Measure;
@@ -14,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -73,6 +75,7 @@ class CreateMeasureServiceTest {
         assertEquals(param.getTitle(), measureCaptor.getValue().getTitle());
         assertEquals(param.getDescription(), measureCaptor.getValue().getDescription());
         assertEquals(param.getIndex(), measureCaptor.getValue().getIndex());
+        assertEquals(param.getTranslations(), measureCaptor.getValue().getTranslations());
         assertNotNull(measureCaptor.getValue().getCreationTime());
         assertNotNull(measureCaptor.getValue().getLastModificationTime());
     }
@@ -89,6 +92,7 @@ class CreateMeasureServiceTest {
             .index(1)
             .title("title")
             .description("description")
+            .translations(Map.of("EN", new MeasureTranslation("title", "desc")))
             .currentUserId(UUID.randomUUID());
     }
 }
