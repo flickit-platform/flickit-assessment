@@ -538,6 +538,10 @@ public class ErrorMessageKey {
     public static final String GET_KIT_SLIDER_BANNERS_LANG_NOT_NULL = "get-kit-slider-banners.lang.notNull";
     public static final String GET_KIT_SLIDER_BANNERS_LANGUAGE_INVALID = "get-kit-slider-banners.lang.invalid";
 
+    public static final String ADD_LANGUAGE_TO_KIT_KIT_ID_NOT_NULL = "add-language-to-kit.kitId.notNull";
+    public static final String ADD_LANGUAGE_TO_KIT_LANG_NOT_NULL = "add-language-to-kit.lang.notNull";
+    public static final String ADD_LANGUAGE_TO_KIT_LANGUAGE_INVALID = "add-language-to-kit.lang.invalid";
+
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
     }
