@@ -571,7 +571,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"New title\"\n}",
+							"raw": "{\n    \"title\": \"New title\",\n    \"removeTranslations\" : true,\n    \"translations\": {\n        \"EN\": {\n            \"title\": \"title\",\n            \"summary\": \"summary\",\n            \"about\" : \"about\"\n        }\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3041,6 +3041,46 @@
 								"kit-versions",
 								"393",
 								"measures"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Kit Banner",
+			"item": [
+				{
+					"name": "Get Slider Banners",
+					"request": {
+						"method": "GET",
+                        "header": [
+                        {
+                            "key": "Authorization",
+                            "value": "{{authorization_header}}",
+                            "type": "text"
+                        },
+                        {
+                            "key": "Accept-Language",
+                            "value": "{{accept_language}}",
+                            "type": "text"
+                        }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/{{api_path}}/assessment-kits-banners?lang=FA",
+                            "host": [
+								"{{base_url}}"
+							  ],
+                            "path": [
+								"{{api_path}}",
+							  	"assessment-kits-banners"
+							],
+							"query": [
+								{
+									"key": "lang",
+									"value": "FA"
+								}
 							]
 						}
 					},
