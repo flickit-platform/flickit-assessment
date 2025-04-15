@@ -3055,15 +3055,26 @@
 					"name": "Get Slider Banners",
 					"request": {
 						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessment-kits-banners?lang=FA",
-							"host": [
+                        "header": [
+                        {
+                            "key": "Authorization",
+                            "value": "{{authorization_header}}",
+                            "type": "text"
+                        },
+                        {
+                            "key": "Accept-Language",
+                            "value": "{{accept_language}}",
+                            "type": "text"
+                        }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/{{api_path}}/assessment-kits-banners?lang=FA",
+                            "host": [
 								"{{base_url}}"
-							],
-							"path": [
+							  ],
+                            "path": [
 								"{{api_path}}",
-								"assessment-kits-banners"
+							  	"assessment-kits-banners"
 							],
 							"query": [
 								{
