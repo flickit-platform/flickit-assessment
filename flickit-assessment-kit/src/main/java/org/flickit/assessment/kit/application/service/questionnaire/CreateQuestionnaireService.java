@@ -38,6 +38,8 @@ public class CreateQuestionnaireService implements CreateQuestionnaireUseCase {
             param.getTitle(),
             param.getIndex(),
             param.getDescription(),
+            null,
+            param.getTranslations(),
             LocalDateTime.now(),
             LocalDateTime.now());
         return createQuestionnairePort.persist(questionnaire, param.getKitVersionId(), param.getCurrentUserId());
