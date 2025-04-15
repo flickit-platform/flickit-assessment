@@ -19,6 +19,8 @@ public class JsonUtils {
 
     @SneakyThrows
     public static String toJson(Object value) {
+        if (value == null)
+            return null;
         return objectMapper.writeValueAsString(value);
     }
 
