@@ -135,7 +135,9 @@ public class AttributePersistenceJpaAdapter implements
         var pageResult = repository.findAllByKitVersionId(kitVersionId, PageRequest.of(page, size));
 
         var items = pageResult.getContent().stream()
-            .map(x -> new AttributeWithSubject(mapToDomainModel(x.getAttribute()), SubjectMapper.mapToDomainModel(x.getSubject(), null)))
+            .map(x -> new AttributeWithSubject(
+                mapToDomainModel(x.getAttribute()),
+                SubjectMapper.mapToDomainModel(x.getSubject(), null)))
             .toList();
 
         return new PaginatedResponse<>(items,
