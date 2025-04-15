@@ -1,5 +1,6 @@
 package org.flickit.assessment.kit.application.port.in.maturitylevel;
 
+import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -49,6 +50,7 @@ public interface UpdateMaturityLevelUseCase {
         Integer value;
 
         @Valid
+        @Nullable
         Map<KitLanguage, MaturityLevelTranslation> translations;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
