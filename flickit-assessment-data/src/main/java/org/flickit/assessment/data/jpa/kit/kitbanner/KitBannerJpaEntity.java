@@ -29,4 +29,7 @@ public class KitBannerJpaEntity {
 
     @Column(name = "in_slider", nullable = false)
     private Boolean inSlider;
+
+    @Column(name = "lang_id", nullable = false)
+    private Integer langId;
 }

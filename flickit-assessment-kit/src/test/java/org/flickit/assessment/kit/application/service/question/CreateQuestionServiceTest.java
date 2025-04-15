@@ -75,6 +75,7 @@ class CreateQuestionServiceTest {
         assertEquals(param.getMayNotBeApplicable(), outPortParam.getValue().mayNotBeApplicable());
         assertEquals(param.getAdvisable(), outPortParam.getValue().advisable());
         assertEquals(param.getQuestionnaireId(), outPortParam.getValue().questionnaireId());
+        assertEquals(param.getTranslations(), outPortParam.getValue().translations());
         assertNull(outPortParam.getValue().measureId());
         assertNull(outPortParam.getValue().answerRangeId());
         assertEquals(param.getCurrentUserId(), outPortParam.getValue().createdBy());

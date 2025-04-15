@@ -41,6 +41,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
                 q.advisable = :advisable,
                 q.answerRangeId = :answerRangeId,
                 q.measureId = :measureId,
+                q.translations = :translations,
                 q.lastModificationTime = :lastModificationTime,
                 q.lastModifiedBy = :lastModifiedBy
             WHERE q.id = :id AND q.kitVersionId = :kitVersionId
@@ -55,6 +56,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
                 @Param("advisable") Boolean advisable,
                 @Param("answerRangeId") Long answerRangeId,
                 @Param("measureId") Long measureId,
+                @Param("translations") String translations,
                 @Param("lastModificationTime") LocalDateTime lastModificationTime,
                 @Param("lastModifiedBy") UUID lastModifiedBy);
 

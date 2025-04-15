@@ -126,4 +126,16 @@
                                  constraintName="fk_fak_kitbanner_assessmentkit"/>
     </changeSet>
 
+    <changeSet id="0.56-16" author="Maziyar Gerami">
+        <addColumn tableName="fak_kit_banner">
+            <column name="lang_id" type="int"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.56-17" author="Maziyar Gerami">
+        <addUniqueConstraint columnNames="kit_id, lang_id"
+                             constraintName="uq_fak_kitbanner_kitid_langid"
+                             tableName="fak_kit_banner"/>
+    </changeSet>
+
 </databaseChangeLog>
