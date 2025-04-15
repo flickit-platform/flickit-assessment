@@ -9,6 +9,7 @@ import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersion
 import org.flickit.assessment.kit.application.port.out.questionnaire.CreateQuestionnairePort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -23,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CreateQuestionnaireServiceTest {
@@ -65,6 +66,14 @@ class CreateQuestionnaireServiceTest {
             .thenReturn(questionnaireId);
 
         long actualQuestionnaireId = createQuestionnaireService.createQuestionnaire(param);
+
+        var createPortArgument = ArgumentCaptor.forClass(Questionnaire.class);
+        verify(createQuestionnairePort, times(1)).persist(createPortArgument.capture(), anyLong(), any(UUID.class));
+        assertEquals(param.getIndex(), createPortArgument.getValue().getIndex());
+        assertEquals(param.getTitle(), createPortArgument.getValue().getTitle());
+        assertEquals(param.getDescription(), createPortArgument.getValue().getDescription());
+        assertEquals(param.getTranslations(), createPortArgument.getValue().getTranslations());
+
         assertEquals(questionnaireId, actualQuestionnaireId);
     }
 
