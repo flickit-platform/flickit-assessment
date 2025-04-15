@@ -571,7 +571,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"New title\"\n}",
+							"raw": "{\n    \"title\": \"New title\",\n    \"removeTranslations\" : true,\n    \"translations\": {\n        \"EN\": {\n            \"title\": \"title\",\n            \"summary\": \"summary\",\n            \"about\" : \"about\"\n        }\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1404,7 +1404,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"index\": 25,\n    \"title\": \"new question\",\n    \"hint\": \"question hint\",\n    \"mayNotBeApplicable\": false,\n    \"advisable\": true,\n    \"questionnaireId\": 3072\n}",
+							"raw": "{\n    \"index\": 280,\n    \"title\": \"new question\",\n    \"hint\": \"question hint\",\n    \"mayNotBeApplicable\": false,\n    \"advisable\": true,\n    \"questionnaireId\": 2845,\n    \"translations\": {\n        \"EN\": {\n            \"title\": \"title\",\n            \"hint\": \"hint\"\n        }\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1444,7 +1444,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"index\": 26,\n    \"title\": \"update question title\",\n    \"hint\": \"new hint\",\n    \"mayNotBeApplicable\": true,\n    \"advisable\": false,\n    \"answerRangeId\": 1618,\n    \"measureId\": 1438\n}",
+							"raw": "{\n    \"index\": 280,\n    \"title\": \"update question title\",\n    \"hint\": \"new hint\",\n    \"mayNotBeApplicable\": true,\n    \"advisable\": false,\n    \"translations\": {\n        \"EN\": {\n            \"title\": \"title1\",\n            \"hint\": \"hint1\"\n        }\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1452,16 +1452,16 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/{{api_path}}/kit-versions/223/questions/4859",
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/393/questions/20024",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"{{api_path}}",
 								"kit-versions",
-								"223",
+								"393",
 								"questions",
-								"4859"
+								"20024"
 							]
 						}
 					},
@@ -3041,6 +3041,35 @@
 								"kit-versions",
 								"393",
 								"measures"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Kit Banner",
+			"item": [
+				{
+					"name": "Get Slider Banners",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessment-kits-banners?lang=FA",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessment-kits-banners"
+							],
+							"query": [
+								{
+									"key": "lang",
+									"value": "FA"
+								}
 							]
 						}
 					},

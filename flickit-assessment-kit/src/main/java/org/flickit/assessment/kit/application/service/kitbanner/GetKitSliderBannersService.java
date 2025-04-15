@@ -13,7 +13,7 @@ import java.util.List;
 public class GetKitSliderBannersService implements GetKitSliderBannersUseCase {
 
     @Override
-    public List<Result> getSliderBanners() {
+    public List<Result> getSliderBanners(Param param) {
         return List.of();
     }
 }
