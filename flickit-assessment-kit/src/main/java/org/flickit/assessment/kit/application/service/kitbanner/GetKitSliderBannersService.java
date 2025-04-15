@@ -26,7 +26,8 @@ public class GetKitSliderBannersService implements GetKitSliderBannersUseCase {
     public List<Result> getSliderBanners(Param param) {
         var portResult = loadKitBannerPort.loadSliderBanners(KitLanguage.valueOf(param.getLang()));
 
-        return portResult.stream().map(this::toResult)
+        return portResult.stream()
+                .map(this::toResult)
                 .toList();
     }
 
