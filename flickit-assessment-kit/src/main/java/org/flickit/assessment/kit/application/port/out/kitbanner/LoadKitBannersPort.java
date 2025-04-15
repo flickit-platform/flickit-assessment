@@ -5,7 +5,7 @@ import org.flickit.assessment.kit.application.domain.KitBanner;
 
 import java.util.List;
 
-public interface LoadKitBannerPort {
+public interface LoadKitBannersPort {
 
     List<KitBanner> loadSliderBanners(KitLanguage kitLanguage);
 }

@@ -4,14 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.data.jpa.kit.kitbanner.KitBannerJpaRepository;
 import org.flickit.assessment.kit.application.domain.KitBanner;
-import org.flickit.assessment.kit.application.port.out.kitbanner.LoadKitBannerPort;
+import org.flickit.assessment.kit.application.port.out.kitbanner.LoadKitBannersPort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class KitBannerPersistenceJpaAdapter implements LoadKitBannerPort {
+public class KitBannerPersistenceJpaAdapter implements LoadKitBannersPort {
 
     private final KitBannerJpaRepository kitBannerRepository;
 

@@ -2,7 +2,7 @@ package org.flickit.assessment.kit.application.service.kitbanner;
 
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.kit.application.port.in.kitbanner.GetKitSliderBannersUseCase;
-import org.flickit.assessment.kit.application.port.out.kitbanner.LoadKitBannerPort;
+import org.flickit.assessment.kit.application.port.out.kitbanner.LoadKitBannersPort;
 import org.flickit.assessment.kit.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.flickit.assessment.kit.test.fixture.application.KitBannerMother;
 import org.junit.jupiter.api.Test;
@@ -27,7 +27,7 @@ class GetKitSliderBannersServiceTest {
     private GetKitSliderBannersService service;
 
     @Mock
-    private LoadKitBannerPort loadKitBannersPort;
+    private LoadKitBannersPort loadKitBannersPort;
 
     @Mock
     private CreateFileDownloadLinkPort createDownloadLinkPort;
