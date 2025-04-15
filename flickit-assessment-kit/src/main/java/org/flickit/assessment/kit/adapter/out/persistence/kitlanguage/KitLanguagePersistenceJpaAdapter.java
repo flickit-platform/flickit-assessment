@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.data.jpa.kit.kitlanguage.KitLanguageJpaEntity;
 import org.flickit.assessment.data.jpa.kit.kitlanguage.KitLanguageJpaRepository;
+import org.flickit.assessment.kit.application.port.out.kitlanguage.CreateKitLanguagePort;
 import org.flickit.assessment.kit.application.port.out.kitlanguage.LoadKitLanguagesPort;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +16,8 @@ import static java.util.stream.Collectors.*;
 @Component
 @RequiredArgsConstructor
 public class KitLanguagePersistenceJpaAdapter implements
-    LoadKitLanguagesPort {
+    LoadKitLanguagesPort,
+    CreateKitLanguagePort {
 
     private final KitLanguageJpaRepository repository;
 
@@ -31,5 +33,10 @@ public class KitLanguagePersistenceJpaAdapter implements
         return repository.findAllByKitId(kitId).stream()
             .map(e -> KitLanguage.valueOfById(e.getLangId()))
             .toList();
+    }
+
+    @Override
+    public void persist(Long kitId, Integer langId) {
+        repository.save(new KitLanguageJpaEntity(kitId, langId));
     }
 }
