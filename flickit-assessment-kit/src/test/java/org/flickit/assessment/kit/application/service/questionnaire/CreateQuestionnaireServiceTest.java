@@ -1,9 +1,10 @@
 package org.flickit.assessment.kit.application.service.questionnaire;
 
+import org.flickit.assessment.common.application.domain.kit.translation.QuestionnaireTranslation;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.domain.Questionnaire;
-import org.flickit.assessment.kit.application.port.in.questionnaire.CreateQuestionnaireUseCase;
+import org.flickit.assessment.kit.application.port.in.questionnaire.CreateQuestionnaireUseCase.Param;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.CreateQuestionnairePort;
@@ -14,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -46,7 +48,7 @@ class CreateQuestionnaireServiceTest {
 
     @Test
     void testCreateQuestionnaire_WhenCurrentUserIsNotOwner_ShouldThrowAccessDeniedException() {
-        var param = createParam(CreateQuestionnaireUseCase.Param.ParamBuilder::build);
+        var param = createParam(Param.ParamBuilder::build);
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
@@ -77,18 +79,19 @@ class CreateQuestionnaireServiceTest {
         assertEquals(questionnaireId, actualQuestionnaireId);
     }
 
-    private CreateQuestionnaireUseCase.Param createParam(Consumer<CreateQuestionnaireUseCase.Param.ParamBuilder> changer) {
+    private Param createParam(Consumer<Param.ParamBuilder> changer) {
         var paramBuilder = paramBuilder();
         changer.accept(paramBuilder);
         return paramBuilder.build();
     }
 
-    private CreateQuestionnaireUseCase.Param.ParamBuilder paramBuilder() {
-        return CreateQuestionnaireUseCase.Param.builder()
+    private Param.ParamBuilder paramBuilder() {
+        return Param.builder()
             .kitVersionId(1L)
             .index(1)
             .title("title")
             .description("description")
+            .translations(Map.of("EN", new QuestionnaireTranslation("title", "desc")))
             .currentUserId(UUID.randomUUID());
     }
 }
