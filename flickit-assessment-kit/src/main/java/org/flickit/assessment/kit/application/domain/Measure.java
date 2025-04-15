@@ -1,9 +1,6 @@
 package org.flickit.assessment.kit.application.domain;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.application.domain.kit.translation.MeasureTranslation;
 
@@ -11,6 +8,7 @@ import java.time.LocalDateTime;
 import java.util.Map;
 
 @Getter
+@AllArgsConstructor
 @RequiredArgsConstructor
 @EqualsAndHashCode
 public class Measure {

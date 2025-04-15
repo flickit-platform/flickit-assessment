@@ -38,14 +38,13 @@ public class CreateMeasureService implements CreateMeasureUseCase {
     }
 
     private Measure toMeasure(Param param) {
-        Measure measure = new Measure(null,
+        return new Measure(null,
             generateCode(param.getTitle()),
             param.getTitle(),
             param.getIndex(),
             param.getDescription(),
+            param.getTranslations(),
             LocalDateTime.now(),
             LocalDateTime.now());
-        measure.setTranslations(param.getTranslations());
-        return measure;
     }
 }
