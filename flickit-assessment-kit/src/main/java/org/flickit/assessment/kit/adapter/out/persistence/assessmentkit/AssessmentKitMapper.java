@@ -13,6 +13,8 @@ import org.flickit.assessment.kit.application.port.out.assessmentkit.UpdateKitIn
 import java.time.LocalDateTime;
 import java.util.HashSet;
 
+import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
+
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AssessmentKitMapper {
 
@@ -39,6 +41,9 @@ public class AssessmentKitMapper {
     }
 
     public static AssessmentKitJpaEntity toJpaEntity(AssessmentKitJpaEntity entity, UpdateKitInfoPort.Param param) {
+        var translations = param.isRemoveTranslations() ?
+            null :
+            isNotEmpty(param.translations()) ? JsonUtils.toJson(param.translations()) : entity.getTranslations();
         return new AssessmentKitJpaEntity(
             entity.getId(),
             param.code() != null ? param.code() : entity.getCode(),
@@ -49,7 +54,7 @@ public class AssessmentKitMapper {
             param.isPrivate() != null ? param.isPrivate() : entity.getIsPrivate(),
             entity.getExpertGroupId(),
             param.lang() != null ? param.lang().getId() : entity.getLanguageId(),
-            JsonUtils.toJson(param.translations()),
+            translations,
             entity.getCreationTime(),
             param.lastModificationTime(),
             entity.getCreatedBy(),

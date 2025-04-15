@@ -28,7 +28,7 @@ public class UpdateKitInfoService implements UpdateKitInfoUseCase {
     @Override
     public void updateKitInfo(Param param) {
         validateCurrentUser(param.getKitId(), param.getCurrentUserId());
-        if (containsNonNullParam(param))
+        if (containsNonNullParam(param) || param.isRemoveTranslations())
             updateKitInfoPort.update(toPortParam(param));
     }
 
@@ -46,7 +46,8 @@ public class UpdateKitInfoService implements UpdateKitInfoUseCase {
             Objects.nonNull(param.getIsPrivate()) ||
             Objects.nonNull(param.getPrice()) ||
             Objects.nonNull(param.getAbout()) ||
-            Objects.nonNull(param.getTags());
+            Objects.nonNull(param.getTags()) ||
+            Objects.nonNull(param.getTranslations());
     }
 
     private UpdateKitInfoPort.Param toPortParam(Param param) {
@@ -61,7 +62,8 @@ public class UpdateKitInfoService implements UpdateKitInfoUseCase {
             param.getPrice(),
             param.getAbout(),
             param.getTags() != null ? new HashSet<>(param.getTags()) : null,
-            param.getRemoveTranslations() ? null : param.getTranslations(),
+            param.getTranslations(),
+            param.isRemoveTranslations(),
             param.getCurrentUserId(),
             LocalDateTime.now()
         );

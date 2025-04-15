@@ -23,6 +23,7 @@ public interface UpdateKitInfoPort {
                  String about,
                  Set<Long> tags,
                  Map<KitLanguage, KitTranslation> translations,
+                 boolean isRemoveTranslations,
                  UUID currentUserId,
                  LocalDateTime lastModificationTime) {
     }
