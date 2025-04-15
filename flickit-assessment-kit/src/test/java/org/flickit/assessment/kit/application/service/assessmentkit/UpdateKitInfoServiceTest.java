@@ -90,7 +90,6 @@ class UpdateKitInfoServiceTest {
         assertEquals(param.getKitId(), portParam.getValue().kitId());
         assertEquals(param.getTitle(), portParam.getValue().title());
         assertEquals(newCode, portParam.getValue().code());
-        assertNull(portParam.getValue().translations());
     }
 
     @Test
@@ -105,7 +104,6 @@ class UpdateKitInfoServiceTest {
 
         assertEquals(param.getKitId(), portParam.getValue().kitId());
         assertEquals(param.getSummary(), portParam.getValue().summary());
-        assertEquals(param.getTranslations(), portParam.getValue().translations());
     }
 
     @Test
@@ -119,7 +117,6 @@ class UpdateKitInfoServiceTest {
 
         assertEquals(param.getKitId(), portParam.getValue().kitId());
         assertEquals(param.getPublished(), portParam.getValue().published());
-        assertEquals(param.getTranslations(), portParam.getValue().translations());
     }
 
     @Test
@@ -133,7 +130,6 @@ class UpdateKitInfoServiceTest {
 
         assertEquals(param.getKitId(), portParam.getValue().kitId());
         assertEquals(param.getIsPrivate(), portParam.getValue().isPrivate());
-        assertEquals(param.getTranslations(), portParam.getValue().translations());
     }
 
     @Test
@@ -147,7 +143,6 @@ class UpdateKitInfoServiceTest {
 
         assertEquals(param.getKitId(), portParam.getValue().kitId());
         assertEquals(param.getPrice(), portParam.getValue().price());
-        assertEquals(param.getTranslations(), portParam.getValue().translations());
     }
 
     @Test
@@ -161,7 +156,6 @@ class UpdateKitInfoServiceTest {
 
         assertEquals(param.getKitId(), portParam.getValue().kitId());
         assertEquals(param.getAbout(), portParam.getValue().about());
-        assertEquals(param.getTranslations(), portParam.getValue().translations());
     }
 
     @Test
@@ -180,6 +174,33 @@ class UpdateKitInfoServiceTest {
         assertEquals(param.getKitId(), portParam.getValue().kitId());
         assertEquals(KitLanguage.valueOf(param.getLang()), portParam.getValue().lang());
         assertEquals(param.getTranslations(), portParam.getValue().translations());
+    }
+
+    @Test
+    void testUpdateKitInfo_EditTranslations_ValidResults() {
+        param = createParam(b -> b.translations(
+            Map.of("EN", new KitTranslation("title", "summary", "about"))));
+
+        when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
+
+        service.updateKitInfo(param);
+        verify(updateKitInfoPort, times(1)).update(portParam.capture());
+
+        assertEquals(param.getKitId(), portParam.getValue().kitId());
+        assertEquals(param.getTranslations(), portParam.getValue().translations());
+    }
+
+    @Test
+    void testUpdateKitInfo_RemoveTranslations_ValidResults() {
+        param = createParam(b -> b.removeTranslations(true));
+
+        when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
+
+        service.updateKitInfo(param);
+        verify(updateKitInfoPort, times(1)).update(portParam.capture());
+
+        assertEquals(param.getKitId(), portParam.getValue().kitId());
+        assertTrue(portParam.getValue().isRemoveTranslations());
     }
 
     @Test
@@ -216,7 +237,6 @@ class UpdateKitInfoServiceTest {
     private UpdateKitInfoUseCase.Param.ParamBuilder paramBuilder() {
         return UpdateKitInfoUseCase.Param.builder()
             .kitId(1L)
-            .translations(Map.of("EN", new KitTranslation("title", "summary", "about")))
             .currentUserId(expertGroup.getOwnerId());
     }
 }
