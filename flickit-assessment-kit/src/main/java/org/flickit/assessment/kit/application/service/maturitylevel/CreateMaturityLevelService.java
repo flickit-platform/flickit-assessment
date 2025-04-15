@@ -37,7 +37,9 @@ public class CreateMaturityLevelService implements CreateMaturityLevelUseCase {
             param.getTitle(),
             param.getIndex(),
             param.getDescription(),
-            param.getValue());
+            param.getValue(),
+            param.getTranslations(),
+            null);
         return createMaturityLevelPort.persist(maturityLevel, param.getKitVersionId(), param.getCurrentUserId());
     }
 }

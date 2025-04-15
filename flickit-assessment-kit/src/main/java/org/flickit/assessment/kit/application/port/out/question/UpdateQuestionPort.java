@@ -1,7 +1,11 @@
 package org.flickit.assessment.kit.application.port.out.question;
 
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.common.application.domain.kit.translation.QuestionTranslation;
+
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public interface UpdateQuestionPort {
@@ -21,6 +25,7 @@ public interface UpdateQuestionPort {
                  Boolean advisable,
                  Long answerRangeId,
                  Long measureId,
+                 Map<KitLanguage, QuestionTranslation> translations,
                  LocalDateTime lastModificationTime,
                  UUID lastModifiedBy) {
     }

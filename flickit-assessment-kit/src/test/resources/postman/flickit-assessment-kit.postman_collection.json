@@ -571,7 +571,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"New title\"\n}",
+							"raw": "{\n    \"title\": \"New title\",\n    \"removeTranslations\" : true,\n    \"translations\": {\n        \"EN\": {\n            \"title\": \"title\",\n            \"summary\": \"summary\",\n            \"about\" : \"about\"\n        }\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1404,7 +1404,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"index\": 25,\n    \"title\": \"new question\",\n    \"hint\": \"question hint\",\n    \"mayNotBeApplicable\": false,\n    \"advisable\": true,\n    \"questionnaireId\": 3072\n}",
+							"raw": "{\n    \"index\": 25,\n    \"title\": \"new question\",\n    \"hint\": \"question hint\",\n    \"mayNotBeApplicable\": false,\n    \"advisable\": true,\n    \"questionnaireId\": 3072,\n    \"translations\": {\n        \"EN\": {\n            \"title\": \"title\",\n            \"hint\": \"hint\"\n        }\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1444,7 +1444,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"index\": 26,\n    \"title\": \"update question title\",\n    \"hint\": \"new hint\",\n    \"mayNotBeApplicable\": true,\n    \"advisable\": false,\n    \"answerRangeId\": 1618,\n    \"measureId\": 1438\n}",
+							"raw": "{\n    \"index\": 26,\n    \"title\": \"update question title\",\n    \"hint\": \"new hint\",\n    \"mayNotBeApplicable\": true,\n    \"advisable\": false,\n    \"answerRangeId\": 1618,\n    \"measureId\": 1438,\n        \"translations\": {\n        \"EN\": {\n            \"title\": \"title\",\n            \"hint\": \"hint\"\n        }\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2219,7 +2219,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"index\": 6,\n    \"title\": \"Perfect\",\n    \"description\": \"description\",\n    \"value\": 6\n}",
+							"raw": "{\n    \"index\": 6,\n    \"title\": \"Perfect\",\n    \"description\": \"description\",\n    \"value\": 6,\n    \"translations\": {\n        \"EN\": {\n            \"title\": \"Perfecttttooo\",\n            \"description\": \"description\"\n        }\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2259,7 +2259,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"index\": 17,\r\n    \"title\": \"Perfectttt\",\r\n    \"description\": \"descrippption\",\r\n    \"value\": 166\r\n}",
+							"raw": "{\r\n    \"index\": 17,\r\n    \"title\": \"Perfectttt\",\r\n    \"description\": \"descrippption\",\r\n    \"value\": 166,\n    \"translations\": {\n        \"EN\": {\n            \"title\": \"Perfecttttooo\",\n            \"description\": \"description\"\n        }\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3041,6 +3041,46 @@
 								"kit-versions",
 								"393",
 								"measures"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Kit Banner",
+			"item": [
+				{
+					"name": "Get Slider Banners",
+					"request": {
+						"method": "GET",
+                        "header": [
+                        {
+                            "key": "Authorization",
+                            "value": "{{authorization_header}}",
+                            "type": "text"
+                        },
+                        {
+                            "key": "Accept-Language",
+                            "value": "{{accept_language}}",
+                            "type": "text"
+                        }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/{{api_path}}/assessment-kits-banners?lang=FA",
+                            "host": [
+								"{{base_url}}"
+							  ],
+                            "path": [
+								"{{api_path}}",
+							  	"assessment-kits-banners"
+							],
+							"query": [
+								{
+									"key": "lang",
+									"value": "FA"
+								}
 							]
 						}
 					},

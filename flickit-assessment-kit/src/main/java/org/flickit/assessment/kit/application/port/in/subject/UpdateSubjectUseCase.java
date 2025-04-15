@@ -1,5 +1,6 @@
 package org.flickit.assessment.kit.application.port.in.subject;
 
+import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -49,6 +50,7 @@ public interface UpdateSubjectUseCase {
         Integer weight;
 
         @Valid
+        @Nullable
         Map<KitLanguage, SubjectTranslation> translations;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)

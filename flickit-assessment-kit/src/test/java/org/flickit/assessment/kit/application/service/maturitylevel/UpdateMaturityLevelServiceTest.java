@@ -18,10 +18,10 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.common.util.GenerateHashCodeUtil.generateCode;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
 import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createKitVersion;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -69,10 +69,13 @@ class UpdateMaturityLevelServiceTest {
         verify(updateMaturityLevelPort).update(updatePortParam.capture(), eq(param.getKitVersionId()), notNull(), eq(param.getCurrentUserId()));
 
         assertEquals(param.getMaturityLevelId(), updatePortParam.getValue().getId());
+        assertEquals(generateCode(param.getTitle()), updatePortParam.getValue().getCode());
         assertEquals(param.getTitle(), updatePortParam.getValue().getTitle());
         assertEquals(param.getIndex(), updatePortParam.getValue().getIndex());
-        assertEquals(param.getValue(), updatePortParam.getValue().getValue());
         assertEquals(param.getDescription(), updatePortParam.getValue().getDescription());
+        assertEquals(param.getValue(), updatePortParam.getValue().getValue());
+        assertEquals(param.getTranslations(), updatePortParam.getValue().getTranslations());
+        assertNull(updatePortParam.getValue().getCompetences());
     }
 
     private UpdateMaturityLevelUseCase.Param createParam(Consumer<UpdateMaturityLevelUseCase.Param.ParamBuilder> changer) {

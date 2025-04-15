@@ -165,9 +165,14 @@ class MaturityLevelUpdateKitPersisterTest {
         ArgumentCaptor<UUID> uuidCaptor = ArgumentCaptor.forClass(UUID.class);
         verify(updateMaturityLevelPort).updateAll(updateCaptor.capture(), any(), uuidCaptor.capture());
 
-        var updatedMaturityLevel = new MaturityLevel(
-            levelTwo().getId(), levelTwo().getCode(), dslLevel.getTitle(), dslLevel.getIndex(), dslLevel.getDescription(), dslLevel.getValue(), levelTwo().getCompetences()
-        );
+        var updatedMaturityLevel = new MaturityLevel(levelTwo().getId(),
+            levelTwo().getCode(),
+            dslLevel.getTitle(),
+            dslLevel.getIndex(),
+            dslLevel.getDescription(),
+            dslLevel.getValue(),
+            null,
+            levelTwo().getCompetences());
         assertEquals(updatedMaturityLevel.getId(), updateCaptor.getValue().getFirst().getId());
         assertEquals(updatedMaturityLevel.getTitle(), updateCaptor.getValue().getFirst().getTitle());
         assertEquals(updatedMaturityLevel.getIndex(), updateCaptor.getValue().getFirst().getIndex());

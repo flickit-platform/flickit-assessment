@@ -1,5 +1,6 @@
 package org.flickit.assessment.kit.application.service.question;
 
+import org.flickit.assessment.common.application.domain.kit.translation.QuestionTranslation;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.kit.application.domain.KitVersion;
@@ -18,6 +19,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -107,6 +109,7 @@ class UpdateQuestionServiceTest {
         assertEquals(param.getAdvisable(), outPortParam.getValue().advisable());
         assertEquals(param.getAnswerRangeId(), outPortParam.getValue().answerRangeId());
         assertEquals(param.getMeasureId(), outPortParam.getValue().measureId());
+        assertEquals(param.getTranslations(), outPortParam.getValue().translations());
         assertEquals(param.getCurrentUserId(), outPortParam.getValue().lastModifiedBy());
         assertNotNull(outPortParam.getValue().lastModificationTime());
 
@@ -135,6 +138,7 @@ class UpdateQuestionServiceTest {
         assertEquals(param.getAdvisable(), outPortParam.getValue().advisable());
         assertEquals(param.getAnswerRangeId(), outPortParam.getValue().answerRangeId());
         assertEquals(param.getMeasureId(), outPortParam.getValue().measureId());
+        assertEquals(param.getTranslations(), outPortParam.getValue().translations());
         assertEquals(param.getCurrentUserId(), outPortParam.getValue().lastModifiedBy());
         assertNotNull(outPortParam.getValue().lastModificationTime());
     }
@@ -160,6 +164,7 @@ class UpdateQuestionServiceTest {
         assertEquals(param.getAdvisable(), outPortParam.getValue().advisable());
         assertEquals(param.getAnswerRangeId(), outPortParam.getValue().answerRangeId());
         assertEquals(param.getMeasureId(), outPortParam.getValue().measureId());
+        assertEquals(param.getTranslations(), outPortParam.getValue().translations());
         assertEquals(param.getCurrentUserId(), outPortParam.getValue().lastModifiedBy());
         assertNotNull(outPortParam.getValue().lastModificationTime());
     }
@@ -181,6 +186,7 @@ class UpdateQuestionServiceTest {
             .answerRangeId(15L)
             .measureId(15L)
             .advisable(false)
+            .translations(Map.of("EN", new QuestionTranslation("title", "desc")))
             .currentUserId(ownerId);
     }
 }

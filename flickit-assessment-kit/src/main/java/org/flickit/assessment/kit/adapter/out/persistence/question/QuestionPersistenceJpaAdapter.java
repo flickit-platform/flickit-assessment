@@ -1,8 +1,10 @@
 package org.flickit.assessment.kit.adapter.out.persistence.question;
 
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.util.JsonUtils;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
@@ -56,6 +58,7 @@ public class QuestionPersistenceJpaAdapter implements
     private final KitDbSequenceGenerators sequenceGenerators;
 
     @Override
+    @SneakyThrows
     public void update(UpdateQuestionPort.Param param) {
         if (!repository.existsByIdAndKitVersionId(param.id(), param.kitVersionId()))
             throw new ResourceNotFoundException(QUESTION_ID_NOT_FOUND);
@@ -70,6 +73,7 @@ public class QuestionPersistenceJpaAdapter implements
             param.advisable(),
             param.answerRangeId(),
             param.measureId(),
+            JsonUtils.toJson(param.translations()),
             param.lastModificationTime(),
             param.lastModifiedBy());
     }
