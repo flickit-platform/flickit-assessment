@@ -60,6 +60,11 @@ public class ErrorMessageKey {
     public static final String TRANSLATION_MATURITY_LEVEL_DESCRIPTION_SIZE_MIN = "translations-maturity-level.description.size.min";
     public static final String TRANSLATION_MATURITY_LEVEL_DESCRIPTION_SIZE_MAX = "translations-maturity-level.description.size.max";
 
+    public static final String TRANSLATION_MEASURE_TITLE_SIZE_MIN = "translations-measure.title.size.min";
+    public static final String TRANSLATION_MEASURE_TITLE_SIZE_MAX = "translations-measure.title.size.max";
+    public static final String TRANSLATION_MEASURE_DESCRIPTION_SIZE_MIN = "translations-measure.description.size.min";
+    public static final String TRANSLATION_MEASURE_DESCRIPTION_SIZE_MAX = "translations-measure.description.size.max";
+
     public static final String TRANSLATION_QUESTIONNAIRE_TITLE_SIZE_MIN = "translations-questionnaire.title.size.min";
     public static final String TRANSLATION_QUESTIONNAIRE_TITLE_SIZE_MAX = "translations-questionnaire.title.size.max";
     public static final String TRANSLATION_QUESTIONNAIRE_DESCRIPTION_SIZE_MIN = "translations-questionnaire.description.size.min";
