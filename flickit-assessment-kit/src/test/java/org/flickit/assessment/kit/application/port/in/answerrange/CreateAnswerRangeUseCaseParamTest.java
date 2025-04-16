@@ -10,9 +10,9 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
-import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_KIT_LANGUAGE_NOT_VALID;
+import static org.flickit.assessment.common.error.ErrorMessageKey.*;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -50,6 +50,17 @@ class CreateAnswerRangeUseCaseParamTest {
         var throwable = assertThrows(ValidationException.class,
             () -> createParam(a -> a.translations(Map.of("FR", new AnswerRangeTranslation("title")))));
         assertEquals(COMMON_KIT_LANGUAGE_NOT_VALID, throwable.getMessageKey());
+    }
+
+    @Test
+    void testCreateAnswerRangeUseCaseParam_translationsFieldsViolations_ErrorMessage() {
+        var throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(a -> a.translations(Map.of("EN", new AnswerRangeTranslation("t")))));
+        assertThat(throwable).hasMessage("translations[EN].title: " + TRANSLATION_ANSWER_RANGE_TITLE_SIZE_MIN);
+
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(a -> a.translations(Map.of("EN", new AnswerRangeTranslation(randomAlphabetic(101))))));
+        assertThat(throwable).hasMessage("translations[EN].title: " + TRANSLATION_ANSWER_RANGE_TITLE_SIZE_MAX);
     }
 
     @Test
