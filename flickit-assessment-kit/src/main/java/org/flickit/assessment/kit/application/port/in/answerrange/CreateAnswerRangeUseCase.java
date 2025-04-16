@@ -1,6 +1,7 @@
 package org.flickit.assessment.kit.application.port.in.answerrange;
 
 import jakarta.annotation.Nullable;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -35,6 +36,7 @@ public interface CreateAnswerRangeUseCase {
         @Size(max = 100, message = CREATE_ANSWER_RANGE_TITLE_SIZE_MAX)
         String title;
 
+        @Valid
         @Nullable
         Map<KitLanguage, AnswerRangeTranslation> translations;
 
