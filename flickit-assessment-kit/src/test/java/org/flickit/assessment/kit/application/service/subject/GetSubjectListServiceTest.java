@@ -24,6 +24,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_VERSION_ID_N
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
 import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createKitVersion;
 import static org.flickit.assessment.kit.test.fixture.application.SubjectMother.subjectWithAttributes;
+import static org.flickit.assessment.kit.test.fixture.application.SubjectMother.subjectWithTitle;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -44,7 +45,7 @@ class GetSubjectListServiceTest {
     LoadSubjectsPort loadSubjectsPort;
 
     @Test
-    void testGetSubjectListService_kitVersionNotExist_shouldThrowResourceNotFoundException() {
+    void testGetSubjectListService_whenKitVersionDoesNotExist_thenThrowResourceNotFoundException() {
         Param param = createParam(GetSubjectListUseCase.Param.ParamBuilder::build);
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenThrow(new ResourceNotFoundException(KIT_VERSION_ID_NOT_FOUND));
@@ -56,7 +57,7 @@ class GetSubjectListServiceTest {
     }
 
     @Test
-    void testGetSubjectListService_CurrentUserIsNotExpertGroupMember_shouldThrowAccessDeniedException() {
+    void testGetSubjectListService_whenCurrentUserIsNotExpertGroupMember_thenThrowAccessDeniedException() {
         Param param = createParam(GetSubjectListUseCase.Param.ParamBuilder::build);
         var assessmentKit = simpleKit();
         var kitVersion = createKitVersion(assessmentKit);
@@ -71,23 +72,24 @@ class GetSubjectListServiceTest {
     }
 
     @Test
-    void testGetSubjectListService_ValidParams_shouldReturnPaginatedSubjectList() {
+    void testGetSubjectListService_whenValidParams_thenReturnPaginatedSubjectList() {
         Param param = createParam(GetSubjectListUseCase.Param.ParamBuilder::build);
         var assessmentKit = simpleKit();
         var kitVersion = createKitVersion(assessmentKit);
-        var subjectList = List.of(subjectWithAttributes("title1", null), subjectWithAttributes("title2", null));
+        var subjectList = List.of(subjectWithAttributes("title1", null), subjectWithTitle("title2"));
         var paginatedResponse = new PaginatedResponse<>(subjectList,
             param.getPage(),
             param.getSize(),
             "index",
             "desc",
-            4);
+            2);
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(checkExpertGroupAccessPort.checkIsMember(kitVersion.getKit().getExpertGroupId(), param.getCurrentUserId())).thenReturn(true);
         when(loadSubjectsPort.loadPaginatedByKitVersionId(kitVersion.getId(), param.getPage(), param.getSize())).thenReturn(paginatedResponse);
 
         var result = service.getSubjectList(param);
+
         assertNotNull(result);
         assertNotNull(result.getItems());
         assertEquals(paginatedResponse.getSort(), result.getSort());
