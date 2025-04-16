@@ -87,6 +87,7 @@ public class AnswerRangeUpdateKitPersister implements UpdateKitPersister {
             dslAnswerRange.getTitle(),
             dslAnswerRange.getCode(),
             true,
+            null,
             currentUserId
         );
     }

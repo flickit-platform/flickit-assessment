@@ -142,7 +142,7 @@ class AnswerRangeUpdateKitPersisterTest {
         var currentUserId = UUID.randomUUID();
 
         CreateAnswerRangePort.Param createParam = new CreateAnswerRangePort.Param(savedKit.getActiveVersionId(),
-            dslRangeThree.getTitle(), dslRangeThree.getCode(), true, currentUserId);
+            dslRangeThree.getTitle(), dslRangeThree.getCode(), true, null, currentUserId);
         long newRangeId = 543L;
         when(createAnswerRangePort.persist(createParam)).thenReturn(newRangeId);
 
