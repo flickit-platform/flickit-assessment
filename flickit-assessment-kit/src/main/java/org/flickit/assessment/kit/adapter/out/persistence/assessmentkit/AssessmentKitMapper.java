@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.adapter.out.persistence.assessmentkit;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.common.application.domain.kit.translation.KitTranslation;
 import org.flickit.assessment.common.util.JsonUtils;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.KitWithDraftVersionIdView;
@@ -78,12 +79,14 @@ public class AssessmentKitMapper {
             entity.getPublished(),
             entity.getIsPrivate(),
             entity.getExpertGroupId(),
+            JsonUtils.fromJsonToMap(entity.getTranslations(), KitLanguage.class, KitTranslation.class),
             null,
             null,
             null,
             null,
             null,
-            entity.getKitVersionId());
+            entity.getKitVersionId(),
+            null);
     }
 
     public static AssessmentKit mapToDomainModel(KitWithDraftVersionIdView view) {
