@@ -20,6 +20,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class CreateAnswerRangeUseCaseParamTest {
 
     @Test
+    void testCreateAnswerRangeUseCaseParam_kitVersionIdParamViolatesConstraints_ErrorMessage() {
+        var throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.kitVersionId(null)));
+        assertThat(throwable).hasMessage("kitVersionId: " + CREATE_ANSWER_RANGE_KIT_VERSION_ID_NOT_NULL);
+    }
+
+    @Test
     void testCreateAnswerRangeUseCaseParam_titleParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.title("")));
@@ -36,13 +43,6 @@ class CreateAnswerRangeUseCaseParamTest {
         throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.title(RandomStringUtils.randomAlphabetic(101))));
         assertThat(throwable).hasMessage("title: " + CREATE_ANSWER_RANGE_TITLE_SIZE_MAX);
-    }
-
-    @Test
-    void testCreateAnswerRangeUseCaseParam_kitVersionIdParamViolatesConstraints_ErrorMessage() {
-        var throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.kitVersionId(null)));
-        assertThat(throwable).hasMessage("kitVersionId: " + CREATE_ANSWER_RANGE_KIT_VERSION_ID_NOT_NULL);
     }
 
     @Test
