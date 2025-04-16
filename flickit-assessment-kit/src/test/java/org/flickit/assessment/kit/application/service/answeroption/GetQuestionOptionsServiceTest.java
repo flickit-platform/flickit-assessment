@@ -78,6 +78,7 @@ class GetQuestionOptionsServiceTest {
             assertEquals(expectedAnswerOptions.get(i).getIndex(), result.answerOptions().get(i).index());
             assertEquals(expectedAnswerOptions.get(i).getTitle(), result.answerOptions().get(i).title());
             assertEquals(expectedAnswerOptions.get(i).getValue(), result.answerOptions().get(i).value());
+            assertEquals(expectedAnswerOptions.get(i).getTranslations(), result.answerOptions().get(i).translations());
         }
     }
 
