@@ -2,6 +2,8 @@ package org.flickit.assessment.kit.adapter.out.persistence.questionnaire;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.common.application.domain.kit.translation.QuestionnaireTranslation;
 import org.flickit.assessment.common.util.JsonUtils;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaEntity;
 import org.flickit.assessment.kit.application.domain.Questionnaire;
@@ -19,6 +21,8 @@ public class QuestionnaireMapper {
             entity.getTitle(),
             entity.getIndex(),
             entity.getDescription(),
+            null,
+            JsonUtils.fromJsonToMap(entity.getTranslations(), KitLanguage.class, QuestionnaireTranslation.class),
             entity.getCreationTime(),
             entity.getLastModificationTime()
         );
