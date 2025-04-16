@@ -2650,7 +2650,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"alpha\",\n    \"reusable\": true\n}",
+							"raw": "{\n    \"title\": \"alpha\",\n    \"reusable\": true,\n    \"translations\": {\n        \"EN\" : {\n            \"title\" : \"new title\"\n        }\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
