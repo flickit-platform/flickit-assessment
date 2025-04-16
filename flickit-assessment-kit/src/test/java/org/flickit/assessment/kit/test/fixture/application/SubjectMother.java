@@ -47,21 +47,4 @@ public class SubjectMother {
             LocalDateTime.now()
         );
     }
-
-    public static Subject subjectWithTitleAndAttributes(String title, List<Attribute> attributes) {
-        return new Subject(
-            id++,
-            "c-" + title,
-            title,
-            index++,
-            weight++,
-            "Description",
-            Map.of(KitLanguage.FA, new SubjectTranslation("translated title", "translated desc")),
-            attributes,
-            UUID.randomUUID(),
-            UUID.randomUUID(),
-            LocalDateTime.now(),
-            LocalDateTime.now()
-        );
-    }
 }

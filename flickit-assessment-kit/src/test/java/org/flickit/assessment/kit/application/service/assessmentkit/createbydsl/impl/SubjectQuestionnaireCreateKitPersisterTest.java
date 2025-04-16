@@ -43,7 +43,7 @@ class SubjectQuestionnaireCreateKitPersisterTest {
     @Test
     void testPersist_ValidInputs_SaveSubjectQuestionnaire() {
         var attribute = AttributeMother.attributeWithTitle("SoftwareReliability");
-        var subject = SubjectMother.subjectWithTitleAndAttributes("software", List.of(attribute));
+        var subject = SubjectMother.subjectWithAttributes("software", List.of(attribute));
         var questionnaire = QuestionnaireMother.questionnaireWithTitle("CleanArchitecture");
 
         var attributeDslModel = AttributeDslModelMother.domainToDslModel(attribute, a -> a.subjectCode(subject.getCode()));

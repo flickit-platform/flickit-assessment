@@ -45,6 +45,7 @@ public class GetSubjectListService implements GetSubjectListUseCase {
             subject.getTitle(),
             subject.getDescription(),
             subject.getIndex(),
-            subject.getWeight());
+            subject.getWeight(),
+            subject.getTranslations());
     }
 }

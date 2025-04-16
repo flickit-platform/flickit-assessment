@@ -2,6 +2,8 @@ package org.flickit.assessment.kit.adapter.out.persistence.subject;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.common.application.domain.kit.translation.SubjectTranslation;
 import org.flickit.assessment.common.util.JsonUtils;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.kit.application.domain.Attribute;
@@ -23,7 +25,7 @@ public class SubjectMapper {
             entity.getIndex(),
             entity.getWeight(),
             entity.getDescription(),
-            null, // TODO: Consider replacing this with the actual value after editing the service.
+            JsonUtils.fromJsonToMap(entity.getTranslations(), KitLanguage.class, SubjectTranslation.class),
             attributes,
             entity.getCreatedBy(),
             entity.getLastModifiedBy(),
