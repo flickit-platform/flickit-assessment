@@ -103,7 +103,6 @@ class CreateAnswerOptionServiceTest {
         assertEquals(question.getAnswerRangeId(), createPortParam.getValue().answerRangeId());
         assertEquals(param.getValue(), createPortParam.getValue().value());
         assertEquals(param.getTranslations(), createPortParam.getValue().translation());
-        assertEquals(param.getTranslations(), createPortParam.getValue().translation());
         assertEquals(param.getCurrentUserId(), createPortParam.getValue().createdBy());
 
         verifyNoInteractions(createAnswerRangePort, updateQuestionPort);
