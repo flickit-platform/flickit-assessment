@@ -2,6 +2,8 @@ package org.flickit.assessment.kit.adapter.out.persistence.maturitylevel;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.common.application.domain.kit.translation.MaturityLevelTranslation;
 import org.flickit.assessment.common.util.JsonUtils;
 import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaEntity;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
@@ -28,7 +30,7 @@ public class MaturityLevelMapper {
             entity.getIndex(),
             entity.getDescription(),
             entity.getValue(),
-            null, // TODO: Consider replacing this with the actual value after editing the service.
+            JsonUtils.fromJsonToMap(entity.getTranslations(), KitLanguage.class, MaturityLevelTranslation.class),
             null
         );
     }
