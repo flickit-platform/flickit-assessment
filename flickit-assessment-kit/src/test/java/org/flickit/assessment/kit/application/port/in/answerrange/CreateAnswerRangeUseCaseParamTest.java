@@ -20,20 +20,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class CreateAnswerRangeUseCaseParamTest {
 
     @Test
-    void testCreateAnswerRangeUseCaseParam_kitVersionIdParamViolatesConstraints_ErrorMessage() {
-        var throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.kitVersionId(null)));
-        assertThat(throwable).hasMessage("kitVersionId: " + CREATE_ANSWER_RANGE_KIT_VERSION_ID_NOT_NULL);
-    }
-
-    @Test
-    void testCreateAnswerRangeUseCaseParam_translationsLanguageViolations_ErrorMessage() {
-        var throwable = assertThrows(ValidationException.class,
-            () -> createParam(a -> a.translations(Map.of("FR", new AnswerRangeTranslation("title")))));
-        assertEquals(COMMON_KIT_LANGUAGE_NOT_VALID, throwable.getMessageKey());
-    }
-
-    @Test
     void testCreateAnswerRangeUseCaseParam_titleParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.title("")));
@@ -50,6 +36,20 @@ class CreateAnswerRangeUseCaseParamTest {
         throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.title(RandomStringUtils.randomAlphabetic(101))));
         assertThat(throwable).hasMessage("title: " + CREATE_ANSWER_RANGE_TITLE_SIZE_MAX);
+    }
+
+    @Test
+    void testCreateAnswerRangeUseCaseParam_kitVersionIdParamViolatesConstraints_ErrorMessage() {
+        var throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.kitVersionId(null)));
+        assertThat(throwable).hasMessage("kitVersionId: " + CREATE_ANSWER_RANGE_KIT_VERSION_ID_NOT_NULL);
+    }
+
+    @Test
+    void testCreateAnswerRangeUseCaseParam_translationsLanguageViolations_ErrorMessage() {
+        var throwable = assertThrows(ValidationException.class,
+            () -> createParam(a -> a.translations(Map.of("FR", new AnswerRangeTranslation("title")))));
+        assertEquals(COMMON_KIT_LANGUAGE_NOT_VALID, throwable.getMessageKey());
     }
 
     @Test

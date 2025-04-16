@@ -50,13 +50,6 @@ class UpdateAnswerRangeUseCaseParamTest {
     }
 
     @Test
-    void testUpdateAnswerRangeUseCaseParam_currentUserIdParamViolatesConstraints_ErrorMessage() {
-        var throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.currentUserId(null)));
-        assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
-    }
-
-    @Test
     void testUpdateAnswerRangeUseCaseParam_translationsLanguageViolations_ErrorMessage() {
         var throwable = assertThrows(ValidationException.class,
             () -> createParam(a -> a.translations(Map.of("FR", new AnswerRangeTranslation("title")))));
@@ -72,6 +65,13 @@ class UpdateAnswerRangeUseCaseParamTest {
         throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(a -> a.translations(Map.of("EN", new AnswerRangeTranslation(RandomStringUtils.randomAlphabetic(101))))));
         assertThat(throwable).hasMessage("translations[EN].title: " + TRANSLATION_ANSWER_RANGE_TITLE_SIZE_MAX);
+    }
+
+    @Test
+    void testUpdateAnswerRangeUseCaseParam_currentUserIdParamViolatesConstraints_ErrorMessage() {
+        var throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.currentUserId(null)));
+        assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 
     private void createParam(Consumer<UpdateAnswerRangeUseCase.Param.ParamBuilder> changer) {
