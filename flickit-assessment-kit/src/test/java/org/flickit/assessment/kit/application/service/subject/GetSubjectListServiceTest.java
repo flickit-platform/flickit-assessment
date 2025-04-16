@@ -18,11 +18,12 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_VERSION_ID_NOT_FOUND;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
 import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createKitVersion;
-import static org.flickit.assessment.kit.test.fixture.application.SubjectMother.subjectWithTitle;
+import static org.flickit.assessment.kit.test.fixture.application.SubjectMother.subjectWithAttributes;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -74,7 +75,7 @@ class GetSubjectListServiceTest {
         Param param = createParam(GetSubjectListUseCase.Param.ParamBuilder::build);
         var assessmentKit = simpleKit();
         var kitVersion = createKitVersion(assessmentKit);
-        var subjectList = List.of(subjectWithTitle("title1"), subjectWithTitle("title2"));
+        var subjectList = List.of(subjectWithAttributes("title1", null), subjectWithAttributes("title2", null));
         var paginatedResponse = new PaginatedResponse<>(subjectList,
             param.getPage(),
             param.getSize(),
@@ -95,20 +96,15 @@ class GetSubjectListServiceTest {
         assertEquals(paginatedResponse.getOrder(), result.getOrder());
         assertEquals(paginatedResponse.getPage(), result.getPage());
 
-        assertEquals(subjectList.size(), result.getItems().size());
-        assertEquals(subjectList.getFirst().getId(), result.getItems().getFirst().id());
-        assertEquals(subjectList.getFirst().getId(), result.getItems().getFirst().id());
-        assertEquals(subjectList.getFirst().getIndex(), result.getItems().getFirst().index());
-        assertEquals(subjectList.getFirst().getTitle(), result.getItems().getFirst().title());
-        assertEquals(subjectList.getFirst().getDescription(), result.getItems().getFirst().description());
-        assertEquals(subjectList.getFirst().getWeight(), result.getItems().getFirst().weight());
-
-        assertEquals(subjectList.get(1).getId(), result.getItems().get(1).id());
-        assertEquals(subjectList.get(1).getId(), result.getItems().get(1).id());
-        assertEquals(subjectList.get(1).getIndex(), result.getItems().get(1).index());
-        assertEquals(subjectList.get(1).getTitle(), result.getItems().get(1).title());
-        assertEquals(subjectList.get(1).getDescription(), result.getItems().get(1).description());
-        assertEquals(subjectList.get(1).getWeight(), result.getItems().get(1).weight());
+        assertThat(result.getItems())
+            .zipSatisfy(subjectList, (actual, expected) -> {
+                assertEquals(expected.getId(), actual.id());
+                assertEquals(expected.getIndex(), actual.index());
+                assertEquals(expected.getTitle(), actual.title());
+                assertEquals(expected.getDescription(), actual.description());
+                assertEquals(expected.getWeight(), actual.weight());
+                assertEquals(expected.getTranslations(), actual.translations());
+            });
     }
 
     private Param createParam(Consumer<Param.ParamBuilder> changer) {
