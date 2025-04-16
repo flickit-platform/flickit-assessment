@@ -13,7 +13,10 @@ public interface CreateAnswerRangePort {
 
     Map<String, Long> persistAll(List<Param> params);
 
-    record Param(long kitVersionId, String title, String code, boolean reusable,
+    record Param(long kitVersionId,
+                 String title,
+                 String code,
+                 boolean reusable,
                  Map<KitLanguage, AnswerRangeTranslation> translations,
                  UUID createdBy) {
     }
