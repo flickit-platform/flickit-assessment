@@ -39,7 +39,8 @@ public class GetQuestionnaireQuestionsService implements GetQuestionnaireQuestio
                 e.getMayNotBeApplicable(),
                 e.getAdvisable(),
                 e.getAnswerRangeId(),
-                e.getMeasureId()))
+                e.getMeasureId(),
+                e.getTranslations()))
             .toList();
 
         return new PaginatedResponse<>(items,
