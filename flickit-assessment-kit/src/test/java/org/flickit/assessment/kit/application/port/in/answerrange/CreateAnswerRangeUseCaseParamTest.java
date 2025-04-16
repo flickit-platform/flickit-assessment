@@ -2,14 +2,19 @@ package org.flickit.assessment.kit.application.port.in.answerrange;
 
 import jakarta.validation.ConstraintViolationException;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.flickit.assessment.common.application.domain.kit.translation.AnswerRangeTranslation;
+import org.flickit.assessment.common.exception.ValidationException;
 import org.junit.jupiter.api.Test;
 
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_KIT_LANGUAGE_NOT_VALID;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class CreateAnswerRangeUseCaseParamTest {
@@ -19,6 +24,13 @@ class CreateAnswerRangeUseCaseParamTest {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.kitVersionId(null)));
         assertThat(throwable).hasMessage("kitVersionId: " + CREATE_ANSWER_RANGE_KIT_VERSION_ID_NOT_NULL);
+    }
+
+    @Test
+    void testCreateAnswerRangeUseCaseParam_translationsLanguageViolations_ErrorMessage() {
+        var throwable = assertThrows(ValidationException.class,
+            () -> createParam(a -> a.translations(Map.of("FR", new AnswerRangeTranslation("title")))));
+        assertEquals(COMMON_KIT_LANGUAGE_NOT_VALID, throwable.getMessageKey());
     }
 
     @Test
