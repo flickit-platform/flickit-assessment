@@ -49,6 +49,7 @@ public class GetKitEditableInfoService implements GetKitEditableInfoUseCase {
             tags,
             expertGroup.getOwnerId().equals(param.getCurrentUserId()),
             assessmentKit.getActiveVersionId() != null,
+            assessmentKit.getTranslations(),
             languages);
     }
 
