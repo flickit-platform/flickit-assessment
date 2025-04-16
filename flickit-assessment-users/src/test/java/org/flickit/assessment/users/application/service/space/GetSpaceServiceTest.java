@@ -19,8 +19,10 @@ import java.util.function.Consumer;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.users.common.ErrorMessageKey.SPACE_ID_NOT_FOUND;
 import static org.flickit.assessment.users.test.fixture.application.SpaceMother.basicSpace;
+import static org.flickit.assessment.users.test.fixture.application.SpaceMother.premiumSpace;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class GetSpaceServiceTest {
@@ -87,7 +89,7 @@ class GetSpaceServiceTest {
     @Test
     void testGetSpace_whenCurrentUserIsNotSpaceOwner_thenReturnSpaceWithEditableFalse() {
         var space = basicSpace(UUID.randomUUID());
-        var portResult = new LoadSpaceDetailsPort.Result(space, 1, maxBasicAssessments);
+        var portResult = new LoadSpaceDetailsPort.Result(space, 1, maxBasicAssessments - 1);
 
         when(checkSpaceAccessPort.checkIsMember(param.getId(), param.getCurrentUserId())).thenReturn(true);
         when(loadSpaceDetailsPort.loadSpace(param.getId())).thenReturn(portResult);
@@ -103,6 +105,32 @@ class GetSpaceServiceTest {
         assertEquals(portResult.space().getLastModificationTime(), result.space().getLastModificationTime());
         assertEquals(portResult.membersCount(), result.membersCount());
         assertEquals(portResult.assessmentsCount(), result.assessmentsCount());
+        assertTrue(result.canCreateAssessment());
+    }
+
+    @Test
+    void testGetSpace_whenSpaceIsPremium_thenReturnCanCreateAssessmentTrue() {
+        var space = premiumSpace(UUID.randomUUID());
+        var portResult = new LoadSpaceDetailsPort.Result(space, 1, maxBasicAssessments);
+
+        when(checkSpaceAccessPort.checkIsMember(param.getId(), param.getCurrentUserId())).thenReturn(true);
+        when(loadSpaceDetailsPort.loadSpace(param.getId())).thenReturn(portResult);
+
+        var result = service.getSpace(param);
+
+        assertTrue(result.canCreateAssessment());
+    }
+
+    @Test
+    void testGetSpace_whenSpaceIsBasicAndMaxAssessmentIsCreated_thenReturnCanCreateAssessmentFalse() {
+        var space = basicSpace(UUID.randomUUID());
+        var portResult = new LoadSpaceDetailsPort.Result(space, 1, maxBasicAssessments);
+
+        when(checkSpaceAccessPort.checkIsMember(param.getId(), param.getCurrentUserId())).thenReturn(true);
+        when(loadSpaceDetailsPort.loadSpace(param.getId())).thenReturn(portResult);
+
+        var result = service.getSpace(param);
+
         assertFalse(result.canCreateAssessment());
     }
 
