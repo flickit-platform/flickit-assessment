@@ -3,15 +3,19 @@ package org.flickit.assessment.kit.application.port.in.questionnaire;
 import jakarta.validation.ConstraintViolationException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.assertj.core.api.Assertions;
+import org.flickit.assessment.common.application.domain.kit.translation.QuestionnaireTranslation;
+import org.flickit.assessment.common.exception.ValidationException;
 import org.junit.jupiter.api.Test;
 
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
+import static org.flickit.assessment.common.error.ErrorMessageKey.*;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class UpdateQuestionnaireUseCaseParamTest {
 
@@ -67,6 +71,32 @@ class UpdateQuestionnaireUseCaseParamTest {
     }
 
     @Test
+    void testUpdateQuestionnaireUseCaseParam_translationsLanguageViolations_ErrorMessage() {
+        var throwable = assertThrows(ValidationException.class,
+            () -> createParam(a -> a.translations(Map.of("FR", new QuestionnaireTranslation("title", "desc")))));
+        assertEquals(COMMON_KIT_LANGUAGE_NOT_VALID, throwable.getMessageKey());
+    }
+
+    @Test
+    void testUpdateQuestionnaireUseCaseParam_translationsFieldsViolations_ErrorMessage() {
+        var throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(a -> a.translations(Map.of("EN", new QuestionnaireTranslation("t", "desc")))));
+        Assertions.assertThat(throwable).hasMessage("translations[EN].title: " + TRANSLATION_QUESTIONNAIRE_TITLE_SIZE_MIN);
+
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(a -> a.translations(Map.of("EN", new QuestionnaireTranslation(RandomStringUtils.randomAlphabetic(101), "desc")))));
+        Assertions.assertThat(throwable).hasMessage("translations[EN].title: " + TRANSLATION_QUESTIONNAIRE_TITLE_SIZE_MAX);
+
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(a -> a.translations(Map.of("EN", new QuestionnaireTranslation("title", "de")))));
+        Assertions.assertThat(throwable).hasMessage("translations[EN].description: " + TRANSLATION_QUESTIONNAIRE_DESCRIPTION_SIZE_MIN);
+
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(a -> a.translations(Map.of("EN", new QuestionnaireTranslation("title", RandomStringUtils.randomAlphabetic(501))))));
+        Assertions.assertThat(throwable).hasMessage("translations[EN].description: " + TRANSLATION_QUESTIONNAIRE_DESCRIPTION_SIZE_MAX);
+    }
+
+    @Test
     void testUpdateQuestionnaireParam_currentUserIdParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.currentUserId(null)));
@@ -86,6 +116,7 @@ class UpdateQuestionnaireUseCaseParamTest {
             .title("abc")
             .index(1)
             .description("description")
+            .translations(Map.of("EN", new QuestionnaireTranslation("title", "desc")))
             .currentUserId(UUID.randomUUID());
     }
 }
