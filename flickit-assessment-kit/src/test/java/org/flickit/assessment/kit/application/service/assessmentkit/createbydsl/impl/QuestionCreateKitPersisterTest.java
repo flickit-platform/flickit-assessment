@@ -105,7 +105,7 @@ class QuestionCreateKitPersisterTest {
             .questions(List.of(dslQuestion))
             .build();
 
-        var createAnswerRangeParam = new CreateAnswerRangePort.Param(kitVersionId, null, null, false, currentUserId);
+        var createAnswerRangeParam = new CreateAnswerRangePort.Param(kitVersionId, null, null, false, null, currentUserId);
 
         when(createAnswerRangePort.persist(createAnswerRangeParam)).thenReturn(answerRangeId);
         when(createQuestionPort.persist(any())).thenReturn(question.getId());

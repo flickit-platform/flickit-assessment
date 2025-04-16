@@ -80,12 +80,14 @@ class AnswerRangeCreateKitPersisterTest {
             answerRangeR1.getTitle(),
             answerRangeR1.getCode(),
             answerRangeR1.isReusable(),
+            null,
             currentUserId);
 
         var answerRangeR2ParamNoId = new CreateAnswerRangePort.Param(kitVersionId,
             answerRangeR2.getTitle(),
             answerRangeR2.getCode(),
             answerRangeR2.isReusable(),
+            null,
             currentUserId);
 
         Map<String, Long> codeToId = new HashMap<>();
