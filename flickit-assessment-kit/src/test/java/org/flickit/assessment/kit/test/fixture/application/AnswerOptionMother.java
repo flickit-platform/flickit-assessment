@@ -28,7 +28,7 @@ public class AnswerOptionMother {
             index,
             answerRangeId,
             value += 0.1,
-            Map.of(KitLanguage.EN, new AnswerOptionTranslation("title")));
+            Map.of(KitLanguage.EN, new AnswerOptionTranslation("title" + id)));
     }
 
     public static AnswerOption optionOne() {
