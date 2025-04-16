@@ -115,13 +115,12 @@ public class AnswerRangePersistenceJpaAdapter implements
         if (!repository.existsByIdAndKitVersionId(param.answerRangeId(), param.kitVersionId()))
             throw new ResourceNotFoundException(ANSWER_RANGE_ID_NOT_FOUND);
 
-        var translations = JsonUtils.toJson(param.translations());
         repository.update(param.answerRangeId(),
             param.kitVersionId(),
             param.title(),
             param.code(),
             param.reusable(),
-            translations,
+            JsonUtils.toJson(param.translations()),
             param.lastModificationTime(),
             param.lastModifiedBy());
     }
