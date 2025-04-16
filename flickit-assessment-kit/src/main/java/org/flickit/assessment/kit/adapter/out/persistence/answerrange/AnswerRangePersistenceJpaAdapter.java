@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.adapter.out.persistence.answerrange;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.util.JsonUtils;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.answerrange.AnswerRangeJoinOptionView;
@@ -119,6 +120,7 @@ public class AnswerRangePersistenceJpaAdapter implements
             param.title(),
             param.code(),
             param.reusable(),
+            JsonUtils.toJson(param.translations()),
             param.lastModificationTime(),
             param.lastModifiedBy());
     }
