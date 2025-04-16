@@ -1,5 +1,6 @@
 package org.flickit.assessment.kit.application.port.in.answerrange;
 
+import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -40,6 +41,7 @@ public interface UpdateAnswerRangeUseCase {
         Boolean reusable;
 
         @Valid
+        @Nullable
         Map<KitLanguage, AnswerRangeTranslation> translations;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
