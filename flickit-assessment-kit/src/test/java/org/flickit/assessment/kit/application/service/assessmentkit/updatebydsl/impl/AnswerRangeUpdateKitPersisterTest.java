@@ -106,12 +106,16 @@ class AnswerRangeUpdateKitPersisterTest {
         assertEquals(dslRangeOne.getTitle(), firstRange.title());
         assertEquals(savedKit.getActiveVersionId(), firstRange.kitVersionId());
         assertThat(firstRange.lastModificationTime(), lessThanOrEqualTo(LocalDateTime.now()));
+        assertNotNull(firstRange.translations());
+        assertEquals(rangeOne.getTranslations(), firstRange.translations());
         assertEquals(currentUserId, firstRange.lastModifiedBy());
 
         assertEquals(rangeTwo.getId(), secondRange.answerRangeId());
         assertEquals(savedKit.getActiveVersionId(), secondRange.kitVersionId());
         assertEquals(dslRangeTwo.getTitle(), secondRange.title());
         assertThat(secondRange.lastModificationTime(), lessThanOrEqualTo(LocalDateTime.now()));
+        assertNotNull(secondRange.translations());
+        assertEquals(rangeTwo.getTranslations(), secondRange.translations());
         assertEquals(currentUserId, secondRange.lastModifiedBy());
 
         assertFalse(result.isMajorUpdate());
