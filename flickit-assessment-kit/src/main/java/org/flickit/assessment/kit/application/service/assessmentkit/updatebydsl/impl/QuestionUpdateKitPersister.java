@@ -220,6 +220,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             option.getIndex(),
             answerRangeId,
             option.getValue(),
+            null,
             kitVersionId,
             currentUserId);
         var optionId = createAnswerOptionPort.persist(createOptionParam);

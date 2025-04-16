@@ -1,7 +1,11 @@
 package org.flickit.assessment.kit.application.port.out.measure;
 
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.common.application.domain.kit.translation.MeasureTranslation;
+
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public interface UpdateMeasurePort {
@@ -15,6 +19,7 @@ public interface UpdateMeasurePort {
         String code,
         int index,
         String description,
+        Map<KitLanguage, MeasureTranslation> translations,
         LocalDateTime lastModificationTime,
         UUID lastModifiedBy) {
     }

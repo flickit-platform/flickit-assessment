@@ -43,6 +43,7 @@ public class CreateMeasureService implements CreateMeasureUseCase {
             param.getTitle(),
             param.getIndex(),
             param.getDescription(),
+            param.getTranslations(),
             LocalDateTime.now(),
             LocalDateTime.now());
     }

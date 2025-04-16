@@ -24,6 +24,7 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.kit.test.fixture.application.AnswerRangeMother.createReusableAnswerRangeWithTwoOptions;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.*;
 
@@ -108,7 +109,7 @@ class AnswerRangeCreateKitPersisterTest {
                 assertEquals(option.getTitle(), param.title());
                 assertEquals(option.getIndex(), param.index());
                 assertEquals(option.getValue(), param.value());
+                assertNull(param.translation());
             });
-
     }
 }

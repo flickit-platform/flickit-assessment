@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.adapter.out.persistence.questionnaire;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.flickit.assessment.common.util.JsonUtils;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaEntity;
 import org.flickit.assessment.kit.application.domain.Questionnaire;
 import org.flickit.assessment.kit.application.domain.dsl.QuestionnaireDslModel;
@@ -31,7 +32,7 @@ public class QuestionnaireMapper {
             questionnaire.getIndex(),
             questionnaire.getTitle(),
             questionnaire.getDescription(),
-            null, // TODO: Consider replacing this with the actual value after editing the service.
+            JsonUtils.toJson(questionnaire.getTranslations()),
             questionnaire.getCreationTime(),
             questionnaire.getLastModificationTime(),
             createdBy,

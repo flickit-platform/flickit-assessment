@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.adapter.out.persistence.measure;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.util.JsonUtils;
 import org.flickit.assessment.data.jpa.kit.measure.MeasureJpaEntity;
 import org.flickit.assessment.data.jpa.kit.measure.MeasureJpaRepository;
 import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Component;
 import java.util.UUID;
 
 import static java.util.stream.Collectors.toMap;
+import static org.flickit.assessment.kit.adapter.out.persistence.measure.MeasureMapper.toJpaEntity;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.MEASURE_ID_NOT_FOUND;
 
 @Component
@@ -33,7 +35,7 @@ public class MeasurePersistenceJpaAdapter implements
 
     @Override
     public Long persist(Measure measure, long kitVersionId, UUID createdBy) {
-        MeasureJpaEntity entity = MeasureMapper.toJpaEntity(measure, kitVersionId, createdBy);
+        var entity = toJpaEntity(measure, kitVersionId, createdBy);
         entity.setId(sequenceGenerators.generateMeasureId());
         return repository.save(entity).getId();
     }
@@ -49,6 +51,7 @@ public class MeasurePersistenceJpaAdapter implements
             param.code(),
             param.index(),
             param.description(),
+            JsonUtils.toJson(param.translations()),
             param.lastModificationTime(),
             param.lastModifiedBy());
     }

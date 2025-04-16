@@ -526,6 +526,7 @@ class QuestionUpdateKitPersisterTest {
         assertEquals(answerRangeId, createAnswerOptionParam.answerRangeId());
         assertEquals(dslAnswerOption1.getIndex(), createAnswerOptionParam.index());
         assertEquals(savedKit.getActiveVersionId(), createAnswerOptionParam.kitVersionId());
+        assertNull(createAnswerOptionParam.translation());
         assertEquals(currentUserId, createAnswerOptionParam.createdBy());
     }
 

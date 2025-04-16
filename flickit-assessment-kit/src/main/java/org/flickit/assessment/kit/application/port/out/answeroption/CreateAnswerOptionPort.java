@@ -1,6 +1,10 @@
 package org.flickit.assessment.kit.application.port.out.answeroption;
 
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.common.application.domain.kit.translation.AnswerOptionTranslation;
+
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public interface CreateAnswerOptionPort {
@@ -14,6 +18,8 @@ public interface CreateAnswerOptionPort {
         Integer index,
         Long answerRangeId,
         double value,
+        Map<KitLanguage, AnswerOptionTranslation> translation,
         Long kitVersionId,
-        UUID createdBy) {}
+        UUID createdBy) {
+    }
 }
