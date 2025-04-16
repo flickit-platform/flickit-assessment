@@ -58,6 +58,7 @@ public class AnswerRangeCreateKitPersister implements CreateKitPersister {
                     x.getIndex(),
                     entry.getValue(),
                     x.getValue(),
+                    null,
                     kitVersionId,
                     currentUserId)))
             .toList();

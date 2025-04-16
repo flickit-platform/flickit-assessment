@@ -38,6 +38,7 @@ public class UpdateMeasureRestController {
             requestDto.index(),
             requestDto.title(),
             requestDto.description(),
+            requestDto.translations(),
             currentUserId);
     }
 }

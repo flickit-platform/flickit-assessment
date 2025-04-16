@@ -39,6 +39,7 @@ public class UpdateMeasureService implements UpdateMeasureUseCase {
             generateCode(param.getTitle()),
             param.getIndex(),
             param.getDescription(),
+            param.getTranslations(),
             LocalDateTime.now(),
             param.getCurrentUserId());
     }

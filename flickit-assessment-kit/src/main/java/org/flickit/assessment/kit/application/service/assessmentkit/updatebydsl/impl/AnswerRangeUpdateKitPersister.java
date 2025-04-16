@@ -122,6 +122,7 @@ public class AnswerRangeUpdateKitPersister implements UpdateKitPersister {
                     savedOption.getIndex(),
                     dslOption.getCaption(),
                     dslOption.getValue(),
+                    savedOption.getTranslations(),
                     LocalDateTime.now(),
                     currentUserId));
                 isOptionValueChanged = true;

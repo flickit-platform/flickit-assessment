@@ -38,6 +38,7 @@ public class UpdateQuestionRestController {
             requestDto.advisable(),
             requestDto.answerRangeId(),
             requestDto.measureId(),
+            requestDto.translations(),
             currentUserId);
     }
 }

@@ -45,6 +45,7 @@ public class CreateQuestionService implements CreateQuestionUseCase {
             param.getQuestionnaireId(),
             null,
             null,
+            param.getTranslations(),
             param.getCurrentUserId());
     }
 }

@@ -106,6 +106,7 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
             questionnaireId,
             measureId,
             answerRangeId,
+            null,
             currentUserId
         );
 
@@ -126,6 +127,7 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
                 option.getIndex(),
                 answerRangeId,
                 option.getValue(),
+                null,
                 kitVersionId,
                 currentUserId);
 
