@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+    <changeSet id="0.57-01" author="Maziyar Gerami">
+        <addColumn tableName="fac_assessment">
+            <column name="lang_id" type="int">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.57-2" author="Maziyar Gerami">
+        <update tableName="fac_assessment">
+            <column name="lang_id"
+                    valueComputed="(COALESCE((SELECT language_id FROM fak_assessment_kit
+                WHERE fak_assessment_kit.id = fac_assessment.assessment_kit_id), 0))"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.57-03" author="Maziyar Gerami">
+        <addNotNullConstraint tableName="fac_assessment" columnName="lang_id"/>
+    </changeSet>
+
+</databaseChangeLog>
