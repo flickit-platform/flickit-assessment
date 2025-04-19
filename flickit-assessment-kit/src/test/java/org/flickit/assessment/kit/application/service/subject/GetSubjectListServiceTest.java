@@ -92,12 +92,6 @@ class GetSubjectListServiceTest {
 
         assertNotNull(result);
         assertNotNull(result.getItems());
-        assertEquals(paginatedResponse.getSort(), result.getSort());
-        assertEquals(paginatedResponse.getSize(), result.getSize());
-        assertEquals(paginatedResponse.getTotal(), result.getTotal());
-        assertEquals(paginatedResponse.getOrder(), result.getOrder());
-        assertEquals(paginatedResponse.getPage(), result.getPage());
-
         assertThat(result.getItems())
             .zipSatisfy(subjectList, (actual, expected) -> {
                 assertEquals(expected.getId(), actual.id());
@@ -107,6 +101,13 @@ class GetSubjectListServiceTest {
                 assertEquals(expected.getWeight(), actual.weight());
                 assertEquals(expected.getTranslations(), actual.translations());
             });
+
+        assertEquals(paginatedResponse.getSort(), result.getSort());
+        assertEquals(paginatedResponse.getSize(), result.getSize());
+        assertEquals(paginatedResponse.getTotal(), result.getTotal());
+        assertEquals(paginatedResponse.getOrder(), result.getOrder());
+        assertEquals(paginatedResponse.getPage(), result.getPage());
+
     }
 
     private Param createParam(Consumer<Param.ParamBuilder> changer) {

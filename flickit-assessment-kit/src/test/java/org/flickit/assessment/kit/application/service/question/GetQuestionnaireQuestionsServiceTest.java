@@ -79,9 +79,9 @@ class GetQuestionnaireQuestionsServiceTest {
         when(checkExpertGroupAccessPort.checkIsMember(kitVersion.getKit().getExpertGroupId(), param.getCurrentUserId()))
             .thenReturn(true);
         when(loadQuestionnaireQuestionsPort.loadQuestionnaireQuestions(new LoadQuestionnaireQuestionsPort.Param(param.getQuestionnaireId(),
-                param.getKitVersionId(),
-                param.getPage(),
-                param.getSize())))
+            param.getKitVersionId(),
+            param.getPage(),
+            param.getSize())))
             .thenReturn(pageResult);
 
         var paginatedResponse = service.getQuestionnaireQuestions(param);
@@ -100,6 +100,12 @@ class GetQuestionnaireQuestionsServiceTest {
                 assertEquals(expected.getMeasureId(), actual.measureId());
                 assertEquals(expected.getTranslations(), actual.translations());
             });
+
+        assertEquals(pageResult.getItems().size(), paginatedResponse.getTotal());
+        assertEquals(pageResult.getSize(), paginatedResponse.getSize());
+        assertEquals(pageResult.getPage(), paginatedResponse.getPage());
+        assertEquals(pageResult.getSort(), paginatedResponse.getSort());
+        assertEquals(pageResult.getOrder(), paginatedResponse.getOrder());
     }
 
     public GetQuestionnaireQuestionsUseCase.Param createParam(Consumer<GetQuestionnaireQuestionsUseCase.Param.ParamBuilder> changer) {
