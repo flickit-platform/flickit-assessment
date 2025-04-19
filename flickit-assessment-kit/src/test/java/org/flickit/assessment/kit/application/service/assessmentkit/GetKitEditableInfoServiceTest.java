@@ -99,6 +99,7 @@ class GetKitEditableInfoServiceTest {
         assertEquals(assessmentKit.isPrivate(), kitEditableInfo.isPrivate());
         assertEquals(0, kitEditableInfo.price());
         assertEquals(assessmentKit.getAbout(), kitEditableInfo.about());
+        assertEquals(assessmentKit.getTranslations(), kitEditableInfo.translations());
         assertEquals(tags.size(), kitEditableInfo.tags().size());
         assertEquals(languages.size(), kitEditableInfo.languages().size());
         assertTrue(kitEditableInfo.editable());
