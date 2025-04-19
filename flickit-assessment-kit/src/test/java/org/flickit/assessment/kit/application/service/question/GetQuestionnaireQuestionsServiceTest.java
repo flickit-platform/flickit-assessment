@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
