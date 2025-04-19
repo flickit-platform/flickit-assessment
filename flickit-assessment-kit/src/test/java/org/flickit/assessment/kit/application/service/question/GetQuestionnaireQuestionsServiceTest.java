@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
 import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createKitVersion;
@@ -87,18 +88,18 @@ class GetQuestionnaireQuestionsServiceTest {
 
         assertNotNull(paginatedResponse);
         assertEquals(pageResult.getItems().size(), paginatedResponse.getItems().size());
-        for (int i = 0; i < pageResult.getItems().size(); i++) {
-            var expected = pageResult.getItems().get(i);
-            var actual = paginatedResponse.getItems().get(i);
-            assertEquals(expected.getId(), actual.id());
-            assertEquals(expected.getTitle(), actual.title());
-            assertEquals(expected.getIndex(), actual.index());
-            assertEquals(expected.getHint(), actual.hint());
-            assertEquals(expected.getMayNotBeApplicable(), actual.mayNotBeApplicable());
-            assertEquals(expected.getAdvisable(), actual.advisable());
-            assertEquals(expected.getAnswerRangeId(), actual.answerRangeId());
-            assertEquals(expected.getMeasureId(), actual.measureId());
-        }
+        assertThat(paginatedResponse.getItems())
+            .zipSatisfy(items, (actual, expected) -> {
+                assertEquals(expected.getId(), actual.id());
+                assertEquals(expected.getTitle(), actual.title());
+                assertEquals(expected.getIndex(), actual.index());
+                assertEquals(expected.getHint(), actual.hint());
+                assertEquals(expected.getMayNotBeApplicable(), actual.mayNotBeApplicable());
+                assertEquals(expected.getAdvisable(), actual.advisable());
+                assertEquals(expected.getAnswerRangeId(), actual.answerRangeId());
+                assertEquals(expected.getMeasureId(), actual.measureId());
+                assertEquals(expected.getTranslations(), actual.translations());
+            });
     }
 
     public GetQuestionnaireQuestionsUseCase.Param createParam(Consumer<GetQuestionnaireQuestionsUseCase.Param.ParamBuilder> changer) {
