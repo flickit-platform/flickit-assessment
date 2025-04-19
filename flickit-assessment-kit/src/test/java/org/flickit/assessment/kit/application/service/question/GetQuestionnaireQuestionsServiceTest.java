@@ -21,6 +21,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
 import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createKitVersion;
@@ -89,7 +90,7 @@ class GetQuestionnaireQuestionsServiceTest {
         assertNotNull(paginatedResponse);
         assertEquals(pageResult.getItems().size(), paginatedResponse.getItems().size());
         assertThat(paginatedResponse.getItems())
-            .zipSatisfy(pageResult.getItems(), (actual, expected) -> {
+            .zipSatisfy(items, (actual, expected) -> {
                 assertEquals(expected.getId(), actual.id());
                 assertEquals(expected.getTitle(), actual.title());
                 assertEquals(expected.getIndex(), actual.index());
@@ -98,6 +99,7 @@ class GetQuestionnaireQuestionsServiceTest {
                 assertEquals(expected.getAdvisable(), actual.advisable());
                 assertEquals(expected.getAnswerRangeId(), actual.answerRangeId());
                 assertEquals(expected.getMeasureId(), actual.measureId());
+                assertEquals(expected.getTranslations(), actual.translations());
             });
 
         assertEquals(pageResult.getItems().size(), paginatedResponse.getTotal());

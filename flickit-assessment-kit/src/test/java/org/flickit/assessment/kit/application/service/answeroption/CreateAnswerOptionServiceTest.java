@@ -1,5 +1,6 @@
 package org.flickit.assessment.kit.application.service.answeroption;
 
+import org.flickit.assessment.common.application.domain.kit.translation.AnswerOptionTranslation;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.kit.application.domain.AnswerRange;
@@ -23,6 +24,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -100,6 +102,7 @@ class CreateAnswerOptionServiceTest {
         assertEquals(param.getTitle(), createPortParam.getValue().title());
         assertEquals(question.getAnswerRangeId(), createPortParam.getValue().answerRangeId());
         assertEquals(param.getValue(), createPortParam.getValue().value());
+        assertEquals(param.getTranslations(), createPortParam.getValue().translation());
         assertEquals(param.getCurrentUserId(), createPortParam.getValue().createdBy());
 
         verifyNoInteractions(createAnswerRangePort, updateQuestionPort);
@@ -141,6 +144,12 @@ class CreateAnswerOptionServiceTest {
         var createPortParam = ArgumentCaptor.forClass(CreateAnswerOptionPort.Param.class);
         verify(createAnswerOptionPort, times(1)).persist(createPortParam.capture());
         assertEquals(expectedAnswerRangeId, createPortParam.getValue().answerRangeId());
+        assertEquals(param.getKitVersionId(), createPortParam.getValue().kitVersionId());
+        assertEquals(param.getIndex(), createPortParam.getValue().index());
+        assertEquals(param.getTitle(), createPortParam.getValue().title());
+        assertEquals(param.getValue(), createPortParam.getValue().value());
+        assertEquals(param.getTranslations(), createPortParam.getValue().translation());
+        assertEquals(param.getCurrentUserId(), createPortParam.getValue().createdBy());
     }
 
     @Test
@@ -173,7 +182,7 @@ class CreateAnswerOptionServiceTest {
             .index(3)
             .title("first")
             .value(0.5D)
+            .translations(Map.of("EN", new AnswerOptionTranslation("title")))
             .currentUserId(UUID.randomUUID());
     }
-
 }

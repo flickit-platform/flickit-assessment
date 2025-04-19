@@ -31,18 +31,20 @@ public interface MeasureJpaRepository extends JpaRepository<MeasureJpaEntity, Me
                 m.code = :code,
                 m.index = :index,
                 m.description = :description,
+                m.translations = :translations,
                 m.lastModificationTime = :lastModificationTime,
                 m.lastModifiedBy = :lastModifiedBy
             WHERE m.id = :id AND m.kitVersionId = :kitVersionId
         """)
-    void update(@Param(value = "id") long id,
-                @Param(value = "kitVersionId") long kitVersionId,
-                @Param(value = "title") String title,
-                @Param(value = "code") String code,
-                @Param(value = "index") int index,
-                @Param(value = "description") String description,
-                @Param(value = "lastModificationTime") LocalDateTime lastModificationTime,
-                @Param(value = "lastModifiedBy") UUID lastModifiedBy
+    void update(@Param("id") long id,
+                @Param("kitVersionId") long kitVersionId,
+                @Param("title") String title,
+                @Param("code") String code,
+                @Param("index") int index,
+                @Param("description") String description,
+                @Param("translations") String translations,
+                @Param("lastModificationTime") LocalDateTime lastModificationTime,
+                @Param("lastModifiedBy") UUID lastModifiedBy
     );
 
     @Query("""

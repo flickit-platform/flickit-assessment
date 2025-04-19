@@ -23,6 +23,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_VERSION_ID_NOT_FOUND;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
 import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createKitVersion;
+import static org.flickit.assessment.kit.test.fixture.application.SubjectMother.subjectWithAttributes;
 import static org.flickit.assessment.kit.test.fixture.application.SubjectMother.subjectWithTitle;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -44,7 +45,7 @@ class GetSubjectListServiceTest {
     LoadSubjectsPort loadSubjectsPort;
 
     @Test
-    void testGetSubjectListService_kitVersionNotExist_shouldThrowResourceNotFoundException() {
+    void testGetSubjectListService_whenKitVersionDoesNotExist_thenThrowResourceNotFoundException() {
         Param param = createParam(GetSubjectListUseCase.Param.ParamBuilder::build);
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenThrow(new ResourceNotFoundException(KIT_VERSION_ID_NOT_FOUND));
@@ -56,7 +57,7 @@ class GetSubjectListServiceTest {
     }
 
     @Test
-    void testGetSubjectListService_CurrentUserIsNotExpertGroupMember_shouldThrowAccessDeniedException() {
+    void testGetSubjectListService_whenCurrentUserIsNotExpertGroupMember_thenThrowAccessDeniedException() {
         Param param = createParam(GetSubjectListUseCase.Param.ParamBuilder::build);
         var assessmentKit = simpleKit();
         var kitVersion = createKitVersion(assessmentKit);
@@ -71,27 +72,26 @@ class GetSubjectListServiceTest {
     }
 
     @Test
-    void testGetSubjectListService_ValidParams_shouldReturnPaginatedSubjectList() {
+    void testGetSubjectListService_whenValidParams_thenReturnPaginatedSubjectList() {
         Param param = createParam(GetSubjectListUseCase.Param.ParamBuilder::build);
         var assessmentKit = simpleKit();
         var kitVersion = createKitVersion(assessmentKit);
-        var subjectList = List.of(subjectWithTitle("title1"), subjectWithTitle("title2"));
+        var subjectList = List.of(subjectWithAttributes("title1", null), subjectWithTitle("title2"));
         var paginatedResponse = new PaginatedResponse<>(subjectList,
             param.getPage(),
             param.getSize(),
             "index",
             "desc",
-            4);
+            2);
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(checkExpertGroupAccessPort.checkIsMember(kitVersion.getKit().getExpertGroupId(), param.getCurrentUserId())).thenReturn(true);
         when(loadSubjectsPort.loadPaginatedByKitVersionId(kitVersion.getId(), param.getPage(), param.getSize())).thenReturn(paginatedResponse);
 
         var result = service.getSubjectList(param);
+
         assertNotNull(result);
         assertNotNull(result.getItems());
-
-        assertEquals(subjectList.size(), result.getItems().size());
         assertThat(result.getItems())
             .zipSatisfy(subjectList, (actual, expected) -> {
                 assertEquals(expected.getId(), actual.id());
@@ -99,6 +99,7 @@ class GetSubjectListServiceTest {
                 assertEquals(expected.getTitle(), actual.title());
                 assertEquals(expected.getDescription(), actual.description());
                 assertEquals(expected.getWeight(), actual.weight());
+                assertEquals(expected.getTranslations(), actual.translations());
             });
 
         assertEquals(paginatedResponse.getSort(), result.getSort());
@@ -106,6 +107,7 @@ class GetSubjectListServiceTest {
         assertEquals(paginatedResponse.getTotal(), result.getTotal());
         assertEquals(paginatedResponse.getOrder(), result.getOrder());
         assertEquals(paginatedResponse.getPage(), result.getPage());
+
     }
 
     private Param createParam(Consumer<Param.ParamBuilder> changer) {

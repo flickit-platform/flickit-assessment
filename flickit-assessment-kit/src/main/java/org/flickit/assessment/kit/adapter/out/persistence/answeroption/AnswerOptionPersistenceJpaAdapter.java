@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.adapter.out.persistence.answeroption;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.util.JsonUtils;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
@@ -52,6 +53,7 @@ public class AnswerOptionPersistenceJpaAdapter implements
             param.index(),
             param.title(),
             param.value(),
+            JsonUtils.toJson(param.translations()),
             param.lastModificationTime(),
             param.lastModifiedBy());
     }
@@ -105,7 +107,7 @@ public class AnswerOptionPersistenceJpaAdapter implements
 
     @Override
     public void delete(Long answerOptionId, Long kitVersionId) {
-        if(!repository.existsByIdAndKitVersionId(answerOptionId, kitVersionId))
+        if (!repository.existsByIdAndKitVersionId(answerOptionId, kitVersionId))
             throw new ResourceNotFoundException(ANSWER_OPTION_ID_NOT_FOUND);
 
         repository.deleteByIdAndKitVersionId(answerOptionId, kitVersionId);

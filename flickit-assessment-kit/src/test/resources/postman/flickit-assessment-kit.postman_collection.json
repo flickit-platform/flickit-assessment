@@ -1779,7 +1779,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"index\": 14,\n    \"title\": \"Test Quality\",\n    \"description\": \"Test Quality Description\"\n}",
+							"raw": "{\n    \"index\": 14,\n    \"title\": \"Test Quality\",\n    \"description\": \"Test Quality Description\",\n    \"translations\": {\n        \"EN\": {\n            \"title\": \"Title 2\",\n            \"description\": \"description 2\"\n        }\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1819,7 +1819,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"index\": 1,\n    \"title\": \"new title\",\n    \"description\": \"sample desc\"\n}",
+							"raw": "{\n    \"index\": 1,\n    \"title\": \"new title\",\n    \"description\": \"sample desc\",\n    \"translations\": {\n        \"EN\": {\n            \"title\": \"Title 2\",\n            \"description\": \"description 2\"\n        }\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2418,7 +2418,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"questionId\": 3,\n    \"index\": \"1\",\n    \"title\": \"Yes\",\n    \"value\": 0.5\n}",
+							"raw": "{\n    \"questionId\": 3,\n    \"index\": \"1\",\n    \"title\": \"Yes\",\n    \"value\": 0.5,\n    \"translations\": {\n        \"EN\": {\n            \"title\": \"Title 2\"\n        }\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2491,7 +2491,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"index\": 5,\n    \"title\": \"new option\",\n    \"value\": 1.6\n}",
+							"raw": "{\n    \"index\": 5,\n    \"title\": \"new option\",\n    \"value\": 1.6,\n    \"translations\": {\n        \"EN\": {\n            \"title\": \"Title 2\"\n        }\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2569,7 +2569,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"answerRangeId\": 3,\n    \"index\": \"1\",\n    \"title\": \"Yes\",\n    \"value\": 0.5\n}",
+							"raw": "{\n    \"answerRangeId\": 3,\n    \"index\": \"1\",\n    \"title\": \"Yes\",\n    \"value\": 0.5,\n    \"translations\": {\n        \"EN\": {\n            \"title\": \"Title 2\"\n        }\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2650,7 +2650,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"alpha\",\n    \"reusable\": true\n}",
+							"raw": "{\n    \"title\": \"alpha\",\n    \"reusable\": true,\n    \"translations\": {\n        \"EN\" : {\n            \"title\" : \"new title\"\n        }\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2691,7 +2691,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"alpha\"\n}",
+							"raw": "{\n    \"title\": \"alpha\",\n        \"translations\": {\n        \"EN\": {\n            \"title\": \"Title 2\"\n        }\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2943,7 +2943,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"index\": 1,\n    \"title\": \"new title\",\n    \"description\": \"sample desc\"\n}",
+							"raw": "{\n    \"index\": 1,\n    \"title\": \"new title\",\n    \"description\": \"sample desc\",\n    \"translations\": {\n        \"EN\": {\n            \"title\": \"Title 2\",\n            \"description\": \"description 2\"\n        }\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3024,7 +3024,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"index\": 30,\n    \"title\": \"Test Quality\",\n    \"description\": \"Test Quality Description\"\n}",
+							"raw": "{\n    \"index\": 30,\n    \"title\": \"Test Quality\",\n    \"description\": \"Test Quality Description\",\n    \"translations\": {\n        \"EN\": {\n            \"title\": \"Title 2\",\n            \"description\": \"description 2\"\n        }\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3081,6 +3081,51 @@
 									"key": "lang",
 									"value": "FA"
 								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Kit Language",
+			"item": [
+				{
+					"name": "Add Kit Language to Kit",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"lang\" : \"FA\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessment-kits/386/add-language",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessment-kits",
+								"386",
+								"add-language"
 							]
 						}
 					},

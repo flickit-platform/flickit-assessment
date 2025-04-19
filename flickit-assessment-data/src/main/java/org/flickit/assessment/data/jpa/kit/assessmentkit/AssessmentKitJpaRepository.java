@@ -67,12 +67,13 @@ public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJ
     CountKitStatsView countKitStats(@Param(value = "kitId") long kitId);
 
     @Query("""
-            SELECT k AS kit, g AS expertGroup
+            SELECT DISTINCT(k) AS kit, g AS expertGroup
             FROM AssessmentKitJpaEntity k
             LEFT JOIN ExpertGroupJpaEntity g ON k.expertGroupId = g.id
+            LEFT JOIN KitLanguageJpaEntity kl ON k.id = kl.kitId
             WHERE k.published = TRUE
                 AND k.isPrivate = FALSE
-                AND (:languageIds IS NULL OR k.languageId IN :languageIds)
+                AND (:languageIds IS NULL OR kl.langId IN :languageIds)
             ORDER BY k.title
         """)
     Page<KitWithExpertGroupView> findAllPublishedAndNotPrivateOrderByTitle(@Nullable
@@ -81,14 +82,15 @@ public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJ
                                                                            Pageable pageable);
 
     @Query("""
-            SELECT k AS kit, g AS expertGroup
+            SELECT DISTINCT(k) AS kit, g AS expertGroup
             FROM AssessmentKitJpaEntity k
             LEFT JOIN ExpertGroupJpaEntity g ON k.expertGroupId = g.id
+            LEFT JOIN KitLanguageJpaEntity kl ON k.id = kl.kitId
             JOIN KitUserAccessJpaEntity kua ON k.id = kua.kitId
             WHERE k.published = TRUE
                 AND k.isPrivate = TRUE
                 AND kua.userId = :userId
-                AND (:languageIds IS NULL OR k.languageId IN :languageIds)
+                AND (:languageIds IS NULL OR kl.langId IN :languageIds)
             ORDER BY k.title
         """)
     Page<KitWithExpertGroupView> findAllPublishedAndPrivateByUserIdOrderByTitle(@Param("userId")
@@ -102,10 +104,11 @@ public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJ
             SELECT DISTINCT(k) AS kit, g AS expertGroup
             FROM AssessmentKitJpaEntity k
             LEFT JOIN ExpertGroupJpaEntity g ON k.expertGroupId = g.id
+            LEFT JOIN KitLanguageJpaEntity kl ON k.id = kl.kitId
             JOIN KitUserAccessJpaEntity kua ON k.id = kua.kitId
             WHERE k.published = TRUE
                 AND (k.isPrivate = FALSE OR (k.isPrivate = TRUE AND kua.userId = :userId))
-                AND (:languageIds IS NULL OR k.languageId IN :languageIds)
+                AND (:languageIds IS NULL OR kl.langId IN :languageIds)
             ORDER BY k.isPrivate DESC, k.title
         """)
     Page<KitWithExpertGroupView> findAllPublishedOrderByTitle(@Param("userId")

@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.test.fixture.application.MaturityLevelMother.allLevels;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -81,13 +82,15 @@ class GetKitMaturityLevelsServiceTest {
         assertEquals(paginatedResponse.getOrder(), result.getOrder());
         assertEquals(paginatedResponse.getTotal(), result.getTotal());
 
-        var item = resultItems.get(1);
-        var maturityLevel = maturityLevels.get(1);
-        assertEquals(maturityLevel.getId(), item.id());
-        assertEquals(maturityLevel.getTitle(), item.title());
-        assertEquals(maturityLevel.getDescription(), item.description());
-        assertEquals(maturityLevel.getIndex(), item.index());
-        assertEquals(maturityLevel.getValue(), item.value());
+        assertThat(result.getItems())
+            .zipSatisfy(maturityLevels, (actual, expected) -> {
+                assertEquals(expected.getId(), actual.id());
+                assertEquals(expected.getTitle(), actual.title());
+                assertEquals(expected.getDescription(), actual.description());
+                assertEquals(expected.getIndex(), actual.index());
+                assertEquals(expected.getValue(), actual.value());
+                assertEquals(expected.getTranslations(), actual.translations());
+            });
     }
 
     private GetKitMaturityLevelsUseCase.Param createParam(Consumer<GetKitMaturityLevelsUseCase.Param.ParamBuilder> changer) {

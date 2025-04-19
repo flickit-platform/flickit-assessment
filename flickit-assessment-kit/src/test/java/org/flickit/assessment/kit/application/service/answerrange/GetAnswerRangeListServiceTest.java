@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.test.fixture.application.AnswerRangeMother.createAnswerRangeWithFourOptions;
 import static org.flickit.assessment.kit.test.fixture.application.AnswerRangeMother.createReusableAnswerRangeWithTwoOptions;
@@ -78,8 +79,19 @@ class GetAnswerRangeListServiceTest {
 
         assertEquals(paginatedAnswerRanges.getItems().size(), result.getItems().size());
         assertFalse(result.getItems().isEmpty());
-        assertEquals(2, result.getItems().get(0).answerOptions().size());
-        assertEquals(4, result.getItems().get(1).answerOptions().size());
+        assertThat(result.getItems())
+            .zipSatisfy(paginatedAnswerRanges.getItems(), (actual, expected) -> {
+                assertEquals(expected.getId(), actual.id());
+                assertEquals(expected.getTitle(), actual.title());
+                assertThat(actual.answerOptions())
+                    .zipSatisfy(expected.getAnswerOptions(), (actualAnswerOption, expectedAnswerOption) -> {
+                        assertEquals(expectedAnswerOption.getId(), actualAnswerOption.id());
+                        assertEquals(expectedAnswerOption.getTitle(), actualAnswerOption.title());
+                        assertEquals(expectedAnswerOption.getIndex(), actualAnswerOption.index());
+                        assertEquals(expectedAnswerOption.getValue(), actualAnswerOption.value());
+                        assertEquals(expectedAnswerOption.getTranslations(), actualAnswerOption.translations());
+                    });
+            });
         assertEquals(param.getSize(), paginatedAnswerRanges.getSize());
         assertEquals(param.getPage(), paginatedAnswerRanges.getPage());
         assertEquals(2, paginatedAnswerRanges.getTotal());
