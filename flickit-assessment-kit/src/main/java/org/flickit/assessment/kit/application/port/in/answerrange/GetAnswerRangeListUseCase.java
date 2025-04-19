@@ -9,6 +9,7 @@ import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.common.application.domain.kit.translation.AnswerOptionTranslation;
 import org.flickit.assessment.common.application.domain.kit.translation.AnswerRangeTranslation;
 
 import java.util.List;
@@ -58,7 +59,8 @@ public interface GetAnswerRangeListUseCase {
         public record AnswerOptionListItem(long id,
                                            String title,
                                            int index,
-                                           double value) {
+                                           double value,
+                                           Map<KitLanguage, AnswerOptionTranslation> translations) {
         }
     }
 }
