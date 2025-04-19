@@ -45,6 +45,7 @@ public class GetMeasuresRestController {
                 e.measure().getTitle(),
                 e.measure().getIndex(),
                 e.measure().getDescription(),
+                e.measure().getTranslations(),
                 e.questionsCount()))
             .toList();
 
