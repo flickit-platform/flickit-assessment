@@ -1,10 +1,12 @@
 package org.flickit.assessment.kit.test.fixture.application;
 
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.common.application.domain.kit.translation.KitTranslation;
 import org.flickit.assessment.kit.application.domain.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 public class AssessmentKitMother {
 
@@ -28,12 +30,14 @@ public class AssessmentKitMother {
             Boolean.TRUE,
             Boolean.FALSE,
             EXPERT_GROUP_ID,
+            Map.of(KitLanguage.EN, new KitTranslation(TITLE, SUMMARY, ABOUT)),
             null,
             null,
             null,
             null,
             null,
-            id++);
+            id++,
+            null);
     }
 
     public static AssessmentKit notPublishedKit() {

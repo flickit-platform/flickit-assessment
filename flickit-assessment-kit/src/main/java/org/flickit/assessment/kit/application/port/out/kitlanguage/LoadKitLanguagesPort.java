@@ -8,4 +8,6 @@ import java.util.Map;
 public interface LoadKitLanguagesPort {
 
     Map<Long, List<KitLanguage>> loadByKitIds(List<Long> kitIds);
+
+    List<KitLanguage> loadByKitId(long kitId);
 }

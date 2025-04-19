@@ -45,6 +45,7 @@ public class GetQuestionnairesRestController {
                 e.questionnaire().getTitle(),
                 e.questionnaire().getIndex(),
                 e.questionnaire().getDescription(),
+                e.questionnaire().getTranslations(),
                 e.questionsCount()))
             .toList();
 

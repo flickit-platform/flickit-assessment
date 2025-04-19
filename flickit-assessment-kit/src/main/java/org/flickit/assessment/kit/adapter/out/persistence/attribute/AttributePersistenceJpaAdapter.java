@@ -1,10 +1,9 @@
 package org.flickit.assessment.kit.adapter.out.persistence.attribute;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.util.JsonUtils;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity.Fields;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
@@ -40,15 +39,13 @@ public class AttributePersistenceJpaAdapter implements
     private final AttributeJpaRepository repository;
     private final SubjectJpaRepository subjectRepository;
     private final KitDbSequenceGenerators sequenceGenerators;
-    private final ObjectMapper objectMapper;
 
     @Override
-    @SneakyThrows
     public void update(UpdateAttributePort.Param param) {
         if (!repository.existsByIdAndKitVersionId(param.id(), param.kitVersionId()))
             throw new ResourceNotFoundException(ATTRIBUTE_ID_NOT_FOUND);
 
-        var translations = objectMapper.writeValueAsString(param.translations());
+        var translations = JsonUtils.toJson(param.translations());
         repository.update(param.id(),
             param.kitVersionId(),
             param.code(),
@@ -88,7 +85,6 @@ public class AttributePersistenceJpaAdapter implements
     }
 
     @Override
-    @SneakyThrows
     public Long persist(Attribute attribute, Long subjectId, Long kitVersionId) {
         var subjectEntityId = new SubjectJpaEntity.EntityId(subjectId, kitVersionId);
         var subjectJpaEntity = subjectRepository.findById(subjectEntityId)
@@ -139,7 +135,9 @@ public class AttributePersistenceJpaAdapter implements
         var pageResult = repository.findAllByKitVersionId(kitVersionId, PageRequest.of(page, size));
 
         var items = pageResult.getContent().stream()
-            .map(x -> new AttributeWithSubject(mapToDomainModel(x.getAttribute()), SubjectMapper.mapToDomainModel(x.getSubject(), null)))
+            .map(x -> new AttributeWithSubject(
+                mapToDomainModel(x.getAttribute()),
+                SubjectMapper.mapToDomainModel(x.getSubject(), null)))
             .toList();
 
         return new PaginatedResponse<>(items,
