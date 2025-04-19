@@ -1,6 +1,10 @@
 package org.flickit.assessment.kit.test.fixture.application;
 
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.common.application.domain.kit.translation.AnswerOptionTranslation;
 import org.flickit.assessment.kit.application.domain.AnswerOption;
+
+import java.util.Map;
 
 public class AnswerOptionMother {
 
@@ -14,7 +18,8 @@ public class AnswerOptionMother {
             "title" + id,
             index++,
             answerRangeId++,
-            value += 0.1);
+            value += 0.1,
+            Map.of(KitLanguage.EN, new AnswerOptionTranslation("title" + id)) );
     }
 
     public static AnswerOption createAnswerOption(long answerRangeId, String title, int index) {

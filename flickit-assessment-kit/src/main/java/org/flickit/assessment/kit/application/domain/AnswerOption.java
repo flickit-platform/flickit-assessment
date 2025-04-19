@@ -1,5 +1,6 @@
 package org.flickit.assessment.kit.application.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -10,6 +11,7 @@ import java.util.Map;
 
 @Getter
 @RequiredArgsConstructor
+@AllArgsConstructor
 public class AnswerOption {
 
     private final long id;
