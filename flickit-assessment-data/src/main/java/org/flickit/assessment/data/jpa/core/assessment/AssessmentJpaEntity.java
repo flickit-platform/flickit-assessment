@@ -44,6 +44,9 @@ public class AssessmentJpaEntity {
     @Column(name = "kit_custom_id")
     private Long kitCustomId;
 
+    @Column(name = "lang_id", nullable = false)
+    private Integer langId;
+
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
 
