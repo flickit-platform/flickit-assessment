@@ -5,23 +5,25 @@
                                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
 
     <changeSet id="0.57-01" author="Maziyar Gerami">
-        <addColumn tableName="fac_assessment">
+        <addColumn tableName="fac_assessment_result">
             <column name="lang_id" type="int">
                 <constraints nullable="true"/>
             </column>
         </addColumn>
     </changeSet>
 
-    <changeSet id="0.57-2" author="Maziyar Gerami">
-        <update tableName="fac_assessment">
+    <changeSet id="0.57-02" author="Maziyar Gerami">
+        <update tableName="fac_assessment_result">
             <column name="lang_id"
-                    valueComputed="(COALESCE((SELECT language_id FROM fak_assessment_kit
-                WHERE fak_assessment_kit.id = fac_assessment.assessment_kit_id), 0))"/>
+                    valueComputed="(COALESCE((SELECT fak_assessment_kit.language_id
+                                           FROM fac_assessment
+                                           JOIN fak_assessment_kit ON fak_assessment_kit.id = fac_assessment.assessment_kit_id
+                                           WHERE fac_assessment.id = fac_assessment_result.assessment_id), 0))"/>
         </update>
     </changeSet>
 
     <changeSet id="0.57-03" author="Maziyar Gerami">
-        <addNotNullConstraint tableName="fac_assessment" columnName="lang_id"/>
+        <addNotNullConstraint tableName="fac_assessment_result" columnName="lang_id"/>
     </changeSet>
 
 </databaseChangeLog>

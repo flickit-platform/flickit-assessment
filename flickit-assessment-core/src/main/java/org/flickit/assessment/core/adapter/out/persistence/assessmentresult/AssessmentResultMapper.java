@@ -14,7 +14,6 @@ import java.util.ArrayList;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AssessmentResultMapper {
 
-
     public static AssessmentResultJpaEntity mapToJpaEntity(CreateAssessmentResultPort.Param param) {
         return new AssessmentResultJpaEntity(
             null,
@@ -24,6 +23,7 @@ public class AssessmentResultMapper {
             null,
             param.isCalculateValid(),
             param.isConfidenceValid(),
+            param.langId(),
             param.lastModificationTime(),
             param.lastModificationTime(),
             param.lastModificationTime()

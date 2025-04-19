@@ -23,7 +23,6 @@ public class AssessmentMapper {
             param.assessmentKitId(),
             param.spaceId(),
             null,
-            null, //TODO: Consider to change it after adding `langId` to createAssessmentService
             param.creationTime(),
             param.creationTime(),
             param.deletionTime(),
