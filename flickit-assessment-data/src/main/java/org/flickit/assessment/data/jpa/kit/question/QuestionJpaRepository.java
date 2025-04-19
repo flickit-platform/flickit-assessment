@@ -199,11 +199,12 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
                 qi as questionImpact
             FROM QuestionJpaEntity qsn
             LEFT JOIN QuestionImpactJpaEntity qi on qsn.id = qi.questionId AND qsn.kitVersionId = qi.kitVersionId
-            WHERE qi.attributeId = :attributeId
+            WHERE qi.attributeId IN :attributeIds
                 AND qi.kitVersionId = :kitVersionId
             ORDER BY qsn.questionnaireId asc, qsn.index asc
         """)
-    List<AttributeImpactfulQuestionsView> findByAttributeIdAndKitVersionId(Long attributeId, Long kitVersionId);
+    List<AttributeImpactfulQuestionsView> findByAttributeIdInAndKitVersionId(@Param("attributeIds") List<Long> attributeIds,
+                                                                             @Param("kitVersionId") Long kitVersionId);
 
     @Modifying
     @Query("""
