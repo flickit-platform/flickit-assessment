@@ -32,7 +32,9 @@ public class GetAnswerRangeListService implements GetAnswerRangeListUseCase {
             .map(e -> new AnswerRangeListItem(e.getId(), e.getTitle(),
                 e.getTranslations(),
                 e.getAnswerOptions().stream()
-                    .map(a -> new AnswerRangeListItem.AnswerOptionListItem(a.getId(), a.getTitle(), a.getIndex(), a.getValue()))
+                    .map(a -> new AnswerRangeListItem.AnswerOptionListItem(a.getId(),
+                        a.getTitle(), a.getIndex(), a.getValue(),
+                        a.getTranslations()))
                     .toList()))
             .toList();
 

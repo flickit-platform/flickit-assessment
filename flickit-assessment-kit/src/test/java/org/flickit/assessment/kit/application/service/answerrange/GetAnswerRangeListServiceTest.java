@@ -89,6 +89,7 @@ class GetAnswerRangeListServiceTest {
                         assertEquals(expectedAnswerOption.getTitle(), actualAnswerOption.title());
                         assertEquals(expectedAnswerOption.getIndex(), actualAnswerOption.index());
                         assertEquals(expectedAnswerOption.getValue(), actualAnswerOption.value());
+                        assertEquals(expectedAnswerOption.getTranslations(), actualAnswerOption.translations());
                     });
             });
         assertEquals(param.getSize(), paginatedAnswerRanges.getSize());
