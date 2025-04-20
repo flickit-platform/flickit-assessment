@@ -48,6 +48,9 @@ public class AssessmentKitJpaEntity {
     @Column(name = "language_id", nullable = false)
     private Integer languageId;
 
+    @Column(name = "translations")
+    private String translations;
+
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
 

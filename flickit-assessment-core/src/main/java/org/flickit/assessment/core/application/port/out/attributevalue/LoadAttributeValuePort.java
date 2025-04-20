@@ -9,5 +9,7 @@ public interface LoadAttributeValuePort {
 
     AttributeValue load(UUID assessmentResultId, Long attributeId);
 
+    List<AttributeValue> load(UUID assessmentResultId, List<Long> attributeIds);
+
     List<AttributeValue> loadAll(UUID assessmentResultId);
 }

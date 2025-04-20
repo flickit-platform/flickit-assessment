@@ -1,7 +1,9 @@
 package org.flickit.assessment.kit.adapter.out.persistence.measure;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.util.JsonUtils;
 import org.flickit.assessment.data.jpa.kit.measure.MeasureJpaEntity;
 import org.flickit.assessment.data.jpa.kit.measure.MeasureJpaRepository;
 import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
@@ -10,12 +12,14 @@ import org.flickit.assessment.kit.application.port.out.measure.CreateMeasurePort
 import org.flickit.assessment.kit.application.port.out.measure.DeleteMeasurePort;
 import org.flickit.assessment.kit.application.port.out.measure.LoadMeasurePort;
 import org.flickit.assessment.kit.application.port.out.measure.UpdateMeasurePort;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.UUID;
 
 import static java.util.stream.Collectors.toMap;
+import static org.flickit.assessment.kit.adapter.out.persistence.measure.MeasureMapper.toJpaEntity;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.MEASURE_ID_NOT_FOUND;
 
 @Component
@@ -31,7 +35,7 @@ public class MeasurePersistenceJpaAdapter implements
 
     @Override
     public Long persist(Measure measure, long kitVersionId, UUID createdBy) {
-        MeasureJpaEntity entity = MeasureMapper.toJpaEntity(measure, kitVersionId, createdBy);
+        var entity = toJpaEntity(measure, kitVersionId, createdBy);
         entity.setId(sequenceGenerators.generateMeasureId());
         return repository.save(entity).getId();
     }
@@ -47,6 +51,7 @@ public class MeasurePersistenceJpaAdapter implements
             param.code(),
             param.index(),
             param.description(),
+            JsonUtils.toJson(param.translations()),
             param.lastModificationTime(),
             param.lastModifiedBy());
     }
@@ -72,17 +77,21 @@ public class MeasurePersistenceJpaAdapter implements
     }
 
     @Override
-    public Measure loadByCode(String code, Long kitVersionId) {
-        return repository.findByCodeAndKitVersionId(code, kitVersionId)
-            .map(MeasureMapper::mapToDomainModel)
-            .orElseThrow(() -> new ResourceNotFoundException(MEASURE_ID_NOT_FOUND));
-    }
-
-    @Override
-    public List<Measure> loadAll(Long kitVersionId) {
-        return repository.findAllByKitVersionIdOrderByIndex(kitVersionId).stream()
-            .map(MeasureMapper::mapToDomainModel)
+    public PaginatedResponse<LoadMeasurePort.Result> loadAll(long kitVersionId, int page, int size) {
+        var pageResult = repository.findAllWithQuestionCountByKitVersionId(kitVersionId, PageRequest.of(page, size));
+        var items = pageResult.getContent().stream()
+            .map(e -> new LoadMeasurePort.Result(MeasureMapper.mapToDomainModel(e.getMeasure()),
+                e.getQuestionCount()))
             .toList();
+
+        return new PaginatedResponse<>(
+            items,
+            pageResult.getNumber(),
+            pageResult.getSize(),
+            MeasureJpaEntity.Fields.index,
+            Sort.Direction.ASC.name().toLowerCase(),
+            (int) pageResult.getTotalElements()
+        );
     }
 
     @Override

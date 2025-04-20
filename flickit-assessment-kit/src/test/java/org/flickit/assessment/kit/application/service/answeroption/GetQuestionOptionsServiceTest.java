@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.test.fixture.application.AnswerOptionMother.createAnswerOption;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
@@ -43,7 +44,7 @@ class GetQuestionOptionsServiceTest {
     private final KitVersion kitVersion = createKitVersion(simpleKit());
 
     @Test
-    void testGetQuestionOptions_WhenCurrentUserIsNotExpertGroupMember_ThenThrowAccessDeniedException() {
+    void testGetQuestionOptions_whenCurrentUserIsNotExpertGroupMember_thenThrowAccessDeniedException() {
         var param = createParam(GetQuestionOptionsUseCase.Param.ParamBuilder::build);
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
@@ -57,7 +58,7 @@ class GetQuestionOptionsServiceTest {
     }
 
     @Test
-    void testGetQuestionOptions_WhenCurrentUserIsExpertGroupMember_ThenGetQuestionOptions() {
+    void testGetQuestionOptions_whenCurrentUserIsExpertGroupMember_thenGetQuestionOptions() {
         var param = createParam(GetQuestionOptionsUseCase.Param.ParamBuilder::build);
         var answerRangeId = 8329L;
         var answerOptionA = createAnswerOption(answerRangeId, "titleA", 1);
@@ -73,12 +74,14 @@ class GetQuestionOptionsServiceTest {
         var result = service.getQuestionOptions(param);
         assertNotNull(result);
         assertEquals(expectedAnswerOptions.size(), result.answerOptions().size());
-        for (int i = 0; i < result.answerOptions().size(); i++) {
-            assertEquals(expectedAnswerOptions.get(i).getId(), result.answerOptions().get(i).id());
-            assertEquals(expectedAnswerOptions.get(i).getIndex(), result.answerOptions().get(i).index());
-            assertEquals(expectedAnswerOptions.get(i).getTitle(), result.answerOptions().get(i).title());
-            assertEquals(expectedAnswerOptions.get(i).getValue(), result.answerOptions().get(i).value());
-        }
+        assertThat(result.answerOptions())
+            .zipSatisfy(expectedAnswerOptions, (actual, expected) -> {
+                assertEquals(expected.getId(), actual.id());
+                assertEquals(expected.getIndex(), actual.index());
+                assertEquals(expected.getTitle(), actual.title());
+                assertEquals(expected.getValue(), actual.value());
+                assertEquals(expected.getTranslations(), actual.translations());
+            });
     }
 
     private GetQuestionOptionsUseCase.Param createParam(Consumer<GetQuestionOptionsUseCase.Param.ParamBuilder> changer) {

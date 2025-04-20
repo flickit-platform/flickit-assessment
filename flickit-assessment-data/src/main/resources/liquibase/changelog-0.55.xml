@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+    <changeSet id="0.55-01" author="Maziyar Gerami">
+        <createTable tableName="fak_kit_language">
+            <column name="kit_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="lang_id" type="int">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.55-02" author="Maziyar Gerami">
+        <addPrimaryKey tableName="fak_kit_language"
+                       columnNames="kit_id, lang_id"
+                       constraintName="pk_fak_kit_language"/>
+    </changeSet>
+
+    <changeSet id="0.55-03" author="Maziyar Gerami">
+        <addForeignKeyConstraint baseTableName="fak_kit_language"
+                                 baseColumnNames="kit_id"
+                                 constraintName="fk_fak_kitlanguage_assessmentkit"
+                                 referencedTableName="fak_assessment_kit"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="0.55-04" author="Maziyar Gerami">
+        <sql>
+            INSERT INTO fak_kit_language(kit_id, lang_id)
+            SELECT k.id                     AS kit_id,
+                   k.language_id            AS lang_id
+            FROM fak_assessment_kit k
+        </sql>
+    </changeSet>
+</databaseChangeLog>

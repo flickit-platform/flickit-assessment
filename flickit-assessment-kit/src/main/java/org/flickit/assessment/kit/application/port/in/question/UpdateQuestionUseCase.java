@@ -1,15 +1,22 @@
 package org.flickit.assessment.kit.application.port.in.question;
 
+import jakarta.annotation.Nullable;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.common.application.domain.kit.translation.QuestionTranslation;
 
+import java.util.Map;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_KIT_LANGUAGE_NOT_VALID;
+import static org.flickit.assessment.common.validation.EnumValidateUtils.validateAndConvert;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 public interface UpdateQuestionUseCase {
@@ -46,6 +53,12 @@ public interface UpdateQuestionUseCase {
 
         Long answerRangeId;
 
+        Long measureId;
+
+        @Valid
+        @Nullable
+        Map<KitLanguage, QuestionTranslation> translations;
+
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
@@ -58,15 +71,19 @@ public interface UpdateQuestionUseCase {
                      Boolean mayNotBeApplicable,
                      Boolean advisable,
                      Long answerRangeId,
+                     Long measureId,
+                     Map<String, QuestionTranslation> translations,
                      UUID currentUserId) {
             this.kitVersionId = kitVersionId;
             this.questionId = questionId;
             this.index = index;
-            this.title = title != null && !title.isBlank() ? title.trim(): null;
-            this.hint = hint != null && !hint.isBlank() ? hint.trim(): null;
+            this.title = title != null && !title.isBlank() ? title.trim() : null;
+            this.hint = hint != null && !hint.isBlank() ? hint.trim() : null;
             this.mayNotBeApplicable = mayNotBeApplicable;
             this.advisable = advisable;
             this.answerRangeId = answerRangeId;
+            this.measureId = measureId;
+            this.translations = validateAndConvert(translations, KitLanguage.class, COMMON_KIT_LANGUAGE_NOT_VALID);
             this.currentUserId = currentUserId;
             this.validateSelf();
         }

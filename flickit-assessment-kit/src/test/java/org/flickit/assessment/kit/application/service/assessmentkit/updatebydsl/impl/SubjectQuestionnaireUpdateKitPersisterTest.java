@@ -51,7 +51,7 @@ class SubjectQuestionnaireUpdateKitPersisterTest {
     @Test
     void testPersist_SameQuestionnairesForSubject_DontUpdateAnything() {
         var softwareReliability = AttributeMother.attributeWithTitle("SoftwareReliability");
-        var software = SubjectMother.subjectWithTitleAndAttributes("software", List.of(softwareReliability));
+        var software = SubjectMother.subjectWithAttributes("software", List.of(softwareReliability));
         var cleanArchitecture = QuestionnaireMother.questionnaireWithTitle("CleanArchitecture");
         var savedKit = AssessmentKitMother.kitWithSubjectsAndQuestionnaires(
             List.of(software), List.of(cleanArchitecture)
@@ -88,10 +88,10 @@ class SubjectQuestionnaireUpdateKitPersisterTest {
     @Test
     void testPersist_AddQuestionnairesForSubject_AddAndRemoveRelation() {
         var softwareReliability = AttributeMother.attributeWithTitle("SoftwareReliability");
-        var software = SubjectMother.subjectWithTitleAndAttributes("software", List.of(softwareReliability));
+        var software = SubjectMother.subjectWithAttributes("software", List.of(softwareReliability));
 
         var teamAgileWorkflow = AttributeMother.attributeWithTitle("TeamAgileWorkflow");
-        var team = SubjectMother.subjectWithTitleAndAttributes("team", List.of(teamAgileWorkflow));
+        var team = SubjectMother.subjectWithAttributes("team", List.of(teamAgileWorkflow));
 
         var cleanArchitecture = QuestionnaireMother.questionnaireWithTitle("CleanArchitecture");
         var teamLearning = QuestionnaireMother.questionnaireWithTitle("TeamLearning");

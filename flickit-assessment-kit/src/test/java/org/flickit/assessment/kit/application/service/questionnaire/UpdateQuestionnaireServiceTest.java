@@ -1,5 +1,6 @@
 package org.flickit.assessment.kit.application.service.questionnaire;
 
+import org.flickit.assessment.common.application.domain.kit.translation.QuestionnaireTranslation;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.port.in.questionnaire.UpdateQuestionnaireUseCase;
@@ -13,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -73,6 +75,7 @@ class UpdateQuestionnaireServiceTest {
         assertEquals(param.getTitle(), outPortParam.getValue().title());
         assertEquals(param.getIndex(), outPortParam.getValue().index());
         assertEquals(param.getDescription(), outPortParam.getValue().description());
+        assertEquals(param.getTranslations(), outPortParam.getValue().translations());
         assertEquals(param.getCurrentUserId(), outPortParam.getValue().lastModifiedBy());
         assertNotNull(outPortParam.getValue().lastModificationTime());
     }
@@ -90,6 +93,7 @@ class UpdateQuestionnaireServiceTest {
             .title("abc")
             .index(1)
             .description("description")
+            .translations(Map.of("EN", new QuestionnaireTranslation("title", "desc")))
             .currentUserId(UUID.randomUUID());
     }
 }

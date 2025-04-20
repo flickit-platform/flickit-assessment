@@ -16,6 +16,7 @@ public class SubjectJpaEntityMother {
             "title" + subjectId,
             "description" + subjectId,
             1,
+            null,
             creationTime,
             creationTime,
             null,

@@ -27,7 +27,6 @@ public interface GetKitListUseCase {
     @EqualsAndHashCode(callSuper = true)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = GET_KIT_LIST_IS_PRIVATE_NOT_NULL)
         Boolean isPrivate;
 
         @EnumValue(enumClass = KitLanguage.class, message = GET_KIT_LIST_LANGS_INVALID)
@@ -62,7 +61,8 @@ public interface GetKitListUseCase {
         int likes,
         int assessmentsCount,
         ExpertGroup expertGroup,
-        List<KitTag> tags) {
+        List<KitTag> tags,
+        List<String> languages) {
 
         public record ExpertGroup(
             long id,

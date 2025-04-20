@@ -41,6 +41,9 @@ public class MeasureJpaEntity {
     @Column(name = "description", nullable = false)
     private String description;
 
+    @Column(name = "translations")
+    private String translations;
+
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
 

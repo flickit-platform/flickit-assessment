@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.adapter.out.persistence.attribute;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.util.JsonUtils;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity.Fields;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
@@ -44,6 +45,7 @@ public class AttributePersistenceJpaAdapter implements
         if (!repository.existsByIdAndKitVersionId(param.id(), param.kitVersionId()))
             throw new ResourceNotFoundException(ATTRIBUTE_ID_NOT_FOUND);
 
+        var translations = JsonUtils.toJson(param.translations());
         repository.update(param.id(),
             param.kitVersionId(),
             param.code(),
@@ -51,6 +53,7 @@ public class AttributePersistenceJpaAdapter implements
             param.index(),
             param.description(),
             param.weight(),
+            translations,
             param.lastModificationTime(),
             param.lastModifiedBy(),
             param.subjectId());
@@ -84,7 +87,7 @@ public class AttributePersistenceJpaAdapter implements
     @Override
     public Long persist(Attribute attribute, Long subjectId, Long kitVersionId) {
         var subjectEntityId = new SubjectJpaEntity.EntityId(subjectId, kitVersionId);
-        SubjectJpaEntity subjectJpaEntity = subjectRepository.findById(subjectEntityId)
+        var subjectJpaEntity = subjectRepository.findById(subjectEntityId)
             .orElseThrow(() -> new ResourceNotFoundException(CREATE_ATTRIBUTE_SUBJECT_ID_NOT_FOUND));
 
         var entity = mapToJpaEntity(attribute, subjectJpaEntity);
@@ -132,7 +135,9 @@ public class AttributePersistenceJpaAdapter implements
         var pageResult = repository.findAllByKitVersionId(kitVersionId, PageRequest.of(page, size));
 
         var items = pageResult.getContent().stream()
-            .map(x -> new AttributeWithSubject(mapToDomainModel(x.getAttribute()), SubjectMapper.mapToDomainModel(x.getSubject(), null)))
+            .map(x -> new AttributeWithSubject(
+                mapToDomainModel(x.getAttribute()),
+                SubjectMapper.mapToDomainModel(x.getSubject(), null)))
             .toList();
 
         return new PaginatedResponse<>(items,
