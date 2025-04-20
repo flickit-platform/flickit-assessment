@@ -40,7 +40,7 @@ public interface CreateAssessmentUseCase {
         @NotNull(message = CREATE_ASSESSMENT_ASSESSMENT_KIT_ID_NOT_NULL)
         Long kitId;
 
-        @EnumValue(enumClass = KitLanguage.class, message = CREATE_ASSESSMENT_LANGUAGE_INVALID)
+        @EnumValue(enumClass = KitLanguage.class)
         String lang;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
