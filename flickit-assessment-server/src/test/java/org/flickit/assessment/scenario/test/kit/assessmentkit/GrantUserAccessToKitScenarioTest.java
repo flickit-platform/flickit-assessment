@@ -1,7 +1,6 @@
 package org.flickit.assessment.scenario.test.kit.assessmentkit;
 
 import org.flickit.assessment.common.exception.api.ErrorResponseDto;
-import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.kit.kituseraccess.KitUserAccessJpaEntity;
 import org.flickit.assessment.scenario.fixture.request.CreateUserRequestDtoMother;
 import org.flickit.assessment.scenario.test.AbstractScenarioTest;
@@ -15,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.exception.api.ErrorCodes.ACCESS_DENIED;
 import static org.flickit.assessment.scenario.fixture.request.CreateExpertGroupRequestDtoMother.createExpertGroupRequestDto;
 import static org.flickit.assessment.scenario.fixture.request.CreateKitByDslRequestDtoMother.createKitByDslRequestDto;
@@ -43,38 +41,42 @@ class GrantUserAccessToKitScenarioTest extends AbstractScenarioTest {
     @Test
     void grantUserAccessToKit() {
         var expertGroupId = createExpertGroup();
-        int kitId = createKit(expertGroupId);
+        var kitId = createKit(expertGroupId);
         // Generate a new user ID and create the user
         UUID userId = UUID.randomUUID();
         userHelper.create(CreateUserRequestDtoMother.createUserRequestDto(b -> b.id(userId)));
 
-        var request = grantUserAccessToKitRequestDto(b -> b.userId(userId));
-
         final int countBefore = jpaTemplate.count(KitUserAccessJpaEntity.class);
+
         // Grant access to the kit for a new user
+        var request = grantUserAccessToKitRequestDto(b -> b.userId(userId));
         kitHelper.grantUserAccessToKit(context, request, kitId)
             .then().statusCode(200);
 
         final int countAfter = jpaTemplate.count(KitUserAccessJpaEntity.class);
-        AssessmentKitJpaEntity loadedKitAfter = jpaTemplate.load(kitId, AssessmentKitJpaEntity.class);
 
-        assertKitUserAccess(loadedKitAfter, userId);
+        var kitUserAccess = jpaTemplate.load(new KitUserAccessJpaEntity.KitUserAccessKey(kitId, userId), KitUserAccessJpaEntity.class);
+
         assertEquals(countBefore + 1, countAfter);
+        assertNotNull(kitUserAccess);
     }
 
     @Test
     void grantUserAccessToKit_currentUserIsNotExpertGroupOwner() {
         var expertGroupId = createExpertGroup();
-        int kitId = createKit(expertGroupId);
+        var kitId = createKit(expertGroupId);
+
         // Generate a new user ID and create the user
         UUID userId = UUID.randomUUID();
         userHelper.create(CreateUserRequestDtoMother.createUserRequestDto(b -> b.id(userId)));
+
         // Change the current user
         context.getNextCurrentUser();
-        var request = grantUserAccessToKitRequestDto(b -> b.userId(userId));
-        // Grant access to the kit for a new user by a non-owner of the expert group
+
         final int countBefore = jpaTemplate.count(KitUserAccessJpaEntity.class);
 
+        // Grant access to the kit for a new user by a non-owner of the expert group
+        var request = grantUserAccessToKitRequestDto(b -> b.userId(userId));
         var error = kitHelper.grantUserAccessToKit(context, request, kitId)
             .then().statusCode(403)
             .extract().as(ErrorResponseDto.class);
@@ -86,7 +88,7 @@ class GrantUserAccessToKitScenarioTest extends AbstractScenarioTest {
         assertEquals(countBefore, countAfter);
     }
 
-    Integer createKit(long expertGroupId) {
+    private Long createKit(long expertGroupId) {
         final Long kitDslId = uploadDsl(expertGroupId);
         final Long kitTagId = kitTagHelper.createKitTag();
 
@@ -98,7 +100,8 @@ class GrantUserAccessToKitScenarioTest extends AbstractScenarioTest {
         );
 
         var response = kitHelper.create(context, request);
-        return response.path("kitId");
+        Number id = response.path("kitId");
+        return id.longValue();
     }
 
     private Long createExpertGroup() {
@@ -112,16 +115,5 @@ class GrantUserAccessToKitScenarioTest extends AbstractScenarioTest {
         var response = kitDslHelper.uploadDsl(context, "dummy-dsl.zip", "dsl.json", expertGroupId);
         Number id = response.path("kitDslId");
         return id.longValue();
-    }
-
-    private void assertKitUserAccess(AssessmentKitJpaEntity loadedKit, UUID newUserId) {
-        var kitUsers = loadKitUserAccesses(loadedKit.getId());
-        assertThat(kitUsers)
-            .anySatisfy(x -> assertEquals(newUserId, x.getUserId()));
-    }
-
-    private List<KitUserAccessJpaEntity> loadKitUserAccesses(Long kitId) {
-        return jpaTemplate.search(KitUserAccessJpaEntity.class,
-            (root, query, cb) -> cb.equal(root.get(KitUserAccessJpaEntity.Fields.kitId), kitId));
     }
 }
