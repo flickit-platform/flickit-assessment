@@ -259,6 +259,7 @@ class CreateAssessmentServiceTest {
         assertNotNull(createAssessmentResultPortCaptor.getValue().lastModificationTime());
         assertFalse(createAssessmentResultPortCaptor.getValue().isCalculateValid());
         assertFalse(createAssessmentResultPortCaptor.getValue().isConfidenceValid());
+        assertEquals(publicKit.getLanguage().getId(), createAssessmentResultPortCaptor.getValue().langId());
 
         verify(createSubjectValuePort, times(1)).persistAll(anyList(), any());
         verify(createAttributeValuePort, times(1)).persistAll(anySet(), any());
