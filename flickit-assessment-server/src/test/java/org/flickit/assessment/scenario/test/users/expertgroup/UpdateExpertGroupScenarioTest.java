@@ -6,12 +6,12 @@ import org.flickit.assessment.scenario.test.AbstractScenarioTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.exception.api.ErrorCodes.ACCESS_DENIED;
 import static org.flickit.assessment.common.exception.api.ErrorCodes.INVALID_INPUT;
 import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
 import static org.flickit.assessment.scenario.fixture.request.CreateExpertGroupRequestDtoMother.createExpertGroupRequestDto;
 import static org.flickit.assessment.scenario.fixture.request.UpdateExpertGroupRequestDtoMother.updateExpertGroupRequestDto;
-import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.*;
 
 class UpdateExpertGroupScenarioTest extends AbstractScenarioTest {
@@ -21,88 +21,67 @@ class UpdateExpertGroupScenarioTest extends AbstractScenarioTest {
 
     @Test
     void updateExpertGroup() {
-        var request = createExpertGroupRequestDto();
         // Create expert group
-        var response = expertGroupHelper.create(context, request);
-        response.then()
-            .statusCode(201)
-            .body("id", notNullValue());
+        final long expertGroupId = createExpertGroup();
 
-        final Number expertGroupId = response.path("id");
-
-        var updateRequest = updateExpertGroupRequestDto();
         // Update expert group
-        var updateResponse = expertGroupHelper.update(context, updateRequest, expertGroupId.longValue());
+        var updateRequest = updateExpertGroupRequestDto();
+        var updateResponse = expertGroupHelper.update(context, updateRequest, expertGroupId);
         updateResponse.then()
             .statusCode(200);
 
         ExpertGroupJpaEntity loadedExpertGroup = jpaTemplate.load(expertGroupId, ExpertGroupJpaEntity.class);
+
         assertEquals(updateRequest.title(), loadedExpertGroup.getTitle());
         assertEquals(updateRequest.bio(), loadedExpertGroup.getBio());
         assertEquals(updateRequest.about(), loadedExpertGroup.getAbout());
         assertEquals(generateSlugCode(updateRequest.title()), loadedExpertGroup.getCode());
         assertEquals(updateRequest.website(), loadedExpertGroup.getWebsite());
         assertEquals(getCurrentUserId(), loadedExpertGroup.getLastModifiedBy());
-        assertTrue(loadedExpertGroup.getLastModificationTime().isAfter(loadedExpertGroup.getCreationTime()));
+        assertThat(loadedExpertGroup.getLastModificationTime()).isAfter(loadedExpertGroup.getCreationTime());
     }
 
     @Test
     void updateExpertGroup_withSameTitleAsDeletedExpertGroup() {
-        var firstRequest = createExpertGroupRequestDto();
-        // Create expert group
-        var firstResponse = expertGroupHelper.create(context, firstRequest);
-        firstResponse.then()
-            .statusCode(201)
-            .body("id", notNullValue());
+        // Create first expert group
+        final long firstExpertGroupId = createExpertGroup();
+        var firstExpertGroup = jpaTemplate.load(firstExpertGroupId, ExpertGroupJpaEntity.class);
 
-        final Number firstExpertGroupId = firstResponse.path("id");
+        // Create second expert group
+        final Number secondExpertGroupId = createExpertGroup();
+
         // Delete the expert group
-        expertGroupHelper.delete(context, firstExpertGroupId.longValue());
+        expertGroupHelper.delete(context, firstExpertGroupId);
 
-        var secondRequest = createExpertGroupRequestDto();
-        // Create new expert group
-        var secondResponse = expertGroupHelper.create(context, secondRequest);
-        secondResponse.then()
-            .statusCode(201)
-            .body("id", notNullValue());
-
-        final Number secondExpertGroupId = secondResponse.path("id");
-
-        var updateRequest = updateExpertGroupRequestDto(b -> b.title(firstRequest.title()));
         // Update expert group
+        var updateRequest = updateExpertGroupRequestDto(b -> b.title(firstExpertGroup.getTitle()));
         var updateResponse = expertGroupHelper.update(context, updateRequest, secondExpertGroupId.longValue());
         updateResponse.then()
             .statusCode(200);
 
         ExpertGroupJpaEntity loadedExpertGroup = jpaTemplate.load(secondExpertGroupId, ExpertGroupJpaEntity.class);
-        assertEquals(firstRequest.title(), loadedExpertGroup.getTitle());
+
+        assertEquals(firstExpertGroup.getTitle(), loadedExpertGroup.getTitle());
         assertEquals(updateRequest.bio(), loadedExpertGroup.getBio());
         assertEquals(updateRequest.about(), loadedExpertGroup.getAbout());
         assertEquals(generateSlugCode(updateRequest.title()), loadedExpertGroup.getCode());
         assertEquals(updateRequest.website(), loadedExpertGroup.getWebsite());
         assertEquals(getCurrentUserId(), loadedExpertGroup.getLastModifiedBy());
-        assertTrue(loadedExpertGroup.getLastModificationTime().isAfter(loadedExpertGroup.getCreationTime()));
+        assertThat(loadedExpertGroup.getLastModificationTime()).isAfter(loadedExpertGroup.getCreationTime());
     }
 
     @Test
     void updateExpertGroup_duplicateTitle() {
-        var firstRequest = createExpertGroupRequestDto();
         // Create first expert group
-        var firstResponse = expertGroupHelper.create(context, firstRequest);
-        firstResponse.then()
-            .statusCode(201);
+        final long firstExpertGroupId = createExpertGroup();
+        var firstExpertGroup = jpaTemplate.load(firstExpertGroupId, ExpertGroupJpaEntity.class);
 
-        var secondRequest = createExpertGroupRequestDto();
         // Create second expert group
-        var secondResponse = expertGroupHelper.create(context, secondRequest);
-        secondResponse.then()
-            .statusCode(201)
-            .body("id", notNullValue());
+        final long secondExpertGroupId = createExpertGroup();
+        var updateRequest = updateExpertGroupRequestDto(b -> b.title(firstExpertGroup.getTitle()));
 
-        final Number secondExpertGroupId = secondResponse.path("id");
-        var updateRequest = updateExpertGroupRequestDto(b -> b.title(firstRequest.title()));
         // Update expert group with the same title as the deleted expert group
-        var updateResponse = expertGroupHelper.update(context, updateRequest, secondExpertGroupId.longValue());
+        var updateResponse = expertGroupHelper.update(context, updateRequest, secondExpertGroupId);
         var error = updateResponse.then()
             .statusCode(400)
             .extract().as(ErrorResponseDto.class);
@@ -116,18 +95,16 @@ class UpdateExpertGroupScenarioTest extends AbstractScenarioTest {
 
     @Test
     void updateExpertGroup_userIsNotOwner() {
-        var createRequest = createExpertGroupRequestDto();
         // Create expert group
-        var firstResponse = expertGroupHelper.create(context, createRequest);
-        firstResponse.then()
-            .statusCode(201);
+        final long expertGroupId = createExpertGroup();
+        var expertGroup = jpaTemplate.load(expertGroupId, ExpertGroupJpaEntity.class);
 
-        final Number secondExpertGroupId = firstResponse.path("id");
-        // Change the user
+        // Change the current user
         context.getNextCurrentUser();
-        var updateRequest = updateExpertGroupRequestDto(b -> b.title(createRequest.title()));
+
         // Update the expert group
-        var updateResponse = expertGroupHelper.update(context, updateRequest, secondExpertGroupId.longValue());
+        var updateRequest = updateExpertGroupRequestDto(b -> b.title(expertGroup.getTitle()));
+        var updateResponse = expertGroupHelper.update(context, updateRequest, expertGroupId);
         var error = updateResponse.then()
             .statusCode(403)
             .extract().as(ErrorResponseDto.class);
@@ -135,8 +112,15 @@ class UpdateExpertGroupScenarioTest extends AbstractScenarioTest {
         assertEquals(ACCESS_DENIED, error.code());
         assertNotNull(error.message());
 
-        ExpertGroupJpaEntity loadedExpertGroup = jpaTemplate.load(secondExpertGroupId, ExpertGroupJpaEntity.class);
+        ExpertGroupJpaEntity loadedExpertGroup = jpaTemplate.load(expertGroupId, ExpertGroupJpaEntity.class);
         assertFalse(loadedExpertGroup.getLastModificationTime().isAfter(loadedExpertGroup.getCreationTime()));
         assertEquals(loadedExpertGroup.getCreatedBy(), loadedExpertGroup.getLastModifiedBy());
+    }
+
+    private long createExpertGroup() {
+        var request = createExpertGroupRequestDto();
+        var response = expertGroupHelper.create(context, request);
+        Number id = response.path("id");
+        return id.longValue();
     }
 }
