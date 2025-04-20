@@ -6,5 +6,7 @@ public interface SubjectWithQuestionnaireIdView {
 
     String getTitle();
 
+    String getTranslations();
+
     Long getQuestionnaireId();
 }

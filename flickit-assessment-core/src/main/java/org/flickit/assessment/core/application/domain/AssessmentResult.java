@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.lang3.mutable.MutableDouble;
 import org.apache.commons.lang3.mutable.MutableInt;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -35,6 +36,9 @@ public class AssessmentResult {
 
     @Setter
     private Boolean isConfidenceValid;
+
+    @Setter
+    private KitLanguage language;
 
     @Setter
     private LocalDateTime lastModificationTime;
@@ -88,7 +92,7 @@ public class AssessmentResult {
         Map<Long, Double> mLevelIdToScoreWeightedMean = new HashMap<>();
         levelIdToSubjectsWeightedScoreSum.forEach((mLevelId, weightedScoreSum) -> {
             if (subjectsTotalWeight.intValue() > 0)
-                mLevelIdToScoreWeightedMean.put(mLevelId, weightedScoreSum/ subjectsTotalWeight.intValue());
+                mLevelIdToScoreWeightedMean.put(mLevelId, weightedScoreSum / subjectsTotalWeight.intValue());
             else
                 mLevelIdToScoreWeightedMean.put(mLevelId, 0d);
         });
