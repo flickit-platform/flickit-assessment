@@ -84,7 +84,7 @@ class CreateAssessmentUseCaseParamTest {
     }
 
     @Test
-    void testCreateAssessmentUseCaseParam_whenLangParamIsNullOrEmpty_thenSetLangToNull() {
+    void testCreateAssessmentUseCaseParam_whenLangParamIsNullOrBlank_thenSetLangToNull() {
         var param = createParam(b -> b.lang(" "));
         assertNull(param.getLang());
 
