@@ -61,18 +61,18 @@ public class GetSpaceScenarioTest extends AbstractScenarioTest {
             .body()
             .as(GetSpaceResponseDto.class);
 
-        // assert space
+        // Assert Space
         assertEquals(spaceId.longValue(), result.id());
         assertEquals(createRequest.title(), result.title());
         assertEquals(generateSlugCode(createRequest.title()), result.code());
-        // assert type
-        assertEquals(SpaceType.BASIC.getCode(), result.type().code());
-        assertEquals(SpaceType.BASIC.getTitle(), result.type().title());
         assertTrue(result.editable());
         assertNotNull(result.lastModificationTime());
         assertEquals(0, result.assessmentsCount());
         assertEquals(1, result.membersCount());
         assertTrue(result.canCreateAssessment());
+        // Assert SpaceType
+        assertEquals(SpaceType.BASIC.getCode(), result.type().code());
+        assertEquals(SpaceType.BASIC.getTitle(), result.type().title());
     }
 
     @Test
