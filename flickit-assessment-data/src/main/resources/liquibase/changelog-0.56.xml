@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+    <changeSet id="0.56-01" author="Maziyar Gerami">
+        <addColumn tableName="fak_assessment_kit">
+            <column name="translations" type="text">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.56-02" author="Maziyar Gerami">
+        <addColumn tableName="fak_question">
+            <column name="translations" type="text">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.56-03" author="Maziyar Gerami">
+        <addColumn tableName="fak_attribute">
+            <column name="translations" type="text">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.56-04" author="Maziyar Gerami">
+        <addColumn tableName="fak_subject">
+            <column name="translations" type="text">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.56-05" author="Maziyar Gerami">
+        <addColumn tableName="fak_maturity_level">
+            <column name="translations" type="text">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.56-06" author="Maziyar Gerami">
+        <addColumn tableName="fak_questionnaire">
+            <column name="translations" type="text">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.56-07" author="Maziyar Gerami">
+        <addColumn tableName="fak_measure">
+            <column name="translations" type="text">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.56-08" author="Maziyar Gerami">
+        <addColumn tableName="fak_answer_range">
+            <column name="translations" type="text">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.56-09" author="Maziyar Gerami">
+        <addColumn tableName="fak_answer_option">
+            <column name="translations" type="text">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.56-10" author="Maziyar Gerami">
+        <addUniqueConstraint columnNames="kit_version_id, index"
+                             constraintName="uq_fak_measure_index_kitversionid"
+                             tableName="fak_measure"
+                             initiallyDeferred="true"/>
+    </changeSet>
+
+    <changeSet id="0.56-11" author="Maziyar Gerami">
+        <addUniqueConstraint columnNames="kit_version_id, code"
+                             constraintName="uq_fak_measure_code_kitversionid"
+                             tableName="fak_measure"
+                             initiallyDeferred="true"/>
+    </changeSet>
+
+    <changeSet id="0.56-12" author="Maziyar Gerami">
+        <addUniqueConstraint columnNames="kit_version_id, title"
+                             constraintName="uq_fak_measure_title_kitversionid"
+                             tableName="fak_measure"
+                             initiallyDeferred="true"/>
+    </changeSet>
+
+    <changeSet id="0.56-13" author="Mahdi Rezazadeh">
+        <dropNotNullConstraint tableName="fak_question" columnName="measure_id"/>
+    </changeSet>
+
+    <changeSet id="0.56-14" author="Maziyar Gerami">
+        <createTable tableName="fak_kit_banner">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_fak_kit_banner"/>
+            </column>
+            <column name="kit_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="path" type="varchar(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="in_slider" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.56-15" author="Maziyar Gerami">
+        <addForeignKeyConstraint baseTableName="fak_kit_banner"
+                                 baseColumnNames="kit_id"
+                                 referencedTableName="fak_assessment_kit"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fak_kitbanner_assessmentkit"/>
+    </changeSet>
+
+    <changeSet id="0.56-16" author="Maziyar Gerami">
+        <addColumn tableName="fak_kit_banner">
+            <column name="lang_id" type="int"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.56-17" author="Maziyar Gerami">
+        <addUniqueConstraint columnNames="kit_id, lang_id"
+                             constraintName="uq_fak_kitbanner_kitid_langid"
+                             tableName="fak_kit_banner"/>
+    </changeSet>
+
+</databaseChangeLog>

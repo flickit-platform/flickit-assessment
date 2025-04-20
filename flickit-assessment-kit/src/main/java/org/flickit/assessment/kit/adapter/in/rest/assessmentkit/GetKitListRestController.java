@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.adapter.in.rest.kitdsl;
+package org.flickit.assessment.kit.adapter.in.rest.assessmentkit;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
@@ -24,7 +24,7 @@ public class GetKitListRestController {
 
     @GetMapping("/assessment-kits")
     public ResponseEntity<PaginatedResponse<KitListItem>> getKitList(
-        @RequestParam(required = false) Boolean isPrivate, // validated in the use-case param
+        @RequestParam(required = false) Boolean isPrivate,
         @RequestParam(required = false) Set<String> langs,
         @RequestParam(defaultValue = "50") int size,
         @RequestParam(defaultValue = "0") int page) {

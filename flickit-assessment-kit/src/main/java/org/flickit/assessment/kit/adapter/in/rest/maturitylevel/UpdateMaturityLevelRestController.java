@@ -36,6 +36,7 @@ public class UpdateMaturityLevelRestController {
             requestDto.index(),
             requestDto.description(),
             requestDto.value(),
+            requestDto.translations(),
             currentUserId);
     }
 }

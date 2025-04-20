@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.adapter.out.persistence.questionnaire;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.util.JsonUtils;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
@@ -34,8 +35,7 @@ public class QuestionnairePersistenceJpaAdapter implements
     UpdateQuestionnairePort,
     LoadQuestionnairesPort,
     LoadKitQuestionnaireDetailPort,
-    DeleteQuestionnairePort,
-    LoadQuestionnairePort {
+    DeleteQuestionnairePort {
 
     private final QuestionnaireJpaRepository repository;
     private final AssessmentKitJpaRepository assessmentKitRepository;
@@ -61,6 +61,7 @@ public class QuestionnairePersistenceJpaAdapter implements
             param.code(),
             param.index(),
             param.description(),
+            JsonUtils.toJson(param.translations()),
             param.lastModificationTime(),
             param.lastModifiedBy());
     }
@@ -122,16 +123,9 @@ public class QuestionnairePersistenceJpaAdapter implements
     }
 
     @Override
-    public List<Questionnaire> loadAll(long kitVersionId) {
-        return repository.findAllByKitVersionId(kitVersionId).stream()
-            .map(QuestionnaireMapper::mapToDomainModel)
-            .toList();
-    }
-
-    @Override
     public LoadKitQuestionnaireDetailPort.Result loadKitQuestionnaireDetail(Long questionnaireId, Long kitVersionId) {
         QuestionnaireJpaEntity questionnaireEntity = repository.findByIdAndKitVersionId(questionnaireId, kitVersionId)
-            .orElseThrow(() ->  new ResourceNotFoundException(QUESTIONNAIRE_ID_NOT_FOUND));
+            .orElseThrow(() -> new ResourceNotFoundException(QUESTIONNAIRE_ID_NOT_FOUND));
 
         List<QuestionJpaEntity> questionEntities = questionRepository.findAllByQuestionnaireIdAndKitVersionIdOrderByIndex(questionnaireId, kitVersionId, null)
             .getContent();
@@ -157,12 +151,5 @@ public class QuestionnairePersistenceJpaAdapter implements
             throw new ResourceNotFoundException(QUESTIONNAIRE_ID_NOT_FOUND);
 
         repository.deleteByIdAndKitVersionId(questionnaireId, kitVersionId);
-    }
-
-    @Override
-    public Questionnaire load(Long id, Long kitVersionId) {
-        return repository.findByIdAndKitVersionId(id, kitVersionId)
-            .map(QuestionnaireMapper::mapToDomainModel)
-            .orElseThrow(() -> new ResourceNotFoundException(QUESTIONNAIRE_ID_NOT_FOUND));
     }
 }

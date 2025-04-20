@@ -1,7 +1,11 @@
 package org.flickit.assessment.kit.application.port.out.subject;
 
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.common.application.domain.kit.translation.SubjectTranslation;
+
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public interface UpdateSubjectPort {
@@ -22,6 +26,7 @@ public interface UpdateSubjectPort {
                  int index,
                  String description,
                  int weight,
+                 Map<KitLanguage, SubjectTranslation> translations,
                  LocalDateTime lastModificationTime,
                  UUID lastModifiedBy) {
     }

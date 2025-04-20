@@ -28,6 +28,7 @@ public interface AnswerRangeJpaRepository extends JpaRepository<AnswerRangeJpaEn
             SET a.title = :title,
                 a.code = :code,
                 a.reusable = :reusable,
+                a.translations = :translations,
                 a.lastModificationTime = :lastModificationTime,
                 a.lastModifiedBy = :lastModifiedBy
             WHERE a.id = :answerRangeId and a.kitVersionId = :kitVersionId
@@ -37,6 +38,7 @@ public interface AnswerRangeJpaRepository extends JpaRepository<AnswerRangeJpaEn
                 @Param("title") String title,
                 @Param("code") String code,
                 @Param("reusable") boolean reusable,
+                @Param("translations") String translations,
                 @Param("lastModificationTime") LocalDateTime lastModificationTime,
                 @Param("lastModifiedBy") UUID lastModifiedBy);
 

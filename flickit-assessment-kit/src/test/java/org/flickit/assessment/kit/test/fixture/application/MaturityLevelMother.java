@@ -38,6 +38,7 @@ public class MaturityLevelMother {
             1,
             LEVEL_ONE_CODE,
             1,
+            null,
             List.of());
     }
 
@@ -49,6 +50,7 @@ public class MaturityLevelMother {
             2,
             LEVEL_TWO_CODE,
             2,
+            null,
             levelCompetenceForLevelTwo());
     }
 
@@ -60,6 +62,7 @@ public class MaturityLevelMother {
             3,
             LEVEL_THREE_CODE,
             3,
+            null,
             levelCompetenceForLevelThree());
     }
 
@@ -71,6 +74,7 @@ public class MaturityLevelMother {
             4,
             LEVEL_FOUR_CODE,
             4,
+            null,
             levelCompetenceForLevelFour());
     }
 
@@ -82,6 +86,7 @@ public class MaturityLevelMother {
             5,
             LEVEL_FIVE_CODE,
             5,
+            null,
             levelCompetenceForLevelFive());
     }
 }

@@ -1,5 +1,6 @@
 package org.flickit.assessment.kit.application.service.attribute;
 
+import org.flickit.assessment.common.application.domain.kit.translation.AttributeTranslation;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.Attribute;
 import org.flickit.assessment.kit.application.domain.KitVersion;
@@ -9,21 +10,22 @@ import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGro
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
 import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createKitVersion;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CreateAttributeServiceTest {
@@ -65,6 +67,24 @@ class CreateAttributeServiceTest {
 
         long actualAttributeId = service.createAttribute(param);
 
+        var createAttributePortArgument = ArgumentCaptor.forClass(Attribute.class);
+        verify(createAttributePort, times(1))
+            .persist(createAttributePortArgument.capture(), eq(param.getSubjectId()), eq(param.getKitVersionId()));
+
+        assertNull(createAttributePortArgument.getValue().getId());
+
+        assertEquals(param.getIndex(), createAttributePortArgument.getValue().getIndex());
+        assertEquals(param.getTitle(), createAttributePortArgument.getValue().getTitle());
+        assertEquals(param.getDescription(), createAttributePortArgument.getValue().getDescription());
+        assertEquals(param.getWeight(), createAttributePortArgument.getValue().getWeight());
+        assertEquals(param.getTranslations(), createAttributePortArgument.getValue().getTranslations());
+        assertEquals(param.getCurrentUserId(), createAttributePortArgument.getValue().getCreatedBy());
+        assertEquals(param.getCurrentUserId(), createAttributePortArgument.getValue().getLastModifiedBy());
+
+        assertNotNull(createAttributePortArgument.getValue().getCode());
+        assertNotNull(createAttributePortArgument.getValue().getCreationTime());
+        assertNotNull(createAttributePortArgument.getValue().getLastModificationTime());
+
         assertEquals(attributeId, actualAttributeId);
     }
 
@@ -82,6 +102,7 @@ class CreateAttributeServiceTest {
             .description("desc")
             .weight(2)
             .subjectId(1L)
+            .translations(Map.of("EN", new AttributeTranslation("title", "desc")))
             .currentUserId(UUID.randomUUID());
     }
 }

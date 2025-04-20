@@ -77,8 +77,8 @@ class GetKitCustomSubjectServiceTest {
         PaginatedResponse<Subject> paginatedResponse = new PaginatedResponse<>(List.of(subject),
             1,
             1,
-            "asc",
             "index",
+            "asc",
             1);
 
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
@@ -112,6 +112,7 @@ class GetKitCustomSubjectServiceTest {
         assertEquals(expectedAttribute.getIndex(), actualAttribute.index());
         assertEquals(attributeCustom.weight(), actualAttribute.weight().customValue());
         assertEquals(expectedAttribute.getWeight(), actualAttribute.weight().defaultValue());
+        assertPaginationProperties(paginatedResponse, resultPaginatedResponse);
     }
 
     @Test
@@ -129,8 +130,8 @@ class GetKitCustomSubjectServiceTest {
         PaginatedResponse<Subject> paginatedResponse = new PaginatedResponse<>(List.of(subject),
             1,
             1,
-            "asc",
             "index",
+            "asc",
             1);
 
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
@@ -163,6 +164,7 @@ class GetKitCustomSubjectServiceTest {
         assertEquals(expectedAttribute.getIndex(), actualAttribute.index());
         assertEquals(attributeCustom.weight(), actualAttribute.weight().customValue());
         assertEquals(expectedAttribute.getWeight(), actualAttribute.weight().defaultValue());
+        assertPaginationProperties(paginatedResponse, resultPaginatedResponse);
 
         verifyNoInteractions(checkKitUserAccessPort);
     }
@@ -182,8 +184,8 @@ class GetKitCustomSubjectServiceTest {
         PaginatedResponse<Subject> paginatedResponse = new PaginatedResponse<>(List.of(subject),
             1,
             1,
-            "asc",
             "index",
+            "asc",
             1);
 
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
@@ -225,6 +227,7 @@ class GetKitCustomSubjectServiceTest {
         assertEquals(expectedMaintainabilityAttr.getIndex(), actualMaintainabilityAttr.index());
         assertEquals(expectedMaintainabilityAttr.getWeight(), actualMaintainabilityAttr.weight().defaultValue());
         assertNull(actualMaintainabilityAttr.weight().customValue());
+        assertPaginationProperties(paginatedResponse, resultPaginatedResponse);
 
         verifyNoInteractions(checkKitUserAccessPort);
     }
@@ -281,7 +284,17 @@ class GetKitCustomSubjectServiceTest {
             assertNull(actualAttribute.weight().customValue());
         }
 
+        assertPaginationProperties(paginatedResponse, resultPaginatedResponse);
+
         verifyNoInteractions(checkKitUserAccessPort);
+    }
+
+    private static void assertPaginationProperties(PaginatedResponse<Subject> expectedPaginatedResponse, PaginatedResponse<GetKitCustomSubjectUseCase.Subject> resultPaginatedResponse) {
+        assertEquals(expectedPaginatedResponse.getItems().size(), resultPaginatedResponse.getTotal());
+        assertEquals(expectedPaginatedResponse.getSize(), resultPaginatedResponse.getSize());
+        assertEquals(expectedPaginatedResponse.getPage(), resultPaginatedResponse.getPage());
+        assertEquals(expectedPaginatedResponse.getSort(), resultPaginatedResponse.getSort());
+        assertEquals(expectedPaginatedResponse.getOrder(), resultPaginatedResponse.getOrder());
     }
 
     private GetKitCustomSubjectUseCase.Param createParam(Consumer<GetKitCustomSubjectUseCase.Param.ParamBuilder> changer) {

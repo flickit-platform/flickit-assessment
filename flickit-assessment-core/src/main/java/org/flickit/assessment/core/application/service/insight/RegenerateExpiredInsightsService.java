@@ -10,7 +10,6 @@ import org.flickit.assessment.core.application.domain.insight.AssessmentInsight;
 import org.flickit.assessment.core.application.domain.insight.AttributeInsight;
 import org.flickit.assessment.core.application.domain.insight.SubjectInsight;
 import org.flickit.assessment.core.application.port.in.insight.RegenerateExpiredInsightsUseCase;
-import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentProgressPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.insight.assessment.LoadAssessmentInsightPort;
 import org.flickit.assessment.core.application.port.out.insight.assessment.UpdateAssessmentInsightPort;
@@ -18,15 +17,14 @@ import org.flickit.assessment.core.application.port.out.insight.attribute.LoadAt
 import org.flickit.assessment.core.application.port.out.insight.attribute.UpdateAttributeInsightPort;
 import org.flickit.assessment.core.application.port.out.insight.subject.LoadSubjectInsightsPort;
 import org.flickit.assessment.core.application.port.out.insight.subject.UpdateSubjectInsightPort;
-import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.core.application.service.insight.assessment.CreateAssessmentInsightHelper;
 import org.flickit.assessment.core.application.service.insight.attribute.CreateAttributeAiInsightHelper;
+import org.flickit.assessment.core.application.service.insight.attribute.CreateAttributeAiInsightHelper.AttributeInsightsParam;
 import org.flickit.assessment.core.application.service.insight.subject.CreateSubjectInsightsHelper;
 import org.flickit.assessment.core.application.service.insight.subject.CreateSubjectInsightsHelper.SubjectInsightsParam;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -43,8 +41,6 @@ public class RegenerateExpiredInsightsService implements RegenerateExpiredInsigh
     private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final ValidateAssessmentResultPort validateAssessmentResultPort;
     private final LoadAttributeInsightsPort loadAttributeInsightsPort;
-    private final LoadMaturityLevelsPort loadMaturityLevelsPort;
-    private final GetAssessmentProgressPort getAssessmentProgressPort;
     private final CreateAttributeAiInsightHelper createAttributeAiInsightHelper;
     private final UpdateAttributeInsightPort updateAttributeInsightPort;
     private final LoadSubjectInsightsPort loadSubjectInsightsPort;
@@ -74,25 +70,13 @@ public class RegenerateExpiredInsightsService implements RegenerateExpiredInsigh
             .filter(e -> e.getLastModificationTime().isBefore(assessmentResult.getLastCalculationTime()))
             .map(AttributeInsight::getAttributeId)
             .toList();
-        if (!expiredInsightIds.isEmpty())
-            updateAttributesInsights(assessmentResult, expiredInsightIds, locale);
-    }
-
-    private void updateAttributesInsights(AssessmentResult assessmentResult, List<Long> attributeIds, Locale locale) {
-        var maturityLevels = loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId());
-        var progress = getAssessmentProgressPort.getProgress(assessmentResult.getAssessment().getId());
-        var insightUpdateParams = attributeIds.stream()
-            .map(id -> {
-                var createAiInsightParam = new CreateAttributeAiInsightHelper.Param(assessmentResult,
-                    id,
-                    maturityLevels,
-                    progress,
-                    locale);
-                var attributeAiInsight = createAttributeAiInsightHelper.createAttributeAiInsight(createAiInsightParam);
-                return toUpdateParam(attributeAiInsight);
-            })
-            .toList();
-        updateAttributeInsightPort.updateAiInsights(insightUpdateParams);
+        if (!expiredInsightIds.isEmpty()) {
+            var insightUpdateParams = createAttributeAiInsightHelper
+                .createAttributeAiInsights(new AttributeInsightsParam(assessmentResult, expiredInsightIds, locale)).stream()
+                .map(this::toUpdateParam)
+                .toList();
+            updateAttributeInsightPort.updateAiInsights(insightUpdateParams);
+        }
     }
 
     private UpdateAttributeInsightPort.AiParam toUpdateParam(AttributeInsight attributeAiInsight) {

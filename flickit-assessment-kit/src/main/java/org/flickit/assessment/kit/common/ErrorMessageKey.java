@@ -47,7 +47,6 @@ public class ErrorMessageKey {
     public static final String GET_KIT_TAG_LIST_SIZE_MIN = "get-kit-tag-list.size.min";
     public static final String GET_KIT_TAG_LIST_SIZE_MAX = "get-kit-tag-list.size.max";
 
-    public static final String GET_KIT_LIST_IS_PRIVATE_NOT_NULL = "get-kit-list.isPrivate.notNull";
     public static final String GET_KIT_LIST_LANGS_INVALID = "get-kit-list.langs.invalid";
     public static final String GET_KIT_LIST_PAGE_MIN = "get-kit-list.page.min";
     public static final String GET_KIT_LIST_SIZE_MIN = "get-kit-list.size.min";
@@ -106,6 +105,7 @@ public class ErrorMessageKey {
     public static final String UPDATE_KIT_INFO_TAGS_SIZE_MIN = "update-kit-info.tags.size.min";
     public static final String UPDATE_KIT_INFO_TAG_ID_NOT_FOUND = "update-kit-info.tagId.notFound";
     public static final String UPDATE_KIT_INFO_KIT_LANGUAGE_INVALID = "update-kit-info.kitLanguage.invalid";
+    public static final String UPDATE_KIT_INFO_TRANSLATIONS_INCORRECT = "update-kit-info.translations.incorrect";
 
     public static final String GET_KIT_DETAIL_KIT_ID_NOT_NULL = "get-kit-detail.kitId.notNull";
 
@@ -477,6 +477,7 @@ public class ErrorMessageKey {
     public static final String VALIDATE_KIT_VERSION_QUESTION_NOT_NULL = "validate-kit-version.question.notNull";
     public static final String VALIDATE_KIT_VERSION_QUESTIONNAIRE_NOT_NULL = "validate-kit-version.questionnaire.notNull";
     public static final String VALIDATE_KIT_VERSION_MATURITY_LEVEL_NOT_NULL = "validate-kit-version.maturityLevel.notNull";
+    public static final String VALIDATE_KIT_VERSION_QUESTION_MEASURE_NOT_NULL = "validate-kit-version.question-measure.notNull";
 
     public static final String UPDATE_KIT_CUSTOM_KIT_CUSTOM_ID_NOT_NULL = "update-kit-custom.kitCustomId.notNull";
     public static final String UPDATE_KIT_CUSTOM_KIT_ID_NOT_NULL = "update-kit-custom.kitId.notNull";
@@ -499,6 +500,47 @@ public class ErrorMessageKey {
 
     public static final String GET_KIT_DSL_KIT_ID_NOT_NULL = "get-kit-dsl.kitId.notNull";
     public static final String GET_KIT_DSL_NOT_AVAILABLE = "get-kit-dsl.notAvailable";
+
+    public static final String GET_MEASURES_KIT_VERSION_ID_NOT_NULL = "get-measures.kitVersionId.notNull";
+    public static final String GET_MEASURES_PAGE_MIN = "get-measures.page.min";
+    public static final String GET_MEASURES_SIZE_MIN = "get-measures.size.min";
+    public static final String GET_MEASURES_SIZE_MAX = "get-measures.size.max";
+
+    public static final String UPDATE_MEASURE_KIT_VERSION_ID_NOT_NULL = "update-measure.kitVersionId.notNull";
+    public static final String UPDATE_MEASURE_MEASURE_ID_NOT_NULL = "update-measure.measureId.notNull";
+    public static final String UPDATE_MEASURE_INDEX_NOT_NULL = "update-measure.index.notNull";
+    public static final String UPDATE_MEASURE_TITLE_NOT_NULL = "update-measure.title.notNull";
+    public static final String UPDATE_MEASURE_TITLE_SIZE_MIN = "update-measure.title.size.min";
+    public static final String UPDATE_MEASURE_TITLE_SIZE_MAX = "update-measure.title.size.max";
+    public static final String UPDATE_MEASURE_DESCRIPTION_NOT_NULL = "update-measure.description.notNull";
+    public static final String UPDATE_MEASURE_DESCRIPTION_SIZE_MIN = "update-measure.description.size.min";
+    public static final String UPDATE_MEASURE_DESCRIPTION_SIZE_MAX = "update-measure.description.size.max";
+
+    public static final String UPDATE_MEASURE_ORDERS_KIT_VERSION_ID_NOT_NULL = "update-measure-orders.kitVersionId.notNull";
+    public static final String UPDATE_MEASURE_ORDERS_ORDERS_NOT_NULL = "update-measure-orders.orders.notNull";
+    public static final String UPDATE_MEASURE_ORDERS_ORDERS_SIZE_MIN = "update-measure-orders.orders.size.min";
+    public static final String UPDATE_MEASURE_ORDERS_MEASURE_ID_NOT_NULL = "update-measure-orders.measureId.notNull";
+    public static final String UPDATE_MEASURE_ORDERS_MEASURE_INDEX_NOT_NULL = "update-measure-orders.measureIndex.notNull";
+    public static final String UPDATE_MEASURE_ORDERS_MEASURE_INDEX_MIN = "update-measure-orders.measureIndex.min";
+
+    public static final String CREATE_MEASURE_KIT_VERSION_ID_NOT_NULL = "create-measure.kitVersionId.notNull";
+    public static final String CREATE_MEASURE_INDEX_NOT_NULL = "create-measure.index.notNull";
+    public static final String CREATE_MEASURE_TITLE_NOT_NULL = "create-measure.title.notNull";
+    public static final String CREATE_MEASURE_TITLE_SIZE_MIN = "create-measure.title.size.min";
+    public static final String CREATE_MEASURE_TITLE_SIZE_MAX = "create-measure.title.size.max";
+    public static final String CREATE_MEASURE_DESCRIPTION_NOT_NULL = "create-measure.description.notNull";
+    public static final String CREATE_MEASURE_DESCRIPTION_SIZE_MIN = "create-measure.description.size.min";
+    public static final String CREATE_MEASURE_DESCRIPTION_SIZE_MAX = "create-measure.description.size.max";
+
+    public static final String CREATE_MEASURE_INDEX_DUPLICATE = "create-measure.index.duplicate";
+    public static final String CREATE_MEASURE_TITLE_DUPLICATE = "create-measure.title.duplicate";
+
+    public static final String GET_KIT_SLIDER_BANNERS_LANG_NOT_NULL = "get-kit-slider-banners.lang.notNull";
+    public static final String GET_KIT_SLIDER_BANNERS_LANGUAGE_INVALID = "get-kit-slider-banners.lang.invalid";
+
+    public static final String ADD_LANGUAGE_TO_KIT_KIT_ID_NOT_NULL = "add-language-to-kit.kitId.notNull";
+    public static final String ADD_LANGUAGE_TO_KIT_LANG_NOT_NULL = "add-language-to-kit.lang.notNull";
+    public static final String ADD_LANGUAGE_TO_KIT_LANGUAGE_INVALID = "add-language-to-kit.lang.invalid";
 
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);

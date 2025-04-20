@@ -1,6 +1,7 @@
 package org.flickit.assessment.users.application.service.space;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.domain.space.SpaceType;
 import org.flickit.assessment.common.config.AppSpecProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.users.application.port.in.space.GetSpaceUseCase;
@@ -27,7 +28,9 @@ public class GetSpaceService implements GetSpaceUseCase {
 
         LoadSpaceDetailsPort.Result spaceDetails = loadSpaceDetailsPort.loadSpace(param.getId());
         boolean editable = param.getCurrentUserId().equals(spaceDetails.space().getOwnerId());
-        boolean canCreateAssessment = spaceDetails.assessmentsCount() < appSpecProperties.getSpace().getMaxBasicSpaceAssessments();
+
+        var isPremium = SpaceType.PREMIUM.equals(spaceDetails.space().getType());
+        boolean canCreateAssessment = isPremium || spaceDetails.assessmentsCount() < appSpecProperties.getSpace().getMaxBasicSpaceAssessments();
 
         return new Result(spaceDetails.space(),
             editable,

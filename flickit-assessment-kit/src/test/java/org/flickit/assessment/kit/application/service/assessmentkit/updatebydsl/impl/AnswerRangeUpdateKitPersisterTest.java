@@ -106,12 +106,16 @@ class AnswerRangeUpdateKitPersisterTest {
         assertEquals(dslRangeOne.getTitle(), firstRange.title());
         assertEquals(savedKit.getActiveVersionId(), firstRange.kitVersionId());
         assertThat(firstRange.lastModificationTime(), lessThanOrEqualTo(LocalDateTime.now()));
+        assertNotNull(firstRange.translations());
+        assertEquals(rangeOne.getTranslations(), firstRange.translations());
         assertEquals(currentUserId, firstRange.lastModifiedBy());
 
         assertEquals(rangeTwo.getId(), secondRange.answerRangeId());
         assertEquals(savedKit.getActiveVersionId(), secondRange.kitVersionId());
         assertEquals(dslRangeTwo.getTitle(), secondRange.title());
         assertThat(secondRange.lastModificationTime(), lessThanOrEqualTo(LocalDateTime.now()));
+        assertNotNull(secondRange.translations());
+        assertEquals(rangeTwo.getTranslations(), secondRange.translations());
         assertEquals(currentUserId, secondRange.lastModifiedBy());
 
         assertFalse(result.isMajorUpdate());
@@ -142,7 +146,7 @@ class AnswerRangeUpdateKitPersisterTest {
         var currentUserId = UUID.randomUUID();
 
         CreateAnswerRangePort.Param createParam = new CreateAnswerRangePort.Param(savedKit.getActiveVersionId(),
-            dslRangeThree.getTitle(), dslRangeThree.getCode(), true, currentUserId);
+            dslRangeThree.getTitle(), dslRangeThree.getCode(), true, null, currentUserId);
         long newRangeId = 543L;
         when(createAnswerRangePort.persist(createParam)).thenReturn(newRangeId);
 
@@ -193,7 +197,7 @@ class AnswerRangeUpdateKitPersisterTest {
 
         UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit, currentUserId);
 
-        ArgumentCaptor<UpdateAnswerOptionPort.Param> updateOptionParamCaptor = ArgumentCaptor.forClass(UpdateAnswerOptionPort.Param.class);
+        var updateOptionParamCaptor = ArgumentCaptor.forClass(UpdateAnswerOptionPort.Param.class);
         verify(updateAnswerOptionPort).update(updateOptionParamCaptor.capture());
 
         assertEquals(answerRange.getAnswerOptions().getLast().getId(), updateOptionParamCaptor.getValue().answerOptionId());
@@ -201,6 +205,7 @@ class AnswerRangeUpdateKitPersisterTest {
         assertEquals(newAnswerOption.getIndex(), updateOptionParamCaptor.getValue().index());
         assertEquals(newAnswerOption.getCaption(), updateOptionParamCaptor.getValue().title());
         assertEquals(newAnswerOption.getValue(), updateOptionParamCaptor.getValue().value());
+        assertEquals(answerRange.getAnswerOptions().getLast().getTranslations(), updateOptionParamCaptor.getValue().translations());
         assertNotNull(updateOptionParamCaptor.getValue().lastModificationTime());
         assertEquals(currentUserId, updateOptionParamCaptor.getValue().lastModifiedBy());
 
