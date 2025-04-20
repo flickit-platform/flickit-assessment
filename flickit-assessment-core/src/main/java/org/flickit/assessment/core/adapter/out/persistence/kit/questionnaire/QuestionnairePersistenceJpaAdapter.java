@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component(value = "coreQuestionnairePersistenceJpaAdapter")
@@ -30,25 +31,31 @@ public class QuestionnairePersistenceJpaAdapter implements
 
     @Override
     public PaginatedResponse<QuestionnaireListItem> loadAllByAssessmentId(LoadQuestionnairesByAssessmentIdPort.Param param) {
-        var pageResult = repository.findAllWithQuestionCountByKitVersionId(param.assessmentResult().getKitVersionId(), PageRequest.of(param.page(), param.size()));
+        var assessmentResult = param.assessmentResult();
+        var language = Objects.equals(assessmentResult.getLanguage(), assessmentResult.getAssessment().getAssessmentKit().getLanguage())
+            ? null
+            : assessmentResult.getLanguage();
+
+        var pageResult = repository.findAllWithQuestionCountByKitVersionId(assessmentResult.getKitVersionId(), PageRequest.of(param.page(), param.size()));
         var ids = pageResult.getContent().stream().map(v -> v.getQuestionnaire().getId()).toList();
 
-        var questionnaireIdToSubjectMap = subjectRepository.findAllWithQuestionnaireIdByKitVersionId(ids, param.assessmentResult().getKitVersionId())
+        var questionnaireIdToSubjectMap = subjectRepository.findAllWithQuestionnaireIdByKitVersionId(ids, assessmentResult.getKitVersionId())
             .stream()
             .collect(Collectors.groupingBy(SubjectWithQuestionnaireIdView::getQuestionnaireId));
 
-        var questionnairesProgress = answerRepository.getQuestionnairesProgressByAssessmentResultId(param.assessmentResult().getId(), ids)
+        var questionnairesProgress = answerRepository.getQuestionnairesProgressByAssessmentResultId(assessmentResult.getId(), ids)
             .stream()
             .collect(Collectors.toMap(QuestionnaireIdAndAnswerCountView::getQuestionnaireId, QuestionnaireIdAndAnswerCountView::getAnswerCount));
 
-        var questionnaireToNextQuestionMap = questionRepository.findQuestionnairesFirstUnansweredQuestion(param.assessmentResult().getId()).stream()
+        var questionnaireToNextQuestionMap = questionRepository.findQuestionnairesFirstUnansweredQuestion(assessmentResult.getId()).stream()
             .collect(Collectors.toMap(FirstUnansweredQuestionView::getQuestionnaireId, FirstUnansweredQuestionView::getIndex));
 
         var items = pageResult.getContent().stream()
             .map(q -> QuestionnaireMapper.mapToListItem(q,
                 questionnaireIdToSubjectMap.get(q.getQuestionnaire().getId()),
                 questionnairesProgress.getOrDefault(q.getQuestionnaire().getId(), 0),
-                questionnaireToNextQuestionMap.getOrDefault(q.getQuestionnaire().getId(), 1)))
+                questionnaireToNextQuestionMap.getOrDefault(q.getQuestionnaire().getId(), 1),
+                language))
             .toList();
 
         return new PaginatedResponse<>(
