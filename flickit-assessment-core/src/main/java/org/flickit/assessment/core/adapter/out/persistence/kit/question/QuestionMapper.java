@@ -1,7 +1,11 @@
 package org.flickit.assessment.core.adapter.out.persistence.kit.question;
 
+import jakarta.annotation.Nullable;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.common.application.domain.kit.translation.QuestionTranslation;
+import org.flickit.assessment.common.util.JsonUtils;
 import org.flickit.assessment.core.application.domain.Measure;
 import org.flickit.assessment.core.application.domain.Question;
 import org.flickit.assessment.core.application.domain.QuestionImpact;
@@ -49,6 +53,22 @@ public class QuestionMapper {
             null,
             questionnaire,
             null
+        );
+    }
+
+    public static Question mapToDomainModel(QuestionJpaEntity entity, @Nullable KitLanguage language) {
+        var translations = JsonUtils.fromJsonToMap(entity.getTranslations(), KitLanguage.class, QuestionTranslation.class);
+        var translation = translations.getOrDefault(language, new QuestionTranslation(null, null));
+
+        return new Question(
+            entity.getId(),
+            translation.titleOrDefault(entity.getTitle()),
+            entity.getIndex(),
+            translation.hintOrDefault(entity.getHint()),
+            entity.getMayNotBeApplicable(),
+            null,
+            new Questionnaire(entity.getQuestionnaireId(), null),
+            new Measure(entity.getMeasureId(), null)
         );
     }
 }
