@@ -1,9 +1,7 @@
 package org.flickit.assessment.scenario.test.users.space;
 
-import io.restassured.response.Response;
 import org.flickit.assessment.common.application.domain.space.SpaceType;
 import org.flickit.assessment.common.config.AppSpecProperties;
-import org.flickit.assessment.data.jpa.users.space.SpaceJpaEntity;
 import org.flickit.assessment.scenario.fixture.request.CreateAssessmentRequestDtoMother;
 import org.flickit.assessment.scenario.test.AbstractScenarioTest;
 import org.flickit.assessment.scenario.test.core.assessment.AssessmentTestHelper;
@@ -11,11 +9,13 @@ import org.flickit.assessment.scenario.test.kit.assessmentkit.KitTestHelper;
 import org.flickit.assessment.scenario.test.kit.kitdsl.KitDslTestHelper;
 import org.flickit.assessment.scenario.test.kit.tag.KitTagTestHelper;
 import org.flickit.assessment.scenario.test.users.expertgroup.ExpertGroupTestHelper;
+import org.flickit.assessment.users.adapter.in.rest.space.GetSpaceResponseDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
+import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
 import static org.flickit.assessment.scenario.fixture.request.CreateExpertGroupRequestDtoMother.createExpertGroupRequestDto;
 import static org.flickit.assessment.scenario.fixture.request.CreateKitByDslRequestDtoMother.createKitByDslRequestDto;
 import static org.flickit.assessment.scenario.fixture.request.CreateSpaceRequestDtoMother.createSpaceRequestDto;
@@ -55,13 +55,24 @@ public class GetSpaceScenarioTest extends AbstractScenarioTest {
             .body("id", notNullValue());
 
         Number spaceId = createResponse.body().path("id");
-        spaceHelper.get(context, spaceId).then()
-            .statusCode(200);
+        var result = spaceHelper.get(context, spaceId).then()
+            .statusCode(200)
+            .extract()
+            .body()
+            .as(GetSpaceResponseDto.class);
 
-        SpaceJpaEntity space = jpaTemplate.load(spaceId, SpaceJpaEntity.class);
-        assertNotNull(space);
-        assertEquals(createRequest.title(), space.getTitle());
-        assertEquals(SpaceType.BASIC.getCode(), createRequest.type());
+        // assert space
+        assertEquals(spaceId.longValue(), result.id());
+        assertEquals(createRequest.title(), result.title());
+        assertEquals(generateSlugCode(createRequest.title()), result.code());
+        // assert type
+        assertEquals(SpaceType.BASIC.getCode(), result.type().code());
+        assertEquals(SpaceType.BASIC.getTitle(), result.type().title());
+        assertTrue(result.editable());
+        assertNotNull(result.lastModificationTime());
+        assertEquals(0, result.assessmentsCount());
+        assertEquals(1, result.membersCount());
+        assertTrue(result.canCreateAssessment());
     }
 
     @Test
@@ -74,14 +85,15 @@ public class GetSpaceScenarioTest extends AbstractScenarioTest {
         // #assessments = limit
         createAssessments(spaceId, kitId, limit);
         // Check the `canCreateAssessment` field of the space.
-        Response getResponse = spaceHelper.get(context, spaceId);
-        getResponse.then()
+        var result = spaceHelper.get(context, spaceId).then()
             .statusCode(200)
-            .body("canCreateAssessment", notNullValue());
+            .extract()
+            .body()
+            .as(GetSpaceResponseDto.class);
 
-        Boolean canCreateAssessment = getResponse.body().path("canCreateAssessment");
         // If the limit has been reached, no additional assessments can be created.
-        assertFalse(canCreateAssessment);
+        assertEquals(limit, result.assessmentsCount());
+        assertFalse(result.canCreateAssessment());
     }
 
     @Test
@@ -94,14 +106,15 @@ public class GetSpaceScenarioTest extends AbstractScenarioTest {
         // #assessments = limit
         createAssessments(spaceId, kitId, limit);
         // Check the `canCreateAssessment` field of the space.
-        Response getResponse = spaceHelper.get(context, spaceId);
-        getResponse.then()
+        var result = spaceHelper.get(context, spaceId).then()
             .statusCode(200)
-            .body("canCreateAssessment", notNullValue());
+            .extract()
+            .body()
+            .as(GetSpaceResponseDto.class);
 
-        Boolean canCreateAssessment = getResponse.body().path("canCreateAssessment");
         // If the limit for the basic space has been reached, an assessment can still be created in a premium space.
-        assertTrue(canCreateAssessment);
+        assertEquals(limit, result.assessmentsCount());
+        assertTrue(result.canCreateAssessment());
     }
 
     private void createAssessments(long spaceId, long kitId, int limit) {
