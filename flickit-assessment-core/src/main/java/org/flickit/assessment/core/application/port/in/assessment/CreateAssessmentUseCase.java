@@ -7,7 +7,9 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.application.domain.notification.HasNotificationCmd;
+import org.flickit.assessment.common.validation.EnumValue;
 import org.flickit.assessment.core.application.domain.notification.CreateAssessmentNotificationCmd;
 
 import java.util.UUID;
@@ -38,15 +40,19 @@ public interface CreateAssessmentUseCase {
         @NotNull(message = CREATE_ASSESSMENT_ASSESSMENT_KIT_ID_NOT_NULL)
         Long kitId;
 
+        @EnumValue(enumClass = KitLanguage.class, message = CREATE_ASSESSMENT_LANGUAGE_INVALID)
+        String lang;
+
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
         @Builder
-        public Param(Long spaceId, String title, String shortTitle, Long kitId, UUID currentUserId) {
+        public Param(Long spaceId, String title, String shortTitle, Long kitId, String lang, UUID currentUserId) {
             this.title = title != null ? title.strip() : null;
             this.shortTitle = shortTitle != null && !shortTitle.isBlank() ? shortTitle.strip() : null;
             this.spaceId = spaceId;
             this.kitId = kitId;
+            this.lang = KitLanguage.getEnum(lang).name();
             this.currentUserId = currentUserId;
             this.validateSelf();
         }

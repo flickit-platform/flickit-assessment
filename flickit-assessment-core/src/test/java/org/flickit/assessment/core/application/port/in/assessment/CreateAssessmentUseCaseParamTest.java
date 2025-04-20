@@ -3,7 +3,17 @@ package org.flickit.assessment.core.application.port.in.assessment;
 
 import jakarta.validation.ConstraintViolationException;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.flickit.assessment.common.config.AppSpecProperties;
+import org.flickit.assessment.common.util.SpringUtil;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationContext;
 
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -11,10 +21,22 @@ import java.util.function.Consumer;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.doReturn;
 
+@ExtendWith(MockitoExtension.class)
 class CreateAssessmentUseCaseParamTest {
+
+    @Mock
+    ApplicationContext applicationContext;
+
+    @BeforeEach
+    void prepare() {
+        var props = new AppSpecProperties();
+        doReturn(props).when(applicationContext).getBean(AppSpecProperties.class);
+        new SpringUtil(applicationContext);
+    }
 
     @Test
     void testCreateAssessmentUseCaseParam_titleParamViolatesConstraints_ErrorMessage() {
@@ -59,6 +81,17 @@ class CreateAssessmentUseCaseParamTest {
         assertThat(throwable).hasMessage("kitId: " + CREATE_ASSESSMENT_ASSESSMENT_KIT_ID_NOT_NULL);
     }
 
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {"  ", "\t", "\n"})
+    void testCreateAssessmentUseCaseParam_whenLangParamViolatesConstraints_thenSetLangToDefault(String lang) {
+        var param = createParam(b -> b.lang(lang));
+        assertEquals("EN", param.getLang());
+
+        param = createParam(b -> b.lang("FR"));
+        assertEquals("EN", param.getLang());
+    }
+
     @Test
     void testCreateAssessmentUseCaseParam_currentUserIdParamViolatesConstraint_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
@@ -66,10 +99,10 @@ class CreateAssessmentUseCaseParamTest {
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 
-    private void createParam(Consumer<CreateAssessmentUseCase.Param.ParamBuilder> changer) {
+    private CreateAssessmentUseCase.Param createParam(Consumer<CreateAssessmentUseCase.Param.ParamBuilder> changer) {
         var paramBuilder = paramBuilder();
         changer.accept(paramBuilder);
-        paramBuilder.build();
+        return paramBuilder.build();
     }
 
     private CreateAssessmentUseCase.Param.ParamBuilder paramBuilder() {
@@ -78,6 +111,7 @@ class CreateAssessmentUseCaseParamTest {
             .shortTitle("shortTitle")
             .spaceId(123L)
             .kitId(234L)
+            .lang("EN")
             .currentUserId(UUID.randomUUID());
     }
 }
