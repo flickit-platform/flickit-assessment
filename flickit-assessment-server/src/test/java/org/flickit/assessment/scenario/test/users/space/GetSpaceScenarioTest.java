@@ -45,7 +45,6 @@ public class GetSpaceScenarioTest extends AbstractScenarioTest {
     @Autowired
     AppSpecProperties appSpecProperties;
 
-
     @Test
     void getSpace() {
         var createRequest = createSpaceRequestDto();
@@ -61,6 +60,8 @@ public class GetSpaceScenarioTest extends AbstractScenarioTest {
 
         SpaceJpaEntity space = jpaTemplate.load(spaceId, SpaceJpaEntity.class);
         assertNotNull(space);
+        assertEquals(createRequest.title(), space.getTitle());
+        assertEquals(SpaceType.BASIC.getCode(), createRequest.type());
     }
 
     @Test
