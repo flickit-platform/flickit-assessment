@@ -38,13 +38,13 @@ public class KitTestHelper {
             .response();
     }
 
-    public Response grantUserAccessToKit(ScenarioContext context, GrantUserAccessToKitRequestDto request, long id) {
+    public Response grantUserAccessToKit(ScenarioContext context, GrantUserAccessToKitRequestDto request, long kitId) {
         return given()
             .contentType(JSON)
             .auth().oauth2(context.getCurrentUser().getJwt())
             .body(request)
             .when()
-            .post("/assessment-core/api/assessment-kits/" + id + "/users")
+            .post("/assessment-core/api/assessment-kits/" + kitId + "/users")
             .then()
             .extract()
             .response();
