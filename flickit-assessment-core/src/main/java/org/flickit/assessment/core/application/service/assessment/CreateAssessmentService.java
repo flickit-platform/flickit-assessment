@@ -1,6 +1,7 @@
 package org.flickit.assessment.core.application.service.assessment;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.application.domain.notification.SendNotification;
 import org.flickit.assessment.common.application.domain.space.SpaceType;
 import org.flickit.assessment.common.config.AppSpecProperties;
@@ -80,8 +81,12 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
 
         validateSpace(param, space, assessmentKit.getIsPrivate());
 
+        int langId = (param.getLang() != null)
+            ? KitLanguage.valueOf(param.getLang()).getId()
+            : assessmentKit.getLanguage().getId();
+
         UUID id = createAssessmentPort.persist(toParam(param));
-        createAssessmentResult(id, assessmentKit.getKitVersion(), assessmentKit.getLanguage().getId());
+        createAssessmentResult(id, assessmentKit.getKitVersion(), langId);
 
         grantAssessmentAccesses(id, space.getOwnerId(), param.getCurrentUserId());
 

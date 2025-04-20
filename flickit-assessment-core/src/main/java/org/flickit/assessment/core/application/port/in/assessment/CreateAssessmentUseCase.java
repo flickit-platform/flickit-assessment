@@ -52,7 +52,9 @@ public interface CreateAssessmentUseCase {
             this.shortTitle = shortTitle != null && !shortTitle.isBlank() ? shortTitle.strip() : null;
             this.spaceId = spaceId;
             this.kitId = kitId;
-            this.lang = KitLanguage.getEnum(lang).name();
+            this.lang = lang != null && !lang.isBlank()
+                ? KitLanguage.getEnum(lang).name()
+                : null;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }

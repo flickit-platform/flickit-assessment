@@ -1,6 +1,5 @@
 package org.flickit.assessment.core.application.port.in.assessment;
 
-
 import jakarta.validation.ConstraintViolationException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.flickit.assessment.common.config.AppSpecProperties;
@@ -8,9 +7,6 @@ import org.flickit.assessment.common.util.SpringUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.NullAndEmptySource;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
@@ -23,7 +19,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.lenient;
 
 @ExtendWith(MockitoExtension.class)
 class CreateAssessmentUseCaseParamTest {
@@ -34,7 +30,7 @@ class CreateAssessmentUseCaseParamTest {
     @BeforeEach
     void prepare() {
         var props = new AppSpecProperties();
-        doReturn(props).when(applicationContext).getBean(AppSpecProperties.class);
+        lenient().doReturn(props).when(applicationContext).getBean(AppSpecProperties.class);
         new SpringUtil(applicationContext);
     }
 
@@ -81,15 +77,19 @@ class CreateAssessmentUseCaseParamTest {
         assertThat(throwable).hasMessage("kitId: " + CREATE_ASSESSMENT_ASSESSMENT_KIT_ID_NOT_NULL);
     }
 
-    @ParameterizedTest
-    @NullAndEmptySource
-    @ValueSource(strings = {"  ", "\t", "\n"})
-    void testCreateAssessmentUseCaseParam_whenLangParamViolatesConstraints_thenSetLangToDefault(String lang) {
-        var param = createParam(b -> b.lang(lang));
+    @Test
+    void testCreateAssessmentUseCaseParam_whenLangParamIsInvalid_thenSetLangToDefault() {
+        var param = createParam(b -> b.lang("FR"));
         assertEquals("EN", param.getLang());
+    }
 
-        param = createParam(b -> b.lang("FR"));
-        assertEquals("EN", param.getLang());
+    @Test
+    void testCreateAssessmentUseCaseParam_whenLangParamIsNullOrEmpty_thenSetLangToNull() {
+        var param = createParam(b -> b.lang(" "));
+        assertNull(param.getLang());
+
+        param = createParam(b -> b.lang(null));
+        assertNull(param.getLang());
     }
 
     @Test
