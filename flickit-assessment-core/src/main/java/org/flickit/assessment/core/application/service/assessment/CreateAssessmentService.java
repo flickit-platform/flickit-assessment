@@ -81,7 +81,7 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
         validateSpace(param, space, assessmentKit.getIsPrivate());
 
         UUID id = createAssessmentPort.persist(toParam(param));
-        createAssessmentResult(id, assessmentKit.getKitVersion());
+        createAssessmentResult(id, assessmentKit.getKitVersion(), assessmentKit.getLanguage().getId());
 
         grantAssessmentAccesses(id, space.getOwnerId(), param.getCurrentUserId());
 
@@ -122,10 +122,10 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
             param.getCurrentUserId());
     }
 
-    private void createAssessmentResult(UUID assessmentId, Long kitVersionId) {
+    private void createAssessmentResult(UUID assessmentId, Long kitVersionId, int langId) {
         LocalDateTime lastModificationTime = LocalDateTime.now();
         CreateAssessmentResultPort.Param param = new CreateAssessmentResultPort.Param(assessmentId, kitVersionId,
-            lastModificationTime, false, false);
+            lastModificationTime, false, false, langId);
         UUID assessmentResultId = createAssessmentResultPort.persist(param);
 
         List<Subject> subjects = loadSubjectsPort.loadByKitVersionIdWithAttributes(kitVersionId);
