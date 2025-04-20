@@ -14,6 +14,8 @@ import java.util.*;
 
 public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJpaEntity, Long> {
 
+    Optional<AssessmentKitJpaEntity> findByKitVersionId(long kitVersionId);
+
     @Query("""
             SELECT k
             FROM AssessmentKitJpaEntity k
