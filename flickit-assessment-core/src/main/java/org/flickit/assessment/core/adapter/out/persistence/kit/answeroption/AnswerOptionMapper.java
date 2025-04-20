@@ -21,8 +21,11 @@ public class AnswerOptionMapper {
     }
 
     public static AnswerOption mapToDomainModel(AnswerOptionJpaEntity entity, @Nullable KitLanguage language) {
-        var translations = JsonUtils.fromJsonToMap(entity.getTranslations(), KitLanguage.class, AnswerOptionTranslation.class);
-        var translation = translations.getOrDefault(language, new AnswerOptionTranslation(null));
+        var translation = new AnswerOptionTranslation(null);
+        if (language != null) {
+            var translations = JsonUtils.fromJsonToMap(entity.getTranslations(), KitLanguage.class, AnswerOptionTranslation.class);
+            translation = translations.getOrDefault(language, translation);
+        }
 
         return new AnswerOption(
             entity.getId(),

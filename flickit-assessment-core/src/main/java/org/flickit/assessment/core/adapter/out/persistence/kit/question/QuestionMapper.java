@@ -57,8 +57,11 @@ public class QuestionMapper {
     }
 
     public static Question mapToDomainModel(QuestionJpaEntity entity, @Nullable KitLanguage language) {
-        var translations = JsonUtils.fromJsonToMap(entity.getTranslations(), KitLanguage.class, QuestionTranslation.class);
-        var translation = translations.getOrDefault(language, new QuestionTranslation(null, null));
+        var translation = new QuestionTranslation(null, null);
+        if (language != null) {
+            var translations = JsonUtils.fromJsonToMap(entity.getTranslations(), KitLanguage.class, QuestionTranslation.class);
+            translation = translations.getOrDefault(language, translation);
+        }
 
         return new Question(
             entity.getId(),
