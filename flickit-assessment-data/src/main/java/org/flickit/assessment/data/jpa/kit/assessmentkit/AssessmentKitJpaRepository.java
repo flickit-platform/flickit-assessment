@@ -3,7 +3,6 @@ package org.flickit.assessment.data.jpa.kit.assessmentkit;
 import jakarta.annotation.Nullable;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -68,12 +67,13 @@ public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJ
     CountKitStatsView countKitStats(@Param(value = "kitId") long kitId);
 
     @Query("""
-            SELECT k AS kit, g AS expertGroup
+            SELECT DISTINCT(k) AS kit, g AS expertGroup
             FROM AssessmentKitJpaEntity k
             LEFT JOIN ExpertGroupJpaEntity g ON k.expertGroupId = g.id
+            LEFT JOIN KitLanguageJpaEntity kl ON k.id = kl.kitId
             WHERE k.published = TRUE
                 AND k.isPrivate = FALSE
-                AND (:languageIds IS NULL OR k.languageId IN :languageIds)
+                AND (:languageIds IS NULL OR kl.langId IN :languageIds)
             ORDER BY k.title
         """)
     Page<KitWithExpertGroupView> findAllPublishedAndNotPrivateOrderByTitle(@Nullable
@@ -82,14 +82,15 @@ public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJ
                                                                            Pageable pageable);
 
     @Query("""
-            SELECT k AS kit, g AS expertGroup
+            SELECT DISTINCT(k) AS kit, g AS expertGroup
             FROM AssessmentKitJpaEntity k
             LEFT JOIN ExpertGroupJpaEntity g ON k.expertGroupId = g.id
+            LEFT JOIN KitLanguageJpaEntity kl ON k.id = kl.kitId
             JOIN KitUserAccessJpaEntity kua ON k.id = kua.kitId
             WHERE k.published = TRUE
                 AND k.isPrivate = TRUE
                 AND kua.userId = :userId
-                AND (:languageIds IS NULL OR k.languageId IN :languageIds)
+                AND (:languageIds IS NULL OR kl.langId IN :languageIds)
             ORDER BY k.title
         """)
     Page<KitWithExpertGroupView> findAllPublishedAndPrivateByUserIdOrderByTitle(@Param("userId")
@@ -98,6 +99,24 @@ public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJ
                                                                                 @Param("languageIds")
                                                                                 Collection<Integer> languageIds,
                                                                                 Pageable pageable);
+
+    @Query("""
+            SELECT DISTINCT(k) AS kit, g AS expertGroup
+            FROM AssessmentKitJpaEntity k
+            LEFT JOIN ExpertGroupJpaEntity g ON k.expertGroupId = g.id
+            LEFT JOIN KitLanguageJpaEntity kl ON k.id = kl.kitId
+            JOIN KitUserAccessJpaEntity kua ON k.id = kua.kitId
+            WHERE k.published = TRUE
+                AND (k.isPrivate = FALSE OR (k.isPrivate = TRUE AND kua.userId = :userId))
+                AND (:languageIds IS NULL OR kl.langId IN :languageIds)
+            ORDER BY k.isPrivate DESC, k.title
+        """)
+    Page<KitWithExpertGroupView> findAllPublishedOrderByTitle(@Param("userId")
+                                                              UUID userId,
+                                                              @Nullable
+                                                              @Param("languageIds")
+                                                              Collection<Integer> languageIds,
+                                                              Pageable pageable);
 
     @Query("""
             SELECT
@@ -137,7 +156,7 @@ public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJ
         @Param("userId") UUID userId,
         @Param("includeUnpublished") boolean includeUnpublishedKits,
         @Param("updatingStatusId") int updatingStatusId,
-        PageRequest pageable);
+        Pageable pageable);
 
     @Query("""
             SELECT k.kitVersionId

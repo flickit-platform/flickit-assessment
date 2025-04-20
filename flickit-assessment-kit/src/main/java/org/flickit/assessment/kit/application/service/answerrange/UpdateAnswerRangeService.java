@@ -58,6 +58,7 @@ public class UpdateAnswerRangeService implements UpdateAnswerRangeUseCase {
             param.getTitle(),
             code,
             param.getReusable(),
+            param.getTranslations(),
             LocalDateTime.now(),
             param.getCurrentUserId());
     }

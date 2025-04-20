@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.adapter.in.rest.subject;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
 import org.flickit.assessment.kit.application.port.in.subject.UpdateSubjectUseCase;
+import org.flickit.assessment.kit.application.port.in.subject.UpdateSubjectUseCase.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,17 +29,18 @@ public class UpdateSubjectRestController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private UpdateSubjectUseCase.Param toParam(Long kitVersionId,
-                                               Long subjectId,
-                                               UUID currentUserId,
-                                               UpdateSubjectRequestDto updateSubjectRequestDto) {
+    private Param toParam(Long kitVersionId,
+                          Long subjectId,
+                          UUID currentUserId,
+                          UpdateSubjectRequestDto updateSubjectRequestDto) {
 
-        return new UpdateSubjectUseCase.Param(kitVersionId,
+        return new Param(kitVersionId,
             subjectId,
             updateSubjectRequestDto.index(),
             updateSubjectRequestDto.title(),
             updateSubjectRequestDto.description(),
             updateSubjectRequestDto.weight(),
+            updateSubjectRequestDto.translations(),
             currentUserId);
     }
 }

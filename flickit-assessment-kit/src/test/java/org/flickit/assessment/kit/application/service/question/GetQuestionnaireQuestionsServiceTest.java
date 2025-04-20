@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
 import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createKitVersion;
@@ -47,7 +48,7 @@ class GetQuestionnaireQuestionsServiceTest {
     private final KitVersion kitVersion = createKitVersion(simpleKit());
 
     @Test
-    void testGetQuestionnaireQuestions_WhenCurrentUserIsNotExpertGroupOwner_ThenThrowAccessDeniedException() {
+    void testGetQuestionnaireQuestions_whenCurrentUserIsNotExpertGroupOwner_thenThrowAccessDeniedException() {
         var param = createParam(GetQuestionnaireQuestionsUseCase.Param.ParamBuilder::build);
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
@@ -61,7 +62,7 @@ class GetQuestionnaireQuestionsServiceTest {
     }
 
     @Test
-    void testGetQuestionnaireQuestions_WhenCurrentUserIsExpertGroupOwner_ThenGetQuestionnaireQuestions() {
+    void testGetQuestionnaireQuestions_whenCurrentUserIsExpertGroupOwner_thenGetQuestionnaireQuestions() {
         var param = createParam(b -> b.currentUserId(ownerId));
         Question question1 = createQuestion();
         Question question2 = createQuestion(null);
@@ -78,26 +79,33 @@ class GetQuestionnaireQuestionsServiceTest {
         when(checkExpertGroupAccessPort.checkIsMember(kitVersion.getKit().getExpertGroupId(), param.getCurrentUserId()))
             .thenReturn(true);
         when(loadQuestionnaireQuestionsPort.loadQuestionnaireQuestions(new LoadQuestionnaireQuestionsPort.Param(param.getQuestionnaireId(),
-                param.getKitVersionId(),
-                param.getPage(),
-                param.getSize())))
+            param.getKitVersionId(),
+            param.getPage(),
+            param.getSize())))
             .thenReturn(pageResult);
 
         var paginatedResponse = service.getQuestionnaireQuestions(param);
 
         assertNotNull(paginatedResponse);
         assertEquals(pageResult.getItems().size(), paginatedResponse.getItems().size());
-        for (int i = 0; i < pageResult.getItems().size(); i++) {
-            var expected = pageResult.getItems().get(i);
-            var actual = paginatedResponse.getItems().get(i);
-            assertEquals(expected.getId(), actual.id());
-            assertEquals(expected.getTitle(), actual.title());
-            assertEquals(expected.getIndex(), actual.index());
-            assertEquals(expected.getHint(), actual.hint());
-            assertEquals(expected.getMayNotBeApplicable(), actual.mayNotBeApplicable());
-            assertEquals(expected.getAdvisable(), actual.advisable());
-            assertEquals(expected.getAnswerRangeId(), actual.answerRangeId());
-        }
+        assertThat(paginatedResponse.getItems())
+            .zipSatisfy(items, (actual, expected) -> {
+                assertEquals(expected.getId(), actual.id());
+                assertEquals(expected.getTitle(), actual.title());
+                assertEquals(expected.getIndex(), actual.index());
+                assertEquals(expected.getHint(), actual.hint());
+                assertEquals(expected.getMayNotBeApplicable(), actual.mayNotBeApplicable());
+                assertEquals(expected.getAdvisable(), actual.advisable());
+                assertEquals(expected.getAnswerRangeId(), actual.answerRangeId());
+                assertEquals(expected.getMeasureId(), actual.measureId());
+                assertEquals(expected.getTranslations(), actual.translations());
+            });
+
+        assertEquals(pageResult.getItems().size(), paginatedResponse.getTotal());
+        assertEquals(pageResult.getSize(), paginatedResponse.getSize());
+        assertEquals(pageResult.getPage(), paginatedResponse.getPage());
+        assertEquals(pageResult.getSort(), paginatedResponse.getSort());
+        assertEquals(pageResult.getOrder(), paginatedResponse.getOrder());
     }
 
     public GetQuestionnaireQuestionsUseCase.Param createParam(Consumer<GetQuestionnaireQuestionsUseCase.Param.ParamBuilder> changer) {

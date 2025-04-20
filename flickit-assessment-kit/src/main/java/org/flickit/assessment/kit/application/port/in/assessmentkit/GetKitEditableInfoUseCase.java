@@ -5,9 +5,12 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.common.application.domain.kit.translation.KitTranslation;
 import org.flickit.assessment.kit.application.domain.KitTag;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
@@ -39,13 +42,18 @@ public interface GetKitEditableInfoUseCase {
         Long id,
         String title,
         String summary,
-        String lang,
+        Language mainLanguage,
         Boolean published,
         Boolean isPrivate,
         Double price,
         String about,
         List<KitTag> tags,
         boolean editable,
-        boolean hasActiveVersion) {
+        boolean hasActiveVersion,
+        Map<KitLanguage, KitTranslation> translations,
+        List<Language> languages) {
+        public record Language(String code,
+                               String title) {
+        }
     }
 }

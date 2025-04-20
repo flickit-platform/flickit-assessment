@@ -32,6 +32,9 @@ public class ErrorMessageKey {
     public static final String CREATE_ASSESSMENT_SPACE_ID_NOT_NULL = "create-assessment.spaceId.notNull";
     public static final String CREATE_ASSESSMENT_DUPLICATE_TITLE_AND_SPACE_ID = "create-assessment.duplicate.titleAndSpaceId";
     public static final String CREATE_ASSESSMENT_KIT_NOT_ALLOWED = "create-assessment.kit.notAllowed";
+    public static final String CREATE_ASSESSMENT_BASIC_SPACE_ASSESSMENTS_MAX = "create-assessment.basicSpaceAssessments.max";
+    public static final String CREATE_ASSESSMENT_BASIC_SPACE_PRIVATE_KIT_NOT_ALLOWED = "create-assessment.basicSpacePrivateKits.notAllowed";
+    public static final String CREATE_ASSESSMENT_PREMIUM_SPACE_EXPIRED = "create-assessment.premiumSpace.expired";
 
     public static final String CREATE_ASSESSMENT_RESULT_ASSESSMENT_ID_NOT_FOUND = "create-assessmentresult.assessmentId.notFound";
 
@@ -82,13 +85,6 @@ public class ErrorMessageKey {
     public static final String GET_EVIDENCE_LIST_SIZE_MIN = "get-evidence-list.size.min";
     public static final String GET_EVIDENCE_LIST_SIZE_MAX = "get-evidence-list.size.max";
     public static final String GET_EVIDENCE_LIST_PAGE_MIN = "get-evidence-list.page.min";
-
-    public static final String REPORT_ASSESSMENT_ASSESSMENT_ID_NOT_FOUND = "report-assessment-assessment.id.notFound";
-    public static final String REPORT_ASSESSMENT_ID_NOT_NULL = "report-assessment.assessment.id.notNull";
-    public static final String REPORT_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND = "report-assessment.assessmentResult.notFound";
-    public static final String REPORT_ASSESSMENT_ASSESSMENT_KIT_NOT_FOUND = "report-assessment.assessmentKit.notFound";
-    public static final String REPORT_ASSESSMENT_EXPERT_GROUP_NOT_FOUND = "report-assessment.expertGroup.notFound";
-    public static final String REPORT_ASSESSMENT_SPACE_NOT_FOUND = "report-assessment.space.notFound";
 
     public static final String GET_ASSESSMENT_PROGRESS_ASSESSMENT_ID_NOT_NULL = "get-assessment-progress.assessment.id.notNull";
     public static final String GET_ASSESSMENT_PROGRESS_ASSESSMENT_NOT_FOUND = "get-assessment-progress.assessment.notFound";
@@ -308,6 +304,9 @@ public class ErrorMessageKey {
     public static final String CREATE_ASSESSMENT_REPORT_METADATA_PROS_AND_CONS_SIZE_MAX = "create-assessment-report-metadata.prosAndCons.size.max";
 
     public static final String GET_ASSESSMENT_REPORT_ASSESSMENT_ID_NOT_NULL = "get-assessment-report.assessmentId.notNull";
+    public static final String GET_ASSESSMENT_REPORT_ASSESSMENT_ID_NOT_FOUND = "get-assessment-report.assessment.id.notFound";
+    public static final String GET_ASSESSMENT_REPORT_ASSESSMENT_RESULT_NOT_FOUND = "get-assessment-report.assessmentResult.notFound";
+    public static final String GET_ASSESSMENT_REPORT_ASSESSMENT_KIT_NOT_FOUND = "get-assessment-report.assessmentKit.notFound";
     public static final String GET_ASSESSMENT_REPORT_REPORT_NOT_PUBLISHED = "get-assessment-report.report-not-published";
 
     public static final String UPDATE_ASSESSMENT_REPORT_PUBLISH_STATUS_ASSESSMENT_ID_NOT_NULL = "update-assessment-report-publish-status.assessmentId.notNull";

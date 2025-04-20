@@ -37,6 +37,7 @@ public class CreateAnswerRangeService implements CreateAnswerRangeUseCase {
             param.getTitle(),
             code,
             Boolean.TRUE,
+            param.getTranslations(),
             param.getCurrentUserId());
     }
 }

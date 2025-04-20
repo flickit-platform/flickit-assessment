@@ -2,6 +2,9 @@ package org.flickit.assessment.kit.adapter.out.persistence.answeroption;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.common.application.domain.kit.translation.AnswerOptionTranslation;
+import org.flickit.assessment.common.util.JsonUtils;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
 import org.flickit.assessment.kit.application.domain.AnswerOption;
 import org.flickit.assessment.kit.application.domain.dsl.AnswerOptionDslModel;
@@ -18,8 +21,9 @@ public class AnswerOptionMapper {
             entity.getTitle(),
             entity.getIndex(),
             entity.getAnswerRangeId(),
-            entity.getValue()
-            );
+            entity.getValue(),
+            JsonUtils.fromJsonToMap(entity.getTranslations(), KitLanguage.class, AnswerOptionTranslation.class)
+        );
     }
 
     public static AnswerOptionJpaEntity mapToJpaEntity(CreateAnswerOptionPort.Param param) {
@@ -31,6 +35,7 @@ public class AnswerOptionMapper {
             param.title(),
             param.answerRangeId(),
             param.value(),
+            JsonUtils.toJson(param.translation()),
             creationTime,
             creationTime,
             param.createdBy(),

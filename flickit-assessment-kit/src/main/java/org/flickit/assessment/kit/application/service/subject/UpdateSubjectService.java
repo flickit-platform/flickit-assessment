@@ -40,6 +40,7 @@ public class UpdateSubjectService implements UpdateSubjectUseCase {
             param.getIndex(),
             param.getDescription(),
             param.getWeight(),
+            param.getTranslations(),
             LocalDateTime.now(),
             param.getCurrentUserId()));
     }
