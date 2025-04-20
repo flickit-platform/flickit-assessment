@@ -6,7 +6,6 @@ import org.flickit.assessment.users.application.port.in.spaceuseraccess.GetSpace
 import org.flickit.assessment.users.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.LoadSpaceMembersPort;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -39,8 +38,7 @@ class GetSpaceMembersServiceTest {
     CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
     @Test
-    @DisplayName("Only members can see the Space members")
-    void testGetSpaceMember_spaceAccessNotFound_accessDeniedException() {
+    void testGetSpaceMember_userDoesNotHaveAccess_accessDeniedException() {
         long spaceId = 0L;
         UUID currentUserId = UUID.randomUUID();
         int size = 10;
@@ -49,14 +47,15 @@ class GetSpaceMembersServiceTest {
 
         when(checkSpaceAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(false);
 
-        assertThrows(AccessDeniedException.class, () -> service.getSpaceMembers(param), COMMON_CURRENT_USER_NOT_ALLOWED);
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.getSpaceMembers(param), COMMON_CURRENT_USER_NOT_ALLOWED);
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+
         verify(checkSpaceAccessPort).checkIsMember(spaceId,currentUserId);
         verifyNoInteractions(loadSpaceMembersPort);
         verifyNoInteractions(createFileDownloadLinkPort);
     }
 
     @Test
-    @DisplayName("Get Space Member service, for valid input should produce list of members")
     void testGetSpaceMember_validParameters_validMembers() {
         long spaceId = 0L;
         UUID currentUserId = UUID.randomUUID();
@@ -81,10 +80,10 @@ class GetSpaceMembersServiceTest {
         when(createFileDownloadLinkPort.createDownloadLink(anyString(), any())).thenReturn("pictureLink");
 
         var result = service.getSpaceMembers(param);
-        assertEquals(2, result.getItems().size(), "Items list should be empty");
-        assertEquals(page, result.getPage(), "'page' should be 0");
-        assertEquals(size, result.getSize(), "'size' should be 10");
-        assertEquals(2, result.getTotal(), "'total' should be 2");
+        assertEquals(2, result.getItems().size());
+        assertEquals(page, result.getPage());
+        assertEquals(size, result.getSize());
+        assertEquals(2, result.getTotal());
         assertTrue(result.getItems().getFirst().isOwner());
         assertFalse(result.getItems().get(1).isOwner());
 

@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.adapter.out.persistence.subject;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.util.JsonUtils;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
 import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
@@ -99,7 +100,7 @@ public class SubjectPersistenceJpaAdapter implements
 
     @Override
     public Subject load(long subjectId, long kitVersionId) {
-        var subjectEntity = repository.findByIdAndKitVersionId (subjectId, kitVersionId)
+        var subjectEntity = repository.findByIdAndKitVersionId(subjectId, kitVersionId)
             .orElseThrow(() -> new ResourceNotFoundException(GET_KIT_SUBJECT_DETAIL_SUBJECT_ID_NOT_FOUND));
         List<AttributeJpaEntity> attributeEntities = attributeRepository.findAllBySubjectIdAndKitVersionId(subjectId, kitVersionId);
         return mapToDomainModel(subjectEntity,
@@ -153,6 +154,7 @@ public class SubjectPersistenceJpaAdapter implements
         if (!repository.existsByIdAndKitVersionId(param.id(), param.kitVersionId()))
             throw new ResourceNotFoundException(SUBJECT_ID_NOT_FOUND);
 
+        var translations = JsonUtils.toJson(param.translations());
         repository.update(param.id(),
             param.kitVersionId(),
             param.code(),
@@ -160,6 +162,7 @@ public class SubjectPersistenceJpaAdapter implements
             param.index(),
             param.description(),
             param.weight(),
+            translations,
             param.lastModificationTime(),
             param.lastModifiedBy());
     }

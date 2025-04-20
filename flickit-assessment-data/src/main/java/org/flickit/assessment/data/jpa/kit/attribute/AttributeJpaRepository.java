@@ -43,6 +43,7 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
                 a.index = :index,
                 a.description = :description,
                 a.weight = :weight,
+                a.translations = :translations,
                 a.lastModificationTime = :lastModificationTime,
                 a.lastModifiedBy = :lastModifiedBy,
                 a.subjectId = :subjectId
@@ -55,6 +56,7 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
                 @Param("index") int index,
                 @Param("description") String description,
                 @Param("weight") int weight,
+                @Param("translations") String translations,
                 @Param("lastModificationTime") LocalDateTime lastModificationTime,
                 @Param("lastModifiedBy") UUID lastModifiedBy,
                 @Param("subjectId") long subjectId);
@@ -178,9 +180,9 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
             LEFT JOIN QuestionImpactJpaEntity qi on qsn.id = qi.questionId and qsn.kitVersionId = qi.kitVersionId
             WHERE qi.attributeId = :attributeId
                 AND qsn.kitVersionId = :kitVersionId
-                AND ans.isNotApplicable != TRUE
+                AND ans.isNotApplicable IS NOT TRUE
         """)
-    List<AttributeImpactFullQuestionsView> findAttributeQuestionsAndAnswers(@Param("assessmentResultId") UUID assessmentResultId,
-                                                                            @Param("kitVersionId") Long kitVersionId,
-                                                                            @Param("attributeId") long attributeId);
+    List<QuestionAnswerView> findAttributeQuestionsAndAnswers(@Param("assessmentResultId") UUID assessmentResultId,
+                                                              @Param("kitVersionId") Long kitVersionId,
+                                                              @Param("attributeId") long attributeId);
 }

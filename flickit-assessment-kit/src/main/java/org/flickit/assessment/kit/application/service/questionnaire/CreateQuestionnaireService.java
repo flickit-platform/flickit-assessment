@@ -3,12 +3,10 @@ package org.flickit.assessment.kit.application.service.questionnaire;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.KitVersion;
-import org.flickit.assessment.kit.application.domain.Measure;
 import org.flickit.assessment.kit.application.domain.Questionnaire;
 import org.flickit.assessment.kit.application.port.in.questionnaire.CreateQuestionnaireUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
-import org.flickit.assessment.kit.application.port.out.measure.CreateMeasurePort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.CreateQuestionnairePort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +25,6 @@ public class CreateQuestionnaireService implements CreateQuestionnaireUseCase {
     private final LoadKitVersionPort loadKitVersionPort;
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
     private final CreateQuestionnairePort createQuestionnairePort;
-    private final CreateMeasurePort createMeasurePort;
 
     @Override
     public long createQuestionnaire(Param param) {
@@ -41,20 +38,10 @@ public class CreateQuestionnaireService implements CreateQuestionnaireUseCase {
             param.getTitle(),
             param.getIndex(),
             param.getDescription(),
+            null,
+            param.getTranslations(),
             LocalDateTime.now(),
             LocalDateTime.now());
-
-        createMeasurePort.persist(convertToMeasure(questionnaire), param.getKitVersionId(), param.getCurrentUserId());
         return createQuestionnairePort.persist(questionnaire, param.getKitVersionId(), param.getCurrentUserId());
-    }
-
-    private Measure convertToMeasure(Questionnaire questionnaire) {
-        return new Measure(null,
-            questionnaire.getCode(),
-            questionnaire.getTitle(),
-            questionnaire.getIndex(),
-            questionnaire.getDescription(),
-            questionnaire.getCreationTime(),
-            questionnaire.getLastModificationTime());
     }
 }

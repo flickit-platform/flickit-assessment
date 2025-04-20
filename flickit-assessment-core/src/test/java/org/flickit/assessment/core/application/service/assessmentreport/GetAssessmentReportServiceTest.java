@@ -16,10 +16,12 @@ import org.flickit.assessment.core.application.domain.report.QuestionnaireReport
 import org.flickit.assessment.core.application.port.in.assessmentreport.GetAssessmentReportUseCase;
 import org.flickit.assessment.core.application.port.out.adviceitem.LoadAdviceItemsPort;
 import org.flickit.assessment.core.application.port.out.advicenarration.LoadAdviceNarrationPort;
+import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentQuestionsPort;
 import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
 import org.flickit.assessment.core.test.fixture.application.AssessmentReportMother;
 import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
+import org.flickit.assessment.core.test.fixture.application.QuestionMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -40,10 +42,14 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 import static org.flickit.assessment.common.exception.api.ErrorCodes.REPORT_UNPUBLISHED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_REPORT_REPORT_NOT_PUBLISHED;
 import static org.flickit.assessment.core.test.fixture.application.AdviceItemMother.adviceItem;
+import static org.flickit.assessment.core.test.fixture.application.AnswerMother.answer;
+import static org.flickit.assessment.core.test.fixture.application.AnswerOptionMother.optionFour;
+import static org.flickit.assessment.core.test.fixture.application.AnswerOptionMother.optionOne;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentReportMetadataMother.fullMetadata;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentReportMother.publishedReportWithMetadata;
 import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.levelThree;
 import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.levelTwo;
+import static org.flickit.assessment.core.test.fixture.application.MeasureMother.createMeasure;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -61,6 +67,9 @@ class GetAssessmentReportServiceTest {
 
     @Mock
     private LoadAssessmentReportPort loadAssessmentReportPort;
+
+    @Mock
+    private LoadAssessmentQuestionsPort loadAssessmentQuestionsPort;
 
     @Mock
     private ValidateAssessmentResultPort validateAssessmentResultPort;
@@ -83,6 +92,7 @@ class GetAssessmentReportServiceTest {
 
         verifyNoInteractions(loadAssessmentReportInfoPort,
             loadAssessmentReportPort,
+            loadAssessmentQuestionsPort,
             validateAssessmentResultPort,
             loadAdviceItemsPort,
             loadAdviceNarrationPort);
@@ -102,6 +112,7 @@ class GetAssessmentReportServiceTest {
 
         verifyNoInteractions(loadAssessmentReportInfoPort,
             loadAssessmentReportPort,
+            loadAssessmentQuestionsPort,
             loadAdviceItemsPort,
             loadAdviceNarrationPort);
     }
@@ -125,22 +136,27 @@ class GetAssessmentReportServiceTest {
 
         verify(assessmentAccessChecker, times(2))
             .isAuthorized(eq(param.getAssessmentId()), eq(param.getCurrentUserId()), any(AssessmentPermission.class));
-        verifyNoInteractions(loadAdviceItemsPort, loadAdviceNarrationPort);
+        verifyNoInteractions(loadAdviceItemsPort,
+            loadAssessmentQuestionsPort,
+            loadAdviceNarrationPort);
     }
 
     @Test
-    void testGetAssessmentReport_whenReportReportEntityNotExistsAndUserHasPreviewPermission_thenReturnEmptyReport() {
+    void testGetAssessmentReport_whenReportEntityNotExistsAndUserHasPreviewPermission_thenReturnEmptyReport() {
         var param = createParam(GetAssessmentReportUseCase.Param.ParamBuilder::build);
 
         var assessmentReport = createAssessmentReportItem(param);
-        var teamLevel = levelTwo();
-        var attributeReportItem = new AttributeReportItem(3L, "Agility", "agility of team",
+        var attributeReportItem = new AttributeReportItem(15L, "Agility", "agility of team",
             "in very good state", 1, 3, 63.0, levelThree());
-        var subjects = List.of(new AssessmentSubjectReportItem(2L, "team", 2, "subjectDesc2",
-            "subject Insight", 58.6, teamLevel, List.of(attributeReportItem)));
+        var subjects = List.of(new AssessmentSubjectReportItem(2L, "team", 2,
+            "subject Insight", 58.6, levelTwo(), List.of(attributeReportItem)));
         var assessmentReportInfo = new LoadAssessmentReportInfoPort.Result(assessmentReport, subjects);
         var adviceNarration = "assessor narration";
         var adviceItems = List.of(adviceItem(), adviceItem());
+
+        var measure = assessmentReport.assessmentKit().measures().getFirst();
+        var questionAnswers = List.of(new LoadAssessmentQuestionsPort.Result(QuestionMother.withMeasure(measure),
+            answer(optionOne())));
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_GRAPHICAL_REPORT))
             .thenReturn(true);
@@ -153,6 +169,8 @@ class GetAssessmentReportServiceTest {
             .thenReturn(true);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_DASHBOARD))
             .thenReturn(true);
+        when(loadAssessmentQuestionsPort.loadApplicableQuestions(param.getAssessmentId()))
+            .thenReturn(questionAnswers);
 
         var result = service.getAssessmentReport(param);
 
@@ -183,14 +201,20 @@ class GetAssessmentReportServiceTest {
         AssessmentReportItem assessmentReport = createAssessmentReportItem(param);
 
         var teamLevel = levelTwo();
-        var attributeReportItem = new AttributeReportItem(3L, "Agility", "agility of team",
+        var attributeReportItem = new AttributeReportItem(15L, "Agility", "agility of team",
             "in very good state", 1, 3, 63.0, levelThree());
-        var subjects = List.of(new AssessmentSubjectReportItem(2L, "team", 2, "subjectDesc2",
+        var subjects = List.of(new AssessmentSubjectReportItem(2L, "team", 2,
             "subject Insight", 58.6, teamLevel, List.of(attributeReportItem)));
         var assessmentReportInfo = new LoadAssessmentReportInfoPort.Result(assessmentReport, subjects);
         AssessmentReport report = publishedReportWithMetadata(fullMetadata());
         var adviceNarration = "assessor narration";
         var adviceItems = List.of(adviceItem(), adviceItem());
+
+        var measure1 = assessmentReport.assessmentKit().measures().getFirst();
+        var measure2 = assessmentReport.assessmentKit().measures().getLast();
+        var questionAnswers = List.of(
+            new LoadAssessmentQuestionsPort.Result(QuestionMother.withMeasure(measure1), answer(optionOne())),
+            new LoadAssessmentQuestionsPort.Result(QuestionMother.withMeasure(measure2), answer(optionFour())));
 
         when(loadAssessmentReportInfoPort.load(param.getAssessmentId())).thenReturn(assessmentReportInfo);
         when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.of(report));
@@ -198,6 +222,8 @@ class GetAssessmentReportServiceTest {
         when(loadAdviceItemsPort.loadAll(assessmentReport.assessmentResultId())).thenReturn(adviceItems);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_DASHBOARD))
             .thenReturn(false);
+        when(loadAssessmentQuestionsPort.loadApplicableQuestions(param.getAssessmentId()))
+            .thenReturn(questionAnswers);
 
         var result = service.getAssessmentReport(param);
 
@@ -216,33 +242,26 @@ class GetAssessmentReportServiceTest {
     }
 
     private AssessmentReportItem createAssessmentReportItem(GetAssessmentReportUseCase.Param param) {
-        AssessmentReportItem.Space space = new AssessmentReportItem.Space(1563L, "Space");
         return new AssessmentReportItem(param.getAssessmentId(),
             UUID.randomUUID(),
             "assessmentTitle",
-            "shortAssessmentTitle",
             "assessment insight",
             createAssessmentKit(),
             levelTwo(),
             1.5,
-            true,
-            true,
-            LocalDateTime.now(),
-            LocalDateTime.now(),
-            space);
+            LocalDateTime.now()
+        );
     }
 
     private AssessmentReportItem.AssessmentKitItem createAssessmentKit() {
         return new AssessmentReportItem.AssessmentKitItem(15L,
             "kit title",
-            "kit summary",
-            "about",
             KitLanguage.FA,
             5,
             150,
             MaturityLevelMother.allLevels(),
             List.of(new QuestionnaireReportItem(14L, "questionnaire title", "questionnaire description", 1, 15)),
-            new AssessmentReportItem.AssessmentKitItem.ExpertGroup(569L, "expert group", null));
+            List.of(createMeasure(), createMeasure()));
     }
 
     private GetAssessmentReportUseCase.Param createParam(Consumer<GetAssessmentReportUseCase.Param.ParamBuilder> changer) {

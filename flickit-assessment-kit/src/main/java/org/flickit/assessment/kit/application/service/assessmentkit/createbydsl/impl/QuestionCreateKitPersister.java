@@ -87,7 +87,7 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
                                 Map<String, Long> answerRanges,
                                 Long kitVersionId,
                                 UUID currentUserId) {
-        var param = new CreateAnswerRangePort.Param(kitVersionId, null, null, false, currentUserId);
+        var param = new CreateAnswerRangePort.Param(kitVersionId, null, null, false, null, currentUserId);
         long answerRangeId;
         if (dslQuestion.getAnswerRangeCode() == null) {
             answerRangeId = createAnswerRangePort.persist(param);
@@ -106,6 +106,7 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
             questionnaireId,
             measureId,
             answerRangeId,
+            null,
             currentUserId
         );
 
@@ -126,6 +127,7 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
                 option.getIndex(),
                 answerRangeId,
                 option.getValue(),
+                null,
                 kitVersionId,
                 currentUserId);
 

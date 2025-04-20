@@ -1,5 +1,7 @@
 package org.flickit.assessment.scenario.test.core.assessment;
 
+import io.restassured.response.Response;
+import org.flickit.assessment.common.config.AppSpecProperties;
 import org.flickit.assessment.common.exception.api.ErrorResponseDto;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
 import org.flickit.assessment.scenario.fixture.request.CreateAssessmentRequestDtoMother;
@@ -17,8 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import java.util.UUID;
 
-import static org.flickit.assessment.common.exception.api.ErrorCodes.ACCESS_DENIED;
-import static org.flickit.assessment.common.exception.api.ErrorCodes.INVALID_INPUT;
+import static org.flickit.assessment.common.exception.api.ErrorCodes.*;
 import static org.flickit.assessment.scenario.fixture.request.AddSpaceMemberRequestDtoMother.addSpaceMemberRequestDto;
 import static org.flickit.assessment.scenario.fixture.request.CreateExpertGroupRequestDtoMother.createExpertGroupRequestDto;
 import static org.flickit.assessment.scenario.fixture.request.CreateKitByDslRequestDtoMother.createKitByDslRequestDto;
@@ -50,9 +51,12 @@ class CreateAssessmentErrorScenarioTest extends AbstractScenarioTest {
     @Autowired
     SpaceUserAccessTestHelper spaceUserAccessHelper;
 
+    @Autowired
+    AppSpecProperties appSpecProperties;
+
     @Test
     void createAssessment_currentUserIsNotSpaceMember() {
-        var spaceId = createSpace();
+        var spaceId = createBasicSpace();
 
         // Change currentUser which is not an owner of the expert group
         context.getNextCurrentUser();
@@ -79,7 +83,7 @@ class CreateAssessmentErrorScenarioTest extends AbstractScenarioTest {
 
     @Test
     void createAssessment_currentUserDoesNotHaveAccessToPrivateKit() {
-        var spaceId = createSpace();
+        var spaceId = createBasicSpace();
 
         // Create a private kit
         var kitId = createKit(true);
@@ -118,7 +122,7 @@ class CreateAssessmentErrorScenarioTest extends AbstractScenarioTest {
 
     @Test
     void createAssessment_duplicateTitle() {
-        var spaceId = createSpace();
+        var spaceId = createBasicSpace();
 
         var kitId = createKit(false);
         kitHelper.publishKit(context, kitId);
@@ -146,7 +150,65 @@ class CreateAssessmentErrorScenarioTest extends AbstractScenarioTest {
         assertEquals(countBefore, countAfter);
     }
 
-    private Long createSpace() {
+    @Test
+    void createAssessment_basicAssessmentsReachedLimit() {
+        var limit = appSpecProperties.getSpace().getMaxBasicSpaceAssessments();
+        var spaceId = createBasicSpace();
+
+        var kitId = createKit(false);
+        kitHelper.publishKit(context, kitId);
+        // #assessments = limit
+        createAssessments(spaceId, kitId, limit);
+
+        final int countBefore = jpaTemplate.count(AssessmentJpaEntity.class);
+
+        // Create another assessment
+        var error = createAssessment(spaceId, kitId)
+            .then()
+            .statusCode(403)
+            .extract().as(ErrorResponseDto.class);
+
+        assertEquals(UPGRADE_REQUIRED, error.code());
+        assertNotNull(error.message());
+
+        final int countAfter = jpaTemplate.count(AssessmentJpaEntity.class);
+        assertEquals(countBefore, countAfter);
+    }
+
+    @Test
+    void createAssessment_privateKitAndBasicSpace() {
+        var spaceId = createBasicSpace();
+
+        var kitId = createKit(true);
+        kitHelper.publishKit(context, kitId);
+
+        final int countBefore = jpaTemplate.count(AssessmentJpaEntity.class);
+
+        var error = createAssessment(spaceId, kitId)
+            .then()
+            .statusCode(403)
+            .extract().as(ErrorResponseDto.class);
+
+        assertEquals(UPGRADE_REQUIRED, error.code());
+        assertNotNull(error.message());
+
+        final int countAfter = jpaTemplate.count(AssessmentJpaEntity.class);
+        assertEquals(countBefore, countAfter);
+    }
+
+    private void createAssessments(long spaceId, long kitId, int limit) {
+        for (int i = 0; i < limit; i++)
+            createAssessment(spaceId, kitId);
+    }
+
+    private Response createAssessment(Long spaceId, Long kitId) {
+        var request = CreateAssessmentRequestDtoMother.createAssessmentRequestDto(a -> a
+            .spaceId(spaceId)
+            .assessmentKitId(kitId));
+        return assessmentHelper.create(context, request);
+    }
+
+    private Long createBasicSpace() {
         var response = spaceHelper.create(context, createSpaceRequestDto());
         Number id = response.path("id");
         return id.longValue();

@@ -1,5 +1,6 @@
 package org.flickit.assessment.core.test.fixture.adapter.jpa;
 
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
 
@@ -20,6 +21,7 @@ public class AssessmentResultJpaEntityMother {
             1.0,
             isCalculateValid,
             isConfidenceValid,
+            KitLanguage.EN.getId(),
             LocalDateTime.now(),
             LocalDateTime.now(),
             LocalDateTime.now()

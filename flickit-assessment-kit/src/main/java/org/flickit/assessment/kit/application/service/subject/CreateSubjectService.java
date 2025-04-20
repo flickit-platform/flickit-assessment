@@ -37,6 +37,7 @@ public class CreateSubjectService implements CreateSubjectUseCase {
             param.getTitle(),
             param.getIndex(),
             param.getWeight(),
+            param.getTranslations(),
             param.getDescription(),
             param.getKitVersionId(),
             param.getCurrentUserId()));

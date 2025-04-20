@@ -33,8 +33,17 @@ public class UpdateMaturityLevelService implements UpdateMaturityLevelUseCase {
         if (!Objects.equals(expertGroupOwnerId, param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        var maturityLevel = new MaturityLevel(param.getMaturityLevelId(), generateCode(param.getTitle()),
-            param.getTitle(), param.getIndex(), param.getDescription(), param.getValue(), null);
-        updateMaturityLevelPort.update(maturityLevel, param.getKitVersionId(), LocalDateTime.now(), param.getCurrentUserId());
+        var maturityLevel = new MaturityLevel(param.getMaturityLevelId(),
+            generateCode(param.getTitle()),
+            param.getTitle(),
+            param.getIndex(),
+            param.getDescription(),
+            param.getValue(),
+            param.getTranslations(),
+            null);
+        updateMaturityLevelPort.update(maturityLevel,
+            param.getKitVersionId(),
+            LocalDateTime.now(),
+            param.getCurrentUserId());
     }
 }

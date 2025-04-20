@@ -30,6 +30,6 @@ public class CreateAnswerRangeRestController {
     }
 
     private static Param toParam(Long kitVersionId, UUID currentUserId, CreateAnswerRangeRequestDto requestDto) {
-        return new Param(kitVersionId, requestDto.title(), currentUserId);
+        return new Param(kitVersionId, requestDto.title(), requestDto.translations(), currentUserId);
     }
 }

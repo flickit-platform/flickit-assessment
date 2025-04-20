@@ -46,7 +46,8 @@ public class GetKitMaturityLevelsService implements GetKitMaturityLevelsUseCase 
             maturityLevel.getIndex(),
             maturityLevel.getTitle(),
             maturityLevel.getDescription(),
-            maturityLevel.getValue()
+            maturityLevel.getValue(),
+            maturityLevel.getTranslations()
         );
     }
 }
