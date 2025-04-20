@@ -22,7 +22,7 @@ class UpdateSpaceScenarioTest extends AbstractScenarioTest {
 
     @Test
     void updateSpace() {
-        Number spaceId = createSpace();
+        var spaceId = createSpace();
         SpaceJpaEntity createdSpace = jpaTemplate.load(spaceId, SpaceJpaEntity.class);
 
         var updateRequest = updateSpaceRequestDto();
@@ -33,21 +33,21 @@ class UpdateSpaceScenarioTest extends AbstractScenarioTest {
 
         assertEquals(updateRequest.title(), updatedSpace.getTitle());
         assertEquals(generateSlugCode(updateRequest.title()), updatedSpace.getCode());
-        assertEquals(context.getCurrentUser().getUserId(), updatedSpace.getLastModifiedBy());
+        assertEquals(getCurrentUserId(), updatedSpace.getLastModifiedBy());
         assertThat(updatedSpace.getLastModificationTime()).isAfter(createdSpace.getLastModificationTime());
     }
 
     @Test
     void updateSpace_withSameTitleForDifferentUsers() {
         // Create first space
-        Number firstSpaceId = createSpace();
+        var firstSpaceId = createSpace();
         SpaceJpaEntity firstSpace = jpaTemplate.load(firstSpaceId, SpaceJpaEntity.class);
 
         // Change currentUser
         context.getNextCurrentUser();
 
         // Create second space for different user
-        Number secondSpaceId = createSpace();
+        var secondSpaceId = createSpace();
         SpaceJpaEntity secondSpace = jpaTemplate.load(secondSpaceId, SpaceJpaEntity.class);
 
         // Update the second space with first space's title
@@ -59,18 +59,18 @@ class UpdateSpaceScenarioTest extends AbstractScenarioTest {
 
         assertEquals(firstSpace.getTitle(), updatedSecondSpace.getTitle());
         assertEquals(firstSpace.getCode(), updatedSecondSpace.getCode());
-        assertEquals(context.getCurrentUser().getUserId(), secondSpace.getLastModifiedBy());
+        assertEquals(getCurrentUserId(), secondSpace.getLastModifiedBy());
         assertThat(updatedSecondSpace.getLastModificationTime()).isAfter(secondSpace.getLastModificationTime());
     }
 
     @Test
     void updateSpace_withSameTitleAsDeleted() {
         // Create first space
-        Number firstSpaceId = createSpace();
+        var firstSpaceId = createSpace();
         SpaceJpaEntity firstSpace = jpaTemplate.load(firstSpaceId, SpaceJpaEntity.class);
 
         // Create second space with different title
-        Number secondSpaceId = createSpace();
+        var secondSpaceId = createSpace();
         SpaceJpaEntity secondSpace = jpaTemplate.load(secondSpaceId, SpaceJpaEntity.class);
 
         // Delete the first space
@@ -85,7 +85,7 @@ class UpdateSpaceScenarioTest extends AbstractScenarioTest {
 
         assertEquals(firstSpace.getTitle(), updatedSpace.getTitle());
         assertEquals(firstSpace.getCode(), updatedSpace.getCode());
-        assertEquals(context.getCurrentUser().getUserId(), updatedSpace.getLastModifiedBy());
+        assertEquals(getCurrentUserId(), updatedSpace.getLastModifiedBy());
         assertThat(updatedSpace.getLastModificationTime()).isAfter(secondSpace.getLastModificationTime());
     }
 
