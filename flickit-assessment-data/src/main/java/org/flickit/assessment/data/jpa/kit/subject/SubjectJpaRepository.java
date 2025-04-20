@@ -58,6 +58,7 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Su
                 s.index = :index,
                 s.description = :description,
                 s.weight = :weight,
+                s.translations = :translations,
                 s.lastModificationTime = :lastModificationTime,
                 s.lastModifiedBy = :lastModifiedBy
             WHERE s.id = :id AND s.kitVersionId = :kitVersionId
@@ -69,6 +70,7 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Su
                 @Param(value = "index") int index,
                 @Param(value = "description") String description,
                 @Param(value = "weight") int weight,
+                @Param(value = "translations") String translations,
                 @Param(value = "lastModificationTime") LocalDateTime lastModificationTime,
                 @Param(value = "lastModifiedBy") UUID lastModifiedBy);
 

@@ -118,6 +118,7 @@ class UpdateAnswerRangeServiceTest {
         assertEquals(code, captor.getValue().code());
         assertEquals(param.getReusable(), captor.getValue().reusable());
         assertEquals(param.getCurrentUserId(), captor.getValue().lastModifiedBy());
+        assertEquals(param.getTranslations(), captor.getValue().translations());
         assertNotNull(captor.getValue().lastModificationTime());
     }
 

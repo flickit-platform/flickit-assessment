@@ -49,6 +49,7 @@ public interface MaturityLevelJpaRepository extends JpaRepository<MaturityLevelJ
                 ml.title = :title,
                 ml.description = :description,
                 ml.value = :value,
+                ml.translations = :translations,
                 ml.lastModificationTime = :lastModificationTime,
                 ml.lastModifiedBy = :lastModifiedBy
             WHERE ml.id = :id AND ml.kitVersionId = :kitVersionId
@@ -60,6 +61,7 @@ public interface MaturityLevelJpaRepository extends JpaRepository<MaturityLevelJ
                 @Param("title") String title,
                 @Param("description") String description,
                 @Param("value") Integer value,
+                @Param("translations") String translations,
                 @Param("lastModificationTime") LocalDateTime lastModificationTime,
                 @Param("lastModifiedBy") UUID lastModifiedBy);
 

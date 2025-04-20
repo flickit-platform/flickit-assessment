@@ -8,7 +8,10 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.common.application.domain.kit.translation.AttributeTranslation;
 
+import java.util.Map;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
@@ -45,7 +48,13 @@ public interface GetAttributesUseCase {
         }
     }
 
-    record AttributeListItem(long id, int index, String title, String description, int weight, AttributeSubject subject) {
+    record AttributeListItem(long id,
+                             int index,
+                             String title,
+                             String description,
+                             int weight,
+                             AttributeSubject subject,
+                             Map<KitLanguage, AttributeTranslation> translations) {
     }
 
     record AttributeSubject(long id, String title) {

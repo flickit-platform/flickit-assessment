@@ -60,7 +60,7 @@ public class AnswerRangeUpdateKitPersister implements UpdateKitPersister {
                 log.debug("AnswerRange[id={}, code={}] created", persistedSubjectId, dslRange.getCode());
             } else {
                 if (!savedRange.getTitle().equals(dslRange.getTitle())) {
-                    updateAnswerRangePort.update(toUpdateParam(savedRange.getId(), savedKit.getActiveVersionId(), dslRange, currentUserId));
+                    updateAnswerRangePort.update(toUpdateParam(savedRange, savedKit.getActiveVersionId(), dslRange, currentUserId));
                     log.debug("AnswerRange[id={}, code={}] updated", savedRange.getId(), savedRange.getCode());
                 }
                 var isOptionValueChanged = updateAnswerOptions(savedRange, dslRange, savedKit.getActiveVersionId(), currentUserId);
@@ -87,16 +87,18 @@ public class AnswerRangeUpdateKitPersister implements UpdateKitPersister {
             dslAnswerRange.getTitle(),
             dslAnswerRange.getCode(),
             true,
+            null,
             currentUserId
         );
     }
 
-    private UpdateAnswerRangePort.Param toUpdateParam(long id, long kitVersionId, AnswerRangeDslModel dslSubject, UUID currentUserId) {
-        return new UpdateAnswerRangePort.Param(id,
+    private UpdateAnswerRangePort.Param toUpdateParam(AnswerRange savedAnswerRange, long kitVersionId, AnswerRangeDslModel dslSubject, UUID currentUserId) {
+        return new UpdateAnswerRangePort.Param(savedAnswerRange.getId(),
             kitVersionId,
             dslSubject.getTitle(),
             dslSubject.getCode(),
             true,
+            savedAnswerRange.getTranslations(),
             LocalDateTime.now(),
             currentUserId
         );
@@ -122,6 +124,7 @@ public class AnswerRangeUpdateKitPersister implements UpdateKitPersister {
                     savedOption.getIndex(),
                     dslOption.getCaption(),
                     dslOption.getValue(),
+                    savedOption.getTranslations(),
                     LocalDateTime.now(),
                     currentUserId));
                 isOptionValueChanged = true;

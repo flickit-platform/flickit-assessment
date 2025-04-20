@@ -1,8 +1,11 @@
 package org.flickit.assessment.kit.test.fixture.application;
 
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.common.application.domain.kit.translation.AnswerRangeTranslation;
 import org.flickit.assessment.kit.application.domain.AnswerRange;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.flickit.assessment.kit.test.fixture.application.AnswerOptionMother.createAnswerOption;
 import static org.flickit.assessment.kit.test.fixture.application.AnswerOptionMother.createSimpleAnswerOption;
@@ -18,7 +21,8 @@ public class AnswerRangeMother {
             "title" + id,
             "title" + id,
             true,
-            List.of(createSimpleAnswerOption(), createSimpleAnswerOption())
+            List.of(createSimpleAnswerOption(), createSimpleAnswerOption()),
+            Map.of(KitLanguage.EN, new AnswerRangeTranslation("title" + id))
         );
     }
 

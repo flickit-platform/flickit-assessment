@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.adapter.in.rest.answeroption;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
 import org.flickit.assessment.kit.application.port.in.answeroption.UpdateAnswerOptionUseCase;
+import org.flickit.assessment.kit.application.port.in.answeroption.UpdateAnswerOptionUseCase.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,21 +23,22 @@ public class UpdateAnswerOptionRestController {
     @PutMapping("/kit-versions/{kitVersionId}/answer-options/{answerOptionId}")
     public ResponseEntity<Void> updateAnswerOption(@PathVariable("kitVersionId") Long kitVersionId,
                                                    @PathVariable("answerOptionId") Long answerOptionId,
-                                                   @RequestBody AnswerOptionRequestDto requestDto) {
+                                                   @RequestBody UpdateAnswerOptionRequestDto requestDto) {
         UUID currentUserId = userContext.getUser().id();
         useCase.updateAnswerOption(toParam(kitVersionId, answerOptionId, currentUserId, requestDto));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private UpdateAnswerOptionUseCase.Param toParam(Long kitVersionId,
-                                                    Long answerOptionId,
-                                                    UUID currentUserId,
-                                                    AnswerOptionRequestDto dto) {
-        return new UpdateAnswerOptionUseCase.Param(kitVersionId,
+    private Param toParam(Long kitVersionId,
+                          Long answerOptionId,
+                          UUID currentUserId,
+                          UpdateAnswerOptionRequestDto dto) {
+        return new Param(kitVersionId,
             answerOptionId,
             dto.index(),
             dto.title(),
             dto.value(),
+            dto.translations(),
             currentUserId);
     }
 }

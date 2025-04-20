@@ -108,6 +108,7 @@ public class AttributeUpdateKitPersister implements UpdateKitPersister {
             dslAttribute.getIndex(),
             dslAttribute.getDescription(),
             dslAttribute.getWeight(),
+            savedAttribute.getTranslations(),
             LocalDateTime.now(),
             updatedBy,
             subjectId);
