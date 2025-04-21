@@ -23,13 +23,22 @@ public class AssessmentKitMother {
     }
 
     public static AssessmentKit publicKit() {
+        return new AssessmentKit(id++,
+            "title" + id,
+            id,
+            KitLanguage.EN,
+            MaturityLevelMother.allLevels(),
+            Boolean.FALSE);
+    }
+
+    public static AssessmentKit publicKitFaSupported() {
         var kit = new AssessmentKit(id++,
             "title" + id,
             id,
             KitLanguage.EN,
             MaturityLevelMother.allLevels(),
             Boolean.FALSE);
-        kit.setSupportedLanguages(List.of(KitLanguage.EN));
+        kit.setSupportedLanguages(List.of(KitLanguage.FA));
         return kit;
     }
 
