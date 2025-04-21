@@ -256,6 +256,26 @@ class CreateAssessmentServiceTest {
     }
 
     @Test
+    void testCreateAssessment_whenLangIsNotSupported_thenThrowValidationException() {
+        param = createParam(b -> b.lang("FA"));
+
+        when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(Optional.of(space));
+        when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
+        when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.of(param.getKitId()));
+        when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId())).thenReturn(Optional.of(publicKit));
+
+        var throwable = assertThrows(ValidationException.class, () -> service.createAssessment(param));
+        assertNotNull(CREATE_ASSESSMENT_LANGUAGE_NOT_SUPPORTED, throwable.getMessage());
+
+        verifyNoInteractions(createAssessmentPort,
+            createAssessmentResultPort,
+            createAttributeValuePort,
+            createSubjectValuePort,
+            grantUserAssessmentRolePort,
+            loadSubjectsPort);
+    }
+
+    @Test
     void testCreateAssessment_whenParamsAreValid_thenCreateAssessmentAndAssessmentResult() {
         param = createParam(Param.ParamBuilder::build);
         UUID expectedAssessmentId = UUID.randomUUID();
@@ -381,7 +401,7 @@ class CreateAssessmentServiceTest {
             .shortTitle("Short Title")
             .spaceId(space.getId())
             .kitId(publicKit.getId())
-            .lang("FA")
+            .lang("EN")
             .currentUserId(UUID.randomUUID());
     }
 }

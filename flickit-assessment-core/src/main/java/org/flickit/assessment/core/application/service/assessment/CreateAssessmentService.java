@@ -81,6 +81,9 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
 
         validateSpace(param, space, assessmentKit.getIsPrivate());
 
+        if(param.getLang() !=null && !assessmentKit.getSupportedLanguages().contains(KitLanguage.valueOf(param.getLang())))
+            throw new ValidationException(CREATE_ASSESSMENT_LANGUAGE_NOT_SUPPORTED);
+
         int langId = (param.getLang() != null)
             ? KitLanguage.valueOf(param.getLang()).getId()
             : assessmentKit.getLanguage().getId();
