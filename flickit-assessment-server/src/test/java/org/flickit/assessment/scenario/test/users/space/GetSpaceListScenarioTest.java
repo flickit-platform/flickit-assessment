@@ -9,12 +9,13 @@ import org.flickit.assessment.users.application.port.in.space.GetSpaceListUseCas
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.scenario.fixture.request.CreateSpaceRequestDtoMother.createSpaceRequestDto;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.*;
@@ -42,34 +43,42 @@ class GetSpaceListScenarioTest extends AbstractScenarioTest {
         // Second page request
         Map<String, Integer> secondPageQueryParams = createQueryParam(1);
         var secondPageResponse = getPaginatedSpaces(secondPageQueryParams);
+
         // First page assertions
         assertPageProperties(firstPageResponse, firstPageQueryParams, pageSize);
-        //assertPageItems(firstPageResponse.getItems(), createdSpaces);
-        List<GetSpaceListUseCase.SpaceListItem> firstPageExpectedItems = createdSpaces
+        // Assert first page item ids
+        List<Long> firstPageExpectedItemIds = createdSpaces
             .reversed()
             .subList(0, pageSize).stream()
-            .map(this::convertToSpaceListItem).toList();
+            .toList();
+        List<Long> firstPageActualIds = firstPageResponse.getItems().stream()
+            .map(GetSpaceListUseCase.SpaceListItem::id)
+            .toList();
 
-        assertPageItems(firstPageResponse, firstPageExpectedItems);
+        assertEquals(firstPageExpectedItemIds, firstPageActualIds);
+
         // Second page assertions
         assertPageProperties(secondPageResponse, secondPageQueryParams, secondPageSpaceCount);
-        List<GetSpaceListUseCase.SpaceListItem> secondPageExpectedItems = createdSpaces
+        // Assert second page item ids
+        List<Long> secondPageExpectedItemsIds = createdSpaces
             .reversed()
             .subList(pageSize, createdSpaces.size()).stream()
-            .map(this::convertToSpaceListItem).toList();
+            .toList();
+        List<Long> secondPageActualIds = secondPageResponse.getItems().stream()
+            .map(GetSpaceListUseCase.SpaceListItem::id)
+            .toList();
 
-        assertPageItems(secondPageResponse, secondPageExpectedItems);
-    }
+        assertEquals(secondPageExpectedItemsIds, secondPageActualIds);
 
-    private static void assertPageItems(PaginatedResponse<GetSpaceListUseCase.SpaceListItem> pageResponse, List<GetSpaceListUseCase.SpaceListItem> pageExpectedItems) {
-        assertThat(pageResponse.getItems())
-            .zipSatisfy(pageExpectedItems, (actual, expected) -> {
-                assertEquals(expected.id(), actual.id());
-            });
-    }
+        // Assert order of items according to LastSeen
+        Specification<SpaceUserAccessJpaEntity> matchAllSpec = (root, query, cb) -> cb.conjunction();
+        List<Long> expectedSortedSpaceIds = jpaTemplate.search(SpaceUserAccessJpaEntity.class, matchAllSpec).stream()
+            .sorted(Comparator.comparing(SpaceUserAccessJpaEntity::getLastSeen).reversed())
+            .map(SpaceUserAccessJpaEntity::getSpaceId)
+            .toList()
+            .subList(0, pageSize);
 
-    GetSpaceListUseCase.SpaceListItem convertToSpaceListItem(Long spaceId) {
-        return new GetSpaceListUseCase.SpaceListItem(spaceId,null,null,null,true, null,0,0);
+        assertEquals(expectedSortedSpaceIds, firstPageActualIds);
     }
 
     @Test
@@ -78,21 +87,53 @@ class GetSpaceListScenarioTest extends AbstractScenarioTest {
         final int defaultSize = 10;
         int count = pageSize + 1;
         // Create spaces
-        createSpaces(count);
+        var createdSpaces = createSpaces(count);
         // Delete the last created space
         spaceHelper.delete(context, lastSpaceId);
+        createdSpaces.removeLast();
         // Page request with empty param
-        var paginatedResponse = getPaginatedSpaces(Map.of());
+        var firstPageResponse = getPaginatedSpaces(Map.of());
         Map<String, Integer> secondPageQueryParams = createQueryParam(1);
         var secondPageResponse = getPaginatedSpaces(secondPageQueryParams);
-        // Page assertions
-        assertEquals(spaceCount - 1, paginatedResponse.getItems().size());
-        assertEquals(defaultPage, paginatedResponse.getPage());
-        assertEquals(defaultSize, paginatedResponse.getSize());
-        assertEquals(SpaceUserAccessJpaEntity.Fields.lastSeen, paginatedResponse.getSort());
-        assertEquals(Sort.Direction.DESC.name().toLowerCase(), paginatedResponse.getOrder());
-        assertEquals(spaceCount - 1, paginatedResponse.getTotal());
+
+        // First Page assertions
+        assertEquals(spaceCount - 1, firstPageResponse.getItems().size());
+        assertEquals(defaultPage, firstPageResponse.getPage());
+        assertEquals(defaultSize, firstPageResponse.getSize());
+        assertEquals(SpaceUserAccessJpaEntity.Fields.lastSeen, firstPageResponse.getSort());
+        assertEquals(Sort.Direction.DESC.name().toLowerCase(), firstPageResponse.getOrder());
+        assertEquals(spaceCount - 1, firstPageResponse.getTotal());
         assertEquals(0, secondPageResponse.getItems().size());
+
+        // Assert first page item ids
+        List<Long> firstPageExpectedItemIds = createdSpaces
+            .reversed()
+            .subList(0, pageSize).stream()
+            .toList();
+        List<Long> firstPageActualIds = firstPageResponse.getItems().stream()
+            .map(GetSpaceListUseCase.SpaceListItem::id)
+            .toList();
+
+        assertEquals(firstPageExpectedItemIds, firstPageActualIds);
+
+        // Second Page assertions
+        assertEquals(0, secondPageResponse.getItems().size());
+        assertEquals(secondPageQueryParams.get("page"), secondPageResponse.getPage());
+        assertEquals(secondPageQueryParams.get("size"), secondPageResponse.getSize());
+        assertEquals(SpaceUserAccessJpaEntity.Fields.lastSeen, secondPageResponse.getSort());
+        assertEquals(Sort.Direction.DESC.name().toLowerCase(), secondPageResponse.getOrder());
+        assertEquals(count - 1, secondPageResponse.getTotal());
+        assertEquals(0, secondPageResponse.getItems().size());
+        // Assert second page item ids
+        List<Long> secondPageExpectedItemsIds = createdSpaces
+            .reversed()
+            .subList(pageSize, createdSpaces.size()).stream()
+            .toList();
+        List<Long> secondPageActualIds = secondPageResponse.getItems().stream()
+            .map(GetSpaceListUseCase.SpaceListItem::id)
+            .toList();
+
+        assertEquals(secondPageExpectedItemsIds, secondPageActualIds);
     }
 
     private LinkedList<Long> createSpaces(int count) {
@@ -120,7 +161,8 @@ class GetSpaceListScenarioTest extends AbstractScenarioTest {
             .statusCode(200)
             .extract()
             .body()
-            .as(new TypeRef<>() {});
+            .as(new TypeRef<>() {
+            });
     }
 
     private void assertPageProperties(PaginatedResponse pageResponse, Map<String, Integer> queryParams, int expectedSize) {
