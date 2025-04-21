@@ -78,11 +78,9 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
 
         validateSpace(param, space, assessmentKit.getIsPrivate());
 
-
         int langId = (param.getLang() != null)
             ? KitLanguage.valueOf(param.getLang()).getId()
             : assessmentKit.getLanguage().getId();
-
         validateLanguage(assessmentKit, langId);
 
         UUID id = createAssessmentPort.persist(toParam(param));
@@ -91,16 +89,6 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
         grantAssessmentAccesses(id, space.getOwnerId(), param.getCurrentUserId());
 
         return new Result(id, new CreateAssessmentNotificationCmd(param.getKitId(), param.getCurrentUserId()));
-    }
-
-    private void validateLanguage(AssessmentKit kit, int langId) {
-        KitLanguage lang = KitLanguage.valueOfById(langId);
-
-        boolean isPrimaryLang = kit.getLanguage() == lang;
-        boolean isSupportedLang = kit.getSupportedLanguages() != null && kit.getSupportedLanguages().contains(lang);
-
-        if (!isPrimaryLang && !isSupportedLang)
-            throw new ValidationException(CREATE_ASSESSMENT_LANGUAGE_NOT_SUPPORTED);
     }
 
     private void validateSpace(Param param, Space space, boolean isKitPrivate) {
@@ -120,6 +108,16 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
             LocalDateTime.now().isAfter(space.getSubscriptionExpiry())) {
             throw new UpgradeRequiredException(CREATE_ASSESSMENT_PREMIUM_SPACE_EXPIRED);
         }
+    }
+
+    private void validateLanguage(AssessmentKit kit, int langId) {
+        KitLanguage lang = KitLanguage.valueOfById(langId);
+
+        boolean isPrimaryLang = kit.getLanguage() == lang;
+        boolean isSupportedLang = kit.getSupportedLanguages() != null && kit.getSupportedLanguages().contains(lang);
+
+        if (!isPrimaryLang && !isSupportedLang)
+            throw new ValidationException(CREATE_ASSESSMENT_LANGUAGE_NOT_SUPPORTED);
     }
 
     private CreateAssessmentPort.Param toParam(Param param) {
