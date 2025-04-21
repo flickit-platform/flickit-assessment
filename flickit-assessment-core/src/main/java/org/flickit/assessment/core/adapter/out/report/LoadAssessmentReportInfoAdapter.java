@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.application.domain.kit.translation.KitTranslation;
 import org.flickit.assessment.common.application.domain.kit.translation.QuestionnaireTranslation;
+import org.flickit.assessment.common.application.domain.kit.translation.SubjectTranslation;
 import org.flickit.assessment.common.application.domain.kitcustom.KitCustomData;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.util.JsonUtils;
@@ -40,6 +41,7 @@ import org.flickit.assessment.data.jpa.kit.measure.MeasureJpaRepository;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaEntity;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaRepository;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireListItemView;
+import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.springframework.stereotype.Component;
 
@@ -108,7 +110,7 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             assessment.getCreationTime()
         );
 
-        var subjects = buildSubjectReportItems(assessmentResultEntity, idToMaturityLevel);
+        var subjects = buildSubjectReportItems(assessmentResultEntity, idToMaturityLevel, language);
 
         return new Result(assessmentReportItem, subjects);
     }
@@ -152,7 +154,8 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
     }
 
     private List<AssessmentSubjectReportItem> buildSubjectReportItems(AssessmentResultJpaEntity assessmentResult,
-                                                                      Map<Long, MaturityLevel> idToMaturityLevel) {
+                                                                      Map<Long, MaturityLevel> idToMaturityLevel,
+                                                                      @Nullable KitLanguage language) {
         List<SubjectValueJpaEntity> subjectValueEntities = subjectValueRepo.findByAssessmentResultId(assessmentResult.getId());
 
         Set<Long> subjectIds = subjectValueEntities.stream()
@@ -187,6 +190,7 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
 
         return subjectEntities.stream()
             .map(e -> {
+                var translation = getSubjectTranslation(e, language);
                 Long maturityLevelId = subjectIdToSubjectValue.get(e.getId()).getMaturityLevelId();
                 MaturityLevel subjectMaturityLevel = idToMaturityLevel.get(maturityLevelId);
                 var attributeValues = subjectIdToAttributeValueMap.get(e.getId());
@@ -194,7 +198,7 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
                     .map(SubjectInsightJpaEntity::getInsight)
                     .orElse(null);
                 return new AssessmentSubjectReportItem(e.getId(),
-                    e.getTitle(),
+                    translation.titleOrDefault(e.getTitle()),
                     e.getIndex(),
                     insight,
                     subjectIdToSubjectValue.get(e.getId()).getConfidenceValue(),
@@ -275,6 +279,15 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
         var translation = new KitTranslation(null, null, null);
         if (language != null) {
             var translations = JsonUtils.fromJsonToMap(assessmentKitEntity.getTranslations(), KitLanguage.class, KitTranslation.class);
+            translation = translations.getOrDefault(language, translation);
+        }
+        return translation;
+    }
+
+    private SubjectTranslation getSubjectTranslation(SubjectJpaEntity entity, @Nullable KitLanguage language) {
+        var translation = new SubjectTranslation(null, null);
+        if (language != null) {
+            var translations = JsonUtils.fromJsonToMap(entity.getTranslations(), KitLanguage.class, SubjectTranslation.class);
             translation = translations.getOrDefault(language, translation);
         }
         return translation;
