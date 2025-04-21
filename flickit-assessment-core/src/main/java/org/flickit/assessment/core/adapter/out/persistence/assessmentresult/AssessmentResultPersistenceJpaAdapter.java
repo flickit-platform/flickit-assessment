@@ -75,7 +75,7 @@ public class AssessmentResultPersistenceJpaAdapter implements
         if (maturityLevelId != null) {
             var maturityLevelEntity = maturityLevelRepository.findByIdAndKitVersionId(maturityLevelId, entity.get().getKitVersionId());
             maturityLevel = maturityLevelEntity.map(maturityLevelJpaEntity ->
-                MaturityLevelMapper.mapToDomainModel(maturityLevelJpaEntity, null)).orElse(null);
+                MaturityLevelMapper.mapToDomainModel(maturityLevelJpaEntity, List.of())).orElse(null);
         }
         var kit = kitRepository.findById(entity.get().getAssessment().getAssessmentKitId())
             .map(x -> AssessmentKitMapper.mapToDomainModel(x, null))

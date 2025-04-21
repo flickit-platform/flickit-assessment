@@ -29,7 +29,7 @@ public class MaturityLevelPersistenceJpaAdapter implements
     @Override
     public List<MaturityLevel> loadByKitVersionId(Long kitVersionId) {
         return repository.findAllByKitVersionIdOrderByIndex(kitVersionId).stream()
-            .map(levelEntity -> mapToDomainModel(levelEntity, null))
+            .map(levelEntity -> mapToDomainModel(levelEntity, List.of()))
             .toList();
     }
 
