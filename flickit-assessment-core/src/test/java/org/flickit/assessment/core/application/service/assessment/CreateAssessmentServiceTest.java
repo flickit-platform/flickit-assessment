@@ -42,8 +42,7 @@ import java.util.function.Consumer;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_SPACE_ID_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
-import static org.flickit.assessment.core.test.fixture.application.AssessmentKitMother.kit;
-import static org.flickit.assessment.core.test.fixture.application.AssessmentKitMother.publicKit;
+import static org.flickit.assessment.core.test.fixture.application.AssessmentKitMother.*;
 import static org.flickit.assessment.core.test.fixture.application.SpaceMother.createExpiredPremiumSpace;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -101,7 +100,7 @@ class CreateAssessmentServiceTest {
     AppSpecProperties appSpecProperties = appSpecProperties();
 
     private final AssessmentKit privateKit = kit();
-    private final AssessmentKit publicKit = publicKit();
+    private final AssessmentKit publicKit = publicKitFaSupported();
 
     private final Space space = SpaceMother.createBasicSpace();
     private Param param;
@@ -258,11 +257,12 @@ class CreateAssessmentServiceTest {
     @Test
     void testCreateAssessment_whenLangIsNotSupported_thenThrowValidationException() {
         param = createParam(b -> b.lang("FA"));
+        var kit = publicKit();
 
         when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(Optional.of(space));
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
         when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.of(param.getKitId()));
-        when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId())).thenReturn(Optional.of(publicKit));
+        when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId())).thenReturn(Optional.of(kit));
 
         var throwable = assertThrows(ValidationException.class, () -> service.createAssessment(param));
         assertNotNull(CREATE_ASSESSMENT_LANGUAGE_NOT_SUPPORTED, throwable.getMessage());
@@ -277,7 +277,7 @@ class CreateAssessmentServiceTest {
 
     @Test
     void testCreateAssessment_whenParamsAreValid_thenCreateAssessmentAndAssessmentResult() {
-        param = createParam(Param.ParamBuilder::build);
+        param = createParam(b -> b.lang("FA"));
         UUID expectedAssessmentId = UUID.randomUUID();
 
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
