@@ -98,7 +98,7 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             assessmentResultEntity.getId(),
             assessment.getTitle(),
             assessmentInsight,
-            buildAssessmentKitItem(kitVersionId, assessmentKitEntity, maturityLevels),
+            buildAssessmentKitItem(kitVersionId, assessmentKitEntity, maturityLevels, language),
             idToMaturityLevel.get(assessmentResultEntity.getMaturityLevelId()),
             assessmentResultEntity.getConfidenceValue(),
             assessment.getCreationTime()
@@ -111,9 +111,12 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
 
     private AssessmentReportItem.AssessmentKitItem buildAssessmentKitItem(long kitVersionId,
                                                                           AssessmentKitJpaEntity assessmentKitEntity,
-                                                                          List<MaturityLevel> maturityLevels) {
+                                                                          List<MaturityLevel> maturityLevels,
+                                                                          @Nullable KitLanguage language) {
         var questionnaireViews = questionnaireRepository.findAllWithQuestionCountByKitVersionId(kitVersionId, null).getContent();
-        var questionnaireReportItems = questionnaireViews.stream().map(this::buildQuestionnaireReportItems).toList();
+        var questionnaireReportItems = questionnaireViews.stream()
+            .map(view -> buildQuestionnaireReportItems(view, language))
+            .toList();
         int questionsCount = questionnaireReportItems.stream()
             .mapToInt(QuestionnaireReportItem::questionCount)
             .sum();
@@ -132,11 +135,13 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             measures);
     }
 
-    private QuestionnaireReportItem buildQuestionnaireReportItems(QuestionnaireListItemView itemView) {
+    private QuestionnaireReportItem buildQuestionnaireReportItems(QuestionnaireListItemView itemView, @Nullable KitLanguage language) {
         QuestionnaireJpaEntity questionnaire = itemView.getQuestionnaire();
+        var translation = getQuestionnaireTranslation(questionnaire, language);
+
         return new QuestionnaireReportItem(questionnaire.getId(),
-            questionnaire.getTitle(),
-            questionnaire.getDescription(),
+            translation.titleOrDefault(questionnaire.getTitle()),
+            translation.descriptionOrDefault(questionnaire.getDescription()),
             questionnaire.getIndex(),
             itemView.getQuestionCount());
     }
@@ -250,5 +255,14 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
                 AttributeJpaEntity::getId,
                 e -> attributeIdToCustomWeight.getOrDefault(e.getId(), e.getWeight())
             ));
+    }
+
+    private QuestionnaireTranslation getQuestionnaireTranslation(QuestionnaireJpaEntity entity, @Nullable KitLanguage language) {
+        var translation = new QuestionnaireTranslation(null, null);
+        if (language != null) {
+            var translations = JsonUtils.fromJsonToMap(entity.getTranslations(), KitLanguage.class, QuestionnaireTranslation.class);
+            translation = translations.getOrDefault(language, translation);
+        }
+        return translation;
     }
 }
