@@ -9,10 +9,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.exception.UpgradeRequiredException;
 import org.flickit.assessment.common.exception.ValidationException;
-import org.flickit.assessment.core.application.domain.AssessmentUserRole;
-import org.flickit.assessment.core.application.domain.Attribute;
-import org.flickit.assessment.core.application.domain.Space;
-import org.flickit.assessment.core.application.domain.Subject;
+import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.domain.notification.CreateAssessmentNotificationCmd;
 import org.flickit.assessment.core.application.port.in.assessment.CreateAssessmentUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.CountAssessmentsPort;
@@ -81,7 +78,8 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
 
         validateSpace(param, space, assessmentKit.getIsPrivate());
 
-        if(param.getLang() !=null && !assessmentKit.getSupportedLanguages().contains(KitLanguage.valueOf(param.getLang())))
+        if (param.getLang() != null && assessmentKit.getLanguage() != KitLanguage.valueOf(param.getLang()) &&
+            !assessmentKit.getSupportedLanguages().contains(KitLanguage.valueOf(param.getLang())))
             throw new ValidationException(CREATE_ASSESSMENT_LANGUAGE_NOT_SUPPORTED);
 
         int langId = (param.getLang() != null)
