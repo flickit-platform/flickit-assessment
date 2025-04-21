@@ -51,11 +51,11 @@ class GetSpaceListScenarioTest extends AbstractScenarioTest {
             .reversed()
             .subList(0, pageSize).stream()
             .toList();
-        List<Long> firstPageActualIds = firstPageResponse.getItems().stream()
+        List<Long> firstPageActualItemIds = firstPageResponse.getItems().stream()
             .map(GetSpaceListUseCase.SpaceListItem::id)
             .toList();
 
-        assertEquals(firstPageExpectedItemIds, firstPageActualIds);
+        assertEquals(firstPageExpectedItemIds, firstPageActualItemIds);
 
         // Second page assertions
         assertPageProperties(secondPageResponse, secondPageQueryParams, secondPageSpaceCount);
@@ -64,11 +64,11 @@ class GetSpaceListScenarioTest extends AbstractScenarioTest {
             .reversed()
             .subList(pageSize, createdSpaces.size()).stream()
             .toList();
-        List<Long> secondPageActualIds = secondPageResponse.getItems().stream()
+        List<Long> secondPageActualItemIds = secondPageResponse.getItems().stream()
             .map(GetSpaceListUseCase.SpaceListItem::id)
             .toList();
 
-        assertEquals(secondPageExpectedItemsIds, secondPageActualIds);
+        assertEquals(secondPageExpectedItemsIds, secondPageActualItemIds);
 
         // Assert order of items according to LastSeen
         Specification<SpaceUserAccessJpaEntity> matchAllSpec = (root, query, cb) -> cb.conjunction();
@@ -78,7 +78,7 @@ class GetSpaceListScenarioTest extends AbstractScenarioTest {
             .toList()
             .subList(0, pageSize);
 
-        assertEquals(expectedSortedSpaceIds, firstPageActualIds);
+        assertEquals(expectedSortedSpaceIds, firstPageActualItemIds);
     }
 
     @Test
