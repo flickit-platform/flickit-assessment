@@ -2,6 +2,7 @@ package org.flickit.assessment.common.application.domain.kit.translation;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.Size;
+import org.apache.commons.lang3.StringUtils;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.TRANSLATION_ANSWER_OPTION_TITLE_SIZE_MAX;
 import static org.flickit.assessment.common.error.ErrorMessageKey.TRANSLATION_ANSWER_OPTION_TITLE_SIZE_MIN;
@@ -12,4 +13,7 @@ public record AnswerOptionTranslation(
     @Size(max = 100, message = TRANSLATION_ANSWER_OPTION_TITLE_SIZE_MAX)
     String title
 ) {
+    public String titleOrDefault(String defaultTitle) {
+        return StringUtils.isBlank(title) ? defaultTitle : title;
+    }
 }

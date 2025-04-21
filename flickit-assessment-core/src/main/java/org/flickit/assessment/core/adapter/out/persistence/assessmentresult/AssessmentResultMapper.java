@@ -2,6 +2,7 @@ package org.flickit.assessment.core.adapter.out.persistence.assessmentresult;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.core.adapter.out.persistence.assessment.AssessmentMapper;
 import org.flickit.assessment.core.application.domain.AssessmentKit;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
@@ -40,6 +41,7 @@ public class AssessmentResultMapper {
             entity.getConfidenceValue(),
             entity.getIsCalculateValid(),
             entity.getIsConfidenceValid(),
+            KitLanguage.valueOfById(entity.getLangId()),
             entity.getLastModificationTime(),
             entity.getLastCalculationTime(),
             entity.getLastConfidenceCalculationTime()
