@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.common.application.domain.kit.translation.AttributeTranslation;
 import org.flickit.assessment.common.application.domain.kit.translation.KitTranslation;
 import org.flickit.assessment.common.application.domain.kit.translation.QuestionnaireTranslation;
 import org.flickit.assessment.common.application.domain.kit.translation.SubjectTranslation;
@@ -207,7 +208,8 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
                         .map(x -> buildAttributeReportItem(idToMaturityLevel,
                             x,
                             attributeIdToInsightMap.get(x.getAttribute().getId()),
-                            attributeIdToWeight.get(x.getAttribute().getId())))
+                            attributeIdToWeight.get(x.getAttribute().getId()),
+                            language))
                         .toList());
             }).toList();
     }
@@ -215,14 +217,16 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
     private AttributeReportItem buildAttributeReportItem(Map<Long, MaturityLevel> idToMaturityLevel,
                                                          SubjectIdAttributeValueView attributeValueView,
                                                          AttributeInsightJpaEntity attributeInsight,
-                                                         int attributeWeight) {
+                                                         int attributeWeight,
+                                                         @Nullable KitLanguage language) {
         var attribute = attributeValueView.getAttribute();
+        var translation = getAttributeTranslation(attribute, language);
         var attributeValue = attributeValueView.getAttributeValue();
         var maturityLevel = idToMaturityLevel.get(attributeValue.getMaturityLevelId());
         var insight = getAttributeInsight(attributeInsight);
         return new AttributeReportItem(attribute.getId(),
-            attribute.getTitle(),
-            attribute.getDescription(),
+            translation.titleOrDefault(attribute.getTitle()),
+            translation.descriptionOrDefault(attribute.getDescription()),
             insight,
             attribute.getIndex(),
             attributeWeight,
@@ -288,6 +292,15 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
         var translation = new SubjectTranslation(null, null);
         if (language != null) {
             var translations = JsonUtils.fromJsonToMap(entity.getTranslations(), KitLanguage.class, SubjectTranslation.class);
+            translation = translations.getOrDefault(language, translation);
+        }
+        return translation;
+    }
+
+    private AttributeTranslation getAttributeTranslation(AttributeJpaEntity entity, @Nullable KitLanguage language) {
+        var translation = new AttributeTranslation(null, null);
+        if (language != null) {
+            var translations = JsonUtils.fromJsonToMap(entity.getTranslations(), KitLanguage.class, AttributeTranslation.class);
             translation = translations.getOrDefault(language, translation);
         }
         return translation;
