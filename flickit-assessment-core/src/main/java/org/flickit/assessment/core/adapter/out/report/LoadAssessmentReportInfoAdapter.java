@@ -84,8 +84,12 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             .orElse(null);
 
         var kitVersionId = assessmentResultEntity.getKitVersionId();
-        var maturityLevels = maturityLevelRepository.findAllByKitVersionIdOrderByIndex(kitVersionId)
-            .stream().map(e -> mapToDomainModel(e, null)).toList();
+        var language = Objects.equals(assessmentResultEntity.getLangId(), assessmentKitEntity.getLanguageId()) ? null
+            : KitLanguage.valueOfById(assessmentResultEntity.getLangId());
+
+        var maturityLevels = maturityLevelRepository.findAllByKitVersionIdOrderByIndex(kitVersionId).stream()
+            .map(e -> mapToDomainModel(e, language))
+            .toList();
 
         var idToMaturityLevel = maturityLevels.stream()
             .collect(toMap(MaturityLevel::getId, Function.identity()));
