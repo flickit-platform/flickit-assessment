@@ -1,15 +1,20 @@
 package org.flickit.assessment.scenario.test.users.space;
 
+import io.restassured.common.mapper.TypeRef;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.application.domain.space.SpaceType;
 import org.flickit.assessment.data.jpa.users.spaceuseraccess.SpaceUserAccessJpaEntity;
 import org.flickit.assessment.scenario.test.AbstractScenarioTest;
+import org.flickit.assessment.users.application.port.in.space.GetSpaceListUseCase;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.scenario.fixture.request.CreateSpaceRequestDtoMother.createSpaceRequestDto;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,9 +25,9 @@ class GetSpaceListScenarioTest extends AbstractScenarioTest {
     SpaceTestHelper spaceHelper;
 
     private final int pageSize = 5;
-    private final int secondPageExpertGroupCount = 1;
-    private final int spaceCount = pageSize + secondPageExpertGroupCount;
-    private int lastSpaceId = 0;
+    private final int secondPageSpaceCount = 1;
+    private final int spaceCount = pageSize + secondPageSpaceCount;
+    private Long lastSpaceId = 0L;
 
     @Test
     void getSpaceList() {
@@ -30,7 +35,7 @@ class GetSpaceListScenarioTest extends AbstractScenarioTest {
         createSpaces(pageSize);
         // Switch to the next user (main user) and create actual test data
         context.getNextCurrentUser();
-        createSpaces(spaceCount);
+        var createdSpaces = createSpaces(spaceCount);
         // First page request
         Map<String, Integer> firstPageQueryParams = createQueryParam(0);
         var firstPageResponse = getPaginatedSpaces(firstPageQueryParams);
@@ -38,9 +43,33 @@ class GetSpaceListScenarioTest extends AbstractScenarioTest {
         Map<String, Integer> secondPageQueryParams = createQueryParam(1);
         var secondPageResponse = getPaginatedSpaces(secondPageQueryParams);
         // First page assertions
-        assertPage(firstPageResponse, firstPageQueryParams, pageSize);
+        assertPageProperties(firstPageResponse, firstPageQueryParams, pageSize);
+        //assertPageItems(firstPageResponse.getItems(), createdSpaces);
+        List<GetSpaceListUseCase.SpaceListItem> firstPageExpectedItems = createdSpaces
+            .reversed()
+            .subList(0, pageSize).stream()
+            .map(this::convertToSpaceListItem).toList();
+
+        assertPageItems(firstPageResponse, firstPageExpectedItems);
         // Second page assertions
-        assertPage(secondPageResponse, secondPageQueryParams, secondPageExpertGroupCount);
+        assertPageProperties(secondPageResponse, secondPageQueryParams, secondPageSpaceCount);
+        List<GetSpaceListUseCase.SpaceListItem> secondPageExpectedItems = createdSpaces
+            .reversed()
+            .subList(pageSize, createdSpaces.size()).stream()
+            .map(this::convertToSpaceListItem).toList();
+
+        assertPageItems(secondPageResponse, secondPageExpectedItems);
+    }
+
+    private static void assertPageItems(PaginatedResponse<GetSpaceListUseCase.SpaceListItem> pageResponse, List<GetSpaceListUseCase.SpaceListItem> pageExpectedItems) {
+        assertThat(pageResponse.getItems())
+            .zipSatisfy(pageExpectedItems, (actual, expected) -> {
+                assertEquals(expected.id(), actual.id());
+            });
+    }
+
+    GetSpaceListUseCase.SpaceListItem convertToSpaceListItem(Long spaceId) {
+        return new GetSpaceListUseCase.SpaceListItem(spaceId,null,null,null,true, null,0,0);
     }
 
     @Test
@@ -66,7 +95,8 @@ class GetSpaceListScenarioTest extends AbstractScenarioTest {
         assertEquals(0, secondPageResponse.getItems().size());
     }
 
-    private void createSpaces(int count) {
+    private LinkedList<Long> createSpaces(int count) {
+        LinkedList<Long> spaceIds = new LinkedList<>();
         for (int i = 0; i < count; i++) {
             var createRequest = createSpaceRequestDto(b -> b.type(SpaceType.PREMIUM.getCode()));
             var response = spaceHelper.create(context, createRequest)
@@ -74,27 +104,29 @@ class GetSpaceListScenarioTest extends AbstractScenarioTest {
                 .statusCode(201)
                 .body("id", notNullValue());
 
-            lastSpaceId = response.extract().path("id");
+            lastSpaceId = ((Number) response.extract().path("id")).longValue();
+            spaceIds.add(lastSpaceId);
         }
+        return spaceIds;
     }
 
     private Map<String, Integer> createQueryParam(int page) {
         return Map.of("page", page, "size", pageSize);
     }
 
-    private PaginatedResponse getPaginatedSpaces(Map<String, Integer> queryParams) {
+    private PaginatedResponse<GetSpaceListUseCase.SpaceListItem> getPaginatedSpaces(Map<String, Integer> queryParams) {
         return spaceHelper.getList(context, queryParams)
             .then()
             .statusCode(200)
             .extract()
             .body()
-            .as(PaginatedResponse.class);
+            .as(new TypeRef<>() {});
     }
 
-    private void assertPage(PaginatedResponse pageResponse, Map<String, Integer> firstPageQueryParams, int expectedSize) {
+    private void assertPageProperties(PaginatedResponse pageResponse, Map<String, Integer> queryParams, int expectedSize) {
         assertEquals(expectedSize, pageResponse.getItems().size());
-        assertEquals(firstPageQueryParams.get("page"), pageResponse.getPage());
-        assertEquals(firstPageQueryParams.get("size"), pageResponse.getSize());
+        assertEquals(queryParams.get("page"), pageResponse.getPage());
+        assertEquals(queryParams.get("size"), pageResponse.getSize());
         assertEquals(SpaceUserAccessJpaEntity.Fields.lastSeen, pageResponse.getSort());
         assertEquals(Sort.Direction.DESC.name().toLowerCase(), pageResponse.getOrder());
         assertEquals(spaceCount, pageResponse.getTotal());
