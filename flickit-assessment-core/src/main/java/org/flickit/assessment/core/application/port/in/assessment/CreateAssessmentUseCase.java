@@ -1,5 +1,6 @@
 package org.flickit.assessment.core.application.port.in.assessment;
 
+import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -40,21 +41,20 @@ public interface CreateAssessmentUseCase {
         @NotNull(message = CREATE_ASSESSMENT_ASSESSMENT_KIT_ID_NOT_NULL)
         Long kitId;
 
-        @EnumValue(enumClass = KitLanguage.class)
+        @Nullable
+        @EnumValue(enumClass = KitLanguage.class, message = CREATE_ASSESSMENT_LANGUAGE_INVALID)
         String lang;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
         @Builder
-        public Param(Long spaceId, String title, String shortTitle, Long kitId, String lang, UUID currentUserId) {
+        public Param(Long spaceId, String title, String shortTitle, Long kitId, @Nullable String lang, UUID currentUserId) {
             this.title = title != null ? title.strip() : null;
             this.shortTitle = shortTitle != null && !shortTitle.isBlank() ? shortTitle.strip() : null;
             this.spaceId = spaceId;
             this.kitId = kitId;
-            this.lang = lang != null && !lang.isBlank()
-                ? KitLanguage.getEnum(lang).name()
-                : null;
+            this.lang = lang;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }

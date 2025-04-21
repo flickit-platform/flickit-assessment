@@ -18,7 +18,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.lenient;
 
 @ExtendWith(MockitoExtension.class)
@@ -79,16 +78,14 @@ class CreateAssessmentUseCaseParamTest {
 
     @Test
     void testCreateAssessmentUseCaseParam_whenLangParamIsInvalid_thenSetLangToDefault() {
-        var param = createParam(b -> b.lang("FR"));
-        assertEquals("EN", param.getLang());
+        var throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.lang("FR")));
+        assertThat(throwable).hasMessage("lang: " + CREATE_ASSESSMENT_LANGUAGE_INVALID);
     }
 
     @Test
-    void testCreateAssessmentUseCaseParam_whenLangParamIsNullOrBlank_thenSetLangToNull() {
-        var param = createParam(b -> b.lang(" "));
-        assertNull(param.getLang());
-
-        param = createParam(b -> b.lang(null));
+    void testCreateAssessmentUseCaseParam_whenLangParamIsNull_thenSetLangToNull() {
+        var param = createParam(b -> b.lang(null));
         assertNull(param.getLang());
     }
 
