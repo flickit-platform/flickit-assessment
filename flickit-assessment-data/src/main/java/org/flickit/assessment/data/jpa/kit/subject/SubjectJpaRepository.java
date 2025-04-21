@@ -78,6 +78,7 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Su
             SELECT
                 s.id AS id,
                 s.title AS title,
+                s.translations AS translations,
                 sq.questionnaireId AS questionnaireId
             FROM SubjectQuestionnaireJpaEntity sq
             JOIN SubjectJpaEntity s ON s.id = sq.subjectId AND s.kitVersionId = :kitVersionId
