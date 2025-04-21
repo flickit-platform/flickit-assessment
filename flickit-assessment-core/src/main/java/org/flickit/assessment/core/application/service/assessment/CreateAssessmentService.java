@@ -1,6 +1,7 @@
 package org.flickit.assessment.core.application.service.assessment;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.application.domain.notification.SendNotification;
 import org.flickit.assessment.common.application.domain.space.SpaceType;
@@ -114,7 +115,8 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
         KitLanguage lang = KitLanguage.valueOfById(langId);
 
         boolean isPrimaryLang = kit.getLanguage() == lang;
-        boolean isSupportedLang = kit.getSupportedLanguages() != null && kit.getSupportedLanguages().contains(lang);
+        boolean isSupportedLang = !CollectionUtils.isEmpty(kit.getSupportedLanguages()) &&
+            kit.getSupportedLanguages().contains(lang);
 
         if (!isPrimaryLang && !isSupportedLang)
             throw new ValidationException(CREATE_ASSESSMENT_LANGUAGE_NOT_SUPPORTED);
