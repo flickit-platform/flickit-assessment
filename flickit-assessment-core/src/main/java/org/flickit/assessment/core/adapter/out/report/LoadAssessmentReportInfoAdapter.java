@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.common.application.domain.kit.translation.KitTranslation;
 import org.flickit.assessment.common.application.domain.kit.translation.QuestionnaireTranslation;
 import org.flickit.assessment.common.application.domain.kitcustom.KitCustomData;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
@@ -128,8 +129,9 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             .map(measure -> MeasureMapper.mapToDomainModel(measure, language))
             .toList();
 
+        var translation = getKitTranslation(assessmentKitEntity, language);
         return new AssessmentReportItem.AssessmentKitItem(assessmentKitEntity.getId(),
-            assessmentKitEntity.getTitle(),
+            translation.titleOrDefault(assessmentKitEntity.getTitle()),
             KitLanguage.valueOfById(assessmentKitEntity.getLanguageId()),
             maturityLevels.size(),
             questionsCount,
@@ -264,6 +266,15 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
         var translation = new QuestionnaireTranslation(null, null);
         if (language != null) {
             var translations = JsonUtils.fromJsonToMap(entity.getTranslations(), KitLanguage.class, QuestionnaireTranslation.class);
+            translation = translations.getOrDefault(language, translation);
+        }
+        return translation;
+    }
+
+    private KitTranslation getKitTranslation(AssessmentKitJpaEntity assessmentKitEntity, @Nullable KitLanguage language) {
+        var translation = new KitTranslation(null, null, null);
+        if (language != null) {
+            var translations = JsonUtils.fromJsonToMap(assessmentKitEntity.getTranslations(), KitLanguage.class, KitTranslation.class);
             translation = translations.getOrDefault(language, translation);
         }
         return translation;
