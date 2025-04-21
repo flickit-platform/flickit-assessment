@@ -15,6 +15,17 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MaturityLevelMapper {
 
+    public static MaturityLevel mapToDomainModel(MaturityLevelJpaEntity entity) {
+        return new MaturityLevel(
+            entity.getId(),
+            entity.getTitle(),
+            entity.getIndex(),
+            entity.getValue(),
+            entity.getDescription(),
+            null
+        );
+    }
+
     public static MaturityLevel mapToDomainModel(MaturityLevelJpaEntity entity, List<LevelCompetence> competences) {
         return new MaturityLevel(
             entity.getId(),

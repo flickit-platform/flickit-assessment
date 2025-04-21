@@ -28,7 +28,7 @@ public class AttributeMaturityScorePersistenceJpaAdapter implements
                 AttributeMaturityScoreView::getAttributeId,
                 Collectors.mapping(
                     view -> new LoadAttributeMaturityScoresPort.MaturityLevelScore(
-                        MaturityLevelMapper.mapToDomainModel(view.getMaturityLevel(), List.of()),
+                        MaturityLevelMapper.mapToDomainModel(view.getMaturityLevel()),
                         view.getScore()),
                     Collectors.toList()
                 )
