@@ -108,6 +108,7 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             buildAssessmentKitItem(kitVersionId, assessmentKitEntity, maturityLevels, language),
             idToMaturityLevel.get(assessmentResultEntity.getMaturityLevelId()),
             assessmentResultEntity.getConfidenceValue(),
+            KitLanguage.valueOfById(assessmentResultEntity.getLangId()),
             assessment.getCreationTime()
         );
 
@@ -135,7 +136,6 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
         var translation = getKitTranslation(assessmentKitEntity, language);
         return new AssessmentReportItem.AssessmentKitItem(assessmentKitEntity.getId(),
             translation.titleOrDefault(assessmentKitEntity.getTitle()),
-            KitLanguage.valueOfById(assessmentKitEntity.getLanguageId()),
             maturityLevels.size(),
             questionsCount,
             maturityLevels,
