@@ -2,6 +2,7 @@ package org.flickit.assessment.common.application.domain.kit.translation;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.Size;
+import org.apache.commons.lang3.StringUtils;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.*;
 
@@ -15,4 +16,7 @@ public record MeasureTranslation(
     @Size(max = 500, message = TRANSLATION_MEASURE_DESCRIPTION_SIZE_MAX)
     String description
 ) {
+    public String titleOrDefault(String defaultTitle) {
+        return StringUtils.isBlank(title) ? defaultTitle : title;
+    }
 }

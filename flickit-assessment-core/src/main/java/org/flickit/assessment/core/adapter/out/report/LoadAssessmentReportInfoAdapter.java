@@ -1,12 +1,15 @@
 package org.flickit.assessment.core.adapter.out.report;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.common.application.domain.kit.translation.QuestionnaireTranslation;
 import org.flickit.assessment.common.application.domain.kitcustom.KitCustomData;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.util.JsonUtils;
 import org.flickit.assessment.core.adapter.out.persistence.kit.measure.MeasureMapper;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.domain.report.AssessmentReportItem;
@@ -122,7 +125,7 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             .sum();
 
         var measures = measureRepository.findAllByKitVersionId(kitVersionId).stream()
-            .map(MeasureMapper::mapToDomainModel)
+            .map(measure -> MeasureMapper.mapToDomainModel(measure, language))
             .toList();
 
         return new AssessmentReportItem.AssessmentKitItem(assessmentKitEntity.getId(),
