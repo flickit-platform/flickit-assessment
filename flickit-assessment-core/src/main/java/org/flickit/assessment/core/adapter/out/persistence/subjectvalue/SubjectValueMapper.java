@@ -2,6 +2,7 @@ package org.flickit.assessment.core.adapter.out.persistence.subjectvalue;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.core.adapter.out.persistence.kit.attribute.AttributeMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.maturitylevel.MaturityLevelMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.subject.SubjectMapper;
@@ -37,11 +38,14 @@ public class SubjectValueMapper {
         );
     }
 
-    public static SubjectValue mapToDomainModel(SubjectValueWithSubjectView view, MaturityLevelJpaEntity maturityLevelJpaEntity, List<AttributeJpaEntity> attributeJpaEntities) {
+    public static SubjectValue mapToDomainModel(SubjectValueWithSubjectView view,
+                                                MaturityLevelJpaEntity maturityLevelJpaEntity,
+                                                List<AttributeJpaEntity> attributeJpaEntities,
+                                                KitLanguage language) {
         var attributes = attributeJpaEntities.stream()
             .map(AttributeMapper::mapToDomainModel)
             .toList();
-        var subject = SubjectMapper.mapToDomainModel(view.getSubject(), attributes);
+        var subject = SubjectMapper.mapToDomainModel(view.getSubject(), attributes, language);
         var subjectValue = new SubjectValue(
             view.getSubjectValue().getId(),
             subject,
