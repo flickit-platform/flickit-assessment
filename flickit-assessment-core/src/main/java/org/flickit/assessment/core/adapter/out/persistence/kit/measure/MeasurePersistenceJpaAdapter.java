@@ -10,7 +10,6 @@ import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpa
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
 import org.flickit.assessment.data.jpa.kit.measure.MeasureJpaRepository;
-import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -32,14 +31,14 @@ public class MeasurePersistenceJpaAdapter implements
     public List<Measure> loadAll(List<Long> measureIds, UUID assessmentId) {
         var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
-        var language = resolveLanguage(assessmentResult);
+        var translationLanguage = resolveLanguage(assessmentResult);
 
         return repository.findAllByIdInAndKitVersionId(measureIds, assessmentResult.getKitVersionId()).stream()
-            .map(entity -> MeasureMapper.mapToDomainModel(entity, language))
+            .map(entity -> MeasureMapper.mapToDomainModel(entity, translationLanguage))
             .toList();
     }
 
-    private @Nullable KitLanguage resolveLanguage(AssessmentResultJpaEntity assessmentResult) {
+    private KitLanguage resolveLanguage(AssessmentResultJpaEntity assessmentResult) {
         var assessmentKit = assessmentKitRepository.findByKitVersionId(assessmentResult.getKitVersionId())
             .orElseThrow(() -> new ResourceNotFoundException(ErrorMessageKey.COMMON_ASSESSMENT_KIT_NOT_FOUND));
         return Objects.equals(assessmentResult.getLangId(), assessmentKit.getLanguageId())
