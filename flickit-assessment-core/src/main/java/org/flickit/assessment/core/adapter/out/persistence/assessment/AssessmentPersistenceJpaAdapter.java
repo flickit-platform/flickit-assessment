@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.application.domain.kit.translation.KitTranslation;
+import org.flickit.assessment.common.application.domain.kit.translation.MaturityLevelTranslation;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.util.JsonUtils;
 import org.flickit.assessment.core.adapter.out.persistence.answer.AnswerMapper;
@@ -165,10 +166,8 @@ public class AssessmentPersistenceJpaAdapter implements
                 if (Boolean.TRUE.equals(e.getAssessmentResult().getIsCalculateValid())) {
                     MaturityLevelJpaEntity maturityLevelEntity = maturityLevelIdToMaturityLevel.get(
                         new MaturityLevelJpaEntity.EntityId(e.getAssessmentResult().getMaturityLevelId(), e.getAssessmentResult().getKitVersionId()));
-                    maturityLevel = new AssessmentListItem.MaturityLevel(maturityLevelEntity.getId(),
-                        maturityLevelEntity.getTitle(),
-                        maturityLevelEntity.getValue(),
-                        maturityLevelEntity.getIndex());
+
+                    maturityLevel = mapToAssessmentListItemMaturityLevel(maturityLevelEntity, language);
                 }
 
                 return new AssessmentListItem(e.getAssessment().getId(),
@@ -299,5 +298,17 @@ public class AssessmentPersistenceJpaAdapter implements
         return new AssessmentListItem.Kit(kitEntity.getId(),
             kitTranslation.titleOrDefault(kitEntity.getTitle()),
             kitLevelEntities);
+    }
+
+    private AssessmentListItem.MaturityLevel mapToAssessmentListItemMaturityLevel(MaturityLevelJpaEntity jpaEntity, KitLanguage language) {
+        var maturityLevelTranslation = new MaturityLevelTranslation(null, null);
+        if (language != null) {
+            var translations = JsonUtils.fromJsonToMap(jpaEntity.getTranslations(), KitLanguage.class, MaturityLevelTranslation.class);
+            maturityLevelTranslation = translations.getOrDefault(language, maturityLevelTranslation);
+        }
+        return new AssessmentListItem.MaturityLevel(jpaEntity.getId(),
+            maturityLevelTranslation.titleOrDefault(jpaEntity.getTitle()),
+            jpaEntity.getValue(),
+            jpaEntity.getIndex());
     }
 }

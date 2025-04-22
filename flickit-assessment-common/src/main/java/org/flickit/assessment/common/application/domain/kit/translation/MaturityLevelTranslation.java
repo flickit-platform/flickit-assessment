@@ -1,6 +1,7 @@
 package org.flickit.assessment.common.application.domain.kit.translation;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import io.micrometer.common.util.StringUtils;
 import jakarta.validation.constraints.Size;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.*;
@@ -15,4 +16,7 @@ public record MaturityLevelTranslation(
     @Size(max = 500, message = TRANSLATION_MATURITY_LEVEL_DESCRIPTION_SIZE_MAX)
     String description
 ) {
+    public String titleOrDefault(String defaultTitle) {
+        return StringUtils.isBlank(title) ? defaultTitle : title;
+    }
 }
