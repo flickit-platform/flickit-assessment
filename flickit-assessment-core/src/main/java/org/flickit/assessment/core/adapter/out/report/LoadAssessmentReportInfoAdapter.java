@@ -7,18 +7,17 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.application.domain.kit.translation.AttributeTranslation;
-import org.flickit.assessment.common.application.domain.kit.translation.KitTranslation;
-import org.flickit.assessment.common.application.domain.kit.translation.QuestionnaireTranslation;
 import org.flickit.assessment.common.application.domain.kit.translation.SubjectTranslation;
 import org.flickit.assessment.common.application.domain.kitcustom.KitCustomData;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.util.JsonUtils;
+import org.flickit.assessment.core.adapter.out.persistence.kit.assessmentkit.AssessmentKitMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.measure.MeasureMapper;
+import org.flickit.assessment.core.adapter.out.persistence.kit.questionnaire.QuestionnaireMapper;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.domain.report.AssessmentReportItem;
 import org.flickit.assessment.core.application.domain.report.AssessmentSubjectReportItem;
 import org.flickit.assessment.core.application.domain.report.AttributeReportItem;
-import org.flickit.assessment.core.application.domain.report.QuestionnaireReportItem;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
@@ -39,9 +38,7 @@ import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.kitcustom.KitCustomJpaRepository;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.data.jpa.kit.measure.MeasureJpaRepository;
-import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaEntity;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaRepository;
-import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireListItemView;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.springframework.stereotype.Component;
@@ -123,35 +120,18 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
                                                                           @Nullable KitLanguage language) {
         var questionnaireViews = questionnaireRepository.findAllWithQuestionCountByKitVersionId(kitVersionId, null).getContent();
         var questionnaireReportItems = questionnaireViews.stream()
-            .map(view -> buildQuestionnaireReportItems(view, language))
+            .map(view -> QuestionnaireMapper.mapToReportItem(view, language))
             .toList();
-        int questionsCount = questionnaireReportItems.stream()
-            .mapToInt(QuestionnaireReportItem::questionCount)
-            .sum();
 
         var measures = measureRepository.findAllByKitVersionId(kitVersionId).stream()
             .map(measure -> MeasureMapper.mapToDomainModel(measure, language))
             .toList();
 
-        var translation = getKitTranslation(assessmentKitEntity, language);
-        return new AssessmentReportItem.AssessmentKitItem(assessmentKitEntity.getId(),
-            translation.titleOrDefault(assessmentKitEntity.getTitle()),
-            maturityLevels.size(),
-            questionsCount,
+        return AssessmentKitMapper.mapToReportItem(assessmentKitEntity,
             maturityLevels,
             questionnaireReportItems,
-            measures);
-    }
-
-    private QuestionnaireReportItem buildQuestionnaireReportItems(QuestionnaireListItemView itemView, @Nullable KitLanguage language) {
-        QuestionnaireJpaEntity questionnaire = itemView.getQuestionnaire();
-        var translation = getQuestionnaireTranslation(questionnaire, language);
-
-        return new QuestionnaireReportItem(questionnaire.getId(),
-            translation.titleOrDefault(questionnaire.getTitle()),
-            translation.descriptionOrDefault(questionnaire.getDescription()),
-            questionnaire.getIndex(),
-            itemView.getQuestionCount());
+            measures,
+            language);
     }
 
     private List<AssessmentSubjectReportItem> buildSubjectReportItems(AssessmentResultJpaEntity assessmentResult,
@@ -268,24 +248,6 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
                 AttributeJpaEntity::getId,
                 e -> attributeIdToCustomWeight.getOrDefault(e.getId(), e.getWeight())
             ));
-    }
-
-    private QuestionnaireTranslation getQuestionnaireTranslation(QuestionnaireJpaEntity entity, @Nullable KitLanguage language) {
-        var translation = new QuestionnaireTranslation(null, null);
-        if (language != null) {
-            var translations = JsonUtils.fromJsonToMap(entity.getTranslations(), KitLanguage.class, QuestionnaireTranslation.class);
-            translation = translations.getOrDefault(language, translation);
-        }
-        return translation;
-    }
-
-    private KitTranslation getKitTranslation(AssessmentKitJpaEntity assessmentKitEntity, @Nullable KitLanguage language) {
-        var translation = new KitTranslation(null, null, null);
-        if (language != null) {
-            var translations = JsonUtils.fromJsonToMap(assessmentKitEntity.getTranslations(), KitLanguage.class, KitTranslation.class);
-            translation = translations.getOrDefault(language, translation);
-        }
-        return translation;
     }
 
     private SubjectTranslation getSubjectTranslation(SubjectJpaEntity entity, @Nullable KitLanguage language) {
