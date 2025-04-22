@@ -12,12 +12,10 @@ import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpa
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
 import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaEntity;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityJoinCompetenceView;
-import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -56,25 +54,27 @@ public class MaturityLevelPersistenceJpaAdapter implements
     }
 
     public List<MaturityLevel> loadByKitVersionIdWithCompetences(Long kitVersionId) {
-        List<MaturityJoinCompetenceView> results = repository.findAllByKitVersionIdWithCompetence(kitVersionId);
+        var views = repository.findAllByKitVersionIdWithCompetence(kitVersionId);
 
-        Map<Long, List<MaturityJoinCompetenceView>> collect = results.stream()
-            .collect(Collectors.groupingBy(x -> x.getMaturityLevel().getId()));
+        var groupedByLevelId = views.stream()
+            .collect(Collectors.groupingBy(view -> view.getMaturityLevel().getId()));
 
-        return collect.values().stream().map(result -> {
-            MaturityLevelJpaEntity levelEntity = result.stream()
-                .findFirst()
-                .orElseThrow() // Can't happen
-                .getMaturityLevel();
+        return groupedByLevelId.values().stream()
+            .map(group -> {
+                var levelEntity = group.getFirst().getMaturityLevel();
 
-            List<LevelCompetence> competences = result.stream()
-                .map(MaturityJoinCompetenceView::getLevelCompetence)
-                .filter(Objects::nonNull)
-                .map(MaturityLevelPersistenceJpaAdapter::mapToCompetenceDomainModel)
-                .toList();
+                var competences = group.stream()
+                    .map(MaturityJoinCompetenceView::getLevelCompetence)
+                    .filter(Objects::nonNull)
+                    .map(MaturityLevelPersistenceJpaAdapter::mapToCompetenceDomainModel)
+                    .toList();
 
-            return mapToDomainModel(levelEntity, competences);
-        }).toList();
+                var level = mapToDomainModel(levelEntity);
+                level.setLevelCompetences(competences);
+
+                return level;
+            })
+            .toList();
     }
 
     private static LevelCompetence mapToCompetenceDomainModel(LevelCompetenceJpaEntity entity) {
