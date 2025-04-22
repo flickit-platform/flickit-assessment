@@ -27,9 +27,9 @@ public class AttributeMaturityScoreMapper {
 
     public static LoadAttributeScoreDetailPort.Result mapToAttributeScoreDetail(ImpactFullQuestionsView view,
                                                                                 @Nullable KitLanguage translationLanguage) {
-        var questionnaireTranslation = QuestionnaireMapper.getTranslation(view.getQuestionnaireTranslation(), translationLanguage);
-        var questionTranslation = QuestionMapper.getTranslation(view.getQuestionTranslation(), translationLanguage);
-        var answerOptionTranslation = AnswerOptionMapper.getTranslation(view.getOptionTranslation(), translationLanguage);
+        var questionnaireTranslation = QuestionnaireMapper.getTranslation(view.getQuestionnaireTranslations(), translationLanguage);
+        var questionTranslation = QuestionMapper.getTranslation(view.getQuestionTranslations(), translationLanguage);
+        var answerOptionTranslation = AnswerOptionMapper.getTranslation(view.getOptionTranslations(), translationLanguage);
 
         return new LoadAttributeScoreDetailPort.Result(view.getQuestionnaireId(),
             questionnaireTranslation.titleOrDefault(view.getQuestionnaireTitle()),
