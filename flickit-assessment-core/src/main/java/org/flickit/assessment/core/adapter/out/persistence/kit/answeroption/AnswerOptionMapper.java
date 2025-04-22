@@ -30,10 +30,10 @@ public class AnswerOptionMapper {
             entity.getValue());
     }
 
-    public static AnswerOptionTranslation getTranslation(String entityTranslation, @Nullable KitLanguage language) {
+    public static AnswerOptionTranslation getTranslation(String entityTranslations, @Nullable KitLanguage language) {
         var translation = new AnswerOptionTranslation(null);
         if (language != null) {
-            var translations = JsonUtils.fromJsonToMap(entityTranslation, KitLanguage.class, AnswerOptionTranslation.class);
+            var translations = JsonUtils.fromJsonToMap(entityTranslations, KitLanguage.class, AnswerOptionTranslation.class);
             translation = translations.getOrDefault(language, translation);
         }
         return translation;

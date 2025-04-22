@@ -70,10 +70,10 @@ public class QuestionMapper {
         );
     }
 
-    public static QuestionTranslation getTranslation(String entityTranslation, @Nullable KitLanguage language) {
+    public static QuestionTranslation getTranslation(String entityTranslations, @Nullable KitLanguage language) {
         var translation = new QuestionTranslation(null, null);
         if (language != null) {
-            var translations = JsonUtils.fromJsonToMap(entityTranslation, KitLanguage.class, QuestionTranslation.class);
+            var translations = JsonUtils.fromJsonToMap(entityTranslations, KitLanguage.class, QuestionTranslation.class);
             translation = translations.getOrDefault(language, translation);
         }
         return translation;

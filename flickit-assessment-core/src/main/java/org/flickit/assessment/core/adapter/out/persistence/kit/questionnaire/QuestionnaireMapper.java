@@ -70,10 +70,10 @@ public class QuestionnaireMapper {
             itemView.getQuestionCount());
     }
 
-    public static QuestionnaireTranslation getTranslation(String entityTranslation, @Nullable KitLanguage language) {
+    public static QuestionnaireTranslation getTranslation(String entityTranslations, @Nullable KitLanguage language) {
         var translation = new QuestionnaireTranslation(null, null);
         if (language != null) {
-            var translations = JsonUtils.fromJsonToMap(entityTranslation, KitLanguage.class, QuestionnaireTranslation.class);
+            var translations = JsonUtils.fromJsonToMap(entityTranslations, KitLanguage.class, QuestionnaireTranslation.class);
             translation = translations.getOrDefault(language, translation);
         }
         return translation;
