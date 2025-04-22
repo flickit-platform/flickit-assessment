@@ -50,7 +50,7 @@ public class SubjectValueMapper {
             view.getSubjectValue().getId(),
             subject,
             new ArrayList<>());
-        var maturityLevel = MaturityLevelMapper.mapToDomainModel(maturityLevelJpaEntity);
+        var maturityLevel = MaturityLevelMapper.mapToDomainModel(maturityLevelJpaEntity, language);
         subjectValue.setMaturityLevel(maturityLevel);
         subjectValue.setConfidenceValue(view.getSubjectValue().getConfidenceValue());
         return subjectValue;
