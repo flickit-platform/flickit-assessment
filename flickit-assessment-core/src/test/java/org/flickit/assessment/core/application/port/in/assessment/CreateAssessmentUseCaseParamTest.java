@@ -3,8 +3,6 @@ package org.flickit.assessment.core.application.port.in.assessment;
 import jakarta.validation.ConstraintViolationException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -15,7 +13,6 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@ExtendWith(MockitoExtension.class)
 class CreateAssessmentUseCaseParamTest {
 
     @Test
