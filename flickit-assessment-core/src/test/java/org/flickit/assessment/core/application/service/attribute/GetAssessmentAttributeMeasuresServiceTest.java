@@ -2,13 +2,10 @@ package org.flickit.assessment.core.application.service.attribute;
 
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.port.in.attribute.GetAssessmentAttributeMeasuresUseCase.Param;
-import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeQuestionsPort;
 import org.flickit.assessment.core.application.port.out.measure.LoadMeasuresPort;
 import org.flickit.assessment.core.test.fixture.application.AnswerMother;
-import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.flickit.assessment.core.test.fixture.application.MeasureMother;
 import org.flickit.assessment.core.test.fixture.application.QuestionMother;
 import org.junit.jupiter.api.Test;
@@ -18,13 +15,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ATTRIBUTE_MEASURES;
-import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -39,9 +34,6 @@ class GetAssessmentAttributeMeasuresServiceTest {
 
     @Mock
     private AssessmentAccessChecker assessmentAccessChecker;
-
-    @Mock
-    private LoadAssessmentResultPort loadAssessmentResultPort;
 
     @Mock
     private LoadMeasuresPort loadMeasuresPort;
@@ -59,24 +51,11 @@ class GetAssessmentAttributeMeasuresServiceTest {
         var throwable = assertThrows(AccessDeniedException.class, () -> service.getAssessmentAttributeMeasures(param));
         assertThat(throwable.getMessage()).isEqualTo(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        verifyNoInteractions(loadAssessmentResultPort, loadMeasuresPort, loadAttributeQuestionsPort);
-    }
-
-    @Test
-    void testGetAssessmentAttributeMeasures_whenAssessmentResultDoesNotExist_thenThrowResourceNotFoundException() {
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ATTRIBUTE_MEASURES))
-            .thenReturn(true);
-        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.empty());
-
-        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.getAssessmentAttributeMeasures(param));
-        assertThat(throwable.getMessage()).isEqualTo(COMMON_ASSESSMENT_RESULT_NOT_FOUND);
-
         verifyNoInteractions(loadMeasuresPort, loadAttributeQuestionsPort);
     }
 
     @Test
     void testGetAssessmentAttributeMeasures_whenParamIsValid_thenReturnResult() {
-        var assessmentResult = AssessmentResultMother.validResult();
         var measure1 = MeasureMother.createMeasure();
         var measure2 = MeasureMother.createMeasure();
         var question1 = QuestionMother.withMeasure(measure1);
@@ -88,13 +67,11 @@ class GetAssessmentAttributeMeasuresServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ATTRIBUTE_MEASURES))
             .thenReturn(true);
-        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
-            .thenReturn(Optional.of(assessmentResult));
         when(loadAttributeQuestionsPort.loadApplicableQuestions(param.getAssessmentId(), param.getAttributeId()))
             .thenReturn(List.of(new LoadAttributeQuestionsPort.Result(question1, answer1),
                 new LoadAttributeQuestionsPort.Result(question2, answer2),
                 new LoadAttributeQuestionsPort.Result(question3, null)));
-        when(loadMeasuresPort.loadAll(List.of(measure1.getId(), measure2.getId()), assessmentResult.getKitVersionId()))
+        when(loadMeasuresPort.loadAll(List.of(measure1.getId(), measure2.getId()), param.getAssessmentId()))
             .thenReturn(List.of(measure1, measure2));
 
         var result = service.getAssessmentAttributeMeasures(param);
