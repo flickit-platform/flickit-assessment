@@ -6,5 +6,6 @@ import lombok.Builder;
 public record CreateAssessmentRequestDto(Long spaceId,
                                          String title,
                                          String shortTitle,
-                                         Long assessmentKitId) {
+                                         Long assessmentKitId,
+                                         String lang) {
 }
