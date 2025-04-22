@@ -87,10 +87,10 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
 
         return new Result(toAssessment(assessment, assessmentKitItem, metadata, maturityLevels, attributesCount, maturityLevelMap),
             toSubjects(assessmentReportInfo.subjects(), maturityLevelMap, attributeMeasuresMap),
-            toAdvice(assessment.assessmentResultId(), Locale.of(assessmentKitItem.language().name())),
+            toAdvice(assessment.assessmentResultId(), Locale.of(assessment.language().name())),
             toAssessmentProcess(metadata),
             toPermissions(param),
-            toLanguage(assessmentKitItem.language()));
+            toLanguage(assessment.language()));
     }
 
     private List<MaturityLevel> toMaturityLevels(AssessmentKitItem assessmentKitItem) {

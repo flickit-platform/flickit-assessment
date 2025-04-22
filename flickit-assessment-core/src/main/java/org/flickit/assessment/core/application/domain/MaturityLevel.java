@@ -1,8 +1,10 @@
 package org.flickit.assessment.core.application.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 
@@ -10,6 +12,7 @@ import static java.util.Comparator.comparingInt;
 
 @Getter
 @RequiredArgsConstructor
+@AllArgsConstructor
 public class MaturityLevel {
 
     private final long id;
@@ -19,7 +22,8 @@ public class MaturityLevel {
     private final String description;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private final List<LevelCompetence> levelCompetences;
+    @Setter
+    private List<LevelCompetence> levelCompetences;
 
     public static MaturityLevel middleLevel(List<MaturityLevel> maturityLevels) {
         var sortedMaturityLevels = maturityLevels.stream()
