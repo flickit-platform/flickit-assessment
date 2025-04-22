@@ -3,6 +3,8 @@ package org.flickit.assessment.core.test.fixture.application;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.core.application.domain.AssessmentKit;
 
+import java.util.List;
+
 public class AssessmentKitMother {
 
     private static long id = 134L;
@@ -21,12 +23,14 @@ public class AssessmentKitMother {
     }
 
     public static AssessmentKit publicKit() {
-        return new AssessmentKit(id++,
+        var kit = new AssessmentKit(id++,
             "title" + id,
             id,
             KitLanguage.EN,
             MaturityLevelMother.allLevels(),
             Boolean.FALSE);
+        kit.setSupportedLanguages(List.of(KitLanguage.FA, KitLanguage.EN));
+        return kit;
     }
 
     public static AssessmentKit AssessmentKitWithoutActiveKitVersion() {

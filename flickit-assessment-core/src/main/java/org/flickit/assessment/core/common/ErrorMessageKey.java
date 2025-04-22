@@ -35,6 +35,8 @@ public class ErrorMessageKey {
     public static final String CREATE_ASSESSMENT_BASIC_SPACE_ASSESSMENTS_MAX = "create-assessment.basicSpaceAssessments.max";
     public static final String CREATE_ASSESSMENT_BASIC_SPACE_PRIVATE_KIT_NOT_ALLOWED = "create-assessment.basicSpacePrivateKits.notAllowed";
     public static final String CREATE_ASSESSMENT_PREMIUM_SPACE_EXPIRED = "create-assessment.premiumSpace.expired";
+    public static final String CREATE_ASSESSMENT_LANGUAGE_INVALID = "create-assessment.language.invalid";
+    public static final String CREATE_ASSESSMENT_LANGUAGE_NOT_SUPPORTED = "create-assessment.language.notSupported";
 
     public static final String CREATE_ASSESSMENT_RESULT_ASSESSMENT_ID_NOT_FOUND = "create-assessmentresult.assessmentId.notFound";
 

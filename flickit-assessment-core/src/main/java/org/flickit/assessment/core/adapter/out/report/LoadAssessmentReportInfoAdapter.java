@@ -1,9 +1,7 @@
 package org.flickit.assessment.core.adapter.out.report;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.application.domain.kit.translation.AttributeTranslation;
@@ -224,7 +222,6 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
         return insight.getAssessorInsight();
     }
 
-    @SneakyThrows
     private Map<Long, Integer> getAttributeIdToWeightMap(List<AttributeJpaEntity> attributeEntities, long kitId, Long kitCustomId) {
         if (kitCustomId == null)
             return attributeEntities.stream()
@@ -233,8 +230,7 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
         var kitCustomEntity = kitCustomRepository.findByIdAndKitId(kitCustomId, kitId)
             .orElseThrow(() -> new ResourceNotFoundException(KIT_CUSTOM_ID_NOT_FOUND));
 
-        KitCustomData kitCustomData = new ObjectMapper()
-            .readValue(kitCustomEntity.getCustomData(), KitCustomData.class);
+        KitCustomData kitCustomData = JsonUtils.fromJson(kitCustomEntity.getCustomData(), KitCustomData.class);
 
         if (kitCustomData == null || kitCustomData.attributes() == null)
             return attributeEntities.stream()

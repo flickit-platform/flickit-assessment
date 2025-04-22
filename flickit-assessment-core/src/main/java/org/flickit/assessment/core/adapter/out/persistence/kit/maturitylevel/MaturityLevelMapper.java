@@ -23,12 +23,7 @@ public class MaturityLevelMapper {
     }
 
     public static MaturityLevel mapToDomainModel(MaturityLevelJpaEntity entity, @Nullable KitLanguage language) {
-        var translation = new MaturityLevelTranslation(null, null);
-        if (language != null) {
-            var translations = JsonUtils.fromJsonToMap(entity.getTranslations(), KitLanguage.class, MaturityLevelTranslation.class);
-            translation = translations.getOrDefault(language, translation);
-        }
-
+        var translation = getTranslation(entity, language);
         return new MaturityLevel(
             entity.getId(),
             translation.titleOrDefault(entity.getTitle()),
@@ -36,5 +31,14 @@ public class MaturityLevelMapper {
             entity.getValue(),
             translation.descriptionOrDefault(entity.getDescription())
         );
+    }
+
+    private static MaturityLevelTranslation getTranslation(MaturityLevelJpaEntity entity, @Nullable KitLanguage language) {
+        var translation = new MaturityLevelTranslation(null, null);
+        if (language != null) {
+            var translations = JsonUtils.fromJsonToMap(entity.getTranslations(), KitLanguage.class, MaturityLevelTranslation.class);
+            translation = translations.getOrDefault(language, translation);
+        }
+        return translation;
     }
 }
