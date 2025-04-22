@@ -16,12 +16,7 @@ import java.util.List;
 public class SubjectMapper {
 
     public static Subject mapToDomainModel(SubjectJpaEntity entity, List<Attribute> attributes, @Nullable KitLanguage language) {
-        var translation = new SubjectTranslation(null, null);
-        if (language != null) {
-            var translations = JsonUtils.fromJsonToMap(entity.getTranslations(), KitLanguage.class, SubjectTranslation.class);
-            translation = translations.getOrDefault(language, translation);
-        }
-
+        var translation = getTranslation(entity, language);
         return new Subject(
             entity.getId(),
             entity.getIndex(),
@@ -41,5 +36,14 @@ public class SubjectMapper {
             entity.getWeight(),
             attributes
         );
+    }
+
+    private static SubjectTranslation getTranslation(SubjectJpaEntity entity, @Nullable KitLanguage language) {
+        var translation = new SubjectTranslation(null, null);
+        if (language != null) {
+            var translations = JsonUtils.fromJsonToMap(entity.getTranslations(), KitLanguage.class, SubjectTranslation.class);
+            translation = translations.getOrDefault(language, translation);
+        }
+        return translation;
     }
 }

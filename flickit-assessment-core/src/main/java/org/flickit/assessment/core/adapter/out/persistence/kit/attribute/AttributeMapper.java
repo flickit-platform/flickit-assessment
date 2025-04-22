@@ -29,12 +29,7 @@ public class AttributeMapper {
     }
 
     public static Attribute mapToDomainModel(AttributeJpaEntity entity, @Nullable KitLanguage language) {
-        var translation = new AttributeTranslation(null, null);
-        if (language != null) {
-            var translations = JsonUtils.fromJsonToMap(entity.getTranslations(), KitLanguage.class, AttributeTranslation.class);
-            translation = translations.getOrDefault(language, translation);
-        }
-
+        var translation = getTranslation(entity, language);
         return new Attribute(
             entity.getId(),
             entity.getIndex(),
@@ -76,5 +71,14 @@ public class AttributeMapper {
                 view.getSubject().getTitle()
             )
         );
+    }
+
+    private static AttributeTranslation getTranslation(AttributeJpaEntity entity, @Nullable KitLanguage language) {
+        var translation = new AttributeTranslation(null, null);
+        if (language != null) {
+            var translations = JsonUtils.fromJsonToMap(entity.getTranslations(), KitLanguage.class, AttributeTranslation.class);
+            translation = translations.getOrDefault(language, translation);
+        }
+        return translation;
     }
 }
