@@ -1,5 +1,6 @@
 package org.flickit.assessment.core.adapter.out.persistence.kit.attribute;
 
+import jakarta.annotation.Nullable;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
@@ -27,7 +28,7 @@ public class AttributeMapper {
         );
     }
 
-    public static Attribute mapToDomainModel(AttributeJpaEntity entity, KitLanguage language) {
+    public static Attribute mapToDomainModel(AttributeJpaEntity entity, @Nullable KitLanguage language) {
         var translation = new AttributeTranslation(null, null);
         if (language != null) {
             var translations = JsonUtils.fromJsonToMap(entity.getTranslations(), KitLanguage.class, AttributeTranslation.class);

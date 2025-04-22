@@ -1,5 +1,6 @@
 package org.flickit.assessment.core.adapter.out.persistence.subjectvalue;
 
+import jakarta.annotation.Nullable;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
@@ -41,7 +42,7 @@ public class SubjectValueMapper {
     public static SubjectValue mapToDomainModel(SubjectValueWithSubjectView view,
                                                 MaturityLevelJpaEntity maturityLevelJpaEntity,
                                                 List<AttributeJpaEntity> attributeJpaEntities,
-                                                KitLanguage language) {
+                                                @Nullable KitLanguage language) {
         var attributes = attributeJpaEntities.stream()
             .map(entity -> AttributeMapper.mapToDomainModel(entity, language))
             .toList();

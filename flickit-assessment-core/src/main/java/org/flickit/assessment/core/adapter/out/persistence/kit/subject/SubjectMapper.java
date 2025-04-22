@@ -1,5 +1,6 @@
 package org.flickit.assessment.core.adapter.out.persistence.kit.subject;
 
+import jakarta.annotation.Nullable;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
@@ -14,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SubjectMapper {
 
-    public static Subject mapToDomainModel(SubjectJpaEntity entity, List<Attribute> attributes, KitLanguage language) {
+    public static Subject mapToDomainModel(SubjectJpaEntity entity, List<Attribute> attributes, @Nullable KitLanguage language) {
         var translation = new SubjectTranslation(null, null);
         if (language != null) {
             var translations = JsonUtils.fromJsonToMap(entity.getTranslations(), KitLanguage.class, SubjectTranslation.class);
