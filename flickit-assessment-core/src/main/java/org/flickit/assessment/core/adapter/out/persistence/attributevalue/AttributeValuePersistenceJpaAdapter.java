@@ -153,7 +153,7 @@ public class AttributeValuePersistenceJpaAdapter implements
 
         return views.stream()
             .map(view -> mapToDomainModel(view.getAttributeValue(),
-                AttributeMapper.mapToDomainModel(view.getAttribute()),
+                AttributeMapper.mapToDomainModel(view.getAttribute(), language),
                 null,
                 maturityLevelMap.get(view.getAttributeValue().getMaturityLevelId())))
             .toList();
