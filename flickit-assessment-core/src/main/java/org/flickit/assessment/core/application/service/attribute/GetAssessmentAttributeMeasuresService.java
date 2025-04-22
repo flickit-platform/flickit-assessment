@@ -68,7 +68,7 @@ public class GetAssessmentAttributeMeasuresService implements GetAssessmentAttri
         var measureIds = measureIdToQuestions.keySet().stream()
             .toList();
 
-        var idToMeasureMap = loadMeasuresPort.loadAll(measureIds, assessmentResult.getKitVersionId())
+        var idToMeasureMap = loadMeasuresPort.loadAll(measureIds, param.getAssessmentId())
             .stream().collect(toMap(Measure::getId, Function.identity()));
 
         var resultMeasures = measureIdToQuestions.entrySet().stream()

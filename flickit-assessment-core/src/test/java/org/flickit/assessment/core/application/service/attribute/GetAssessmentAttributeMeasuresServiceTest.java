@@ -94,7 +94,7 @@ class GetAssessmentAttributeMeasuresServiceTest {
             .thenReturn(List.of(new LoadAttributeQuestionsPort.Result(question1, answer1),
                 new LoadAttributeQuestionsPort.Result(question2, answer2),
                 new LoadAttributeQuestionsPort.Result(question3, null)));
-        when(loadMeasuresPort.loadAll(List.of(measure1.getId(), measure2.getId()), assessmentResult.getKitVersionId()))
+        when(loadMeasuresPort.loadAll(List.of(measure1.getId(), measure2.getId()), param.getAssessmentId()))
             .thenReturn(List.of(measure1, measure2));
 
         var result = service.getAssessmentAttributeMeasures(param);
