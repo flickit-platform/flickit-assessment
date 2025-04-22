@@ -41,7 +41,7 @@ public class AssessmentResultMapper {
             var translations = JsonUtils.fromJsonToMap(maturityLevelJpaEntity.getTranslations(), KitLanguage.class, MaturityLevelTranslation.class);
             translation = translations.getOrDefault(language, translation);
         }
-        var kit = AssessmentKitMapper.mapToDomainModel(kitJpaEntity, null);
+        var kit = AssessmentKitMapper.mapToDomainModel(kitJpaEntity);
         var maturityLevel = new MaturityLevel(maturityLevelJpaEntity.getId(),
             translation.titleOrDefault(maturityLevelJpaEntity.getTitle()),
             maturityLevelJpaEntity.getIndex(),
