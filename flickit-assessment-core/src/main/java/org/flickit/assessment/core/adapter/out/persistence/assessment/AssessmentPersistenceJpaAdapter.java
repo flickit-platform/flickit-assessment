@@ -160,14 +160,14 @@ public class AssessmentPersistenceJpaAdapter implements
                     ? null
                     : KitLanguage.valueOfById(e.getAssessmentResult().getLangId());
 
-                AssessmentListItem.Kit kit = this.mapToAssessmentListItemKit(kitEntity, kitLevelEntities.size(), language);
+                AssessmentListItem.Kit kit = toAssessmentListItemKit(kitEntity, kitLevelEntities.size(), language);
                 AssessmentListItem.Space space = null;
                 AssessmentListItem.MaturityLevel maturityLevel = null;
                 if (Boolean.TRUE.equals(e.getAssessmentResult().getIsCalculateValid())) {
                     MaturityLevelJpaEntity maturityLevelEntity = maturityLevelIdToMaturityLevel.get(
                         new MaturityLevelJpaEntity.EntityId(e.getAssessmentResult().getMaturityLevelId(), e.getAssessmentResult().getKitVersionId()));
 
-                    maturityLevel = mapToAssessmentListItemMaturityLevel(maturityLevelEntity, language);
+                    maturityLevel = toAssessmentListItemMaturityLevel(maturityLevelEntity, language);
                 }
 
                 return new AssessmentListItem(e.getAssessment().getId(),
@@ -289,7 +289,7 @@ public class AssessmentPersistenceJpaAdapter implements
             .toList();
     }
 
-    private AssessmentListItem.Kit mapToAssessmentListItemKit(AssessmentKitJpaEntity kitEntity, int kitLevelEntities, KitLanguage language) {
+    private AssessmentListItem.Kit toAssessmentListItemKit(AssessmentKitJpaEntity kitEntity, int kitLevelEntities, KitLanguage language) {
         var kitTranslation = new KitTranslation(null, null, null);
         if (language != null) {
             var translations = JsonUtils.fromJsonToMap(kitEntity.getTranslations(), KitLanguage.class, KitTranslation.class);
@@ -300,7 +300,7 @@ public class AssessmentPersistenceJpaAdapter implements
             kitLevelEntities);
     }
 
-    private AssessmentListItem.MaturityLevel mapToAssessmentListItemMaturityLevel(MaturityLevelJpaEntity jpaEntity, KitLanguage language) {
+    private AssessmentListItem.MaturityLevel toAssessmentListItemMaturityLevel(MaturityLevelJpaEntity jpaEntity, KitLanguage language) {
         var maturityLevelTranslation = new MaturityLevelTranslation(null, null);
         if (language != null) {
             var translations = JsonUtils.fromJsonToMap(jpaEntity.getTranslations(), KitLanguage.class, MaturityLevelTranslation.class);
