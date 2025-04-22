@@ -99,7 +99,7 @@ class InitAssessmentInsightServiceTest {
     void testInitAssessmentInsight_whenInsightNotExists_thenCrateAssessmentInsightAndPersist() {
         var assessmentResult = validResultWithKitLanguage(KitLanguage.FA);
         var newAssessmentInsight = createDefaultInsightWithAssessmentResultId(assessmentResult.getId());
-        var locale = Locale.of(KitLanguage.FA.getCode());
+        var locale = Locale.of(assessmentResult.getLanguage().getCode());
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
             .thenReturn(true);
@@ -122,7 +122,7 @@ class InitAssessmentInsightServiceTest {
         var assessmentResult = validResultWithSubjectValuesAndMaturityLevel(null, levelFive());
         var loadedAssessmentInsight = createDefaultInsightWithAssessmentResultId(assessmentResult.getId());
         var newAssessmentInsight = createDefaultInsightWithAssessmentResultId(assessmentResult.getId());
-        var locale = Locale.of(assessmentResult.getAssessment().getAssessmentKit().getLanguage().getCode());
+        var locale = Locale.of(assessmentResult.getLanguage().getCode());
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
             .thenReturn(true);

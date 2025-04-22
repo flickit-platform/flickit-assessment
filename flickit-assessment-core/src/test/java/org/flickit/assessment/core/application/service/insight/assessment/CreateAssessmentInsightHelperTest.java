@@ -3,6 +3,7 @@ package org.flickit.assessment.core.application.service.insight.assessment;
 import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentProgressPort;
+import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -28,6 +29,9 @@ class CreateAssessmentInsightHelperTest {
     @Mock
     private GetAssessmentProgressPort getAssessmentProgressPort;
 
+    @Mock
+    private LoadMaturityLevelsPort loadMaturityLevelsPort;
+
     @Test
     void testCreateAssessmentInsight_whenAssessmentIsComplete_thenCreateCompleteAssessmentInsight() {
         var assessmentResult = validResult();
@@ -40,6 +44,8 @@ class CreateAssessmentInsightHelperTest {
             Math.ceil(assessmentResult.getConfidenceValue()));
 
         when(getAssessmentProgressPort.getProgress(assessmentResult.getAssessment().getId())).thenReturn(progress);
+        when(loadMaturityLevelsPort.load(assessmentResult.getMaturityLevel().getId(), assessmentResult.getAssessment().getId()))
+            .thenReturn(assessmentResult.getMaturityLevel());
 
         var result = helper.createAssessmentInsight(assessmentResult, locale);
 
@@ -65,6 +71,8 @@ class CreateAssessmentInsightHelperTest {
             0);
 
         when(getAssessmentProgressPort.getProgress(assessmentResult.getAssessment().getId())).thenReturn(progress);
+        when(loadMaturityLevelsPort.load(assessmentResult.getMaturityLevel().getId(), assessmentResult.getAssessment().getId()))
+            .thenReturn(assessmentResult.getMaturityLevel());
 
         var result = helper.createAssessmentInsight(assessmentResult, locale);
 
