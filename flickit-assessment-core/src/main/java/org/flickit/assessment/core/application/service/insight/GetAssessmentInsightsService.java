@@ -15,7 +15,7 @@ import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAss
 import org.flickit.assessment.core.application.port.out.attributematurityscore.LoadAttributeMaturityScoresPort;
 import org.flickit.assessment.core.application.port.out.attributevalue.LoadAttributeValuePort;
 import org.flickit.assessment.core.application.port.out.maturitylevel.CountMaturityLevelsPort;
-import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
+import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelPort;
 import org.flickit.assessment.core.application.port.out.subjectvalue.LoadSubjectValuePort;
 import org.flickit.assessment.core.application.service.insight.assessment.GetAssessmentInsightHelper;
 import org.flickit.assessment.core.application.service.insight.attribute.GetAttributeInsightHelper;
@@ -49,7 +49,7 @@ public class GetAssessmentInsightsService implements GetAssessmentInsightsUseCas
     private final LoadAttributeValuePort loadAttributeValuePort;
     private final LoadAttributeMaturityScoresPort loadAttributeMaturityScoresPort;
     private final CountMaturityLevelsPort countMaturityLevelsPort;
-    private final LoadMaturityLevelsPort loadMaturityLevelsPort;
+    private final LoadMaturityLevelPort loadMaturityLevelPort;
 
     @Override
     public Result getAssessmentInsights(Param param) {
@@ -82,7 +82,7 @@ public class GetAssessmentInsightsService implements GetAssessmentInsightsUseCas
     }
 
     private AssessmentModel buildAssessment(AssessmentResult assessmentResult, Insight assessmentInsight) {
-        var maturityLevel = loadMaturityLevelsPort
+        var maturityLevel = loadMaturityLevelPort
             .load(assessmentResult.getMaturityLevel().getId(), assessmentResult.getAssessment().getId());
 
         return new AssessmentModel(assessmentResult.getAssessment().getId(),

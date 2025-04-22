@@ -3,7 +3,7 @@ package org.flickit.assessment.core.application.service.insight.assessment;
 import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentProgressPort;
-import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
+import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -30,7 +30,7 @@ class CreateAssessmentInsightHelperTest {
     private GetAssessmentProgressPort getAssessmentProgressPort;
 
     @Mock
-    private LoadMaturityLevelsPort loadMaturityLevelsPort;
+    private LoadMaturityLevelPort loadMaturityLevelPort;
 
     @Test
     void testCreateAssessmentInsight_whenAssessmentIsComplete_thenCreateCompleteAssessmentInsight() {
@@ -44,7 +44,7 @@ class CreateAssessmentInsightHelperTest {
             Math.ceil(assessmentResult.getConfidenceValue()));
 
         when(getAssessmentProgressPort.getProgress(assessmentResult.getAssessment().getId())).thenReturn(progress);
-        when(loadMaturityLevelsPort.load(assessmentResult.getMaturityLevel().getId(), assessmentResult.getAssessment().getId()))
+        when(loadMaturityLevelPort.load(assessmentResult.getMaturityLevel().getId(), assessmentResult.getAssessment().getId()))
             .thenReturn(assessmentResult.getMaturityLevel());
 
         var result = helper.createAssessmentInsight(assessmentResult, locale);
@@ -71,7 +71,7 @@ class CreateAssessmentInsightHelperTest {
             0);
 
         when(getAssessmentProgressPort.getProgress(assessmentResult.getAssessment().getId())).thenReturn(progress);
-        when(loadMaturityLevelsPort.load(assessmentResult.getMaturityLevel().getId(), assessmentResult.getAssessment().getId()))
+        when(loadMaturityLevelPort.load(assessmentResult.getMaturityLevel().getId(), assessmentResult.getAssessment().getId()))
             .thenReturn(assessmentResult.getMaturityLevel());
 
         var result = helper.createAssessmentInsight(assessmentResult, locale);
