@@ -1,14 +1,12 @@
 package org.flickit.assessment.core.adapter.out.persistence.assessmentresult;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.adapter.out.persistence.attributevalue.AttributeValueMapper;
-import org.flickit.assessment.core.adapter.out.persistence.kit.assessmentkit.AssessmentKitMapper;
-import org.flickit.assessment.core.adapter.out.persistence.kit.maturitylevel.MaturityLevelMapper;
 import org.flickit.assessment.core.adapter.out.persistence.subjectvalue.SubjectValueMapper;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.AttributeValue;
-import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.domain.SubjectValue;
 import org.flickit.assessment.core.application.port.out.assessmentresult.*;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
@@ -18,16 +16,19 @@ import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpa
 import org.flickit.assessment.data.jpa.core.attributevalue.AttributeValueJpaRepository;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
+import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_KIT_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSMENT_RESULT_ASSESSMENT_ID_NOT_FOUND;
+import static org.flickit.assessment.core.common.ErrorMessageKey.MATURITY_LEVEL_ID_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
@@ -70,17 +71,20 @@ public class AssessmentResultPersistenceJpaAdapter implements
         var entity = repository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId);
         if (entity.isEmpty())
             return Optional.empty();
-        MaturityLevel maturityLevel = null;
+        MaturityLevelJpaEntity maturityLevelEntity = new MaturityLevelJpaEntity();
         var maturityLevelId = entity.get().getMaturityLevelId();
         if (maturityLevelId != null) {
-            var maturityLevelEntity = maturityLevelRepository.findByIdAndKitVersionId(maturityLevelId, entity.get().getKitVersionId());
-            maturityLevel = maturityLevelEntity.map(MaturityLevelMapper::mapToDomainModel).orElse(null);
+            maturityLevelEntity = maturityLevelRepository.findByIdAndKitVersionId(maturityLevelId, entity.get().getKitVersionId())
+                .orElseThrow(()-> new ResourceNotFoundException(MATURITY_LEVEL_ID_NOT_FOUND));
         }
         var kit = kitRepository.findById(entity.get().getAssessment().getAssessmentKitId())
-            .map(x -> AssessmentKitMapper.mapToDomainModel(x, null))
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_KIT_NOT_FOUND));
 
-        var assessmentResult = AssessmentResultMapper.mapToDomainModel(entity.get(), maturityLevel, kit);
+        var language = Objects.equals(entity.get().getLangId(), kit.getLanguageId())
+            ? null
+            : KitLanguage.valueOfById(entity.get().getLangId());
+
+        var assessmentResult = AssessmentResultMapper.mapToDomainModel(entity.get(), maturityLevelEntity, kit, language);
         var subjectValues = createSubjectValues(entity.get().getId());
         assessmentResult.setSubjectValues(subjectValues);
         return Optional.of(assessmentResult);

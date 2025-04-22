@@ -2,6 +2,7 @@ package org.flickit.assessment.core.adapter.out.persistence.assessment;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.adapter.out.persistence.answer.AnswerMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.answeroption.AnswerOptionMapper;
@@ -34,6 +35,7 @@ import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
+import static org.flickit.assessment.core.adapter.out.persistence.assessment.AssessmentMapper.mapToDomainModel;
 import static org.flickit.assessment.core.application.domain.AssessmentUserRole.ASSOCIATE;
 import static org.flickit.assessment.core.application.domain.AssessmentUserRole.MANAGER;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
@@ -217,7 +219,14 @@ public class AssessmentPersistenceJpaAdapter implements
         Optional<AssessmentKitSpaceJoinView> entity = repository.findByIdAndDeletedFalseWithKitAndSpace(assessmentId);
         if (entity.isEmpty())
             throw new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND);
-        return entity.map(AssessmentMapper::mapToDomainModel);
+
+        var assessmentResult = resultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
+            .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
+
+        var language = Objects.equals(assessmentResult.getLangId(), entity.get().getKit().getLanguageId())
+            ? null
+            : KitLanguage.valueOfById(assessmentResult.getLangId());
+        return entity.map(e -> mapToDomainModel(e, language));
     }
 
     @Override
