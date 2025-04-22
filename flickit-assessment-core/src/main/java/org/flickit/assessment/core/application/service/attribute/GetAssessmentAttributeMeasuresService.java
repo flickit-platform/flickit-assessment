@@ -3,15 +3,12 @@ package org.flickit.assessment.core.application.service.attribute;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.domain.crud.Order;
-import org.flickit.assessment.common.error.ErrorMessageKey;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.util.MathUtils;
 import org.flickit.assessment.core.application.domain.Answer;
 import org.flickit.assessment.core.application.domain.Measure;
 import org.flickit.assessment.core.application.port.in.attribute.GetAssessmentAttributeMeasuresUseCase;
 import org.flickit.assessment.core.application.port.in.attribute.GetAssessmentAttributeMeasuresUseCase.Param.Sort;
-import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeQuestionsPort;
 import org.flickit.assessment.core.application.port.out.measure.LoadMeasuresPort;
 import org.springframework.stereotype.Service;
@@ -30,7 +27,6 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 public class GetAssessmentAttributeMeasuresService implements GetAssessmentAttributeMeasuresUseCase {
 
     private final AssessmentAccessChecker assessmentAccessChecker;
-    private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final LoadMeasuresPort loadMeasuresPort;
     private final LoadAttributeQuestionsPort loadAttributeQuestionsPort;
 
@@ -38,9 +34,6 @@ public class GetAssessmentAttributeMeasuresService implements GetAssessmentAttri
     public Result getAssessmentAttributeMeasures(Param param) {
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ATTRIBUTE_MEASURES))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
-
-        var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
-            .orElseThrow(() -> new ResourceNotFoundException(ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND));
 
         var attributeQuestions = loadAttributeQuestionsPort.loadApplicableQuestions(param.getAssessmentId(), param.getAttributeId());
 
