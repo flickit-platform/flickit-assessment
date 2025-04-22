@@ -40,7 +40,7 @@ public class AttributeMapper {
         );
     }
 
-    public static Attribute mapToDomainModel(AttributeJpaEntity entity, List<Question> questions) {
+    public static Attribute mapToDomainWithQuestions(AttributeJpaEntity entity, List<Question> questions) {
         return new Attribute(
             entity.getId(),
             entity.getIndex(),

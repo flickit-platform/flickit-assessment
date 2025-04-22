@@ -105,7 +105,7 @@ public class AttributeValuePersistenceJpaAdapter implements
                 .toList()));
 
         var attributes = attributeEntities.stream()
-            .map(entity -> AttributeMapper.mapToDomainModel(entity, attributeIdToQuestionsMap.get(entity.getId())))
+            .map(entity -> AttributeMapper.mapToDomainWithQuestions(entity, attributeIdToQuestionsMap.get(entity.getId())))
             .toList();
 
         var questionIds = questions.stream()
