@@ -91,11 +91,11 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             .orElse(null);
 
         var kitVersionId = assessmentResultEntity.getKitVersionId();
-        var language = Objects.equals(assessmentResultEntity.getLangId(), assessmentKitEntity.getLanguageId()) ? null
+        var translationLanguage = Objects.equals(assessmentResultEntity.getLangId(), assessmentKitEntity.getLanguageId()) ? null
             : KitLanguage.valueOfById(assessmentResultEntity.getLangId());
 
         var maturityLevels = maturityLevelRepository.findAllByKitVersionIdOrderByIndex(kitVersionId).stream()
-            .map(e -> mapToDomainModel(e, language))
+            .map(e -> mapToDomainModel(e, translationLanguage))
             .toList();
 
         var idToMaturityLevel = maturityLevels.stream()
@@ -105,14 +105,14 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             assessmentResultEntity.getId(),
             assessment.getTitle(),
             assessmentInsight,
-            buildAssessmentKitItem(kitVersionId, assessmentKitEntity, maturityLevels, language),
+            buildAssessmentKitItem(kitVersionId, assessmentKitEntity, maturityLevels, translationLanguage),
             idToMaturityLevel.get(assessmentResultEntity.getMaturityLevelId()),
             assessmentResultEntity.getConfidenceValue(),
             KitLanguage.valueOfById(assessmentResultEntity.getLangId()),
             assessment.getCreationTime()
         );
 
-        var subjects = buildSubjectReportItems(assessmentResultEntity, idToMaturityLevel, language);
+        var subjects = buildSubjectReportItems(assessmentResultEntity, idToMaturityLevel, translationLanguage);
 
         return new Result(assessmentReportItem, subjects);
     }
