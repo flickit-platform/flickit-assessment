@@ -4,7 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentKit;
-import org.flickit.assessment.core.application.port.out.assessmentkit.*;
+import org.flickit.assessment.core.application.port.out.assessmentkit.CheckKitAccessPort;
+import org.flickit.assessment.core.application.port.out.assessmentkit.LoadAssessmentKitPort;
+import org.flickit.assessment.core.application.port.out.assessmentkit.LoadKitInfoPort;
+import org.flickit.assessment.core.application.port.out.assessmentkit.LoadKitLastMajorModificationTimePort;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
 import org.flickit.assessment.data.jpa.kit.kitlanguage.KitLanguageJpaEntity;
@@ -48,17 +51,15 @@ public class AssessmentKitPersistenceJpaAdapter implements
 
     @Override
     public Optional<AssessmentKit> loadAssessmentKit(long kitId) {
-        var kit = repository.findById(kitId)
-            .map(e -> AssessmentKitMapper.mapToDomainModel(e, null));
-
-        kit.ifPresent(k -> {
-            var languages = languageRepository.findAllByKitId(kitId).stream()
-                .map(KitLanguageJpaEntity::getLangId)
-                .map(KitLanguage::valueOfById)
-                .toList();
-            k.setSupportedLanguages(languages);
-        });
-
-        return kit;
+        return repository.findById(kitId)
+            .map(entity -> {
+                var kit = AssessmentKitMapper.mapToDomainModel(entity);
+                var languages = languageRepository.findAllByKitId(kitId).stream()
+                    .map(KitLanguageJpaEntity::getLangId)
+                    .map(KitLanguage::valueOfById)
+                    .toList();
+                kit.setSupportedLanguages(languages);
+                return kit;
+            });
     }
 }
