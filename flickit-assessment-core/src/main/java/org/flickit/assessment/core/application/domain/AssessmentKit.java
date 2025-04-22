@@ -2,6 +2,7 @@ package org.flickit.assessment.core.application.domain;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 
 import java.util.List;
@@ -16,4 +17,6 @@ public class AssessmentKit {
     private final KitLanguage language;
     private final List<MaturityLevel> maturityLevels;
     private final Boolean isPrivate;
+    @Setter
+    private List<KitLanguage> supportedLanguages;
 }

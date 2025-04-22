@@ -32,6 +32,7 @@ public class CreateAssessmentRestController {
             requestDto.title(),
             requestDto.shortTitle(),
             requestDto.assessmentKitId(),
+            requestDto.lang(),
             currentUserId
         );
     }

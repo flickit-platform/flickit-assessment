@@ -1,6 +1,7 @@
 package org.flickit.assessment.core.application.service.assessment;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.application.domain.notification.SendNotification;
 import org.flickit.assessment.common.application.domain.space.SpaceType;
 import org.flickit.assessment.common.config.AppSpecProperties;
@@ -8,10 +9,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.exception.UpgradeRequiredException;
 import org.flickit.assessment.common.exception.ValidationException;
-import org.flickit.assessment.core.application.domain.AssessmentUserRole;
-import org.flickit.assessment.core.application.domain.Attribute;
-import org.flickit.assessment.core.application.domain.Space;
-import org.flickit.assessment.core.application.domain.Subject;
+import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.domain.notification.CreateAssessmentNotificationCmd;
 import org.flickit.assessment.core.application.port.in.assessment.CreateAssessmentUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.CountAssessmentsPort;
@@ -80,8 +78,10 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
 
         validateSpace(param, space, assessmentKit.getIsPrivate());
 
+        var assessmentLangId = resolveAssessmentLanguage(assessmentKit, param.getLang()).getId();
+
         UUID id = createAssessmentPort.persist(toParam(param));
-        createAssessmentResult(id, assessmentKit.getKitVersion(), assessmentKit.getLanguage().getId());
+        createAssessmentResult(id, assessmentKit.getKitVersion(), assessmentLangId);
 
         grantAssessmentAccesses(id, space.getOwnerId(), param.getCurrentUserId());
 
@@ -105,6 +105,17 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
             LocalDateTime.now().isAfter(space.getSubscriptionExpiry())) {
             throw new UpgradeRequiredException(CREATE_ASSESSMENT_PREMIUM_SPACE_EXPIRED);
         }
+    }
+
+    private KitLanguage resolveAssessmentLanguage(AssessmentKit kit, String langParam) {
+        KitLanguage assessmentLanguage = langParam == null
+            ? kit.getLanguage()
+            : KitLanguage.valueOf(langParam);
+
+        if (!kit.getSupportedLanguages().contains(assessmentLanguage))
+            throw new ValidationException(CREATE_ASSESSMENT_LANGUAGE_NOT_SUPPORTED);
+
+        return assessmentLanguage;
     }
 
     private CreateAssessmentPort.Param toParam(Param param) {
