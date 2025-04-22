@@ -3,7 +3,9 @@ package org.flickit.assessment.core.adapter.out.persistence.kit.attribute;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.Order;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.application.domain.kitcustom.KitCustomData;
+import org.flickit.assessment.common.error.ErrorMessageKey;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.util.JsonUtils;
 import org.flickit.assessment.core.adapter.out.persistence.answer.AnswerMapper;
@@ -15,8 +17,10 @@ import org.flickit.assessment.core.application.port.in.attribute.GetAttributeSco
 import org.flickit.assessment.core.application.port.out.attribute.*;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaRepository;
+import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.core.attribute.AttributeMaturityLevelSubjectView;
+import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
 import org.flickit.assessment.data.jpa.kit.kitcustom.KitCustomJpaRepository;
 import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaEntity;
@@ -25,14 +29,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
+import static org.flickit.assessment.core.adapter.out.persistence.attributematurityscore.AttributeMaturityScoreMapper.mapToAttributeScoreDetail;
 import static org.flickit.assessment.core.adapter.out.persistence.kit.attribute.AttributeMapper.mapToDomainModel;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
@@ -50,11 +52,13 @@ public class AttributePersistenceJpaAdapter implements
     private final AssessmentResultJpaRepository assessmentResultRepository;
     private final KitCustomJpaRepository kitCustomRepository;
     private final AssessmentJpaRepository assessmentRepository;
+    private final AssessmentKitJpaRepository assessmentKitRepository;
 
     @Override
     public PaginatedResponse<LoadAttributeScoreDetailPort.Result> loadScoreDetail(LoadAttributeScoreDetailPort.Param param) {
         var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(param.assessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(GET_ATTRIBUTE_SCORE_DETAIL_ASSESSMENT_RESULT_NOT_FOUND));
+        var translationLanguage = resolveLanguage(assessmentResult);
 
         var pageRequest = buildPageRequest(param.page(), param.size(), param.sort(), param.order());
         var pageResult = repository.findImpactFullQuestionsScore(
@@ -66,19 +70,7 @@ public class AttributePersistenceJpaAdapter implements
             pageRequest);
 
         var items = pageResult.getContent().stream()
-            .map(view -> new LoadAttributeScoreDetailPort.Result(view.getQuestionnaireId(),
-                view.getQuestionnaireTitle(),
-                view.getQuestionId(),
-                view.getQuestionIndex(),
-                view.getQuestionTitle(),
-                view.getQuestionImpact().getWeight(),
-                view.getOptionIndex(),
-                view.getOptionTitle(),
-                view.getAnswer() == null ? null : view.getAnswer().getIsNotApplicable(),
-                view.getGainedScore(),
-                view.getMissedScore(),
-                view.getAnswer() != null && view.getAnswer().getConfidenceLevelId() != null ? view.getAnswer().getConfidenceLevelId() : null,
-                view.getEvidenceCount()))
+            .map(view -> mapToAttributeScoreDetail(view, translationLanguage))
             .toList();
 
         return new PaginatedResponse<>(
@@ -216,5 +208,13 @@ public class AttributePersistenceJpaAdapter implements
                 return new LoadAttributeQuestionsPort.Result(question, answer);
             })
             .toList();
+    }
+
+    private KitLanguage resolveLanguage(AssessmentResultJpaEntity assessmentResult) {
+        var assessmentKit = assessmentKitRepository.findByKitVersionId(assessmentResult.getKitVersionId())
+            .orElseThrow(() -> new ResourceNotFoundException(ErrorMessageKey.COMMON_ASSESSMENT_KIT_NOT_FOUND));
+        return Objects.equals(assessmentResult.getLangId(), assessmentKit.getLanguageId())
+            ? null
+            : KitLanguage.valueOfById(assessmentResult.getLangId());
     }
 }

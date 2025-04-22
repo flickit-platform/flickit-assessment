@@ -21,16 +21,21 @@ public class AnswerOptionMapper {
     }
 
     public static AnswerOption mapToDomainModel(AnswerOptionJpaEntity entity, @Nullable KitLanguage language) {
-        var translation = new AnswerOptionTranslation(null);
-        if (language != null) {
-            var translations = JsonUtils.fromJsonToMap(entity.getTranslations(), KitLanguage.class, AnswerOptionTranslation.class);
-            translation = translations.getOrDefault(language, translation);
-        }
+        var translation = getTranslation(entity.getTranslations(), language);
 
         return new AnswerOption(
             entity.getId(),
             entity.getIndex(),
             translation.titleOrDefault(entity.getTitle()),
             entity.getValue());
+    }
+
+    public static AnswerOptionTranslation getTranslation(String entityTranslation, @Nullable KitLanguage language) {
+        var translation = new AnswerOptionTranslation(null);
+        if (language != null) {
+            var translations = JsonUtils.fromJsonToMap(entityTranslation, KitLanguage.class, AnswerOptionTranslation.class);
+            translation = translations.getOrDefault(language, translation);
+        }
+        return translation;
     }
 }
