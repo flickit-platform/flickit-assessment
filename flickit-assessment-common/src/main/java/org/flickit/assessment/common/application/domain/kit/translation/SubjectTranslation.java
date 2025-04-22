@@ -19,4 +19,8 @@ public record SubjectTranslation(
     public String titleOrDefault(String defaultTitle) {
         return isBlank(title) ? defaultTitle : title;
     }
+
+    public String descriptionOrDefault(String defaultDescription) {
+        return isBlank(description) ? defaultDescription : description;
+    }
 }
