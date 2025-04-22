@@ -184,7 +184,7 @@ class GetAssessmentReportServiceTest {
         assertAttributeItem(expectedAttributeItem, actualAttributeItem);
         assertEquals(adviceNarration, result.advice().narration());
         assertEquals(adviceItems.size(), result.advice().adviceItems().size());
-        assertAdviceItem(adviceItems, result.advice().adviceItems(), assessmentReport.assessmentKit().language());
+        assertAdviceItem(adviceItems, result.advice().adviceItems(), assessmentReport.language());
         assertTrue(result.permissions().canViewDashboard());
 
         verify(assessmentAccessChecker, times(3))
@@ -237,7 +237,7 @@ class GetAssessmentReportServiceTest {
         assertAttributeItem(expectedAttributeItem, actualAttributeItem);
         assertEquals(adviceNarration, result.advice().narration());
         assertEquals(adviceItems.size(), result.advice().adviceItems().size());
-        assertAdviceItem(adviceItems, result.advice().adviceItems(), assessmentReport.assessmentKit().language());
+        assertAdviceItem(adviceItems, result.advice().adviceItems(), assessmentReport.language());
         assertFalse(result.permissions().canViewDashboard());
     }
 
@@ -249,6 +249,7 @@ class GetAssessmentReportServiceTest {
             createAssessmentKit(),
             levelTwo(),
             1.5,
+            KitLanguage.FA,
             LocalDateTime.now()
         );
     }
@@ -256,7 +257,6 @@ class GetAssessmentReportServiceTest {
     private AssessmentReportItem.AssessmentKitItem createAssessmentKit() {
         return new AssessmentReportItem.AssessmentKitItem(15L,
             "kit title",
-            KitLanguage.FA,
             5,
             150,
             MaturityLevelMother.allLevels(),

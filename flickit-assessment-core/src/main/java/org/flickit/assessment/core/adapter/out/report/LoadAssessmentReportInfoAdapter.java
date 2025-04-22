@@ -1,18 +1,23 @@
 package org.flickit.assessment.core.adapter.out.report;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.common.application.domain.kit.translation.AttributeTranslation;
+import org.flickit.assessment.common.application.domain.kit.translation.SubjectTranslation;
 import org.flickit.assessment.common.application.domain.kitcustom.KitCustomData;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.util.JsonUtils;
+import org.flickit.assessment.core.adapter.out.persistence.kit.assessmentkit.AssessmentKitMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.measure.MeasureMapper;
+import org.flickit.assessment.core.adapter.out.persistence.kit.questionnaire.QuestionnaireMapper;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.domain.report.AssessmentReportItem;
 import org.flickit.assessment.core.application.domain.report.AssessmentSubjectReportItem;
 import org.flickit.assessment.core.application.domain.report.AttributeReportItem;
-import org.flickit.assessment.core.application.domain.report.QuestionnaireReportItem;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
@@ -33,9 +38,8 @@ import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.kitcustom.KitCustomJpaRepository;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.data.jpa.kit.measure.MeasureJpaRepository;
-import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaEntity;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaRepository;
-import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireListItemView;
+import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.springframework.stereotype.Component;
 
@@ -84,8 +88,12 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             .orElse(null);
 
         var kitVersionId = assessmentResultEntity.getKitVersionId();
-        var maturityLevels = maturityLevelRepository.findAllByKitVersionIdOrderByIndex(kitVersionId)
-            .stream().map(e -> mapToDomainModel(e, null)).toList();
+        var translationLanguage = Objects.equals(assessmentResultEntity.getLangId(), assessmentKitEntity.getLanguageId()) ? null
+            : KitLanguage.valueOfById(assessmentResultEntity.getLangId());
+
+        var maturityLevels = maturityLevelRepository.findAllByKitVersionIdOrderByIndex(kitVersionId).stream()
+            .map(e -> mapToDomainModel(e, translationLanguage))
+            .toList();
 
         var idToMaturityLevel = maturityLevels.stream()
             .collect(toMap(MaturityLevel::getId, Function.identity()));
@@ -94,51 +102,41 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             assessmentResultEntity.getId(),
             assessment.getTitle(),
             assessmentInsight,
-            buildAssessmentKitItem(kitVersionId, assessmentKitEntity, maturityLevels),
+            buildAssessmentKitItem(kitVersionId, assessmentKitEntity, maturityLevels, translationLanguage),
             idToMaturityLevel.get(assessmentResultEntity.getMaturityLevelId()),
             assessmentResultEntity.getConfidenceValue(),
+            KitLanguage.valueOfById(assessmentResultEntity.getLangId()),
             assessment.getCreationTime()
         );
 
-        var subjects = buildSubjectReportItems(assessmentResultEntity, idToMaturityLevel);
+        var subjects = buildSubjectReportItems(assessmentResultEntity, idToMaturityLevel, translationLanguage);
 
         return new Result(assessmentReportItem, subjects);
     }
 
     private AssessmentReportItem.AssessmentKitItem buildAssessmentKitItem(long kitVersionId,
                                                                           AssessmentKitJpaEntity assessmentKitEntity,
-                                                                          List<MaturityLevel> maturityLevels) {
+                                                                          List<MaturityLevel> maturityLevels,
+                                                                          @Nullable KitLanguage language) {
         var questionnaireViews = questionnaireRepository.findAllWithQuestionCountByKitVersionId(kitVersionId, null).getContent();
-        var questionnaireReportItems = questionnaireViews.stream().map(this::buildQuestionnaireReportItems).toList();
-        int questionsCount = questionnaireReportItems.stream()
-            .mapToInt(QuestionnaireReportItem::questionCount)
-            .sum();
-
-        var measures = measureRepository.findAllByKitVersionId(kitVersionId).stream()
-            .map(MeasureMapper::mapToDomainModel)
+        var questionnaireReportItems = questionnaireViews.stream()
+            .map(view -> QuestionnaireMapper.mapToReportItem(view, language))
             .toList();
 
-        return new AssessmentReportItem.AssessmentKitItem(assessmentKitEntity.getId(),
-            assessmentKitEntity.getTitle(),
-            KitLanguage.valueOfById(assessmentKitEntity.getLanguageId()),
-            maturityLevels.size(),
-            questionsCount,
+        var measures = measureRepository.findAllByKitVersionId(kitVersionId).stream()
+            .map(measure -> MeasureMapper.mapToDomainModel(measure, language))
+            .toList();
+
+        return AssessmentKitMapper.mapToReportItem(assessmentKitEntity,
             maturityLevels,
             questionnaireReportItems,
-            measures);
-    }
-
-    private QuestionnaireReportItem buildQuestionnaireReportItems(QuestionnaireListItemView itemView) {
-        QuestionnaireJpaEntity questionnaire = itemView.getQuestionnaire();
-        return new QuestionnaireReportItem(questionnaire.getId(),
-            questionnaire.getTitle(),
-            questionnaire.getDescription(),
-            questionnaire.getIndex(),
-            itemView.getQuestionCount());
+            measures,
+            language);
     }
 
     private List<AssessmentSubjectReportItem> buildSubjectReportItems(AssessmentResultJpaEntity assessmentResult,
-                                                                      Map<Long, MaturityLevel> idToMaturityLevel) {
+                                                                      Map<Long, MaturityLevel> idToMaturityLevel,
+                                                                      @Nullable KitLanguage language) {
         List<SubjectValueJpaEntity> subjectValueEntities = subjectValueRepo.findByAssessmentResultId(assessmentResult.getId());
 
         Set<Long> subjectIds = subjectValueEntities.stream()
@@ -173,6 +171,7 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
 
         return subjectEntities.stream()
             .map(e -> {
+                var translation = getSubjectTranslation(e, language);
                 Long maturityLevelId = subjectIdToSubjectValue.get(e.getId()).getMaturityLevelId();
                 MaturityLevel subjectMaturityLevel = idToMaturityLevel.get(maturityLevelId);
                 var attributeValues = subjectIdToAttributeValueMap.get(e.getId());
@@ -180,7 +179,7 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
                     .map(SubjectInsightJpaEntity::getInsight)
                     .orElse(null);
                 return new AssessmentSubjectReportItem(e.getId(),
-                    e.getTitle(),
+                    translation.titleOrDefault(e.getTitle()),
                     e.getIndex(),
                     insight,
                     subjectIdToSubjectValue.get(e.getId()).getConfidenceValue(),
@@ -189,7 +188,8 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
                         .map(x -> buildAttributeReportItem(idToMaturityLevel,
                             x,
                             attributeIdToInsightMap.get(x.getAttribute().getId()),
-                            attributeIdToWeight.get(x.getAttribute().getId())))
+                            attributeIdToWeight.get(x.getAttribute().getId()),
+                            language))
                         .toList());
             }).toList();
     }
@@ -197,14 +197,16 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
     private AttributeReportItem buildAttributeReportItem(Map<Long, MaturityLevel> idToMaturityLevel,
                                                          SubjectIdAttributeValueView attributeValueView,
                                                          AttributeInsightJpaEntity attributeInsight,
-                                                         int attributeWeight) {
+                                                         int attributeWeight,
+                                                         @Nullable KitLanguage language) {
         var attribute = attributeValueView.getAttribute();
+        var translation = getAttributeTranslation(attribute, language);
         var attributeValue = attributeValueView.getAttributeValue();
         var maturityLevel = idToMaturityLevel.get(attributeValue.getMaturityLevelId());
         var insight = getAttributeInsight(attributeInsight);
         return new AttributeReportItem(attribute.getId(),
-            attribute.getTitle(),
-            attribute.getDescription(),
+            translation.titleOrDefault(attribute.getTitle()),
+            translation.descriptionOrDefault(attribute.getDescription()),
             insight,
             attribute.getIndex(),
             attributeWeight,
@@ -246,5 +248,23 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
                 AttributeJpaEntity::getId,
                 e -> attributeIdToCustomWeight.getOrDefault(e.getId(), e.getWeight())
             ));
+    }
+
+    private SubjectTranslation getSubjectTranslation(SubjectJpaEntity entity, @Nullable KitLanguage language) {
+        var translation = new SubjectTranslation(null, null);
+        if (language != null) {
+            var translations = JsonUtils.fromJsonToMap(entity.getTranslations(), KitLanguage.class, SubjectTranslation.class);
+            translation = translations.getOrDefault(language, translation);
+        }
+        return translation;
+    }
+
+    private AttributeTranslation getAttributeTranslation(AttributeJpaEntity entity, @Nullable KitLanguage language) {
+        var translation = new AttributeTranslation(null, null);
+        if (language != null) {
+            var translations = JsonUtils.fromJsonToMap(entity.getTranslations(), KitLanguage.class, AttributeTranslation.class);
+            translation = translations.getOrDefault(language, translation);
+        }
+        return translation;
     }
 }

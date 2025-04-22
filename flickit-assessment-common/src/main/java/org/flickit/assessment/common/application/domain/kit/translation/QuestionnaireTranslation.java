@@ -2,8 +2,8 @@ package org.flickit.assessment.common.application.domain.kit.translation;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.Size;
-import org.apache.commons.lang3.StringUtils;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.flickit.assessment.common.error.ErrorMessageKey.*;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -17,10 +17,10 @@ public record QuestionnaireTranslation(
     String description
 ) {
     public String titleOrDefault(String defaultTitle) {
-        return StringUtils.isBlank(title) ? defaultTitle : title;
+        return isBlank(title) ? defaultTitle : title;
     }
 
     public String descriptionOrDefault(String defaultDescription) {
-        return StringUtils.isBlank(description) ? defaultDescription : description;
+        return isBlank(description) ? defaultDescription : description;
     }
 }
