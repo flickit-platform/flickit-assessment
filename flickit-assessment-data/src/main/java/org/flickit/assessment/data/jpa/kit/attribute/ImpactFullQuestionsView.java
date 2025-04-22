@@ -9,11 +9,15 @@ public interface ImpactFullQuestionsView {
 
     String getQuestionnaireTitle();
 
+    String getQuestionnaireTranslation();
+
     Long getQuestionId();
 
     Integer getQuestionIndex();
 
     String getQuestionTitle();
+
+    String getQuestionTranslation();
 
     AnswerJpaEntity getAnswer();
 
@@ -22,6 +26,8 @@ public interface ImpactFullQuestionsView {
     Integer getOptionIndex();
 
     String getOptionTitle();
+
+    String getOptionTranslation();
 
     Double getGainedScore();
 
