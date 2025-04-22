@@ -41,7 +41,7 @@ public class AssessmentMapper {
             var translations = JsonUtils.fromJsonToMap(view.getKit().getTranslations(), KitLanguage.class, KitTranslation.class);
             translation = translations.getOrDefault(language, translation);
         }
-        var kit = AssessmentKitMapper.mapToDomainModel(view.getKit(), null);
+        var kit = AssessmentKitMapper.mapToDomainModel(view.getKit());
         Space space = SpaceMapper.mapToDomain(view.getSpace());
         kit = new AssessmentKit(kit.getId(),
             translation.titleOrDefault(kit.getTitle()),

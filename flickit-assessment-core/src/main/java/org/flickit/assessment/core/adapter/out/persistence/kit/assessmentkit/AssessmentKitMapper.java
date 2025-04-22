@@ -18,13 +18,13 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AssessmentKitMapper {
 
-    public static AssessmentKit mapToDomainModel(AssessmentKitJpaEntity entity, List<MaturityLevel> maturityLevels) {
+    public static AssessmentKit mapToDomainModel(AssessmentKitJpaEntity entity) {
         return new AssessmentKit(
             entity.getId(),
             entity.getTitle(),
             entity.getKitVersionId(),
             KitLanguage.valueOfById(entity.getLanguageId()),
-            maturityLevels,
+            null,
             entity.getIsPrivate()
         );
     }
