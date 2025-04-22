@@ -3,7 +3,10 @@ package org.flickit.assessment.core.adapter.out.persistence.kit.assessmentkit;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentKit;
-import org.flickit.assessment.core.application.port.out.assessmentkit.*;
+import org.flickit.assessment.core.application.port.out.assessmentkit.CheckKitAccessPort;
+import org.flickit.assessment.core.application.port.out.assessmentkit.LoadAssessmentKitPort;
+import org.flickit.assessment.core.application.port.out.assessmentkit.LoadKitInfoPort;
+import org.flickit.assessment.core.application.port.out.assessmentkit.LoadKitLastMajorModificationTimePort;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
 import org.springframework.stereotype.Component;
@@ -45,6 +48,6 @@ public class AssessmentKitPersistenceJpaAdapter implements
     @Override
     public Optional<AssessmentKit> loadAssessmentKit(long kitId) {
         return repository.findById(kitId)
-            .map(e -> AssessmentKitMapper.mapToDomainModel(e, null));
+            .map(AssessmentKitMapper::mapToDomainModel);
     }
 }

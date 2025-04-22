@@ -1,7 +1,6 @@
 package org.flickit.assessment.core.adapter.out.persistence.assessmentresult;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.adapter.out.persistence.attributevalue.AttributeValueMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.assessmentkit.AssessmentKitMapper;
@@ -71,17 +70,15 @@ public class AssessmentResultPersistenceJpaAdapter implements
         var entity = repository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId);
         if (entity.isEmpty())
             return Optional.empty();
-        var kit = kitRepository.findById(entity.get().getAssessment().getAssessmentKitId())
-            .map(x -> AssessmentKitMapper.mapToDomainModel(x, null))
-            .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_KIT_NOT_FOUND));
-        var language = entity.get().getLangId() == kit.getLanguage().getId() ? null
-            : KitLanguage.valueOfById(entity.get().getLangId());
         MaturityLevel maturityLevel = null;
         var maturityLevelId = entity.get().getMaturityLevelId();
         if (maturityLevelId != null) {
             var maturityLevelEntity = maturityLevelRepository.findByIdAndKitVersionId(maturityLevelId, entity.get().getKitVersionId());
-            maturityLevel = maturityLevelEntity.map(ml -> MaturityLevelMapper.mapToDomainModel(ml, language)).orElse(null);
+            maturityLevel = maturityLevelEntity.map(MaturityLevelMapper::mapToDomainModel).orElse(null);
         }
+        var kit = kitRepository.findById(entity.get().getAssessment().getAssessmentKitId())
+            .map(AssessmentKitMapper::mapToDomainModel)
+            .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_KIT_NOT_FOUND));
 
         var assessmentResult = AssessmentResultMapper.mapToDomainModel(entity.get(), maturityLevel, kit);
         var subjectValues = createSubjectValues(entity.get().getId());
