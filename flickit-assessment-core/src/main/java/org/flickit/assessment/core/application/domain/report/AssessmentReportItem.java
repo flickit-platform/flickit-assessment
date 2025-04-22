@@ -15,15 +15,15 @@ public record AssessmentReportItem(UUID id,
                                    AssessmentKitItem assessmentKit,
                                    MaturityLevel maturityLevel,
                                    Double confidenceValue,
+                                   KitLanguage language,
                                    LocalDateTime creationTime) {
     public record AssessmentKitItem(
         Long id,
         String title,
-        KitLanguage language,
         Integer maturityLevelCount,
         Integer questionsCount,
         List<MaturityLevel> maturityLevels,
         List<QuestionnaireReportItem> questionnaires,
         List<Measure> measures) {
-        }
+    }
 }

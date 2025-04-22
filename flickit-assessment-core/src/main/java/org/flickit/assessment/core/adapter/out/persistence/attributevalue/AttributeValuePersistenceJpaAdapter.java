@@ -122,7 +122,7 @@ public class AttributeValuePersistenceJpaAdapter implements
                     .toList()));
 
         var maturityLevelsMap = maturityLevelRepository.findAllByKitVersionId(kitVersionId).stream()
-            .map(ml -> MaturityLevelMapper.mapToDomainModel(ml, null))
+            .map(MaturityLevelMapper::mapToDomainModel)
             .collect(toMap(MaturityLevel::getId, Function.identity()));
 
         return attributes.stream()
@@ -144,8 +144,7 @@ public class AttributeValuePersistenceJpaAdapter implements
         var views = repository.findAllWithAttributeByAssessmentResultId(assessmentResultId);
 
         var maturityLevelMap = maturityLevelRepository.findAllByKitVersionId(assessmentResult.getKitVersionId()).stream()
-            .collect(toMap(MaturityLevelJpaEntity::getId,
-                entity -> MaturityLevelMapper.mapToDomainModel(entity, null)));
+            .collect(toMap(MaturityLevelJpaEntity::getId, MaturityLevelMapper::mapToDomainModel));
 
         return views.stream()
             .map(view -> mapToDomainModel(view.getAttributeValue(),
