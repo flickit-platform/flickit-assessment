@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.application.domain.kit.translation.MaturityLevelTranslation;
 import org.flickit.assessment.common.util.JsonUtils;
+import org.flickit.assessment.core.application.domain.AssessmentListItem;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 
@@ -31,6 +32,14 @@ public class MaturityLevelMapper {
             entity.getValue(),
             translation.descriptionOrDefault(entity.getDescription())
         );
+    }
+
+    public static AssessmentListItem.MaturityLevel toAssessmentListItemMaturityLevel(MaturityLevelJpaEntity entity, KitLanguage language) {
+        var translation = getTranslation(entity, language);
+        return new AssessmentListItem.MaturityLevel(entity.getId(),
+            translation.titleOrDefault(entity.getTitle()),
+            entity.getValue(),
+            entity.getIndex());
     }
 
     private static MaturityLevelTranslation getTranslation(MaturityLevelJpaEntity entity, @Nullable KitLanguage language) {

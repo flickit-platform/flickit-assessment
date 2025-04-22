@@ -3,10 +3,7 @@ package org.flickit.assessment.core.adapter.out.persistence.assessment;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
-import org.flickit.assessment.common.application.domain.kit.translation.KitTranslation;
-import org.flickit.assessment.common.application.domain.kit.translation.MaturityLevelTranslation;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.common.util.JsonUtils;
 import org.flickit.assessment.core.adapter.out.persistence.answer.AnswerMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.answeroption.AnswerOptionMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.question.QuestionMapper;
@@ -38,6 +35,8 @@ import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
+import static org.flickit.assessment.core.adapter.out.persistence.kit.assessmentkit.AssessmentKitMapper.mapToAssessmentListItemKit;
+import static org.flickit.assessment.core.adapter.out.persistence.kit.maturitylevel.MaturityLevelMapper.toAssessmentListItemMaturityLevel;
 import static org.flickit.assessment.core.application.domain.AssessmentUserRole.ASSOCIATE;
 import static org.flickit.assessment.core.application.domain.AssessmentUserRole.MANAGER;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
@@ -160,12 +159,14 @@ public class AssessmentPersistenceJpaAdapter implements
                     ? null
                     : KitLanguage.valueOfById(e.getAssessmentResult().getLangId());
 
-                AssessmentListItem.Kit kit = toAssessmentListItemKit(kitEntity, kitLevelEntities.size(), language);
+                AssessmentListItem.Kit kit = mapToAssessmentListItemKit(kitEntity, kitLevelEntities.size(), language);
                 AssessmentListItem.Space space = null;
                 AssessmentListItem.MaturityLevel maturityLevel = null;
                 if (Boolean.TRUE.equals(e.getAssessmentResult().getIsCalculateValid())) {
-                    MaturityLevelJpaEntity maturityLevelEntity = maturityLevelIdToMaturityLevel.get(
-                        new MaturityLevelJpaEntity.EntityId(e.getAssessmentResult().getMaturityLevelId(), e.getAssessmentResult().getKitVersionId()));
+                    var maturityLevelEntity = maturityLevelIdToMaturityLevel.get(
+                        new MaturityLevelJpaEntity.EntityId(
+                            e.getAssessmentResult().getMaturityLevelId(),
+                            e.getAssessmentResult().getKitVersionId()));
 
                     maturityLevel = toAssessmentListItemMaturityLevel(maturityLevelEntity, language);
                 }
@@ -182,7 +183,6 @@ public class AssessmentPersistenceJpaAdapter implements
                     e.getManageable(),
                     e.getHasReport());
             }).toList();
-
 
         return new PaginatedResponse<>(
             items,
@@ -287,28 +287,5 @@ public class AssessmentPersistenceJpaAdapter implements
                 return new LoadAssessmentQuestionsPort.Result(question, answer);
             })
             .toList();
-    }
-
-    private AssessmentListItem.Kit toAssessmentListItemKit(AssessmentKitJpaEntity kitEntity, int kitLevelEntities, KitLanguage language) {
-        var kitTranslation = new KitTranslation(null, null, null);
-        if (language != null) {
-            var translations = JsonUtils.fromJsonToMap(kitEntity.getTranslations(), KitLanguage.class, KitTranslation.class);
-            kitTranslation = translations.getOrDefault(language, kitTranslation);
-        }
-        return new AssessmentListItem.Kit(kitEntity.getId(),
-            kitTranslation.titleOrDefault(kitEntity.getTitle()),
-            kitLevelEntities);
-    }
-
-    private AssessmentListItem.MaturityLevel toAssessmentListItemMaturityLevel(MaturityLevelJpaEntity jpaEntity, KitLanguage language) {
-        var maturityLevelTranslation = new MaturityLevelTranslation(null, null);
-        if (language != null) {
-            var translations = JsonUtils.fromJsonToMap(jpaEntity.getTranslations(), KitLanguage.class, MaturityLevelTranslation.class);
-            maturityLevelTranslation = translations.getOrDefault(language, maturityLevelTranslation);
-        }
-        return new AssessmentListItem.MaturityLevel(jpaEntity.getId(),
-            maturityLevelTranslation.titleOrDefault(jpaEntity.getTitle()),
-            jpaEntity.getValue(),
-            jpaEntity.getIndex());
     }
 }
