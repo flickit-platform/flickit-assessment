@@ -3,10 +3,11 @@ package org.flickit.assessment.core.adapter.out.persistence.assessment;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.common.application.domain.kit.translation.KitTranslation;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.util.JsonUtils;
 import org.flickit.assessment.core.adapter.out.persistence.answer.AnswerMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.answeroption.AnswerOptionMapper;
-import org.flickit.assessment.core.adapter.out.persistence.kit.assessmentkit.AssessmentKitMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.question.QuestionMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.questionimpact.QuestionImpactMapper;
 import org.flickit.assessment.core.application.domain.Assessment;
@@ -158,7 +159,7 @@ public class AssessmentPersistenceJpaAdapter implements
                     ? null
                     : KitLanguage.valueOfById(e.getAssessmentResult().getLangId());
 
-                AssessmentListItem.Kit kit = AssessmentKitMapper.mapToAssessmentListItemKit(kitEntity, kitLevelEntities.size(), language);
+                AssessmentListItem.Kit kit = this.mapToAssessmentListItemKit(kitEntity, kitLevelEntities.size(), language);
                 AssessmentListItem.Space space = null;
                 AssessmentListItem.MaturityLevel maturityLevel = null;
                 if (Boolean.TRUE.equals(e.getAssessmentResult().getIsCalculateValid())) {
@@ -287,5 +288,16 @@ public class AssessmentPersistenceJpaAdapter implements
                 return new LoadAssessmentQuestionsPort.Result(question, answer);
             })
             .toList();
+    }
+
+    private AssessmentListItem.Kit mapToAssessmentListItemKit(AssessmentKitJpaEntity kitEntity, int kitLevelEntities, KitLanguage language) {
+        var kitTranslation = new KitTranslation(null, null, null);
+        if (language != null) {
+            var translations = JsonUtils.fromJsonToMap(kitEntity.getTranslations(), KitLanguage.class, KitTranslation.class);
+            kitTranslation = translations.getOrDefault(language, kitTranslation);
+        }
+        return new AssessmentListItem.Kit(kitEntity.getId(),
+            kitTranslation.titleOrDefault(kitEntity.getTitle()),
+            kitLevelEntities);
     }
 }
