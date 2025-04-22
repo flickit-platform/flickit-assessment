@@ -1,6 +1,7 @@
 package org.flickit.assessment.core.adapter.out.persistence.attributevalue;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.adapter.out.persistence.answer.AnswerMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.answeroption.AnswerOptionMapper;
@@ -19,6 +20,7 @@ import org.flickit.assessment.data.jpa.core.attributevalue.AttributeValueJpaEnti
 import org.flickit.assessment.data.jpa.core.attributevalue.AttributeValueJpaRepository;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepository;
+import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
@@ -32,6 +34,7 @@ import java.util.function.Function;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_KIT_NOT_FOUND;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.core.adapter.out.persistence.attributevalue.AttributeValueMapper.mapToDomainModel;
 import static org.flickit.assessment.core.common.ErrorMessageKey.ATTRIBUTE_ID_NOT_FOUND;
@@ -50,6 +53,7 @@ public class AttributeValuePersistenceJpaAdapter implements
     private final QuestionJpaRepository questionRepository;
     private final AnswerJpaRepository answerRepository;
     private final AnswerOptionJpaRepository answerOptionRepository;
+    private final AssessmentKitJpaRepository assessmentKitRepository;
 
     @Override
     public List<AttributeValue> persistAll(Set<Long> attributeIds, UUID assessmentResultId) {
@@ -140,11 +144,12 @@ public class AttributeValuePersistenceJpaAdapter implements
     public List<AttributeValue> loadAll(UUID assessmentResultId) {
         var assessmentResult = assessmentResultRepository.findById(assessmentResultId)
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
+        var language = resolveLanguage(assessmentResult);
 
         var views = repository.findAllWithAttributeByAssessmentResultId(assessmentResultId);
 
         var maturityLevelMap = maturityLevelRepository.findAllByKitVersionId(assessmentResult.getKitVersionId()).stream()
-            .collect(toMap(MaturityLevelJpaEntity::getId, MaturityLevelMapper::mapToDomainModel));
+            .collect(toMap(MaturityLevelJpaEntity::getId, entity -> MaturityLevelMapper.mapToDomainModel(entity, language)));
 
         return views.stream()
             .map(view -> mapToDomainModel(view.getAttributeValue(),
@@ -191,5 +196,12 @@ public class AttributeValuePersistenceJpaAdapter implements
                 return AnswerMapper.mapToDomainModel(answerEntity, answerOption);
             })
             .toList();
+    }
+
+    private KitLanguage resolveLanguage(AssessmentResultJpaEntity assessmentResult) {
+        var kit = assessmentKitRepository.findByKitVersionId(assessmentResult.getKitVersionId())
+            .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_KIT_NOT_FOUND));
+        return Objects.equals(assessmentResult.getLangId(), kit.getLanguageId()) ? null
+            : KitLanguage.valueOfById(assessmentResult.getLangId());
     }
 }
