@@ -1,7 +1,6 @@
 package org.flickit.assessment.core.application.service.assessment;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.collections4.CollectionUtils;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.application.domain.notification.SendNotification;
 import org.flickit.assessment.common.application.domain.space.SpaceType;
@@ -79,13 +78,10 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
 
         validateSpace(param, space, assessmentKit.getIsPrivate());
 
-        int langId = (param.getLang() != null)
-            ? KitLanguage.valueOf(param.getLang()).getId()
-            : assessmentKit.getLanguage().getId();
-        validateLanguage(assessmentKit, langId);
+        var assessmentLangId = resolveAssessmentLanguage(assessmentKit, param.getLang()).getId();
 
         UUID id = createAssessmentPort.persist(toParam(param));
-        createAssessmentResult(id, assessmentKit.getKitVersion(), langId);
+        createAssessmentResult(id, assessmentKit.getKitVersion(), assessmentLangId);
 
         grantAssessmentAccesses(id, space.getOwnerId(), param.getCurrentUserId());
 
@@ -111,15 +107,15 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
         }
     }
 
-    private void validateLanguage(AssessmentKit kit, int langId) {
-        KitLanguage lang = KitLanguage.valueOfById(langId);
+    private KitLanguage resolveAssessmentLanguage(AssessmentKit kit, String langParam) {
+        KitLanguage assessmentLanguage = langParam == null
+            ? kit.getLanguage()
+            : KitLanguage.valueOf(langParam);
 
-        boolean isPrimaryLang = kit.getLanguage() == lang;
-        boolean isSupportedLang = !CollectionUtils.isEmpty(kit.getSupportedLanguages()) &&
-            kit.getSupportedLanguages().contains(lang);
-
-        if (!isPrimaryLang && !isSupportedLang)
+        if (!kit.getSupportedLanguages().contains(assessmentLanguage))
             throw new ValidationException(CREATE_ASSESSMENT_LANGUAGE_NOT_SUPPORTED);
+
+        return assessmentLanguage;
     }
 
     private CreateAssessmentPort.Param toParam(Param param) {

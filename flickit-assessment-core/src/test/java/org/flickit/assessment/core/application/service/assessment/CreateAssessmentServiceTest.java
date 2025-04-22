@@ -7,7 +7,6 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.exception.UpgradeRequiredException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.common.util.SlugCodeUtil;
-import org.flickit.assessment.common.util.SpringUtil;
 import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.port.in.assessment.CreateAssessmentUseCase;
 import org.flickit.assessment.core.application.port.in.assessment.CreateAssessmentUseCase.Param;
@@ -24,7 +23,6 @@ import org.flickit.assessment.core.application.port.out.subject.LoadSubjectsPort
 import org.flickit.assessment.core.application.port.out.subjectvalue.CreateSubjectValuePort;
 import org.flickit.assessment.core.test.fixture.application.AttributeMother;
 import org.flickit.assessment.core.test.fixture.application.SpaceMother;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -32,7 +30,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.ApplicationContext;
 
 import java.util.List;
 import java.util.Optional;
@@ -42,7 +39,8 @@ import java.util.function.Consumer;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_SPACE_ID_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
-import static org.flickit.assessment.core.test.fixture.application.AssessmentKitMother.*;
+import static org.flickit.assessment.core.test.fixture.application.AssessmentKitMother.kit;
+import static org.flickit.assessment.core.test.fixture.application.AssessmentKitMother.publicKit;
 import static org.flickit.assessment.core.test.fixture.application.SpaceMother.createExpiredPremiumSpace;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -86,30 +84,18 @@ class CreateAssessmentServiceTest {
     @Mock
     private LoadAssessmentKitPort loadAssessmentKitPort;
 
-    @Mock
-    ApplicationContext applicationContext;
-
-    @BeforeEach
-    void prepare() {
-        var props = new AppSpecProperties();
-        lenient().doReturn(props).when(applicationContext).getBean(AppSpecProperties.class);
-        new SpringUtil(applicationContext);
-    }
-
     @Spy
     AppSpecProperties appSpecProperties = appSpecProperties();
 
     private final AssessmentKit privateKit = kit();
-    private final AssessmentKit publicKit = publicKitFaSupported();
+    private final AssessmentKit publicKit = publicKit();
 
     private final Space space = SpaceMother.createBasicSpace();
-    private Param param;
+    private Param param = createParam(Param.ParamBuilder::build);
 
 
     @Test
     void testCreateAssessment_whenSpaceNotFound_thenThrowResourceNotFoundException() {
-        param = createParam(Param.ParamBuilder::build);
-
         when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(Optional.empty());
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.createAssessment(param));
@@ -128,8 +114,6 @@ class CreateAssessmentServiceTest {
 
     @Test
     void testCreateAssessment_whenCurrentUserIsNotSpaceMember_thenThrowUpgradeRequiredException() {
-        param = createParam(Param.ParamBuilder::build);
-
         when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(Optional.of(space));
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(false);
 
@@ -149,8 +133,6 @@ class CreateAssessmentServiceTest {
 
     @Test
     void testCreateAssessment_whenAssessmentKitNotFound_thenThrowResourceNotFoundException() {
-        param = createParam(Param.ParamBuilder::build);
-
         when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(Optional.of(space));
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
         when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId())).thenReturn(Optional.empty());
@@ -170,8 +152,6 @@ class CreateAssessmentServiceTest {
 
     @Test
     void testCreateAssessment_whenCurrentUserDoesNotHaveAccessToKit_thenThrowValidationException() {
-        param = createParam(Param.ParamBuilder::build);
-
         when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(Optional.of(space));
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
         when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId())).thenReturn(Optional.of(publicKit));
@@ -191,8 +171,6 @@ class CreateAssessmentServiceTest {
 
     @Test
     void testCreateAssessment_whenSpaceIsBasicAndExceedsMaxAssessmentLimits_thenThrowUpgradeRequiredException() {
-        param = createParam(Param.ParamBuilder::build);
-
         when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(Optional.of(space));
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
         when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.of(param.getKitId()));
@@ -212,8 +190,6 @@ class CreateAssessmentServiceTest {
 
     @Test
     void testCreateAssessment_whenSpaceIsBasicAndAssessmentKitIsPrivate_thenThrowUpgradeRequiredException() {
-        param = createParam(Param.ParamBuilder::build);
-
         when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(Optional.of(space));
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
         when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.of(param.getKitId()));
@@ -235,7 +211,6 @@ class CreateAssessmentServiceTest {
 
     @Test
     void testCreateAssessment_whenSpaceIsPremiumAndSubscriptionIsExpired_thenThrowUpgradeRequiredException() {
-        param = createParam(Param.ParamBuilder::build);
         var premiumExpiredSpace = createExpiredPremiumSpace(UUID.randomUUID());
 
         when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(Optional.of(premiumExpiredSpace));
@@ -255,14 +230,14 @@ class CreateAssessmentServiceTest {
     }
 
     @Test
-    void testCreateAssessment_whenLangIsNotSupported_thenThrowValidationException() {
+    void testCreateAssessment_whenLangIsNotSupportedInKit_thenThrowValidationException() {
         param = createParam(b -> b.lang("FA"));
-        var kit = publicKit();
+        publicKit.setSupportedLanguages(List.of(KitLanguage.EN));
 
         when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(Optional.of(space));
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
         when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.of(param.getKitId()));
-        when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId())).thenReturn(Optional.of(kit));
+        when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId())).thenReturn(Optional.of(publicKit));
 
         var throwable = assertThrows(ValidationException.class, () -> service.createAssessment(param));
         assertNotNull(CREATE_ASSESSMENT_LANGUAGE_NOT_SUPPORTED, throwable.getMessage());
