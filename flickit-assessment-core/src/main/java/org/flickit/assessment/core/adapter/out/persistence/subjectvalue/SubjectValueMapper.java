@@ -43,7 +43,7 @@ public class SubjectValueMapper {
                                                 List<AttributeJpaEntity> attributeJpaEntities,
                                                 KitLanguage language) {
         var attributes = attributeJpaEntities.stream()
-            .map(AttributeMapper::mapToDomainModel)
+            .map(entity -> AttributeMapper.mapToDomainModel(entity, language))
             .toList();
         var subject = SubjectMapper.mapToDomainModel(view.getSubject(), attributes, language);
         var subjectValue = new SubjectValue(
