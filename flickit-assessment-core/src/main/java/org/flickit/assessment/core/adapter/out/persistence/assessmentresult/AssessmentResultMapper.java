@@ -3,12 +3,10 @@ package org.flickit.assessment.core.adapter.out.persistence.assessmentresult;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
-import org.flickit.assessment.common.application.domain.kit.translation.KitTranslation;
 import org.flickit.assessment.common.application.domain.kit.translation.MaturityLevelTranslation;
 import org.flickit.assessment.common.util.JsonUtils;
 import org.flickit.assessment.core.adapter.out.persistence.assessment.AssessmentMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.assessmentkit.AssessmentKitMapper;
-import org.flickit.assessment.core.application.domain.AssessmentKit;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.port.out.assessmentresult.CreateAssessmentResultPort;
@@ -44,7 +42,12 @@ public class AssessmentResultMapper {
             translation = translations.getOrDefault(language, translation);
         }
         var kit = AssessmentKitMapper.mapToDomainModel(kitJpaEntity, null);
-        var maturityLevel = new MaturityLevel(maturityLevelJpaEntity.getId(), translation.titleOrDefault(maturityLevelJpaEntity.getTitle()), maturityLevelJpaEntity.getIndex(), maturityLevelJpaEntity.getValue(), maturityLevelJpaEntity.getDescription());
+        var maturityLevel = new MaturityLevel(maturityLevelJpaEntity.getId(),
+            translation.titleOrDefault(maturityLevelJpaEntity.getTitle()),
+            maturityLevelJpaEntity.getIndex(),
+            maturityLevelJpaEntity.getValue(),
+            translation.descriptionOrDefault(maturityLevelJpaEntity.getDescription()));
+
         return new AssessmentResult(
             entity.getId(),
             AssessmentMapper.mapToDomainModel(entity.getAssessment(), kit, null),
