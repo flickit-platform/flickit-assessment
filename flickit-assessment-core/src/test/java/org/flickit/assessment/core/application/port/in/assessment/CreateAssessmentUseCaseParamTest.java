@@ -80,10 +80,10 @@ class CreateAssessmentUseCaseParamTest {
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 
-    private CreateAssessmentUseCase.Param createParam(Consumer<CreateAssessmentUseCase.Param.ParamBuilder> changer) {
+    private void createParam(Consumer<CreateAssessmentUseCase.Param.ParamBuilder> changer) {
         var paramBuilder = paramBuilder();
         changer.accept(paramBuilder);
-        return paramBuilder.build();
+        paramBuilder.build();
     }
 
     private CreateAssessmentUseCase.Param.ParamBuilder paramBuilder() {
