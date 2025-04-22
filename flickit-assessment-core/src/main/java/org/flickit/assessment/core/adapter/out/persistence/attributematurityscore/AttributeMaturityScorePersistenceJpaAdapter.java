@@ -32,14 +32,14 @@ public class AttributeMaturityScorePersistenceJpaAdapter implements
     @Override
     public Map<Long, List<LoadAttributeMaturityScoresPort.MaturityLevelScore>> loadAll(UUID assessmentResultId) {
         var views = repository.findByAssessmentResultId(assessmentResultId);
-        var language = resolveLanguage(assessmentResultId);
+        var translationLanguage = resolveLanguage(assessmentResultId);
 
         return views.stream()
             .collect(Collectors.groupingBy(
                 AttributeMaturityScoreView::getAttributeId,
                 Collectors.mapping(
                     view -> new LoadAttributeMaturityScoresPort.MaturityLevelScore(
-                        MaturityLevelMapper.mapToDomainModel(view.getMaturityLevel(), language),
+                        MaturityLevelMapper.mapToDomainModel(view.getMaturityLevel(), translationLanguage),
                         view.getScore()),
                     Collectors.toList()
                 )

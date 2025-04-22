@@ -73,7 +73,7 @@ public class SubjectValuePersistenceJpaAdapter implements
     public SubjectValue load(UUID assessmentResultId, long subjectId) {
         var assessmentResult = assessmentResultRepository.findById(assessmentResultId)
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
-        var language = resolveLanguage(assessmentResult);
+        var translationLanguage = resolveLanguage(assessmentResult);
         var subjectValueWithSubjectView = repository.findBySubjectIdAndAssessmentResultId(subjectId, assessmentResult.getId())
             .orElseThrow(() -> new ResourceNotFoundException(SUBJECT_VALUE_NOT_FOUND));
         var maturityLevelEntity = maturityLevelRepository.findByIdAndKitVersionId(subjectValueWithSubjectView.getSubjectValue().getMaturityLevelId(),
@@ -81,14 +81,14 @@ public class SubjectValuePersistenceJpaAdapter implements
             .orElseThrow(() -> new ResourceNotFoundException(MATURITY_LEVEL_ID_NOT_FOUND));
         var attributesEntity = attributeRepository.findAllBySubjectIdAndKitVersionId(subjectId, assessmentResult.getKitVersionId());
 
-        return mapToDomainModel(subjectValueWithSubjectView, maturityLevelEntity, attributesEntity, language);
+        return mapToDomainModel(subjectValueWithSubjectView, maturityLevelEntity, attributesEntity, translationLanguage);
     }
 
     @Override
     public List<SubjectValue> loadAll(UUID assessmentResultId) {
         var assessmentResult = assessmentResultRepository.findById(assessmentResultId)
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
-        var language = resolveLanguage(assessmentResult);
+        var translationLanguage = resolveLanguage(assessmentResult);
         var subjectValues = repository.findAllWithSubjectByAssessmentResultId(assessmentResultId);
         var maturityLevelIdToEntityMap = maturityLevelRepository.findAllByKitVersionId(assessmentResult.getKitVersionId())
             .stream().collect(toMap(MaturityLevelJpaEntity::getId, Function.identity()));
@@ -99,7 +99,7 @@ public class SubjectValuePersistenceJpaAdapter implements
             .map(sv -> mapToDomainModel(sv,
                 maturityLevelIdToEntityMap.get(sv.getSubjectValue().getMaturityLevelId()),
                 subjectIdToAttributesMap.get(sv.getSubject().getId()),
-                language))
+                translationLanguage))
             .toList();
     }
 
@@ -107,7 +107,7 @@ public class SubjectValuePersistenceJpaAdapter implements
     public List<SubjectValue> loadAll(UUID assessmentResultId, Collection<Long> subjectIds) {
         var assessmentResult = assessmentResultRepository.findById(assessmentResultId)
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
-        var language = resolveLanguage(assessmentResult);
+        var translationLanguage = resolveLanguage(assessmentResult);
         var subjectValues = repository.findAllWithSubjectByAssessmentResultId(assessmentResultId, subjectIds);
         var maturityLevelIdToEntityMap = maturityLevelRepository.findAllByKitVersionId(assessmentResult.getKitVersionId())
             .stream().collect(toMap(MaturityLevelJpaEntity::getId, Function.identity()));
@@ -118,7 +118,7 @@ public class SubjectValuePersistenceJpaAdapter implements
             .map(sv -> mapToDomainModel(sv,
                 maturityLevelIdToEntityMap.get(sv.getSubjectValue().getMaturityLevelId()),
                 subjectIdToAttributesMap.get(sv.getSubject().getId()),
-                language))
+                translationLanguage))
             .toList();
     }
 

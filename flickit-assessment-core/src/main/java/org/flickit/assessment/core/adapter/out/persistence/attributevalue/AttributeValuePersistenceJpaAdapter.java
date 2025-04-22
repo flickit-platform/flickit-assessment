@@ -144,16 +144,16 @@ public class AttributeValuePersistenceJpaAdapter implements
     public List<AttributeValue> loadAll(UUID assessmentResultId) {
         var assessmentResult = assessmentResultRepository.findById(assessmentResultId)
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
-        var language = resolveLanguage(assessmentResult);
+        var translationLanguage = resolveLanguage(assessmentResult);
 
         var views = repository.findAllWithAttributeByAssessmentResultId(assessmentResultId);
 
         var maturityLevelMap = maturityLevelRepository.findAllByKitVersionId(assessmentResult.getKitVersionId()).stream()
-            .collect(toMap(MaturityLevelJpaEntity::getId, entity -> MaturityLevelMapper.mapToDomainModel(entity, language)));
+            .collect(toMap(MaturityLevelJpaEntity::getId, entity -> MaturityLevelMapper.mapToDomainModel(entity, translationLanguage)));
 
         return views.stream()
             .map(view -> mapToDomainModel(view.getAttributeValue(),
-                AttributeMapper.mapToDomainModel(view.getAttribute(), language),
+                AttributeMapper.mapToDomainModel(view.getAttribute(), translationLanguage),
                 null,
                 maturityLevelMap.get(view.getAttributeValue().getMaturityLevelId())))
             .toList();

@@ -39,10 +39,10 @@ public class MaturityLevelPersistenceJpaAdapter implements
     public MaturityLevel load(long id, UUID assessmentId) {
         var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
-        var language = resolveLanguage(assessmentResult);
+        var translationLanguage = resolveLanguage(assessmentResult);
 
         return repository.findByIdAndKitVersionId(id, assessmentResult.getKitVersionId())
-            .map(entity -> MaturityLevelMapper.mapToDomainModel(entity, language))
+            .map(entity -> mapToDomainModel(entity, translationLanguage))
             .orElseThrow(() -> new ResourceNotFoundException(MATURITY_LEVEL_ID_NOT_FOUND));
     }
 
