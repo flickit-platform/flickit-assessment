@@ -13,6 +13,8 @@ import org.flickit.assessment.core.application.domain.report.AssessmentReportIte
 import org.flickit.assessment.core.application.domain.report.QuestionnaireReportItem;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 
+import java.util.List;
+
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AssessmentKitMapper {
 
