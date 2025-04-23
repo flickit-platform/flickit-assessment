@@ -2,9 +2,9 @@ package org.flickit.assessment.core.application.port.out.maturitylevel;
 
 import org.flickit.assessment.core.application.domain.MaturityLevel;
 
-import java.util.List;
+import java.util.UUID;
 
-public interface LoadMaturityLevelsPort {
+public interface LoadMaturityLevelPort {
 
-    List<MaturityLevel> loadByKitVersionId(Long kitVersionId);
+    MaturityLevel load(long id, UUID assessmentId);
 }

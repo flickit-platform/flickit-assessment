@@ -27,6 +27,7 @@ public class AssessmentResultMother {
             subjectValues, LocalDateTime.now(), LocalDateTime.now());
         assessmentResult.setIsCalculateValid(true);
         assessmentResult.setMaturityLevel(maturityLevel);
+        assessmentResult.setLanguage(KitLanguage.EN);
         assessmentResult.setLastCalculationTime(LocalDateTime.now());
         assessmentResult.setLastConfidenceCalculationTime(LocalDateTime.now());
         return assessmentResult;
@@ -49,6 +50,7 @@ public class AssessmentResultMother {
         assessmentResult.setMaturityLevel(levelFour());
         assessmentResult.setIsConfidenceValid(true);
         assessmentResult.setConfidenceValue(69.0);
+        assessmentResult.setLanguage(language);
         return assessmentResult;
     }
 
@@ -62,7 +64,7 @@ public class AssessmentResultMother {
     public static AssessmentResult resultWithValidations(Boolean isCalculateValid, Boolean isConfCalculationValid,
                                                          LocalDateTime lastCalculationTime, LocalDateTime lastConfCalculationTime) {
         Assessment assessment = AssessmentMother.assessment();
-        AssessmentResult assessmentResult = new AssessmentResult(UUID.randomUUID(),assessment, assessment.getAssessmentKit().getKitVersion(),
+        AssessmentResult assessmentResult = new AssessmentResult(UUID.randomUUID(), assessment, assessment.getAssessmentKit().getKitVersion(),
             List.of(), LocalDateTime.now(), LocalDateTime.now());
         assessmentResult.setIsCalculateValid(isCalculateValid);
         assessmentResult.setIsConfidenceValid(isConfCalculationValid);

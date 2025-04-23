@@ -5,6 +5,7 @@ import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.insight.AssessmentInsight;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentProgressPort;
+import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,7 @@ import static org.flickit.assessment.core.common.MessageKey.ASSESSMENT_DEFAULT_I
 public class CreateAssessmentInsightHelper {
 
     private final GetAssessmentProgressPort getAssessmentProgressPort;
+    private final LoadMaturityLevelPort loadMaturityLevelPort;
 
     public AssessmentInsight createAssessmentInsight(AssessmentResult assessmentResult, Locale locale) {
         var progress = getAssessmentProgressPort.getProgress(assessmentResult.getAssessment().getId());
@@ -29,7 +31,9 @@ public class CreateAssessmentInsightHelper {
         int confidenceValue = assessmentResult.getConfidenceValue() != null
             ? (int) Math.ceil(assessmentResult.getConfidenceValue())
             : 0;
-        var maturityLevelTitle = assessmentResult.getMaturityLevel().getTitle();
+        var maturityLevelTitle = loadMaturityLevelPort.load(assessmentResult.getMaturityLevel().getId(),
+                assessmentResult.getAssessment().getId())
+            .getTitle();
         String insight = (questionsCount == answersCount)
             ? MessageBundle.message(ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_COMPLETED,
             locale,
