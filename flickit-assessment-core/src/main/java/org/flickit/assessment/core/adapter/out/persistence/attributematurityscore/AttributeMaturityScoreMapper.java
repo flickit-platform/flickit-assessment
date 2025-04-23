@@ -33,7 +33,7 @@ public class AttributeMaturityScoreMapper {
         var answer = view.getAnswer();
         var questionnaireTranslation = QuestionnaireMapper.getTranslation(questionnaire, translationLanguage);
         var questionTranslation = QuestionMapper.getTranslation(question, translationLanguage);
-        var answerOptionTranslation = AnswerOptionMapper.getTranslation(option, translationLanguage);
+        var answerOptionTranslation = option == null ? null : AnswerOptionMapper.getTranslation(option, translationLanguage);
 
         return new LoadAttributeScoreDetailPort.Result(questionnaire.getId(),
             questionnaireTranslation.titleOrDefault(questionnaire.getTitle()),
@@ -41,8 +41,8 @@ public class AttributeMaturityScoreMapper {
             question.getIndex(),
             questionTranslation.titleOrDefault(question.getTitle()),
             view.getQuestionImpact().getWeight(),
-            option.getIndex(),
-            answerOptionTranslation.titleOrDefault(option.getTitle()),
+            option == null ? null : option.getIndex(),
+            option == null ? null : answerOptionTranslation.titleOrDefault(option.getTitle()),
             answer == null ? null : answer.getIsNotApplicable(),
             view.getGainedScore(),
             view.getMissedScore(),
