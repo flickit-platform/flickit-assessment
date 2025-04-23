@@ -27,22 +27,26 @@ public class AttributeMaturityScoreMapper {
 
     public static LoadAttributeScoreDetailPort.Result mapToAttributeScoreDetail(ImpactFullQuestionsView view,
                                                                                 @Nullable KitLanguage translationLanguage) {
-        var questionnaireTranslation = QuestionnaireMapper.getTranslation(view.getQuestionnaireTranslations(), translationLanguage);
-        var questionTranslation = QuestionMapper.getTranslation(view.getQuestionTranslations(), translationLanguage);
-        var answerOptionTranslation = AnswerOptionMapper.getTranslation(view.getOptionTranslations(), translationLanguage);
+        var questionnaire = view.getQuestionnaire();
+        var question = view.getQuestion();
+        var option = view.getOption();
+        var answer = view.getAnswer();
+        var questionnaireTranslation = QuestionnaireMapper.getTranslation(questionnaire, translationLanguage);
+        var questionTranslation = QuestionMapper.getTranslation(question, translationLanguage);
+        var answerOptionTranslation = AnswerOptionMapper.getTranslation(option, translationLanguage);
 
-        return new LoadAttributeScoreDetailPort.Result(view.getQuestionnaireId(),
-            questionnaireTranslation.titleOrDefault(view.getQuestionnaireTitle()),
-            view.getQuestionId(),
-            view.getQuestionIndex(),
-            questionTranslation.titleOrDefault(view.getQuestionTitle()),
+        return new LoadAttributeScoreDetailPort.Result(questionnaire.getId(),
+            questionnaireTranslation.titleOrDefault(questionnaire.getTitle()),
+            question.getId(),
+            question.getIndex(),
+            questionTranslation.titleOrDefault(question.getTitle()),
             view.getQuestionImpact().getWeight(),
-            view.getOptionIndex(),
-            answerOptionTranslation.titleOrDefault(view.getOptionTitle()),
-            view.getAnswer() == null ? null : view.getAnswer().getIsNotApplicable(),
+            option.getIndex(),
+            answerOptionTranslation.titleOrDefault(option.getTitle()),
+            answer == null ? null : answer.getIsNotApplicable(),
             view.getGainedScore(),
             view.getMissedScore(),
-            view.getAnswer() != null && view.getAnswer().getConfidenceLevelId() != null ? view.getAnswer().getConfidenceLevelId() : null,
+            answer != null && answer.getConfidenceLevelId() != null ? answer.getConfidenceLevelId() : null,
             view.getEvidenceCount());
     }
 }
