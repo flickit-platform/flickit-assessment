@@ -43,6 +43,20 @@ public class QuestionMapper {
         );
     }
 
+    public static Question mapToDomainModel(QuestionJpaEntity entity, List<QuestionImpact> impacts, KitLanguage language) {
+        var translation = getTranslation(entity, language);
+        return new Question(
+            entity.getId(),
+            translation.titleOrDefault(entity.getTitle()),
+            entity.getIndex(),
+            translation.hintOrDefault(entity.getHint()),
+            entity.getMayNotBeApplicable(),
+            impacts,
+            new Questionnaire(entity.getQuestionnaireId(), null),
+            new Measure(entity.getMeasureId(), null)
+        );
+    }
+
     public static Question mapToDomainWithQuestionnaire(QuestionJpaEntity entity, Questionnaire questionnaire) {
         return new Question(
             entity.getId(),

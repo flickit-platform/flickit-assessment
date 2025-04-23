@@ -96,7 +96,9 @@ public class AttributeValuePersistenceJpaAdapter implements
         if (attributeEntities.size() != attributeIds.size())
             throw new ResourceNotFoundException(ATTRIBUTE_ID_NOT_FOUND);
 
-        var questions = loadQuestionsByAttributeIdInAndKitVersionId(attributeIds, kitVersionId);
+        var translationLanguage = resolveLanguage(assessmentResult);
+
+        var questions = loadQuestionsByAttributeIdInAndKitVersionId(attributeIds, kitVersionId, translationLanguage);
 
         var attributeIdToQuestionsMap = attributeEntities.stream()
             .collect(toMap(AttributeJpaEntity::getId, attribute -> questions.stream()
@@ -105,7 +107,7 @@ public class AttributeValuePersistenceJpaAdapter implements
                 .toList()));
 
         var attributes = attributeEntities.stream()
-            .map(entity -> AttributeMapper.mapToDomainWithQuestions(entity, attributeIdToQuestionsMap.get(entity.getId())))
+            .map(entity -> AttributeMapper.mapToDomainWithQuestions(entity, attributeIdToQuestionsMap.get(entity.getId()), translationLanguage))
             .toList();
 
         var questionIds = questions.stream()
@@ -126,7 +128,7 @@ public class AttributeValuePersistenceJpaAdapter implements
                     .toList()));
 
         var maturityLevelsMap = maturityLevelRepository.findAllByKitVersionId(kitVersionId).stream()
-            .map(MaturityLevelMapper::mapToDomainModel)
+            .map(entity -> MaturityLevelMapper.mapToDomainModel(entity, translationLanguage))
             .collect(toMap(MaturityLevel::getId, Function.identity()));
 
         return attributes.stream()
@@ -159,7 +161,7 @@ public class AttributeValuePersistenceJpaAdapter implements
             .toList();
     }
 
-    private List<Question> loadQuestionsByAttributeIdInAndKitVersionId(List<Long> attributeIds, Long kitVersionId) {
+    private List<Question> loadQuestionsByAttributeIdInAndKitVersionId(List<Long> attributeIds, Long kitVersionId, KitLanguage translationLanguage) {
         var questionWithImpactViews = questionRepository.findByAttributeIdInAndKitVersionId(attributeIds, kitVersionId);
 
         var questionToImpactsMap = questionWithImpactViews.stream()
@@ -170,7 +172,7 @@ public class AttributeValuePersistenceJpaAdapter implements
                 var questionImpacts = e.getValue().stream()
                     .map(v -> QuestionImpactMapper.mapToDomainModel(v.getQuestionImpact()))
                     .toList();
-                return QuestionMapper.mapToDomainModel(e.getKey(), questionImpacts);
+                return QuestionMapper.mapToDomainModel(e.getKey(), questionImpacts, translationLanguage);
             })
             .toList();
     }
