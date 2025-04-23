@@ -207,6 +207,32 @@ class CreateAttributeAiInsightServiceTest {
         verifyNoInteractions(createAttributeInsightPort);
     }
 
+    @Test
+    void testCreateAttributeAiInsight_WhenInsightDoesNotExistAndAssessmentIsInSecondLanguageOfKit_ThenCreateAiInsightAndPersist() {
+        var faAssessmentResult = AssessmentResultMother.validResultWithLanguage(KitLanguage.EN, KitLanguage.FA);
+        var aiInsight = aiInsightWithTime(LocalDateTime.now());
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT)).thenReturn(true);
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(faAssessmentResult));
+        when(loadAttributePort.load(attribute.getId(), faAssessmentResult.getKitVersionId())).thenReturn(attribute);
+        when(loadAttributeInsightPort.load(faAssessmentResult.getId(), param.getAttributeId())).thenReturn(Optional.empty());
+        when(createAttributeAiInsightHelper.createAttributeAiInsight(helperParamArgumentCaptor.capture()))
+            .thenReturn(aiInsight);
+
+        var result = service.createAiInsight(param);
+
+        assertEquals(faAssessmentResult, helperParamArgumentCaptor.getValue().assessmentResult());
+        assertEquals(param.getAttributeId(), helperParamArgumentCaptor.getValue().attributeId());
+        assertEquals(Locale.of(faAssessmentResult.getLanguage().getCode()),
+            helperParamArgumentCaptor.getValue().locale());
+
+        assertEquals(aiInsight.getAiInsight(), result.content());
+        verify(createAttributeInsightPort, times(1)).persist(attributeInsightArgumentCaptor.capture());
+        assertEquals(aiInsight, attributeInsightArgumentCaptor.getValue());
+
+        verify(validateAssessmentResultPort).validate(param.getAssessmentId());
+        verifyNoInteractions(updateAttributeInsightPort);
+    }
+
     private CreateAttributeAiInsightUseCase.Param createParam(Consumer<Param.ParamBuilder> changer) {
         var paramBuilder = paramBuilder();
         changer.accept(paramBuilder);
