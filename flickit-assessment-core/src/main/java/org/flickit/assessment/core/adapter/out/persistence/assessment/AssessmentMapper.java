@@ -3,8 +3,6 @@ package org.flickit.assessment.core.adapter.out.persistence.assessment;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
-import org.flickit.assessment.common.application.domain.kit.translation.KitTranslation;
-import org.flickit.assessment.common.util.JsonUtils;
 import org.flickit.assessment.core.adapter.out.persistence.kit.assessmentkit.AssessmentKitMapper;
 import org.flickit.assessment.core.adapter.out.persistence.space.SpaceMapper;
 import org.flickit.assessment.core.application.domain.Assessment;
@@ -36,19 +34,8 @@ public class AssessmentMapper {
     }
 
     public static Assessment mapToDomainModel(AssessmentKitSpaceJoinView view, KitLanguage language) {
-        var translation = new KitTranslation(null, null, null);
-        if (language != null) {
-            var translations = JsonUtils.fromJsonToMap(view.getKit().getTranslations(), KitLanguage.class, KitTranslation.class);
-            translation = translations.getOrDefault(language, translation);
-        }
-        var kit = AssessmentKitMapper.mapToDomainModel(view.getKit());
-        Space space = SpaceMapper.mapToDomain(view.getSpace());
-        kit = new AssessmentKit(kit.getId(),
-            translation.titleOrDefault(kit.getTitle()),
-            kit.getKitVersion(),
-            kit.getLanguage(),
-            null,
-            kit.getIsPrivate());
+        var kit = AssessmentKitMapper.mapToDomainModel(view.getKit(), language);
+        var space = SpaceMapper.mapToDomain(view.getSpace());
         return mapToDomainModel(view.getAssessment(), kit, space);
     }
 

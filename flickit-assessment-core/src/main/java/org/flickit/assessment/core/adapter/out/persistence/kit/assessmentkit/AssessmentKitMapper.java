@@ -30,6 +30,18 @@ public class AssessmentKitMapper {
         );
     }
 
+    public static AssessmentKit mapToDomainModel(AssessmentKitJpaEntity entity, KitLanguage language) {
+        var translation = getTranslation(entity, language);
+        return new AssessmentKit(
+            entity.getId(),
+            translation.titleOrDefault(entity.getTitle()),
+            entity.getKitVersionId(),
+            KitLanguage.valueOfById(entity.getLanguageId()),
+            null,
+            entity.getIsPrivate()
+        );
+    }
+
     public static AssessmentReportItem.AssessmentKitItem mapToReportItem(AssessmentKitJpaEntity entity,
                                                                          List<MaturityLevel> maturityLevels,
                                                                          List<QuestionnaireReportItem> questionnaireReportItems,
@@ -56,7 +68,7 @@ public class AssessmentKitMapper {
             levelsCount);
     }
 
-    private static KitTranslation getTranslation(AssessmentKitJpaEntity assessmentKitEntity, @Nullable KitLanguage language) {
+    public static KitTranslation getTranslation(AssessmentKitJpaEntity assessmentKitEntity, @Nullable KitLanguage language) {
         var translation = new KitTranslation(null, null, null);
         if (language != null) {
             var translations = JsonUtils.fromJsonToMap(assessmentKitEntity.getTranslations(), KitLanguage.class, KitTranslation.class);
