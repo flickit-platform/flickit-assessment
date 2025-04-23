@@ -76,11 +76,6 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
                 ao.translations as optionTranslations,
                 ao.value as optionValue,
                 CASE
-                    WHEN ans IS NULL THEN 0.0
-                    WHEN ans.isNotApplicable = true THEN 0.0
-                    ELSE ao.value
-                END as answerScore,
-                CASE
                     WHEN ans.isNotApplicable = true THEN 0.0
                     ELSE ROUND(COALESCE(ao.value, 0.0) * qi.weight, 2)
                 END AS gainedScore,
