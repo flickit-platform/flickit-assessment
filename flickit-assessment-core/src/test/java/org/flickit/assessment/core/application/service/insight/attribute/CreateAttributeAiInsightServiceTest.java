@@ -1,6 +1,7 @@
 package org.flickit.assessment.core.application.service.insight.attribute;
 
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.CalculateNotValidException;
@@ -16,6 +17,7 @@ import org.flickit.assessment.core.application.port.out.insight.attribute.Create
 import org.flickit.assessment.core.application.port.out.insight.attribute.LoadAttributeInsightPort;
 import org.flickit.assessment.core.application.port.out.insight.attribute.UpdateAttributeInsightPort;
 import org.flickit.assessment.core.application.service.insight.attribute.CreateAttributeAiInsightHelper.AttributeInsightParam;
+import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -139,7 +141,7 @@ class CreateAttributeAiInsightServiceTest {
 
         assertEquals(assessmentResult, helperParamArgumentCaptor.getValue().assessmentResult());
         assertEquals(param.getAttributeId(), helperParamArgumentCaptor.getValue().attributeId());
-        assertEquals(Locale.of(assessmentResult.getAssessment().getAssessmentKit().getLanguage().getCode()),
+        assertEquals(Locale.of(assessmentResult.getLanguage().getCode()),
             helperParamArgumentCaptor.getValue().locale());
 
         assertEquals(aiInsight.getAiInsight(), result.content());
@@ -188,7 +190,7 @@ class CreateAttributeAiInsightServiceTest {
 
         assertEquals(assessmentResult, helperParamArgumentCaptor.getValue().assessmentResult());
         assertEquals(param.getAttributeId(), helperParamArgumentCaptor.getValue().attributeId());
-        assertEquals(Locale.of(assessmentResult.getAssessment().getAssessmentKit().getLanguage().getCode()),
+        assertEquals(Locale.of(assessmentResult.getLanguage().getCode()),
             helperParamArgumentCaptor.getValue().locale());
 
         assertEquals(newAttributeAiInsight.getAiInsight(), result.content());
