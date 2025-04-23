@@ -93,7 +93,7 @@ public class CreateAttributeAiInsightHelper {
 
         var attributeValues = loadAttributeValuePort.load(param.assessmentResult().getId(), param.attributeIds());
         var assessmentTitle = getAssessmentTitle(assessment);
-        var maturityLevels = loadMaturityLevelsPort.loadByKitVersionId(param.assessmentResult().getKitVersionId());
+        var maturityLevels = loadMaturityLevelsPort.loadByAssessmentId(param.assessmentResult().getAssessment().getId());
         var attributeIdToFile = attributeValues.stream()
             .collect(toMap(av -> av.getAttribute().getId(),
                 attributeValue -> createAttributeScoresFilePort.generateFile(attributeValue, maturityLevels)));
