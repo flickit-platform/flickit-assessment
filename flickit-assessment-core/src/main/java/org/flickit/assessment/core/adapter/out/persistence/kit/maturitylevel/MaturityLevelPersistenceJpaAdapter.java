@@ -55,6 +55,17 @@ public class MaturityLevelPersistenceJpaAdapter implements
             .toList();
     }
 
+    @Override
+    public List<MaturityLevel> loadByAssessmentId(UUID assessmentId) {
+        var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
+            .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
+        var translationLanguage = resolveLanguage(assessmentResult);
+
+        return repository.findAllByKitVersionIdOrderByIndex(assessmentResult.getKitVersionId()).stream()
+            .map(entity -> mapToDomainModel(entity, translationLanguage))
+            .toList();
+    }
+
     public List<MaturityLevel> loadByKitVersionIdWithCompetences(Long kitVersionId) {
         var views = repository.findAllByKitVersionIdWithCompetence(kitVersionId);
 
