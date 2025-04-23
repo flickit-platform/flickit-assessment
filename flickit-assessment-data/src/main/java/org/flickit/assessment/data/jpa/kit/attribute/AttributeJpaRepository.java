@@ -2,7 +2,6 @@ package org.flickit.assessment.data.jpa.kit.attribute;
 
 import org.flickit.assessment.data.jpa.core.attribute.AttributeMaturityLevelSubjectView;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -63,21 +62,11 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
 
     @Query("""
             SELECT
-                qr.id as questionnaireId,
-                qr.title as questionnaireTitle,
-                qsn.id as questionId,
-                qsn.index as questionIndex,
-                qsn.title as questionTitle,
-                ans as answer,
-                qi as questionImpact,
-                ao.index as optionIndex,
-                ao.title as optionTitle,
-                ao.value as optionValue,
-                CASE
-                    WHEN ans IS NULL THEN 0.0
-                    WHEN ans.isNotApplicable = true THEN 0.0
-                    ELSE ao.value
-                END as answerScore,
+                qr AS questionnaire,
+                qsn AS question,
+                ans AS answer,
+                qi AS questionImpact,
+                ao AS option,
                 CASE
                     WHEN ans.isNotApplicable = true THEN 0.0
                     ELSE ROUND(COALESCE(ao.value, 0.0) * qi.weight, 2)
@@ -86,7 +75,7 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
                     WHEN ans.isNotApplicable = true THEN 0.0
                     ELSE ROUND(qi.weight - COALESCE(ao.value, 0.0) * qi.weight, 2)
                 END AS missedScore,
-                COUNT(e.id) as evidenceCount
+                COUNT(e.id) AS evidenceCount
             FROM QuestionJpaEntity qsn
             LEFT JOIN AnswerJpaEntity ans on ans.questionId = qsn.id and ans.assessmentResult.id = :assessmentResultId
             LEFT JOIN EvidenceJpaEntity e on ans.questionId = e.questionId and e.assessmentId = :assessmentId and e.deleted = false and e.type IS NOT NULL
@@ -97,15 +86,14 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
                 AND qi.maturityLevelId = :maturityLevelId
                 AND qsn.kitVersionId = :kitVersionId
             GROUP BY
-                qr.id, qr.title, qsn.id, qsn.index, qsn.title,
-                ans, qi, ao.index, ao.title, ao.value
+                qr, qsn, ans, qi, ao
         """)
     Page<ImpactFullQuestionsView> findImpactFullQuestionsScore(@Param("assessmentId") UUID assessmentId,
                                                                @Param("assessmentResultId") UUID assessmentResultId,
                                                                @Param("kitVersionId") long kitVersionId,
                                                                @Param("attributeId") Long attributeId,
                                                                @Param("maturityLevelId") Long maturityLevelId,
-                                                               PageRequest pageRequest);
+                                                               Pageable pageable);
 
     @Query("""
             SELECT COUNT(DISTINCT(q.id))

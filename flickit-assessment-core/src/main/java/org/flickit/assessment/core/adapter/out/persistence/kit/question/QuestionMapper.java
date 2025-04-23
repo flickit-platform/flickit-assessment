@@ -57,12 +57,7 @@ public class QuestionMapper {
     }
 
     public static Question mapToDomainModel(QuestionJpaEntity entity, @Nullable KitLanguage language) {
-        var translation = new QuestionTranslation(null, null);
-        if (language != null) {
-            var translations = JsonUtils.fromJsonToMap(entity.getTranslations(), KitLanguage.class, QuestionTranslation.class);
-            translation = translations.getOrDefault(language, translation);
-        }
-
+        var translation = getTranslation(entity, language);
         return new Question(
             entity.getId(),
             translation.titleOrDefault(entity.getTitle()),
@@ -73,5 +68,14 @@ public class QuestionMapper {
             new Questionnaire(entity.getQuestionnaireId(), null),
             new Measure(entity.getMeasureId(), null)
         );
+    }
+
+    public static QuestionTranslation getTranslation(QuestionJpaEntity entity, @Nullable KitLanguage language) {
+        var translation = new QuestionTranslation(null, null);
+        if (language != null) {
+            var translations = JsonUtils.fromJsonToMap(entity.getTranslations(), KitLanguage.class, QuestionTranslation.class);
+            translation = translations.getOrDefault(language, translation);
+        }
+        return translation;
     }
 }
