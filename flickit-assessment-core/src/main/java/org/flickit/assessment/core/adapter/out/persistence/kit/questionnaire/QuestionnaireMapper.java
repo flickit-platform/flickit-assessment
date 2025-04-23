@@ -25,7 +25,7 @@ public class QuestionnaireMapper {
                                                       int nextQuestion,
                                                       KitLanguage language) {
         var questionnaireEntity = questionnaireView.getQuestionnaire();
-        var translation = getTranslation(questionnaireEntity.getTranslations(), language);
+        var translation = getTranslation(questionnaireEntity, language);
 
         List<QuestionnaireListItem.Subject> subjects = List.of();
         if (subjectsView != null)
@@ -61,7 +61,7 @@ public class QuestionnaireMapper {
 
     public static QuestionnaireReportItem mapToReportItem(QuestionnaireListItemView itemView, @Nullable KitLanguage language) {
         QuestionnaireJpaEntity questionnaire = itemView.getQuestionnaire();
-        var translation = getTranslation(questionnaire.getTranslations(), language);
+        var translation = getTranslation(questionnaire, language);
 
         return new QuestionnaireReportItem(questionnaire.getId(),
             translation.titleOrDefault(questionnaire.getTitle()),
@@ -70,10 +70,10 @@ public class QuestionnaireMapper {
             itemView.getQuestionCount());
     }
 
-    public static QuestionnaireTranslation getTranslation(String entityTranslations, @Nullable KitLanguage language) {
+    public static QuestionnaireTranslation getTranslation(QuestionnaireJpaEntity entity, @Nullable KitLanguage language) {
         var translation = new QuestionnaireTranslation(null, null);
         if (language != null) {
-            var translations = JsonUtils.fromJsonToMap(entityTranslations, KitLanguage.class, QuestionnaireTranslation.class);
+            var translations = JsonUtils.fromJsonToMap(entity.getTranslations(), KitLanguage.class, QuestionnaireTranslation.class);
             translation = translations.getOrDefault(language, translation);
         }
         return translation;

@@ -57,7 +57,7 @@ public class QuestionMapper {
     }
 
     public static Question mapToDomainModel(QuestionJpaEntity entity, @Nullable KitLanguage language) {
-        var translation = getTranslation(entity.getTranslations(), language);
+        var translation = getTranslation(entity, language);
         return new Question(
             entity.getId(),
             translation.titleOrDefault(entity.getTitle()),
@@ -70,10 +70,10 @@ public class QuestionMapper {
         );
     }
 
-    public static QuestionTranslation getTranslation(String entityTranslations, @Nullable KitLanguage language) {
+    public static QuestionTranslation getTranslation(QuestionJpaEntity entity, @Nullable KitLanguage language) {
         var translation = new QuestionTranslation(null, null);
         if (language != null) {
-            var translations = JsonUtils.fromJsonToMap(entityTranslations, KitLanguage.class, QuestionTranslation.class);
+            var translations = JsonUtils.fromJsonToMap(entity.getTranslations(), KitLanguage.class, QuestionTranslation.class);
             translation = translations.getOrDefault(language, translation);
         }
         return translation;
