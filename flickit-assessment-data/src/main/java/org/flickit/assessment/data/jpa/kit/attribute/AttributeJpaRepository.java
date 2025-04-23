@@ -62,19 +62,11 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
 
     @Query("""
             SELECT
-                qr.id as questionnaireId,
-                qr.title as questionnaireTitle,
-                qr.translations as questionnaireTranslations,
-                qsn.id as questionId,
-                qsn.index as questionIndex,
-                qsn.title as questionTitle,
-                qsn.translations as questionTranslations,
-                ans as answer,
-                qi as questionImpact,
-                ao.index as optionIndex,
-                ao.title as optionTitle,
-                ao.translations as optionTranslations,
-                ao.value as optionValue,
+                qr AS questionnaire,
+                qsn AS question,
+                ans AS answer,
+                qi AS questionImpact,
+                ao AS option,
                 CASE
                     WHEN ans.isNotApplicable = true THEN 0.0
                     ELSE ROUND(COALESCE(ao.value, 0.0) * qi.weight, 2)
@@ -83,7 +75,7 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
                     WHEN ans.isNotApplicable = true THEN 0.0
                     ELSE ROUND(qi.weight - COALESCE(ao.value, 0.0) * qi.weight, 2)
                 END AS missedScore,
-                COUNT(e.id) as evidenceCount
+                COUNT(e.id) AS evidenceCount
             FROM QuestionJpaEntity qsn
             LEFT JOIN AnswerJpaEntity ans on ans.questionId = qsn.id and ans.assessmentResult.id = :assessmentResultId
             LEFT JOIN EvidenceJpaEntity e on ans.questionId = e.questionId and e.assessmentId = :assessmentId and e.deleted = false and e.type IS NOT NULL
@@ -94,8 +86,7 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
                 AND qi.maturityLevelId = :maturityLevelId
                 AND qsn.kitVersionId = :kitVersionId
             GROUP BY
-                qr.id, qr.title, qr.translations, qsn.id, qsn.index, qsn.title, qsn.translations,
-                ans, qi, ao.index, ao.title, ao.translations, ao.value
+                qr, qsn, ans, qi, ao
         """)
     Page<ImpactFullQuestionsView> findImpactFullQuestionsScore(@Param("assessmentId") UUID assessmentId,
                                                                @Param("assessmentResultId") UUID assessmentResultId,

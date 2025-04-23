@@ -1,33 +1,22 @@
 package org.flickit.assessment.data.jpa.kit.attribute;
 
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
+import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
+import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaEntity;
+import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaEntity;
 
 public interface ImpactFullQuestionsView {
 
-    Long getQuestionnaireId();
+    QuestionnaireJpaEntity getQuestionnaire();
 
-    String getQuestionnaireTitle();
-
-    String getQuestionnaireTranslations();
-
-    Long getQuestionId();
-
-    Integer getQuestionIndex();
-
-    String getQuestionTitle();
-
-    String getQuestionTranslations();
+    QuestionJpaEntity getQuestion();
 
     AnswerJpaEntity getAnswer();
 
     QuestionImpactJpaEntity getQuestionImpact();
 
-    Integer getOptionIndex();
-
-    String getOptionTitle();
-
-    String getOptionTranslations();
+    AnswerOptionJpaEntity getOption();
 
     Double getGainedScore();
 
