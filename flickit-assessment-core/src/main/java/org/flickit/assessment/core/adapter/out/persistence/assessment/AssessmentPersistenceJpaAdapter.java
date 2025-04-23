@@ -24,6 +24,7 @@ import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.flickit.assessment.data.jpa.users.space.SpaceJpaEntity;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
@@ -35,9 +36,9 @@ import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
+import static org.flickit.assessment.core.adapter.out.persistence.assessment.AssessmentMapper.mapToDomainModel;
 import static org.flickit.assessment.core.adapter.out.persistence.kit.assessmentkit.AssessmentKitMapper.mapToAssessmentListItemKit;
 import static org.flickit.assessment.core.adapter.out.persistence.kit.maturitylevel.MaturityLevelMapper.toAssessmentListItemMaturityLevel;
-import static org.flickit.assessment.core.adapter.out.persistence.assessment.AssessmentMapper.mapToDomainModel;
 import static org.flickit.assessment.core.application.domain.AssessmentUserRole.ASSOCIATE;
 import static org.flickit.assessment.core.application.domain.AssessmentUserRole.MANAGER;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
@@ -156,9 +157,7 @@ public class AssessmentPersistenceJpaAdapter implements
                 AssessmentKitJpaEntity kitEntity = kitIdToKitEntity.get(e.getAssessment().getAssessmentKitId());
                 List<MaturityLevelJpaEntity> kitLevelEntities = kitVersionIdToMaturityLevelEntities.get(e.getAssessmentResult().getKitVersionId());
 
-                var language = Objects.equals(e.getAssessmentResult().getLangId(), kitEntity.getLanguageId())
-                    ? null
-                    : KitLanguage.valueOfById(e.getAssessmentResult().getLangId());
+                var language = resolveLanguage(e.getAssessmentResult().getLangId(), kitEntity.getLanguageId());
 
                 AssessmentListItem.Kit kit = mapToAssessmentListItemKit(kitEntity, kitLevelEntities.size(), language);
                 AssessmentListItem.Space space = null;
@@ -229,9 +228,7 @@ public class AssessmentPersistenceJpaAdapter implements
         var assessmentResult = resultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
 
-        var language = Objects.equals(assessmentResult.getLangId(), entity.get().getKit().getLanguageId())
-            ? null
-            : KitLanguage.valueOfById(assessmentResult.getLangId());
+        var language = resolveLanguage(assessmentResult.getLangId(), entity.get().getKit().getLanguageId());
         return entity.map(e -> mapToDomainModel(e, language));
     }
 
@@ -295,5 +292,11 @@ public class AssessmentPersistenceJpaAdapter implements
                 return new LoadAssessmentQuestionsPort.Result(question, answer);
             })
             .toList();
+    }
+
+    private @Nullable KitLanguage resolveLanguage(int assessmentResultLangId, int kitLangId) {
+        return Objects.equals(assessmentResultLangId, kitLangId)
+            ? null
+            : KitLanguage.valueOfById(assessmentResultLangId);
     }
 }
