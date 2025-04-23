@@ -31,6 +31,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
@@ -127,7 +128,11 @@ public class AttributeValuePersistenceJpaAdapter implements
                     .filter(answer -> entrySet.getValue().contains(answer.getQuestionId()))
                     .toList()));
 
-        var maturityLevelsMap = maturityLevelRepository.findAllByKitVersionId(kitVersionId).stream()
+        var maturityLevelIds = attributeValueMap.values().stream()
+            .map(AttributeValueJpaEntity::getMaturityLevelId)
+            .collect(Collectors.toSet());
+
+        var maturityLevelsMap = maturityLevelRepository.findAllByIdInAndKitVersionId(maturityLevelIds, kitVersionId).stream()
             .map(entity -> MaturityLevelMapper.mapToDomainModel(entity, translationLanguage))
             .collect(toMap(MaturityLevel::getId, Function.identity()));
 
