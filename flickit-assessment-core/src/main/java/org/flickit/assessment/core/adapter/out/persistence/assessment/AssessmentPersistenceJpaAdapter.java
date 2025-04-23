@@ -35,6 +35,8 @@ import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
+import static org.flickit.assessment.core.adapter.out.persistence.kit.assessmentkit.AssessmentKitMapper.mapToAssessmentListItemKit;
+import static org.flickit.assessment.core.adapter.out.persistence.kit.maturitylevel.MaturityLevelMapper.toAssessmentListItemMaturityLevel;
 import static org.flickit.assessment.core.adapter.out.persistence.assessment.AssessmentMapper.mapToDomainModel;
 import static org.flickit.assessment.core.application.domain.AssessmentUserRole.ASSOCIATE;
 import static org.flickit.assessment.core.application.domain.AssessmentUserRole.MANAGER;
@@ -153,16 +155,21 @@ public class AssessmentPersistenceJpaAdapter implements
             .map(e -> {
                 AssessmentKitJpaEntity kitEntity = kitIdToKitEntity.get(e.getAssessment().getAssessmentKitId());
                 List<MaturityLevelJpaEntity> kitLevelEntities = kitVersionIdToMaturityLevelEntities.get(e.getAssessmentResult().getKitVersionId());
-                AssessmentListItem.Kit kit = new AssessmentListItem.Kit(kitEntity.getId(), kitEntity.getTitle(), kitLevelEntities.size());
+
+                var language = Objects.equals(e.getAssessmentResult().getLangId(), kitEntity.getLanguageId())
+                    ? null
+                    : KitLanguage.valueOfById(e.getAssessmentResult().getLangId());
+
+                AssessmentListItem.Kit kit = mapToAssessmentListItemKit(kitEntity, kitLevelEntities.size(), language);
                 AssessmentListItem.Space space = null;
                 AssessmentListItem.MaturityLevel maturityLevel = null;
                 if (Boolean.TRUE.equals(e.getAssessmentResult().getIsCalculateValid())) {
-                    MaturityLevelJpaEntity maturityLevelEntity = maturityLevelIdToMaturityLevel.get(
-                        new MaturityLevelJpaEntity.EntityId(e.getAssessmentResult().getMaturityLevelId(), e.getAssessmentResult().getKitVersionId()));
-                    maturityLevel = new AssessmentListItem.MaturityLevel(maturityLevelEntity.getId(),
-                        maturityLevelEntity.getTitle(),
-                        maturityLevelEntity.getValue(),
-                        maturityLevelEntity.getIndex());
+                    var maturityLevelEntity = maturityLevelIdToMaturityLevel.get(
+                        new MaturityLevelJpaEntity.EntityId(
+                            e.getAssessmentResult().getMaturityLevelId(),
+                            e.getAssessmentResult().getKitVersionId()));
+
+                    maturityLevel = toAssessmentListItemMaturityLevel(maturityLevelEntity, language);
                 }
 
                 return new AssessmentListItem(e.getAssessment().getId(),
@@ -177,7 +184,6 @@ public class AssessmentPersistenceJpaAdapter implements
                     e.getManageable(),
                     e.getHasReport());
             }).toList();
-
 
         return new PaginatedResponse<>(
             items,

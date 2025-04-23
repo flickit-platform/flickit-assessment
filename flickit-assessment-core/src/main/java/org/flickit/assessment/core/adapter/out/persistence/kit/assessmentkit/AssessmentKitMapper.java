@@ -7,6 +7,7 @@ import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.application.domain.kit.translation.KitTranslation;
 import org.flickit.assessment.common.util.JsonUtils;
 import org.flickit.assessment.core.application.domain.AssessmentKit;
+import org.flickit.assessment.core.application.domain.AssessmentListItem;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.domain.Measure;
 import org.flickit.assessment.core.application.domain.report.AssessmentReportItem;
@@ -46,6 +47,13 @@ public class AssessmentKitMapper {
             maturityLevels,
             questionnaireReportItems,
             measures);
+    }
+
+    public static AssessmentListItem.Kit mapToAssessmentListItemKit(AssessmentKitJpaEntity entity, int levelsCount, KitLanguage language) {
+        var kitTranslation = getTranslation(entity, language);
+        return new AssessmentListItem.Kit(entity.getId(),
+            kitTranslation.titleOrDefault(entity.getTitle()),
+            levelsCount);
     }
 
     private static KitTranslation getTranslation(AssessmentKitJpaEntity assessmentKitEntity, @Nullable KitLanguage language) {

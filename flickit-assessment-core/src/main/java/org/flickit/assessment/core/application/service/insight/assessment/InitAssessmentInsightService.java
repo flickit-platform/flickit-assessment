@@ -43,7 +43,7 @@ public class InitAssessmentInsightService implements InitAssessmentInsightUseCas
             .orElseThrow(() -> new ResourceNotFoundException(INIT_ASSESSMENT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND));
         validateAssessmentResultPort.validate(param.getAssessmentId());
 
-        var locale = Locale.of(assessmentResult.getAssessment().getAssessmentKit().getLanguage().getCode());
+        var locale = Locale.of(assessmentResult.getLanguage().getCode());
         var assessmentInsight = createAssessmentInsightHelper.createAssessmentInsight(assessmentResult, locale);
 
         loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId())

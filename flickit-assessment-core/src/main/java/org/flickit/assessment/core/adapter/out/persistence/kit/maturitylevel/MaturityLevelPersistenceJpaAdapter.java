@@ -6,6 +6,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.LevelCompetence;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.port.out.maturitylevel.CountMaturityLevelsPort;
+import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelPort;
 import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
@@ -29,7 +30,8 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.MATURITY_LEVEL_
 @RequiredArgsConstructor
 public class MaturityLevelPersistenceJpaAdapter implements
     LoadMaturityLevelsPort,
-    CountMaturityLevelsPort {
+    CountMaturityLevelsPort,
+    LoadMaturityLevelPort {
 
     private final MaturityLevelJpaRepository repository;
     private final AssessmentResultJpaRepository assessmentResultRepository;
