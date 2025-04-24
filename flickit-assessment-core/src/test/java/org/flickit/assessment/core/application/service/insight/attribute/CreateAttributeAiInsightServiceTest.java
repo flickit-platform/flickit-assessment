@@ -1,6 +1,7 @@
 package org.flickit.assessment.core.application.service.insight.attribute;
 
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.CalculateNotValidException;
@@ -16,6 +17,7 @@ import org.flickit.assessment.core.application.port.out.insight.attribute.Create
 import org.flickit.assessment.core.application.port.out.insight.attribute.LoadAttributeInsightPort;
 import org.flickit.assessment.core.application.port.out.insight.attribute.UpdateAttributeInsightPort;
 import org.flickit.assessment.core.application.service.insight.attribute.CreateAttributeAiInsightHelper.AttributeInsightParam;
+import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -139,7 +141,7 @@ class CreateAttributeAiInsightServiceTest {
 
         assertEquals(assessmentResult, helperParamArgumentCaptor.getValue().assessmentResult());
         assertEquals(param.getAttributeId(), helperParamArgumentCaptor.getValue().attributeId());
-        assertEquals(Locale.of(assessmentResult.getAssessment().getAssessmentKit().getLanguage().getCode()),
+        assertEquals(Locale.of(assessmentResult.getLanguage().getCode()),
             helperParamArgumentCaptor.getValue().locale());
 
         assertEquals(aiInsight.getAiInsight(), result.content());
@@ -188,7 +190,7 @@ class CreateAttributeAiInsightServiceTest {
 
         assertEquals(assessmentResult, helperParamArgumentCaptor.getValue().assessmentResult());
         assertEquals(param.getAttributeId(), helperParamArgumentCaptor.getValue().attributeId());
-        assertEquals(Locale.of(assessmentResult.getAssessment().getAssessmentKit().getLanguage().getCode()),
+        assertEquals(Locale.of(assessmentResult.getLanguage().getCode()),
             helperParamArgumentCaptor.getValue().locale());
 
         assertEquals(newAttributeAiInsight.getAiInsight(), result.content());
@@ -203,6 +205,32 @@ class CreateAttributeAiInsightServiceTest {
 
         verify(validateAssessmentResultPort).validate(param.getAssessmentId());
         verifyNoInteractions(createAttributeInsightPort);
+    }
+
+    @Test
+    void testCreateAttributeAiInsight_WhenInsightDoesNotExistAndAssessmentIsInSecondLanguageOfKit_ThenCreateAiInsightAndPersist() {
+        var faAssessmentResult = AssessmentResultMother.validResultWithLanguage(KitLanguage.EN, KitLanguage.FA);
+        var aiInsight = aiInsightWithTime(LocalDateTime.now());
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT)).thenReturn(true);
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(faAssessmentResult));
+        when(loadAttributePort.load(attribute.getId(), faAssessmentResult.getKitVersionId())).thenReturn(attribute);
+        when(loadAttributeInsightPort.load(faAssessmentResult.getId(), param.getAttributeId())).thenReturn(Optional.empty());
+        when(createAttributeAiInsightHelper.createAttributeAiInsight(helperParamArgumentCaptor.capture()))
+            .thenReturn(aiInsight);
+
+        var result = service.createAiInsight(param);
+
+        assertEquals(faAssessmentResult, helperParamArgumentCaptor.getValue().assessmentResult());
+        assertEquals(param.getAttributeId(), helperParamArgumentCaptor.getValue().attributeId());
+        assertEquals(Locale.of(faAssessmentResult.getLanguage().getCode()),
+            helperParamArgumentCaptor.getValue().locale());
+
+        assertEquals(aiInsight.getAiInsight(), result.content());
+        verify(createAttributeInsightPort, times(1)).persist(attributeInsightArgumentCaptor.capture());
+        assertEquals(aiInsight, attributeInsightArgumentCaptor.getValue());
+
+        verify(validateAssessmentResultPort).validate(param.getAssessmentId());
+        verifyNoInteractions(updateAttributeInsightPort);
     }
 
     private CreateAttributeAiInsightUseCase.Param createParam(Consumer<Param.ParamBuilder> changer) {

@@ -211,7 +211,7 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
 
         return impactfulQuestions.entrySet().stream()
             .filter(q -> q.getValue() != null)
-            .map(q -> QuestionMapper.mapToDomainModel(q.getKey(),
+            .map(q -> QuestionMapper.mapToDomainModelWithImpacts(q.getKey(),
                 q.getValue().stream()
                     .map(QuestionImpactMapper::mapToDomainModel)
                     .toList()))

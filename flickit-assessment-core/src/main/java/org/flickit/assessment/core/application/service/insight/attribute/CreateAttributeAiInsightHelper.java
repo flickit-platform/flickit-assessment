@@ -62,7 +62,7 @@ public class CreateAttributeAiInsightHelper {
             throw new UnsupportedOperationException(ASSESSMENT_AI_IS_DISABLED);
 
         var assessmentTitle = getAssessmentTitle(assessment);
-        var maturityLevels = loadMaturityLevelsPort.loadByKitVersionId(param.assessmentResult().getKitVersionId());
+        var maturityLevels = loadMaturityLevelsPort.loadAllTranslated(param.assessmentResult());
         var file = createAttributeScoresFilePort.generateFile(attributeValue, maturityLevels);
         var prompt = createPrompt(attribute.getTitle(),
             attribute.getDescription(),
