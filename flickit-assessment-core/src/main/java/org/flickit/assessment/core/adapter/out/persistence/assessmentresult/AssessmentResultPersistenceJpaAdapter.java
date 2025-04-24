@@ -78,7 +78,7 @@ public class AssessmentResultPersistenceJpaAdapter implements
                 MaturityLevelMapper.mapToDomainModel(maturityLevelJpaEntity, null)).orElse(null);
         }
         var kit = kitRepository.findById(entity.get().getAssessment().getAssessmentKitId())
-            .map(x -> AssessmentKitMapper.mapToDomainModel(x, null))
+            .map(AssessmentKitMapper::mapToDomainModel)
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_KIT_NOT_FOUND));
 
         var assessmentResult = AssessmentResultMapper.mapToDomainModel(entity.get(), maturityLevel, kit);
