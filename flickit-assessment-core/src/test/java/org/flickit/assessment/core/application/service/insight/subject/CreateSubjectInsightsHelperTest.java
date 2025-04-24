@@ -34,7 +34,6 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.SUBJECT_NOT_FOU
 import static org.flickit.assessment.core.common.MessageKey.SUBJECT_DEFAULT_INSIGHT;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.validResultWithKitLanguage;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
@@ -68,7 +67,7 @@ class CreateSubjectInsightsHelperTest {
 
     @Test
     void testCreateSubjectInsight_whenSubjectIdDoesNotExist_thenThrowResourceNotFoundException() {
-        when(loadAssessmentKitPort.loadAssessmentKit(anyLong())).thenReturn(Optional.of(assessmentKit));
+        when(loadAssessmentKitPort.loadAssessmentKit(subjectInsightParam.assessmentResult().getAssessment().getAssessmentKit().getId(), null)).thenReturn(Optional.of(assessmentKit));
         when(loadSubjectPort.load(subjectInsightParam.subjectId(), assessmentResult.getKitVersionId(), null))
             .thenReturn(Optional.empty());
 
@@ -82,7 +81,7 @@ class CreateSubjectInsightsHelperTest {
     void testCreateSubjectInsight_whenSubjectIdIsValid_thenReturnSubjectInsight() {
         assessmentKit = AssessmentKitMother.kitWithLanguage(KitLanguage.FA);
 
-        when(loadAssessmentKitPort.loadAssessmentKit(anyLong())).thenReturn(Optional.of(assessmentKit));
+        when(loadAssessmentKitPort.loadAssessmentKit(subjectInsightParam.assessmentResult().getAssessment().getAssessmentKit().getId(), null)).thenReturn(Optional.of(assessmentKit));
         when(loadSubjectPort.load(subjectInsightParam.subjectId(), assessmentResult.getKitVersionId(), KitLanguage.EN))
             .thenReturn(Optional.of(subject));
         when(loadSubjectValuePort.load(assessmentResult.getId(), subjectInsightParam.subjectId()))
@@ -108,7 +107,7 @@ class CreateSubjectInsightsHelperTest {
         assessmentKit = AssessmentKitMother.kitWithLanguage(KitLanguage.EN);
         assessmentResult = validResultWithKitLanguage(KitLanguage.FA);
 
-        when(loadAssessmentKitPort.loadAssessmentKit(anyLong())).thenReturn(Optional.of(assessmentKit));
+        when(loadAssessmentKitPort.loadAssessmentKit(assessmentResult.getAssessment().getAssessmentKit().getId(), null)).thenReturn(Optional.of(assessmentKit));
         when(loadSubjectPort.load(subjectInsightParam.subjectId(), assessmentResult.getKitVersionId(), KitLanguage.FA))
             .thenReturn(Optional.of(subject));
         var paramWithPersianLocale = createSubjectInsightParam(b -> b.locale(Locale.of(KitLanguage.FA.getCode())));

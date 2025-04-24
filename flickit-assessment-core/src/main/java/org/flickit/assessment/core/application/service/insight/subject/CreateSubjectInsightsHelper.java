@@ -38,7 +38,7 @@ public class CreateSubjectInsightsHelper {
 
     public SubjectInsight createSubjectInsight(SubjectInsightParam param) {
         var assessmentResult = param.assessmentResult;
-        var kit = loadAssessmentKitPort.loadAssessmentKit(assessmentResult.getAssessment().getAssessmentKit().getId())
+        var kit = loadAssessmentKitPort.loadAssessmentKit(assessmentResult.getAssessment().getAssessmentKit().getId(), null)
             .orElseThrow(() -> new ResourceNotFoundException(ASSESSMENT_KIT_ID_NOT_FOUND));
         var translationLanguage = resolveLanguage(kit, assessmentResult);
         var subject = loadSubjectPort.load(param.subjectId(), assessmentResult.getKitVersionId(), translationLanguage)
