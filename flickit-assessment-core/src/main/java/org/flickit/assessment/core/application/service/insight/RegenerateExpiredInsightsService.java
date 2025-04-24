@@ -59,7 +59,7 @@ public class RegenerateExpiredInsightsService implements RegenerateExpiredInsigh
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
         validateAssessmentResultPort.validate(param.getAssessmentId());
 
-        var locale = Locale.of(assessmentResult.getAssessment().getAssessmentKit().getLanguage().getCode());
+        var locale = Locale.of(assessmentResult.getLanguage().getCode());
         regenerateExpiredAttributesInsight(assessmentResult, locale);
         regenerateExpiredSubjectsInsight(assessmentResult, locale);
         regenerateExpiredAssessmentInsight(assessmentResult, locale);

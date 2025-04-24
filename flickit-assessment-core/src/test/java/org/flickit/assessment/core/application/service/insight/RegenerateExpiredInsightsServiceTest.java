@@ -1,6 +1,7 @@
 package org.flickit.assessment.core.application.service.insight;
 
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.CalculateNotValidException;
@@ -106,7 +107,7 @@ class RegenerateExpiredInsightsServiceTest {
     private ArgumentCaptor<List<SubjectInsight>> subjectInsightArgumentCaptor;
 
     private final Param param = createParam(Param.ParamBuilder::build);
-    private final AssessmentResult assessmentResult = AssessmentResultMother.validResult();
+    private final AssessmentResult assessmentResult = AssessmentResultMother.validResultWithLanguage(KitLanguage.FA, KitLanguage.EN);
     private final LoadAttributesPort.Result attribute = createAttribute();
 
     @Test
@@ -193,7 +194,7 @@ class RegenerateExpiredInsightsServiceTest {
 
         assertEquals(assessmentResult, attributeHelperParamArgumentCaptor.getValue().assessmentResult());
         assertEquals(List.of(expiredAttributeInsight.getAttributeId()), attributeHelperParamArgumentCaptor.getValue().attributeIds());
-        assertEquals(Locale.of(assessmentResult.getAssessment().getAssessmentKit().getLanguage().getCode()),
+        assertEquals(Locale.of(assessmentResult.getLanguage().getCode()),
             attributeHelperParamArgumentCaptor.getValue().locale());
 
         verify(updateAttributeInsightPort, times(1)).updateAiInsights(attributeInsightArgumentCaptor.capture());
@@ -239,7 +240,7 @@ class RegenerateExpiredInsightsServiceTest {
 
         assertEquals(assessmentResult, subjectHelperParamArgumentCaptor.getValue().assessmentResult());
         assertEquals(List.of(expiredSubjectInsight.getSubjectId()), subjectHelperParamArgumentCaptor.getValue().subjectIds());
-        assertEquals(Locale.of(assessmentResult.getAssessment().getAssessmentKit().getLanguage().getCode()),
+        assertEquals(Locale.of(assessmentResult.getLanguage().getCode()),
             subjectHelperParamArgumentCaptor.getValue().locale());
 
         verify(updateSubjectInsightPort, times(1)).updateAll(subjectInsightArgumentCaptor.capture());
@@ -269,7 +270,7 @@ class RegenerateExpiredInsightsServiceTest {
 
         when(loadSubjectInsightsPort.loadSubjectInsights(assessmentResult.getId())).thenReturn(List.of());
 
-        var locale = Locale.of(assessmentResult.getAssessment().getAssessmentKit().getLanguage().getCode());
+        var locale = Locale.of(assessmentResult.getLanguage().getCode());
 
         when(loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId()))
             .thenReturn(Optional.of(expiredAssessmentInsight));
