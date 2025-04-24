@@ -65,9 +65,9 @@ public class AssessmentKitPersistenceJpaAdapter implements
             });
     }
 
-    private KitLanguage resolveLanguage(AssessmentKitJpaEntity kitEntity, KitLanguage assessmentResultLanguage) {
-        return (assessmentResultLanguage != null && Objects.equals(assessmentResultLanguage.getId(), kitEntity.getLanguageId()))
+    private KitLanguage resolveLanguage(AssessmentKitJpaEntity kitEntity, KitLanguage assessmentLanguage) {
+        return (assessmentLanguage != null && Objects.equals(assessmentLanguage.getId(), kitEntity.getLanguageId()))
             ? null
-            : assessmentResultLanguage;
+            : assessmentLanguage;
     }
 }

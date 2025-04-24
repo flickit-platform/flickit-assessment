@@ -68,7 +68,7 @@ public class AssessmentKitMapper {
             levelsCount);
     }
 
-    public static KitTranslation getTranslation(AssessmentKitJpaEntity assessmentKitEntity, @Nullable KitLanguage language) {
+    private static KitTranslation getTranslation(AssessmentKitJpaEntity assessmentKitEntity, @Nullable KitLanguage language) {
         var translation = new KitTranslation(null, null, null);
         if (language != null) {
             var translations = JsonUtils.fromJsonToMap(assessmentKitEntity.getTranslations(), KitLanguage.class, KitTranslation.class);

@@ -223,7 +223,6 @@ public class AssessmentPersistenceJpaAdapter implements
         Optional<AssessmentKitSpaceJoinView> entity = repository.findByIdAndDeletedFalseWithKitAndSpace(assessmentId);
         if (entity.isEmpty())
             throw new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND);
-
         return entity.map(AssessmentMapper::mapToDomainModel);
     }
 
