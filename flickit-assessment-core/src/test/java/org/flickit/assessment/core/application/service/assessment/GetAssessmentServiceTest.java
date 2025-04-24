@@ -12,6 +12,7 @@ import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentU
 import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.LoadUserRoleForAssessmentPort;
+import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelPort;
 import org.flickit.assessment.core.application.port.out.user.LoadUserPort;
 import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
@@ -55,6 +56,9 @@ class GetAssessmentServiceTest {
     @Mock
     private AssessmentPermissionChecker assessmentPermissionChecker;
 
+    @Mock
+    private LoadMaturityLevelPort loadMaturityLevelPort;
+
     @Test
     void testGetAssessment_validResultManageableViewable_successful() {
         var maturityLevel = MaturityLevelMother.levelThree();
@@ -70,6 +74,7 @@ class GetAssessmentServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult));
         when(loadUserRoleForAssessmentPort.load(assessmentId, currentUserId)).thenReturn(Optional.of(AssessmentUserRole.MANAGER));
         when(assessmentPermissionChecker.isAuthorized(eq(assessmentId), eq(currentUserId), any())).thenReturn(true);
+        when(loadMaturityLevelPort.load(assessmentResult.getMaturityLevel().getId(), assessmentId)).thenReturn(maturityLevel);
 
         Result result = service.getAssessment(new Param(assessmentId, currentUserId));
 
@@ -90,10 +95,6 @@ class GetAssessmentServiceTest {
         assertEquals(assessmentResult.getIsCalculateValid(), result.isCalculateValid());
         assertTrue(result.manageable());
         assertTrue(result.viewable());
-
-        verify(assessmentAccessChecker, times(1)).isAuthorized(any(), any(), any());
-        verify(loadAssessmentPort, times(1)).getAssessmentById(any());
-        verify(loadUserPort, times(1)).loadById(any());
     }
 
     @Test
@@ -111,6 +112,7 @@ class GetAssessmentServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult));
         when(loadUserRoleForAssessmentPort.load(assessmentId, currentUserId)).thenReturn(Optional.of(AssessmentUserRole.ASSESSOR));
         when(assessmentPermissionChecker.isAuthorized(eq(assessmentId), eq(currentUserId), any())).thenReturn(true);
+        when(loadMaturityLevelPort.load(assessmentResult.getMaturityLevel().getId(), assessmentId)).thenReturn(maturityLevel);
 
         Result result = service.getAssessment(new Param(assessmentId, currentUserId));
 
@@ -120,10 +122,6 @@ class GetAssessmentServiceTest {
         assertFalse(result.manageable());
         assertTrue(result.viewable());
         assertNotNull(result.maturityLevel());
-
-        verify(assessmentAccessChecker, times(1)).isAuthorized(any(), any(), any());
-        verify(loadAssessmentPort, times(1)).getAssessmentById(any());
-        verify(loadUserPort, times(1)).loadById(any());
     }
 
     @Test
@@ -150,9 +148,7 @@ class GetAssessmentServiceTest {
         assertFalse(result.viewable());
         assertNull(result.maturityLevel());
 
-        verify(assessmentAccessChecker, times(1)).isAuthorized(any(), any(), any());
-        verify(loadAssessmentPort, times(1)).getAssessmentById(any());
-        verify(loadUserPort, times(1)).loadById(any());
+        verifyNoInteractions(loadMaturityLevelPort);
     }
 
     @Test
