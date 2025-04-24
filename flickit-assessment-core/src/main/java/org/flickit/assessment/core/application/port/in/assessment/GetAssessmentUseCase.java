@@ -5,7 +5,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.application.domain.AssessmentKit;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.domain.Space;
 import org.flickit.assessment.core.application.domain.User;
@@ -53,5 +52,8 @@ public interface GetAssessmentUseCase {
                   boolean isCalculateValid,
                   boolean manageable,
                   boolean viewable) {
+
+        public record AssessmentKit(long id, String title) {
+        }
     }
 }

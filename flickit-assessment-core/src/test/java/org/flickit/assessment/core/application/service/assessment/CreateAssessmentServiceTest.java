@@ -135,7 +135,7 @@ class CreateAssessmentServiceTest {
     void testCreateAssessment_whenAssessmentKitNotFound_thenThrowResourceNotFoundException() {
         when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(Optional.of(space));
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
-        when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId())).thenReturn(Optional.empty());
+        when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId(), null)).thenReturn(Optional.empty());
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.createAssessment(param));
         assertEquals(ASSESSMENT_KIT_ID_NOT_FOUND, throwable.getMessage());
@@ -154,7 +154,7 @@ class CreateAssessmentServiceTest {
     void testCreateAssessment_whenCurrentUserDoesNotHaveAccessToKit_thenThrowValidationException() {
         when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(Optional.of(space));
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
-        when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId())).thenReturn(Optional.of(publicKit));
+        when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId(), null)).thenReturn(Optional.of(publicKit));
         when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.empty());
 
         var throwable = assertThrows(ValidationException.class, () -> service.createAssessment(param));
@@ -174,7 +174,7 @@ class CreateAssessmentServiceTest {
         when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(Optional.of(space));
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
         when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.of(param.getKitId()));
-        when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId())).thenReturn(Optional.of(publicKit));
+        when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId(), null)).thenReturn(Optional.of(publicKit));
         when(countAssessmentsPort.countSpaceAssessments(param.getSpaceId())).thenReturn(2);
 
         var throwable = assertThrows(UpgradeRequiredException.class, () -> service.createAssessment(param));
@@ -193,7 +193,7 @@ class CreateAssessmentServiceTest {
         when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(Optional.of(space));
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
         when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.of(param.getKitId()));
-        when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId())).thenReturn(Optional.of(privateKit));
+        when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId(), null)).thenReturn(Optional.of(privateKit));
         when(countAssessmentsPort.countSpaceAssessments(param.getSpaceId())).thenReturn(0);
 
         var throwable = assertThrows(UpgradeRequiredException.class, () -> service.createAssessment(param));
@@ -216,7 +216,7 @@ class CreateAssessmentServiceTest {
         when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(Optional.of(premiumExpiredSpace));
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
         when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.of(param.getKitId()));
-        when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId())).thenReturn(Optional.of(publicKit));
+        when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId(), null)).thenReturn(Optional.of(publicKit));
 
         var throwable = assertThrows(UpgradeRequiredException.class, () -> service.createAssessment(param));
         assertEquals(CREATE_ASSESSMENT_PREMIUM_SPACE_EXPIRED, throwable.getMessage());
@@ -237,7 +237,7 @@ class CreateAssessmentServiceTest {
         when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(Optional.of(space));
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
         when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.of(param.getKitId()));
-        when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId())).thenReturn(Optional.of(publicKit));
+        when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId(), null)).thenReturn(Optional.of(publicKit));
 
         var throwable = assertThrows(ValidationException.class, () -> service.createAssessment(param));
         assertNotNull(CREATE_ASSESSMENT_LANGUAGE_NOT_SUPPORTED, throwable.getMessage());
@@ -261,7 +261,7 @@ class CreateAssessmentServiceTest {
         when(createAssessmentResultPort.persist(any(CreateAssessmentResultPort.Param.class))).thenReturn(UUID.randomUUID());
         when(loadSubjectsPort.loadByKitVersionIdWithAttributes(publicKit.getKitVersion())).thenReturn(createSubjects());
         when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(Optional.of(space));
-        when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId())).thenReturn(Optional.of(publicKit));
+        when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId(), null)).thenReturn(Optional.of(publicKit));
 
         var result = service.createAssessment(param);
         assertNotNull(result);
@@ -301,7 +301,7 @@ class CreateAssessmentServiceTest {
         List<Subject> expectedResponse = List.of();
         when(loadSubjectsPort.loadByKitVersionIdWithAttributes(publicKit.getKitVersion())).thenReturn(expectedResponse);
         when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(Optional.of(space));
-        when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId())).thenReturn(Optional.of(publicKit));
+        when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId(), null)).thenReturn(Optional.of(publicKit));
 
         CreateAssessmentUseCase.Result result = service.createAssessment(param);
         assertNotNull(result);

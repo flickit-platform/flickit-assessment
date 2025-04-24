@@ -36,7 +36,6 @@ import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
-import static org.flickit.assessment.core.adapter.out.persistence.assessment.AssessmentMapper.mapToDomainModel;
 import static org.flickit.assessment.core.adapter.out.persistence.kit.assessmentkit.AssessmentKitMapper.mapToAssessmentListItemKit;
 import static org.flickit.assessment.core.adapter.out.persistence.kit.maturitylevel.MaturityLevelMapper.toAssessmentListItemMaturityLevel;
 import static org.flickit.assessment.core.application.domain.AssessmentUserRole.ASSOCIATE;
@@ -225,11 +224,7 @@ public class AssessmentPersistenceJpaAdapter implements
         if (entity.isEmpty())
             throw new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND);
 
-        var assessmentResult = resultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
-            .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
-
-        var language = resolveLanguage(assessmentResult.getLangId(), entity.get().getKit().getLanguageId());
-        return entity.map(e -> mapToDomainModel(e, language));
+        return entity.map(AssessmentMapper::mapToDomainModel);
     }
 
     @Override

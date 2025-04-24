@@ -10,6 +10,7 @@ import org.flickit.assessment.core.application.domain.User;
 import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentUseCase.Param;
 import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentUseCase.Result;
 import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentPort;
+import org.flickit.assessment.core.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.LoadUserRoleForAssessmentPort;
 import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelPort;
@@ -59,6 +60,9 @@ class GetAssessmentServiceTest {
     @Mock
     private LoadMaturityLevelPort loadMaturityLevelPort;
 
+    @Mock
+    private LoadAssessmentKitPort loadAssessmentKitPort;
+
     @Test
     void testGetAssessment_validResultManageableViewable_successful() {
         var maturityLevel = MaturityLevelMother.levelThree();
@@ -75,6 +79,8 @@ class GetAssessmentServiceTest {
         when(loadUserRoleForAssessmentPort.load(assessmentId, currentUserId)).thenReturn(Optional.of(AssessmentUserRole.MANAGER));
         when(assessmentPermissionChecker.isAuthorized(eq(assessmentId), eq(currentUserId), any())).thenReturn(true);
         when(loadMaturityLevelPort.load(assessmentResult.getMaturityLevel().getId(), assessmentId)).thenReturn(maturityLevel);
+        when(loadAssessmentKitPort.loadAssessmentKit(assessment.getAssessmentKit().getId(), assessmentResult.getLanguage()))
+            .thenReturn(Optional.ofNullable(assessment.getAssessmentKit()));
 
         Result result = service.getAssessment(new Param(assessmentId, currentUserId));
 
@@ -85,8 +91,8 @@ class GetAssessmentServiceTest {
         assertEquals(assessment.getTitle(), result.title());
         assertEquals(assessment.getSpace().getId(), result.space().getId());
         assertEquals(assessment.getSpace().getTitle(), result.space().getTitle());
-        assertEquals(assessment.getAssessmentKit().getId(), result.kit().getId());
-        assertEquals(assessment.getAssessmentKit().getTitle(), result.kit().getTitle());
+        assertEquals(assessment.getAssessmentKit().getId(), result.kit().id());
+        assertEquals(assessment.getAssessmentKit().getTitle(), result.kit().title());
         assertEquals(assessment.getCreationTime(), result.creationTime());
         assertEquals(assessment.getLastModificationTime(), result.lastModificationTime());
         assertEquals(assessmentCreator.getId(), result.createdBy().getId());
@@ -113,6 +119,8 @@ class GetAssessmentServiceTest {
         when(loadUserRoleForAssessmentPort.load(assessmentId, currentUserId)).thenReturn(Optional.of(AssessmentUserRole.ASSESSOR));
         when(assessmentPermissionChecker.isAuthorized(eq(assessmentId), eq(currentUserId), any())).thenReturn(true);
         when(loadMaturityLevelPort.load(assessmentResult.getMaturityLevel().getId(), assessmentId)).thenReturn(maturityLevel);
+        when(loadAssessmentKitPort.loadAssessmentKit(assessment.getAssessmentKit().getId(), assessmentResult.getLanguage()))
+            .thenReturn(Optional.ofNullable(assessment.getAssessmentKit()));
 
         Result result = service.getAssessment(new Param(assessmentId, currentUserId));
 
@@ -138,6 +146,8 @@ class GetAssessmentServiceTest {
         when(loadUserPort.loadById(assessment.getCreatedBy())).thenReturn(Optional.of(assessmentCreator));
         when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult));
         when(assessmentPermissionChecker.isAuthorized (eq(assessmentId), eq(currentUserId),any())).thenReturn(false);
+        when(loadAssessmentKitPort.loadAssessmentKit(assessment.getAssessmentKit().getId(), assessmentResult.getLanguage()))
+            .thenReturn(Optional.ofNullable(assessment.getAssessmentKit()));
 
         Result result = service.getAssessment(new Param(assessmentId, currentUserId));
 
