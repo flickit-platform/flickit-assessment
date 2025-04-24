@@ -1,6 +1,5 @@
 package org.flickit.assessment.core.adapter.out.persistence.kit.assessmentkit;
 
-import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;

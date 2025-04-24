@@ -58,7 +58,7 @@ public class CreateAttributeAiInsightService implements CreateAttributeAiInsight
             updateAttributeInsightPort.updateAiInsightTime(toUpdateTimeParam(assessmentResult.getId(), attribute.getId()));
             return new Result(attributeInsight.get().getAiInsight());
         }
-        var locale = Locale.of(assessmentResult.getAssessment().getAssessmentKit().getLanguage().getCode());
+        var locale = Locale.of(assessmentResult.getLanguage().getCode());
         var attributeAiInsight = createAttributeAiInsightHelper.createAttributeAiInsight(new AttributeInsightParam(assessmentResult,
             param.getAttributeId(),
             locale));

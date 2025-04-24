@@ -276,7 +276,7 @@ public class AssessmentPersistenceJpaAdapter implements
                     .toList();
 
                 var firstView = views.getFirst();
-                var question = QuestionMapper.mapToDomainModel(firstView.getQuestion(), impacts);
+                var question = QuestionMapper.mapToDomainModelWithImpacts(firstView.getQuestion(), impacts);
                 var answerOption = firstView.getAnswerOption() != null
                     ? AnswerOptionMapper.mapToDomainModel(firstView.getAnswerOption())
                     : null;

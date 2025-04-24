@@ -109,7 +109,7 @@ class GenerateAllAssessmentInsightsServiceTest {
     private ArgumentCaptor<List<SubjectInsight>> subjectInsightArgumentCaptor;
 
     private final Param param = createParam(Param.ParamBuilder::build);
-    private final AssessmentResult assessmentResult = AssessmentResultMother.validResultWithKitLanguage(KitLanguage.FA);
+    private final AssessmentResult assessmentResult = AssessmentResultMother.validResultWithLanguage(KitLanguage.EN, KitLanguage.FA);
     private final LoadAttributesPort.Result attribute = createAttribute();
     private final SubjectValue subjectValue = SubjectValueMother.createSubjectValue();
 
@@ -206,7 +206,7 @@ class GenerateAllAssessmentInsightsServiceTest {
 
         assertEquals(assessmentResult, attributeHelperParamArgumentCaptor.getValue().assessmentResult());
         assertEquals(attribute.id(), attributeHelperParamArgumentCaptor.getValue().attributeIds().getFirst());
-        assertEquals(Locale.of(assessmentResult.getAssessment().getAssessmentKit().getLanguage().getCode()),
+        assertEquals(Locale.of(assessmentResult.getLanguage().getCode()),
             attributeHelperParamArgumentCaptor.getValue().locale());
 
         verify(createAttributeInsightPort, times(1)).persistAll(attributeInsightArgumentCaptor.capture());
@@ -246,7 +246,7 @@ class GenerateAllAssessmentInsightsServiceTest {
 
         assertEquals(assessmentResult, subjectHelperParamArgumentCaptor.getValue().assessmentResult());
         assertEquals(List.of(subject.getId()), subjectHelperParamArgumentCaptor.getValue().subjectIds());
-        assertEquals(Locale.of(assessmentResult.getAssessment().getAssessmentKit().getLanguage().getCode()),
+        assertEquals(Locale.of(assessmentResult.getLanguage().getCode()),
             subjectHelperParamArgumentCaptor.getValue().locale());
 
         verify(createSubjectInsightPort, times(1)).persistAll(subjectInsightArgumentCaptor.capture());
@@ -279,7 +279,7 @@ class GenerateAllAssessmentInsightsServiceTest {
         when(loadSubjectInsightsPort.loadSubjectInsights(assessmentResult.getId()))
             .thenReturn(List.of(SubjectInsightMother.subjectInsightWithSubjectId(subject.getId())));
 
-        var locale = Locale.of(assessmentResult.getAssessment().getAssessmentKit().getLanguage().getCode());
+        var locale = Locale.of(assessmentResult.getLanguage().getCode());
 
         when(loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.empty());
         when(createAssessmentInsightHelper.createAssessmentInsight(assessmentResult, locale))
