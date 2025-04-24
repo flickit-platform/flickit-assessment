@@ -63,7 +63,7 @@ public class GenerateAllAssessmentInsightsService implements GenerateAllAssessme
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
         validateAssessmentResultPort.validate(param.getAssessmentId());
 
-        var locale = Locale.of(assessmentResult.getAssessment().getAssessmentKit().getLanguage().getCode());
+        var locale = Locale.of(assessmentResult.getLanguage().getCode());
 
         initAttributesInsight(param.getAssessmentId(), assessmentResult, locale);
         initSubjectsInsight(assessmentResult, locale);
