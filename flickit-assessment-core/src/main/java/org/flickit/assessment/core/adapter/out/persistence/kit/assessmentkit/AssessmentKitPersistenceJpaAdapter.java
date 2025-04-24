@@ -1,5 +1,6 @@
 package org.flickit.assessment.core.adapter.out.persistence.kit.assessmentkit;
 
+import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
@@ -65,7 +66,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
             });
     }
 
-    private KitLanguage resolveLanguage(AssessmentKitJpaEntity kitEntity, KitLanguage assessmentLanguage) {
+    private KitLanguage resolveLanguage(AssessmentKitJpaEntity kitEntity, @Nullable KitLanguage assessmentLanguage) {
         return (assessmentLanguage != null && Objects.equals(assessmentLanguage.getId(), kitEntity.getLanguageId()))
             ? null
             : assessmentLanguage;
