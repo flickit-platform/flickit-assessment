@@ -7,5 +7,5 @@ import java.util.Optional;
 
 public interface LoadAssessmentKitPort {
 
-    Optional<AssessmentKit> loadAssessmentKit(long kitId, KitLanguage language);
+    Optional<AssessmentKit> loadAssessmentKit(long kitId, KitLanguage assessmentLanguage);
 }

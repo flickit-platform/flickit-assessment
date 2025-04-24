@@ -51,10 +51,10 @@ public class AssessmentKitPersistenceJpaAdapter implements
     }
 
     @Override
-    public Optional<AssessmentKit> loadAssessmentKit(long kitId, KitLanguage language) {
+    public Optional<AssessmentKit> loadAssessmentKit(long kitId, KitLanguage assessmentLanguage) {
         return repository.findById(kitId)
             .map(entity -> {
-                var translationLanguage = resolveLanguage(entity, language);
+                var translationLanguage = resolveLanguage(entity, assessmentLanguage);
                 var kit = AssessmentKitMapper.mapToDomainModel(entity, translationLanguage);
                 var languages = languageRepository.findAllByKitId(kitId).stream()
                     .map(KitLanguageJpaEntity::getLangId)
