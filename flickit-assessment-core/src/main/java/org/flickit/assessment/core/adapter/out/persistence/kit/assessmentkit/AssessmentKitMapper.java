@@ -30,7 +30,7 @@ public class AssessmentKitMapper {
         );
     }
 
-    public static AssessmentKit mapToDomainModel(AssessmentKitJpaEntity entity, KitLanguage language) {
+    public static AssessmentKit mapToDomainModel(AssessmentKitJpaEntity entity, @Nullable KitLanguage language) {
         var translation = getTranslation(entity, language);
         return new AssessmentKit(
             entity.getId(),

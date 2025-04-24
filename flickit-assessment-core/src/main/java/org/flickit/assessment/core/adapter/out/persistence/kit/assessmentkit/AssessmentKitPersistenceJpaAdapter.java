@@ -66,7 +66,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
             });
     }
 
-    private KitLanguage resolveLanguage(AssessmentKitJpaEntity kitEntity, @Nullable KitLanguage assessmentLanguage) {
+    private KitLanguage resolveLanguage(AssessmentKitJpaEntity kitEntity, KitLanguage assessmentLanguage) {
         return (assessmentLanguage != null && Objects.equals(assessmentLanguage.getId(), kitEntity.getLanguageId()))
             ? null
             : assessmentLanguage;
