@@ -56,7 +56,7 @@ public class GetAssessmentService implements GetAssessmentUseCase {
         boolean viewable = assessmentPermissionChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT);
 
         var assessmentKit = loadAssessmentKitPort.loadAssessmentKit(assessment.getAssessmentKit().getId(), assessmentResult.getLanguage())
-            .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_ASSESSMENT_KIT_NOT_FOUND));
+            .orElseThrow(() -> new ResourceNotFoundException(ASSESSMENT_KIT_ID_NOT_FOUND));
 
         MaturityLevel maturityLevel = null;
         if (viewable)
