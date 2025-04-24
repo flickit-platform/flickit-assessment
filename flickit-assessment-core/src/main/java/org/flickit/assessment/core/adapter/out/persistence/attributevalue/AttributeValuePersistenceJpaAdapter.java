@@ -177,7 +177,7 @@ public class AttributeValuePersistenceJpaAdapter implements
                 var questionImpacts = e.getValue().stream()
                     .map(v -> QuestionImpactMapper.mapToDomainModel(v.getQuestionImpact()))
                     .toList();
-                return QuestionMapper.mapToDomainModel(e.getKey(), questionImpacts, translationLanguage);
+                return QuestionMapper.mapToDomainModelWithImpacts(e.getKey(), questionImpacts, translationLanguage);
             })
             .toList();
     }

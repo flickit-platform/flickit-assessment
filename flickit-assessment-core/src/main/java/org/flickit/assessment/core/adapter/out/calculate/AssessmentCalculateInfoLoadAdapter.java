@@ -228,7 +228,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
 
         return impactfulQuestions.values().stream()
             .filter(Objects::nonNull)
-            .map(questionWithImpacts -> QuestionMapper.mapToDomainModel(questionWithImpacts.question(),
+            .map(questionWithImpacts -> QuestionMapper.mapToDomainModelWithImpacts(questionWithImpacts.question(),
                 questionWithImpacts.impacts().stream()
                     .map(QuestionImpactMapper::mapToDomainModel)
                     .toList()))

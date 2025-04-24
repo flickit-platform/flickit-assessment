@@ -117,7 +117,7 @@ class CreateAttributeAiInsightHelperTest {
 
         when(getAssessmentProgressPort.getProgress(assessmentResult.getAssessment().getId())).thenReturn(completeProgress);
         when(loadAttributeValuePort.load(attributeInsightParam.assessmentResult().getId(), attributeInsightParam.attributeId())).thenReturn(attributeValue);
-        when(loadMaturityLevelsPort.loadByAssessmentId(attributeInsightsParam.assessmentResult().getAssessment().getId()))
+        when(loadMaturityLevelsPort.loadAllTranslated(attributeInsightsParam.assessmentResult()))
             .thenReturn(maturityLevels);
         when(createAttributeScoresFilePort.generateFile(attributeValue, maturityLevels)).thenReturn(file);
         when(uploadAttributeScoresFilePort.uploadExcel(eq(file.stream()), any())).thenReturn(fileReportPath);
@@ -146,7 +146,7 @@ class CreateAttributeAiInsightHelperTest {
         when(getAssessmentProgressPort.getProgress(assessmentResult.getAssessment().getId())).thenReturn(completeProgress);
         when(loadAttributeValuePort.load(attributeInsightParam.assessmentResult().getId(), attributeInsightParam.attributeId())).thenReturn(attributeValue);
         when(appAiProperties.isSaveAiInputFileEnabled()).thenReturn(false);
-        when(loadMaturityLevelsPort.loadByAssessmentId(attributeInsightsParam.assessmentResult().getAssessment().getId()))
+        when(loadMaturityLevelsPort.loadAllTranslated(attributeInsightsParam.assessmentResult()))
             .thenReturn(maturityLevels);
         when(createAttributeScoresFilePort.generateFile(attributeValue, maturityLevels)).thenReturn(file);
         when(callAiPromptPort.call(promptArgumentCaptor.capture(), classCaptor.capture())).thenReturn(aiInsight);
