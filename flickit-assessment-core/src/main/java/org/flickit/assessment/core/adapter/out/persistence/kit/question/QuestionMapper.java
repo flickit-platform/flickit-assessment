@@ -17,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class QuestionMapper {
 
-    public static Question mapToDomainModel(Long id, List<QuestionImpact> impacts) {
+    public static Question mapToDomainModelWithImpacts(Long id, List<QuestionImpact> impacts) {
         return new Question(
             id,
             null,
@@ -30,7 +30,7 @@ public class QuestionMapper {
         );
     }
 
-    public static Question mapToDomainModel(QuestionJpaEntity entity, List<QuestionImpact> impacts) {
+    public static Question mapToDomainModelWithImpacts(QuestionJpaEntity entity, List<QuestionImpact> impacts) {
         return new Question(
             entity.getId(),
             entity.getTitle(),
@@ -43,7 +43,7 @@ public class QuestionMapper {
         );
     }
 
-    public static Question mapToDomainModel(QuestionJpaEntity entity, List<QuestionImpact> impacts, KitLanguage language) {
+    public static Question mapToDomainModelWithImpacts(QuestionJpaEntity entity, List<QuestionImpact> impacts, KitLanguage language) {
         var translation = getTranslation(entity, language);
         return new Question(
             entity.getId(),
