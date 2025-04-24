@@ -101,7 +101,7 @@ public class CreateSubjectInsightsHelper {
     }
 
     private KitLanguage resolveLanguage(AssessmentKit assessmentKit, AssessmentResult assessmentResult) {
-        return Objects.equals(assessmentResult.getLanguage(), assessmentKit.getLanguage())
+        return Objects.equals(assessmentKit.getLanguage(), assessmentResult.getLanguage())
             ? null
             : assessmentResult.getLanguage();
     }
