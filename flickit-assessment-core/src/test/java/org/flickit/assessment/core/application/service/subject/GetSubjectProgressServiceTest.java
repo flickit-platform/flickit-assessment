@@ -64,7 +64,7 @@ class GetSubjectProgressServiceTest {
         when(assessmentAccessChecker.isAuthorized(result.getAssessment().getId(), currentUserId, VIEW_SUBJECT_PROGRESS)).thenReturn(true);
         when(loadQuestionsBySubjectPort.loadQuestionsBySubject(subjectValue.getSubject().getId(), result.getKitVersionId())).
             thenReturn(questions);
-        when(loadSubjectPort.loadByIdAndKitVersionId(subjectValue.getSubject().getId(), result.getKitVersionId())).
+        when(loadSubjectPort.load(subjectValue.getSubject().getId(), result.getKitVersionId(), null)).
             thenReturn(Optional.of(subjectValue.getSubject()));
         when(loadAssessmentResultPort.loadByAssessmentId(result.getAssessment().getId())).thenReturn(Optional.of(result));
         when(countAnswersPort.countByQuestionIds(

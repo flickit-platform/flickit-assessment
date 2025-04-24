@@ -1,6 +1,7 @@
 package org.flickit.assessment.core.adapter.out.persistence.kit.subject;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.core.adapter.out.persistence.kit.attribute.AttributeMapper;
 import org.flickit.assessment.core.application.domain.Attribute;
 import org.flickit.assessment.core.application.domain.Subject;
@@ -53,9 +54,9 @@ public class SubjectPersistenceJpaAdapter implements
     }
 
     @Override
-    public Optional<Subject> loadByIdAndKitVersionId(long id, long kitVersionId) {
+    public Optional<Subject> load(long id, long kitVersionId, KitLanguage language) {
         return repository.findByIdAndKitVersionId(id, kitVersionId)
-            .map(entity -> mapToDomainModel(entity, null));
+            .map(entity -> mapToDomainModel(entity, null, language));
     }
 
     @Override
