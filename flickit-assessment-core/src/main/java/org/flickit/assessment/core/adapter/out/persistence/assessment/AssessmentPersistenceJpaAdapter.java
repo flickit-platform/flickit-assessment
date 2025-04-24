@@ -24,6 +24,7 @@ import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.flickit.assessment.data.jpa.users.space.SpaceJpaEntity;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
@@ -155,9 +156,7 @@ public class AssessmentPersistenceJpaAdapter implements
                 AssessmentKitJpaEntity kitEntity = kitIdToKitEntity.get(e.getAssessment().getAssessmentKitId());
                 List<MaturityLevelJpaEntity> kitLevelEntities = kitVersionIdToMaturityLevelEntities.get(e.getAssessmentResult().getKitVersionId());
 
-                var language = Objects.equals(e.getAssessmentResult().getLangId(), kitEntity.getLanguageId())
-                    ? null
-                    : KitLanguage.valueOfById(e.getAssessmentResult().getLangId());
+                var language = resolveLanguage(e.getAssessmentResult().getLangId(), kitEntity.getLanguageId());
 
                 AssessmentListItem.Kit kit = mapToAssessmentListItemKit(kitEntity, kitLevelEntities.size(), language);
                 AssessmentListItem.Space space = null;
@@ -277,7 +276,7 @@ public class AssessmentPersistenceJpaAdapter implements
                     .toList();
 
                 var firstView = views.getFirst();
-                var question = QuestionMapper.mapToDomainModel(firstView.getQuestion(), impacts);
+                var question = QuestionMapper.mapToDomainModelWithImpacts(firstView.getQuestion(), impacts);
                 var answerOption = firstView.getAnswerOption() != null
                     ? AnswerOptionMapper.mapToDomainModel(firstView.getAnswerOption())
                     : null;
@@ -287,5 +286,11 @@ public class AssessmentPersistenceJpaAdapter implements
                 return new LoadAssessmentQuestionsPort.Result(question, answer);
             })
             .toList();
+    }
+
+    private @Nullable KitLanguage resolveLanguage(int assessmentResultLangId, int kitLangId) {
+        return Objects.equals(assessmentResultLangId, kitLangId)
+            ? null
+            : KitLanguage.valueOfById(assessmentResultLangId);
     }
 }

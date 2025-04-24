@@ -35,7 +35,7 @@ public class GetAssessmentRestController {
             result.shortTitle(),
             new GetAssessmentResponseDto.SpaceResponseDto(result.space().getId(), result.space().getTitle()),
             result.kitCustomId(),
-            new GetAssessmentResponseDto.KitResponseDto(result.kit().getId(), result.kit().getTitle()),
+            new GetAssessmentResponseDto.KitResponseDto(result.kit().id(), result.kit().title()),
             result.creationTime(),
             result.lastModificationTime(),
             new UserResponseDto(result.createdBy().getId(), result.createdBy().getDisplayName()),

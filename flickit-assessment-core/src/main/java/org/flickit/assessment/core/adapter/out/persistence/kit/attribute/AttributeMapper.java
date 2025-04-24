@@ -51,6 +51,18 @@ public class AttributeMapper {
         );
     }
 
+    public static Attribute mapToDomainWithQuestions(AttributeJpaEntity entity, List<Question> questions, KitLanguage language) {
+        var translation = getTranslation(entity, language);
+        return new Attribute(
+            entity.getId(),
+            entity.getIndex(),
+            translation.titleOrDefault(entity.getTitle()),
+            translation.descriptionOrDefault(entity.getDescription()),
+            entity.getWeight(),
+            questions
+        );
+    }
+
     public static LoadAttributesPort.Result mapToResult(AttributeMaturityLevelSubjectView view, Integer weight) {
         return new LoadAttributesPort.Result(
             view.getAttribute().getId(),

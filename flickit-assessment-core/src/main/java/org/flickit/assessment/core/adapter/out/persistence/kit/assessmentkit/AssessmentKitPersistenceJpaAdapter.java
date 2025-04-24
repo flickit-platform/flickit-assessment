@@ -15,6 +15,7 @@ import org.flickit.assessment.data.jpa.kit.kitlanguage.KitLanguageJpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -50,10 +51,11 @@ public class AssessmentKitPersistenceJpaAdapter implements
     }
 
     @Override
-    public Optional<AssessmentKit> loadAssessmentKit(long kitId) {
+    public Optional<AssessmentKit> loadAssessmentKit(long kitId, KitLanguage assessmentLanguage) {
         return repository.findById(kitId)
             .map(entity -> {
-                var kit = AssessmentKitMapper.mapToDomainModel(entity);
+                var translationLanguage = resolveLanguage(entity, assessmentLanguage);
+                var kit = AssessmentKitMapper.mapToDomainModel(entity, translationLanguage);
                 var languages = languageRepository.findAllByKitId(kitId).stream()
                     .map(KitLanguageJpaEntity::getLangId)
                     .map(KitLanguage::valueOfById)
@@ -61,5 +63,11 @@ public class AssessmentKitPersistenceJpaAdapter implements
                 kit.setSupportedLanguages(languages);
                 return kit;
             });
+    }
+
+    private KitLanguage resolveLanguage(AssessmentKitJpaEntity kitEntity, KitLanguage assessmentLanguage) {
+        return (assessmentLanguage != null && Objects.equals(assessmentLanguage.getId(), kitEntity.getLanguageId()))
+            ? null
+            : assessmentLanguage;
     }
 }
