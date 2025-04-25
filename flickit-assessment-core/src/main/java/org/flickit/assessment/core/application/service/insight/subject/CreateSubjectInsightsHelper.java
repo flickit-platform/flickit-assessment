@@ -35,11 +35,10 @@ public class CreateSubjectInsightsHelper {
             .orElseThrow(() -> new ResourceNotFoundException(SUBJECT_NOT_FOUND));
         var subjectValues = loadSubjectValuePort.load(param.assessmentResult().getId(), subject.getId());
         int maturityLevelsSize = countMaturityLevelsPort.count(param.assessmentResult().getKitVersionId());
-        Locale locale = Locale.of(param.assessmentResult.getLanguage().getCode());
 
         return new SubjectInsight(param.assessmentResult().getId(),
             subject.getId(),
-            buildDefaultInsight(subjectValues, maturityLevelsSize, locale),
+            buildDefaultInsight(subjectValues, maturityLevelsSize, param.locale()),
             LocalDateTime.now(),
             LocalDateTime.now(),
             null,
