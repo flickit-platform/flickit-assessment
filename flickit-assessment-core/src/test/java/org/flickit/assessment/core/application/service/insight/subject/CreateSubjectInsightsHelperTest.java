@@ -29,6 +29,7 @@ import java.util.function.Consumer;
 
 import static org.flickit.assessment.core.common.ErrorMessageKey.SUBJECT_NOT_FOUND;
 import static org.flickit.assessment.core.common.MessageKey.SUBJECT_DEFAULT_INSIGHT;
+import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.validResult;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.validResultWithKitLanguage;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -49,7 +50,7 @@ class CreateSubjectInsightsHelperTest {
     @Mock
     private CountMaturityLevelsPort countMaturityLevelsPort;
 
-    private AssessmentResult assessmentResult = validResultWithKitLanguage(KitLanguage.EN);
+    private AssessmentResult assessmentResult = validResult();
     private final SubjectValue subjectValue = SubjectValueMother.createSubjectValue();
     private final Subject subject = subjectValue.getSubject();
     private final int maturityLevelsCount = MaturityLevelMother.allLevels().size();
