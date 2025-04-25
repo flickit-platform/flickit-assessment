@@ -78,6 +78,7 @@ public class ErrorMessageKey {
     public static final String UPDATE_ASSESSMENT_TITLE_SIZE_MAX = "update-assessment.title.max";
     public static final String UPDATE_ASSESSMENT_SHORT_TITLE_SIZE_MIN = "update-assessment.shortTitle.size.min";
     public static final String UPDATE_ASSESSMENT_SHORT_TITLE_SIZE_MAX = "update-assessment.shortTitle.size.max";
+    public static final String UPDATE_ASSESSMENT_LANGUAGE_INVALID = "update-assessment.language.invalid";
 
     public static final String CALCULATE_ASSESSMENT_ID_NOT_NULL = "calculate-assessment.assessment.id.notNull";
     public static final String CALCULATE_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND = "calculate-assessment.assessmentResult.notFount";

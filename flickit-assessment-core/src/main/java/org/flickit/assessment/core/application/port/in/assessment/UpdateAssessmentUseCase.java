@@ -1,12 +1,15 @@
 package org.flickit.assessment.core.application.port.in.assessment;
 
+import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.validation.EnumValue;
 
 import java.util.UUID;
 
@@ -36,13 +39,18 @@ public interface UpdateAssessmentUseCase {
         @Size(max = 20, message = UPDATE_ASSESSMENT_SHORT_TITLE_SIZE_MAX)
         String shortTitle;
 
+        @Nullable
+        @EnumValue(enumClass = KitLanguage.class, message = UPDATE_ASSESSMENT_LANGUAGE_INVALID)
+        String lang;
+
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        public Param(UUID id, String title, String shortTitle, UUID currentUserId) {
+        public Param(UUID id, String title, String shortTitle, @Nullable String lang, UUID currentUserId) {
             this.id = id;
             this.title = title;
             this.shortTitle = shortTitle;
+            this.lang = lang;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
