@@ -2,9 +2,11 @@ package org.flickit.assessment.core.application.service.assessment;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.port.in.assessment.UpdateAssessmentUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.UpdateAssessmentPort;
+import org.flickit.assessment.core.application.port.out.assessmentresult.UpdateAssessmentResultPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +23,7 @@ public class UpdateAssessmentService implements UpdateAssessmentUseCase {
 
     private final UpdateAssessmentPort updateAssessmentPort;
     private final AssessmentAccessChecker assessmentAccessChecker;
+    private final UpdateAssessmentResultPort updateAssessmentResultPort;
 
     @Override
     public Result updateAssessment(Param param) {
@@ -36,6 +39,11 @@ public class UpdateAssessmentService implements UpdateAssessmentUseCase {
             code,
             lastModificationTime,
             param.getCurrentUserId());
+
+        if (param.getLang() != null){
+            KitLanguage kitLanguage = KitLanguage.valueOf(param.getLang());
+            updateAssessmentResultPort.updateLanguage(kitLanguage);
+        }
 
         return new Result(updateAssessmentPort.update(updateParam).id());
     }
