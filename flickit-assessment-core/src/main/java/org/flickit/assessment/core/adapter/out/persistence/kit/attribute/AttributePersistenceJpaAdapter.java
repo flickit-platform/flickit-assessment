@@ -36,6 +36,7 @@ import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.core.adapter.out.persistence.attributematurityscore.AttributeMaturityScoreMapper.mapToAttributeScoreDetail;
 import static org.flickit.assessment.core.adapter.out.persistence.kit.attribute.AttributeMapper.mapToDomainModel;
+import static org.flickit.assessment.core.adapter.out.persistence.kit.attribute.AttributeMapper.mapToResult;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 @Component("coreAttributePersistenceJpaAdapter")
@@ -147,7 +148,7 @@ public class AttributePersistenceJpaAdapter implements
 
         var attributeViews = repository.findAllByAssessmentIdWithSubjectAndMaturityLevel(assessmentId);
         var attributes = attributeViews.stream()
-            .map(e -> AttributeMapper.mapToDomainModel(e.getAttribute()))
+            .map(e -> mapToDomainModel(e.getAttribute()))
             .toList();
 
         var attributeIdToWeight = getAttributeIdToWeightMap(attributes,
@@ -157,7 +158,7 @@ public class AttributePersistenceJpaAdapter implements
         return attributeViews.stream()
             .sorted(Comparator.comparingInt((AttributeMaturityLevelSubjectView v) -> v.getSubject().getIndex())
                 .thenComparingInt(v -> v.getAttribute().getIndex()))
-            .map(e -> AttributeMapper.mapToResult(e, attributeIdToWeight.get(e.getAttribute().getId()), translationLanguage))
+            .map(e -> mapToResult(e, attributeIdToWeight.get(e.getAttribute().getId()), translationLanguage))
             .toList();
     }
 
