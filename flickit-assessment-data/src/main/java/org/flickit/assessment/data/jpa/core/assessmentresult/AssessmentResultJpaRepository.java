@@ -66,4 +66,13 @@ public interface AssessmentResultJpaRepository extends JpaRepository<AssessmentR
             WHERE a.id = :id
         """)
     void updateKitVersionId(@Param("id") UUID id, @Param("kitVersionId") long kitVersionId);
+
+    @Modifying
+    @Query("""
+            UPDATE AssessmentResultJpaEntity a
+            SET a.langId = :langId
+            WHERE a.id = :id
+        """)
+    void updateLangId(@Param("id") UUID id,
+                      @Param("langId") int langId);
 }

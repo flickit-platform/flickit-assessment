@@ -1,6 +1,7 @@
 package org.flickit.assessment.core.adapter.out.persistence.assessmentresult;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.adapter.out.persistence.attributevalue.AttributeValueMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.assessmentkit.AssessmentKitMapper;
@@ -108,6 +109,11 @@ public class AssessmentResultPersistenceJpaAdapter implements
     @Override
     public void updateKitVersionId(UUID assessmentResultId, Long kitVersionId) {
         repository.updateKitVersionId(assessmentResultId, kitVersionId);
+    }
+
+    @Override
+    public void updateLanguage(UUID assessmentResultId, KitLanguage kitLanguage) {
+        repository.updateLangId(assessmentResultId, kitLanguage.getId());
     }
 }
 

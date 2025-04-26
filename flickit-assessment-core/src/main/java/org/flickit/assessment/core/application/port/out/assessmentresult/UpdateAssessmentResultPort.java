@@ -8,5 +8,5 @@ public interface UpdateAssessmentResultPort {
 
     void updateKitVersionId(UUID assessmentResultId, Long kitVersionId);
 
-    void updateLanguage(KitLanguage kitLanguage);
+    void updateLanguage(UUID assessmentResultId, KitLanguage kitLanguage);
 }
