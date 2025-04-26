@@ -54,7 +54,6 @@ class UpdateAssessmentServiceTest {
     private UpdateAssessmentResultPort updateAssessmentResultPort;
 
     private final UUID id = UUID.randomUUID();
-    private final UUID currentUserId = UUID.randomUUID();
     private UpdateAssessmentUseCase.Param param = createParam(UpdateAssessmentUseCase.Param.ParamBuilder::build);
     private final AssessmentResult assessmentResult = AssessmentResultMother.validResult();
     private final AssessmentKit assessmentKit = AssessmentKitMother.publicKit();
@@ -65,6 +64,11 @@ class UpdateAssessmentServiceTest {
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.updateAssessment(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+
+        verifyNoInteractions(updateAssessmentPort,
+            loadAssessmentKitPort,
+            loadAssessmentResultPort,
+            updateAssessmentResultPort);
     }
 
     @Test
@@ -74,6 +78,10 @@ class UpdateAssessmentServiceTest {
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.updateAssessment(param));
         assertEquals(UPDATE_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND, throwable.getMessage());
+
+        verifyNoInteractions(updateAssessmentPort,
+            loadAssessmentKitPort,
+            updateAssessmentResultPort);
     }
 
     @Test
@@ -84,6 +92,9 @@ class UpdateAssessmentServiceTest {
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.updateAssessment(param));
         assertEquals(UPDATE_ASSESSMENT_ASSESSMENT_KIT_NOT_FOUND, throwable.getMessage());
+
+        verifyNoInteractions(updateAssessmentPort,
+            updateAssessmentResultPort);
     }
 
     @Test
@@ -170,6 +181,6 @@ class UpdateAssessmentServiceTest {
             .title("title")
             .shortTitle("shortTitle")
             .lang("FA")
-            .currentUserId(currentUserId);
+            .currentUserId(UUID.randomUUID());
     }
 }
