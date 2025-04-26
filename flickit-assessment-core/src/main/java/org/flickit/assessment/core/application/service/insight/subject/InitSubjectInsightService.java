@@ -41,7 +41,7 @@ public class InitSubjectInsightService implements InitSubjectInsightUseCase {
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(INIT_SUBJECT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND));
         validateAssessmentResultPort.validate(param.getAssessmentId());
-        var locale = Locale.of(assessmentResult.getAssessment().getAssessmentKit().getLanguage().getCode());
+        var locale = Locale.of(assessmentResult.getLanguage().getCode());
         var subjectInsight = createSubjectInsightsHelper
             .createSubjectInsight(new SubjectInsightParam(assessmentResult, param.getSubjectId(), locale));
 
