@@ -38,7 +38,7 @@ public class SubjectMapper {
         );
     }
 
-    private static SubjectTranslation getTranslation(SubjectJpaEntity entity, @Nullable KitLanguage language) {
+    public static SubjectTranslation getTranslation(SubjectJpaEntity entity, @Nullable KitLanguage language) {
         var translation = new SubjectTranslation(null, null);
         if (language != null) {
             var translations = JsonUtils.fromJsonToMap(entity.getTranslations(), KitLanguage.class, SubjectTranslation.class);
