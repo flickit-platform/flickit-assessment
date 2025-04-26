@@ -24,6 +24,7 @@ public interface UpdateKitInfoPort {
                  Set<Long> tags,
                  Map<KitLanguage, KitTranslation> translations,
                  boolean isRemoveTranslations,
+                 String metadata,
                  UUID currentUserId,
                  LocalDateTime lastModificationTime) {
     }

@@ -57,7 +57,7 @@ public class AssessmentKitMapper {
             entity.getExpertGroupId(),
             param.lang() != null ? param.lang().getId() : entity.getLanguageId(),
             translations,
-            null,
+            param.metadata(),
             entity.getCreationTime(),
             param.lastModificationTime(),
             entity.getCreatedBy(),
