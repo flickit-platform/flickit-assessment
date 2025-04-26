@@ -82,7 +82,8 @@ class GetAssessmentMaturityLevelsServiceTest {
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
             .thenReturn(Optional.of(assessmentResult));
-        when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId(), assessmentResult)).thenReturn(maturityLevels);
+        when(loadMaturityLevelsPort.loadAllTranslated(assessmentResult))
+            .thenReturn(maturityLevels);
 
         var result = service.getAssessmentMaturityLevels(param);
         assertNotNull(result);

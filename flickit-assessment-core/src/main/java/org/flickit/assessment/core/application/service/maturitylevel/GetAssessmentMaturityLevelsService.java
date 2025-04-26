@@ -32,7 +32,7 @@ public class GetAssessmentMaturityLevelsService implements GetAssessmentMaturity
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_MATURITY_LEVELS_ASSESSMENT_RESULT_NOT_FOUND));
 
-        var maturityLevels = loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId(), assessmentResult).stream()
+        var maturityLevels = loadMaturityLevelsPort.loadAllTranslated(assessmentResult).stream()
             .map(this::toResult)
             .toList();
 
