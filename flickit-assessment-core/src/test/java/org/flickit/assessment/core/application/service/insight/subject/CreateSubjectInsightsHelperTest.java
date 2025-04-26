@@ -30,6 +30,7 @@ import java.util.function.Consumer;
 import static org.flickit.assessment.core.common.ErrorMessageKey.SUBJECT_NOT_FOUND;
 import static org.flickit.assessment.core.common.MessageKey.SUBJECT_DEFAULT_INSIGHT;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.validResult;
+import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.validResultWithKitLanguage;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -49,7 +50,7 @@ class CreateSubjectInsightsHelperTest {
     @Mock
     private CountMaturityLevelsPort countMaturityLevelsPort;
 
-    private final AssessmentResult assessmentResult = validResult();
+    private AssessmentResult assessmentResult = validResult();
     private final SubjectValue subjectValue = SubjectValueMother.createSubjectValue();
     private final Subject subject = subjectValue.getSubject();
     private final int maturityLevelsCount = MaturityLevelMother.allLevels().size();
@@ -93,6 +94,8 @@ class CreateSubjectInsightsHelperTest {
 
     @Test
     void testCreateSubjectInsight_whenLocaleIsPersian_thenReturnSubjectInsightInPersian() {
+        assessmentResult = validResultWithKitLanguage(KitLanguage.FA);
+
         when(loadSubjectPort.loadByIdAndKitVersionId(subjectInsightParam.subjectId(), assessmentResult.getKitVersionId()))
             .thenReturn(Optional.of(subject));
         var paramWithPersianLocale = createSubjectInsightParam(b -> b.locale(Locale.of(KitLanguage.FA.getCode())));
