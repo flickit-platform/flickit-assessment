@@ -73,14 +73,14 @@ public class AttributeMapper {
         return new LoadAttributesPort.Result(
             view.getAttribute().getId(),
             attributeTranslation.titleOrDefault(view.getAttribute().getTitle()),
-            attributeTranslation.titleOrDefault(view.getAttribute().getDescription()),
+            attributeTranslation.descriptionOrDefault(view.getAttribute().getDescription()),
             view.getAttribute().getIndex(),
             weight,
             view.getAttributeValue().getConfidenceValue(),
             new LoadAttributesPort.MaturityLevel(
                 view.getMaturityLevel().getId(),
                 maturityLevelTranslation.titleOrDefault(view.getMaturityLevel().getTitle()),
-                maturityLevelTranslation.titleOrDefault(view.getMaturityLevel().getDescription()),
+                maturityLevelTranslation.descriptionOrDefault(view.getMaturityLevel().getDescription()),
                 view.getMaturityLevel().getIndex(),
                 view.getMaturityLevel().getValue()
             ),
