@@ -1,5 +1,6 @@
 package org.flickit.assessment.kit.application.port.in.assessmentkit;
 
+import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotNull;
@@ -62,6 +63,9 @@ public interface UpdateKitInfoUseCase {
 
         boolean removeTranslations;
 
+        @Nullable
+        String metadata;
+
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
@@ -82,6 +86,7 @@ public interface UpdateKitInfoUseCase {
                      List<Long> tags,
                      Map<String, KitTranslation> translations,
                      boolean removeTranslations,
+                     @Nullable String metadata,
                      UUID currentUserId) {
             this.kitId = kitId;
             this.title = title;
@@ -94,6 +99,7 @@ public interface UpdateKitInfoUseCase {
             this.tags = tags;
             this.translations = validateAndConvert(translations, KitLanguage.class, COMMON_KIT_LANGUAGE_NOT_VALID);
             this.removeTranslations = removeTranslations;
+            this.metadata = metadata;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }

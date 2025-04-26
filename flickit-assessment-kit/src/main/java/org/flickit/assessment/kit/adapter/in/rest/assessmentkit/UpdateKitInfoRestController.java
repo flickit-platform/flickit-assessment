@@ -41,6 +41,7 @@ public class UpdateKitInfoRestController {
             request.tags(),
             request.translations(),
             request.removeTranslations(),
+            request.metadata(),
             currentUserId
         );
     }
