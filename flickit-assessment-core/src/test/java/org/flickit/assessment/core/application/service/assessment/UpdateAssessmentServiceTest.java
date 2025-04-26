@@ -68,7 +68,7 @@ class UpdateAssessmentServiceTest {
     }
 
     @Test
-    void testUpdateAssessment_whenAssessmentResultDoesNotExists_thenThrowResourceNotFoundException() {
+    void testUpdateAssessment_whenAssessmentResultDoesNotExist_thenThrowResourceNotFoundException() {
         when(assessmentAccessChecker.isAuthorized(param.getId(), param.getCurrentUserId(), UPDATE_ASSESSMENT)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getId())).thenReturn(Optional.empty());
 
@@ -77,7 +77,7 @@ class UpdateAssessmentServiceTest {
     }
 
     @Test
-    void testUpdateAssessment_whenAssessmentKitDoesNotExists_thenThrowResourceNotFoundException() {
+    void testUpdateAssessment_whenAssessmentKitDoesNotExist_thenThrowResourceNotFoundException() {
         when(assessmentAccessChecker.isAuthorized(param.getId(), param.getCurrentUserId(), UPDATE_ASSESSMENT)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getId())).thenReturn(Optional.of(assessmentResult));
         when(loadAssessmentKitPort.loadAssessmentKit(assessmentResult.getAssessment().getAssessmentKit().getId(), null)).thenReturn(Optional.empty());
@@ -87,7 +87,7 @@ class UpdateAssessmentServiceTest {
     }
 
     @Test
-    void testUpdateAssessment_whenParametersAreValid_thenUpdateAndReturnsId() {
+    void testUpdateAssessment_whenParametersAreValid_thenUpdateAndReturnId() {
         when(assessmentAccessChecker.isAuthorized(param.getId(), param.getCurrentUserId(), UPDATE_ASSESSMENT)).thenReturn(true);
         when(updateAssessmentPort.update(any())).thenReturn(new UpdateAssessmentPort.Result(id));
         when(loadAssessmentResultPort.loadByAssessmentId(param.getId())).thenReturn(Optional.of(assessmentResult));
@@ -109,7 +109,7 @@ class UpdateAssessmentServiceTest {
     }
 
     @Test
-    void testUpdateAssessment_whenParametersAreValidAndLangNotProvided_thenUpdateAndReturnsId() {
+    void testUpdateAssessment_whenParametersAreValidAndLangNotProvided_thenUpdateAndReturnId() {
         param = createParam(b -> b.lang(null));
 
         when(assessmentAccessChecker.isAuthorized(param.getId(), param.getCurrentUserId(), UPDATE_ASSESSMENT)).thenReturn(true);
@@ -134,7 +134,7 @@ class UpdateAssessmentServiceTest {
     }
 
     @Test
-    void testUpdateAssessment_whenParametersAreValidAndNewLangEqualsToOldLang_thenUpdateWithoutLangAndReturnsId() {
+    void testUpdateAssessment_whenParametersAreValidAndNewLangEqualsToOldLang_thenUpdateWithoutLangAndReturnId() {
         param = createParam(b -> b.lang("EN"));
 
         when(assessmentAccessChecker.isAuthorized(param.getId(), param.getCurrentUserId(), UPDATE_ASSESSMENT)).thenReturn(true);
