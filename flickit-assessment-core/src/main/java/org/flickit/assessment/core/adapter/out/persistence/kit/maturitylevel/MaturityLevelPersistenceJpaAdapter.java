@@ -51,13 +51,6 @@ public class MaturityLevelPersistenceJpaAdapter implements
     }
 
     @Override
-    public List<MaturityLevel> loadByKitVersionId(Long kitVersionId) {
-        return repository.findAllByKitVersionIdOrderByIndex(kitVersionId).stream()
-            .map(MaturityLevelMapper::mapToDomainModel)
-            .toList();
-    }
-
-    @Override
     public List<MaturityLevel> loadAllTranslated(AssessmentResult assessmentResult) {
         var translationLanguage = resolveLanguage(assessmentResult);
 
