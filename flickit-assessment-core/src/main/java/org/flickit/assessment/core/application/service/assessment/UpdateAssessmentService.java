@@ -62,12 +62,12 @@ public class UpdateAssessmentService implements UpdateAssessmentUseCase {
     }
 
     private void handleLanguageUpdate(String lang, AssessmentKit kit, AssessmentResult assessmentResult) {
-        KitLanguage newAssessmentLanguage = KitLanguage.valueOf(lang);
-        if (!kit.getSupportedLanguages().contains(newAssessmentLanguage))
+        KitLanguage newLanguage = KitLanguage.valueOf(lang);
+        if (!kit.getSupportedLanguages().contains(newLanguage))
             throw new ValidationException(UPDATE_ASSESSMENT_LANGUAGE_NOT_SUPPORTED);
 
-        KitLanguage oldAssessmentLanguage = assessmentResult.getLanguage();
-        if (!newAssessmentLanguage.equals(oldAssessmentLanguage))
-            updateAssessmentResultPort.updateLanguage(assessmentResult.getId(), newAssessmentLanguage);
+        KitLanguage oldLanguage = assessmentResult.getLanguage();
+        if (!newLanguage.equals(oldLanguage))
+            updateAssessmentResultPort.updateLanguage(assessmentResult.getId(), newLanguage);
     }
 }
