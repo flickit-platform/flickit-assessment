@@ -36,6 +36,7 @@ import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.core.adapter.out.persistence.attributematurityscore.AttributeMaturityScoreMapper.mapToAttributeScoreDetail;
 import static org.flickit.assessment.core.adapter.out.persistence.kit.attribute.AttributeMapper.mapToDomainModel;
+import static org.flickit.assessment.core.adapter.out.persistence.kit.attribute.AttributeMapper.mapToResult;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 @Component("coreAttributePersistenceJpaAdapter")
@@ -138,12 +139,16 @@ public class AttributePersistenceJpaAdapter implements
 
     @Override
     public List<LoadAttributesPort.Result> loadAll(UUID assessmentId) {
+        var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
+            .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
+        var translationLanguage = resolveLanguage(assessmentResult);
+
         var assessment = assessmentRepository.findByIdAndDeletedFalse(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND));
 
         var attributeViews = repository.findAllByAssessmentIdWithSubjectAndMaturityLevel(assessmentId);
         var attributes = attributeViews.stream()
-            .map(e -> AttributeMapper.mapToDomainModel(e.getAttribute()))
+            .map(e -> mapToDomainModel(e.getAttribute()))
             .toList();
 
         var attributeIdToWeight = getAttributeIdToWeightMap(attributes,
@@ -153,7 +158,7 @@ public class AttributePersistenceJpaAdapter implements
         return attributeViews.stream()
             .sorted(Comparator.comparingInt((AttributeMaturityLevelSubjectView v) -> v.getSubject().getIndex())
                 .thenComparingInt(v -> v.getAttribute().getIndex()))
-            .map(e -> AttributeMapper.mapToResult(e, attributeIdToWeight.get(e.getAttribute().getId())))
+            .map(e -> mapToResult(e, attributeIdToWeight.get(e.getAttribute().getId()), translationLanguage))
             .toList();
     }
 
