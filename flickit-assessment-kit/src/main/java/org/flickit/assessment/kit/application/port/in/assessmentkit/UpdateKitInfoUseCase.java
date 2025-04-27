@@ -19,7 +19,6 @@ import java.util.UUID;
 
 import static io.jsonwebtoken.lang.Collections.isEmpty;
 import static org.flickit.assessment.common.error.ErrorMessageKey.*;
-import static org.flickit.assessment.common.error.ErrorMessageKey.UPDATE_KIT_INFO_METADATA_CONTEXT_SIZE_MAX;
 import static org.flickit.assessment.common.validation.EnumValidateUtils.validateAndConvert;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
