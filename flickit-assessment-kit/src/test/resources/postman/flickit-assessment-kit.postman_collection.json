@@ -571,7 +571,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"New title \",\n    \"removeTranslations\": false,    \n    \"metadata\": {\n        \"goal\": \"  goal\",\n        \"context\": \"context\"\n    },\n    \"removeMetadata\" : false,\n    \"translations\": {\n        \"EN\": {\n            \"title\": \"title\",\n            \"summary\": \"summary\",\n            \"about\": \"about\",\n            \"metadata\": {\n                \"goal\" : \"goal\",\n                \"context\" : \"context\"\n            }\n        }\n    }\n}",
+							"raw": "{\n    \"title\": \"New title \",\n    \"shortTitle\": \"New short title \",\n    \"removeMetadata\" : false,\n    \"metadata\": {\n        \"goal\": \"goal\",\n        \"context\": \"context\"\n    },\n    \"removeTranslations\": false,    \n    \"translations\": {\n        \"EN\": {\n            \"title\": \"title\",\n            \"summary\": \"summary\",\n            \"about\": \"about\",\n            \"metadata\": {\n                \"goal\" : \"goal\",\n                \"context\" : \"context\"\n            }\n        }\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
