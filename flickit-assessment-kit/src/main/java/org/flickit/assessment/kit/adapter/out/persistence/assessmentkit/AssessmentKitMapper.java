@@ -30,7 +30,7 @@ public class AssessmentKitMapper {
             param.isPrivate(),
             param.expertGroupId(),
             param.lang().getId(),
-            null, // TODO: Consider replacing this with the actual value after editing the service.
+            null,
             null,
             LocalDateTime.now(),
             LocalDateTime.now(),
