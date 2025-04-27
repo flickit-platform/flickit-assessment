@@ -295,9 +295,9 @@ class UpdateKitInfoServiceTest {
     }
 
     private UpdateKitInfoUseCase.MetadataParam CreateMetadataParam(Consumer<UpdateKitInfoUseCase.MetadataParam.MetadataParamBuilder> changer) {
-        var param = metadataParamBuilder();
-        changer.accept(param);
-        return param.build();
+        var paramBuilder = metadataParamBuilder();
+        changer.accept(paramBuilder);
+        return paramBuilder.build();
     }
 
     private UpdateKitInfoUseCase.MetadataParam.MetadataParamBuilder metadataParamBuilder() {
