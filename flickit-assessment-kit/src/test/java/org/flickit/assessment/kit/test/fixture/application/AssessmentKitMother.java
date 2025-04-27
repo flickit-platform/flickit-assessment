@@ -62,6 +62,30 @@ public class AssessmentKitMother {
             id++);
     }
 
+    public static AssessmentKit kitWithMetadata(KitMetadata metadata) {
+        return new AssessmentKit(
+            id++,
+            CODE + id,
+            TITLE + id,
+            SUMMARY,
+            ABOUT,
+            KitLanguage.EN,
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            Boolean.TRUE,
+            Boolean.FALSE,
+            EXPERT_GROUP_ID,
+            Map.of(KitLanguage.EN, new KitTranslation(TITLE, SUMMARY, ABOUT)),
+            null,
+            null,
+            null,
+            null,
+            null,
+            id++,
+            metadata,
+            null);
+    }
+
     public static AssessmentKit completeKit(List<Subject> subjects,
                                             List<MaturityLevel> maturityLevels,
                                             List<Questionnaire> questionnaires,
