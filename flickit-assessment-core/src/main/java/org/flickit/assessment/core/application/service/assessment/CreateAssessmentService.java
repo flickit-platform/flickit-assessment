@@ -19,6 +19,7 @@ import org.flickit.assessment.core.application.port.out.assessmentkit.LoadAssess
 import org.flickit.assessment.core.application.port.out.assessmentresult.CreateAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.GrantUserAssessmentRolePort;
 import org.flickit.assessment.core.application.port.out.attributevalue.CreateAttributeValuePort;
+import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.core.application.port.out.space.LoadSpacePort;
 import org.flickit.assessment.core.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectsPort;
@@ -27,10 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -47,6 +45,7 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
 
     private static final AssessmentUserRole SPACE_OWNER_ROLE = MANAGER;
     private static final AssessmentUserRole ASSESSMENT_CREATOR_ROLE = MANAGER;
+    private static final Double CONFIDENCE_INITIAL_VALUE = 0.0;
 
     private final CheckSpaceAccessPort checkSpaceAccessPort;
     private final CheckKitAccessPort checkKitAccessPort;
@@ -54,6 +53,7 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
     private final CreateAssessmentResultPort createAssessmentResultPort;
     private final CreateSubjectValuePort createSubjectValuePort;
     private final CreateAttributeValuePort createAttributeValuePort;
+    private final LoadMaturityLevelsPort loadMaturityLevelsPort;
     private final LoadSubjectsPort loadSubjectsPort;
     private final LoadSpacePort loadSpacePort;
     private final GrantUserAssessmentRolePort grantUserAssessmentRolePort;
@@ -135,8 +135,9 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
 
     private void createAssessmentResult(UUID assessmentId, Long kitVersionId, int langId) {
         LocalDateTime lastModificationTime = LocalDateTime.now();
+        MaturityLevel maturityLevel = resolveInitialMaturityLevel(kitVersionId);
         CreateAssessmentResultPort.Param param = new CreateAssessmentResultPort.Param(assessmentId, kitVersionId,
-            lastModificationTime, false, false, langId);
+            maturityLevel.getId(), CONFIDENCE_INITIAL_VALUE, lastModificationTime, false, false, langId);
         UUID assessmentResultId = createAssessmentResultPort.persist(param);
 
         List<Subject> subjects = loadSubjectsPort.loadByKitVersionIdWithAttributes(kitVersionId);
@@ -146,6 +147,13 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
             .flatMap(List::stream).collect(Collectors.toSet());
         createSubjectValuePort.persistAll(subjectIds, assessmentResultId);
         createAttributeValuePort.persistAll(attributeIds, assessmentResultId);
+    }
+
+    private MaturityLevel resolveInitialMaturityLevel(Long kitVersionId) {
+        return loadMaturityLevelsPort.loadAll(kitVersionId).stream()
+            .sorted(Comparator.comparingInt(MaturityLevel::getValue))
+            .toList()
+            .getFirst();
     }
 
     private void grantAssessmentAccesses(UUID assessmentId, UUID spaceOwnerId, UUID currentUserId) {
