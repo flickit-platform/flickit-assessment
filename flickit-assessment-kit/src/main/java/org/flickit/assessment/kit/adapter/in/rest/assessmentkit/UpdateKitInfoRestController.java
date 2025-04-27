@@ -29,6 +29,11 @@ public class UpdateKitInfoRestController {
     }
 
     private Param toParam(Long kitId, UpdateKitInfoRequestDto request, UUID currentUserId) {
+        var metaDataParam = new UpdateKitInfoUseCase.MetadataParam(
+            request.metadata() != null ? request.metadata().goal() : null,
+            request.metadata() != null ? request.metadata().context() : null
+        );
+
         return new Param(
             kitId,
             request.title(),
@@ -41,10 +46,7 @@ public class UpdateKitInfoRestController {
             request.tags(),
             request.translations(),
             request.removeTranslations(),
-            new UpdateKitInfoUseCase.MetadataParam(
-                request.metadata() != null ? request.metadata().goal() : null,
-                request.metadata() != null ? request.metadata().context() : null
-            ),
+            metaDataParam,
             currentUserId
         );
     }
