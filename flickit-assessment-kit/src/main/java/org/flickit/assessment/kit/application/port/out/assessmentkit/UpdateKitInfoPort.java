@@ -26,6 +26,7 @@ public interface UpdateKitInfoPort {
                  Map<KitLanguage, KitTranslation> translations,
                  boolean isRemoveTranslations,
                  KitMetadata metadata,
+                 boolean isRemoveMetadata,
                  UUID currentUserId,
                  LocalDateTime lastModificationTime) {
     }

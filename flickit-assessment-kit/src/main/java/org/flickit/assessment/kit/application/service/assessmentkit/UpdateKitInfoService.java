@@ -40,7 +40,7 @@ public class UpdateKitInfoService implements UpdateKitInfoUseCase {
             existedMetadata = kit.getMetadata();
 
         var metadata = buildMetadata(existedMetadata, newMetadata);
-        if (containsNonNullParam(param) || param.isRemoveTranslations())
+        if (containsNonNullParam(param) || param.isRemoveTranslations() || param.isRemoveMetadata())
             updateKitInfoPort.update(toPortParam(param, metadata));
     }
 
@@ -79,6 +79,7 @@ public class UpdateKitInfoService implements UpdateKitInfoUseCase {
             param.getTranslations(),
             param.isRemoveTranslations(),
             metadata,
+            param.isRemoveMetadata(),
             param.getCurrentUserId(),
             LocalDateTime.now()
         );

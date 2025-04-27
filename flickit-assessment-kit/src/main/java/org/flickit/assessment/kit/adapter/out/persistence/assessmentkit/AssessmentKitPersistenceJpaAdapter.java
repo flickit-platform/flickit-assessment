@@ -1,6 +1,5 @@
 package org.flickit.assessment.kit.adapter.out.persistence.assessmentkit;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -71,7 +70,6 @@ public class AssessmentKitPersistenceJpaAdapter implements
     private final KitTagRelationJpaRepository kitTagRelationRepository;
     private final KitDbSequenceGenerators sequenceGenerators;
     private final KitLanguageJpaRepository kitLanguageRepository;
-    private final ObjectMapper objectMapper;
 
     @Override
     public PaginatedResponse<LoadKitUsersPort.KitUser> loadKitUsers(LoadKitUsersPort.Param param) {
@@ -163,8 +161,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
         if (param.tags() != null)
             updateKitTags(param.kitId(), param.tags());
 
-        var metadata = objectMapper.writeValueAsString(param.metadata());
-        var toBeUpdatedEntity = AssessmentKitMapper.toJpaEntity(kitEntity, param, metadata);
+        var toBeUpdatedEntity = AssessmentKitMapper.toJpaEntity(kitEntity, param);
         repository.save(toBeUpdatedEntity);
     }
 

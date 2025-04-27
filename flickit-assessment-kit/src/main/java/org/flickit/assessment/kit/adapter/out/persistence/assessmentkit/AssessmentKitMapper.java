@@ -43,10 +43,17 @@ public class AssessmentKitMapper {
         );
     }
 
-    public static AssessmentKitJpaEntity toJpaEntity(AssessmentKitJpaEntity entity, UpdateKitInfoPort.Param param, String metaData) {
+    public static AssessmentKitJpaEntity toJpaEntity(AssessmentKitJpaEntity entity, UpdateKitInfoPort.Param param) {
         var translations = param.isRemoveTranslations() ?
             null :
             isNotEmpty(param.translations()) ? JsonUtils.toJson(param.translations()) : entity.getTranslations();
+
+        var metadataToUpdate = param.isRemoveMetadata()
+            ? null
+            : (param.metadata().goal() != null || param.metadata().context() != null)
+                ? JsonUtils.toJson(param.metadata())
+                : entity.getMetadata();
+
         return new AssessmentKitJpaEntity(
             entity.getId(),
             param.code() != null ? param.code() : entity.getCode(),
@@ -58,7 +65,7 @@ public class AssessmentKitMapper {
             entity.getExpertGroupId(),
             param.lang() != null ? param.lang().getId() : entity.getLanguageId(),
             translations,
-            metaData,
+            metadataToUpdate,
             entity.getCreationTime(),
             param.lastModificationTime(),
             entity.getCreatedBy(),
