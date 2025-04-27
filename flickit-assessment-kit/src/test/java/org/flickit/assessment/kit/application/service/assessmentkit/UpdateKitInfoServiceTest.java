@@ -223,7 +223,8 @@ class UpdateKitInfoServiceTest {
     @Test
     void testUpdateKitInfo_whenEditTranslationsField_thenSuccessfulUpdate() {
         param = createParam(b -> b.translations(
-            Map.of("EN", new KitTranslation("title", "summary", "about"))));
+            Map.of("EN", new KitTranslation("translated title", "translated summary", "translated about",
+                new KitTranslation.MetadataTranslation("translated goal", "translated context")))));
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);

@@ -14,6 +14,8 @@ public class AssessmentKitMother {
     public static final String TITLE = "title";
     public static final String SUMMARY = "summary";
     public static final String ABOUT = "about";
+    public static final String GOAL = "goal";
+    public static final String CONTEXT = "context";
     public static final long EXPERT_GROUP_ID = 1L;
     private static long id = 134L;
 
@@ -30,7 +32,8 @@ public class AssessmentKitMother {
             Boolean.TRUE,
             Boolean.FALSE,
             EXPERT_GROUP_ID,
-            Map.of(KitLanguage.EN, new KitTranslation(TITLE, SUMMARY, ABOUT)),
+            Map.of(KitLanguage.EN, new KitTranslation(TITLE, SUMMARY, ABOUT,
+                new KitTranslation.MetadataTranslation(GOAL, CONTEXT))),
             null,
             null,
             null,
@@ -75,7 +78,8 @@ public class AssessmentKitMother {
             Boolean.TRUE,
             Boolean.FALSE,
             EXPERT_GROUP_ID,
-            Map.of(KitLanguage.EN, new KitTranslation(TITLE, SUMMARY, ABOUT)),
+            Map.of(KitLanguage.EN, new KitTranslation(TITLE, SUMMARY, ABOUT,
+                new KitTranslation.MetadataTranslation(GOAL, CONTEXT))),
             null,
             null,
             null,

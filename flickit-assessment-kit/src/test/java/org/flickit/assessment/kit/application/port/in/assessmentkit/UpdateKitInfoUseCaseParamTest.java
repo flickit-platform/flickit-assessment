@@ -99,7 +99,7 @@ class UpdateKitInfoUseCaseParamTest {
     void testUpdateKitInfoUseCaseParam_translationsLanguageViolations_ErrorMessage() {
         var throwable = assertThrows(ValidationException.class,
             () -> createParam(a -> {
-                a.translations(Map.of("FR", new KitTranslation("title", "summary", "about")));
+                a.translations(Map.of("FR", new KitTranslation("title", "summary", "about", null)));
                 a.removeTranslations(false);
             }));
         assertEquals(COMMON_KIT_LANGUAGE_NOT_VALID, throwable.getMessageKey());
@@ -109,7 +109,7 @@ class UpdateKitInfoUseCaseParamTest {
     void testUpdateKitInfoUseCaseParam_translationsFieldIsNotCorrect_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(a -> {
-                a.translations(Map.of("EN", new KitTranslation("title", "summary", "about")));
+                a.translations(Map.of("EN", new KitTranslation("title", "summary", "about", null)));
                 a.removeTranslations(true);
             }));
         assertThat(throwable).hasMessage("translationFieldCorrect: " + UPDATE_KIT_INFO_TRANSLATIONS_INCORRECT);
@@ -128,28 +128,48 @@ class UpdateKitInfoUseCaseParamTest {
     @Test
     void testUpdateKitInfoUseCaseParam_translationsFieldsViolations_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(a -> a.translations(Map.of("EN", new KitTranslation("t", "summary", "about")))));
+            () -> createParam(a -> a.translations(Map.of("EN", new KitTranslation("t", "summary", "about", null)))));
         assertThat(throwable).hasMessage("translations[EN].title: " + TRANSLATION_ASSESSMENT_KIT_TITLE_SIZE_MIN);
 
         throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(a -> a.translations(Map.of("EN", new KitTranslation(RandomStringUtils.randomAlphabetic(51), "desc", "about")))));
+            () -> createParam(a -> a.translations(Map.of("EN", new KitTranslation(RandomStringUtils.randomAlphabetic(51), "desc", "about", null)))));
         assertThat(throwable).hasMessage("translations[EN].title: " + TRANSLATION_ASSESSMENT_KIT_TITLE_SIZE_MAX);
 
         throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(a -> a.translations(Map.of("EN", new KitTranslation("title", "su", "about")))));
+            () -> createParam(a -> a.translations(Map.of("EN", new KitTranslation("title", "su", "about", null)))));
         assertThat(throwable).hasMessage("translations[EN].summary: " + TRANSLATION_ASSESSMENT_KIT_SUMMARY_SIZE_MIN);
 
         throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(a -> a.translations(Map.of("EN", new KitTranslation("title", RandomStringUtils.randomAlphabetic(201), "about")))));
+            () -> createParam(a -> a.translations(Map.of("EN", new KitTranslation("title", RandomStringUtils.randomAlphabetic(201), "about", null)))));
         assertThat(throwable).hasMessage("translations[EN].summary: " + TRANSLATION_ASSESSMENT_KIT_SUMMARY_SIZE_MAX);
 
         throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(a -> a.translations(Map.of("EN", new KitTranslation("title", "summary", "a")))));
+            () -> createParam(a -> a.translations(Map.of("EN", new KitTranslation("title", "summary", "a", null)))));
         assertThat(throwable).hasMessage("translations[EN].about: " + TRANSLATION_ASSESSMENT_KIT_ABOUT_SIZE_MIN);
 
         throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(a -> a.translations(Map.of("EN", new KitTranslation("title", "summary", RandomStringUtils.randomAlphabetic(1001))))));
+            () -> createParam(a -> a.translations(Map.of("EN", new KitTranslation("title", "summary", RandomStringUtils.randomAlphabetic(1001), null)))));
         assertThat(throwable).hasMessage("translations[EN].about: " + TRANSLATION_ASSESSMENT_KIT_ABOUT_SIZE_MAX);
+
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(a -> a.translations(Map.of("EN", new KitTranslation("title", "summary", "about",
+                new KitTranslation.MetadataTranslation("g", "context"))))));
+        assertThat(throwable).hasMessage("translations[EN].metadata.goal: " + TRANSLATION_ASSESSMENT_KIT_METADATA_GOAL_SIZE_MIN);
+
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(a -> a.translations(Map.of("EN", new KitTranslation("title", "summary", "about",
+                new KitTranslation.MetadataTranslation(RandomStringUtils.randomAlphabetic(301), "context"))))));
+        assertThat(throwable).hasMessage("translations[EN].metadata.goal: " + TRANSLATION_ASSESSMENT_KIT_METADATA_GOAL_SIZE_MAX);
+
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(a -> a.translations(Map.of("EN", new KitTranslation("title", "summary", "about",
+                new KitTranslation.MetadataTranslation("goal", "c"))))));
+        assertThat(throwable).hasMessage("translations[EN].metadata.context: " + TRANSLATION_ASSESSMENT_KIT_METADATA_CONTEXT_SIZE_MIN);
+
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(a -> a.translations(Map.of("EN", new KitTranslation("title", "summary", "about",
+                new KitTranslation.MetadataTranslation("goal", RandomStringUtils.randomAlphabetic(301)))))));
+        assertThat(throwable).hasMessage("translations[EN].metadata.context: " + TRANSLATION_ASSESSMENT_KIT_METADATA_CONTEXT_SIZE_MAX);
     }
 
     @Test
