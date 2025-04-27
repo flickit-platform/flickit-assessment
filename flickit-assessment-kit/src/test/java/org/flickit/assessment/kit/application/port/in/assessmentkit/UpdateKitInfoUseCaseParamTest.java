@@ -116,6 +116,16 @@ class UpdateKitInfoUseCaseParamTest {
     }
 
     @Test
+    void testUpdateKitInfoUseCaseParam_metadataFieldIsNotCorrect_ErrorMessage() {
+        var throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(a -> {
+                a.metadata(new UpdateKitInfoUseCase.MetadataParam("goal", "context"));
+                a.removeMetadata(true);
+            }));
+        assertThat(throwable).hasMessage("metadataFieldCorrect: " + UPDATE_KIT_INFO_METADATA_INCORRECT);
+    }
+
+    @Test
     void testUpdateKitInfoUseCaseParam_translationsFieldsViolations_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(a -> a.translations(Map.of("EN", new KitTranslation("t", "summary", "about")))));

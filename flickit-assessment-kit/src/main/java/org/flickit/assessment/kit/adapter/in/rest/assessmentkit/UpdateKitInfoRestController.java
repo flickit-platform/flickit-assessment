@@ -47,6 +47,7 @@ public class UpdateKitInfoRestController {
             request.translations(),
             request.removeTranslations(),
             metaDataParam,
+            request.removeMetadata(),
             currentUserId
         );
     }
