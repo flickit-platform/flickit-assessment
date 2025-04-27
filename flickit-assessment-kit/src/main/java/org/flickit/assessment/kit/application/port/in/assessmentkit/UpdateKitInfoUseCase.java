@@ -130,5 +130,4 @@ public interface UpdateKitInfoUseCase {
             this.validateSelf();
         }
     }
-
 }
