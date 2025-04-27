@@ -2,7 +2,6 @@ package org.flickit.assessment.kit.adapter.out.persistence.assessmentkit;
 
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
@@ -153,7 +152,6 @@ public class AssessmentKitPersistenceJpaAdapter implements
     }
 
     @Override
-    @SneakyThrows
     public void update(UpdateKitInfoPort.Param param) {
         var kitEntity = repository.findById(param.kitId())
             .orElseThrow(() -> new ResourceNotFoundException(UPDATE_KIT_INFO_KIT_ID_NOT_FOUND));
