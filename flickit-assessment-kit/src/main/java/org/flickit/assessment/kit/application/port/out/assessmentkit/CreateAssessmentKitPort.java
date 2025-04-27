@@ -16,7 +16,6 @@ public interface CreateAssessmentKitPort {
                  boolean published,
                  boolean isPrivate,
                  long expertGroupId,
-                 String metadata,
                  UUID createdBy) {
     }
 }
