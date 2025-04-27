@@ -51,6 +51,9 @@ public class AssessmentKitJpaEntity {
     @Column(name = "translations")
     private String translations;
 
+    @Column(name = "metadata")
+    private String metadata;
+
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
 
