@@ -26,6 +26,7 @@ import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.UPDATE_ASSESSMENT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
 import static org.flickit.assessment.core.common.ErrorMessageKey.UPDATE_ASSESSMENT_ASSESSMENT_KIT_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.UPDATE_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.*;
@@ -39,24 +40,24 @@ class UpdateAssessmentServiceTest {
     private UpdateAssessmentService service;
 
     @Mock
-    private UpdateAssessmentPort updateAssessmentPort;
-
-    @Mock
     private AssessmentAccessChecker assessmentAccessChecker;
-
-    @Mock
-    private LoadAssessmentKitPort loadAssessmentKitPort;
 
     @Mock
     private LoadAssessmentResultPort loadAssessmentResultPort;
 
     @Mock
+    private LoadAssessmentKitPort loadAssessmentKitPort;
+
+    @Mock
+    private UpdateAssessmentPort updateAssessmentPort;
+
+    @Mock
     private UpdateAssessmentResultPort updateAssessmentResultPort;
 
     private final UUID id = UUID.randomUUID();
-    private UpdateAssessmentUseCase.Param param = createParam(UpdateAssessmentUseCase.Param.ParamBuilder::build);
     private final AssessmentResult assessmentResult = AssessmentResultMother.validResult();
     private final AssessmentKit assessmentKit = AssessmentKitMother.publicKit();
+    private UpdateAssessmentUseCase.Param param = createParam(UpdateAssessmentUseCase.Param.ParamBuilder::build);
 
     @Test
     void testUpdateAssessment_whenUserHasNoAccessToAssessment_thenThrowAccessDeniedException() {
@@ -88,7 +89,8 @@ class UpdateAssessmentServiceTest {
     void testUpdateAssessment_whenAssessmentKitDoesNotExist_thenThrowResourceNotFoundException() {
         when(assessmentAccessChecker.isAuthorized(param.getId(), param.getCurrentUserId(), UPDATE_ASSESSMENT)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getId())).thenReturn(Optional.of(assessmentResult));
-        when(loadAssessmentKitPort.loadAssessmentKit(assessmentResult.getAssessment().getAssessmentKit().getId(), null)).thenReturn(Optional.empty());
+        when(loadAssessmentKitPort.loadAssessmentKit(assessmentResult.getAssessment().getAssessmentKit().getId(), null))
+            .thenReturn(Optional.empty());
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.updateAssessment(param));
         assertEquals(UPDATE_ASSESSMENT_ASSESSMENT_KIT_NOT_FOUND, throwable.getMessage());
@@ -100,22 +102,22 @@ class UpdateAssessmentServiceTest {
     @Test
     void testUpdateAssessment_whenParametersAreValid_thenUpdateAndReturnId() {
         when(assessmentAccessChecker.isAuthorized(param.getId(), param.getCurrentUserId(), UPDATE_ASSESSMENT)).thenReturn(true);
-        when(updateAssessmentPort.update(any())).thenReturn(new UpdateAssessmentPort.Result(id));
         when(loadAssessmentResultPort.loadByAssessmentId(param.getId())).thenReturn(Optional.of(assessmentResult));
         when(loadAssessmentKitPort.loadAssessmentKit(assessmentResult.getAssessment().getAssessmentKit().getId(), null))
             .thenReturn(Optional.of(assessmentKit));
+        when(updateAssessmentPort.update(any())).thenReturn(new UpdateAssessmentPort.Result(id));
 
         UUID resultId = service.updateAssessment(param).id();
-        assertEquals(id, resultId);
-
         ArgumentCaptor<UpdateAssessmentPort.AllParam> updatePortParam = ArgumentCaptor.forClass(UpdateAssessmentPort.AllParam.class);
         verify(updateAssessmentPort).update(updatePortParam.capture());
-        verify(updateAssessmentResultPort).updateLanguage(eq(assessmentResult.getId()), eq(KitLanguage.FA));
+        verify(updateAssessmentResultPort).updateLanguage(assessmentResult.getId(), KitLanguage.FA);
 
+        assertEquals(id, resultId);
         assertEquals(param.getId(), updatePortParam.getValue().id());
         assertEquals(param.getTitle(), updatePortParam.getValue().title());
+        assertEquals(generateSlugCode(param.getTitle()), updatePortParam.getValue().code());
+        assertEquals(param.getShortTitle(), updatePortParam.getValue().shortTitle());
         assertEquals(param.getCurrentUserId(), updatePortParam.getValue().lastModifiedBy());
-        assertNotNull(updatePortParam.getValue().title());
         assertNotNull(updatePortParam.getValue().lastModificationTime());
     }
 
@@ -124,46 +126,46 @@ class UpdateAssessmentServiceTest {
         param = createParam(b -> b.lang(null));
 
         when(assessmentAccessChecker.isAuthorized(param.getId(), param.getCurrentUserId(), UPDATE_ASSESSMENT)).thenReturn(true);
-        when(updateAssessmentPort.update(any())).thenReturn(new UpdateAssessmentPort.Result(id));
         when(loadAssessmentResultPort.loadByAssessmentId(param.getId())).thenReturn(Optional.of(assessmentResult));
         when(loadAssessmentKitPort.loadAssessmentKit(assessmentResult.getAssessment().getAssessmentKit().getId(), null))
             .thenReturn(Optional.of(assessmentKit));
+        when(updateAssessmentPort.update(any())).thenReturn(new UpdateAssessmentPort.Result(id));
 
         UUID resultId = service.updateAssessment(param).id();
-        assertEquals(id, resultId);
-
         ArgumentCaptor<UpdateAssessmentPort.AllParam> updatePortParam = ArgumentCaptor.forClass(UpdateAssessmentPort.AllParam.class);
         verify(updateAssessmentPort).update(updatePortParam.capture());
 
+        assertEquals(id, resultId);
         assertEquals(param.getId(), updatePortParam.getValue().id());
         assertEquals(param.getTitle(), updatePortParam.getValue().title());
+        assertEquals(generateSlugCode(param.getTitle()), updatePortParam.getValue().code());
+        assertEquals(param.getShortTitle(), updatePortParam.getValue().shortTitle());
         assertEquals(param.getCurrentUserId(), updatePortParam.getValue().lastModifiedBy());
-        assertNotNull(updatePortParam.getValue().title());
         assertNotNull(updatePortParam.getValue().lastModificationTime());
 
         verifyNoInteractions(updateAssessmentResultPort);
     }
 
     @Test
-    void testUpdateAssessment_whenParametersAreValidAndNewLangEqualsToOldLang_thenUpdateWithoutLangAndReturnId() {
+    void testUpdateAssessment_whenParametersAreValidAndNewLangEqualsToOldLang_thenUpdateWithoutLangChangeAndReturnId() {
         param = createParam(b -> b.lang("EN"));
 
         when(assessmentAccessChecker.isAuthorized(param.getId(), param.getCurrentUserId(), UPDATE_ASSESSMENT)).thenReturn(true);
-        when(updateAssessmentPort.update(any())).thenReturn(new UpdateAssessmentPort.Result(id));
         when(loadAssessmentResultPort.loadByAssessmentId(param.getId())).thenReturn(Optional.of(assessmentResult));
         when(loadAssessmentKitPort.loadAssessmentKit(assessmentResult.getAssessment().getAssessmentKit().getId(), null))
             .thenReturn(Optional.of(assessmentKit));
+        when(updateAssessmentPort.update(any())).thenReturn(new UpdateAssessmentPort.Result(id));
 
         UUID resultId = service.updateAssessment(param).id();
-        assertEquals(id, resultId);
-
         ArgumentCaptor<UpdateAssessmentPort.AllParam> updatePortParam = ArgumentCaptor.forClass(UpdateAssessmentPort.AllParam.class);
         verify(updateAssessmentPort).update(updatePortParam.capture());
 
+        assertEquals(id, resultId);
         assertEquals(param.getId(), updatePortParam.getValue().id());
         assertEquals(param.getTitle(), updatePortParam.getValue().title());
+        assertEquals(generateSlugCode(param.getTitle()), updatePortParam.getValue().code());
+        assertEquals(param.getShortTitle(), updatePortParam.getValue().shortTitle());
         assertEquals(param.getCurrentUserId(), updatePortParam.getValue().lastModifiedBy());
-        assertNotNull(updatePortParam.getValue().title());
         assertNotNull(updatePortParam.getValue().lastModificationTime());
 
         verifyNoInteractions(updateAssessmentResultPort);
