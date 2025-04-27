@@ -18,8 +18,8 @@ import java.util.Map;
 import java.util.UUID;
 
 import static io.jsonwebtoken.lang.Collections.isEmpty;
-import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
-import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_KIT_LANGUAGE_NOT_VALID;
+import static org.flickit.assessment.common.error.ErrorMessageKey.*;
+import static org.flickit.assessment.common.error.ErrorMessageKey.UPDATE_KIT_INFO_METADATA_CONTEXT_SIZE_MAX;
 import static org.flickit.assessment.common.validation.EnumValidateUtils.validateAndConvert;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
@@ -63,8 +63,7 @@ public interface UpdateKitInfoUseCase {
 
         boolean removeTranslations;
 
-        @Nullable
-        String metadata;
+        MetadataParam metadata;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
@@ -86,7 +85,7 @@ public interface UpdateKitInfoUseCase {
                      List<Long> tags,
                      Map<String, KitTranslation> translations,
                      boolean removeTranslations,
-                     @Nullable String metadata,
+                     MetadataParam metadata,
                      UUID currentUserId) {
             this.kitId = kitId;
             this.title = title;
@@ -104,4 +103,25 @@ public interface UpdateKitInfoUseCase {
             this.validateSelf();
         }
     }
+
+    @Value
+    @EqualsAndHashCode(callSuper = true)
+    class MetadataParam extends SelfValidating<MetadataParam> {
+
+        @Size(min = 3, message = UPDATE_KIT_INFO_METADATA_GOAL_SIZE_MIN)
+        @Size(max = 300, message = UPDATE_KIT_INFO_METADATA_GOAL_SIZE_MAX)
+        String goal;
+
+        @Size(min = 3, message = UPDATE_KIT_INFO_METADATA_CONTEXT_SIZE_MIN)
+        @Size(max = 300, message = UPDATE_KIT_INFO_METADATA_CONTEXT_SIZE_MAX)
+        String context;
+
+        @Builder
+        public MetadataParam(String goal, String context) {
+            this.goal = goal != null && !goal.isBlank() ? goal.strip() : null;
+            this.context = context != null && !context.isBlank() ? context.strip() : null;;
+            this.validateSelf();
+        }
+    }
+
 }

@@ -24,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.*;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.lenient;
 
 @ExtendWith(MockitoExtension.class)
 class UpdateKitInfoUseCaseParamTest {
@@ -35,7 +35,7 @@ class UpdateKitInfoUseCaseParamTest {
     @BeforeEach
     void prepare() {
         var props = new AppSpecProperties();
-        doReturn(props).when(applicationContext).getBean(AppSpecProperties.class);
+        lenient().doReturn(props).when(applicationContext).getBean(AppSpecProperties.class);
         new SpringUtil(applicationContext);
     }
 
@@ -143,6 +143,28 @@ class UpdateKitInfoUseCaseParamTest {
     }
 
     @Test
+    void testUpdateKitInfoUseCaseParam_metadataGoalParamViolatesConstraints_ErrorMessage() {
+        var throwable = assertThrows(ConstraintViolationException.class,
+            () -> CreateMetadataParam(b -> b.goal("   g   ")));
+        assertThat(throwable).hasMessage("goal: " + UPDATE_KIT_INFO_METADATA_GOAL_SIZE_MIN);
+
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> CreateMetadataParam(b -> b.goal(RandomStringUtils.randomAlphabetic(301))));
+        assertThat(throwable).hasMessage("goal: " + UPDATE_KIT_INFO_METADATA_GOAL_SIZE_MAX);
+    }
+
+    @Test
+    void testUpdateKitInfoUseCaseParam_metadataContextParamViolatesConstraints_ErrorMessage() {
+        var throwable = assertThrows(ConstraintViolationException.class,
+            () -> CreateMetadataParam(b -> b.context("   c   ")));
+        assertThat(throwable).hasMessage("context: " + UPDATE_KIT_INFO_METADATA_CONTEXT_SIZE_MIN);
+
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> CreateMetadataParam(b -> b.context(RandomStringUtils.randomAlphabetic(301))));
+        assertThat(throwable).hasMessage("context: " + UPDATE_KIT_INFO_METADATA_CONTEXT_SIZE_MAX);
+    }
+
+    @Test
     void testUpdateKitInfoUseCaseParam_currentUserIdParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.currentUserId(null)));
@@ -167,5 +189,17 @@ class UpdateKitInfoUseCaseParamTest {
             .price(10d)
             .tags(List.of(1L))
             .currentUserId(UUID.randomUUID());
+    }
+
+    private void CreateMetadataParam(Consumer<UpdateKitInfoUseCase.MetadataParam.MetadataParamBuilder> changer) {
+        var param = metadataParamBuilder();
+        changer.accept(param);
+        param.build();
+    }
+
+    private UpdateKitInfoUseCase.MetadataParam.MetadataParamBuilder metadataParamBuilder() {
+        return UpdateKitInfoUseCase.MetadataParam.builder()
+            .goal("goal")
+            .context("context");
     }
 }
