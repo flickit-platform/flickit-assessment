@@ -2,13 +2,11 @@ package org.flickit.assessment.kit.application.service.assessmentkit;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
-import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.SearchKitOptionsUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.SearchKitOptionsPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -20,13 +18,16 @@ public class SearchKitOptionsService implements SearchKitOptionsUseCase {
 
     @Override
     public PaginatedResponse<KitListItem> searchKitOptions(Param param) {
-        PaginatedResponse<AssessmentKit> paginatedResponse = port.searchKitOptions(toParam(param.getQuery(),
+        var paginatedResponse = port.searchKitOptions(toParam(param.getQuery(),
             param.getPage(),
             param.getSize(),
             param.getCurrentUserId()));
 
-        List<KitListItem> items = paginatedResponse.getItems().stream()
-            .map(e -> new KitListItem(e.getId(), e.getTitle(), e.isPrivate(), e.getLanguage().getCode()))
+        var items = paginatedResponse.getItems().stream()
+            .map(e -> new KitListItem(e.getId(),
+                e.getTitle(),
+                e.isPrivate(),
+                KitListItem.Language.of(e.getLanguage())))
             .toList();
 
         return new PaginatedResponse<>(

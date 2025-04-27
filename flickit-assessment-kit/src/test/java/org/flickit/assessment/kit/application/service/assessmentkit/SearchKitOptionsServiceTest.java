@@ -63,7 +63,8 @@ class SearchKitOptionsServiceTest {
                 assertEquals(expected.getId(), actual.id());
                 assertEquals(expected.getTitle(), actual.title());
                 assertEquals(expected.isPrivate(), actual.isPrivate());
-                assertEquals(expected.getLanguage().getCode(), actual.lang());
+                assertEquals(expected.getLanguage().getCode(), actual.mainLanguage().code());
+                assertEquals(expected.getLanguage().getTitle(), actual.mainLanguage().title());
             });
     }
 

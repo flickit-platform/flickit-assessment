@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 
 import java.util.UUID;
 
@@ -44,6 +45,11 @@ public interface SearchKitOptionsUseCase {
         }
     }
 
-    record KitListItem(long id, String title, boolean isPrivate, String lang) {
+    record KitListItem(long id, String title, boolean isPrivate, Language mainLanguage) {
+        public record Language(String code, String title) {
+            public static Language of(KitLanguage language) {
+                return new Language(language.getCode(), language.getTitle());
+            }
+        }
     }
 }
