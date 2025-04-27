@@ -41,7 +41,10 @@ public class UpdateKitInfoRestController {
             request.tags(),
             request.translations(),
             request.removeTranslations(),
-            request.metadata(),
+            new UpdateKitInfoUseCase.MetadataParam(
+                request.metadata() != null ? request.metadata().goal() : null,
+                request.metadata() != null ? request.metadata().context() : null
+            ),
             currentUserId
         );
     }

@@ -18,5 +18,9 @@ public record UpdateKitInfoRequestDto(@JsonIgnoreProperties(ignoreUnknown = true
                                       @JsonIgnoreProperties(ignoreUnknown = true) List<Long> tags,
                                       @JsonIgnoreProperties(ignoreUnknown = true) Map<String, KitTranslation> translations,
                                       @JsonIgnoreProperties(ignoreUnknown = true) boolean removeTranslations,
-                                      @JsonIgnoreProperties(ignoreUnknown = true) String metadata) {
+                                      @JsonIgnoreProperties(ignoreUnknown = true) MetadataDto metadata) {
+
+    record MetadataDto(@JsonIgnoreProperties(ignoreUnknown = true) String goal,
+                       @JsonIgnoreProperties(ignoreUnknown = true) String context){
+    }
 }
