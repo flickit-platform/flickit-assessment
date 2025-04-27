@@ -50,8 +50,8 @@ public interface UpdateAssessmentUseCase {
         @Builder
         public Param(UUID id, String title, String shortTitle, @Nullable String lang, UUID currentUserId) {
             this.id = id;
-            this.title = title;
-            this.shortTitle = shortTitle;
+            this.title = title != null && !title.isBlank() ? title.strip() : null;
+            this.shortTitle = shortTitle != null && !shortTitle.isBlank() ? shortTitle.strip() : null;
             this.lang = lang;
             this.currentUserId = currentUserId;
             this.validateSelf();

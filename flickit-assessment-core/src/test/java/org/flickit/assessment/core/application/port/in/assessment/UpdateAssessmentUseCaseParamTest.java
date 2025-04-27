@@ -22,7 +22,7 @@ class UpdateAssessmentUseCaseParamTest {
         assertThat(throwable).hasMessage("shortTitle: " + UPDATE_ASSESSMENT_SHORT_TITLE_SIZE_MAX);
 
         throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.shortTitle("ab")));
+            () -> createParam(b -> b.shortTitle(" ab   ")));
         assertThat(throwable).hasMessage("shortTitle: " + UPDATE_ASSESSMENT_SHORT_TITLE_SIZE_MIN);
     }
 
@@ -33,7 +33,7 @@ class UpdateAssessmentUseCaseParamTest {
         assertThat(throwable).hasMessage("title: " + UPDATE_ASSESSMENT_TITLE_SIZE_MAX);
 
         throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.title("ab")));
+            () -> createParam(b -> b.title("  ab  ")));
         assertThat(throwable).hasMessage("title: " + UPDATE_ASSESSMENT_TITLE_SIZE_MIN);
 
         throwable = assertThrows(ConstraintViolationException.class,
