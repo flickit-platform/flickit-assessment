@@ -7,7 +7,6 @@ import lombok.SneakyThrows;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.common.util.JsonUtils;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.CountKitStatsView;
@@ -25,7 +24,6 @@ import org.flickit.assessment.kit.adapter.out.persistence.kittagrelation.KitTagR
 import org.flickit.assessment.kit.adapter.out.persistence.users.expertgroup.ExpertGroupMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.users.user.UserMapper;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
-import org.flickit.assessment.kit.application.domain.KitMetadata;
 import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitMinimalInfoUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.*;

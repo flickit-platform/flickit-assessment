@@ -8,6 +8,7 @@ import org.flickit.assessment.common.util.JsonUtils;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.KitWithDraftVersionIdView;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
+import org.flickit.assessment.kit.application.domain.KitMetadata;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CreateAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.UpdateKitInfoPort;
 
@@ -42,7 +43,7 @@ public class AssessmentKitMapper {
         );
     }
 
-    public static AssessmentKitJpaEntity toJpaEntity(AssessmentKitJpaEntity entity, UpdateKitInfoPort.Param param) {
+    public static AssessmentKitJpaEntity toJpaEntity(AssessmentKitJpaEntity entity, UpdateKitInfoPort.Param param, String metaData) {
         var translations = param.isRemoveTranslations() ?
             null :
             isNotEmpty(param.translations()) ? JsonUtils.toJson(param.translations()) : entity.getTranslations();
@@ -57,7 +58,7 @@ public class AssessmentKitMapper {
             entity.getExpertGroupId(),
             param.lang() != null ? param.lang().getId() : entity.getLanguageId(),
             translations,
-            param.metadata(),
+            metaData,
             entity.getCreationTime(),
             param.lastModificationTime(),
             entity.getCreatedBy(),
@@ -88,6 +89,7 @@ public class AssessmentKitMapper {
             null,
             null,
             entity.getKitVersionId(),
+            JsonUtils.fromJson(entity.getMetadata(), KitMetadata.class),
             null);
     }
 
