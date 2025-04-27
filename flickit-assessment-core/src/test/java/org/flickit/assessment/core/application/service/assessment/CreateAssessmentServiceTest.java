@@ -17,11 +17,13 @@ import org.flickit.assessment.core.application.port.out.assessmentkit.LoadAssess
 import org.flickit.assessment.core.application.port.out.assessmentresult.CreateAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.GrantUserAssessmentRolePort;
 import org.flickit.assessment.core.application.port.out.attributevalue.CreateAttributeValuePort;
+import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.core.application.port.out.space.LoadSpacePort;
 import org.flickit.assessment.core.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectsPort;
 import org.flickit.assessment.core.application.port.out.subjectvalue.CreateSubjectValuePort;
 import org.flickit.assessment.core.test.fixture.application.AttributeMother;
+import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
 import org.flickit.assessment.core.test.fixture.application.SpaceMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -84,6 +86,9 @@ class CreateAssessmentServiceTest {
     @Mock
     private LoadAssessmentKitPort loadAssessmentKitPort;
 
+    @Mock
+    private LoadMaturityLevelsPort loadMaturityLevelsPort;
+
     @Spy
     AppSpecProperties appSpecProperties = appSpecProperties();
 
@@ -109,7 +114,8 @@ class CreateAssessmentServiceTest {
             checkSpaceAccessPort,
             checkKitAccessPort,
             grantUserAssessmentRolePort,
-            loadSubjectsPort);
+            loadSubjectsPort,
+            loadMaturityLevelsPort);
     }
 
     @Test
@@ -128,7 +134,8 @@ class CreateAssessmentServiceTest {
             checkKitAccessPort,
             grantUserAssessmentRolePort,
             loadSubjectsPort,
-            countAssessmentsPort);
+            countAssessmentsPort,
+            loadMaturityLevelsPort);
     }
 
     @Test
@@ -147,7 +154,8 @@ class CreateAssessmentServiceTest {
             checkKitAccessPort,
             grantUserAssessmentRolePort,
             loadSubjectsPort,
-            countAssessmentsPort);
+            countAssessmentsPort,
+            loadMaturityLevelsPort);
     }
 
     @Test
@@ -166,7 +174,8 @@ class CreateAssessmentServiceTest {
             createSubjectValuePort,
             grantUserAssessmentRolePort,
             loadSubjectsPort,
-            countAssessmentsPort);
+            countAssessmentsPort,
+            loadMaturityLevelsPort);
     }
 
     @Test
@@ -185,7 +194,8 @@ class CreateAssessmentServiceTest {
             createAttributeValuePort,
             createSubjectValuePort,
             grantUserAssessmentRolePort,
-            loadSubjectsPort);
+            loadSubjectsPort,
+            loadMaturityLevelsPort);
     }
 
     @Test
@@ -206,7 +216,8 @@ class CreateAssessmentServiceTest {
             createAttributeValuePort,
             createSubjectValuePort,
             grantUserAssessmentRolePort,
-            loadSubjectsPort);
+            loadSubjectsPort,
+            loadMaturityLevelsPort);
     }
 
     @Test
@@ -226,7 +237,8 @@ class CreateAssessmentServiceTest {
             createAttributeValuePort,
             createSubjectValuePort,
             grantUserAssessmentRolePort,
-            loadSubjectsPort);
+            loadSubjectsPort,
+            loadMaturityLevelsPort);
     }
 
     @Test
@@ -247,7 +259,8 @@ class CreateAssessmentServiceTest {
             createAttributeValuePort,
             createSubjectValuePort,
             grantUserAssessmentRolePort,
-            loadSubjectsPort);
+            loadSubjectsPort,
+            loadMaturityLevelsPort);
     }
 
     @Test
@@ -262,6 +275,7 @@ class CreateAssessmentServiceTest {
         when(loadSubjectsPort.loadByKitVersionIdWithAttributes(publicKit.getKitVersion())).thenReturn(createSubjects());
         when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(Optional.of(space));
         when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId(), null)).thenReturn(Optional.of(publicKit));
+        when(loadMaturityLevelsPort.loadAll(publicKit.getKitVersion())).thenReturn(MaturityLevelMother.allLevels());
 
         var result = service.createAssessment(param);
         assertNotNull(result);
@@ -279,6 +293,8 @@ class CreateAssessmentServiceTest {
         verify(createAssessmentResultPort).persist(createAssessmentResultPortCaptor.capture());
         assertEquals(expectedAssessmentId, createAssessmentResultPortCaptor.getValue().assessmentId());
         assertEquals(publicKit.getKitVersion(), createAssessmentResultPortCaptor.getValue().kitVersionId());
+        assertEquals(MaturityLevelMother.levelOne().getId(), createAssessmentResultPortCaptor.getValue().maturityLevelId());
+        assertEquals(0.0, createAssessmentResultPortCaptor.getValue().confidenceValue());
         assertNotNull(createAssessmentResultPortCaptor.getValue().lastModificationTime());
         assertFalse(createAssessmentResultPortCaptor.getValue().isCalculateValid());
         assertFalse(createAssessmentResultPortCaptor.getValue().isConfidenceValid());
@@ -302,6 +318,7 @@ class CreateAssessmentServiceTest {
         when(loadSubjectsPort.loadByKitVersionIdWithAttributes(publicKit.getKitVersion())).thenReturn(expectedResponse);
         when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(Optional.of(space));
         when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId(), null)).thenReturn(Optional.of(publicKit));
+        when(loadMaturityLevelsPort.loadAll(publicKit.getKitVersion())).thenReturn(MaturityLevelMother.allLevels());
 
         CreateAssessmentUseCase.Result result = service.createAssessment(param);
         assertNotNull(result);
@@ -319,6 +336,8 @@ class CreateAssessmentServiceTest {
         verify(createAssessmentResultPort).persist(createAssessmentResultPortCaptor.capture());
         assertEquals(expectedAssessmentId, createAssessmentResultPortCaptor.getValue().assessmentId());
         assertEquals(publicKit.getKitVersion(), createAssessmentResultPortCaptor.getValue().kitVersionId());
+        assertEquals(MaturityLevelMother.levelOne().getId(), createAssessmentResultPortCaptor.getValue().maturityLevelId());
+        assertEquals(0.0, createAssessmentResultPortCaptor.getValue().confidenceValue());
         assertNotNull(createAssessmentResultPortCaptor.getValue().lastModificationTime());
         assertFalse(createAssessmentResultPortCaptor.getValue().isCalculateValid());
         assertFalse(createAssessmentResultPortCaptor.getValue().isConfidenceValid());
