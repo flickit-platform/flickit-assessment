@@ -48,11 +48,7 @@ public class AssessmentKitMapper {
             null :
             isNotEmpty(param.translations()) ? JsonUtils.toJson(param.translations()) : entity.getTranslations();
 
-        var metadataToUpdate = param.isRemoveMetadata()
-            ? null
-            : (param.metadata().goal() != null || param.metadata().context() != null)
-                ? JsonUtils.toJson(param.metadata())
-                : entity.getMetadata();
+        var metadataToUpdate = handleMetadataToUpdate(entity, param);
 
         return new AssessmentKitJpaEntity(
             entity.getId(),
@@ -124,5 +120,15 @@ public class AssessmentKitMapper {
             entity.getKitVersionId());
         kit.setDraftVersionId(view.getDraftVersionId());
         return kit;
+    }
+
+    private static String handleMetadataToUpdate(AssessmentKitJpaEntity entity, UpdateKitInfoPort.Param param) {
+        if (param.isRemoveMetadata())
+            return null;
+
+        if (param.metadata().goal() != null || param.metadata().context() != null)
+            return JsonUtils.toJson(param.metadata());
+
+        return entity.getMetadata();
     }
 }
