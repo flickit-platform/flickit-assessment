@@ -10,6 +10,7 @@ import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 
+import java.util.List;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
@@ -45,7 +46,7 @@ public interface SearchKitOptionsUseCase {
         }
     }
 
-    record KitListItem(long id, String title, boolean isPrivate, Language mainLanguage) {
+    record KitListItem(long id, String title, boolean isPrivate, Language mainLanguage, List<Language> languages) {
         public record Language(String code, String title) {
             public static Language of(KitLanguage language) {
                 return new Language(language.getCode(), language.getTitle());

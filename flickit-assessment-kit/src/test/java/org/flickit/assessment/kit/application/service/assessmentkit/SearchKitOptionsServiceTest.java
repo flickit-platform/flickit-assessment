@@ -2,9 +2,11 @@ package org.flickit.assessment.kit.application.service.assessmentkit;
 
 import org.assertj.core.api.Assertions;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.SearchKitOptionsUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.SearchKitOptionsPort;
+import org.flickit.assessment.kit.application.port.out.kitlanguage.LoadKitLanguagesPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -13,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Sort;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -32,6 +35,9 @@ class SearchKitOptionsServiceTest {
     @Mock
     private SearchKitOptionsPort port;
 
+    @Mock
+    private LoadKitLanguagesPort loadKitLanguagesPort;
+
     @Test
     void testSearchKitOptions_ValidInput_ValidResult() {
         var param = createParam(SearchKitOptionsUseCase.Param.ParamBuilder::build);
@@ -46,7 +52,12 @@ class SearchKitOptionsServiceTest {
             "title",
             expectedItems.size());
 
+        var expectedIdToLangMap = Map.of(publicKit.getId(), List.of(KitLanguage.EN),
+            privateKit.getId(), List.of(KitLanguage.EN, KitLanguage.FA));
+
         when(port.searchKitOptions(any(SearchKitOptionsPort.Param.class))).thenReturn(kitPaginatedResponse);
+        when(loadKitLanguagesPort.loadByKitIds(List.of(publicKit.getId(), privateKit.getId())))
+            .thenReturn(expectedIdToLangMap);
 
         var result = service.searchKitOptions(param);
 
@@ -65,6 +76,11 @@ class SearchKitOptionsServiceTest {
                 assertEquals(expected.isPrivate(), actual.isPrivate());
                 assertEquals(expected.getLanguage().getCode(), actual.mainLanguage().code());
                 assertEquals(expected.getLanguage().getTitle(), actual.mainLanguage().title());
+                Assertions.assertThat(actual.languages())
+                    .zipSatisfy(expectedIdToLangMap.get(expected.getId()), (actualLang, expectedLang) -> {
+                        assertEquals(expectedLang.getCode(), actualLang.code());
+                        assertEquals(expectedLang.getTitle(), actualLang.title());
+                    });
             });
     }
 
