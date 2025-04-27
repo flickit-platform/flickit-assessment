@@ -89,7 +89,9 @@ public class AssessmentKitMapper {
             null,
             null,
             entity.getKitVersionId(),
-            JsonUtils.fromJson(entity.getMetadata(), KitMetadata.class),
+            entity.getMetadata() != null
+                ? JsonUtils.fromJson(entity.getMetadata(), KitMetadata.class)
+                : null,
             null);
     }
 
