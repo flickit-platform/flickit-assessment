@@ -60,7 +60,8 @@ public class UpdateKitInfoService implements UpdateKitInfoUseCase {
             Objects.nonNull(param.getAbout()) ||
             Objects.nonNull(param.getTags()) ||
             Objects.nonNull(param.getTranslations()) ||
-            Objects.nonNull(param.getMetadata());
+            Objects.nonNull(param.getMetadata().getGoal()) ||
+            Objects.nonNull(param.getMetadata().getContext());
     }
 
     private UpdateKitInfoPort.Param toPortParam(Param param, KitMetadata metadata) {
@@ -82,6 +83,7 @@ public class UpdateKitInfoService implements UpdateKitInfoUseCase {
             LocalDateTime.now()
         );
     }
+
     private KitMetadata buildMetadata(KitMetadata existedMetadata, KitMetadata newMetadata) {
         if (existedMetadata == null)
             return newMetadata;
@@ -97,6 +99,6 @@ public class UpdateKitInfoService implements UpdateKitInfoUseCase {
     }
 
     KitMetadata toDomainModel(MetadataParam metadata) {
-        return new KitMetadata(metadata.getGoal(),  metadata.getContext());
+        return new KitMetadata(metadata.getGoal(), metadata.getContext());
     }
 }
