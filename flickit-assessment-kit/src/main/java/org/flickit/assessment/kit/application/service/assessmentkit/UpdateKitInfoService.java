@@ -3,9 +3,7 @@ package org.flickit.assessment.kit.application.service.assessmentkit;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.kit.application.domain.KitMetadata;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.UpdateKitInfoUseCase;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.UpdateKitInfoPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
 import org.springframework.stereotype.Service;
@@ -26,22 +24,13 @@ public class UpdateKitInfoService implements UpdateKitInfoUseCase {
 
     private final LoadKitExpertGroupPort loadKitExpertGroupPort;
     private final UpdateKitInfoPort updateKitInfoPort;
-    private final LoadAssessmentKitPort loadAssessmentKitPort;
 
     @Override
     public void updateKitInfo(Param param) {
         validateCurrentUser(param.getKitId(), param.getCurrentUserId());
 
-        var kit = loadAssessmentKitPort.load(param.getKitId());
-        var newMetadata = toDomainModel(param.getMetadata());
-
-        KitMetadata existedMetadata = null;
-        if (kit.getMetadata() != null)
-            existedMetadata = kit.getMetadata();
-
-        var metadata = buildMetadata(existedMetadata, newMetadata);
         if (containsNonNullParam(param) || param.isRemoveTranslations() || param.isRemoveMetadata())
-            updateKitInfoPort.update(toPortParam(param, metadata));
+            updateKitInfoPort.update(toPortParam(param));
     }
 
     private void validateCurrentUser(Long kitId, UUID currentUserId) {
@@ -60,11 +49,10 @@ public class UpdateKitInfoService implements UpdateKitInfoUseCase {
             Objects.nonNull(param.getAbout()) ||
             Objects.nonNull(param.getTags()) ||
             Objects.nonNull(param.getTranslations()) ||
-            Objects.nonNull(param.getMetadata().getGoal()) ||
-            Objects.nonNull(param.getMetadata().getContext());
+            Objects.nonNull(param.getMetadata());
     }
 
-    private UpdateKitInfoPort.Param toPortParam(Param param, KitMetadata metadata) {
+    private UpdateKitInfoPort.Param toPortParam(Param param) {
         return new UpdateKitInfoPort.Param(
             param.getKitId(),
             param.getTitle() != null ? generateSlugCode(param.getTitle()) : null,
@@ -78,28 +66,10 @@ public class UpdateKitInfoService implements UpdateKitInfoUseCase {
             param.getTags() != null ? new HashSet<>(param.getTags()) : null,
             param.getTranslations(),
             param.isRemoveTranslations(),
-            metadata,
+            param.getMetadata(),
             param.isRemoveMetadata(),
             param.getCurrentUserId(),
             LocalDateTime.now()
         );
-    }
-
-    private KitMetadata buildMetadata(KitMetadata existedMetadata, KitMetadata newMetadata) {
-        if (existedMetadata == null)
-            return newMetadata;
-
-        return new KitMetadata(
-            resolveField(existedMetadata.goal(), newMetadata.goal()),
-            resolveField(existedMetadata.context(), newMetadata.context())
-        );
-    }
-
-    private <T> T resolveField(T existingValue, T newValue) {
-        return newValue != null ? newValue : existingValue;
-    }
-
-    KitMetadata toDomainModel(MetadataParam metadata) {
-        return new KitMetadata(metadata.getGoal(), metadata.getContext());
     }
 }
