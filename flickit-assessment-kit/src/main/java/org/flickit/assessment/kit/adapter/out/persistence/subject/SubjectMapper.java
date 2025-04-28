@@ -44,7 +44,7 @@ public class SubjectMapper {
             entity.getIndex(),
             entity.getWeight(),
             translation.descriptionOrDefault(entity.getDescription()),
-            JsonUtils.fromJsonToMap(entity.getTranslations(), KitLanguage.class, SubjectTranslation.class),
+            null,
             attributes,
             entity.getCreatedBy(),
             entity.getLastModifiedBy(),

@@ -40,7 +40,7 @@ public class AttributeMapper {
             entity.getIndex(),
             translation.descriptionOrDefault(entity.getDescription()),
             entity.getWeight(),
-            JsonUtils.fromJsonToMap(entity.getTranslations(), KitLanguage.class, AttributeTranslation.class),
+            null,
             entity.getCreationTime(),
             entity.getLastModificationTime(),
             entity.getCreatedBy(),

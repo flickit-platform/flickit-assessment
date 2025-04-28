@@ -45,7 +45,7 @@ public class MaturityLevelMapper {
             entity.getIndex(),
             translation.descriptionOrDefault(entity.getDescription()),
             entity.getValue(),
-            JsonUtils.fromJsonToMap(entity.getTranslations(), KitLanguage.class, MaturityLevelTranslation.class),
+            null,
             null
         );
     }
