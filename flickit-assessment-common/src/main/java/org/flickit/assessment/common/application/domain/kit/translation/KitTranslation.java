@@ -23,4 +23,12 @@ public record KitTranslation(
     public String titleOrDefault(String defaultTitle) {
         return isBlank(title) ? defaultTitle : title;
     }
+
+    public String summaryOrDefault(String defaultSummary) {
+        return isBlank(summary) ? defaultSummary : summary;
+    }
+
+    public String aboutOrDefault(String defaultAbout) {
+        return isBlank(about) ? defaultAbout : about;
+    }
 }

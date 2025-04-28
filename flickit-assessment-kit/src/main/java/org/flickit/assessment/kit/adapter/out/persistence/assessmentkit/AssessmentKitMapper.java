@@ -1,5 +1,6 @@
 package org.flickit.assessment.kit.adapter.out.persistence.assessmentkit;
 
+import jakarta.annotation.Nullable;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
@@ -13,6 +14,7 @@ import org.flickit.assessment.kit.application.port.out.assessmentkit.UpdateKitIn
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.Objects;
 
 import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 
@@ -113,5 +115,39 @@ public class AssessmentKitMapper {
             entity.getKitVersionId());
         kit.setDraftVersionId(view.getDraftVersionId());
         return kit;
+    }
+
+    public static AssessmentKit mapToDomainModel(AssessmentKitJpaEntity entity, KitLanguage language) {
+        var translationLanguage = Objects.equals(language.getId(), entity.getLanguageId()) ? null : language;
+        var translation = getTranslation(entity, translationLanguage);
+        return new AssessmentKit(
+            entity.getId(),
+            entity.getCode(),
+            translation.titleOrDefault(entity.getTitle()),
+            translation.summaryOrDefault(entity.getSummary()),
+            translation.aboutOrDefault(entity.getAbout()),
+            KitLanguage.valueOfById(entity.getLanguageId()),
+            entity.getCreationTime(),
+            entity.getLastModificationTime(),
+            entity.getPublished(),
+            entity.getIsPrivate(),
+            entity.getExpertGroupId(),
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            entity.getKitVersionId(),
+            null);
+    }
+
+    private static KitTranslation getTranslation(AssessmentKitJpaEntity assessmentKitEntity, @Nullable KitLanguage language) {
+        var translation = new KitTranslation(null, null, null);
+        if (language != null) {
+            var translations = JsonUtils.fromJsonToMap(assessmentKitEntity.getTranslations(), KitLanguage.class, KitTranslation.class);
+            translation = translations.getOrDefault(language, translation);
+        }
+        return translation;
     }
 }
