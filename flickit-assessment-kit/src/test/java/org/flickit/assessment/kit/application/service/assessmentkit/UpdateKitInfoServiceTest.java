@@ -270,7 +270,7 @@ class UpdateKitInfoServiceTest {
     }
 
     @Test
-    void testUpdateKitInfo_whenEditNothing_thenSuccessfulUpdate() {
+    void testUpdateKitInfo_whenEditNothing_thenUpdateNothing() {
         var metadataParam = CreateMetadataParam(b -> b.goal(null).context(null));
         param = createParam(b -> b.kitId(kit.getId()).metadata(metadataParam));
 
