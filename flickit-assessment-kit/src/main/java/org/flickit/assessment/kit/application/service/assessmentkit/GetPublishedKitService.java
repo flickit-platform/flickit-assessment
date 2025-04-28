@@ -48,7 +48,7 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
             .map(this::toSubject)
             .toList();
 
-        var questionnaires = loadQuestionnairesPort.loadByKitId(param.getKitId()).stream()
+        var questionnaires = loadQuestionnairesPort.loadAllTranslated(kit.getActiveVersionId()).stream()
             .map(this::toQuestionnaire)
             .toList();
 
