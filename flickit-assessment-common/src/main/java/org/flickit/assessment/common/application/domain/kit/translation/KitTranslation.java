@@ -48,5 +48,12 @@ public record KitTranslation(
         @Size(max = 300, message = TRANSLATION_ASSESSMENT_KIT_METADATA_CONTEXT_SIZE_MAX)
         String context
     ) {
+        public String goalOrDefault(String defaultGoal) {
+            return isBlank(goal) ? defaultGoal : goal;
+        }
+
+        public String contextOrDefault(String defaultContext) {
+            return isBlank(context) ? defaultContext : context;
+        }
     }
 }
