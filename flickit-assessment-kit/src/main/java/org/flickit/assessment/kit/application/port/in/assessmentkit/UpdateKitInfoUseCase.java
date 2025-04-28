@@ -78,7 +78,7 @@ public interface UpdateKitInfoUseCase {
 
         @AssertTrue(message = UPDATE_KIT_INFO_METADATA_INCORRECT)
         boolean isMetadataFieldCorrect() {
-            return !removeMetadata || (metadata.goal() == null && metadata.context() == null);
+            return !removeMetadata || metadata == null;
         }
 
         @Builder

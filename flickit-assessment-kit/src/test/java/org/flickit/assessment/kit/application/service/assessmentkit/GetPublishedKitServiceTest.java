@@ -1,10 +1,13 @@
 package org.flickit.assessment.kit.application.service.assessmentkit;
 
+import org.assertj.core.api.Assertions;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetPublishedKitUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CountKitStatsPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
+import org.flickit.assessment.kit.application.port.out.kitlanguage.LoadKitLanguagesPort;
 import org.flickit.assessment.kit.application.port.out.kitlike.CheckKitLikeExistencePort;
 import org.flickit.assessment.kit.application.port.out.kittag.LoadKitTagListPort;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.CheckKitUserAccessPort;
@@ -57,6 +60,9 @@ class GetPublishedKitServiceTest {
     @Mock
     private CheckKitLikeExistencePort checkKitLikeExistencePort;
 
+    @Mock
+    private LoadKitLanguagesPort loadKitLanguagesPort;
+
     @Test
     void testGetPublishedKit_WhenKitDoesNotExist_ThrowsException() {
         GetPublishedKitUseCase.Param param = new GetPublishedKitUseCase.Param(12L, UUID.randomUUID());
@@ -71,7 +77,8 @@ class GetPublishedKitServiceTest {
             loadSubjectsPort,
             loadQuestionnairesPort,
             loadMaturityLevelsPort,
-            loadKitTagListPort);
+            loadKitTagListPort,
+            loadKitLanguagesPort);
     }
 
     @Test
@@ -87,7 +94,8 @@ class GetPublishedKitServiceTest {
             loadSubjectsPort,
             loadQuestionnairesPort,
             loadMaturityLevelsPort,
-            loadKitTagListPort);
+            loadKitTagListPort,
+            loadKitLanguagesPort);
     }
 
     @Test
@@ -104,7 +112,8 @@ class GetPublishedKitServiceTest {
             loadSubjectsPort,
             loadQuestionnairesPort,
             loadMaturityLevelsPort,
-            loadKitTagListPort);
+            loadKitTagListPort,
+            loadKitLanguagesPort);
     }
 
     @Test
@@ -118,6 +127,7 @@ class GetPublishedKitServiceTest {
         var counts = new CountKitStatsPort.Result(1, 1, 115,
             1, 3, 1);
         var tag = KitTagMother.createKitTag("security");
+        List<KitLanguage> languages = List.of(KitLanguage.EN, KitLanguage.FA);
 
         when(loadAssessmentKitPort.loadTranslated(param.getKitId())).thenReturn(kit);
         when(checkKitUserAccessPort.hasAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(true);
@@ -127,6 +137,7 @@ class GetPublishedKitServiceTest {
         when(loadMaturityLevelsPort.loadAllTranslated(kit.getActiveVersionId())).thenReturn(List.of(maturityLevel));
         when(loadKitTagListPort.loadByKitId(param.getKitId())).thenReturn(List.of(tag));
         when(checkKitLikeExistencePort.exist(param.getKitId(), param.getCurrentUserId())).thenReturn(false);
+        when(loadKitLanguagesPort.loadByKitId(param.getKitId())).thenReturn(languages);
 
         GetPublishedKitUseCase.Result result = service.getPublishedKit(param);
 
@@ -157,6 +168,12 @@ class GetPublishedKitServiceTest {
 
         assertEquals(1, result.tags().size());
         assertEquals(tag.getId(), result.tags().getFirst().id());
+
+        Assertions.assertThat(result.languages())
+            .zipSatisfy(languages, (actual, expected) -> {
+                assertEquals(expected.getCode(), actual.code());
+                assertEquals(expected.getTitle(), actual.title());
+            });
     }
 
     @Test
