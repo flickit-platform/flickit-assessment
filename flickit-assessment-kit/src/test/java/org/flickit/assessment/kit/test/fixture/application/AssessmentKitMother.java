@@ -8,6 +8,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+import static org.flickit.assessment.common.application.domain.kit.translation.KitTranslation.MetadataTranslation;
+
 public class AssessmentKitMother {
 
     public static final String CODE = "code";
@@ -33,7 +35,7 @@ public class AssessmentKitMother {
             Boolean.FALSE,
             EXPERT_GROUP_ID,
             Map.of(KitLanguage.EN, new KitTranslation(TITLE, SUMMARY, ABOUT,
-                new KitTranslation.MetadataTranslation(GOAL, CONTEXT))),
+                new MetadataTranslation(GOAL, CONTEXT))),
             null,
             null,
             null,
