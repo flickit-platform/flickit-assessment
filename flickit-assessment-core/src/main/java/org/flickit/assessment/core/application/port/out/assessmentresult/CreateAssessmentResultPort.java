@@ -14,6 +14,8 @@ public interface CreateAssessmentResultPort {
 
     record Param(UUID assessmentId,
                  long kitVersionId,
+                 Long maturityLevelId,
+                 Double confidenceValue,
                  LocalDateTime lastModificationTime,
                  boolean isCalculateValid,
                  boolean isConfidenceValid,

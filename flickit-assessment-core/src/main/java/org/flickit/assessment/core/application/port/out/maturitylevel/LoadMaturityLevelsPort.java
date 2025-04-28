@@ -7,5 +7,7 @@ import java.util.List;
 
 public interface LoadMaturityLevelsPort {
 
+    List<MaturityLevel> loadAll(Long kitVersionId);
+
     List<MaturityLevel> loadAllTranslated(AssessmentResult assessmentResult);
 }
