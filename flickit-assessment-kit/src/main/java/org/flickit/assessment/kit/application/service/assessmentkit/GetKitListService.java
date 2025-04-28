@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
@@ -72,6 +73,8 @@ public class GetKitListService implements GetKitListUseCase {
                 idToStatsMap.get(item.kit().getId()),
                 idToKitTagsMap.get(item.kit().getId()),
                 idToKitLanguagesMap.get(item.kit().getId())))
+            .sorted(Comparator.comparing(KitListItem::isPrivate).reversed()
+                .thenComparing(KitListItem::title, String.CASE_INSENSITIVE_ORDER))
             .toList();
 
         return new PaginatedResponse<>(
