@@ -224,8 +224,7 @@ class UpdateKitInfoServiceTest {
 
     @Test
     void testUpdateKitInfo_whenRemoveMetadata_thenSuccessfulUpdate() {
-        var metadata = new KitMetadata(null, null);
-        param = createParam(b -> b.removeMetadata(true).metadata(metadata));
+        param = createParam(b -> b.removeMetadata(true).metadata(null));
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
 
