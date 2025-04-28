@@ -60,6 +60,9 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
             .map(this::toKitTag)
             .toList();
 
+        var goal = kit.getMetadata() != null ? kit.getMetadata().goal() : null;
+        var context = kit.getMetadata() != null ? kit.getMetadata().context() : null;
+
         return new Result(
             kit.getId(),
             kit.getTitle(),
@@ -77,7 +80,8 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
             subjects,
             questionnaires,
             maturityLevels,
-            kitTags);
+            kitTags,
+            new Metadata(goal, context));
     }
 
     private MinimalSubject toSubject(Subject s) {
