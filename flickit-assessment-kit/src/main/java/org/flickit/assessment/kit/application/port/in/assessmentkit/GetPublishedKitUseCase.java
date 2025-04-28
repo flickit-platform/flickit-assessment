@@ -50,7 +50,11 @@ public interface GetPublishedKitUseCase {
                   List<MinimalQuestionnaire> questionnaires,
                   List<MinimalMaturityLevel> maturityLevels,
                   List<MinimalKitTag> tags,
-                  Metadata metadata) {
+                  Metadata metadata,
+                  List<Language> languages) {
+        public record Language(String code,
+                               String title) {
+        }
     }
 
     record Like(int count, boolean liked) {

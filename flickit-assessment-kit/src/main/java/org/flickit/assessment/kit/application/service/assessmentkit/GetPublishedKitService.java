@@ -1,12 +1,15 @@
 package org.flickit.assessment.kit.application.service.assessmentkit;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.domain.*;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetPublishedKitUseCase;
+import org.flickit.assessment.kit.application.port.in.assessmentkit.GetPublishedKitUseCase.Result.Language;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CountKitStatsPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
+import org.flickit.assessment.kit.application.port.out.kitlanguage.LoadKitLanguagesPort;
 import org.flickit.assessment.kit.application.port.out.kitlike.CheckKitLikeExistencePort;
 import org.flickit.assessment.kit.application.port.out.kittag.LoadKitTagListPort;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.CheckKitUserAccessPort;
@@ -32,6 +35,7 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
     private final LoadMaturityLevelsPort loadMaturityLevelsPort;
     private final LoadKitTagListPort loadKitTagListPort;
     private final CheckKitLikeExistencePort checkKitLikeExistencePort;
+    private final LoadKitLanguagesPort loadKitLanguagesPort;
 
     @Override
     public Result getPublishedKit(Param param) {
@@ -60,6 +64,10 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
             .map(this::toKitTag)
             .toList();
 
+        var languages = loadKitLanguagesPort.loadByKitId(param.getKitId()).stream()
+            .map(this::toLanguage)
+            .toList();
+
         var goal = kit.getMetadata() != null ? kit.getMetadata().goal() : null;
         var context = kit.getMetadata() != null ? kit.getMetadata().context() : null;
 
@@ -81,7 +89,8 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
             questionnaires,
             maturityLevels,
             kitTags,
-            new Metadata(goal, context));
+            new Metadata(goal, context),
+            languages);
     }
 
     private MinimalSubject toSubject(Subject s) {
@@ -109,5 +118,9 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
 
     private MinimalKitTag toKitTag(KitTag tag) {
         return new MinimalKitTag(tag.getId(), tag.getTitle());
+    }
+
+    private Language toLanguage(KitLanguage kitLanguage) {
+        return new Language(kitLanguage.getCode(), kitLanguage.getTitle());
     }
 }
