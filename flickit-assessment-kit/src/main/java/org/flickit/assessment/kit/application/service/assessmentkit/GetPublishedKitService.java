@@ -44,7 +44,7 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
 
         var stats = countKitStatsPort.countKitStats(param.getKitId());
 
-        var subjects = loadSubjectsPort.loadByKitVersionId(kit.getActiveVersionId()).stream()
+        var subjects = loadSubjectsPort.loadAllTranslated(kit.getActiveVersionId()).stream()
             .map(this::toSubject)
             .toList();
 
