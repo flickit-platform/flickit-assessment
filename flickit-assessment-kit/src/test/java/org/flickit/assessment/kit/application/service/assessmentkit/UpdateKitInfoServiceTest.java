@@ -239,8 +239,9 @@ class UpdateKitInfoServiceTest {
     }
 
     @Test
-    void testUpdateKitInfo_whenRemoveTranslations_thenSuccessfulUpdate() {
-        param = createParam(b -> b.removeTranslations(true));
+    void testUpdateKitInfo_whenRemoveTranslationsAndMetadata_thenSuccessfulUpdate() {
+        var metadataParam = CreateMetadataParam(b -> b.goal(null).context(null));
+        param = createParam(b -> b.removeTranslations(true).removeMetadata(true).metadata(metadataParam));
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
@@ -252,6 +253,7 @@ class UpdateKitInfoServiceTest {
         assertTrue(portParam.getValue().isRemoveTranslations());
         assertEquals(param.getMetadata().getGoal(), portParam.getValue().metadata().goal());
         assertEquals(param.getMetadata().getContext(), portParam.getValue().metadata().context());
+        assertTrue(portParam.getValue().isRemoveMetadata());
     }
 
     @Test
