@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public record KitMetadata(
-
     @JsonProperty("goal") String goal,
     @JsonProperty("context") String context) {
 }
