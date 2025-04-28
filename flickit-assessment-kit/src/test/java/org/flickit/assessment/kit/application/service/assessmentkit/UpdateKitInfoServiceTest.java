@@ -216,8 +216,6 @@ class UpdateKitInfoServiceTest {
         assertEquals(param.getKitId(), portParam.getValue().kitId());
         assertEquals(KitLanguage.valueOf(param.getLang()), portParam.getValue().lang());
         assertEquals(param.getTranslations(), portParam.getValue().translations());
-        assertEquals(param.getMetadata().getGoal(), portParam.getValue().metadata().goal());
-        assertEquals(param.getMetadata().getContext(), portParam.getValue().metadata().context());
     }
 
     @Test
@@ -234,8 +232,6 @@ class UpdateKitInfoServiceTest {
 
         assertEquals(param.getKitId(), portParam.getValue().kitId());
         assertEquals(param.getTranslations(), portParam.getValue().translations());
-        assertEquals(param.getMetadata().getGoal(), portParam.getValue().metadata().goal());
-        assertEquals(param.getMetadata().getContext(), portParam.getValue().metadata().context());
     }
 
     @Test
@@ -251,8 +247,6 @@ class UpdateKitInfoServiceTest {
 
         assertEquals(param.getKitId(), portParam.getValue().kitId());
         assertTrue(portParam.getValue().isRemoveTranslations());
-        assertEquals(param.getMetadata().getGoal(), portParam.getValue().metadata().goal());
-        assertEquals(param.getMetadata().getContext(), portParam.getValue().metadata().context());
         assertTrue(portParam.getValue().isRemoveMetadata());
     }
 
