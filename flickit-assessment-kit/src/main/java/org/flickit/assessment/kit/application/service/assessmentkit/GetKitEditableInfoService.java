@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.application.service.assessmentkit;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.kit.application.domain.KitMetadata;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitEditableInfoUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
@@ -36,6 +37,9 @@ public class GetKitEditableInfoService implements GetKitEditableInfoUseCase {
         var languages = loadKitLanguagesPort.loadByKitId(param.getKitId()).stream()
             .map(this::toLanguage)
             .toList();
+        var kitMetadata = assessmentKit.getMetadata() != null
+            ? assessmentKit.getMetadata()
+            : null;
 
         return new KitEditableInfo(
             assessmentKit.getId(),
@@ -50,10 +54,17 @@ public class GetKitEditableInfoService implements GetKitEditableInfoUseCase {
             expertGroup.getOwnerId().equals(param.getCurrentUserId()),
             assessmentKit.getActiveVersionId() != null,
             assessmentKit.getTranslations(),
-            languages);
+            languages,
+            toMetadata(kitMetadata));
     }
 
     private KitEditableInfo.Language toLanguage(KitLanguage kitLanguage) {
         return new KitEditableInfo.Language(kitLanguage.getCode(), kitLanguage.getTitle());
+    }
+
+    private KitEditableInfo.Metadata toMetadata(KitMetadata metadata) {
+        return  (metadata == null)
+            ? null
+            : new KitEditableInfo.Metadata(metadata.goal(), metadata.context());
     }
 }

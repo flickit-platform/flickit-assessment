@@ -49,7 +49,8 @@ public interface GetPublishedKitUseCase {
                   List<MinimalSubject> subjects,
                   List<MinimalQuestionnaire> questionnaires,
                   List<MinimalMaturityLevel> maturityLevels,
-                  List<MinimalKitTag> tags) {
+                  List<MinimalKitTag> tags,
+                  Metadata metadata) {
     }
 
     record Like(int count, boolean liked) {
@@ -68,5 +69,8 @@ public interface GetPublishedKitUseCase {
     }
 
     record MinimalKitTag(Long id, String title) {
+    }
+
+    record Metadata(String goal, String context){
     }
 }

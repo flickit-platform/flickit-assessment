@@ -69,7 +69,7 @@ public class AssessmentKitMapper {
     }
 
     private static KitTranslation getTranslation(AssessmentKitJpaEntity assessmentKitEntity, @Nullable KitLanguage language) {
-        var translation = new KitTranslation(null, null, null);
+        var translation = new KitTranslation(null, null, null, null);
         if (language != null) {
             var translations = JsonUtils.fromJsonToMap(assessmentKitEntity.getTranslations(), KitLanguage.class, KitTranslation.class);
             translation = translations.getOrDefault(language, translation);

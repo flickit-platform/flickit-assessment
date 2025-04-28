@@ -11,6 +11,7 @@ import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.application.domain.kit.translation.KitTranslation;
 import org.flickit.assessment.common.validation.EnumValue;
+import org.flickit.assessment.kit.application.domain.KitMetadata;
 
 import java.util.List;
 import java.util.Map;
@@ -62,12 +63,22 @@ public interface UpdateKitInfoUseCase {
 
         boolean removeTranslations;
 
+        @Valid
+        KitMetadata metadata;
+
+        boolean removeMetadata;
+
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
         @AssertTrue(message = UPDATE_KIT_INFO_TRANSLATIONS_INCORRECT)
         boolean isTranslationFieldCorrect() {
             return !removeTranslations || isEmpty(translations);
+        }
+
+        @AssertTrue(message = UPDATE_KIT_INFO_METADATA_INCORRECT)
+        boolean isMetadataFieldCorrect() {
+            return !removeMetadata || (metadata.goal() == null && metadata.context() == null);
         }
 
         @Builder
@@ -82,6 +93,8 @@ public interface UpdateKitInfoUseCase {
                      List<Long> tags,
                      Map<String, KitTranslation> translations,
                      boolean removeTranslations,
+                     KitMetadata metadata,
+                     boolean removeMetadata,
                      UUID currentUserId) {
             this.kitId = kitId;
             this.title = title;
@@ -94,6 +107,8 @@ public interface UpdateKitInfoUseCase {
             this.tags = tags;
             this.translations = validateAndConvert(translations, KitLanguage.class, COMMON_KIT_LANGUAGE_NOT_VALID);
             this.removeTranslations = removeTranslations;
+            this.metadata = metadata;
+            this.removeMetadata = removeMetadata;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
