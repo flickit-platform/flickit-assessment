@@ -1,5 +1,6 @@
 package org.flickit.assessment.kit.adapter.out.persistence.maturitylevel;
 
+import jakarta.annotation.Nullable;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
@@ -35,7 +36,21 @@ public class MaturityLevelMapper {
         );
     }
 
-    public static List<MaturityLevel> mapToDomainModel(List<MaturityLevelJpaEntity> maturityLevelEntities, List<LevelCompetenceJpaEntity> levelCompetenceEntities) {
+    public static MaturityLevel mapToDomainModel(MaturityLevelJpaEntity entity, KitLanguage language) {
+        var translation = getTranslation(entity, language);
+        return new MaturityLevel(
+            entity.getId(),
+            entity.getCode(),
+            translation.titleOrDefault(entity.getTitle()),
+            entity.getIndex(),
+            translation.descriptionOrDefault(entity.getDescription()),
+            entity.getValue(),
+            JsonUtils.fromJsonToMap(entity.getTranslations(), KitLanguage.class, MaturityLevelTranslation.class),
+            null
+        );
+    }
+
+    public static List<MaturityLevel> mapToDomainModelWithCompetences(List<MaturityLevelJpaEntity> maturityLevelEntities, List<LevelCompetenceJpaEntity> levelCompetenceEntities) {
         var levelIdToLevelCompetences = levelCompetenceEntities.stream()
             .collect(Collectors.groupingBy(LevelCompetenceJpaEntity::getAffectedLevelId));
 
@@ -81,5 +96,14 @@ public class MaturityLevelMapper {
             .value(entity.getValue())
             .competencesCodeToValueMap(competencesCodeToValueMap.isEmpty() ? null : competencesCodeToValueMap)
             .build();
+    }
+
+    public static MaturityLevelTranslation getTranslation(MaturityLevelJpaEntity entity, @Nullable KitLanguage language) {
+        var translation = new MaturityLevelTranslation(null, null);
+        if (language != null) {
+            var translations = JsonUtils.fromJsonToMap(entity.getTranslations(), KitLanguage.class, MaturityLevelTranslation.class);
+            translation = translations.getOrDefault(language, translation);
+        }
+        return translation;
     }
 }
