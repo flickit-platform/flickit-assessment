@@ -1,6 +1,7 @@
 package org.flickit.assessment.common.application.domain.kit.translation;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -18,9 +19,26 @@ public record KitTranslation(
 
     @Size(min = 3, message = TRANSLATION_ASSESSMENT_KIT_ABOUT_SIZE_MIN)
     @Size(max = 1000, message = TRANSLATION_ASSESSMENT_KIT_ABOUT_SIZE_MAX)
-    String about
+    String about,
+
+    @Valid
+    MetadataTranslation metadata
 ) {
+
     public String titleOrDefault(String defaultTitle) {
         return isBlank(title) ? defaultTitle : title;
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    public record MetadataTranslation(
+
+        @Size(min = 3, message = TRANSLATION_ASSESSMENT_KIT_METADATA_GOAL_SIZE_MIN)
+        @Size(max = 300, message = TRANSLATION_ASSESSMENT_KIT_METADATA_GOAL_SIZE_MAX)
+        String goal,
+
+        @Size(min = 3, message = TRANSLATION_ASSESSMENT_KIT_METADATA_CONTEXT_SIZE_MIN)
+        @Size(max = 300, message = TRANSLATION_ASSESSMENT_KIT_METADATA_CONTEXT_SIZE_MAX)
+        String context
+    ) {
     }
 }

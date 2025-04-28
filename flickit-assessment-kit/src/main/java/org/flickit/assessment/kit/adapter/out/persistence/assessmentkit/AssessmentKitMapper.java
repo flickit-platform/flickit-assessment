@@ -8,6 +8,7 @@ import org.flickit.assessment.common.util.JsonUtils;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.KitWithDraftVersionIdView;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
+import org.flickit.assessment.kit.application.domain.KitMetadata;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CreateAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.UpdateKitInfoPort;
 
@@ -46,6 +47,11 @@ public class AssessmentKitMapper {
         var translations = param.isRemoveTranslations() ?
             null :
             isNotEmpty(param.translations()) ? JsonUtils.toJson(param.translations()) : entity.getTranslations();
+
+        var metadata = param.isRemoveMetadata() ?
+            null :
+            metadataIsNotEmpty(param.metadata()) ? JsonUtils.toJson(param.metadata()) : entity.getMetadata();
+
         return new AssessmentKitJpaEntity(
             entity.getId(),
             param.code() != null ? param.code() : entity.getCode(),
@@ -57,7 +63,7 @@ public class AssessmentKitMapper {
             entity.getExpertGroupId(),
             param.lang() != null ? param.lang().getId() : entity.getLanguageId(),
             translations,
-            null,
+            metadata,
             entity.getCreationTime(),
             param.lastModificationTime(),
             entity.getCreatedBy(),
@@ -66,6 +72,10 @@ public class AssessmentKitMapper {
             entity.getLastMajorModificationTime(),
             entity.getKitVersionId()
         );
+    }
+
+    private static boolean metadataIsNotEmpty(KitMetadata metadata) {
+        return metadata != null && (metadata.goal() != null || metadata.context() != null);
     }
 
     public static AssessmentKit mapToDomainModel(AssessmentKitJpaEntity entity) {
@@ -88,6 +98,9 @@ public class AssessmentKitMapper {
             null,
             null,
             entity.getKitVersionId(),
+            entity.getMetadata() != null
+                ? JsonUtils.fromJson(entity.getMetadata(), KitMetadata.class)
+                : null,
             null);
     }
 
