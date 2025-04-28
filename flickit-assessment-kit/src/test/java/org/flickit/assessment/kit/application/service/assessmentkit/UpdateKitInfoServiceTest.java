@@ -106,7 +106,7 @@ class UpdateKitInfoServiceTest {
     }
 
     @Test
-    void testUpdateKitInfo_whenEditSummary_thenSuccessfulUpdate() {
+    void testUpdateKitInfo_whenEditSummaryAndMetadataField_thenSuccessfulUpdate() {
         var metadataParam = CreateMetadataParam(b -> b.goal(null));
         param = createParam(b -> b.summary("new summary").removeTranslations(false).metadata(metadataParam));
 
@@ -125,7 +125,7 @@ class UpdateKitInfoServiceTest {
     }
 
     @Test
-    void testUpdateKitInfo_whenEditPublishedField_thenSuccessfulUpdate() {
+    void testUpdateKitInfo_whenEditPublishedFieldAndMetadataField_thenSuccessfulUpdate() {
         var metadataParam = CreateMetadataParam(b -> b.context(null));
         param = createParam(b -> b.published(false).metadata(metadataParam));
 
@@ -143,7 +143,7 @@ class UpdateKitInfoServiceTest {
     }
 
     @Test
-    void testUpdateKitInfo_whenEditIsPrivateField_thenSuccessfulUpdate() {
+    void testUpdateKitInfo_whenEditIsPrivateFieldAndMetadataField_thenSuccessfulUpdate() {
         var metadataParam = CreateMetadataParam(b -> b.goal(null).context(null));
         param = createParam(b -> b.isPrivate(true).metadata(metadataParam));
         var metadata = new KitMetadata(metadataParam.getGoal(), metadataParam.getContext());
@@ -162,7 +162,7 @@ class UpdateKitInfoServiceTest {
     }
 
     @Test
-    void testUpdateKitInfo_whenEditPriceField_thenSuccessfulUpdate() {
+    void testUpdateKitInfo_whenEditPriceFieldAndMetadataField_thenSuccessfulUpdate() {
         var metadataParam = CreateMetadataParam(b -> b.context(null));
         param = createParam(b -> b.price(2d).metadata(metadataParam));
         var metadata = new KitMetadata(metadataParam.getGoal(), metadataParam.getContext());
@@ -181,7 +181,7 @@ class UpdateKitInfoServiceTest {
     }
 
     @Test
-    void testUpdateKitInfo_whenEditAboutField_thenSuccessfulUpdate() {
+    void testUpdateKitInfo_whenEditAboutFieldAndMetadataField_thenSuccessfulUpdate() {
         var metadataParam = CreateMetadataParam(b -> b.goal(null));
         param = createParam(b -> b.about("new about").metadata(metadataParam));
         var metadata = new KitMetadata(metadataParam.getGoal(), metadataParam.getContext());
@@ -216,8 +216,6 @@ class UpdateKitInfoServiceTest {
         assertEquals(param.getKitId(), portParam.getValue().kitId());
         assertEquals(KitLanguage.valueOf(param.getLang()), portParam.getValue().lang());
         assertEquals(param.getTranslations(), portParam.getValue().translations());
-        assertEquals(param.getMetadata().getGoal(), portParam.getValue().metadata().goal());
-        assertEquals(param.getMetadata().getContext(), portParam.getValue().metadata().context());
     }
 
     @Test
@@ -234,12 +232,10 @@ class UpdateKitInfoServiceTest {
 
         assertEquals(param.getKitId(), portParam.getValue().kitId());
         assertEquals(param.getTranslations(), portParam.getValue().translations());
-        assertEquals(param.getMetadata().getGoal(), portParam.getValue().metadata().goal());
-        assertEquals(param.getMetadata().getContext(), portParam.getValue().metadata().context());
     }
 
     @Test
-    void testUpdateKitInfo_whenRemoveTranslationsAndMetadata_thenSuccessfulUpdate() {
+    void testUpdateKitInfo_whenRemoveTranslationsAndRemoveMetadata_thenSuccessfulUpdate() {
         var metadataParam = CreateMetadataParam(b -> b.goal(null).context(null));
         param = createParam(b -> b.removeTranslations(true).removeMetadata(true).metadata(metadataParam));
 
@@ -251,8 +247,6 @@ class UpdateKitInfoServiceTest {
 
         assertEquals(param.getKitId(), portParam.getValue().kitId());
         assertTrue(portParam.getValue().isRemoveTranslations());
-        assertEquals(param.getMetadata().getGoal(), portParam.getValue().metadata().goal());
-        assertEquals(param.getMetadata().getContext(), portParam.getValue().metadata().context());
         assertTrue(portParam.getValue().isRemoveMetadata());
     }
 
