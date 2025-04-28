@@ -35,7 +35,7 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
 
     @Override
     public Result getPublishedKit(Param param) {
-        AssessmentKit kit = loadAssessmentKitPort.load(param.getKitId());
+        AssessmentKit kit = loadAssessmentKitPort.loadTranslated(param.getKitId());
         if (!kit.isPublished())
             throw new ResourceNotFoundException(KIT_ID_NOT_FOUND);
 
