@@ -52,7 +52,7 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
             .map(this::toQuestionnaire)
             .toList();
 
-        var maturityLevels = loadMaturityLevelsPort.loadAllByKitVersionId(kit.getActiveVersionId()).stream()
+        var maturityLevels = loadMaturityLevelsPort.loadAllTranslated(kit.getActiveVersionId()).stream()
             .map(this::toMaturityLevel)
             .toList();
 
