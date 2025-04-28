@@ -18,6 +18,8 @@ public interface LoadQuestionnairesPort {
      */
     List<Questionnaire> loadByKitId(Long kitId);
 
+    List<Questionnaire> loadAllTranslated(long kitVersionId);
+
     List<Questionnaire> loadQuestionnairesWithoutQuestion(long kitVersionId);
 
     PaginatedResponse<Result> loadAllByKitVersionId(long kitVersionId, int page, int size);
