@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
 
-import org.flickit.assessment.kit.adapter.in.rest.assessmentkit.GetPublishedKitResponseDto.MetadataDto;
-
 @RestController
 @RequiredArgsConstructor
 public class GetPublishedKitRestController {
@@ -23,35 +21,13 @@ public class GetPublishedKitRestController {
     private final UserContext userContext;
 
     @GetMapping("assessment-kits/{kitId}")
-    public ResponseEntity<GetPublishedKitResponseDto> getPublishedKit(@PathVariable("kitId") Long kitId) {
+    public ResponseEntity<Result> getPublishedKit(@PathVariable("kitId") Long kitId) {
         UUID currentUserId = userContext.getUser().id();
         Result result = useCase.getPublishedKit(toParam(kitId, currentUserId));
-        return new ResponseEntity<>(toResponse(result), HttpStatus.OK);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     private Param toParam(Long kitId, UUID currentUserId) {
         return new Param(kitId, currentUserId);
-    }
-
-    private GetPublishedKitResponseDto toResponse(Result result) {
-        return new GetPublishedKitResponseDto(
-            result.id(),
-            result.title(),
-            result.summary(),
-            result.about(),
-            result.published(),
-            result.isPrivate(),
-            result.creationTime(),
-            result.lastModificationTime(),
-            result.like(),
-            result.assessmentsCount(),
-            result.subjectsCount(),
-            result.questionnairesCount(),
-            result.expertGroupId(),
-            result.subjects(),
-            result.questionnaires(),
-            result.maturityLevels(),
-            result.tags(),
-            new MetadataDto(result.metadata().goal(), result.metadata().context()));
     }
 }
