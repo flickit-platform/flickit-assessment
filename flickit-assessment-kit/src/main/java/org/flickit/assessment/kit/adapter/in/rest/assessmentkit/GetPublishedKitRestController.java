@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
 
+import org.flickit.assessment.kit.adapter.in.rest.assessmentkit.GetPublishedKitResponseDto.MetadataDto;
+
 @RestController
 @RequiredArgsConstructor
 public class GetPublishedKitRestController {
@@ -49,6 +51,7 @@ public class GetPublishedKitRestController {
             result.subjects(),
             result.questionnaires(),
             result.maturityLevels(),
-            result.tags());
+            result.tags(),
+            new MetadataDto(result.metadata().goal(), result.metadata().context()));
     }
 }

@@ -21,5 +21,9 @@ public record GetPublishedKitResponseDto(Long id,
                                          List<GetPublishedKitUseCase.MinimalSubject> subjects,
                                          List<GetPublishedKitUseCase.MinimalQuestionnaire> questionnaires,
                                          List<GetPublishedKitUseCase.MinimalMaturityLevel> maturityLevels,
-                                         List<GetPublishedKitUseCase.MinimalKitTag> tags) {
+                                         List<GetPublishedKitUseCase.MinimalKitTag> tags,
+                                         MetadataDto metadata) {
+
+    record MetadataDto(String goal, String context){
+    }
 }
