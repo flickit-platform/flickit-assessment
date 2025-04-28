@@ -48,7 +48,9 @@ public class AssessmentKitMapper {
             null :
             isNotEmpty(param.translations()) ? JsonUtils.toJson(param.translations()) : entity.getTranslations();
 
-        var metadataToUpdate = handleMetadataToUpdate(entity, param);
+        var metadata = param.isRemoveMetadata() ?
+            null :
+            metadataIsNotEmpty(param.metadata()) ? JsonUtils.toJson(param.metadata()) : entity.getMetadata();
 
         return new AssessmentKitJpaEntity(
             entity.getId(),
@@ -61,7 +63,7 @@ public class AssessmentKitMapper {
             entity.getExpertGroupId(),
             param.lang() != null ? param.lang().getId() : entity.getLanguageId(),
             translations,
-            metadataToUpdate,
+            metadata,
             entity.getCreationTime(),
             param.lastModificationTime(),
             entity.getCreatedBy(),
@@ -70,6 +72,10 @@ public class AssessmentKitMapper {
             entity.getLastMajorModificationTime(),
             entity.getKitVersionId()
         );
+    }
+
+    private static boolean metadataIsNotEmpty(KitMetadata metadata) {
+        return metadata != null && (metadata.goal() != null || metadata.context() != null);
     }
 
     public static AssessmentKit mapToDomainModel(AssessmentKitJpaEntity entity) {
@@ -120,15 +126,5 @@ public class AssessmentKitMapper {
             entity.getKitVersionId());
         kit.setDraftVersionId(view.getDraftVersionId());
         return kit;
-    }
-
-    private static String handleMetadataToUpdate(AssessmentKitJpaEntity entity, UpdateKitInfoPort.Param param) {
-        if (param.isRemoveMetadata())
-            return null;
-
-        if (param.metadata().goal() != null || param.metadata().context() != null)
-            return JsonUtils.toJson(param.metadata());
-
-        return entity.getMetadata();
     }
 }

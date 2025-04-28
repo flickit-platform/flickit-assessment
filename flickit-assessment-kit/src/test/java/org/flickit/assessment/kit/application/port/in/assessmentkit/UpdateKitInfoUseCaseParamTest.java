@@ -7,6 +7,7 @@ import org.flickit.assessment.common.application.domain.kit.translation.KitTrans
 import org.flickit.assessment.common.config.AppSpecProperties;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.common.util.SpringUtil;
+import org.flickit.assessment.kit.application.domain.KitMetadata;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -119,7 +120,7 @@ class UpdateKitInfoUseCaseParamTest {
     void testUpdateKitInfoUseCaseParam_metadataFieldIsNotCorrect_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(a -> {
-                a.metadata(new UpdateKitInfoUseCase.MetadataParam("goal", "context"));
+                a.metadata(new KitMetadata("goal", "context"));
                 a.removeMetadata(true);
             }));
         assertThat(throwable).hasMessage("metadataFieldCorrect: " + UPDATE_KIT_INFO_METADATA_INCORRECT);
@@ -173,25 +174,22 @@ class UpdateKitInfoUseCaseParamTest {
     }
 
     @Test
-    void testUpdateKitInfoUseCaseParam_metadataGoalParamViolatesConstraints_ErrorMessage() {
+    void testUpdateKitInfoUseCaseParam_metadataFieldsViolations_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> CreateMetadataParam(b -> b.goal("   g   ")));
-        assertThat(throwable).hasMessage("goal: " + UPDATE_KIT_INFO_METADATA_GOAL_SIZE_MIN);
+            () -> new KitMetadata("   g   ", "context"));
+        assertThat(throwable).hasMessage("goal: " + KIT_METADATA_GOAL_SIZE_MIN);
 
         throwable = assertThrows(ConstraintViolationException.class,
-            () -> CreateMetadataParam(b -> b.goal(RandomStringUtils.randomAlphabetic(301))));
-        assertThat(throwable).hasMessage("goal: " + UPDATE_KIT_INFO_METADATA_GOAL_SIZE_MAX);
-    }
-
-    @Test
-    void testUpdateKitInfoUseCaseParam_metadataContextParamViolatesConstraints_ErrorMessage() {
-        var throwable = assertThrows(ConstraintViolationException.class,
-            () -> CreateMetadataParam(b -> b.context("   c   ")));
-        assertThat(throwable).hasMessage("context: " + UPDATE_KIT_INFO_METADATA_CONTEXT_SIZE_MIN);
+            () -> new KitMetadata(RandomStringUtils.randomAlphabetic(301), "context"));
+        assertThat(throwable).hasMessage("goal: " + KIT_METADATA_GOAL_SIZE_MAX);
 
         throwable = assertThrows(ConstraintViolationException.class,
-            () -> CreateMetadataParam(b -> b.context(RandomStringUtils.randomAlphabetic(301))));
-        assertThat(throwable).hasMessage("context: " + UPDATE_KIT_INFO_METADATA_CONTEXT_SIZE_MAX);
+            () -> new KitMetadata("goal", "   c   "));
+        assertThat(throwable).hasMessage("context: " + KIT_METADATA_CONTEXT_SIZE_MIN);
+
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> new KitMetadata("goal", RandomStringUtils.randomAlphabetic(301)));
+        assertThat(throwable).hasMessage("context: " + KIT_METADATA_CONTEXT_SIZE_MAX);
     }
 
     @Test
@@ -219,17 +217,5 @@ class UpdateKitInfoUseCaseParamTest {
             .price(10d)
             .tags(List.of(1L))
             .currentUserId(UUID.randomUUID());
-    }
-
-    private void CreateMetadataParam(Consumer<UpdateKitInfoUseCase.MetadataParam.MetadataParamBuilder> changer) {
-        var param = metadataParamBuilder();
-        changer.accept(param);
-        param.build();
-    }
-
-    private UpdateKitInfoUseCase.MetadataParam.MetadataParamBuilder metadataParamBuilder() {
-        return UpdateKitInfoUseCase.MetadataParam.builder()
-            .goal("goal")
-            .context("context");
     }
 }

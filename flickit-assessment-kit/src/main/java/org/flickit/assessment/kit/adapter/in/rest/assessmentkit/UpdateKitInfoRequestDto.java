@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.adapter.in.rest.assessmentkit;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Builder;
 import org.flickit.assessment.common.application.domain.kit.translation.KitTranslation;
+import org.flickit.assessment.kit.application.domain.KitMetadata;
 
 import java.util.List;
 import java.util.Map;
@@ -18,10 +19,6 @@ public record UpdateKitInfoRequestDto(@JsonIgnoreProperties(ignoreUnknown = true
                                       @JsonIgnoreProperties(ignoreUnknown = true) List<Long> tags,
                                       @JsonIgnoreProperties(ignoreUnknown = true) Map<String, KitTranslation> translations,
                                       @JsonIgnoreProperties(ignoreUnknown = true) boolean removeTranslations,
-                                      @JsonIgnoreProperties(ignoreUnknown = true) MetadataDto metadata,
+                                      @JsonIgnoreProperties(ignoreUnknown = true) KitMetadata metadata,
                                       @JsonIgnoreProperties(ignoreUnknown = true) boolean removeMetadata) {
-
-    record MetadataDto(@JsonIgnoreProperties(ignoreUnknown = true) String goal,
-                       @JsonIgnoreProperties(ignoreUnknown = true) String context){
-    }
 }

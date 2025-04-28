@@ -101,14 +101,11 @@ class UpdateKitInfoServiceTest {
         assertEquals(param.getKitId(), portParam.getValue().kitId());
         assertEquals(param.getTitle(), portParam.getValue().title());
         assertEquals(newCode, portParam.getValue().code());
-        assertEquals(param.getMetadata().getGoal(), portParam.getValue().metadata().goal());
-        assertEquals(param.getMetadata().getContext(), portParam.getValue().metadata().context());
     }
 
     @Test
-    void testUpdateKitInfo_whenEditSummaryAndMetadataField_thenSuccessfulUpdate() {
-        var metadataParam = CreateMetadataParam(b -> b.goal(null));
-        param = createParam(b -> b.summary("new summary").removeTranslations(false).metadata(metadataParam));
+    void testUpdateKitInfo_whenEditSummary_thenSuccessfulUpdate() {
+        param = createParam(b -> b.summary("new summary"));
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
@@ -119,15 +116,11 @@ class UpdateKitInfoServiceTest {
 
         assertEquals(param.getKitId(), portParam.getValue().kitId());
         assertEquals(param.getSummary(), portParam.getValue().summary());
-        assertEquals(param.getMetadata().getGoal(), portParam.getValue().metadata().goal());
-        assertNull(portParam.getValue().metadata().goal());
-        assertEquals(param.getMetadata().getContext(), portParam.getValue().metadata().context());
     }
 
     @Test
-    void testUpdateKitInfo_whenEditPublishedFieldAndMetadataField_thenSuccessfulUpdate() {
-        var metadataParam = CreateMetadataParam(b -> b.context(null));
-        param = createParam(b -> b.published(false).metadata(metadataParam));
+    void testUpdateKitInfo_whenEditPublishedField_thenSuccessfulUpdate() {
+        param = createParam(b -> b.published(false));
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
@@ -137,17 +130,11 @@ class UpdateKitInfoServiceTest {
 
         assertEquals(param.getKitId(), portParam.getValue().kitId());
         assertEquals(param.getPublished(), portParam.getValue().published());
-        assertEquals(param.getMetadata().getGoal(), portParam.getValue().metadata().goal());
-        assertEquals(param.getMetadata().getGoal(), portParam.getValue().metadata().goal());
-        assertNull(portParam.getValue().metadata().context());
     }
 
     @Test
-    void testUpdateKitInfo_whenEditIsPrivateFieldAndMetadataField_thenSuccessfulUpdate() {
-        var metadataParam = CreateMetadataParam(b -> b.goal(null).context(null));
-        param = createParam(b -> b.isPrivate(true).metadata(metadataParam));
-        var metadata = new KitMetadata(metadataParam.getGoal(), metadataParam.getContext());
-        kit = AssessmentKitMother.kitWithMetadata(metadata);
+    void testUpdateKitInfo_whenEditIsPrivateField_thenSuccessfulUpdate() {
+        param = createParam(b -> b.isPrivate(true));
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
@@ -157,15 +144,12 @@ class UpdateKitInfoServiceTest {
 
         assertEquals(param.getKitId(), portParam.getValue().kitId());
         assertEquals(param.getIsPrivate(), portParam.getValue().isPrivate());
-        assertNull(portParam.getValue().metadata().goal());
-        assertNull(portParam.getValue().metadata().context());
     }
 
     @Test
     void testUpdateKitInfo_whenEditPriceFieldAndMetadataField_thenSuccessfulUpdate() {
-        var metadataParam = CreateMetadataParam(b -> b.context(null));
-        param = createParam(b -> b.price(2d).metadata(metadataParam));
-        var metadata = new KitMetadata(metadataParam.getGoal(), metadataParam.getContext());
+        var metadata = new KitMetadata("goal", null);
+        param = createParam(b -> b.price(2d).metadata(metadata));
         kit = AssessmentKitMother.kitWithMetadata(metadata);
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
@@ -176,15 +160,12 @@ class UpdateKitInfoServiceTest {
 
         assertEquals(param.getKitId(), portParam.getValue().kitId());
         assertEquals(param.getPrice(), portParam.getValue().price());
-        assertEquals(param.getMetadata().getGoal(), portParam.getValue().metadata().goal());
-        assertNull(portParam.getValue().metadata().context());
     }
 
     @Test
-    void testUpdateKitInfo_whenEditAboutFieldAndMetadataField_thenSuccessfulUpdate() {
-        var metadataParam = CreateMetadataParam(b -> b.goal(null));
-        param = createParam(b -> b.about("new about").metadata(metadataParam));
-        var metadata = new KitMetadata(metadataParam.getGoal(), metadataParam.getContext());
+    void testUpdateKitInfo_whenEditAboutField_thenSuccessfulUpdate() {
+        var metadata = new KitMetadata(null, "context");
+        param = createParam(b -> b.about("new about").metadata(metadata));
         kit = AssessmentKitMother.kitWithMetadata(metadata);
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
@@ -195,8 +176,6 @@ class UpdateKitInfoServiceTest {
 
         assertEquals(param.getKitId(), portParam.getValue().kitId());
         assertEquals(param.getAbout(), portParam.getValue().about());
-        assertNull(portParam.getValue().metadata().goal());
-        assertEquals(param.getMetadata().getContext(), portParam.getValue().metadata().context());
     }
 
     @Test
@@ -235,9 +214,8 @@ class UpdateKitInfoServiceTest {
     }
 
     @Test
-    void testUpdateKitInfo_whenRemoveTranslationsAndRemoveMetadata_thenSuccessfulUpdate() {
-        var metadataParam = CreateMetadataParam(b -> b.goal(null).context(null));
-        param = createParam(b -> b.removeTranslations(true).removeMetadata(true).metadata(metadataParam));
+    void testUpdateKitInfo_whenRemoveTranslations_thenSuccessfulUpdate() {
+        param = createParam(b -> b.removeTranslations(true));
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
@@ -247,6 +225,34 @@ class UpdateKitInfoServiceTest {
 
         assertEquals(param.getKitId(), portParam.getValue().kitId());
         assertTrue(portParam.getValue().isRemoveTranslations());
+    }
+
+    @Test
+    void testUpdateKitInfo_whenEditMetadataField_thenSuccessfulUpdate() {
+        param = createParam(b -> b.metadata(new KitMetadata("translated goal", "translated context")));
+
+        when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
+        when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
+
+        service.updateKitInfo(param);
+        verify(updateKitInfoPort, times(1)).update(portParam.capture());
+
+        assertEquals(param.getKitId(), portParam.getValue().kitId());
+        assertEquals(param.getMetadata(), portParam.getValue().metadata());
+    }
+
+    @Test
+    void testUpdateKitInfo_whenRemoveMetadata_thenSuccessfulUpdate() {
+        var metadata = new KitMetadata(null, null);
+        param = createParam(b -> b.removeMetadata(true).metadata(metadata));
+
+        when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
+        when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
+
+        service.updateKitInfo(param);
+        verify(updateKitInfoPort, times(1)).update(portParam.capture());
+
+        assertEquals(param.getKitId(), portParam.getValue().kitId());
         assertTrue(portParam.getValue().isRemoveMetadata());
     }
 
@@ -267,8 +273,7 @@ class UpdateKitInfoServiceTest {
 
     @Test
     void testUpdateKitInfo_whenEditNothing_thenUpdateNothing() {
-        var metadataParam = CreateMetadataParam(b -> b.goal(null).context(null));
-        param = createParam(b -> b.kitId(kit.getId()).metadata(metadataParam));
+        param = createParam(b -> b.kitId(kit.getId()));
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
@@ -286,19 +291,6 @@ class UpdateKitInfoServiceTest {
     private UpdateKitInfoUseCase.Param.ParamBuilder paramBuilder() {
         return UpdateKitInfoUseCase.Param.builder()
             .kitId(1L)
-            .metadata(metadataParamBuilder().build())
             .currentUserId(expertGroup.getOwnerId());
-    }
-
-    private UpdateKitInfoUseCase.MetadataParam CreateMetadataParam(Consumer<UpdateKitInfoUseCase.MetadataParam.MetadataParamBuilder> changer) {
-        var paramBuilder = metadataParamBuilder();
-        changer.accept(paramBuilder);
-        return paramBuilder.build();
-    }
-
-    private UpdateKitInfoUseCase.MetadataParam.MetadataParamBuilder metadataParamBuilder() {
-        return UpdateKitInfoUseCase.MetadataParam.builder()
-            .goal("goal")
-            .context("context");
     }
 }
