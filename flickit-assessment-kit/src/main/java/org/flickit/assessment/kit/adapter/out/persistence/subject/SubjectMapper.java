@@ -1,5 +1,6 @@
 package org.flickit.assessment.kit.adapter.out.persistence.subject;
 
+import jakarta.annotation.Nullable;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
@@ -34,6 +35,24 @@ public class SubjectMapper {
         );
     }
 
+    public static Subject mapToDomainModel(SubjectJpaEntity entity, List<Attribute> attributes, @Nullable KitLanguage language) {
+        var translation = getTranslation(entity, language);
+        return new Subject(
+            entity.getId(),
+            entity.getCode(),
+            translation.titleOrDefault(entity.getTitle()),
+            entity.getIndex(),
+            entity.getWeight(),
+            translation.descriptionOrDefault(entity.getDescription()),
+            JsonUtils.fromJsonToMap(entity.getTranslations(), KitLanguage.class, SubjectTranslation.class),
+            attributes,
+            entity.getCreatedBy(),
+            entity.getLastModifiedBy(),
+            entity.getCreationTime(),
+            entity.getLastModificationTime()
+        );
+    }
+
     public static SubjectJpaEntity mapToJpaEntity(CreateSubjectPort.Param param) {
         LocalDateTime creationTime = LocalDateTime.now();
         return new SubjectJpaEntity(
@@ -59,6 +78,15 @@ public class SubjectMapper {
             .description(e.getDescription())
             .weight(e.getWeight())
             .build();
+    }
+
+    public static SubjectTranslation getTranslation(SubjectJpaEntity entity, @Nullable KitLanguage language) {
+        var translation = new SubjectTranslation(null, null);
+        if (language != null) {
+            var translations = JsonUtils.fromJsonToMap(entity.getTranslations(), KitLanguage.class, SubjectTranslation.class);
+            translation = translations.getOrDefault(language, translation);
+        }
+        return translation;
     }
 }
 
