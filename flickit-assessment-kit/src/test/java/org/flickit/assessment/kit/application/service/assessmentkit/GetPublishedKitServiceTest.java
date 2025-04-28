@@ -61,7 +61,7 @@ class GetPublishedKitServiceTest {
     void testGetPublishedKit_WhenKitDoesNotExist_ThrowsException() {
         GetPublishedKitUseCase.Param param = new GetPublishedKitUseCase.Param(12L, UUID.randomUUID());
 
-        when(loadAssessmentKitPort.load(param.getKitId()))
+        when(loadAssessmentKitPort.loadTranslated(param.getKitId()))
             .thenThrow(new ResourceNotFoundException(KIT_ID_NOT_FOUND));
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> service.getPublishedKit(param));
@@ -77,7 +77,7 @@ class GetPublishedKitServiceTest {
     @Test
     void testGetPublishedKit_WhenKitIsNotPublished_ThrowsException() {
         GetPublishedKitUseCase.Param param = new GetPublishedKitUseCase.Param(12L, UUID.randomUUID());
-        when(loadAssessmentKitPort.load(param.getKitId()))
+        when(loadAssessmentKitPort.loadTranslated(param.getKitId()))
             .thenReturn(AssessmentKitMother.notPublishedKit());
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> service.getPublishedKit(param));
@@ -93,7 +93,7 @@ class GetPublishedKitServiceTest {
     @Test
     void testGetPublishedKit_WhenKitIsPrivateAndUserHasNotAccess_ThrowsException() {
         GetPublishedKitUseCase.Param param = new GetPublishedKitUseCase.Param(12L, UUID.randomUUID());
-        when(loadAssessmentKitPort.load(param.getKitId()))
+        when(loadAssessmentKitPort.loadTranslated(param.getKitId()))
             .thenReturn(AssessmentKitMother.privateKit());
 
         when(checkKitUserAccessPort.hasAccess(param.getKitId(), param.getCurrentUserId()))
@@ -119,7 +119,7 @@ class GetPublishedKitServiceTest {
             1, 3, 1);
         var tag = KitTagMother.createKitTag("security");
 
-        when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
+        when(loadAssessmentKitPort.loadTranslated(param.getKitId())).thenReturn(kit);
         when(checkKitUserAccessPort.hasAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(true);
         when(countKitStatsPort.countKitStats(param.getKitId())).thenReturn(counts);
         when(loadSubjectsPort.loadByKitVersionId(kit.getActiveVersionId())).thenReturn(List.of(subject));
@@ -171,7 +171,7 @@ class GetPublishedKitServiceTest {
             1, 3, 1);
         var tag = KitTagMother.createKitTag("security");
 
-        when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
+        when(loadAssessmentKitPort.loadTranslated(param.getKitId())).thenReturn(kit);
         when(countKitStatsPort.countKitStats(param.getKitId())).thenReturn(counts);
         when(loadSubjectsPort.loadByKitVersionId(kit.getActiveVersionId())).thenReturn(List.of(subject));
         when(loadQuestionnairesPort.loadByKitId(param.getKitId())).thenReturn(List.of(questionnaire));
