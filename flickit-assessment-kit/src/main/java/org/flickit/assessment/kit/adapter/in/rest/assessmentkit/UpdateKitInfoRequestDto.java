@@ -22,6 +22,6 @@ public record UpdateKitInfoRequestDto(@JsonIgnoreProperties(ignoreUnknown = true
                                       @JsonIgnoreProperties(ignoreUnknown = true) boolean removeMetadata) {
 
     record MetadataDto(@JsonIgnoreProperties(ignoreUnknown = true) String goal,
-                       @JsonIgnoreProperties(ignoreUnknown = true) String context){
+                       @JsonIgnoreProperties(ignoreUnknown = true) String context) {
     }
 }

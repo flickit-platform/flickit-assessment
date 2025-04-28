@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.adapter.in.rest.assessmentkit;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
+import org.flickit.assessment.kit.application.domain.KitMetadata;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.UpdateKitInfoUseCase;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.UpdateKitInfoUseCase.Param;
 import org.springframework.http.HttpStatus;
@@ -29,11 +30,6 @@ public class UpdateKitInfoRestController {
     }
 
     private Param toParam(Long kitId, UpdateKitInfoRequestDto request, UUID currentUserId) {
-        var metaDataParam = new UpdateKitInfoUseCase.MetadataParam(
-            request.metadata() != null ? request.metadata().goal() : null,
-            request.metadata() != null ? request.metadata().context() : null
-        );
-
         return new Param(
             kitId,
             request.title(),
@@ -46,9 +42,21 @@ public class UpdateKitInfoRestController {
             request.tags(),
             request.translations(),
             request.removeTranslations(),
-            metaDataParam,
+            toKitMetadata(request.metadata()),
             request.removeMetadata(),
             currentUserId
         );
+
+    }
+
+    private KitMetadata toKitMetadata(UpdateKitInfoRequestDto.MetadataDto metadataDto) {
+        KitMetadata metadata = null;
+
+        if (metadataDto != null) {
+            var goal = metadataDto.goal() != null && !metadataDto.goal().isBlank() ? metadataDto.goal().strip() : null;
+            var context = metadataDto.context() != null && !metadataDto.context().isBlank() ? metadataDto.context().strip() : null;
+            metadata = new KitMetadata(goal, context);
+        }
+        return metadata;
     }
 }
