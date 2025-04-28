@@ -81,7 +81,7 @@ public class AssessmentKitMother {
             Boolean.FALSE,
             EXPERT_GROUP_ID,
             Map.of(KitLanguage.EN, new KitTranslation(TITLE, SUMMARY, ABOUT,
-                new KitTranslation.MetadataTranslation(GOAL, CONTEXT))),
+                new MetadataTranslation(GOAL, CONTEXT))),
             null,
             null,
             null,
