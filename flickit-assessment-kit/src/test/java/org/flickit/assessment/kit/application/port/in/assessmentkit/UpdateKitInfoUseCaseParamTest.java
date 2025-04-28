@@ -127,6 +127,15 @@ class UpdateKitInfoUseCaseParamTest {
     }
 
     @Test
+    void testUpdateKitInfoUseCaseParam_metadataFieldIsCorrect_Success() {
+        assertDoesNotThrow(
+            () -> createParam(a -> {
+                a.metadata(null);
+                a.removeMetadata(true);
+            }));
+    }
+
+    @Test
     void testUpdateKitInfoUseCaseParam_translationsFieldsViolations_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(a -> a.translations(Map.of("EN", new KitTranslation("t", "summary", "about", null)))));
