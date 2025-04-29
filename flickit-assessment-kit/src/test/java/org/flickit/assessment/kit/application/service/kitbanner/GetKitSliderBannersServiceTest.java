@@ -15,7 +15,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -46,7 +45,7 @@ class GetKitSliderBannersServiceTest {
 
         var result = service.getSliderBanners(param);
 
-        assertThat(result.size()).isEqualTo(2);
+        assertEquals(2, result.size());
         var banner1 = result.stream()
             .filter(b -> b.kitId() == 1)
             .findFirst().orElseThrow();
