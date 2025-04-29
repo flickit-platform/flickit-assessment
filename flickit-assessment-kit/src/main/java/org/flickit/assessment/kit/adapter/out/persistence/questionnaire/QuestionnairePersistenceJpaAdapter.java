@@ -2,7 +2,6 @@ package org.flickit.assessment.kit.adapter.out.persistence.questionnaire;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
-import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.util.JsonUtils;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
@@ -17,7 +16,6 @@ import org.flickit.assessment.kit.adapter.out.persistence.question.QuestionMappe
 import org.flickit.assessment.kit.application.domain.Question;
 import org.flickit.assessment.kit.application.domain.Questionnaire;
 import org.flickit.assessment.kit.application.port.out.questionnaire.*;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
@@ -96,14 +94,6 @@ public class QuestionnairePersistenceJpaAdapter implements
 
         return repository.findAllByKitVersionIdOrderByIndex(kitVersionId).stream()
             .map(QuestionnaireMapper::mapToDomainModel)
-            .toList();
-    }
-
-    @Override
-    public List<Questionnaire> loadAllTranslated(long kitVersionId) {
-        var language = KitLanguage.valueOf(LocaleContextHolder.getLocale().getLanguage().toUpperCase());
-        return repository.findAllByKitVersionIdOrderByIndex(kitVersionId).stream()
-            .map(entity -> QuestionnaireMapper.mapToDomainModel(entity, language))
             .toList();
     }
 
