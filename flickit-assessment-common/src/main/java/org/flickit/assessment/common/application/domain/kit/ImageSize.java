@@ -15,10 +15,6 @@ public enum ImageSize {
         return this.ordinal();
     }
 
-    public String getCode() {
-        return this.name();
-    }
-
     public static ImageSize valueOfById(int id) {
         if (!isValidId(id))
             return getDefault();
