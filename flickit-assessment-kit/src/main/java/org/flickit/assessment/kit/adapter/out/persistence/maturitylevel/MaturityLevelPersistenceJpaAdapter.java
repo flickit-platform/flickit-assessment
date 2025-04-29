@@ -2,7 +2,6 @@ package org.flickit.assessment.kit.adapter.out.persistence.maturitylevel;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
-import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.util.JsonUtils;
 import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaRepository;
@@ -12,17 +11,20 @@ import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaReposit
 import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.*;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
-import static org.flickit.assessment.kit.adapter.out.persistence.maturitylevel.MaturityLevelMapper.*;
+import static org.flickit.assessment.kit.adapter.out.persistence.maturitylevel.MaturityLevelMapper.mapToDomainModelWithCompetences;
+import static org.flickit.assessment.kit.adapter.out.persistence.maturitylevel.MaturityLevelMapper.mapToJpaEntityToPersist;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.MATURITY_LEVEL_ID_NOT_FOUND;
 
 @Component
@@ -159,20 +161,5 @@ public class MaturityLevelPersistenceJpaAdapter implements
             sort,
             sortDirection.name().toLowerCase(),
             (int) pageResult.getTotalElements());
-    }
-
-    @Override
-    public List<MaturityLevel> loadByKitVersionId(long kitVersionId, Collection<Long> ids) {
-        return repository.findAllByIdInAndKitVersionId(ids, kitVersionId).stream()
-            .map(MaturityLevelMapper::mapToDomainModel)
-            .toList();
-    }
-
-    @Override
-    public List<MaturityLevel> loadAllTranslated(Long kitVersionId) {
-        var language = KitLanguage.valueOf(LocaleContextHolder.getLocale().getLanguage().toUpperCase());
-        return repository.findAllByKitVersionIdOrderByIndex(kitVersionId).stream()
-            .map(entity -> mapToDomainModel(entity, language))
-            .toList();
     }
 }
