@@ -133,33 +133,17 @@ public class AssessmentKitMapper {
     public static AssessmentKit mapToDomainModel(AssessmentKitJpaEntity entity, KitLanguage language) {
         var translationLanguage = Objects.equals(language.getId(), entity.getLanguageId()) ? null : language;
         var translation = getTranslation(entity, translationLanguage);
-        return new AssessmentKit(
-            entity.getId(),
-            entity.getCode(),
-            translation.titleOrDefault(entity.getTitle()),
-            translation.summaryOrDefault(entity.getSummary()),
-            translation.aboutOrDefault(entity.getAbout()),
-            KitLanguage.valueOfById(entity.getLanguageId()),
-            entity.getCreationTime(),
-            entity.getLastModificationTime(),
-            entity.getPublished(),
-            entity.getIsPrivate(),
-            entity.getExpertGroupId(),
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            entity.getKitVersionId(),
-            null,
-            null);
+        return mapToDomainModel(entity, translation, null);
     }
 
-    public static AssessmentKit mapToDomainModelWithMetaData(AssessmentKitJpaEntity entity, KitLanguage language) {
+    public static AssessmentKit mapToDomainModelWithMetadata(AssessmentKitJpaEntity entity, KitLanguage language) {
         var translationLanguage = Objects.equals(language.getId(), entity.getLanguageId()) ? null : language;
         var translation = getTranslation(entity, translationLanguage);
-        var metadata = getKitMetadata(entity, translation);
+        var metadata = getTranslatedMetadata(entity, translation);
+        return mapToDomainModel(entity, translation, metadata);
+    }
+
+    public static AssessmentKit mapToDomainModel(AssessmentKitJpaEntity entity, KitTranslation translation, KitMetadata metadata) {
         return new AssessmentKit(
             entity.getId(),
             entity.getCode(),
@@ -192,7 +176,7 @@ public class AssessmentKitMapper {
         return translation;
     }
 
-    private static KitMetadata getKitMetadata(AssessmentKitJpaEntity entity, KitTranslation translation) {
+    private static KitMetadata getTranslatedMetadata(AssessmentKitJpaEntity entity, KitTranslation translation) {
         if (entity.getMetadata() == null)
             return null;
         var kitMetadata = JsonUtils.fromJson(entity.getMetadata(), KitMetadata.class);

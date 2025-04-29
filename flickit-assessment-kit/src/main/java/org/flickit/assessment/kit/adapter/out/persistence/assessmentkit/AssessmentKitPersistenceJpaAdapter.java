@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
 import static java.util.stream.Collectors.toSet;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 import static org.flickit.assessment.kit.adapter.out.persistence.assessmentkit.AssessmentKitMapper.mapToDomainModel;
-import static org.flickit.assessment.kit.adapter.out.persistence.assessmentkit.AssessmentKitMapper.mapToDomainModelWithMetaData;
+import static org.flickit.assessment.kit.adapter.out.persistence.assessmentkit.AssessmentKitMapper.mapToDomainModelWithMetadata;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 @Component
@@ -199,7 +199,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
             .orElseThrow(() -> new ResourceNotFoundException(KIT_ID_NOT_FOUND));
 
         var language = KitLanguage.valueOf(LocaleContextHolder.getLocale().getLanguage().toUpperCase());
-        return mapToDomainModelWithMetaData(kitEntity, language);
+        return mapToDomainModelWithMetadata(kitEntity, language);
     }
 
     @Override
