@@ -1,6 +1,7 @@
 package org.flickit.assessment.kit.application.service.kitbanner;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.domain.kit.ImageSize;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.kit.application.domain.KitBanner;
 import org.flickit.assessment.kit.application.port.in.kitbanner.GetKitSliderBannersUseCase;
@@ -11,6 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Map;
+
+import static java.util.stream.Collectors.groupingBy;
 
 @Service
 @Transactional(readOnly = true)
@@ -26,9 +30,10 @@ public class GetKitSliderBannersService implements GetKitSliderBannersUseCase {
     public List<Result> getSliderBanners(Param param) {
         var portResult = loadKitBannersPort.loadSliderBanners(KitLanguage.valueOf(param.getLang()));
 
-        return portResult.stream()
-                .map(this::toResult)
-                .toList();
+        Map<Long, List<KitBanner>> banners = portResult.stream()
+            .collect(groupingBy(KitBanner::getKitId));
+
+        return toResult(banners);
     }
 
     Result toResult(KitBanner kitBanner) {
