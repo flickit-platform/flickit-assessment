@@ -1,5 +1,6 @@
 package org.flickit.assessment.kit.adapter.out.persistence.attribute;
 
+import jakarta.annotation.Nullable;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
@@ -23,6 +24,23 @@ public class AttributeMapper {
             entity.getDescription(),
             entity.getWeight(),
             JsonUtils.fromJsonToMap(entity.getTranslations(), KitLanguage.class, AttributeTranslation.class),
+            entity.getCreationTime(),
+            entity.getLastModificationTime(),
+            entity.getCreatedBy(),
+            entity.getLastModifiedBy()
+        );
+    }
+
+    public static Attribute mapToDomainModel(AttributeJpaEntity entity, KitLanguage language) {
+        var translation = getTranslation(entity, language);
+        return new Attribute(
+            entity.getId(),
+            entity.getCode(),
+            translation.titleOrDefault(entity.getTitle()),
+            entity.getIndex(),
+            translation.descriptionOrDefault(entity.getDescription()),
+            entity.getWeight(),
+            null,
             entity.getCreationTime(),
             entity.getLastModificationTime(),
             entity.getCreatedBy(),
@@ -56,5 +74,14 @@ public class AttributeMapper {
             .description(view.getAttribute().getDescription())
             .weight(view.getAttribute().getWeight())
             .build();
+    }
+
+    private static AttributeTranslation getTranslation(AttributeJpaEntity entity, @Nullable KitLanguage language) {
+        var translation = new AttributeTranslation(null, null);
+        if (language != null) {
+            var translations = JsonUtils.fromJsonToMap(entity.getTranslations(), KitLanguage.class, AttributeTranslation.class);
+            translation = translations.getOrDefault(language, translation);
+        }
+        return translation;
     }
 }

@@ -16,7 +16,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
@@ -158,12 +161,5 @@ public class MaturityLevelPersistenceJpaAdapter implements
             sort,
             sortDirection.name().toLowerCase(),
             (int) pageResult.getTotalElements());
-    }
-
-    @Override
-    public List<MaturityLevel> loadByKitVersionId(long kitVersionId, Collection<Long> ids) {
-        return repository.findAllByIdInAndKitVersionId(ids, kitVersionId).stream()
-            .map(MaturityLevelMapper::mapToDomainModel)
-            .toList();
     }
 }

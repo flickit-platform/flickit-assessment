@@ -42,14 +42,9 @@ public interface GetPublishedKitUseCase {
                   LocalDateTime creationTime,
                   LocalDateTime lastModificationTime,
                   Like like,
-                  Integer assessmentsCount,
                   Integer subjectsCount,
-                  Integer questionnairesCount,
                   long expertGroupId,
                   List<MinimalSubject> subjects,
-                  List<MinimalQuestionnaire> questionnaires,
-                  List<MinimalMaturityLevel> maturityLevels,
-                  List<MinimalKitTag> tags,
                   Metadata metadata,
                   List<Language> languages) {
         public record Language(String code,
@@ -66,15 +61,6 @@ public interface GetPublishedKitUseCase {
     record MinimalAttribute(Long id, String title, String description) {
     }
 
-    record MinimalQuestionnaire(Long id, String title, String description) {
-    }
-
-    record MinimalMaturityLevel(Long id, String title, String description, Integer value, Integer index) {
-    }
-
-    record MinimalKitTag(Long id, String title) {
-    }
-
-    record Metadata(String goal, String context){
+    record Metadata(String goal, String context) {
     }
 }

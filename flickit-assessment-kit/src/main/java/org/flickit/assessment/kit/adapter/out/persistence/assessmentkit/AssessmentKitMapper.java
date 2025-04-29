@@ -133,6 +133,17 @@ public class AssessmentKitMapper {
     public static AssessmentKit mapToDomainModel(AssessmentKitJpaEntity entity, KitLanguage language) {
         var translationLanguage = Objects.equals(language.getId(), entity.getLanguageId()) ? null : language;
         var translation = getTranslation(entity, translationLanguage);
+        return mapToDomainModel(entity, translation, null);
+    }
+
+    public static AssessmentKit mapToDomainModelWithMetadata(AssessmentKitJpaEntity entity, KitLanguage language) {
+        var translationLanguage = Objects.equals(language.getId(), entity.getLanguageId()) ? null : language;
+        var translation = getTranslation(entity, translationLanguage);
+        var metadata = getTranslatedMetadata(entity, translation);
+        return mapToDomainModel(entity, translation, metadata);
+    }
+
+    public static AssessmentKit mapToDomainModel(AssessmentKitJpaEntity entity, KitTranslation translation, KitMetadata metadata) {
         return new AssessmentKit(
             entity.getId(),
             entity.getCode(),
@@ -152,7 +163,7 @@ public class AssessmentKitMapper {
             null,
             null,
             entity.getKitVersionId(),
-            null,
+            metadata,
             null);
     }
 
@@ -163,5 +174,16 @@ public class AssessmentKitMapper {
             translation = translations.getOrDefault(language, translation);
         }
         return translation;
+    }
+
+    private static KitMetadata getTranslatedMetadata(AssessmentKitJpaEntity entity, KitTranslation translation) {
+        if (entity.getMetadata() == null)
+            return null;
+        var kitMetadata = JsonUtils.fromJson(entity.getMetadata(), KitMetadata.class);
+        var metadataTranslation = translation.metadata() == null
+            ? new KitTranslation.MetadataTranslation(null, null)
+            : translation.metadata();
+        return new KitMetadata(metadataTranslation.goalOrDefault(kitMetadata.goal()),
+            metadataTranslation.contextOrDefault(kitMetadata.context()));
     }
 }
