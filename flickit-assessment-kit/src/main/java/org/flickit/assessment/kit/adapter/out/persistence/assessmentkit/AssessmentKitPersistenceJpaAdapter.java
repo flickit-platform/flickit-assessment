@@ -26,6 +26,7 @@ import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitMinimalInfoUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.*;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.DeleteKitUserAccessPort;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -237,9 +238,10 @@ public class AssessmentKitPersistenceJpaAdapter implements
     }
 
     private PaginatedResponse<LoadPublishedKitListPort.Result> toLoadPublishedKitsPortResult(Page<KitWithExpertGroupView> pageResult) {
+        var language = KitLanguage.valueOf(LocaleContextHolder.getLocale().getLanguage().toUpperCase());
         var items = pageResult.getContent().stream()
             .map(v -> new LoadPublishedKitListPort.Result(
-                mapToDomainModel(v.getKit()),
+                mapToDomainModel(v.getKit(), language),
                 ExpertGroupMapper.mapToDomainModel(v.getExpertGroup())))
             .toList();
 

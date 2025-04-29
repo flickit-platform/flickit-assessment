@@ -29,6 +29,14 @@ public record KitTranslation(
         return isBlank(title) ? defaultTitle : title;
     }
 
+    public String summaryOrDefault(String defaultSummary) {
+        return isBlank(summary) ? defaultSummary : summary;
+    }
+
+    public String aboutOrDefault(String defaultAbout) {
+        return isBlank(about) ? defaultAbout : about;
+    }
+
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public record MetadataTranslation(
 
