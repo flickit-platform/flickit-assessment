@@ -28,9 +28,10 @@ public class GetKitSliderBannersService implements GetKitSliderBannersUseCase {
     public List<Result> getSliderBanners(Param param) {
         var portResult = loadKitBannersPort.loadSliderBanners(KitLanguage.valueOf(param.getLang()));
 
-        return portResult.stream()
-            .collect(Collectors.groupingBy(KitBanner::getKitId))
-            .entrySet().stream()
+        var kitBannersMap = portResult.stream()
+            .collect(Collectors.groupingBy(KitBanner::getKitId));
+
+        return kitBannersMap.entrySet().stream()
             .map(entry -> {
                 Long kitId = entry.getKey();
                 List<KitBanner> banners = entry.getValue();
