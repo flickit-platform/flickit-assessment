@@ -44,9 +44,8 @@ class GetKitSliderBannersServiceTest {
         when(createDownloadLinkPort.createDownloadLink(anyString(), any())).thenReturn("path/to/minio");
 
         var result = service.getSliderBanners(param);
-        int size = result.size();
 
-        assertThat(size).isEqualTo(2);
+        assertThat(result.size()).isEqualTo(2);
         var banner1 = result.stream()
             .filter(b -> b.kitId() == 1)
             .findFirst().orElseThrow();
