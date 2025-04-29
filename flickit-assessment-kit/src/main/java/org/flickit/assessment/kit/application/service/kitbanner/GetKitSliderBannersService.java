@@ -12,9 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.util.List;
-import java.util.Map;
-
-import static java.util.stream.Collectors.groupingBy;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -30,34 +28,28 @@ public class GetKitSliderBannersService implements GetKitSliderBannersUseCase {
     public List<Result> getSliderBanners(Param param) {
         var portResult = loadKitBannersPort.loadSliderBanners(KitLanguage.valueOf(param.getLang()));
 
-        Map<Long, List<KitBanner>> banners = portResult.stream()
-            .collect(groupingBy(KitBanner::getKitId));
-
-        return toResult(banners);
-    }
-
-    List<Result> toResult(Map<Long, List<KitBanner>> map) {
-        return map.entrySet().stream()
+        return portResult.stream()
+            .collect(Collectors.groupingBy(KitBanner::getKitId))
+            .entrySet().stream()
             .map(entry -> {
                 Long kitId = entry.getKey();
                 List<KitBanner> banners = entry.getValue();
 
-                String smallBanner = banners.stream()
-                    .filter(b -> b.getSize() == ImageSize.SMALL)
-                    .findFirst()
-                    .map(KitBanner::getPath)
-                    .orElse(null);
-
-                String largeBanner = banners.stream()
-                    .filter(b -> b.getSize() == ImageSize.LARGE)
-                    .findFirst()
-                    .map(KitBanner::getPath)
-                    .orElse(null);
+                String smallBanner = findPathBySize(banners, ImageSize.SMALL);
+                String largeBanner = findPathBySize(banners, ImageSize.LARGE);
 
                 return new Result(kitId,
                     createFileDownloadLinkPort.createDownloadLink(smallBanner, EXPIRY_DURATION),
                     createFileDownloadLinkPort.createDownloadLink(largeBanner, EXPIRY_DURATION));
             })
             .toList();
+    }
+
+    private String findPathBySize(List<KitBanner> banners, ImageSize size) {
+        return banners.stream()
+            .filter(b -> b.getSize() == size)
+            .findFirst()
+            .map(KitBanner::getPath)
+            .orElse(null);
     }
 }
