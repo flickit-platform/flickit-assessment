@@ -9,6 +9,7 @@ import org.flickit.assessment.data.jpa.core.attributevalue.AttributeValueJpaEnti
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
+import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.scenario.fixture.request.CreateAssessmentRequestDtoMother;
 import org.flickit.assessment.scenario.test.AbstractScenarioTest;
@@ -149,10 +150,14 @@ class CreateAssessmentScenarioTest extends AbstractScenarioTest {
         );
 
         var loadedKit = jpaTemplate.load(kitId, AssessmentKitJpaEntity.class);
+        var loadedLevel = loadByKitVersionId(MaturityLevelJpaEntity.class, loadedKit.getKitVersionId()).stream()
+            .sorted(comparingLong(MaturityLevelJpaEntity::getValue))
+            .toList()
+            .getFirst();
 
         assertEquals(loadedKit.getKitVersionId(), loadedAssessmentResult.getKitVersionId());
-        assertNull(loadedAssessmentResult.getMaturityLevelId());
-        assertNull(loadedAssessmentResult.getConfidenceValue());
+        assertEquals(loadedLevel.getId(), loadedAssessmentResult.getMaturityLevelId());
+        assertEquals(0.0, loadedAssessmentResult.getConfidenceValue());
         assertFalse(loadedAssessmentResult.getIsCalculateValid());
         assertFalse(loadedAssessmentResult.getIsConfidenceValid());
         assertNotNull(loadedAssessmentResult.getLastModificationTime());
