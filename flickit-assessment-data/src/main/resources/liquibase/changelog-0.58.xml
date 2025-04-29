@@ -31,4 +31,10 @@
                              columnNames="kit_id, lang_id, size"/>
     </changeSet>
 
+    <changeSet id="0.58-05" author="Mahdi Rezazadeh">
+        <modifyDataType
+                tableName="fak_assessment_kit"
+                columnName="translations"
+                newDataType="json"/>
+    </changeSet>
 </databaseChangeLog>
