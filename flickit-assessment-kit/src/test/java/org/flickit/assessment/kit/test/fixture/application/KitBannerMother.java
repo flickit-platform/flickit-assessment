@@ -1,14 +1,14 @@
 package org.flickit.assessment.kit.test.fixture.application;
 
+import org.flickit.assessment.common.application.domain.kit.ImageSize;
 import org.flickit.assessment.kit.application.domain.KitBanner;
 
 public class KitBannerMother {
 
-    private static Long kitId = 123L;
-
-    public static KitBanner create() {
+    public static KitBanner createWithIdAndSize(long kitId, ImageSize size) {
         return new KitBanner(
-            kitId++,
+            kitId,
+            size,
             "path/to/file");
     }
 }
