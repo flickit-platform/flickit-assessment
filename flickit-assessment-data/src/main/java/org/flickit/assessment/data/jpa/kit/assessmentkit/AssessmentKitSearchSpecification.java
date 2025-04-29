@@ -22,9 +22,9 @@ public class AssessmentKitSearchSpecification implements Specification<Assessmen
     public Predicate toPredicate(Root<AssessmentKitJpaEntity> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
         List<Predicate> titlesMatch = toTitlePredicates(root, cb);
         Predicate published = cb.isTrue(root.get(AssessmentKitJpaEntity.Fields.published));
-        Predicate accessCheck = toAccessCheckPredicate(root, query, cb);
+        Predicate hasAccess = toAccessCheckPredicate(root, query, cb);
 
-        return cb.and(published, accessCheck, cb.or(titlesMatch.toArray(new Predicate[0])));
+        return cb.and(published, hasAccess, cb.or(titlesMatch.toArray(new Predicate[0])));
     }
 
     private List<Predicate> toTitlePredicates(Root<AssessmentKitJpaEntity> root, CriteriaBuilder cb) {
