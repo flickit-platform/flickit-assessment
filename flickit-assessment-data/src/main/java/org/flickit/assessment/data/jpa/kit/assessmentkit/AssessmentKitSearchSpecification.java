@@ -20,29 +20,30 @@ public class AssessmentKitSearchSpecification implements Specification<Assessmen
 
     @Override
     public Predicate toPredicate(Root<AssessmentKitJpaEntity> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-        List<Predicate> titlesMatch = toTitlePredicates(root, cb);
+        Predicate titleMatch = buildTitleSearchPredicate(root, cb);
         Predicate published = cb.isTrue(root.get(AssessmentKitJpaEntity.Fields.published));
         Predicate hasAccess = toAccessCheckPredicate(root, query, cb);
 
-        return cb.and(published, hasAccess, cb.or(titlesMatch.toArray(new Predicate[0])));
+        return cb.and(published, hasAccess, titleMatch);
     }
 
-    private List<Predicate> toTitlePredicates(Root<AssessmentKitJpaEntity> root, CriteriaBuilder cb) {
-        Expression<String> titleExpression = cb.lower(root.get(AssessmentKitJpaEntity.Fields.title));
-        Predicate titleMatch = cb.like(titleExpression, "%" + queryTerm.toLowerCase() + "%");
+    private Predicate buildTitleSearchPredicate(Root<AssessmentKitJpaEntity> root, CriteriaBuilder cb) {
+        String searchPattern = "%" + queryTerm.toLowerCase() + "%";
+        Expression<String> defaultTitle = cb.lower(root.get(AssessmentKitJpaEntity.Fields.title));
+        Predicate titleMatch = cb.like(defaultTitle, searchPattern);
 
-        List<Predicate> titlesMatch = new ArrayList<>();
-        titlesMatch.add(titleMatch);
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(titleMatch);
 
         for (KitLanguage language : KitLanguage.values()) {
-            Expression<String> translatedTitleExpression = cb.lower(
+            Expression<String> translatedTitle = cb.lower(
                 cb.function(JSON_EXTRACT_PATH_TEXT, String.class,
                     root.get(AssessmentKitJpaEntity.Fields.translations),
                     cb.literal(language.name()), cb.literal(AssessmentKitJpaEntity.Fields.title))
             );
-            titlesMatch.add(cb.like(translatedTitleExpression, "%" + queryTerm.toLowerCase() + "%"));
+            predicates.add(cb.like(translatedTitle, searchPattern));
         }
-        return titlesMatch;
+        return cb.or(predicates.toArray(new Predicate[0]));
     }
 
     private Predicate toAccessCheckPredicate(Root<AssessmentKitJpaEntity> root,
