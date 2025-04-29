@@ -23,7 +23,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
-import static org.flickit.assessment.kit.adapter.out.persistence.maturitylevel.MaturityLevelMapper.mapToDomainModelWithCompetences;
+import static org.flickit.assessment.kit.adapter.out.persistence.maturitylevel.MaturityLevelMapper.mapToDomainModel;
 import static org.flickit.assessment.kit.adapter.out.persistence.maturitylevel.MaturityLevelMapper.mapToJpaEntityToPersist;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.MATURITY_LEVEL_ID_NOT_FOUND;
 
@@ -133,7 +133,7 @@ public class MaturityLevelPersistenceJpaAdapter implements
             .toList();
 
         var levelCompetenceEntities = levelCompetenceRepository.findAllByAffectedLevelIdInAndKitVersionId(levelIds, kitVersionId);
-        return mapToDomainModelWithCompetences(maturityLevelEntities, levelCompetenceEntities);
+        return mapToDomainModel(maturityLevelEntities, levelCompetenceEntities);
     }
 
     @Override

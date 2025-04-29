@@ -35,7 +35,7 @@ public class MaturityLevelMapper {
         );
     }
 
-    public static List<MaturityLevel> mapToDomainModelWithCompetences(List<MaturityLevelJpaEntity> maturityLevelEntities, List<LevelCompetenceJpaEntity> levelCompetenceEntities) {
+    public static List<MaturityLevel> mapToDomainModel(List<MaturityLevelJpaEntity> maturityLevelEntities, List<LevelCompetenceJpaEntity> levelCompetenceEntities) {
         var levelIdToLevelCompetences = levelCompetenceEntities.stream()
             .collect(Collectors.groupingBy(LevelCompetenceJpaEntity::getAffectedLevelId));
 
