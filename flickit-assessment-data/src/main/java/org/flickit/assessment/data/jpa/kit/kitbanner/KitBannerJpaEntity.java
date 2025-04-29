@@ -32,4 +32,8 @@ public class KitBannerJpaEntity {
 
     @Column(name = "lang_id", nullable = false)
     private Integer langId;
+
+    @Column(name = "size", nullable = false)
+    private int size;
+
 }
