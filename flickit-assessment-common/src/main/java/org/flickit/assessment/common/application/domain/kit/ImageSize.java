@@ -11,10 +11,6 @@ public enum ImageSize {
 
     SMALL, LARGE;
 
-    public int getId() {
-        return this.ordinal();
-    }
-
     public static ImageSize valueOfById(int id) {
         if (!isValidId(id))
             return getDefault();
