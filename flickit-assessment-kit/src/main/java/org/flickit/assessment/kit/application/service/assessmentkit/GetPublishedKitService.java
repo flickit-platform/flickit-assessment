@@ -4,17 +4,16 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.kit.application.domain.*;
+import org.flickit.assessment.kit.application.domain.AssessmentKit;
+import org.flickit.assessment.kit.application.domain.Attribute;
+import org.flickit.assessment.kit.application.domain.Subject;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetPublishedKitUseCase;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetPublishedKitUseCase.Result.Language;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CountKitStatsPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.kitlanguage.LoadKitLanguagesPort;
 import org.flickit.assessment.kit.application.port.out.kitlike.CheckKitLikeExistencePort;
-import org.flickit.assessment.kit.application.port.out.kittag.LoadKitTagListPort;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.CheckKitUserAccessPort;
-import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelsPort;
-import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairesPort;
 import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectsPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,9 +30,6 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
     private final CheckKitUserAccessPort checkKitUserAccessPort;
     private final CountKitStatsPort countKitStatsPort;
     private final LoadSubjectsPort loadSubjectsPort;
-    private final LoadQuestionnairesPort loadQuestionnairesPort;
-    private final LoadMaturityLevelsPort loadMaturityLevelsPort;
-    private final LoadKitTagListPort loadKitTagListPort;
     private final CheckKitLikeExistencePort checkKitLikeExistencePort;
     private final LoadKitLanguagesPort loadKitLanguagesPort;
 
@@ -50,18 +46,6 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
 
         var subjects = loadSubjectsPort.loadAllTranslated(kit.getActiveVersionId()).stream()
             .map(this::toSubject)
-            .toList();
-
-        var questionnaires = loadQuestionnairesPort.loadAllTranslated(kit.getActiveVersionId()).stream()
-            .map(this::toQuestionnaire)
-            .toList();
-
-        var maturityLevels = loadMaturityLevelsPort.loadAllTranslated(kit.getActiveVersionId()).stream()
-            .map(this::toMaturityLevel)
-            .toList();
-
-        var kitTags = loadKitTagListPort.loadByKitId(param.getKitId()).stream()
-            .map(this::toKitTag)
             .toList();
 
         var languages = loadKitLanguagesPort.loadByKitId(param.getKitId()).stream()
@@ -81,14 +65,9 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
             kit.getCreationTime(),
             kit.getLastModificationTime(),
             new Like(stats.likes(), checkKitLikeExistencePort.exist(param.getKitId(), param.getCurrentUserId())),
-            stats.assessmentCounts(),
             subjects.size(),
-            stats.questionnairesCount(),
             kit.getExpertGroupId(),
             subjects,
-            questionnaires,
-            maturityLevels,
-            kitTags,
             new Metadata(goal, context),
             languages);
     }
@@ -106,18 +85,6 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
 
     private MinimalAttribute toAttribute(Attribute attribute) {
         return new MinimalAttribute(attribute.getId(), attribute.getTitle(), attribute.getDescription());
-    }
-
-    private MinimalQuestionnaire toQuestionnaire(Questionnaire questionnaire) {
-        return new MinimalQuestionnaire(questionnaire.getId(), questionnaire.getTitle(), questionnaire.getDescription());
-    }
-
-    private MinimalMaturityLevel toMaturityLevel(MaturityLevel level) {
-        return new MinimalMaturityLevel(level.getId(), level.getTitle(), level.getDescription(), level.getValue(), level.getIndex());
-    }
-
-    private MinimalKitTag toKitTag(KitTag tag) {
-        return new MinimalKitTag(tag.getId(), tag.getTitle());
     }
 
     private Language toLanguage(KitLanguage kitLanguage) {
