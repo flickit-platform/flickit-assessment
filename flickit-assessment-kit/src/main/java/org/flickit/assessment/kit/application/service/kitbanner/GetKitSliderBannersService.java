@@ -36,9 +36,28 @@ public class GetKitSliderBannersService implements GetKitSliderBannersUseCase {
         return toResult(banners);
     }
 
-    Result toResult(KitBanner kitBanner) {
-        return new Result(kitBanner.getKitId(),
-                createFileDownloadLinkPort.createDownloadLink(kitBanner.getPath(), EXPIRY_DURATION)
-        );
+    List<Result> toResult(Map<Long, List<KitBanner>> map) {
+        return map.entrySet().stream()
+            .map(entry -> {
+                Long kitId = entry.getKey();
+                List<KitBanner> banners = entry.getValue();
+
+                String smallBanner = banners.stream()
+                    .filter(b -> b.getSize() == ImageSize.SMALL)
+                    .findFirst()
+                    .map(KitBanner::getPath)
+                    .orElse(null);
+
+                String largeBanner = banners.stream()
+                    .filter(b -> b.getSize() == ImageSize.LARGE)
+                    .findFirst()
+                    .map(KitBanner::getPath)
+                    .orElse(null);
+
+                return new Result(kitId,
+                    createFileDownloadLinkPort.createDownloadLink(smallBanner, EXPIRY_DURATION),
+                    createFileDownloadLinkPort.createDownloadLink(largeBanner, EXPIRY_DURATION));
+            })
+            .toList();
     }
 }
