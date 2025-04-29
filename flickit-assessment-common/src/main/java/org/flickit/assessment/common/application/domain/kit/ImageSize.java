@@ -17,11 +17,11 @@ public enum ImageSize {
         return values()[id];
     }
 
-    public static ImageSize getDefault() {
+    private static ImageSize getDefault() {
         return LARGE;
     }
 
-    public static boolean isValidId(int id) {
+    private static boolean isValidId(int id) {
         return id >= 0 && id < ImageSize.values().length;
     }
 }
