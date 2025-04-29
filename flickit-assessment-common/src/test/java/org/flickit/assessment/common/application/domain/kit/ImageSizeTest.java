@@ -17,4 +17,9 @@ public class ImageSizeTest {
         assertEquals("SMALL", ImageSize.SMALL.name());
         assertEquals("LARGE", ImageSize.LARGE.name());
     }
+
+    @Test
+    void testImageSize_SizeOfItemsShouldNotBeChanged() {
+        assertEquals(2, ImageSize.values().length);
+    }
 }
