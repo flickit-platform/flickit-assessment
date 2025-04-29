@@ -10,6 +10,8 @@ import org.flickit.assessment.kit.application.domain.KitBanner;
 public class KitBannerMapper {
 
     public static KitBanner toDomainModel(KitBannerJpaEntity entity) {
-        return new KitBanner(entity.getKitId(), ImageSize.valueOfById(entity.getSize()), entity.getPath());
+        return new KitBanner(entity.getKitId(),
+            ImageSize.valueOfById(entity.getSize()),
+            entity.getPath());
     }
 }

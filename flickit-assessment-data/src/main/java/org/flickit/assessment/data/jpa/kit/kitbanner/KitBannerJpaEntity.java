@@ -35,5 +35,4 @@ public class KitBannerJpaEntity {
 
     @Column(name = "size", nullable = false)
     private int size;
-
 }

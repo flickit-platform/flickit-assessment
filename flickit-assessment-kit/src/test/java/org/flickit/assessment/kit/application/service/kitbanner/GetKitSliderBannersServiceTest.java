@@ -35,13 +35,14 @@ class GetKitSliderBannersServiceTest {
 
     @Test
     void getKitSliderBanners_whenParamsAreValid_thenReturnSliderBanners() {
+        String pathToMinio = "path/to/minio";
         var param = createParam(GetKitSliderBannersUseCase.Param.ParamBuilder::build);
-        var sliderBanners = List.of(KitBannerMother.createWithIdAndSize(1L, ImageSize.SMALL),
-            KitBannerMother.createWithIdAndSize(1L, ImageSize.LARGE),
-            KitBannerMother.createWithIdAndSize(2L, ImageSize.SMALL));
+        var sliderBanners = List.of(KitBannerMother.createWithKitIdIdAndSize(1L, ImageSize.SMALL),
+            KitBannerMother.createWithKitIdIdAndSize(1L, ImageSize.LARGE),
+            KitBannerMother.createWithKitIdIdAndSize(2L, ImageSize.SMALL));
 
         when(loadKitBannersPort.loadSliderBanners(KitLanguage.valueOf(param.getLang()))).thenReturn(sliderBanners);
-        when(createDownloadLinkPort.createDownloadLink(anyString(), any())).thenReturn("path/to/minio");
+        when(createDownloadLinkPort.createDownloadLink(anyString(), any())).thenReturn(pathToMinio);
 
         var result = service.getSliderBanners(param);
 
@@ -49,13 +50,13 @@ class GetKitSliderBannersServiceTest {
         var banner1 = result.stream()
             .filter(b -> b.kitId() == 1)
             .findFirst().orElseThrow();
-        assertNotNull(banner1.smallBanner());
-        assertNotNull(banner1.largeBanner());
+        assertEquals(pathToMinio, banner1.smallBanner());
+        assertEquals(pathToMinio, banner1.largeBanner());
 
         var banner2 = result.stream()
             .filter(b -> b.kitId() == 2)
             .findFirst().orElseThrow();
-        assertNotNull(banner2.smallBanner());
+        assertEquals(pathToMinio, banner2.smallBanner());
         assertNull(banner2.largeBanner());
 
         verify(createDownloadLinkPort, times(sliderBanners.size())).createDownloadLink(anyString(), any());

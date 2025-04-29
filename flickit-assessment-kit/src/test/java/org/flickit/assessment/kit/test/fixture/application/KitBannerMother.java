@@ -5,7 +5,7 @@ import org.flickit.assessment.kit.application.domain.KitBanner;
 
 public class KitBannerMother {
 
-    public static KitBanner createWithIdAndSize(long kitId, ImageSize size) {
+    public static KitBanner createWithKitIdIdAndSize(long kitId, ImageSize size) {
         return new KitBanner(
             kitId,
             size,
