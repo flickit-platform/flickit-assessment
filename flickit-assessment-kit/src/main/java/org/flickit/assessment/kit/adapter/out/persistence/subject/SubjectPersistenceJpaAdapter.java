@@ -153,12 +153,13 @@ public class SubjectPersistenceJpaAdapter implements
 
         var language = KitLanguage.valueOf(LocaleContextHolder.getLocale().getLanguage().toUpperCase());
         return subjectEntities.stream()
-            .map(e -> SubjectMapper.mapToDomainModel(e,
-                Optional.ofNullable(subjectIdToAttrEntities.get(e.getId()))
+            .map(s -> {
+                var attributes = Optional.ofNullable(subjectIdToAttrEntities.get(s.getId()))
                     .orElse(Collections.emptyList()).stream()
                     .map(entity -> AttributeMapper.mapToDomainModel(entity, language))
-                    .toList(),
-                language))
+                    .toList();
+                return SubjectMapper.mapToDomainModel(s, attributes, language);
+            })
             .toList();
     }
 
