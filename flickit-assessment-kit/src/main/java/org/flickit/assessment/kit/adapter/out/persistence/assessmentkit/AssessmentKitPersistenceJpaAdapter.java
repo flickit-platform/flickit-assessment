@@ -205,7 +205,10 @@ public class AssessmentKitPersistenceJpaAdapter implements
                                                                              int page,
                                                                              int size) {
         var kitLanguageIds = resolveKitLanguages(kitLanguages);
-        var pageResult = repository.findAllPublishedAndNotPrivateOrderByTitle(kitLanguageIds, PageRequest.of(page, size));
+        var ids = repository.findAllPublishedAndNotPrivate(kitLanguageIds);
+        var sort = Sort.by(Sort.Order.asc(AssessmentKitJpaEntity.Fields.title));
+        var pageResult = repository.findAllByIdIn(ids, PageRequest.of(page, size, sort));
+
         return toLoadPublishedKitsPortResult(pageResult);
     }
 
@@ -216,9 +219,10 @@ public class AssessmentKitPersistenceJpaAdapter implements
                                                                               int page,
                                                                               int size) {
         var kitLanguageIds = resolveKitLanguages(kitLanguages);
-        var pageResult = repository.findAllPublishedAndPrivateByUserIdOrderByTitle(userId,
-            kitLanguageIds,
-            PageRequest.of(page, size));
+        var ids = repository.findAllPublishedAndPrivateByUserId(userId, kitLanguageIds);
+        var sort = Sort.by(Sort.Order.asc(AssessmentKitJpaEntity.Fields.title));
+        var pageResult = repository.findAllByIdIn(ids, PageRequest.of(page, size, sort));
+
         return toLoadPublishedKitsPortResult(pageResult);
     }
 
@@ -229,9 +233,12 @@ public class AssessmentKitPersistenceJpaAdapter implements
                                                                                        int page,
                                                                                        int size) {
         var kitLanguageIds = resolveKitLanguages(kitLanguages);
-        var pageResult = repository.findAllPublishedOrderByTitle(currentUserId,
-            kitLanguageIds,
-            PageRequest.of(page, size));
+        var ids = repository.findAllPublished(currentUserId, kitLanguageIds);
+        var sort = Sort.by(
+            Sort.Order.desc(AssessmentKitJpaEntity.Fields.isPrivate),
+            Sort.Order.asc(AssessmentKitJpaEntity.Fields.title));
+        var pageResult = repository.findAllByIdIn(ids, PageRequest.of(page, size, sort));
+
         return toLoadPublishedKitsPortResult(pageResult);
     }
 
