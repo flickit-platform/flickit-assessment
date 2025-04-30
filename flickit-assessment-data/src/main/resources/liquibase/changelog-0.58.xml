@@ -31,4 +31,56 @@
                              columnNames="kit_id, lang_id, size"/>
     </changeSet>
 
+    <changeSet id="0.58-05" author="Maziyar Gerami">
+        <dropUniqueConstraint tableName="fak_kit_banner" constraintName="fk_fak_kitbanner_assessmentkit"/>
+    </changeSet>
+
+    <changeSet id="0.58-06" author="Maziyar Gerami">
+        <addForeignKeyConstraint baseTableName="fak_kit_banner"
+                                 baseColumnNames="kit_id"
+                                 referencedTableName="fak_assessment_kit"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fak_kitbanner_assessmentkit"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="0.58-07" author="Maziyar Gerami">
+        <dropUniqueConstraint tableName="fac_evidence" constraintName="fk_fac_evidence_assessment"/>
+    </changeSet>
+
+    <changeSet id="0.58-08" author="Maziyar Gerami">
+        <addForeignKeyConstraint baseTableName="fac_evidence"
+                                 baseColumnNames="assessment_id"
+                                 referencedTableName="fac_assessment"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fac_evidence_assessment"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="0.58-09" author="Maziyar Gerami">
+        <dropUniqueConstraint tableName="fac_assessment_result" constraintName="fk_fac_assessmentresult_assessment"/>
+    </changeSet>
+
+    <changeSet id="0.58-10" author="Maziyar Gerami">
+        <addForeignKeyConstraint baseTableName="fac_assessment_result"
+                                 baseColumnNames="assessment_id"
+                                 referencedTableName="fac_assessment"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fac_assessmentresult_assessment"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="0.58-11" author="Maziyar Gerami">
+        <dropUniqueConstraint tableName="fac_evidence_attachment" constraintName="fk_fac_evidence_attachment_evidence"/>
+    </changeSet>
+
+    <changeSet id="0.58-12" author="Maziyar Gerami">
+        <addForeignKeyConstraint baseTableName="fac_evidence_attachment"
+                                 baseColumnNames="evidence_id"
+                                 referencedTableName="fac_evidence"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fac_evidence_attachment_evidence"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
 </databaseChangeLog>
