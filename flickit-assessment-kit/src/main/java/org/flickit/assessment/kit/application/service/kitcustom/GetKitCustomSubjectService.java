@@ -2,9 +2,9 @@ package org.flickit.assessment.kit.application.service.kitcustom;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.application.domain.kitcustom.KitCustomData;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
-import org.flickit.assessment.common.application.domain.kitcustom.KitCustomData;
 import org.flickit.assessment.kit.application.port.in.kitcustom.GetKitCustomSubjectUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.kitcustom.LoadKitCustomPort;
@@ -57,15 +57,20 @@ public class GetKitCustomSubjectService implements GetKitCustomSubjectUseCase {
         var items = paginatedResponse.getItems().stream()
             .map(e -> {
                 var attributes = e.getAttributes().stream()
-                    .map(x -> new Subject.Attribute(x.getId(),
+                    .map(x -> new Attribute(x.getId(),
                         x.getTitle(),
                         x.getIndex(),
-                        new Weight(x.getWeight(), attributeIdToWeight.get(x.getId()))))
+                        new Weight(x.getWeight(), attributeIdToWeight.get(x.getId())),
+                        x.getTranslations()))
                     .toList();
 
-                return new Subject(e.getId(), e.getTitle(), e.getIndex(), new Weight(e.getWeight(),
-                    subjectIdToWeight.get(e.getId())), attributes);
-
+                return new Subject(e.getId(),
+                    e.getTitle(),
+                    e.getIndex(),
+                    new Weight(e.getWeight(), subjectIdToWeight.get(e.getId())),
+                    attributes,
+                    Language.of(kit.getLanguage()),
+                    e.getTranslations());
             }).toList();
 
         return new PaginatedResponse<>(items,
