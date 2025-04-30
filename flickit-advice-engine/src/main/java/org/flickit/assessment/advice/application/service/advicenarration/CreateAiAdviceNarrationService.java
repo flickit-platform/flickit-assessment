@@ -115,7 +115,7 @@ public class CreateAiAdviceNarrationService implements CreateAiAdviceNarrationUs
         var assessment = loadAssessmentPort.loadById(assessmentId);
         var assessmentTitle = assessment.getShortTitle() != null ? assessment.getShortTitle() : assessment.getTitle();
 
-        var maturityLevelsMap = loadMaturityLevelsPort.loadAll(assessmentResult.getKitVersionId()).stream()
+        var maturityLevelsMap = loadMaturityLevelsPort.loadAll(assessmentId).stream()
             .collect(Collectors.toMap(MaturityLevel::getId, MaturityLevel::getTitle));
 
         List<Long> targetAttributeIds = targets.stream()
