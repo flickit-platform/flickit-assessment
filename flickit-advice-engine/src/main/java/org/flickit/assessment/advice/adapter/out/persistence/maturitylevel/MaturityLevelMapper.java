@@ -12,7 +12,7 @@ import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MaturityLevelMapper {
 
-    public static MaturityLevel mapToDomainModel(MaturityLevelJpaEntity entity, KitLanguage language) {
+    public static MaturityLevel mapToDomainModel(MaturityLevelJpaEntity entity, @Nullable KitLanguage language) {
         var translation = getTranslation(entity, language);
         return new MaturityLevel(
             entity.getId(),
