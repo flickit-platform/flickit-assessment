@@ -1,6 +1,7 @@
 package org.flickit.assessment.advice.test.fixture.application;
 
 import org.flickit.assessment.advice.application.domain.AssessmentResult;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 
 import java.util.UUID;
 
@@ -11,6 +12,7 @@ public class AssessmentResultMother {
     public static AssessmentResult createAssessmentResult() {
         return new AssessmentResult(UUID.randomUUID(),
             ++kitVersionId,
-            UUID.randomUUID());
+            UUID.randomUUID(),
+            KitLanguage.FA);
     }
 }
