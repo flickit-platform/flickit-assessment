@@ -50,12 +50,12 @@ public class GetSpaceAssessmentListService implements GetSpaceAssessmentListUseC
                     viewable ? e.confidenceValue() : null,
                     e.isCalculateValid(),
                     e.isConfidenceValid(),
+                    Language.of(e.language()),
                     e.hasReport(),
                     new SpaceAssessmentListItem.Permissions(e.manageable(),
                         viewable,
                         canViewDashboard,
-                        canViewQuestionnaires),
-                    Language.of(e.language()));
+                        canViewQuestionnaires));
             }).toList();
 
         return new PaginatedResponse<>(items,

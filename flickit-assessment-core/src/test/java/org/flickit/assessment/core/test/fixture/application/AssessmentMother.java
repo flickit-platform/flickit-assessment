@@ -61,15 +61,15 @@ public class AssessmentMother {
         return new AssessmentListItem(
             UUID.randomUUID(),
             "my-assessment-" + counter,
-            new AssessmentListItem.Kit(kitId, "kitTitle"+kitId, 2),
+            new AssessmentListItem.Kit(kitId, "kitTitle" + kitId, 2),
             new AssessmentListItem.Space(spaceId, "spaceTitle"),
             LocalDateTime.now(),
             new AssessmentListItem.MaturityLevel(counter, "levelTitle" + counter, 1, 2),
             new Random().nextDouble() * 100,
             Boolean.TRUE,
             Boolean.TRUE,
+            KitLanguage.FA,
             manageable,
-            Boolean.FALSE,
-            KitLanguage.FA);
+            Boolean.FALSE);
     }
 }
