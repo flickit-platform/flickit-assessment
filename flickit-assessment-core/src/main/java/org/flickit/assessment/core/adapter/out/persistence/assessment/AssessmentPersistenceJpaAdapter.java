@@ -117,7 +117,8 @@ public class AssessmentPersistenceJpaAdapter implements
                     e.getAssessmentResult().getIsCalculateValid(),
                     e.getAssessmentResult().getIsConfidenceValid(),
                     null,
-                    false);
+                    false,
+                    KitLanguage.valueOfById(e.getAssessmentKit().getLanguageId()));
             }).toList();
 
         return new PaginatedResponse<>(
@@ -180,7 +181,8 @@ public class AssessmentPersistenceJpaAdapter implements
                     e.getAssessmentResult().getIsCalculateValid(),
                     e.getAssessmentResult().getIsConfidenceValid(),
                     e.getManageable(),
-                    e.getHasReport());
+                    e.getHasReport(),
+                    KitLanguage.valueOfById(e.getAssessmentResult().getLangId()));
             }).toList();
 
         return new PaginatedResponse<>(
