@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.core.application.domain.AssessmentListItem;
 
 import java.time.LocalDateTime;
@@ -56,12 +57,19 @@ public interface GetSpaceAssessmentListUseCase {
                                    boolean isCalculateValid,
                                    boolean isConfidenceValid,
                                    boolean hasReport,
-                                   Permissions permissions) {
+                                   Permissions permissions,
+                                   Language language) {
 
         public record Permissions(boolean canManageSettings,
                                   boolean canViewReport,
                                   boolean canViewDashboard,
                                   boolean canViewQuestionnaires) {
+        }
+
+        public record Language(String code, String title) {
+            public static Language of(KitLanguage language) {
+                return new Language(language.getCode(), language.getTitle());
+            }
         }
     }
 }

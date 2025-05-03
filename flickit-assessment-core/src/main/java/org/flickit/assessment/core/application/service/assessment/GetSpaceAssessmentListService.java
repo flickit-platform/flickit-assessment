@@ -5,6 +5,7 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentPer
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.port.in.assessment.GetSpaceAssessmentListUseCase;
+import org.flickit.assessment.core.application.port.in.assessment.GetSpaceAssessmentListUseCase.SpaceAssessmentListItem.Language;
 import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentListPort;
 import org.flickit.assessment.core.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.springframework.stereotype.Service;
@@ -53,7 +54,8 @@ public class GetSpaceAssessmentListService implements GetSpaceAssessmentListUseC
                     new SpaceAssessmentListItem.Permissions(e.manageable(),
                         viewable,
                         canViewDashboard,
-                        canViewQuestionnaires));
+                        canViewQuestionnaires),
+                    Language.of(e.language()));
             }).toList();
 
         return new PaginatedResponse<>(items,
