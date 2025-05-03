@@ -97,23 +97,10 @@
     </changeSet>
 
     <changeSet id="0.58-15" author="Maziyar Gerami">
-        <dropUniqueConstraint tableName="fac_attribute_maturity_score" constraintName="fk_fac_maturityscore_attributevalue"/>
-    </changeSet>
-
-    <changeSet id="0.58-16" author="Maziyar Gerami">
-        <addForeignKeyConstraint baseTableName="fac_attribute_maturity_score"
-                                 baseColumnNames="attribute_value_id"
-                                 referencedTableName="fac_attribute_value"
-                                 referencedColumnNames="id"
-                                 constraintName="fk_fac_maturityscore_attributevalue"
-                                 onDelete="CASCADE"/>
-    </changeSet>
-
-    <changeSet id="0.58-17" author="Maziyar Gerami">
         <dropUniqueConstraint tableName="fac_attribute_value" constraintName="fk_fac_attributevalue_assessmentresult"/>
     </changeSet>
 
-    <changeSet id="0.58-18" author="Maziyar Gerami">
+    <changeSet id="0.58-16" author="Maziyar Gerami">
         <addForeignKeyConstraint baseTableName="fac_attribute_value"
                                  baseColumnNames="assessment_result_id"
                                  constraintName="fk_fac_attributevalue_assessmentresult"
@@ -122,11 +109,11 @@
                                  onDelete="CASCADE"/>
     </changeSet>
 
-    <changeSet id="0.58-19" author="Maziyar Gerami">
+    <changeSet id="0.58-17" author="Maziyar Gerami">
         <dropUniqueConstraint tableName="fac_subject_value" constraintName="fk_fac_subjectvalue_assessmentresult"/>
     </changeSet>
 
-    <changeSet id="0.58-20" author="Maziyar Gerami">
+    <changeSet id="0.58-18" author="Maziyar Gerami">
         <addForeignKeyConstraint baseTableName="fac_subject_value"
                                  baseColumnNames="assessment_result_id"
                                  constraintName="fk_fac_subjectvalue_assessmentresult"
@@ -135,11 +122,11 @@
                                  onDelete="CASCADE"/>
     </changeSet>
 
-    <changeSet id="0.58-21" author="Maziyar Gerami">
+    <changeSet id="0.58-19" author="Maziyar Gerami">
         <dropUniqueConstraint tableName="fac_answer" constraintName="fk_fac_answer_assessmentresult"/>
     </changeSet>
 
-    <changeSet id="0.58-22" author="Maziyar Gerami">
+    <changeSet id="0.58-20" author="Maziyar Gerami">
         <addForeignKeyConstraint baseTableName="fac_answer"
                                  baseColumnNames="assessment_result_id"
                                  referencedTableName="fac_assessment_result"
@@ -148,11 +135,11 @@
                                  onDelete="CASCADE"/>
     </changeSet>
 
-    <changeSet id="0.58-23" author="Maziyar Gerami">
+    <changeSet id="0.58-21" author="Maziyar Gerami">
         <dropUniqueConstraint tableName="fac_assessment_invitee" constraintName="fk_fac_assessment_invitee_assessment"/>
     </changeSet>
 
-    <changeSet id="0.58-24" author="Maziyar Gerami">
+    <changeSet id="0.58-22" author="Maziyar Gerami">
         <addForeignKeyConstraint baseTableName="fac_assessment_invitee"
                                  baseColumnNames="assessment_id"
                                  referencedTableName="fac_assessment"
