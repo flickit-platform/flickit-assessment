@@ -122,4 +122,43 @@
                                  onDelete="CASCADE"/>
     </changeSet>
 
+    <changeSet id="0.58-19" author="Maziyar Gerami">
+        <dropUniqueConstraint tableName="fac_subject_value" constraintName="fk_fac_subjectvalue_assessmentresult"/>
+    </changeSet>
+
+    <changeSet id="0.58-20" author="Maziyar Gerami">
+        <addForeignKeyConstraint baseTableName="fac_subject_value"
+                                 baseColumnNames="assessment_result_id"
+                                 constraintName="fk_fac_subjectvalue_assessmentresult"
+                                 referencedTableName="fac_assessment_result"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="0.58-21" author="Maziyar Gerami">
+        <dropUniqueConstraint tableName="fac_answer" constraintName="fk_fac_answer_assessmentresult"/>
+    </changeSet>
+
+    <changeSet id="0.58-22" author="Maziyar Gerami">
+        <addForeignKeyConstraint baseTableName="fac_answer"
+                                 baseColumnNames="assessment_result_id"
+                                 referencedTableName="fac_assessment_result"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fac_answer_assessmentresult"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="0.58-23" author="Maziyar Gerami">
+        <dropUniqueConstraint tableName="fac_assessment_invitee" constraintName="fk_fac_assessment_invitee_assessment"/>
+    </changeSet>
+
+    <changeSet id="0.58-24" author="Maziyar Gerami">
+        <addForeignKeyConstraint baseTableName="fac_assessment_invitee"
+                                 baseColumnNames="assessment_id"
+                                 referencedTableName="fac_assessment"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fac_assessment_invitee_assessment"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
 </databaseChangeLog>
