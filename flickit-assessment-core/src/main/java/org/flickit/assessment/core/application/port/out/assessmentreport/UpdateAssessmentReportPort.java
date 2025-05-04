@@ -1,6 +1,7 @@
 package org.flickit.assessment.core.application.port.out.assessmentreport;
 
 import org.flickit.assessment.core.application.domain.AssessmentReportMetadata;
+import org.flickit.assessment.core.application.domain.VisibilityType;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -19,6 +20,7 @@ public interface UpdateAssessmentReportPort {
 
     record UpdatePublishParam(UUID assessmentResultId,
                               boolean published,
+                              VisibilityType visibilityType,
                               LocalDateTime lastModificationTime,
                               UUID lastModifiedBy) {
     }
