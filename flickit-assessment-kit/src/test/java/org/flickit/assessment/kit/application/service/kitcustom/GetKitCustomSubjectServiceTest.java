@@ -1,10 +1,10 @@
 package org.flickit.assessment.kit.application.service.kitcustom;
 
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.application.domain.kitcustom.KitCustomData;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.Attribute;
-import org.flickit.assessment.common.application.domain.kitcustom.KitCustomData;
 import org.flickit.assessment.kit.application.domain.Subject;
 import org.flickit.assessment.kit.application.port.in.kitcustom.GetKitCustomSubjectUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
@@ -103,15 +103,14 @@ class GetKitCustomSubjectServiceTest {
         assertEquals(subjectCustom.weight(), actualItem.weight().customValue());
         assertEquals(expectedItem.getWeight(), actualItem.weight().defaultValue());
         assertEquals(expectedItem.getAttributes().size(), actualItem.attributes().size());
+        assertEquals(kit.getLanguage().getCode(), actualItem.mainLanguage().code());
+        assertEquals(kit.getLanguage().getTitle(), actualItem.mainLanguage().title());
+        assertEquals(expectedItem.getTranslations(), actualItem.translations());
 
         var expectedAttribute = expectedItem.getAttributes().getFirst();
         var actualAttribute = actualItem.attributes().getFirst();
-        assertNotNull(actualAttribute);
-        assertEquals(expectedAttribute.getId(), actualAttribute.id());
-        assertEquals(expectedAttribute.getTitle(), actualAttribute.title());
-        assertEquals(expectedAttribute.getIndex(), actualAttribute.index());
+        assertAttribute(expectedAttribute, actualAttribute);
         assertEquals(attributeCustom.weight(), actualAttribute.weight().customValue());
-        assertEquals(expectedAttribute.getWeight(), actualAttribute.weight().defaultValue());
         assertPaginationProperties(paginatedResponse, resultPaginatedResponse);
     }
 
@@ -155,15 +154,14 @@ class GetKitCustomSubjectServiceTest {
         assertEquals(subjectCustom.weight(), actualSubject.weight().customValue());
         assertEquals(expectedSubject.getWeight(), actualSubject.weight().defaultValue());
         assertEquals(expectedSubject.getAttributes().size(), actualSubject.attributes().size());
+        assertEquals(kit.getLanguage().getCode(), actualSubject.mainLanguage().code());
+        assertEquals(kit.getLanguage().getTitle(), actualSubject.mainLanguage().title());
+        assertEquals(expectedSubject.getTranslations(), actualSubject.translations());
 
         var expectedAttribute = expectedSubject.getAttributes().getFirst();
         var actualAttribute = actualSubject.attributes().getFirst();
-        assertNotNull(actualAttribute);
-        assertEquals(expectedAttribute.getId(), actualAttribute.id());
-        assertEquals(expectedAttribute.getTitle(), actualAttribute.title());
-        assertEquals(expectedAttribute.getIndex(), actualAttribute.index());
+        assertAttribute(expectedAttribute, actualAttribute);
         assertEquals(attributeCustom.weight(), actualAttribute.weight().customValue());
-        assertEquals(expectedAttribute.getWeight(), actualAttribute.weight().defaultValue());
         assertPaginationProperties(paginatedResponse, resultPaginatedResponse);
 
         verifyNoInteractions(checkKitUserAccessPort);
@@ -209,23 +207,19 @@ class GetKitCustomSubjectServiceTest {
         assertEquals(expectedSubject.getWeight(), actualSubject.weight().defaultValue());
         assertNull(actualSubject.weight().customValue());
         assertEquals(expectedSubject.getAttributes().size(), actualSubject.attributes().size());
+        assertEquals(kit.getLanguage().getCode(), actualSubject.mainLanguage().code());
+        assertEquals(kit.getLanguage().getTitle(), actualSubject.mainLanguage().title());
+        assertEquals(expectedSubject.getTranslations(), actualSubject.translations());
 
         var expectedFlexibilityAttr = expectedSubject.getAttributes().getFirst();
         var actualFlexibilityAttr = actualSubject.attributes().getFirst();
+        assertAttribute(expectedFlexibilityAttr, actualFlexibilityAttr);
         assertNotNull(actualFlexibilityAttr);
-        assertEquals(expectedFlexibilityAttr.getId(), actualFlexibilityAttr.id());
-        assertEquals(expectedFlexibilityAttr.getTitle(), actualFlexibilityAttr.title());
-        assertEquals(expectedFlexibilityAttr.getIndex(), actualFlexibilityAttr.index());
         assertEquals(flexibilityAttrCustom.weight(), actualFlexibilityAttr.weight().customValue());
-        assertEquals(expectedFlexibilityAttr.getWeight(), actualFlexibilityAttr.weight().defaultValue());
 
         var expectedMaintainabilityAttr = expectedSubject.getAttributes().get(1);
         var actualMaintainabilityAttr = actualSubject.attributes().get(1);
-        assertNotNull(actualMaintainabilityAttr);
-        assertEquals(expectedMaintainabilityAttr.getId(), actualMaintainabilityAttr.id());
-        assertEquals(expectedMaintainabilityAttr.getTitle(), actualMaintainabilityAttr.title());
-        assertEquals(expectedMaintainabilityAttr.getIndex(), actualMaintainabilityAttr.index());
-        assertEquals(expectedMaintainabilityAttr.getWeight(), actualMaintainabilityAttr.weight().defaultValue());
+        assertAttribute(expectedMaintainabilityAttr, actualMaintainabilityAttr);
         assertNull(actualMaintainabilityAttr.weight().customValue());
         assertPaginationProperties(paginatedResponse, resultPaginatedResponse);
 
@@ -272,21 +266,29 @@ class GetKitCustomSubjectServiceTest {
         assertEquals(subjectCustom.weight(), actualSubject.weight().customValue());
         assertEquals(expectedSubject.getWeight(), actualSubject.weight().defaultValue());
         assertEquals(expectedSubject.getAttributes().size(), actualSubject.attributes().size());
+        assertEquals(kit.getLanguage().getCode(), actualSubject.mainLanguage().code());
+        assertEquals(kit.getLanguage().getTitle(), actualSubject.mainLanguage().title());
+        assertEquals(expectedSubject.getTranslations(), actualSubject.translations());
 
         for (int i = 0; i < expectedSubject.getAttributes().size(); i++) {
             var expectedAttribute = expectedSubject.getAttributes().get(i);
             var actualAttribute = actualSubject.attributes().get(i);
-            assertNotNull(actualAttribute);
-            assertEquals(expectedAttribute.getId(), actualAttribute.id());
-            assertEquals(expectedAttribute.getTitle(), actualAttribute.title());
-            assertEquals(expectedAttribute.getIndex(), actualAttribute.index());
-            assertEquals(expectedAttribute.getWeight(), actualAttribute.weight().defaultValue());
+            assertAttribute(expectedAttribute, actualAttribute);
             assertNull(actualAttribute.weight().customValue());
         }
 
         assertPaginationProperties(paginatedResponse, resultPaginatedResponse);
 
         verifyNoInteractions(checkKitUserAccessPort);
+    }
+
+    private static void assertAttribute(Attribute expectedAttribute, GetKitCustomSubjectUseCase.Attribute actualAttribute) {
+        assertNotNull(actualAttribute);
+        assertEquals(expectedAttribute.getId(), actualAttribute.id());
+        assertEquals(expectedAttribute.getTitle(), actualAttribute.title());
+        assertEquals(expectedAttribute.getIndex(), actualAttribute.index());
+        assertEquals(expectedAttribute.getWeight(), actualAttribute.weight().defaultValue());
+        assertEquals(expectedAttribute.getTranslations(), actualAttribute.translations());
     }
 
     private static void assertPaginationProperties(PaginatedResponse<Subject> expectedPaginatedResponse, PaginatedResponse<GetKitCustomSubjectUseCase.Subject> resultPaginatedResponse) {
