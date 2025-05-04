@@ -31,6 +31,13 @@ public class QuestionMother {
             MeasureMother.createMeasure());
     }
 
+    public static Question withImpactsOnLevel23WithWeights(long attributeId, int level2ImpactWeight, int level3ImpactWeight) {
+        return new Question(id++, "question" + id, index++, "hint", Boolean.FALSE,
+            List.of(QuestionImpactMother.onLevelTwo(level2ImpactWeight, attributeId), QuestionImpactMother.onLevelThree(level3ImpactWeight, attributeId)),
+            QuestionnaireMother.createQuestionnaire(),
+            MeasureMother.createMeasure());
+    }
+
     public static Question withImpactsOnLevel24(long attributeId) {
         return new Question(id++, "question" + id, index++, null, Boolean.FALSE,
             List.of(QuestionImpactMother.onLevelTwo(1, attributeId), QuestionImpactMother.onLevelFour(1, attributeId)),
