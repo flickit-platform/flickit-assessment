@@ -39,7 +39,6 @@ public interface GetKitListUseCase {
         @Max(value = 100, message = GET_KIT_LIST_SIZE_MAX)
         int size;
 
-        @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
         @Builder
