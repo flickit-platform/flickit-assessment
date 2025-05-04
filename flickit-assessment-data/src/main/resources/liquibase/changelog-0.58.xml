@@ -31,4 +31,12 @@
                              columnNames="kit_id, lang_id, size"/>
     </changeSet>
 
+    <changeSet id="0.58-05" author="Mahdi Rezazadeh">
+        <addColumn tableName="fac_assessment_report">
+            <column name="link_hash" type="uuid" defaultValueComputed="gen_random_uuid()">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
