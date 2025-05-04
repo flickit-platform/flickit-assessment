@@ -2,7 +2,6 @@ package org.flickit.assessment.kit.application.port.in.assessmentkit;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
@@ -16,7 +15,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 public interface GetKitListUseCase {
