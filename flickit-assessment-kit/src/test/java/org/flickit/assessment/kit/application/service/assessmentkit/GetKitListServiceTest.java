@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.application.service.assessmentkit;
 
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitListUseCase.Param;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CountKitListStatsPort;
@@ -24,6 +25,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_LIST_NOT_ALLOWED;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.privateKit;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
 import static org.junit.jupiter.api.Assertions.*;
@@ -50,6 +52,27 @@ class GetKitListServiceTest {
 
     @Mock
     private CreateFileDownloadLinkPort createFileDownloadLinkPort;
+
+    @Test
+    void testGetKitList_whenUserIdIsNullAndPrivateKitsAreWanted_thenThrowValidationException() {
+        var param = createParam(p -> p
+            .isPrivate(true)
+            .currentUserId(null));
+
+        var throwable = assertThrows(ValidationException.class, () -> service.getKitList(param));
+        assertEquals(GET_KIT_LIST_NOT_ALLOWED, throwable.getMessageKey());
+    }
+
+    @Test
+    void testGetKitList_whenUserIdIsNullAndPrivateAndPublicKitsAreWanted_thenThrowValidationException() {
+        var param = createParam(p -> p
+            .isPrivate(null)
+            .currentUserId(null));
+
+        var throwable = assertThrows(ValidationException.class, () -> service.getKitList(param));
+        assertEquals(GET_KIT_LIST_NOT_ALLOWED, throwable.getMessageKey());
+    }
+
 
     @Test
     void testGetKitList_whenPublicKitsAreWanted_thenReturnPublicKits() {

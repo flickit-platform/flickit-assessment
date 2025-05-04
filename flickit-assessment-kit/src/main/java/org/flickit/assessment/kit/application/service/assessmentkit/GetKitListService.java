@@ -4,6 +4,7 @@ import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitListUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CountKitListStatsPort;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toSet;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_LIST_NOT_ALLOWED;
 
 @Service
 @Transactional(readOnly = true)
@@ -41,8 +43,13 @@ public class GetKitListService implements GetKitListUseCase {
 
     @Override
     public PaginatedResponse<KitListItem> getKitList(Param param) {
+        if(param.getCurrentUserId() == null &&
+            (param.getIsPrivate() == null || Boolean.TRUE.equals(param.getIsPrivate())))
+            throw new ValidationException(GET_KIT_LIST_NOT_ALLOWED);
+
         var kitLanguages = resolveKitLanguages(param.getLangs());
         PaginatedResponse<LoadPublishedKitListPort.Result> kitsPage;
+
         if (param.getIsPrivate() == null) {
             kitsPage = loadPublishedKitListPort.loadPrivateAndPublicKits(param.getCurrentUserId(),
                 kitLanguages,
