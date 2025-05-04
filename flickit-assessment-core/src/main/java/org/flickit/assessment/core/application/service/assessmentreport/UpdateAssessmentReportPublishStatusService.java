@@ -46,7 +46,7 @@ public class UpdateAssessmentReportPublishStatusService implements UpdateAssessm
             createAssessmentReportPort.persist(assessmentReport);
         }
 
-        if (param.getPublished())
+        if (Boolean.TRUE.equals(param.getPublished()))
             updateAssessmentReportPort.updatePublishStatus(buildPublishParam(assessmentResult.getId(), param.getCurrentUserId()));
         else
             updateAssessmentReportPort.updatePublishStatus(buildUnpublishParam(assessmentResult.getId(), assessmentReport.getVisibility(), param.getCurrentUserId()));
