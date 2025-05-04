@@ -310,6 +310,31 @@
 					"response": []
 				},
 				{
+					"name": "Get Public kits",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/public/assessment-kits",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"public",
+								"assessment-kits"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Get Kit Minimal Info",
 					"request": {
 						"method": "GET",
