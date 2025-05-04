@@ -70,7 +70,7 @@ class GetKitListServiceTest {
             .currentUserId(null));
 
         var throwable = assertThrows(ValidationException.class, () -> service.getKitList(param));
-        assertEquals(GET_KIT_LIST_NOT_ALLOWED, throwable.getMessageKey());
+        assertEquals(COMMON_CURRENT_USER_ID_NOT_NULL, throwable.getMessageKey());
     }
 
     @Test
