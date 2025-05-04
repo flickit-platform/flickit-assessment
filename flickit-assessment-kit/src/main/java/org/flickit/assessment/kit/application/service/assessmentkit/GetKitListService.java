@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toSet;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_LIST_NOT_ALLOWED;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 
 @Service
 @Transactional(readOnly = true)
@@ -45,7 +45,7 @@ public class GetKitListService implements GetKitListUseCase {
     public PaginatedResponse<KitListItem> getKitList(Param param) {
         if(param.getCurrentUserId() == null &&
             (param.getIsPrivate() == null || Boolean.TRUE.equals(param.getIsPrivate())))
-            throw new ValidationException(GET_KIT_LIST_NOT_ALLOWED);
+            throw new ValidationException(COMMON_CURRENT_USER_ID_NOT_NULL);
 
         var kitLanguages = resolveKitLanguages(param.getLangs());
         PaginatedResponse<LoadPublishedKitListPort.Result> kitsPage;

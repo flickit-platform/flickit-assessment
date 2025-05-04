@@ -25,7 +25,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_LIST_NOT_ALLOWED;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.privateKit;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
 import static org.junit.jupiter.api.Assertions.*;
@@ -60,7 +60,7 @@ class GetKitListServiceTest {
             .currentUserId(null));
 
         var throwable = assertThrows(ValidationException.class, () -> service.getKitList(param));
-        assertEquals(GET_KIT_LIST_NOT_ALLOWED, throwable.getMessageKey());
+        assertEquals(COMMON_CURRENT_USER_ID_NOT_NULL, throwable.getMessageKey());
     }
 
     @Test
