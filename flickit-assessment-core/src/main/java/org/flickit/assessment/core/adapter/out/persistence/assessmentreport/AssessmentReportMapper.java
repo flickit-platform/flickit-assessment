@@ -25,6 +25,7 @@ public class AssessmentReportMapper {
             assessmentReport.getAssessmentResultId(),
             metadata,
             assessmentReport.isPublished(),
+            Boolean.FALSE,
             assessmentReport.getCreationTime(),
             assessmentReport.getLastModificationTime(),
             assessmentReport.getCreatedBy(),

@@ -35,6 +35,9 @@ public class AssessmentReportJpaEntity {
     @Column(name = "published", nullable = false)
     private Boolean published;
 
+    @Column(name = "is_public", nullable = false)
+    private Boolean isPublic;
+
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
 
