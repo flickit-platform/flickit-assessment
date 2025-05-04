@@ -35,8 +35,8 @@ public class AssessmentReportJpaEntity {
     @Column(name = "published", nullable = false)
     private Boolean published;
 
-    @Column(name = "visibility_type", nullable = false)
-    private Integer visibilityType;
+    @Column(name = "visibility", nullable = false)
+    private Integer visibility;
 
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;

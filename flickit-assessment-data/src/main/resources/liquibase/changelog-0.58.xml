@@ -33,7 +33,7 @@
 
     <changeSet id="0.58-5" author="Maziyar Gerami">
         <addColumn tableName="fac_assessment_report">
-            <column name="visibility_type" type="tinyint" defaultValue="0">
+            <column name="visibility" type="tinyint" defaultValue="0">
                     <constraints nullable="false"/>
             </column>
         </addColumn>
