@@ -73,7 +73,6 @@ class GetKitListServiceTest {
         assertEquals(GET_KIT_LIST_NOT_ALLOWED, throwable.getMessageKey());
     }
 
-
     @Test
     void testGetKitList_whenPublicKitsAreWanted_thenReturnPublicKits() {
         var param = createParam(Param.ParamBuilder::build);

@@ -49,7 +49,6 @@ public class GetKitListService implements GetKitListUseCase {
 
         var kitLanguages = resolveKitLanguages(param.getLangs());
         PaginatedResponse<LoadPublishedKitListPort.Result> kitsPage;
-
         if (param.getIsPrivate() == null) {
             kitsPage = loadPublishedKitListPort.loadPrivateAndPublicKits(param.getCurrentUserId(),
                 kitLanguages,
