@@ -133,7 +133,6 @@ class UpdateAssessmentReportPublishStatusServiceTest {
 
         assertEquals(assessmentResult.getId(), assessmentReportCaptor.getValue().getAssessmentResultId());
         assertFalse(assessmentReportCaptor.getValue().isPublished());
-        assertEquals(assessmentResult.getId(), assessmentReportCaptor.getValue().getAssessmentResultId());
         assertNotNull(assessmentReportCaptor.getValue().getLastModificationTime());
         assertEquals(param.getCurrentUserId(), assessmentReportCaptor.getValue().getLastModifiedBy());
         assertNotNull(assessmentReportCaptor.getValue().getCreationTime());

@@ -40,16 +40,13 @@ public class UpdateAssessmentReportPublishStatusService implements UpdateAssessm
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
 
-        var assessmentReport = loadAssessmentReportPort.load(param.getAssessmentId()).orElse(null);
-        if (assessmentReport == null) {
-            assessmentReport = buildAssessmentReport(assessmentResult.getId(), param.getCurrentUserId());
-            createAssessmentReportPort.persist(assessmentReport);
-        }
+        var assessmentReport = loadAssessmentReportPort.load(param.getAssessmentId()).orElseGet(() -> {
+            var report = buildAssessmentReport(assessmentResult.getId(), param.getCurrentUserId());
+            createAssessmentReportPort.persist(report);
+            return report;
+        });
 
-        if (Boolean.TRUE.equals(param.getPublished()))
-            updateAssessmentReportPort.updatePublishStatus(buildPublishParam(assessmentResult.getId(), param.getCurrentUserId()));
-        else
-            updateAssessmentReportPort.updatePublishStatus(buildUnpublishParam(assessmentResult.getId(), assessmentReport.getVisibility(), param.getCurrentUserId()));
+        updatePublishStatus(assessmentResult.getId(), param, assessmentReport.getVisibility());
     }
 
     private AssessmentReport buildAssessmentReport(UUID assessmentResultId, UUID currentUserId) {
@@ -64,19 +61,19 @@ public class UpdateAssessmentReportPublishStatusService implements UpdateAssessm
             currentUserId);
     }
 
-    private UpdateAssessmentReportPort.UpdatePublishParam buildPublishParam(UUID assessmentResultId, UUID currentUserId) {
-        return new UpdateAssessmentReportPort.UpdatePublishParam(assessmentResultId,
-            Boolean.TRUE,
-            VisibilityType.RESTRICTED,
-            LocalDateTime.now(),
-            currentUserId);
+    private void updatePublishStatus(UUID assessmentResultId, Param param, VisibilityType visibility) {
+        var updateParam = Boolean.TRUE.equals(param.getPublished())
+            ? buildUpdatePublishParam(assessmentResultId, param, VisibilityType.RESTRICTED)
+            : buildUpdatePublishParam(assessmentResultId, param, visibility);
+
+        updateAssessmentReportPort.updatePublishStatus(updateParam);
     }
 
-    private UpdateAssessmentReportPort.UpdatePublishParam buildUnpublishParam(UUID assessmentResultId, VisibilityType visibility, UUID currentUserId) {
-        return new UpdateAssessmentReportPort.UpdatePublishParam(assessmentResultId,
-            Boolean.FALSE,
-            visibility,
-            LocalDateTime.now(),
-            currentUserId);
-    }
+    private UpdateAssessmentReportPort.UpdatePublishParam buildUpdatePublishParam(UUID assessmentResultId, Param param, VisibilityType visibility) {
+            return new UpdateAssessmentReportPort.UpdatePublishParam(assessmentResultId,
+                param.getPublished(),
+                visibility,
+                LocalDateTime.now(),
+                param.getCurrentUserId());
+        }
 }
