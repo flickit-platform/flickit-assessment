@@ -1,6 +1,5 @@
 package org.flickit.assessment.core.application.service.assessmentreport;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.VisibilityType;
@@ -10,6 +9,7 @@ import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAss
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
