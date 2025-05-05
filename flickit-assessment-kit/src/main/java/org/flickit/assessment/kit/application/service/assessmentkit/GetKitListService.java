@@ -80,7 +80,7 @@ public class GetKitListService implements GetKitListUseCase {
     }
 
     private PaginatedResponse<Result> getPaginatedPublicKits(Param param, Set<KitLanguage> kitLanguages) {
-            return loadPublishedKitListPort.loadPublicKits(kitLanguages, param.getPage(), param.getSize());
+        return loadPublishedKitListPort.loadPublicKits(kitLanguages, param.getPage(), param.getSize());
     }
 
     private PaginatedResponse<Result> getPaginatedKits(Param param, Set<KitLanguage> kitLanguages) {
