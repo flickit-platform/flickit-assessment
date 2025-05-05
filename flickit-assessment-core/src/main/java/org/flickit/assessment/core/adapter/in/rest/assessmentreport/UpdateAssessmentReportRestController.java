@@ -29,7 +29,7 @@ public class UpdateAssessmentReportRestController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private Param toParam(UUID assessmentId, Integer visibility, UUID currentUserId) {
+    private Param toParam(UUID assessmentId, String visibility, UUID currentUserId) {
         return new Param(assessmentId, visibility, currentUserId);
     }
 }
