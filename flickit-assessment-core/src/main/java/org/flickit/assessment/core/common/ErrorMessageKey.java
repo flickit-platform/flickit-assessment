@@ -350,4 +350,9 @@ public class ErrorMessageKey {
     public static final String GET_ASSESSMENT_ATTRIBUTE_MEASURES_ATTRIBUTE_ID_NOT_NULL = "get-assessment-attribute-measures.attributeId.notNull";
     public static final String GET_ASSESSMENT_ATTRIBUTE_MEASURES_SORT_INVALID = "get-assessment-attribute-measures.sort.invalid";
     public static final String GET_ASSESSMENT_ATTRIBUTE_MEASURES_INVALID = "get-assessment-attribute-measures.order.invalid";
+
+    public static final String UPDATE_ASSESSMENT_REPORT_VISIBILITY_ASSESSMENT_ID_NOT_NULL = "update-assessment-report-visibility.assessmentId.notNull";
+    public static final String UPDATE_ASSESSMENT_REPORT_VISIBILITY_VISIBILITY_NOT_NULL = "update-assessment-report-visibility.visible.notFound";
+    public static final String UPDATE_ASSESSMENT_REPORT_VISIBILITY_ASSESSMENT_REPORT_NOT_FOUND = "update-assessment-report-visibility.assessmentReport.notFound";
+    public static final String UPDATE_ASSESSMENT_REPORT_VISIBILITY_VISIBILITY_INVALID = "update-assessment-report-visibility.visibility-status.invalid";
 }
