@@ -38,6 +38,9 @@ public class AssessmentReportJpaEntity {
     @Column(name = "visibility", nullable = false)
     private Integer visibility;
 
+    @Column(name = "link_hash", updatable = false, nullable = false)
+    private UUID linkHash;
+
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
 
