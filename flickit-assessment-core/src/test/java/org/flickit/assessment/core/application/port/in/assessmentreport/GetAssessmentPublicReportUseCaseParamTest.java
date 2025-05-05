@@ -8,7 +8,6 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_PUBLIC_REPORT_LINK_HASH_NOT_NULL;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -19,13 +18,6 @@ class GetAssessmentPublicReportUseCaseParamTest {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.linkHash(null)));
         assertThat(throwable).hasMessage("linkHash: " + GET_ASSESSMENT_PUBLIC_REPORT_LINK_HASH_NOT_NULL);
-    }
-
-    @Test
-    void testGetAssessmentPublicReportUseCaseParam_currentUserIdParamViolatesConstraint_ErrorMessage() {
-        var throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.currentUserId(null)));
-        assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 
     private void createParam(Consumer<Param.ParamBuilder> changer) {
