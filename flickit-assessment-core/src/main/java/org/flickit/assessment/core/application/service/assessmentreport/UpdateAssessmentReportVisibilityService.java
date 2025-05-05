@@ -10,7 +10,9 @@ import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAss
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
@@ -38,14 +40,14 @@ public class UpdateAssessmentReportVisibilityService implements UpdateAssessment
             hashLink = assessmentReport.getLinkHash();
         }
 
-        updateAssessmentReportPort.updateVisibility(toParam(assessmentResult.getId(), param));
+        updateAssessmentReportPort.updateVisibility(toParam(assessmentResult.getId(), visibility, param.getCurrentUserId()));
         return new Result(param.getVisibility(), hashLink);
     }
 
-    private UpdateAssessmentReportPort.UpdateVisibilityParam toParam(UUID assessmentResultId, Param param) {
+    private UpdateAssessmentReportPort.UpdateVisibilityParam toParam(UUID assessmentResultId, VisibilityType visibility, UUID userId) {
         return new UpdateAssessmentReportPort.UpdateVisibilityParam(assessmentResultId,
-            VisibilityType.valueOf(param.getVisibility()),
+            visibility,
             LocalDateTime.now(),
-            param.getCurrentUserId());
+            userId);
     }
 }
