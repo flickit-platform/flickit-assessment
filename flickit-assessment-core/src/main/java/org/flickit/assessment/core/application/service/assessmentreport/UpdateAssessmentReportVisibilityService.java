@@ -30,10 +30,10 @@ public class UpdateAssessmentReportVisibilityService implements UpdateAssessment
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
 
-        updateAssessmentReportPort.updateVisibility(toParam(assessmentResult.getId(), param));
         var assessmentReport = loadAssessmentReportPort.load(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(UPDATE_ASSESSMENT_REPORT_VISIBILITY_ASSESSMENT_REPORT_NOT_FOUND));
 
+        updateAssessmentReportPort.updateVisibility(toParam(assessmentResult.getId(), param));
         return new Result(param.getVisibility(), assessmentReport.getLinkHash());
     }
 
