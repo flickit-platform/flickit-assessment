@@ -41,6 +41,7 @@ public class GetAssessmentRestController {
             new UserResponseDto(result.createdBy().getId(), result.createdBy().getDisplayName()),
             result.maturityLevel(),
             result.isCalculateValid(),
+            result.language(),
             result.manageable(),
             result.viewable());
     }
