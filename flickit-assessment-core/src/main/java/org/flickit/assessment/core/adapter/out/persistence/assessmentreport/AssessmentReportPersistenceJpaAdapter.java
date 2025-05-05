@@ -70,6 +70,7 @@ public class AssessmentReportPersistenceJpaAdapter implements
 
         repository.updatePublished(param.assessmentResultId(),
             param.published(),
+            param.visibilityType().getId(),
             param.lastModificationTime(),
             param.lastModifiedBy());
     }

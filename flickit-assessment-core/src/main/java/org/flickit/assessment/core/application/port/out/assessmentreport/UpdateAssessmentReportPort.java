@@ -20,6 +20,7 @@ public interface UpdateAssessmentReportPort {
 
     record UpdatePublishParam(UUID assessmentResultId,
                               boolean published,
+                              VisibilityType visibilityType,
                               LocalDateTime lastModificationTime,
                               UUID lastModifiedBy) {
     }

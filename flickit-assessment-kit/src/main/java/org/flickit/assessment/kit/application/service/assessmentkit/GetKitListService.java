@@ -43,19 +43,11 @@ public class GetKitListService implements GetKitListUseCase {
     public PaginatedResponse<KitListItem> getKitList(Param param) {
         var kitLanguages = resolveKitLanguages(param.getLangs());
         PaginatedResponse<LoadPublishedKitListPort.Result> kitsPage;
-        if (param.getIsPrivate() == null) {
-            kitsPage = loadPublishedKitListPort.loadPrivateAndPublicKits(param.getCurrentUserId(),
-                kitLanguages,
-                param.getPage(),
-                param.getSize());
-        }
-        else if (Boolean.FALSE.equals(param.getIsPrivate()))
+
+        if (param.getCurrentUserId() == null)
             kitsPage = loadPublishedKitListPort.loadPublicKits(kitLanguages, param.getPage(), param.getSize());
         else
-            kitsPage = loadPublishedKitListPort.loadPrivateKits(param.getCurrentUserId(),
-                kitLanguages,
-                param.getPage(),
-                param.getSize());
+            kitsPage = getPaginatedKits(param, kitLanguages);
 
         var ids = kitsPage.getItems().stream()
             .map((Result t) -> t.kit().getId()).toList();
@@ -85,6 +77,23 @@ public class GetKitListService implements GetKitListUseCase {
             kitsPage.getOrder(),
             kitsPage.getTotal()
         );
+    }
+
+    private PaginatedResponse<Result> getPaginatedKits(Param param, Set<KitLanguage> kitLanguages) {
+        PaginatedResponse<Result> kitsPage;
+        if (param.getIsPrivate() == null) {
+            kitsPage = loadPublishedKitListPort.loadPrivateAndPublicKits(param.getCurrentUserId(),
+                kitLanguages,
+                param.getPage(),
+                param.getSize());
+        } else if (!param.getIsPrivate())
+            kitsPage = loadPublishedKitListPort.loadPublicKits(kitLanguages, param.getPage(), param.getSize());
+        else
+            kitsPage = loadPublishedKitListPort.loadPrivateKits(param.getCurrentUserId(),
+                kitLanguages,
+                param.getPage(),
+                param.getSize());
+        return kitsPage;
     }
 
     @Nullable

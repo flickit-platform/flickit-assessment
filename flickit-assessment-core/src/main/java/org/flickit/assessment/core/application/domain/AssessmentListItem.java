@@ -1,5 +1,7 @@
 package org.flickit.assessment.core.application.domain;
 
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -12,6 +14,7 @@ public record AssessmentListItem(UUID id,
                                  Double confidenceValue,
                                  boolean isCalculateValid,
                                  boolean isConfidenceValid,
+                                 KitLanguage language,
                                  Boolean manageable,
                                  boolean hasReport) {
 

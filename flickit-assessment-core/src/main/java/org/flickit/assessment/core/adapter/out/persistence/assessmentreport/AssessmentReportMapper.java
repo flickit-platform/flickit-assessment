@@ -15,6 +15,7 @@ public class AssessmentReportMapper {
             entity.getAssessmentResultId(),
             metadata,
             entity.getPublished(),
+            VisibilityType.valueOfById(entity.getVisibility()),
             entity.getLinkHash(),
             entity.getCreationTime(),
             entity.getLastModificationTime(),
