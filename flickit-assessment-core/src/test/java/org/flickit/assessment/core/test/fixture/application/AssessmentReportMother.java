@@ -16,7 +16,6 @@ public class AssessmentReportMother {
             metadata,
             false,
             VisibilityType.RESTRICTED,
-            UUID.randomUUID(),
             LocalDateTime.now(),
             LocalDateTime.now(),
             userId,
@@ -30,7 +29,6 @@ public class AssessmentReportMother {
             metadata,
             true,
             VisibilityType.RESTRICTED,
-            UUID.randomUUID(),
             LocalDateTime.now(),
             LocalDateTime.now(),
             userId,
@@ -46,7 +44,6 @@ public class AssessmentReportMother {
             null,
             null,
             null,
-            null,
             null);
     }
 
@@ -57,7 +54,6 @@ public class AssessmentReportMother {
             null,
             true,
             visibility,
-            UUID.randomUUID(),
             LocalDateTime.now(),
             LocalDateTime.now(),
             userId,

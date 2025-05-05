@@ -7,6 +7,8 @@ import org.flickit.assessment.core.application.domain.AssessmentReportMetadata;
 import org.flickit.assessment.core.application.domain.VisibilityType;
 import org.flickit.assessment.data.jpa.core.assessmentreport.AssessmentReportJpaEntity;
 
+import java.util.UUID;
+
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AssessmentReportMapper {
 
@@ -16,7 +18,6 @@ public class AssessmentReportMapper {
             metadata,
             entity.getPublished(),
             VisibilityType.valueOfById(entity.getVisibility()),
-            entity.getLinkHash(),
             entity.getCreationTime(),
             entity.getLastModificationTime(),
             entity.getCreatedBy(),
@@ -29,7 +30,7 @@ public class AssessmentReportMapper {
             metadata,
             assessmentReport.isPublished(),
             VisibilityType.RESTRICTED.getId(),
-            assessmentReport.getLinkHash(),
+            UUID.randomUUID(),
             assessmentReport.getCreationTime(),
             assessmentReport.getLastModificationTime(),
             assessmentReport.getCreatedBy(),

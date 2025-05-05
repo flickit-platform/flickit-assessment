@@ -55,7 +55,6 @@ public class UpdateAssessmentReportPublishStatusService implements UpdateAssessm
             null,
             false,
             VisibilityType.RESTRICTED,
-            UUID.randomUUID(),
             LocalDateTime.now(),
             LocalDateTime.now(),
             currentUserId,
