@@ -54,7 +54,7 @@ class UpdateAssessmentReportVisibilityServiceTest {
 
     @Test
     void testUpdateAssessmentReportVisibility_whenAssessmentReportDoesNotExist_thenThrowsException() {
-        var param = createParam(UpdateAssessmentReportVisibilityUseCase.Param.ParamBuilder::build);
+        var param = createParam(b -> b.visibility("PUBLIC"));
 
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
                 .thenReturn(Optional.of(AssessmentResultMother.validResult()));
