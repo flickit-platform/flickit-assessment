@@ -57,6 +57,7 @@ public class AssessmentReportMother {
             null,
             true,
             visibility,
+            UUID.randomUUID(),
             LocalDateTime.now(),
             LocalDateTime.now(),
             userId,
