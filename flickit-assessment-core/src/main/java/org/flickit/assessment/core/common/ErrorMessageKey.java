@@ -350,4 +350,6 @@ public class ErrorMessageKey {
     public static final String GET_ASSESSMENT_ATTRIBUTE_MEASURES_ATTRIBUTE_ID_NOT_NULL = "get-assessment-attribute-measures.attributeId.notNull";
     public static final String GET_ASSESSMENT_ATTRIBUTE_MEASURES_SORT_INVALID = "get-assessment-attribute-measures.sort.invalid";
     public static final String GET_ASSESSMENT_ATTRIBUTE_MEASURES_INVALID = "get-assessment-attribute-measures.order.invalid";
+
+    public static final String GET_ASSESSMENT_PUBLIC_REPORT_LINK_HASH_NOT_NULL = "get-assessment-public-report.linkHash.notNull";
 }
