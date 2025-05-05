@@ -63,6 +63,7 @@ public class CreateAssessmentReportMetadataService implements CreateAssessmentRe
             assessmentResultId,
             metadata,
             false,
+            UUID.randomUUID(),
             LocalDateTime.now(),
             LocalDateTime.now(),
             currentUserId,

@@ -31,7 +31,15 @@
                              columnNames="kit_id, lang_id, size"/>
     </changeSet>
 
-    <changeSet id="0.58-05" author="Maziyar Gerami">
+    <changeSet id="0.58-05" author="Mahdi Rezazadeh">
+        <addColumn tableName="fac_assessment_report">
+            <column name="link_hash" type="uuid" defaultValueComputed="gen_random_uuid()">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.58-06" author="Maziyar Gerami">
         <addColumn tableName="fac_assessment_report">
             <column name="visibility" type="tinyint" defaultValue="0">
                     <constraints nullable="false"/>
