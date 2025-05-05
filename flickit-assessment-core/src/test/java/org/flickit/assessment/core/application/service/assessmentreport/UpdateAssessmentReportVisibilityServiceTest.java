@@ -68,15 +68,12 @@ class UpdateAssessmentReportVisibilityServiceTest {
     }
 
     @Test
-    void testUpdateAssessmentReportVisibility_whenParametersAreValid_thenThrowsException() {
+    void testUpdateAssessmentReportVisibility_whenVisibilityParamIsRestricted_successfulUpdateWithoutLinkHash() {
         var param = createParam(UpdateAssessmentReportVisibilityUseCase.Param.ParamBuilder::build);
         var assessmentResult = AssessmentResultMother.validResult();
-        var assessmentReport = AssessmentReportMother.empty();
 
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
             .thenReturn(Optional.of(assessmentResult));
-        when(loadAssessmentReportPort.load(param.getAssessmentId()))
-                .thenReturn(Optional.of(assessmentReport));
         ArgumentCaptor<UpdateAssessmentReportPort.UpdateVisibilityParam> argumentCaptor = ArgumentCaptor.forClass(UpdateAssessmentReportPort.UpdateVisibilityParam.class);
         service.updateReportVisibility(param);
 
@@ -84,6 +81,29 @@ class UpdateAssessmentReportVisibilityServiceTest {
 
         assertEquals(assessmentResult.getId(), argumentCaptor.getValue().assessmentResultId());
         assertEquals(VisibilityType.RESTRICTED, argumentCaptor.getValue().visibility());
+        assertNotNull(argumentCaptor.getValue().lastModificationTime());
+        assertEquals(param.getCurrentUserId(), argumentCaptor.getValue().lastModifiedBy());
+
+        verifyNoInteractions(loadAssessmentReportPort);
+    }
+
+    @Test
+    void testUpdateAssessmentReportVisibility_whenVisibilityParamIsPublic_successfulUpdateWithLinkHash() {
+        var param = createParam(b -> b.visibility("PUBLIC"));
+        var assessmentResult = AssessmentResultMother.validResult();
+        var assessmentReport = AssessmentReportMother.empty();
+
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
+            .thenReturn(Optional.of(assessmentResult));
+        when(loadAssessmentReportPort.load(param.getAssessmentId()))
+            .thenReturn(Optional.of(assessmentReport));
+        ArgumentCaptor<UpdateAssessmentReportPort.UpdateVisibilityParam> argumentCaptor = ArgumentCaptor.forClass(UpdateAssessmentReportPort.UpdateVisibilityParam.class);
+        service.updateReportVisibility(param);
+
+        verify(updateAssessmentReportPort).updateVisibility(argumentCaptor.capture());
+
+        assertEquals(assessmentResult.getId(), argumentCaptor.getValue().assessmentResultId());
+        assertEquals(VisibilityType.PUBLIC, argumentCaptor.getValue().visibility());
         assertNotNull(argumentCaptor.getValue().lastModificationTime());
         assertEquals(param.getCurrentUserId(), argumentCaptor.getValue().lastModifiedBy());
     }
