@@ -45,7 +45,7 @@ public class GetKitListService implements GetKitListUseCase {
         PaginatedResponse<LoadPublishedKitListPort.Result> kitsPage;
 
         if (param.getCurrentUserId() == null)
-            kitsPage = getPaginatedPublicKits(param, kitLanguages);
+            kitsPage = loadPublishedKitListPort.loadPublicKits(kitLanguages, param.getPage(), param.getSize());
         else
             kitsPage = getPaginatedKits(param, kitLanguages);
 
@@ -79,10 +79,6 @@ public class GetKitListService implements GetKitListUseCase {
         );
     }
 
-    private PaginatedResponse<Result> getPaginatedPublicKits(Param param, Set<KitLanguage> kitLanguages) {
-        return loadPublishedKitListPort.loadPublicKits(kitLanguages, param.getPage(), param.getSize());
-    }
-
     private PaginatedResponse<Result> getPaginatedKits(Param param, Set<KitLanguage> kitLanguages) {
         PaginatedResponse<Result> kitsPage;
         if (param.getIsPrivate() == null) {
@@ -90,7 +86,7 @@ public class GetKitListService implements GetKitListUseCase {
                 kitLanguages,
                 param.getPage(),
                 param.getSize());
-        } else if (Boolean.FALSE.equals(param.getIsPrivate()))
+        } else if (!param.getIsPrivate())
             kitsPage = loadPublishedKitListPort.loadPublicKits(kitLanguages, param.getPage(), param.getSize());
         else
             kitsPage = loadPublishedKitListPort.loadPrivateKits(param.getCurrentUserId(),
