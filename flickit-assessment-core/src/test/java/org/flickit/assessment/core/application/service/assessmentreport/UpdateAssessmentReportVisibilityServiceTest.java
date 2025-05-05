@@ -77,7 +77,7 @@ class UpdateAssessmentReportVisibilityServiceTest {
         ArgumentCaptor<UpdateAssessmentReportPort.UpdateVisibilityParam> argumentCaptor = ArgumentCaptor.forClass(UpdateAssessmentReportPort.UpdateVisibilityParam.class);
         service.updateReportVisibility(param);
 
-        verify(updateAssessmentReportPort).updateVisibility(argumentCaptor.capture());
+        verify(updateAssessmentReportPort).updateVisibilityStatus(argumentCaptor.capture());
 
         assertEquals(assessmentResult.getId(), argumentCaptor.getValue().assessmentResultId());
         assertEquals(VisibilityType.RESTRICTED, argumentCaptor.getValue().visibility());
@@ -100,7 +100,7 @@ class UpdateAssessmentReportVisibilityServiceTest {
         ArgumentCaptor<UpdateAssessmentReportPort.UpdateVisibilityParam> argumentCaptor = ArgumentCaptor.forClass(UpdateAssessmentReportPort.UpdateVisibilityParam.class);
         service.updateReportVisibility(param);
 
-        verify(updateAssessmentReportPort).updateVisibility(argumentCaptor.capture());
+        verify(updateAssessmentReportPort).updateVisibilityStatus(argumentCaptor.capture());
 
         assertEquals(assessmentResult.getId(), argumentCaptor.getValue().assessmentResultId());
         assertEquals(VisibilityType.PUBLIC, argumentCaptor.getValue().visibility());

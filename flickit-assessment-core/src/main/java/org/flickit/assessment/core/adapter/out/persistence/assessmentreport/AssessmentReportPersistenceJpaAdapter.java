@@ -76,7 +76,7 @@ public class AssessmentReportPersistenceJpaAdapter implements
     }
 
     @Override
-    public void updateVisibility(UpdateVisibilityParam param) {
+    public void updateVisibilityStatus(UpdateVisibilityParam param) {
         if (!repository.existsByAssessmentResultId(param.assessmentResultId()))
             throw new ResourceNotFoundException(UPDATE_ASSESSMENT_REPORT_VISIBILITY_ASSESSMENT_REPORT_NOT_FOUND);
 

@@ -40,7 +40,7 @@ public class UpdateAssessmentReportVisibilityService implements UpdateAssessment
             hashLink = assessmentReport.getLinkHash();
         }
 
-        updateAssessmentReportPort.updateVisibility(toParam(assessmentResult.getId(), visibility, param.getCurrentUserId()));
+        updateAssessmentReportPort.updateVisibilityStatus(toParam(assessmentResult.getId(), visibility, param.getCurrentUserId()));
         return new Result(param.getVisibility(), hashLink);
     }
 
