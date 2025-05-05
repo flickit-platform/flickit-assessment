@@ -19,6 +19,7 @@ import java.util.UUID;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.core.adapter.out.persistence.assessmentreport.AssessmentReportMapper.mapToJpaEntity;
 import static org.flickit.assessment.core.common.ErrorMessageKey.UPDATE_ASSESSMENT_REPORT_PUBLISH_STATUS_ASSESSMENT_REPORT_NOT_FOUND;
+import static org.flickit.assessment.core.common.ErrorMessageKey.UPDATE_ASSESSMENT_REPORT_VISIBILITY_ASSESSMENT_REPORT_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
@@ -69,6 +70,17 @@ public class AssessmentReportPersistenceJpaAdapter implements
 
         repository.updatePublished(param.assessmentResultId(),
             param.published(),
+            param.lastModificationTime(),
+            param.lastModifiedBy());
+    }
+
+    @Override
+    public void updateVisibility(UpdateVisibilityParam param) {
+        if (!repository.existsByAssessmentResultId(param.assessmentResultId()))
+            throw new ResourceNotFoundException(UPDATE_ASSESSMENT_REPORT_VISIBILITY_ASSESSMENT_REPORT_NOT_FOUND);
+
+        repository.updateVisibility(param.assessmentResultId(),
+            param.visibility().getId(),
             param.lastModificationTime(),
             param.lastModifiedBy());
     }
