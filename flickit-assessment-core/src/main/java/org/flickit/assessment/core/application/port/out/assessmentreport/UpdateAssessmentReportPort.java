@@ -27,8 +27,8 @@ public interface UpdateAssessmentReportPort {
     void updateVisibility(UpdateVisibilityParam param);
 
     record UpdateVisibilityParam(UUID assessmentResultId,
-             VisibilityType visibility,
-             LocalDateTime lastModificationTime,
-             UUID lastModifiedBy) {
+                                 VisibilityType visibility,
+                                 LocalDateTime lastModificationTime,
+                                 UUID lastModifiedBy) {
     }
 }

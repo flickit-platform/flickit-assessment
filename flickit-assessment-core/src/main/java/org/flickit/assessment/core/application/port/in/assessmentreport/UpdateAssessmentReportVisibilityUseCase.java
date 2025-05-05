@@ -15,7 +15,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 public interface UpdateAssessmentReportVisibilityUseCase {
 
-    void updateReportVisibility(Param param);
+    Result updateReportVisibility(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
@@ -38,5 +38,8 @@ public interface UpdateAssessmentReportVisibilityUseCase {
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
+    }
+
+    record Result(String visibility, UUID linkHash) {
     }
 }
