@@ -118,17 +118,7 @@ class GetSpaceAssessmentListServiceTest {
 
         assertPaginationProperties(paginatedRes, result);
 
-        assertThat(result.getItems())
-            .zipSatisfy(paginatedRes.getItems(), (actual, expected) -> {
-                assertEquals(expected.id(), actual.id());
-                assertEquals(expected.title(), actual.title());
-                assertEquals(expected.kit(), actual.kit());
-                assertEquals(expected.lastModificationTime(), actual.lastModificationTime());
-                assertTrue(actual.isCalculateValid());
-                assertTrue(actual.isConfidenceValid());
-                assertFalse(actual.hasReport());
-                assertNotNull(actual.permissions());
-            });
+        assertThat(result.getItems()).zipSatisfy(paginatedRes.getItems(), this::assertAssessmentListItem);
 
         // for first assessment
         var firstAssessment = result.getItems().getFirst();
@@ -164,6 +154,19 @@ class GetSpaceAssessmentListServiceTest {
         assertEquals(expected.getSize(), result.getSize());
         assertEquals(expected.getPage(), result.getPage());
         assertEquals(expected.getTotal(), result.getTotal());
+    }
+
+    private void assertAssessmentListItem(GetSpaceAssessmentListUseCase.SpaceAssessmentListItem actual, AssessmentListItem expected) {
+        assertEquals(expected.id(), actual.id());
+        assertEquals(expected.title(), actual.title());
+        assertEquals(expected.kit(), actual.kit());
+        assertEquals(expected.lastModificationTime(), actual.lastModificationTime());
+        assertTrue(actual.isCalculateValid());
+        assertTrue(actual.isConfidenceValid());
+        assertFalse(actual.hasReport());
+        assertNotNull(actual.permissions());
+        assertEquals(expected.language().getCode(), actual.language().code());
+        assertEquals(expected.language().getTitle(), actual.language().title());
     }
 
     private GetSpaceAssessmentListUseCase.Param createParam(Consumer<GetSpaceAssessmentListUseCase.Param.ParamBuilder> changer) {

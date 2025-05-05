@@ -35,6 +35,9 @@ public class AssessmentReportJpaEntity {
     @Column(name = "published", nullable = false)
     private Boolean published;
 
+    @Column(name = "visibility", nullable = false)
+    private Integer visibility;
+
     @Column(name = "link_hash", updatable = false, nullable = false)
     private UUID linkHash;
 
