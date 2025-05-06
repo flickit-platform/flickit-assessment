@@ -8,7 +8,6 @@ import org.flickit.assessment.core.application.domain.AssessmentReport;
 import org.flickit.assessment.core.application.port.out.assessmentreport.CreateAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentreport.UpdateAssessmentReportPort;
-import org.flickit.assessment.core.common.ErrorMessageKey;
 import org.flickit.assessment.data.jpa.core.assessmentreport.AssessmentReportJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.springframework.stereotype.Component;
@@ -18,6 +17,7 @@ import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.core.adapter.out.persistence.assessmentreport.AssessmentReportMapper.mapToJpaEntity;
+import static org.flickit.assessment.core.common.ErrorMessageKey.ASSESSMENT_REPORT_LINK_HASH_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.UPDATE_ASSESSMENT_REPORT_PUBLISH_STATUS_ASSESSMENT_REPORT_NOT_FOUND;
 
 @Component
@@ -46,7 +46,7 @@ public class AssessmentReportPersistenceJpaAdapter implements
     public AssessmentReport loadByLinkHash(UUID linkHash) {
         return repository.findByLinkHash(linkHash)
             .map(AssessmentReportMapper::mapToDomainModel)
-            .orElseThrow(() -> new ResourceNotFoundException(ErrorMessageKey.ASSESSMENT_REPORT_LINK_HASH_NOT_FOUND));
+            .orElseThrow(() -> new ResourceNotFoundException(ASSESSMENT_REPORT_LINK_HASH_NOT_FOUND));
     }
 
     @Override
