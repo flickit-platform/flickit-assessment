@@ -9,7 +9,6 @@ import org.flickit.assessment.advice.application.domain.Question;
 import org.flickit.assessment.advice.application.domain.advice.AdviceListItem;
 import org.flickit.assessment.advice.application.exception.FinalSolutionNotFoundException;
 import org.flickit.assessment.advice.application.port.in.advice.CreateAdviceUseCase;
-import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentKitVersionIdPort;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadSelectedAttributeIdsRelatedToAssessmentPort;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadSelectedLevelIdsRelatedToAssessmentPort;
 import org.flickit.assessment.advice.application.port.out.attributevalue.LoadAttributeCurrentAndTargetLevelIndexPort;
@@ -48,7 +47,6 @@ public class CreateAdviceService implements CreateAdviceUseCase {
     private final LoadAttributeCurrentAndTargetLevelIndexPort loadAttributeCurrentAndTargetLevelIndexPort;
     private final LoadAdviceCalculationInfoPort loadAdviceCalculationInfoPort;
     private final SolverManager<Plan, UUID> solverManager;
-    private final LoadAssessmentKitVersionIdPort loadAssessmentKitVersionIdPort;
     private final LoadCreatedAdviceDetailsPort loadCreatedAdviceDetailsPort;
 
     @Override
@@ -77,8 +75,7 @@ public class CreateAdviceService implements CreateAdviceUseCase {
             log.error("Error occurred while calculating best solution for assessment {}", assessmentId, e.getCause());
             throw new FinalSolutionNotFoundException(CREATE_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION);
         }
-        var kitVersionId = loadAssessmentKitVersionIdPort.loadKitVersionIdById(assessmentId);
-        return mapToResult(plan, kitVersionId);
+        return mapToResult(plan, assessmentId);
     }
 
     private void validateUserAccess(UUID assessmentId, UUID currentUserId) {
@@ -120,12 +117,12 @@ public class CreateAdviceService implements CreateAdviceUseCase {
             .toList();
     }
 
-    private Result mapToResult(Plan solution, Long kitVersionId) {
+    private Result mapToResult(Plan solution, UUID assessmentId) {
         var questionIdsMap = solution.getQuestions().stream()
             .filter(Question::isRecommended)
             .collect(Collectors.toMap(Question::getId, Function.identity()));
 
-        var adviceQuestionDetails = loadCreatedAdviceDetailsPort.loadAdviceDetails(questionIdsMap.keySet().stream().toList(), kitVersionId);
+        var adviceQuestionDetails = loadCreatedAdviceDetailsPort.loadAdviceDetails(questionIdsMap.keySet().stream().toList(), assessmentId);
 
         var adviceListItems = adviceQuestionDetails.stream().map(adv -> {
                 var question = questionIdsMap.get(adv.question().id());
