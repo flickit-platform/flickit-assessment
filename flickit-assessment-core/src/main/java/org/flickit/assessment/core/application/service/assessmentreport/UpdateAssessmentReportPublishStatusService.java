@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.application.domain.AssessmentReport;
 import org.flickit.assessment.core.application.domain.VisibilityType;
 import org.flickit.assessment.core.application.port.in.assessmentreport.UpdateAssessmentReportPublishStatusUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentreport.CreateAssessmentReportPort;
@@ -40,24 +39,25 @@ public class UpdateAssessmentReportPublishStatusService implements UpdateAssessm
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
 
-        var assessmentReport = loadAssessmentReportPort.load(param.getAssessmentId()).orElseGet(() -> {
-            var report = buildAssessmentReport(assessmentResult.getId(), param.getCurrentUserId());
-            createAssessmentReportPort.persist(report);
-            return report;
-        });
+        var assessmentReport = loadAssessmentReportPort.load(param.getAssessmentId());
 
-        updatePublishStatus(assessmentResult.getId(), param, assessmentReport.getVisibility());
+        CreateAssessmentReportPort.Param newAssessmentReport;
+        if (assessmentReport.isEmpty()) {
+            newAssessmentReport = buildAssessmentReportParam(assessmentResult.getId(), param.getCurrentUserId());
+            createAssessmentReportPort.persist(newAssessmentReport);
+        }
+
+        var visibility = assessmentReport.isEmpty()
+            ? VisibilityType.RESTRICTED
+            : assessmentReport.get().getVisibility();
+        updatePublishStatus(assessmentResult.getId(), param, visibility);
     }
 
-    private AssessmentReport buildAssessmentReport(UUID assessmentResultId, UUID currentUserId) {
-        return new AssessmentReport(null,
+    private CreateAssessmentReportPort.Param buildAssessmentReportParam(UUID assessmentResultId, UUID currentUserId) {
+        return new CreateAssessmentReportPort.Param(
             assessmentResultId,
             null,
-            false,
-            VisibilityType.RESTRICTED,
             LocalDateTime.now(),
-            LocalDateTime.now(),
-            currentUserId,
             currentUserId);
     }
 
@@ -70,10 +70,10 @@ public class UpdateAssessmentReportPublishStatusService implements UpdateAssessm
     }
 
     private UpdateAssessmentReportPort.UpdatePublishParam buildUpdatePublishParam(UUID assessmentResultId, Param param, VisibilityType visibility) {
-            return new UpdateAssessmentReportPort.UpdatePublishParam(assessmentResultId,
-                param.getPublished(),
-                visibility,
-                LocalDateTime.now(),
-                param.getCurrentUserId());
-        }
+        return new UpdateAssessmentReportPort.UpdatePublishParam(assessmentResultId,
+            param.getPublished(),
+            visibility,
+            LocalDateTime.now(),
+            param.getCurrentUserId());
+    }
 }
