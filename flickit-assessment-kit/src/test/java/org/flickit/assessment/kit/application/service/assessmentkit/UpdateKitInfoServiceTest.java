@@ -6,8 +6,8 @@ import org.flickit.assessment.common.config.AppSpecProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.util.SpringUtil;
-import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.ExpertGroup;
+import org.flickit.assessment.kit.application.domain.KitMetadata;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.UpdateKitInfoUseCase;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.UpdateKitInfoUseCase.Param;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.UpdateKitInfoPort;
@@ -33,7 +33,6 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -49,25 +48,28 @@ class UpdateKitInfoServiceTest {
     private UpdateKitInfoPort updateKitInfoPort;
 
     @Mock
-    ApplicationContext applicationContext;
+    private ApplicationContext applicationContext;
 
     @Captor
     ArgumentCaptor<UpdateKitInfoPort.Param> portParam = ArgumentCaptor.forClass(UpdateKitInfoPort.Param.class);
 
-    ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
-    UpdateKitInfoUseCase.Param param = createParam(UpdateKitInfoUseCase.Param.ParamBuilder::build);
+    private final ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
+    private UpdateKitInfoUseCase.Param param = createParam(UpdateKitInfoUseCase.Param.ParamBuilder::build);
 
     @Test
-    void testUpdateKitInfo_KitNotFound_ErrorMessage() {
-        when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenThrow(new ResourceNotFoundException(KIT_ID_NOT_FOUND));
+    void testUpdateKitInfo_whenKitNotExists_thenThrowResourceNotFoundError() {
+        when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId()))
+            .thenThrow(new ResourceNotFoundException(KIT_ID_NOT_FOUND));
 
         var throwable = assertThrows(ResourceNotFoundException.class,
             () -> service.updateKitInfo(param));
         assertThat(throwable).hasMessage(KIT_ID_NOT_FOUND);
+
+        verifyNoInteractions(updateKitInfoPort);
     }
 
     @Test
-    void testUpdateKitInfo_CurrentUserNotAllowed_ErrorMessage() {
+    void testUpdateKitInfo_whenCurrentUserIsNotExpertGroupOwner_thenThrowAccessDeniedError() {
         param = createParam(b -> b.currentUserId(UUID.randomUUID()));
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
@@ -75,10 +77,12 @@ class UpdateKitInfoServiceTest {
         var throwable = assertThrows(AccessDeniedException.class,
             () -> service.updateKitInfo(param));
         assertThat(throwable).hasMessage(COMMON_CURRENT_USER_NOT_ALLOWED);
+
+        verifyNoInteractions(updateKitInfoPort);
     }
 
     @Test
-    void testUpdateKitInfo_EditTitle_ValidResults() {
+    void testUpdateKitInfo_whenEditTitle_thenSuccessfulUpdate() {
         param = createParam(b -> b.title("new title").removeTranslations(true).translations(null));
         String newCode = generateSlugCode(param.getTitle());
 
@@ -93,8 +97,8 @@ class UpdateKitInfoServiceTest {
     }
 
     @Test
-    void testUpdateKitInfo_EditSummary_ValidResults() {
-        param = createParam(b -> b.summary("new summary").removeTranslations(false));
+    void testUpdateKitInfo_whenEditSummary_thenSuccessfulUpdate() {
+        param = createParam(b -> b.summary("new summary"));
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
 
@@ -107,7 +111,7 @@ class UpdateKitInfoServiceTest {
     }
 
     @Test
-    void testUpdateKitInfo_EditPublished_ValidResults() {
+    void testUpdateKitInfo_whenEditPublishedField_thenSuccessfulUpdate() {
         param = createParam(b -> b.published(false));
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
@@ -120,7 +124,7 @@ class UpdateKitInfoServiceTest {
     }
 
     @Test
-    void testUpdateKitInfo_EditIsPrivate_ValidResults() {
+    void testUpdateKitInfo_whenEditIsPrivateField_thenSuccessfulUpdate() {
         param = createParam(b -> b.isPrivate(true));
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
@@ -133,8 +137,9 @@ class UpdateKitInfoServiceTest {
     }
 
     @Test
-    void testUpdateKitInfo_EditPrice_ValidResults() {
-        param = createParam(b -> b.price(2d));
+    void testUpdateKitInfo_whenEditPriceField_thenSuccessfulUpdate() {
+        var metadata = new KitMetadata("goal", null);
+        param = createParam(b -> b.price(2d).metadata(metadata));
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
 
@@ -146,7 +151,7 @@ class UpdateKitInfoServiceTest {
     }
 
     @Test
-    void testUpdateKitInfo_EditAbout_ValidResults() {
+    void testUpdateKitInfo_whenEditAboutField_thenSuccessfulUpdate() {
         param = createParam(b -> b.about("new about"));
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
@@ -159,7 +164,7 @@ class UpdateKitInfoServiceTest {
     }
 
     @Test
-    void testUpdateKitInfo_EditLang_ValidResults() {
+    void testUpdateKitInfo_whenEditLangField_thenSuccessfulUpdate() {
         var props = new AppSpecProperties();
         doReturn(props).when(applicationContext).getBean(AppSpecProperties.class);
         new SpringUtil(applicationContext);
@@ -177,9 +182,10 @@ class UpdateKitInfoServiceTest {
     }
 
     @Test
-    void testUpdateKitInfo_EditTranslations_ValidResults() {
+    void testUpdateKitInfo_whenEditTranslationsField_thenSuccessfulUpdate() {
         param = createParam(b -> b.translations(
-            Map.of("EN", new KitTranslation("title", "summary", "about"))));
+            Map.of("EN", new KitTranslation("translated title", "translated summary", "translated about",
+                new KitTranslation.MetadataTranslation("translated goal", "translated context")))));
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
 
@@ -191,7 +197,7 @@ class UpdateKitInfoServiceTest {
     }
 
     @Test
-    void testUpdateKitInfo_RemoveTranslations_ValidResults() {
+    void testUpdateKitInfo_whenRemoveTranslations_thenSuccessfulUpdate() {
         param = createParam(b -> b.removeTranslations(true));
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
@@ -204,7 +210,33 @@ class UpdateKitInfoServiceTest {
     }
 
     @Test
-    void testUpdateKitInfo_EditTags_ValidResults() {
+    void testUpdateKitInfo_whenEditMetadataField_thenSuccessfulUpdate() {
+        param = createParam(b -> b.metadata(new KitMetadata("translated goal", "translated context")));
+
+        when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
+
+        service.updateKitInfo(param);
+        verify(updateKitInfoPort, times(1)).update(portParam.capture());
+
+        assertEquals(param.getKitId(), portParam.getValue().kitId());
+        assertEquals(param.getMetadata(), portParam.getValue().metadata());
+    }
+
+    @Test
+    void testUpdateKitInfo_whenRemoveMetadata_thenSuccessfulUpdate() {
+        param = createParam(b -> b.removeMetadata(true).metadata(null));
+
+        when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
+
+        service.updateKitInfo(param);
+        verify(updateKitInfoPort, times(1)).update(portParam.capture());
+
+        assertEquals(param.getKitId(), portParam.getValue().kitId());
+        assertTrue(portParam.getValue().isRemoveMetadata());
+    }
+
+    @Test
+    void testUpdateKitInfo_whenEditTagsFiled_thenSuccessfulUpdate() {
         param = createParam(b -> b.tags(List.of(3L)));
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
@@ -218,14 +250,14 @@ class UpdateKitInfoServiceTest {
     }
 
     @Test
-    void testUpdateKitInfo_EditNothing_ValidResults() {
-        AssessmentKit assessmentKit = AssessmentKitMother.simpleKit();
+    void testUpdateKitInfo_whenEditNothing_thenUpdateNothing() {
+        var assessmentKit = AssessmentKitMother.simpleKit();
         param = createParam(b -> b.kitId(assessmentKit.getId()));
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
 
         service.updateKitInfo(param);
-        verify(updateKitInfoPort, never()).update(any());
+        verifyNoInteractions(updateKitInfoPort);
     }
 
     private UpdateKitInfoUseCase.Param createParam(Consumer<Param.ParamBuilder> changer) {

@@ -310,6 +310,31 @@
 					"response": []
 				},
 				{
+					"name": "Get Public kits",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/public/assessment-kits",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"public",
+								"assessment-kits"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Get Kit Minimal Info",
 					"request": {
 						"method": "GET",
@@ -571,7 +596,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"New title\",\n    \"removeTranslations\" : true,\n    \"translations\": {\n        \"EN\": {\n            \"title\": \"title\",\n            \"summary\": \"summary\",\n            \"about\" : \"about\"\n        }\n    }\n}",
+							"raw": "{\n    \"title\": \"New title\",\n    \"removeMetadata\": false,\n    \"metadata\": {\n        \"goal\": \"goal\",\n        \"context\": \"context\"\n    },\n    \"removeTranslations\": true,\n    \"translations\": {\n        \"EN\": {\n            \"title\": \"title\",\n            \"summary\": \"summary\",\n            \"about\": \"about\",\n            \"metadata\": {\n                \"goal\": \"goal\",\n                \"context\": \"context\"\n            }\n        }\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"

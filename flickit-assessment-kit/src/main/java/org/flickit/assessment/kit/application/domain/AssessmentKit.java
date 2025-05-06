@@ -37,6 +37,7 @@ public class AssessmentKit {
     private final List<Measure> measures;
     private final List<AnswerRange> reusableAnswerRanges;
     private final Long activeVersionId;
+    @Nullable private KitMetadata metadata;
 
     /**
      * Represents the version ID of the draft. This field is not always required and may be {@code null}.

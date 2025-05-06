@@ -1,17 +1,19 @@
 package org.flickit.assessment.kit.application.service.assessmentkit;
 
+import org.assertj.core.api.Assertions;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetPublishedKitUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CountKitStatsPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
+import org.flickit.assessment.kit.application.port.out.kitlanguage.LoadKitLanguagesPort;
 import org.flickit.assessment.kit.application.port.out.kitlike.CheckKitLikeExistencePort;
-import org.flickit.assessment.kit.application.port.out.kittag.LoadKitTagListPort;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.CheckKitUserAccessPort;
-import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelsPort;
-import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairesPort;
 import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectsPort;
-import org.flickit.assessment.kit.test.fixture.application.*;
+import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
+import org.flickit.assessment.kit.test.fixture.application.AttributeMother;
+import org.flickit.assessment.kit.test.fixture.application.SubjectMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -46,22 +48,16 @@ class GetPublishedKitServiceTest {
     private LoadSubjectsPort loadSubjectsPort;
 
     @Mock
-    private LoadQuestionnairesPort loadQuestionnairesPort;
-
-    @Mock
-    private LoadMaturityLevelsPort loadMaturityLevelsPort;
-
-    @Mock
-    private LoadKitTagListPort loadKitTagListPort;
-
-    @Mock
     private CheckKitLikeExistencePort checkKitLikeExistencePort;
+
+    @Mock
+    private LoadKitLanguagesPort loadKitLanguagesPort;
 
     @Test
     void testGetPublishedKit_WhenKitDoesNotExist_ThrowsException() {
         GetPublishedKitUseCase.Param param = new GetPublishedKitUseCase.Param(12L, UUID.randomUUID());
 
-        when(loadAssessmentKitPort.load(param.getKitId()))
+        when(loadAssessmentKitPort.loadTranslated(param.getKitId()))
             .thenThrow(new ResourceNotFoundException(KIT_ID_NOT_FOUND));
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> service.getPublishedKit(param));
@@ -69,15 +65,13 @@ class GetPublishedKitServiceTest {
         verifyNoInteractions(checkKitUserAccessPort,
             countKitStatsPort,
             loadSubjectsPort,
-            loadQuestionnairesPort,
-            loadMaturityLevelsPort,
-            loadKitTagListPort);
+            loadKitLanguagesPort);
     }
 
     @Test
     void testGetPublishedKit_WhenKitIsNotPublished_ThrowsException() {
         GetPublishedKitUseCase.Param param = new GetPublishedKitUseCase.Param(12L, UUID.randomUUID());
-        when(loadAssessmentKitPort.load(param.getKitId()))
+        when(loadAssessmentKitPort.loadTranslated(param.getKitId()))
             .thenReturn(AssessmentKitMother.notPublishedKit());
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> service.getPublishedKit(param));
@@ -85,15 +79,13 @@ class GetPublishedKitServiceTest {
         verifyNoInteractions(checkKitUserAccessPort,
             countKitStatsPort,
             loadSubjectsPort,
-            loadQuestionnairesPort,
-            loadMaturityLevelsPort,
-            loadKitTagListPort);
+            loadKitLanguagesPort);
     }
 
     @Test
     void testGetPublishedKit_WhenKitIsPrivateAndUserHasNotAccess_ThrowsException() {
         GetPublishedKitUseCase.Param param = new GetPublishedKitUseCase.Param(12L, UUID.randomUUID());
-        when(loadAssessmentKitPort.load(param.getKitId()))
+        when(loadAssessmentKitPort.loadTranslated(param.getKitId()))
             .thenReturn(AssessmentKitMother.privateKit());
 
         when(checkKitUserAccessPort.hasAccess(param.getKitId(), param.getCurrentUserId()))
@@ -102,31 +94,25 @@ class GetPublishedKitServiceTest {
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
         verifyNoInteractions(countKitStatsPort,
             loadSubjectsPort,
-            loadQuestionnairesPort,
-            loadMaturityLevelsPort,
-            loadKitTagListPort);
+            loadKitLanguagesPort);
     }
 
     @Test
     void testGetPublishedKit_WhenKitIsPrivateAndUserHasAccess_ReturnValidResult() {
         var subject = SubjectMother.subjectWithAttributes("subject", List.of(AttributeMother.attributeWithTitle("attribute")));
-        var questionnaire = QuestionnaireMother.questionnaireWithTitle("questionnaire");
-        var maturityLevel = MaturityLevelMother.levelOne();
         var kit = AssessmentKitMother.privateKit();
         var param = new GetPublishedKitUseCase.Param(kit.getId(), UUID.randomUUID());
 
         var counts = new CountKitStatsPort.Result(1, 1, 115,
             1, 3, 1);
-        var tag = KitTagMother.createKitTag("security");
+        List<KitLanguage> languages = List.of(KitLanguage.EN, KitLanguage.FA);
 
-        when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
+        when(loadAssessmentKitPort.loadTranslated(param.getKitId())).thenReturn(kit);
         when(checkKitUserAccessPort.hasAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(true);
         when(countKitStatsPort.countKitStats(param.getKitId())).thenReturn(counts);
-        when(loadSubjectsPort.loadByKitVersionId(kit.getActiveVersionId())).thenReturn(List.of(subject));
-        when(loadQuestionnairesPort.loadByKitId(param.getKitId())).thenReturn(List.of(questionnaire));
-        when(loadMaturityLevelsPort.loadAllByKitVersionId(kit.getActiveVersionId())).thenReturn(List.of(maturityLevel));
-        when(loadKitTagListPort.loadByKitId(param.getKitId())).thenReturn(List.of(tag));
+        when(loadSubjectsPort.loadAllTranslated(kit.getActiveVersionId())).thenReturn(List.of(subject));
         when(checkKitLikeExistencePort.exist(param.getKitId(), param.getCurrentUserId())).thenReturn(false);
+        when(loadKitLanguagesPort.loadByKitId(param.getKitId())).thenReturn(languages);
 
         GetPublishedKitUseCase.Result result = service.getPublishedKit(param);
 
@@ -142,41 +128,29 @@ class GetPublishedKitServiceTest {
 
         assertEquals(counts.likes(), result.like().count());
         assertFalse(result.like().liked());
-        assertEquals(counts.assessmentCounts(), result.assessmentsCount());
-        assertEquals(1, result.subjectsCount());
-        assertEquals(counts.questionnairesCount(), result.questionnairesCount());
 
         assertEquals(1, result.subjects().size());
         assertEquals(subject.getId(), result.subjects().getFirst().id());
 
-        assertEquals(1, result.questionnaires().size());
-        assertEquals(questionnaire.getId(), result.questionnaires().getFirst().id());
-
-        assertEquals(1, result.maturityLevels().size());
-        assertEquals(maturityLevel.getId(), result.maturityLevels().getFirst().id());
-
-        assertEquals(1, result.tags().size());
-        assertEquals(tag.getId(), result.tags().getFirst().id());
+        Assertions.assertThat(result.languages())
+            .zipSatisfy(languages, (actual, expected) -> {
+                assertEquals(expected.getCode(), actual.code());
+                assertEquals(expected.getTitle(), actual.title());
+            });
     }
 
     @Test
     void testGetPublishedKit_WhenKitIsPublishedAndPublic_ReturnValidResult() {
         var subject = SubjectMother.subjectWithAttributes("subject", List.of(AttributeMother.attributeWithTitle("attribute")));
-        var questionnaire = QuestionnaireMother.questionnaireWithTitle("questionnaire");
-        var maturityLevel = MaturityLevelMother.levelOne();
         var kit = AssessmentKitMother.simpleKit();
         var param = new GetPublishedKitUseCase.Param(kit.getId(), UUID.randomUUID());
 
         var counts = new CountKitStatsPort.Result(1, 1, 115,
             1, 3, 1);
-        var tag = KitTagMother.createKitTag("security");
 
-        when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
+        when(loadAssessmentKitPort.loadTranslated(param.getKitId())).thenReturn(kit);
         when(countKitStatsPort.countKitStats(param.getKitId())).thenReturn(counts);
-        when(loadSubjectsPort.loadByKitVersionId(kit.getActiveVersionId())).thenReturn(List.of(subject));
-        when(loadQuestionnairesPort.loadByKitId(param.getKitId())).thenReturn(List.of(questionnaire));
-        when(loadMaturityLevelsPort.loadAllByKitVersionId(kit.getActiveVersionId())).thenReturn(List.of(maturityLevel));
-        when(loadKitTagListPort.loadByKitId(param.getKitId())).thenReturn(List.of(tag));
+        when(loadSubjectsPort.loadAllTranslated(kit.getActiveVersionId())).thenReturn(List.of(subject));
         when(checkKitLikeExistencePort.exist(param.getKitId(), param.getCurrentUserId())).thenReturn(true);
 
         GetPublishedKitUseCase.Result result = service.getPublishedKit(param);
@@ -193,21 +167,9 @@ class GetPublishedKitServiceTest {
 
         assertEquals(counts.likes(), result.like().count());
         assertTrue(result.like().liked());
-        assertEquals(counts.assessmentCounts(), result.assessmentsCount());
-        assertEquals(1, result.subjectsCount());
-        assertEquals(counts.questionnairesCount(), result.questionnairesCount());
 
         assertEquals(1, result.subjects().size());
         assertEquals(subject.getId(), result.subjects().getFirst().id());
-
-        assertEquals(1, result.questionnaires().size());
-        assertEquals(questionnaire.getId(), result.questionnaires().getFirst().id());
-
-        assertEquals(1, result.maturityLevels().size());
-        assertEquals(maturityLevel.getId(), result.maturityLevels().getFirst().id());
-
-        assertEquals(1, result.tags().size());
-        assertEquals(tag.getId(), result.tags().getFirst().id());
 
         verifyNoInteractions(checkKitUserAccessPort);
     }

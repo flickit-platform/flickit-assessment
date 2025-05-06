@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
@@ -42,19 +43,11 @@ public class GetKitListService implements GetKitListUseCase {
     public PaginatedResponse<KitListItem> getKitList(Param param) {
         var kitLanguages = resolveKitLanguages(param.getLangs());
         PaginatedResponse<LoadPublishedKitListPort.Result> kitsPage;
-        if (param.getIsPrivate() == null) {
-            kitsPage = loadPublishedKitListPort.loadPrivateAndPublicKits(param.getCurrentUserId(),
-                kitLanguages,
-                param.getPage(),
-                param.getSize());
-        }
-        else if (Boolean.FALSE.equals(param.getIsPrivate()))
+
+        if (param.getCurrentUserId() == null)
             kitsPage = loadPublishedKitListPort.loadPublicKits(kitLanguages, param.getPage(), param.getSize());
         else
-            kitsPage = loadPublishedKitListPort.loadPrivateKits(param.getCurrentUserId(),
-                kitLanguages,
-                param.getPage(),
-                param.getSize());
+            kitsPage = getPaginatedKits(param, kitLanguages);
 
         var ids = kitsPage.getItems().stream()
             .map((Result t) -> t.kit().getId()).toList();
@@ -72,6 +65,8 @@ public class GetKitListService implements GetKitListUseCase {
                 idToStatsMap.get(item.kit().getId()),
                 idToKitTagsMap.get(item.kit().getId()),
                 idToKitLanguagesMap.get(item.kit().getId())))
+            .sorted(Comparator.comparing(KitListItem::isPrivate).reversed()
+                .thenComparing(KitListItem::title, String.CASE_INSENSITIVE_ORDER))
             .toList();
 
         return new PaginatedResponse<>(
@@ -82,6 +77,23 @@ public class GetKitListService implements GetKitListUseCase {
             kitsPage.getOrder(),
             kitsPage.getTotal()
         );
+    }
+
+    private PaginatedResponse<Result> getPaginatedKits(Param param, Set<KitLanguage> kitLanguages) {
+        PaginatedResponse<Result> kitsPage;
+        if (param.getIsPrivate() == null) {
+            kitsPage = loadPublishedKitListPort.loadPrivateAndPublicKits(param.getCurrentUserId(),
+                kitLanguages,
+                param.getPage(),
+                param.getSize());
+        } else if (!param.getIsPrivate())
+            kitsPage = loadPublishedKitListPort.loadPublicKits(kitLanguages, param.getPage(), param.getSize());
+        else
+            kitsPage = loadPublishedKitListPort.loadPrivateKits(param.getCurrentUserId(),
+                kitLanguages,
+                param.getPage(),
+                param.getSize());
+        return kitsPage;
     }
 
     @Nullable

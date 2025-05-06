@@ -26,6 +26,7 @@ import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitMinimalInfoUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.*;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.DeleteKitUserAccessPort;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -41,6 +42,7 @@ import java.util.stream.Collectors;
 import static java.util.stream.Collectors.toSet;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 import static org.flickit.assessment.kit.adapter.out.persistence.assessmentkit.AssessmentKitMapper.mapToDomainModel;
+import static org.flickit.assessment.kit.adapter.out.persistence.assessmentkit.AssessmentKitMapper.mapToDomainModelWithMetadata;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 @Component
@@ -192,6 +194,15 @@ public class AssessmentKitPersistenceJpaAdapter implements
     }
 
     @Override
+    public AssessmentKit loadTranslated(long kitId) {
+        AssessmentKitJpaEntity kitEntity = repository.findById(kitId)
+            .orElseThrow(() -> new ResourceNotFoundException(KIT_ID_NOT_FOUND));
+
+        var language = KitLanguage.valueOf(LocaleContextHolder.getLocale().getLanguage().toUpperCase());
+        return mapToDomainModelWithMetadata(kitEntity, language);
+    }
+
+    @Override
     public PaginatedResponse<LoadPublishedKitListPort.Result> loadPublicKits(@Nullable
                                                                              Collection<KitLanguage> kitLanguages,
                                                                              int page,
@@ -237,9 +248,10 @@ public class AssessmentKitPersistenceJpaAdapter implements
     }
 
     private PaginatedResponse<LoadPublishedKitListPort.Result> toLoadPublishedKitsPortResult(Page<KitWithExpertGroupView> pageResult) {
+        var language = KitLanguage.valueOf(LocaleContextHolder.getLocale().getLanguage().toUpperCase());
         var items = pageResult.getContent().stream()
             .map(v -> new LoadPublishedKitListPort.Result(
-                mapToDomainModel(v.getKit()),
+                mapToDomainModel(v.getKit(), language),
                 ExpertGroupMapper.mapToDomainModel(v.getExpertGroup())))
             .toList();
 

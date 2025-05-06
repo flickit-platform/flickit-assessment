@@ -12,4 +12,39 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="0.58-02" author="Maziyar Gerami">
+        <addColumn tableName="fak_kit_banner">
+            <column name="size" type="tinyint" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.58-03" author="Maziyar Gerami">
+        <dropUniqueConstraint tableName="fak_kit_banner"
+                              constraintName="uq_fak_kitbanner_kitid_langid"/>
+    </changeSet>
+
+    <changeSet id="0.58-04" author="Maziyar Gerami">
+        <addUniqueConstraint tableName="fak_kit_banner"
+                             constraintName="uq_fak_kitbanner_kitid_langid_size"
+                             columnNames="kit_id, lang_id, size"/>
+    </changeSet>
+
+    <changeSet id="0.58-05" author="Maziyar Gerami">
+        <addColumn tableName="fac_assessment_report">
+            <column name="visibility" type="tinyint" defaultValue="0">
+                    <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.58-06" author="Mahdi Rezazadeh">
+        <addColumn tableName="fac_assessment_report">
+            <column name="link_hash" type="uuid" defaultValueComputed="gen_random_uuid()">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
