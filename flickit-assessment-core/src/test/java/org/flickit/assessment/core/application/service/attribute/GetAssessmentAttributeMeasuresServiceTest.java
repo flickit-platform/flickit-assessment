@@ -10,6 +10,7 @@ import org.flickit.assessment.core.test.fixture.application.MeasureMother;
 import org.flickit.assessment.core.test.fixture.application.QuestionMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -21,10 +22,8 @@ import java.util.function.Consumer;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ATTRIBUTE_MEASURES;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.junit.Assert.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class GetAssessmentAttributeMeasuresServiceTest {
@@ -71,10 +70,14 @@ class GetAssessmentAttributeMeasuresServiceTest {
             .thenReturn(List.of(new LoadAttributeQuestionsPort.Result(question1, answer1),
                 new LoadAttributeQuestionsPort.Result(question2, answer2),
                 new LoadAttributeQuestionsPort.Result(question3, null)));
-        when(loadMeasuresPort.loadAll(List.of(measure1.getId(), measure2.getId()), param.getAssessmentId()))
+        when(loadMeasuresPort.loadAll(anyList(), any(UUID.class)))
             .thenReturn(List.of(measure1, measure2));
 
         var result = service.getAssessmentAttributeMeasures(param);
+        var measureIdsArgument = ArgumentCaptor.forClass(List.class);
+        verify(loadMeasuresPort, times(1)).loadAll(measureIdsArgument.capture(), eq(param.getAssessmentId()));
+
+        assertTrue(measureIdsArgument.getValue().containsAll(List.of(measure1.getId(), measure2.getId())));
 
         assertEquals(2, result.measures().size());
 

@@ -3,7 +3,6 @@ package org.flickit.assessment.core.application.service.assessmentreport;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.application.domain.AssessmentReport;
 import org.flickit.assessment.core.application.domain.VisibilityType;
 import org.flickit.assessment.core.application.port.in.assessmentreport.UpdateAssessmentReportPublishStatusUseCase.Param;
 import org.flickit.assessment.core.application.port.out.assessmentreport.CreateAssessmentReportPort;
@@ -55,7 +54,7 @@ class UpdateAssessmentReportPublishStatusServiceTest {
     ArgumentCaptor<UpdateAssessmentReportPort.UpdatePublishParam> updatePublishPortParam;
 
     @Captor
-    ArgumentCaptor<AssessmentReport> assessmentReportCaptor;
+    ArgumentCaptor<CreateAssessmentReportPort.Param> assessmentReportCaptor;
 
     @Test
     void testUpdateAssessmentReportPublishStatus_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
@@ -131,14 +130,10 @@ class UpdateAssessmentReportPublishStatusServiceTest {
         verify(updateAssessmentReportPort, times(1)).updatePublishStatus(updatePublishPortParam.capture());
         verify(createAssessmentReportPort, times(1)).persist(assessmentReportCaptor.capture());
 
-        assertEquals(assessmentResult.getId(), assessmentReportCaptor.getValue().getAssessmentResultId());
-        assertFalse(assessmentReportCaptor.getValue().isPublished());
-        assertNotNull(assessmentReportCaptor.getValue().getLastModificationTime());
-        assertEquals(param.getCurrentUserId(), assessmentReportCaptor.getValue().getLastModifiedBy());
-        assertNotNull(assessmentReportCaptor.getValue().getCreationTime());
-        assertEquals(param.getCurrentUserId(), assessmentReportCaptor.getValue().getCreatedBy());
-        assertNotNull(assessmentReportCaptor.getValue().getCreationTime());
-        assertEquals(VisibilityType.RESTRICTED, assessmentReportCaptor.getValue().getVisibility());
+        assertEquals(assessmentResult.getId(), assessmentReportCaptor.getValue().assessmentResultId());
+        assertNotNull(assessmentReportCaptor.getValue().creationTime());
+        assertEquals(param.getCurrentUserId(), assessmentReportCaptor.getValue().createdBy());
+        assertNotNull(assessmentReportCaptor.getValue().creationTime());
 
         assertEquals(assessmentResult.getId(), updatePublishPortParam.getValue().assessmentResultId());
         assertNotNull(updatePublishPortParam.getValue().lastModificationTime());
