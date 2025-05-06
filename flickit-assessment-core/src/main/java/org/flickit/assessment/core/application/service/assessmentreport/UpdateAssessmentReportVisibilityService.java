@@ -11,11 +11,9 @@ import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAss
 import org.flickit.assessment.core.application.port.out.assessmentreport.UpdateAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
-
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.MANAGE_ASSESSMENT_REPORT_VISIBILITY;
@@ -49,19 +47,17 @@ public class UpdateAssessmentReportVisibilityService implements UpdateAssessment
         if (!assessmentReport.isPublished())
             throw new InvalidStateException(REPORT_UNPUBLISHED, UPDATE_ASSESSMENT_REPORT_VISIBILITY_ASSESSMENT_REPORT_NOT_PUBLISHED);
 
-        UUID linkHash = null;
         var visibility = VisibilityType.valueOf(param.getVisibility());
-        if (visibility.equals(VisibilityType.PUBLIC))
-            linkHash = assessmentReport.getLinkHash();
-
         updateAssessmentReportPort.updateVisibilityStatus(toParam(assessmentResult.getId(), visibility, param.getCurrentUserId()));
+
+        var linkHash = VisibilityType.PUBLIC.equals(visibility) ? assessmentReport.getLinkHash() : null;
         return new Result(linkHash);
     }
 
-    private UpdateAssessmentReportPort.UpdateVisibilityParam toParam(UUID assessmentResultId, VisibilityType visibility, UUID userId) {
+    private UpdateAssessmentReportPort.UpdateVisibilityParam toParam(UUID assessmentResultId, VisibilityType visibility, UUID currentUserId) {
         return new UpdateAssessmentReportPort.UpdateVisibilityParam(assessmentResultId,
             visibility,
             LocalDateTime.now(),
-            userId);
+            currentUserId);
     }
 }
