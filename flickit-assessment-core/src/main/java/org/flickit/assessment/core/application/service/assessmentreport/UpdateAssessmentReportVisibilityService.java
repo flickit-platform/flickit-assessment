@@ -55,7 +55,7 @@ public class UpdateAssessmentReportVisibilityService implements UpdateAssessment
             linkHash = assessmentReport.getLinkHash();
 
         updateAssessmentReportPort.updateVisibilityStatus(toParam(assessmentResult.getId(), visibility, param.getCurrentUserId()));
-        return new Result(param.getVisibility(), linkHash);
+        return new Result(linkHash);
     }
 
     private UpdateAssessmentReportPort.UpdateVisibilityParam toParam(UUID assessmentResultId, VisibilityType visibility, UUID userId) {

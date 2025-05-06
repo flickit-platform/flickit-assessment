@@ -40,6 +40,6 @@ public interface UpdateAssessmentReportVisibilityUseCase {
         }
     }
 
-    record Result(String visibility, UUID linkHash) {
+    record Result(UUID linkHash) {
     }
 }
