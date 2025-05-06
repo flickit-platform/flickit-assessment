@@ -1,8 +1,22 @@
 package org.flickit.assessment.core.application.port.out.assessmentreport;
 
-import org.flickit.assessment.core.application.domain.AssessmentReport;
+import org.flickit.assessment.core.application.domain.AssessmentReportMetadata;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 public interface CreateAssessmentReportPort {
 
-    void persist(AssessmentReport assessmentReport);
+    /**
+     * Persists a new assessment report in an UNPUBLISHED and RESTRICTED state.
+     *
+     * @param param
+     */
+    void persist(Param param);
+
+    record Param(UUID assessmentResultId,
+                 AssessmentReportMetadata metadata,
+                 LocalDateTime creationTime,
+                 UUID createdBy) {
+    }
 }

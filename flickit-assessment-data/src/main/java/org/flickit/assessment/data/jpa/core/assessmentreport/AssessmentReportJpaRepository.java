@@ -42,4 +42,17 @@ public interface AssessmentReportJpaRepository extends JpaRepository<AssessmentR
                          @Param("visibility") Integer visibility,
                          @Param("lastModificationTime") LocalDateTime lastModificationTime,
                          @Param("lastModifiedBy") UUID lastModifiedBy);
+
+    @Modifying
+    @Query("""
+            UPDATE AssessmentReportJpaEntity a
+            SET a.visibility = :visibility,
+                a.lastModificationTime = :lastModificationTime,
+                a.lastModifiedBy= :lastModifiedBy
+            WHERE a.assessmentResultId = :assessmentResultId
+        """)
+    void updateVisibility(@Param("assessmentResultId") UUID assessmentResultId,
+                          @Param("visibility") Integer visibility,
+                          @Param("lastModificationTime") LocalDateTime lastModificationTime,
+                          @Param("lastModifiedBy") UUID lastModifiedBy);
 }
