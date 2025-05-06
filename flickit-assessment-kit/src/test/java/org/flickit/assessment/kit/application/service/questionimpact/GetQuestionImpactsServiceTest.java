@@ -2,8 +2,11 @@ package org.flickit.assessment.kit.application.service.questionimpact;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.kit.application.domain.Attribute;
 import org.flickit.assessment.kit.application.domain.KitVersion;
+import org.flickit.assessment.kit.application.domain.QuestionImpact;
 import org.flickit.assessment.kit.application.port.in.questionimpact.GetQuestionImpactsUseCase;
+import org.flickit.assessment.kit.application.port.in.questionimpact.GetQuestionImpactsUseCase.AttributeImpact;
 import org.flickit.assessment.kit.application.port.out.attribute.LoadAttributesPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
@@ -18,6 +21,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -128,15 +132,28 @@ class GetQuestionImpactsServiceTest {
 
         assertEquals(2, result.attributeImpacts().size());
 
-        assertThat(result.attributeImpacts())
-            .zipSatisfy(expectedAttributes, (actual, expected) -> {
+        var actualAttributeImpacts = result.attributeImpacts().stream()
+            .sorted(Comparator.comparing(AttributeImpact::attributeId))
+            .toList();
+        var expectedAttributesSorted = expectedAttributes.stream()
+            .sorted(Comparator.comparing(Attribute::getId))
+            .toList();
+        assertThat(actualAttributeImpacts)
+            .zipSatisfy(expectedAttributesSorted, (actual, expected) -> {
                 assertEquals(expected.getId(), actual.attributeId());
                 assertEquals(expected.getTitle(), actual.title());
                 assertEquals(attributeToImpactMap.get(expected).size(), actual.impacts().size());
-                assertThat(actual.impacts())
-                    .zipSatisfy(attributeToImpactMap.get(expected), (actualImpact, expectedImpact) -> {
-                        assertEquals(expectedImpact.getMaturityLevelId(), actualImpact.maturityLevel().maturityLevelId());
+
+                var actualImpacts = actual.impacts().stream()
+                    .sorted(Comparator.comparing(GetQuestionImpactsUseCase.Impact::questionImpactId))
+                    .toList();
+                var expectedImpacts = attributeToImpactMap.get(expected).stream()
+                    .sorted(Comparator.comparing(QuestionImpact::getId))
+                    .toList();
+                assertThat(actualImpacts)
+                    .zipSatisfy(expectedImpacts, (actualImpact, expectedImpact) -> {
                         assertEquals(expectedImpact.getId(), actualImpact.questionImpactId());
+                        assertEquals(expectedImpact.getMaturityLevelId(), actualImpact.maturityLevel().maturityLevelId());
                         assertEquals(expectedImpact.getWeight(), actualImpact.weight());
                     });
             });
