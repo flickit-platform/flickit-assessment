@@ -2050,6 +2050,33 @@
 					"response": []
 				},
 				{
+					"name": "Get Assessment Public Report",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/public/assessments/graphical-report/1124cf20-51eb-4de6-ae6f-096fb4d92adb",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"public",
+								"assessments",
+								"graphical-report",
+								"1124cf20-51eb-4de6-ae6f-096fb4d92adb"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Get Assessment Report Metadata",
 					"request": {
 						"method": "GET",
