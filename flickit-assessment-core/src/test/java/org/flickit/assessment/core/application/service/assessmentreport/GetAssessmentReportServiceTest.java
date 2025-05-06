@@ -9,6 +9,7 @@ import org.flickit.assessment.common.exception.CalculateNotValidException;
 import org.flickit.assessment.common.exception.InvalidStateException;
 import org.flickit.assessment.core.application.domain.AdviceItem;
 import org.flickit.assessment.core.application.domain.AssessmentReport;
+import org.flickit.assessment.core.application.domain.VisibilityType;
 import org.flickit.assessment.core.application.domain.report.AssessmentReportItem;
 import org.flickit.assessment.core.application.domain.report.AssessmentSubjectReportItem;
 import org.flickit.assessment.core.application.domain.report.AttributeReportItem;
@@ -186,6 +187,7 @@ class GetAssessmentReportServiceTest {
         assertEquals(adviceItems.size(), result.advice().adviceItems().size());
         assertAdviceItem(adviceItems, result.advice().adviceItems(), assessmentReport.language());
         assertTrue(result.permissions().canViewDashboard());
+        assertEquals(VisibilityType.RESTRICTED.name(), result.visibility());
 
         verify(assessmentAccessChecker, times(3))
             .isAuthorized(eq(param.getAssessmentId()), eq(param.getCurrentUserId()), any(AssessmentPermission.class));
@@ -239,6 +241,7 @@ class GetAssessmentReportServiceTest {
         assertEquals(adviceItems.size(), result.advice().adviceItems().size());
         assertAdviceItem(adviceItems, result.advice().adviceItems(), assessmentReport.language());
         assertFalse(result.permissions().canViewDashboard());
+        assertEquals(report.getVisibility().name(), result.visibility());
     }
 
     private AssessmentReportItem createAssessmentReportItem(GetAssessmentReportUseCase.Param param) {
