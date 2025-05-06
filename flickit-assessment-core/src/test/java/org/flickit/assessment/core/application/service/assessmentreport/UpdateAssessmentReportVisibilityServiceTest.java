@@ -92,7 +92,7 @@ class UpdateAssessmentReportVisibilityServiceTest {
     }
 
     @Test
-    void testUpdateAssessmentReportVisibility_whenVisibilityParamIsRestricted_successfulUpdateWithoutLinkHash() {
+    void testUpdateAssessmentReportVisibility_whenVisibilityParamIsRestricted_thenSuccessfulUpdateWithoutLinkHash() {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MANAGE_ASSESSMENT_REPORT_VISIBILITY))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
@@ -111,7 +111,7 @@ class UpdateAssessmentReportVisibilityServiceTest {
     }
 
     @Test
-    void testUpdateAssessmentReportVisibility_whenVisibilityParamIsPublic_successfulUpdateWithLinkHash() {
+    void testUpdateAssessmentReportVisibility_whenVisibilityParamIsPublic_thenSuccessfulUpdateWithLinkHash() {
         var param = createParam(b -> b.visibility("PUBLIC"));
         var assessmentReport = AssessmentReportMother.empty();
 
