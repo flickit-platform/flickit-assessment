@@ -135,7 +135,6 @@ class UpdateAssessmentReportPublishStatusServiceTest {
         assertNotNull(assessmentReportCaptor.getValue().creationTime());
         assertEquals(param.getCurrentUserId(), assessmentReportCaptor.getValue().createdBy());
         assertNotNull(assessmentReportCaptor.getValue().creationTime());
-        assertEquals(VisibilityType.RESTRICTED, assessmentReportCaptor.getValue().visibility());
 
         assertEquals(assessmentResult.getId(), updatePublishPortParam.getValue().assessmentResultId());
         assertNotNull(updatePublishPortParam.getValue().lastModificationTime());

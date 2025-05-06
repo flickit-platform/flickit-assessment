@@ -41,14 +41,14 @@ public class UpdateAssessmentReportPublishStatusService implements UpdateAssessm
 
         var assessmentReport = loadAssessmentReportPort.load(param.getAssessmentId());
 
-        CreateAssessmentReportPort.Param newAssessmentReport = null;
+        CreateAssessmentReportPort.Param newAssessmentReport;
         if (assessmentReport.isEmpty()) {
             newAssessmentReport = buildAssessmentReportParam(assessmentResult.getId(), param.getCurrentUserId());
             createAssessmentReportPort.persist(newAssessmentReport);
         }
 
         var visibility = assessmentReport.isEmpty()
-            ? newAssessmentReport.visibility()
+            ? VisibilityType.RESTRICTED
             : assessmentReport.get().getVisibility();
         updatePublishStatus(assessmentResult.getId(), param, visibility);
     }
@@ -58,7 +58,6 @@ public class UpdateAssessmentReportPublishStatusService implements UpdateAssessm
             assessmentResultId,
             null,
             false,
-            VisibilityType.RESTRICTED,
             LocalDateTime.now(),
             currentUserId);
     }
