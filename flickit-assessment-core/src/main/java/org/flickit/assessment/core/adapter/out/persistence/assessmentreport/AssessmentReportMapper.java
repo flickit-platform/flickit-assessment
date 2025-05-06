@@ -31,7 +31,7 @@ public class AssessmentReportMapper {
         return new AssessmentReportJpaEntity(null,
             param.assessmentResultId(),
             JsonUtils.toJson(param.metadata()),
-            param.published(),
+            Boolean.FALSE,
             VisibilityType.RESTRICTED.getId(),
             UUID.randomUUID(),
             param.creationTime(),

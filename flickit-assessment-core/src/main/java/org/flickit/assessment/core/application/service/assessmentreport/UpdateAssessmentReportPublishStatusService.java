@@ -57,7 +57,6 @@ public class UpdateAssessmentReportPublishStatusService implements UpdateAssessm
         return new CreateAssessmentReportPort.Param(
             assessmentResultId,
             null,
-            false,
             LocalDateTime.now(),
             currentUserId);
     }
@@ -71,10 +70,10 @@ public class UpdateAssessmentReportPublishStatusService implements UpdateAssessm
     }
 
     private UpdateAssessmentReportPort.UpdatePublishParam buildUpdatePublishParam(UUID assessmentResultId, Param param, VisibilityType visibility) {
-            return new UpdateAssessmentReportPort.UpdatePublishParam(assessmentResultId,
-                param.getPublished(),
-                visibility,
-                LocalDateTime.now(),
-                param.getCurrentUserId());
-        }
+        return new UpdateAssessmentReportPort.UpdatePublishParam(assessmentResultId,
+            param.getPublished(),
+            visibility,
+            LocalDateTime.now(),
+            param.getCurrentUserId());
+    }
 }

@@ -61,7 +61,6 @@ public class CreateAssessmentReportMetadataService implements CreateAssessmentRe
         return new CreateAssessmentReportPort.Param(
             assessmentResultId,
             metadata,
-            false,
             LocalDateTime.now(),
             currentUserId);
     }

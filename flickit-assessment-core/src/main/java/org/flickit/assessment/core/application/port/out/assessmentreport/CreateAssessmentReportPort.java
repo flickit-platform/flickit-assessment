@@ -11,7 +11,6 @@ public interface CreateAssessmentReportPort {
 
     record Param(UUID assessmentResultId,
                  AssessmentReportMetadata metadata,
-                 boolean published,
                  LocalDateTime creationTime,
                  UUID createdBy) {
     }

@@ -131,7 +131,6 @@ class UpdateAssessmentReportPublishStatusServiceTest {
         verify(createAssessmentReportPort, times(1)).persist(assessmentReportCaptor.capture());
 
         assertEquals(assessmentResult.getId(), assessmentReportCaptor.getValue().assessmentResultId());
-        assertFalse(assessmentReportCaptor.getValue().published());
         assertNotNull(assessmentReportCaptor.getValue().creationTime());
         assertEquals(param.getCurrentUserId(), assessmentReportCaptor.getValue().createdBy());
         assertNotNull(assessmentReportCaptor.getValue().creationTime());
