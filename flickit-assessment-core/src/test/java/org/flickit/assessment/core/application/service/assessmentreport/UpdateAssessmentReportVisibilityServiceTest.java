@@ -2,7 +2,9 @@ package org.flickit.assessment.core.application.service.assessmentreport;
 
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.exception.InvalidStateException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.domain.AssessmentReport;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.VisibilityType;
 import org.flickit.assessment.core.application.port.in.assessmentreport.UpdateAssessmentReportVisibilityUseCase;
@@ -25,7 +27,9 @@ import java.util.function.Consumer;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.MANAGE_ASSESSMENT_REPORT_VISIBILITY;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.common.exception.api.ErrorCodes.REPORT_UNPUBLISHED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.UPDATE_ASSESSMENT_REPORT_VISIBILITY_ASSESSMENT_REPORT_NOT_FOUND;
+import static org.flickit.assessment.core.common.ErrorMessageKey.UPDATE_ASSESSMENT_REPORT_VISIBILITY_ASSESSMENT_REPORT_NOT_PUBLISHED;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -48,7 +52,8 @@ class UpdateAssessmentReportVisibilityServiceTest {
     private LoadAssessmentReportPort loadAssessmentReportPort;
 
     private final AssessmentResult assessmentResult = AssessmentResultMother.validResult();
-    UpdateAssessmentReportVisibilityUseCase.Param param = createParam(UpdateAssessmentReportVisibilityUseCase.Param.ParamBuilder::build);
+    private UpdateAssessmentReportVisibilityUseCase.Param param = createParam(UpdateAssessmentReportVisibilityUseCase.Param.ParamBuilder::build);
+    private AssessmentReport assessmentReport = AssessmentReportMother.publishedReportWithMetadata(null);
 
     @Test
     void testUpdateAssessmentReportVisibility_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowsException() {
@@ -92,11 +97,33 @@ class UpdateAssessmentReportVisibilityServiceTest {
     }
 
     @Test
+    void testUpdateAssessmentReportVisibility_whenAssessmentReportIsNotPublished_thenThrowsException() {
+        param = createParam(b -> b.visibility("PUBLIC"));
+        assessmentReport = AssessmentReportMother.empty();
+
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MANAGE_ASSESSMENT_REPORT_VISIBILITY))
+            .thenReturn(true);
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
+            .thenReturn(Optional.of(AssessmentResultMother.validResult()));
+        when(loadAssessmentReportPort.load(param.getAssessmentId()))
+            .thenReturn(Optional.of(assessmentReport));
+
+        var throwable = assertThrows(InvalidStateException.class, () -> service.updateReportVisibility(param));
+        assertEquals(REPORT_UNPUBLISHED, throwable.getCode());
+        assertEquals(UPDATE_ASSESSMENT_REPORT_VISIBILITY_ASSESSMENT_REPORT_NOT_PUBLISHED, throwable.getMessage());
+
+        verifyNoInteractions(updateAssessmentReportPort);
+    }
+
+    @Test
     void testUpdateAssessmentReportVisibility_whenVisibilityParamIsRestricted_thenSuccessfulUpdateWithoutLinkHash() {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MANAGE_ASSESSMENT_REPORT_VISIBILITY))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
             .thenReturn(Optional.of(assessmentResult));
+        when(loadAssessmentReportPort.load(param.getAssessmentId()))
+            .thenReturn(Optional.of(assessmentReport));
+
         ArgumentCaptor<UpdateAssessmentReportPort.UpdateVisibilityParam> argumentCaptor = ArgumentCaptor.forClass(UpdateAssessmentReportPort.UpdateVisibilityParam.class);
         service.updateReportVisibility(param);
 
@@ -106,14 +133,11 @@ class UpdateAssessmentReportVisibilityServiceTest {
         assertEquals(VisibilityType.RESTRICTED, argumentCaptor.getValue().visibility());
         assertNotNull(argumentCaptor.getValue().lastModificationTime());
         assertEquals(param.getCurrentUserId(), argumentCaptor.getValue().lastModifiedBy());
-
-        verifyNoInteractions(loadAssessmentReportPort);
     }
 
     @Test
     void testUpdateAssessmentReportVisibility_whenVisibilityParamIsPublic_thenSuccessfulUpdateWithLinkHash() {
         var param = createParam(b -> b.visibility("PUBLIC"));
-        var assessmentReport = AssessmentReportMother.empty();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MANAGE_ASSESSMENT_REPORT_VISIBILITY))
             .thenReturn(true);

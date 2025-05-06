@@ -355,4 +355,5 @@ public class ErrorMessageKey {
     public static final String UPDATE_ASSESSMENT_REPORT_VISIBILITY_VISIBILITY_NOT_NULL = "update-assessment-report-visibility.visibility.notFound";
     public static final String UPDATE_ASSESSMENT_REPORT_VISIBILITY_ASSESSMENT_REPORT_NOT_FOUND = "update-assessment-report-visibility.assessmentReport.notFound";
     public static final String UPDATE_ASSESSMENT_REPORT_VISIBILITY_VISIBILITY_INVALID = "update-assessment-report-visibility.visibility.invalid";
+    public static final String UPDATE_ASSESSMENT_REPORT_VISIBILITY_ASSESSMENT_REPORT_NOT_PUBLISHED = "update-assessment-report-visibility.assessmentReport.notPublished";
 }
