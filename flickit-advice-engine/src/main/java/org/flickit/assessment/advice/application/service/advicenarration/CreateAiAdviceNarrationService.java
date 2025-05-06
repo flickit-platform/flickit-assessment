@@ -121,7 +121,7 @@ public class CreateAiAdviceNarrationService implements CreateAiAdviceNarrationUs
         List<Long> targetAttributeIds = targets.stream()
             .map(AttributeLevelTarget::getAttributeId)
             .toList();
-        var attributesMap = loadAttributesPort.loadByIdsAndKitVersionId(targetAttributeIds, assessmentId).stream()
+        var attributesMap = loadAttributesPort.loadByIdsAndAssessmentId(targetAttributeIds, assessmentId).stream()
             .collect(Collectors.toMap(Attribute::getId, Attribute::getTitle));
 
         var adviceRecommendations = adviceItems.stream()

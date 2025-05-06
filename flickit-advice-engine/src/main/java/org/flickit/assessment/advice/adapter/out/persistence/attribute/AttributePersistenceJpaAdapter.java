@@ -25,7 +25,7 @@ public class AttributePersistenceJpaAdapter implements LoadAttributesPort {
     private final AssessmentKitJpaRepository assessmentKitRepository;
 
     @Override
-    public List<Attribute> loadByIdsAndKitVersionId(List<Long> attributeIds, UUID assessmentId) {
+    public List<Attribute> loadByIdsAndAssessmentId(List<Long> attributeIds, UUID assessmentId) {
         var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND));
 

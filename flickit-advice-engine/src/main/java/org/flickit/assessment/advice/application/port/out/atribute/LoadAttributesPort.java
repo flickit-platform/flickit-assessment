@@ -7,5 +7,5 @@ import java.util.UUID;
 
 public interface LoadAttributesPort {
 
-    List<Attribute> loadByIdsAndKitVersionId(List<Long> attributeIds, UUID assessmentId);
+    List<Attribute> loadByIdsAndAssessmentId(List<Long> attributeIds, UUID assessmentId);
 }
