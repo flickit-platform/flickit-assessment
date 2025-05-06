@@ -19,9 +19,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.QUESTION_ID_NOT_FOUND;
 import static org.flickit.assessment.kit.test.fixture.application.AnswerOptionMother.createAnswerOption;
@@ -89,6 +91,7 @@ class GetQuestionImpactsServiceTest {
     void testGetQuestionImpacts_validParameters_loadQuestionImpactsSuccessfully() {
         var attr1 = attributeWithTitle("attr1");
         var attr2 = attributeWithTitle("attr2");
+        var expectedAttributes = List.of(attr1, attr2);
         var maturityLevels = allLevels();
         var question = createQuestion();
 
@@ -104,6 +107,7 @@ class GetQuestionImpactsServiceTest {
         var impact3 = createQuestionImpact(attr2.getId(), maturityLevels.get(3).getId(), 3, question.getId());
 
         var impacts = List.of(impact1, impact2, impact3);
+        var attributeToImpactMap = Map.of(attr1, List.of(impact1, impact2), attr2, List.of(impact3));
 
         var param = createParam(GetQuestionImpactsUseCase.Param.ParamBuilder::build);
 
@@ -113,7 +117,7 @@ class GetQuestionImpactsServiceTest {
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(checkExpertGroupAccessPort.checkIsMember(kitVersion.getKit().getExpertGroupId(), param.getCurrentUserId())).thenReturn(true);
         when(loadQuestionPort.load(param.getQuestionId(), param.getKitVersionId())).thenReturn(question);
-        when(loadAttributesPort.loadAllByIdsAndKitVersionId(anyList(), anyLong())).thenReturn(List.of(attr1, attr2));
+        when(loadAttributesPort.loadAllByIdsAndKitVersionId(anyList(), anyLong())).thenReturn(expectedAttributes);
         when(loadMaturityLevelsPort.loadAllByKitVersionId(param.getKitVersionId())).thenReturn(maturityLevels);
 
         var result = service.getQuestionImpacts(param);
@@ -124,23 +128,18 @@ class GetQuestionImpactsServiceTest {
 
         assertEquals(2, result.attributeImpacts().size());
 
-        var attributeImpact1 = result.attributeImpacts().getFirst();
-        assertEquals(attr1.getId(), attributeImpact1.attributeId());
-        assertEquals(attr1.getTitle(), attributeImpact1.title());
-        assertEquals(2, attributeImpact1.impacts().size());
-
-        var attr1AffectedLevel1 = attributeImpact1.impacts().getFirst();
-        assertEquals(impact1.getAttributeId(), attributeImpact1.attributeId());
-        assertEquals(impact1.getMaturityLevelId(), attr1AffectedLevel1.maturityLevel().maturityLevelId());
-
-        var attr1AffectedLevel2 = attributeImpact1.impacts().get(1);
-        assertEquals(impact2.getAttributeId(), attributeImpact1.attributeId());
-        assertEquals(impact2.getMaturityLevelId(), attr1AffectedLevel2.maturityLevel().maturityLevelId());
-
-        var attributeImpact2 = result.attributeImpacts().get(1);
-        var attr2AffectedLevel1 = attributeImpact1.impacts().getFirst();
-        assertEquals(impact3.getAttributeId(), attributeImpact2.attributeId());
-        assertEquals(impact3.getMaturityLevelId(), attr2AffectedLevel1.maturityLevel().maturityLevelId());
+        assertThat(result.attributeImpacts())
+            .zipSatisfy(expectedAttributes, (actual, expected) -> {
+                assertEquals(expected.getId(), actual.attributeId());
+                assertEquals(expected.getTitle(), actual.title());
+                assertEquals(attributeToImpactMap.get(expected).size(), actual.impacts().size());
+                assertThat(actual.impacts())
+                    .zipSatisfy(attributeToImpactMap.get(expected), (actualImpact, expectedImpact) -> {
+                        assertEquals(expectedImpact.getMaturityLevelId(), actualImpact.maturityLevel().maturityLevelId());
+                        assertEquals(expectedImpact.getId(), actualImpact.questionImpactId());
+                        assertEquals(expectedImpact.getWeight(), actualImpact.weight());
+                    });
+            });
     }
 
     @Test
