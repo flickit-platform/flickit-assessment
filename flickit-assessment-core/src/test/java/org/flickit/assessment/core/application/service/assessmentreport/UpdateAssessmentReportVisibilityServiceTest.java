@@ -3,6 +3,7 @@ package org.flickit.assessment.core.application.service.assessmentreport;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.VisibilityType;
 import org.flickit.assessment.core.application.port.in.assessmentreport.UpdateAssessmentReportVisibilityUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportPort;
@@ -46,10 +47,11 @@ class UpdateAssessmentReportVisibilityServiceTest {
     @Mock
     private LoadAssessmentReportPort loadAssessmentReportPort;
 
+    private final AssessmentResult assessmentResult = AssessmentResultMother.validResult();
+    UpdateAssessmentReportVisibilityUseCase.Param param = createParam(UpdateAssessmentReportVisibilityUseCase.Param.ParamBuilder::build);
+
     @Test
     void testUpdateAssessmentReportVisibility_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowsException() {
-        var param = createParam(UpdateAssessmentReportVisibilityUseCase.Param.ParamBuilder::build);
-
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MANAGE_ASSESSMENT_REPORT_VISIBILITY))
             .thenReturn(false);
 
@@ -61,8 +63,6 @@ class UpdateAssessmentReportVisibilityServiceTest {
 
     @Test
     void testUpdateAssessmentReportVisibility_whenAssessmentResultDoesNotExist_thenThrowsException() {
-        var param = createParam(UpdateAssessmentReportVisibilityUseCase.Param.ParamBuilder::build);
-
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MANAGE_ASSESSMENT_REPORT_VISIBILITY))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
@@ -76,14 +76,14 @@ class UpdateAssessmentReportVisibilityServiceTest {
 
     @Test
     void testUpdateAssessmentReportVisibility_whenAssessmentReportDoesNotExist_thenThrowsException() {
-        var param = createParam(b -> b.visibility("PUBLIC"));
+        param = createParam(b -> b.visibility("PUBLIC"));
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MANAGE_ASSESSMENT_REPORT_VISIBILITY))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
-                .thenReturn(Optional.of(AssessmentResultMother.validResult()));
+            .thenReturn(Optional.of(AssessmentResultMother.validResult()));
         when(loadAssessmentReportPort.load(param.getAssessmentId()))
-                .thenReturn(Optional.empty());
+            .thenReturn(Optional.empty());
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.updateReportVisibility(param));
         assertEquals(UPDATE_ASSESSMENT_REPORT_VISIBILITY_ASSESSMENT_REPORT_NOT_FOUND, throwable.getMessage());
@@ -93,9 +93,6 @@ class UpdateAssessmentReportVisibilityServiceTest {
 
     @Test
     void testUpdateAssessmentReportVisibility_whenVisibilityParamIsRestricted_successfulUpdateWithoutLinkHash() {
-        var param = createParam(UpdateAssessmentReportVisibilityUseCase.Param.ParamBuilder::build);
-        var assessmentResult = AssessmentResultMother.validResult();
-
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MANAGE_ASSESSMENT_REPORT_VISIBILITY))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
@@ -116,7 +113,6 @@ class UpdateAssessmentReportVisibilityServiceTest {
     @Test
     void testUpdateAssessmentReportVisibility_whenVisibilityParamIsPublic_successfulUpdateWithLinkHash() {
         var param = createParam(b -> b.visibility("PUBLIC"));
-        var assessmentResult = AssessmentResultMother.validResult();
         var assessmentReport = AssessmentReportMother.empty();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MANAGE_ASSESSMENT_REPORT_VISIBILITY))
