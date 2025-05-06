@@ -1,8 +1,23 @@
 package org.flickit.assessment.core.application.port.out.assessmentreport;
 
-import org.flickit.assessment.core.application.domain.AssessmentReport;
+import org.flickit.assessment.core.application.domain.AssessmentReportMetadata;
+import org.flickit.assessment.core.application.domain.VisibilityType;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 public interface CreateAssessmentReportPort {
 
-    void persist(AssessmentReport assessmentReport);
+    void persist(Param param);
+
+    record Param(UUID assessmentResultId,
+                 AssessmentReportMetadata metadata,
+                 boolean published,
+                 VisibilityType visibility,
+                 UUID linkHash,
+                 LocalDateTime creationTime,
+                 LocalDateTime lastModificationTime,
+                 UUID createdBy,
+                 UUID lastModifiedBy) {
+    }
 }

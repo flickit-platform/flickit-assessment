@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import org.flickit.assessment.core.application.domain.AssessmentReport;
 import org.flickit.assessment.core.application.domain.AssessmentReportMetadata;
 import org.flickit.assessment.core.application.domain.VisibilityType;
+import org.flickit.assessment.core.application.port.out.assessmentreport.CreateAssessmentReportPort;
 import org.flickit.assessment.data.jpa.core.assessmentreport.AssessmentReportJpaEntity;
 
 import java.util.UUID;
@@ -25,16 +26,16 @@ public class AssessmentReportMapper {
             entity.getLastModifiedBy());
     }
 
-    public static AssessmentReportJpaEntity mapToJpaEntity(AssessmentReport assessmentReport, String metadata) {
+    public static AssessmentReportJpaEntity mapToJpaEntity(CreateAssessmentReportPort.Param assessmentReport, String metadata) {
         return new AssessmentReportJpaEntity(null,
-            assessmentReport.getAssessmentResultId(),
+            assessmentReport.assessmentResultId(),
             metadata,
-            assessmentReport.isPublished(),
+            assessmentReport.published(),
             VisibilityType.RESTRICTED.getId(),
             UUID.randomUUID(),
-            assessmentReport.getCreationTime(),
-            assessmentReport.getLastModificationTime(),
-            assessmentReport.getCreatedBy(),
-            assessmentReport.getLastModifiedBy());
+            assessmentReport.creationTime(),
+            assessmentReport.lastModificationTime(),
+            assessmentReport.createdBy(),
+            assessmentReport.lastModifiedBy());
     }
 }

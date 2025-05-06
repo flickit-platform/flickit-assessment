@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.application.domain.AssessmentReport;
 import org.flickit.assessment.core.application.domain.AssessmentReportMetadata;
 import org.flickit.assessment.core.application.domain.VisibilityType;
 import org.flickit.assessment.core.application.port.in.assessmentreport.CreateAssessmentReportMetadataUseCase;
@@ -44,7 +43,7 @@ public class CreateAssessmentReportMetadataService implements CreateAssessmentRe
         var assessmentReport = loadAssessmentReportPort.load(param.getAssessmentId());
         if (assessmentReport.isEmpty()) {
             var metadata = toDomainModel(param.getMetadata());
-            createAssessmentReportPort.persist(toAssessmentReport(assessmentResult.getId(), metadata, param.getCurrentUserId()));
+            createAssessmentReportPort.persist(toAssessmentReportParam(assessmentResult.getId(), metadata, param.getCurrentUserId()));
         } else {
             var existedMetadata = assessmentReport.get().getMetadata();
             var newMetadata = buildNewMetadata(existedMetadata, param.getMetadata());
@@ -59,8 +58,8 @@ public class CreateAssessmentReportMetadataService implements CreateAssessmentRe
             metadata.getParticipants());
     }
 
-    private AssessmentReport toAssessmentReport(UUID assessmentResultId, AssessmentReportMetadata metadata, UUID currentUserId) {
-        return new AssessmentReport(null,
+    private CreateAssessmentReportPort.Param toAssessmentReportParam(UUID assessmentResultId, AssessmentReportMetadata metadata, UUID currentUserId) {
+        return new CreateAssessmentReportPort.Param(
             assessmentResultId,
             metadata,
             false,
