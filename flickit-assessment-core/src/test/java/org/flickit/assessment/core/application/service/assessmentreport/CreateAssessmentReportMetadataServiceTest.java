@@ -104,6 +104,7 @@ class CreateAssessmentReportMetadataServiceTest {
         assertNull(actualMetadata.prosAndCons());
         assertNull(param.getMetadata().getSteps(), actualMetadata.steps());
         assertNull(param.getMetadata().getParticipants(), actualMetadata.participants());
+        assertFalse(assessmentReportParam.getValue().isPublished());
         assertNotNull(assessmentReportParam.getValue().getCreationTime());
         assertNotNull(assessmentReportParam.getValue().getLastModificationTime());
         assertEquals(param.getCurrentUserId(), assessmentReportParam.getValue().getCreatedBy());

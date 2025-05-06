@@ -4,7 +4,10 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.core.application.domain.AssessmentReport;
 import org.flickit.assessment.core.application.domain.AssessmentReportMetadata;
+import org.flickit.assessment.core.application.domain.VisibilityType;
 import org.flickit.assessment.data.jpa.core.assessmentreport.AssessmentReportJpaEntity;
+
+import java.util.UUID;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AssessmentReportMapper {
@@ -14,6 +17,7 @@ public class AssessmentReportMapper {
             entity.getAssessmentResultId(),
             metadata,
             entity.getPublished(),
+            VisibilityType.valueOfById(entity.getVisibility()),
             entity.getCreationTime(),
             entity.getLastModificationTime(),
             entity.getCreatedBy(),
@@ -25,6 +29,8 @@ public class AssessmentReportMapper {
             assessmentReport.getAssessmentResultId(),
             metadata,
             assessmentReport.isPublished(),
+            VisibilityType.RESTRICTED.getId(),
+            UUID.randomUUID(),
             assessmentReport.getCreationTime(),
             assessmentReport.getLastModificationTime(),
             assessmentReport.getCreatedBy(),
