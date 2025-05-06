@@ -45,7 +45,7 @@ public class GetAssessmentPublicReportService implements GetAssessmentPublicRepo
     private final LoadAdviceItemsPort loadAdviceItemsPort;
 
     @Override
-    public Result getAssessmentReport(Param param) {
+    public Result getAssessmentPublicReport(Param param) {
         var report = loadAssessmentReportPort.loadByLinkHash(param.getLinkHash());
         var assessmentResult = loadAssessmentResultPort.load(report.getAssessmentResultId());
 

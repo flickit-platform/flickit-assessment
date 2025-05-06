@@ -15,7 +15,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_
 
 public interface GetAssessmentPublicReportUseCase {
 
-    Result getAssessmentReport(Param param);
+    Result getAssessmentPublicReport(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
