@@ -5,10 +5,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentReport;
-import org.flickit.assessment.core.application.domain.AssessmentReportMetadata;
 import org.flickit.assessment.core.application.port.out.assessmentreport.CreateAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentreport.UpdateAssessmentReportPort;
+import org.flickit.assessment.core.common.ErrorMessageKey;
 import org.flickit.assessment.data.jpa.core.assessmentreport.AssessmentReportJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.springframework.stereotype.Component;
@@ -39,11 +39,14 @@ public class AssessmentReportPersistenceJpaAdapter implements
 
         var reportEntity = repository.findByAssessmentResultId(assessmentResultId);
 
-        if (reportEntity.isPresent()) {
-            AssessmentReportMetadata metadata = objectMapper.readValue(reportEntity.get().getMetadata(), AssessmentReportMetadata.class);
-            return Optional.of(AssessmentReportMapper.mapToDomainModel(reportEntity.get(), metadata));
-        }
-        return Optional.empty();
+        return reportEntity.map(AssessmentReportMapper::mapToDomainModel);
+    }
+
+    @Override
+    public AssessmentReport loadByLinkHash(UUID linkHash) {
+        return repository.findByLinkHash(linkHash)
+            .map(AssessmentReportMapper::mapToDomainModel)
+            .orElseThrow(() -> new ResourceNotFoundException(ErrorMessageKey.ASSESSMENT_REPORT_LINK_HASH_NOT_FOUND));
     }
 
     @Override
