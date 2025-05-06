@@ -35,8 +35,8 @@ public class AssessmentReportMapper {
             VisibilityType.RESTRICTED.getId(),
             UUID.randomUUID(),
             param.creationTime(),
-            param.lastModificationTime(),
+            param.creationTime(),
             param.createdBy(),
-            param.lastModifiedBy());
+            param.createdBy());
     }
 }

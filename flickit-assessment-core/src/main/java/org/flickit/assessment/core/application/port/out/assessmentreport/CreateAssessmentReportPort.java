@@ -14,10 +14,7 @@ public interface CreateAssessmentReportPort {
                  AssessmentReportMetadata metadata,
                  boolean published,
                  VisibilityType visibility,
-                 UUID linkHash,
                  LocalDateTime creationTime,
-                 LocalDateTime lastModificationTime,
-                 UUID createdBy,
-                 UUID lastModifiedBy) {
+                 UUID createdBy) {
     }
 }

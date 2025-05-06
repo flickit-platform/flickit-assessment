@@ -104,11 +104,8 @@ class CreateAssessmentReportMetadataServiceTest {
         assertNull(param.getMetadata().getSteps(), actualMetadata.steps());
         assertNull(param.getMetadata().getParticipants(), actualMetadata.participants());
         assertFalse(assessmentReportParam.getValue().published());
-        assertNotNull(assessmentReportParam.getValue().linkHash());
         assertNotNull(assessmentReportParam.getValue().creationTime());
-        assertNotNull(assessmentReportParam.getValue().lastModificationTime());
         assertEquals(param.getCurrentUserId(), assessmentReportParam.getValue().createdBy());
-        assertEquals(param.getCurrentUserId(), assessmentReportParam.getValue().lastModifiedBy());
 
         verifyNoInteractions(updateAssessmentReportPort);
     }
