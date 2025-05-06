@@ -116,6 +116,7 @@ public class AssessmentPersistenceJpaAdapter implements
                     e.getAssessmentResult().getConfidenceValue(),
                     e.getAssessmentResult().getIsCalculateValid(),
                     e.getAssessmentResult().getIsConfidenceValid(),
+                    KitLanguage.valueOfById(e.getAssessmentKit().getLanguageId()),
                     null,
                     false);
             }).toList();
@@ -179,6 +180,7 @@ public class AssessmentPersistenceJpaAdapter implements
                     e.getAssessmentResult().getConfidenceValue(),
                     e.getAssessmentResult().getIsCalculateValid(),
                     e.getAssessmentResult().getIsConfidenceValid(),
+                    KitLanguage.valueOfById(e.getAssessmentResult().getLangId()),
                     e.getManageable(),
                     e.getHasReport());
             }).toList();

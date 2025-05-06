@@ -1,6 +1,5 @@
 package org.flickit.assessment.data.jpa.kit.question;
 
-import org.flickit.assessment.data.jpa.kit.question.advice.QuestionAdviceView;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -129,9 +128,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
 
     @Query("""
             SELECT
-                q.id AS id,
-                q.title AS title,
-                q.index AS index,
+                q AS question,
                 ao AS option,
                 atr AS attribute,
                 qsnnr AS questionnaire

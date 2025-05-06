@@ -17,6 +17,12 @@ public interface AssessmentKitJpaRepository extends
     JpaRepository<AssessmentKitJpaEntity, Long>,
     JpaSpecificationExecutor<AssessmentKitJpaEntity> {
 
+    @Query("""
+            SELECT k
+            FROM AssessmentKitJpaEntity k
+            JOIN KitVersionJpaEntity kv ON k.id = kv.kit.id
+            WHERE kv.id = :kitVersionId
+        """)
     Optional<AssessmentKitJpaEntity> findByKitVersionId(long kitVersionId);
 
     @Query("""
