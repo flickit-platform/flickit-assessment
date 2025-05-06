@@ -15,7 +15,6 @@ public class AssessmentReport {
     private final AssessmentReportMetadata metadata;
     private final boolean published;
     private final VisibilityType visibility;
-    private final UUID linkHash;
     private final LocalDateTime creationTime;
     private final LocalDateTime lastModificationTime;
     private final UUID createdBy;

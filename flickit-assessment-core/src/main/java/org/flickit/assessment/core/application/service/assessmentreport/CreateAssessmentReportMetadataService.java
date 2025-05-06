@@ -65,7 +65,6 @@ public class CreateAssessmentReportMetadataService implements CreateAssessmentRe
             metadata,
             false,
             VisibilityType.RESTRICTED,
-            UUID.randomUUID(),
             LocalDateTime.now(),
             LocalDateTime.now(),
             currentUserId,
