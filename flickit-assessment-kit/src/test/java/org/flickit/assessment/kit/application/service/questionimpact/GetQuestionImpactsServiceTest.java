@@ -13,6 +13,7 @@ import org.flickit.assessment.kit.application.service.question.GetQuestionImpact
 import org.flickit.assessment.kit.test.fixture.application.KitVersionMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -29,10 +30,10 @@ import static org.flickit.assessment.kit.test.fixture.application.AttributeMothe
 import static org.flickit.assessment.kit.test.fixture.application.MaturityLevelMother.allLevels;
 import static org.flickit.assessment.kit.test.fixture.application.QuestionImpactMother.createQuestionImpact;
 import static org.flickit.assessment.kit.test.fixture.application.QuestionMother.createQuestion;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class GetQuestionImpactsServiceTest {
@@ -112,10 +113,14 @@ class GetQuestionImpactsServiceTest {
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(checkExpertGroupAccessPort.checkIsMember(kitVersion.getKit().getExpertGroupId(), param.getCurrentUserId())).thenReturn(true);
         when(loadQuestionPort.load(param.getQuestionId(), param.getKitVersionId())).thenReturn(question);
-        when(loadAttributesPort.loadAllByIdsAndKitVersionId(List.of(attr1.getId(), attr2.getId()), param.getKitVersionId())).thenReturn(List.of(attr1, attr2));
+        when(loadAttributesPort.loadAllByIdsAndKitVersionId(anyList(), anyLong())).thenReturn(List.of(attr1, attr2));
         when(loadMaturityLevelsPort.loadAllByKitVersionId(param.getKitVersionId())).thenReturn(maturityLevels);
 
         var result = service.getQuestionImpacts(param);
+        var attributeIdsArgument = ArgumentCaptor.forClass(List.class);
+        verify(loadAttributesPort, times(1)).loadAllByIdsAndKitVersionId(attributeIdsArgument.capture(), eq(param.getKitVersionId()));
+
+        assertTrue(attributeIdsArgument.getValue().containsAll(List.of(attr1.getId(), attr2.getId())));
 
         assertEquals(2, result.attributeImpacts().size());
 
