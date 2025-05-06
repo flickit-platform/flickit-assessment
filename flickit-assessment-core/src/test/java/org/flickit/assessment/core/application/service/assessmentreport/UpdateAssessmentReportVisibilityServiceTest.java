@@ -112,7 +112,7 @@ class UpdateAssessmentReportVisibilityServiceTest {
 
     @Test
     void testUpdateAssessmentReportVisibility_whenVisibilityParamIsPublic_thenSuccessfulUpdateWithLinkHash() {
-        var param = createParam(b -> b.visibility("PUBLIC"));
+        param = createParam(b -> b.visibility("PUBLIC"));
         var assessmentReport = AssessmentReportMother.empty();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MANAGE_ASSESSMENT_REPORT_VISIBILITY))
