@@ -22,10 +22,7 @@ import java.util.function.Consumer;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ATTRIBUTE_MEASURES;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.junit.Assert.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.anyList;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -77,8 +74,7 @@ class GetAssessmentAttributeMeasuresServiceTest {
             .thenReturn(List.of(measure1, measure2));
 
         var result = service.getAssessmentAttributeMeasures(param);
-
-        ArgumentCaptor<List> measureIdsArgument = ArgumentCaptor.forClass(List.class);
+        var measureIdsArgument = ArgumentCaptor.forClass(List.class);
         verify(loadMeasuresPort, times(1)).loadAll(measureIdsArgument.capture(), eq(param.getAssessmentId()));
 
         assertTrue(measureIdsArgument.getValue().containsAll(List.of(measure1.getId(), measure2.getId())));

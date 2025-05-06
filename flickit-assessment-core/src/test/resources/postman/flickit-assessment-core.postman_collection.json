@@ -2183,6 +2183,45 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Update Report Visibility Status",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"visibility\": \"PUBLIC\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/83349858-c15a-4d53-b380-330180dfe514/report-visibility-status",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"83349858-c15a-4d53-b380-330180dfe514",
+								"report-visibility-status"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
