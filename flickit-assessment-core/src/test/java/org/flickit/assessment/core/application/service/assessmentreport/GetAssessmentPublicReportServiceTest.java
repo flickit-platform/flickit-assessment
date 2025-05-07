@@ -41,7 +41,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_DASHBOARD;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.*;
 import static org.flickit.assessment.core.common.ErrorMessageKey.ASSESSMENT_REPORT_LINK_HASH_NOT_FOUND;
 import static org.flickit.assessment.core.test.fixture.application.AdviceItemMother.adviceItem;
 import static org.flickit.assessment.core.test.fixture.application.AnswerMother.answer;
@@ -299,6 +299,11 @@ class GetAssessmentPublicReportServiceTest {
         when(loadAdviceItemsPort.loadAll(assessmentReport.assessmentResultId())).thenReturn(adviceItems);
         when(assessmentAccessChecker.isAuthorized(assessmentId, paramWithUserId.getCurrentUserId(), VIEW_DASHBOARD))
             .thenReturn(true);
+        when(assessmentAccessChecker.isAuthorized(assessmentId, paramWithUserId.getCurrentUserId(), GRANT_ACCESS_TO_REPORT))
+            .thenReturn(false);
+        when(assessmentAccessChecker.isAuthorized(assessmentId, paramWithUserId.getCurrentUserId(), MANAGE_ASSESSMENT_REPORT_VISIBILITY))
+            .thenReturn(true);
+
         when(loadAssessmentQuestionsPort.loadApplicableQuestions(assessmentId))
             .thenReturn(questionAnswers);
 
@@ -316,6 +321,8 @@ class GetAssessmentPublicReportServiceTest {
         assertEquals(adviceItems.size(), result.advice().adviceItems().size());
         assertAdviceItem(adviceItems, result.advice().adviceItems(), assessmentReport.language());
         assertTrue(result.permissions().canViewDashboard());
+        assertFalse(result.permissions().canShareReport());
+        assertTrue(result.permissions().canManageVisibility());
         assertEquals(userRole.getId(), result.role().id());
         assertEquals(userRole.getTitle(), result.role().title());
     }
@@ -354,6 +361,10 @@ class GetAssessmentPublicReportServiceTest {
         when(loadAdviceItemsPort.loadAll(assessmentReport.assessmentResultId())).thenReturn(adviceItems);
         when(assessmentAccessChecker.isAuthorized(assessmentId, paramWithUserId.getCurrentUserId(), VIEW_DASHBOARD))
             .thenReturn(true);
+        when(assessmentAccessChecker.isAuthorized(assessmentId, paramWithUserId.getCurrentUserId(), GRANT_ACCESS_TO_REPORT))
+            .thenReturn(true);
+        when(assessmentAccessChecker.isAuthorized(assessmentId, paramWithUserId.getCurrentUserId(), MANAGE_ASSESSMENT_REPORT_VISIBILITY))
+            .thenReturn(false);
         when(loadAssessmentQuestionsPort.loadApplicableQuestions(assessmentId))
             .thenReturn(questionAnswers);
 
@@ -371,6 +382,8 @@ class GetAssessmentPublicReportServiceTest {
         assertEquals(adviceItems.size(), result.advice().adviceItems().size());
         assertAdviceItem(adviceItems, result.advice().adviceItems(), assessmentReport.language());
         assertTrue(result.permissions().canViewDashboard());
+        assertTrue(result.permissions().canShareReport());
+        assertFalse(result.permissions().canManageVisibility());
         assertEquals(userRole.getId(), result.role().id());
         assertEquals(userRole.getTitle(), result.role().title());
     }

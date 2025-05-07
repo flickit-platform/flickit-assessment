@@ -27,7 +27,7 @@ import java.util.*;
 import java.util.function.Function;
 
 import static java.util.stream.Collectors.*;
-import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_DASHBOARD;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.*;
 import static org.flickit.assessment.core.common.ErrorMessageKey.ASSESSMENT_REPORT_LINK_HASH_NOT_FOUND;
 
 @Service
@@ -236,9 +236,11 @@ public class GetAssessmentPublicReportService implements GetAssessmentPublicRepo
 
     private Permissions toPermissions(UUID assessmentId, UUID currentUserId) {
         if (currentUserId == null)
-            return new Permissions(false);
+            return new Permissions(false, false, false);
         var canViewDashboard = assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_DASHBOARD);
-        return new Permissions(canViewDashboard);
+        var canShareReport = assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, GRANT_ACCESS_TO_REPORT);
+        var canManageVisibility = assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, MANAGE_ASSESSMENT_REPORT_VISIBILITY);
+        return new Permissions(canViewDashboard, canShareReport, canManageVisibility);
     }
 
     private Language toLanguage(KitLanguage language) {
