@@ -78,10 +78,16 @@ public class GetAssessmentPublicReportService implements GetAssessmentPublicRepo
                                                 AssessmentResult assessmentResult,
                                                 UUID currentUserId,
                                                 AssessmentUserRole role) {
+        var assessmentId = assessmentResult.getAssessment().getId();
+
+        if ((!Objects.equals(report.getVisibility(), VisibilityType.PUBLIC) || !report.isPublished()) &&
+            !assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_GRAPHICAL_REPORT)) {
+            throw new ResourceNotFoundException(ASSESSMENT_REPORT_LINK_HASH_NOT_FOUND);
+        }
+
         var reportMetadata = Optional.ofNullable(report.getMetadata())
             .orElse(new AssessmentReportMetadata(null, null, null, null));
 
-        var assessmentId = assessmentResult.getAssessment().getId();
         var assessmentReportInfo = loadAssessmentReportInfoPort.load(assessmentId);
 
         var attributeMeasuresMap = buildAttributeMeasures(assessmentId, assessmentReportInfo);

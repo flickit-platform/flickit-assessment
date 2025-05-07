@@ -6,7 +6,6 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AdviceItem;
 import org.flickit.assessment.core.application.domain.AssessmentReport;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
-import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 import org.flickit.assessment.core.application.domain.report.AssessmentReportItem;
 import org.flickit.assessment.core.application.domain.report.AssessmentSubjectReportItem;
 import org.flickit.assessment.core.application.domain.report.AttributeReportItem;
@@ -42,6 +41,7 @@ import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.*;
+import static org.flickit.assessment.core.application.domain.AssessmentUserRole.VIEWER;
 import static org.flickit.assessment.core.common.ErrorMessageKey.ASSESSMENT_REPORT_LINK_HASH_NOT_FOUND;
 import static org.flickit.assessment.core.test.fixture.application.AdviceItemMother.adviceItem;
 import static org.flickit.assessment.core.test.fixture.application.AnswerMother.answer;
@@ -53,8 +53,7 @@ import static org.flickit.assessment.core.test.fixture.application.MaturityLevel
 import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.levelTwo;
 import static org.flickit.assessment.core.test.fixture.application.MeasureMother.createMeasure;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class GetAssessmentPublicReportServiceTest {
@@ -268,7 +267,7 @@ class GetAssessmentPublicReportServiceTest {
     @Test
     void testGetAssessmentPublicReport_whenReportIsPublicAndLoggedInUserHasRole_thenReturnReportAndUserRole() {
         var assessmentId = assessmentResult.getAssessment().getId();
-        var userRole = AssessmentUserRole.VIEWER;
+        var userRole = VIEWER;
 
         when(loadAssessmentReportPort.loadByLinkHash(paramWithUserId.getLinkHash())).thenReturn(publicReport);
         when(loadAssessmentResultPort.load(publicReport.getAssessmentResultId())).thenReturn(assessmentResult);
@@ -309,6 +308,8 @@ class GetAssessmentPublicReportServiceTest {
 
         var result = service.getAssessmentPublicReport(paramWithUserId);
 
+        verify(assessmentAccessChecker, never()).isAuthorized(assessmentId, paramWithUserId.getCurrentUserId(), VIEW_GRAPHICAL_REPORT);
+
         assertAssessmentReport(assessmentReport, result, report);
         assertEquals(subjects.size(), result.subjects().size());
         var expectedSubjectItem = subjects.getFirst();
@@ -328,14 +329,16 @@ class GetAssessmentPublicReportServiceTest {
     }
 
     @Test
-    void testGetAssessmentPublicReport_whenReportIsRestrictedAndLoggedInUserHasRole_thenReturnReportWithPermissionAndRole() {
+    void testGetAssessmentPublicReport_whenReportIsRestrictedAndLoggedInUserHasRoleAndHasViewGraphicalReportPermission_thenReturnReportWithPermissionAndRole() {
         var assessmentId = assessmentResult.getAssessment().getId();
-        var userRole = AssessmentUserRole.VIEWER;
+        var userRole = VIEWER;
 
         when(loadAssessmentReportPort.loadByLinkHash(paramWithUserId.getLinkHash())).thenReturn(restrictedReport);
         when(loadAssessmentResultPort.load(restrictedReport.getAssessmentResultId())).thenReturn(assessmentResult);
         when(loadUserRoleForAssessmentPort.load(assessmentId, paramWithUserId.getCurrentUserId()))
             .thenReturn(Optional.of(userRole));
+        when(assessmentAccessChecker.isAuthorized(assessmentId, paramWithUserId.getCurrentUserId(), VIEW_GRAPHICAL_REPORT))
+            .thenReturn(true);
 
         var assessmentReport = createAssessmentReportItem(assessmentId);
 
@@ -386,6 +389,24 @@ class GetAssessmentPublicReportServiceTest {
         assertFalse(result.permissions().canManageVisibility());
         assertEquals(userRole.getId(), result.role().id());
         assertEquals(userRole.getTitle(), result.role().title());
+    }
+
+    @Test
+    void testGetAssessmentPublicReport_whenReportIsRestrictedAndLoggedInUserHasRoleAndDoesntHaveViewGraphicalReportPermission_thenThrowResourceNotFoundException() {
+        when(loadAssessmentReportPort.loadByLinkHash(paramWithUserId.getLinkHash())).thenReturn(notPublishedReport);
+        when(loadAssessmentResultPort.load(notPublishedReport.getAssessmentResultId())).thenReturn(assessmentResult);
+        when(loadUserRoleForAssessmentPort.load(assessmentResult.getAssessment().getId(), paramWithUserId.getCurrentUserId()))
+            .thenReturn(Optional.of(VIEWER));
+        when(assessmentAccessChecker.isAuthorized(assessmentResult.getAssessment().getId(), paramWithUserId.getCurrentUserId(), VIEW_GRAPHICAL_REPORT))
+            .thenReturn(false);
+        var exception = assertThrows(ResourceNotFoundException.class, () -> service.getAssessmentPublicReport(paramWithUserId));
+
+        assertEquals(ASSESSMENT_REPORT_LINK_HASH_NOT_FOUND, exception.getMessage());
+
+        verifyNoInteractions(loadAssessmentReportInfoPort,
+            loadAssessmentQuestionsPort,
+            loadAdviceNarrationPort,
+            loadAdviceItemsPort);
     }
 
     private AssessmentReportItem createAssessmentReportItem(UUID assessmentId) {
