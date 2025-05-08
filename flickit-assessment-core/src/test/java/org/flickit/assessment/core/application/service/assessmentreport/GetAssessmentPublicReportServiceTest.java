@@ -95,7 +95,7 @@ class GetAssessmentPublicReportServiceTest {
     void testGetAssessmentPublicReport_whenReportIsRestrictedAndUserIsNotLoggedIn_thenThrowResourceNotFoundException() {
         Param param = createParam(p -> p.currentUserId(null));
         when(loadAssessmentReportPort.loadByLinkHash(param.getLinkHash())).thenReturn(restrictedReport);
-        when(loadAssessmentResultPort.load(restrictedReport.getAssessmentResultId())).thenReturn(assessmentResult);
+        when(loadAssessmentResultPort.load(restrictedReport.getAssessmentResultId())).thenReturn(Optional.of(assessmentResult));
         var exception = assertThrows(ResourceNotFoundException.class, () -> service.getAssessmentPublicReport(param));
 
         assertEquals(ASSESSMENT_REPORT_LINK_HASH_NOT_FOUND, exception.getMessage());
@@ -111,7 +111,7 @@ class GetAssessmentPublicReportServiceTest {
     void testGetAssessmentPublicReport_whenReportIsUnpublishedAndUserIsNotLoggedIn_thenThrowResourceNotFoundException() {
         Param param = createParam(p -> p.currentUserId(null));
         when(loadAssessmentReportPort.loadByLinkHash(param.getLinkHash())).thenReturn(notPublishedReport);
-        when(loadAssessmentResultPort.load(notPublishedReport.getAssessmentResultId())).thenReturn(assessmentResult);
+        when(loadAssessmentResultPort.load(notPublishedReport.getAssessmentResultId())).thenReturn(Optional.of(assessmentResult));
         var exception = assertThrows(ResourceNotFoundException.class, () -> service.getAssessmentPublicReport(param));
 
         assertEquals(ASSESSMENT_REPORT_LINK_HASH_NOT_FOUND, exception.getMessage());
@@ -127,7 +127,7 @@ class GetAssessmentPublicReportServiceTest {
     void testGetAssessmentPublicReport_whenReportIsRestrictedAndLoggedInUserHasNoRole_thenThrowResourceNotFoundException() {
         Param param = createParam(Param.ParamBuilder::build);
         when(loadAssessmentReportPort.loadByLinkHash(param.getLinkHash())).thenReturn(restrictedReport);
-        when(loadAssessmentResultPort.load(restrictedReport.getAssessmentResultId())).thenReturn(assessmentResult);
+        when(loadAssessmentResultPort.load(restrictedReport.getAssessmentResultId())).thenReturn(Optional.of(assessmentResult));
         when(loadUserRoleForAssessmentPort.load(assessmentResult.getAssessment().getId(), param.getCurrentUserId()))
             .thenReturn(Optional.empty());
         var exception = assertThrows(ResourceNotFoundException.class, () -> service.getAssessmentPublicReport(param));
@@ -145,7 +145,7 @@ class GetAssessmentPublicReportServiceTest {
     void testGetAssessmentPublicReport_whenReportIsUnpublishedAndLoggedInUserHasNoRole_thenThrowResourceNotFoundException() {
         Param param = createParam(Param.ParamBuilder::build);
         when(loadAssessmentReportPort.loadByLinkHash(param.getLinkHash())).thenReturn(notPublishedReport);
-        when(loadAssessmentResultPort.load(notPublishedReport.getAssessmentResultId())).thenReturn(assessmentResult);
+        when(loadAssessmentResultPort.load(notPublishedReport.getAssessmentResultId())).thenReturn(Optional.of(assessmentResult));
         when(loadUserRoleForAssessmentPort.load(assessmentResult.getAssessment().getId(), param.getCurrentUserId()))
             .thenReturn(Optional.empty());
         var exception = assertThrows(ResourceNotFoundException.class, () -> service.getAssessmentPublicReport(param));
@@ -165,7 +165,7 @@ class GetAssessmentPublicReportServiceTest {
         var assessmentId = assessmentResult.getAssessment().getId();
 
         when(loadAssessmentReportPort.loadByLinkHash(param.getLinkHash())).thenReturn(publicReport);
-        when(loadAssessmentResultPort.load(publicReport.getAssessmentResultId())).thenReturn(assessmentResult);
+        when(loadAssessmentResultPort.load(publicReport.getAssessmentResultId())).thenReturn(Optional.of(assessmentResult));
 
         var assessmentReport = createAssessmentReportItem(assessmentId);
 
@@ -216,7 +216,7 @@ class GetAssessmentPublicReportServiceTest {
         var assessmentId = assessmentResult.getAssessment().getId();
 
         when(loadAssessmentReportPort.loadByLinkHash(paramWithUserId.getLinkHash())).thenReturn(publicReport);
-        when(loadAssessmentResultPort.load(publicReport.getAssessmentResultId())).thenReturn(assessmentResult);
+        when(loadAssessmentResultPort.load(publicReport.getAssessmentResultId())).thenReturn(Optional.of(assessmentResult));
         when(loadUserRoleForAssessmentPort.load(assessmentResult.getAssessment().getId(), paramWithUserId.getCurrentUserId()))
             .thenReturn(Optional.empty());
 
@@ -270,7 +270,7 @@ class GetAssessmentPublicReportServiceTest {
         var userRole = VIEWER;
 
         when(loadAssessmentReportPort.loadByLinkHash(paramWithUserId.getLinkHash())).thenReturn(publicReport);
-        when(loadAssessmentResultPort.load(publicReport.getAssessmentResultId())).thenReturn(assessmentResult);
+        when(loadAssessmentResultPort.load(publicReport.getAssessmentResultId())).thenReturn(Optional.of(assessmentResult));
         when(loadUserRoleForAssessmentPort.load(assessmentId, paramWithUserId.getCurrentUserId()))
             .thenReturn(Optional.of(userRole));
 
@@ -334,7 +334,7 @@ class GetAssessmentPublicReportServiceTest {
         var userRole = VIEWER;
 
         when(loadAssessmentReportPort.loadByLinkHash(paramWithUserId.getLinkHash())).thenReturn(restrictedReport);
-        when(loadAssessmentResultPort.load(restrictedReport.getAssessmentResultId())).thenReturn(assessmentResult);
+        when(loadAssessmentResultPort.load(restrictedReport.getAssessmentResultId())).thenReturn(Optional.of(assessmentResult));
         when(loadUserRoleForAssessmentPort.load(assessmentId, paramWithUserId.getCurrentUserId()))
             .thenReturn(Optional.of(userRole));
         when(assessmentAccessChecker.isAuthorized(assessmentId, paramWithUserId.getCurrentUserId(), VIEW_GRAPHICAL_REPORT))
@@ -394,7 +394,7 @@ class GetAssessmentPublicReportServiceTest {
     @Test
     void testGetAssessmentPublicReport_whenReportIsRestrictedAndLoggedInUserHasRoleAndLacksViewGraphicalReportPermission_thenThrowResourceNotFoundException() {
         when(loadAssessmentReportPort.loadByLinkHash(paramWithUserId.getLinkHash())).thenReturn(notPublishedReport);
-        when(loadAssessmentResultPort.load(notPublishedReport.getAssessmentResultId())).thenReturn(assessmentResult);
+        when(loadAssessmentResultPort.load(notPublishedReport.getAssessmentResultId())).thenReturn(Optional.of(assessmentResult));
         when(loadUserRoleForAssessmentPort.load(assessmentResult.getAssessment().getId(), paramWithUserId.getCurrentUserId()))
             .thenReturn(Optional.of(VIEWER));
         when(assessmentAccessChecker.isAuthorized(assessmentResult.getAssessment().getId(), paramWithUserId.getCurrentUserId(), VIEW_GRAPHICAL_REPORT))

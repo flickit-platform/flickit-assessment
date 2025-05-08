@@ -9,5 +9,5 @@ public interface LoadAssessmentResultPort {
 
     Optional<AssessmentResult> loadByAssessmentId(UUID assessmentId);
 
-    AssessmentResult load(UUID id);
+    Optional<AssessmentResult> load(UUID id);
 }
