@@ -11,6 +11,7 @@ import org.flickit.assessment.kit.application.port.in.assessmentkit.GetPublished
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetPublishedKitUseCase.Result.Language;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CountKitStatsPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
+import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.kitlanguage.LoadKitLanguagesPort;
 import org.flickit.assessment.kit.application.port.out.kitlike.CheckKitLikeExistencePort;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.CheckKitUserAccessPort;
@@ -32,6 +33,7 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
     private final LoadSubjectsPort loadSubjectsPort;
     private final CheckKitLikeExistencePort checkKitLikeExistencePort;
     private final LoadKitLanguagesPort loadKitLanguagesPort;
+    private final LoadKitExpertGroupPort loadKitExpertGroupPort;
 
     @Override
     public Result getPublishedKit(Param param) {
@@ -54,6 +56,8 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
         var goal = kit.getMetadata() != null ? kit.getMetadata().goal() : null;
         var context = kit.getMetadata() != null ? kit.getMetadata().context() : null;
 
+        var expertGroup = loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId());
+
         return new Result(
             kit.getId(),
             kit.getTitle(),
@@ -68,7 +72,8 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
             kit.getExpertGroupId(),
             subjects,
             new Metadata(goal, context),
-            languages);
+            languages,
+            new ExpertGroup(expertGroup.getTitle(), expertGroup.getPicture()));
     }
 
     private void validateAccess(Param param, AssessmentKit kit) {
