@@ -160,7 +160,7 @@ class GetAssessmentPublicReportServiceTest {
     }
 
     @Test
-    void testGetAssessmentPublicReport_whenReportIsPublicAndUserIsNotLoggedIn_thenReturnReportWithoutPermissionsOrRoles() {
+    void testGetAssessmentPublicReport_whenReportIsPublicAndUserIsNotLoggedIn_thenReturnReportWithoutPermissions() {
         var param = createParam(p -> p.currentUserId(null));
         var assessmentId = assessmentResult.getAssessment().getId();
 
@@ -211,7 +211,7 @@ class GetAssessmentPublicReportServiceTest {
     }
 
     @Test
-    void testGetAssessmentPublicReport_whenReportIsPublicAndLoggedInUserHasNoRole_thenReturnReportWithoutPermissionsOrRoles() {
+    void testGetAssessmentPublicReport_whenReportIsPublicAndLoggedInUserHasNoRole_thenReturnReportWithoutPermissions() {
         var assessmentId = assessmentResult.getAssessment().getId();
 
         when(loadAssessmentReportPort.loadByLinkHash(paramWithUserId.getLinkHash())).thenReturn(publicReport);
@@ -263,7 +263,7 @@ class GetAssessmentPublicReportServiceTest {
     }
 
     @Test
-    void testGetAssessmentPublicReport_whenReportIsPublicAndLoggedInUserHasRole_thenReturnReportWithUserRole() {
+    void testGetAssessmentPublicReport_whenReportIsPublicAndLoggedInUserHasRole_thenReturnReportWithPermissions() {
         var assessmentId = assessmentResult.getAssessment().getId();
         var userRole = VIEWER;
 
@@ -325,7 +325,7 @@ class GetAssessmentPublicReportServiceTest {
     }
 
     @Test
-    void testGetAssessmentPublicReport_whenReportIsRestrictedAndLoggedInUserHasRoleAndHasViewGraphicalReportPermission_thenReturnReportWithPermissionsAndRole() {
+    void testGetAssessmentPublicReport_whenReportIsRestrictedAndLoggedInUserHasRoleAndHasViewGraphicalReportPermission_thenReturnReportWithPermissions() {
         var assessmentId = assessmentResult.getAssessment().getId();
         var userRole = VIEWER;
 
