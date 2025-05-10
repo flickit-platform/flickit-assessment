@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_PUBLISHED_KIT_KIT_ID_NOT_NULL;
 
 public interface GetPublishedKitUseCase {
@@ -23,7 +22,6 @@ public interface GetPublishedKitUseCase {
         @NotNull(message = GET_PUBLISHED_KIT_KIT_ID_NOT_NULL)
         Long kitId;
 
-        @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
         public Param(Long kitId, UUID currentUserId) {
