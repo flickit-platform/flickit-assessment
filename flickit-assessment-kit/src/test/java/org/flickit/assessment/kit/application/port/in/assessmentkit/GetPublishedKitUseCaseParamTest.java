@@ -21,7 +21,7 @@ class GetPublishedKitUseCaseParamTest {
     }
 
     @Test
-    void testGetPublishedKitUseCaseParam_currentUserIdParamIsNull_ErrorMessage() {
+    void testGetPublishedKitUseCaseParam_currentUserIdParamIsNull_Success() {
         assertDoesNotThrow(() -> createParam(b -> b.currentUserId(null)));
     }
 
