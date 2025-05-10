@@ -4,6 +4,7 @@ import org.assertj.core.api.Assertions;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.kit.application.domain.Subject;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetPublishedKitUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CountKitStatsPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
@@ -55,6 +56,8 @@ class GetPublishedKitServiceTest {
     private LoadKitLanguagesPort loadKitLanguagesPort;
 
     private final GetPublishedKitUseCase.Param param = createParam(GetPublishedKitUseCase.Param.ParamBuilder::build);
+    private final Subject subject = SubjectMother.subjectWithAttributes("subject", List.of(AttributeMother.attributeWithTitle("attribute")));
+    private final CountKitStatsPort.Result counts = new CountKitStatsPort.Result(1, 1, 115, 1, 3, 1);
 
     @Test
     void testGetPublishedKit_whenKitIsNotPublished_ThrowsException() {
@@ -85,11 +88,8 @@ class GetPublishedKitServiceTest {
 
     @Test
     void testGetPublishedKit_whenKitIsPrivateAndUserHasAccess_thenReturnValidResult() {
-        var subject = SubjectMother.subjectWithAttributes("subject", List.of(AttributeMother.attributeWithTitle("attribute")));
         var kit = AssessmentKitMother.privateKit();
 
-        var counts = new CountKitStatsPort.Result(1, 1, 115,
-            1, 3, 1);
         List<KitLanguage> languages = List.of(KitLanguage.EN, KitLanguage.FA);
 
         when(loadAssessmentKitPort.loadTranslated(param.getKitId())).thenReturn(kit);
@@ -126,7 +126,6 @@ class GetPublishedKitServiceTest {
 
     @Test
     void testGetPublishedKit_whenKitIsPublishedAndPublic_thenReturnValidResult() {
-        var subject = SubjectMother.subjectWithAttributes("subject", List.of(AttributeMother.attributeWithTitle("attribute")));
         var kit = AssessmentKitMother.simpleKit();
 
         var counts = new CountKitStatsPort.Result(1, 1, 115,
