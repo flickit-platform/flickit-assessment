@@ -88,10 +88,9 @@ public class AssessmentResultPersistenceJpaAdapter implements
     }
 
     @Override
-    public AssessmentResult load(UUID id) {
+    public Optional<AssessmentResult> load(UUID id) {
         return repository.findById(id)
-            .map(entity -> AssessmentResultMapper.mapToDomainModel(entity, null, null))
-            .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
+            .map(entity -> AssessmentResultMapper.mapToDomainModel(entity, null, null));
     }
 
     private List<SubjectValue> createSubjectValues(UUID assessmentResultId) {

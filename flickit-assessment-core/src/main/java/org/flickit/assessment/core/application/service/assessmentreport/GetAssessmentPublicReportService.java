@@ -28,6 +28,7 @@ import java.util.function.Function;
 
 import static java.util.stream.Collectors.*;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.*;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.ASSESSMENT_REPORT_LINK_HASH_NOT_FOUND;
 
 @Service
@@ -47,7 +48,8 @@ public class GetAssessmentPublicReportService implements GetAssessmentPublicRepo
     @Override
     public Result getAssessmentPublicReport(Param param) {
         var report = loadAssessmentReportPort.loadByLinkHash(param.getLinkHash());
-        var assessmentResult = loadAssessmentResultPort.load(report.getAssessmentResultId());
+        var assessmentResult = loadAssessmentResultPort.load(report.getAssessmentResultId())
+            .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
 
         if (param.getCurrentUserId() == null) {
             return generatePublicReport(report, assessmentResult);
