@@ -22,6 +22,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
@@ -53,9 +54,10 @@ class GetPublishedKitServiceTest {
     @Mock
     private LoadKitLanguagesPort loadKitLanguagesPort;
 
+    private final GetPublishedKitUseCase.Param param = createParam(GetPublishedKitUseCase.Param.ParamBuilder::build);
+
     @Test
-    void testGetPublishedKit_WhenKitIsNotPublished_ThrowsException() {
-        GetPublishedKitUseCase.Param param = new GetPublishedKitUseCase.Param(12L, UUID.randomUUID());
+    void testGetPublishedKit_whenKitIsNotPublished_ThrowsException() {
         when(loadAssessmentKitPort.loadTranslated(param.getKitId()))
             .thenReturn(AssessmentKitMother.notPublishedKit());
 
@@ -69,7 +71,6 @@ class GetPublishedKitServiceTest {
 
     @Test
     void testGetPublishedKit_whenKitIsPrivateAndUserHasNotAccess_thenThrowsResourceNotFoundException() {
-        GetPublishedKitUseCase.Param param = new GetPublishedKitUseCase.Param(12L, UUID.randomUUID());
         when(loadAssessmentKitPort.loadTranslated(param.getKitId()))
             .thenReturn(AssessmentKitMother.privateKit());
 
@@ -86,7 +87,6 @@ class GetPublishedKitServiceTest {
     void testGetPublishedKit_whenKitIsPrivateAndUserHasAccess_thenReturnValidResult() {
         var subject = SubjectMother.subjectWithAttributes("subject", List.of(AttributeMother.attributeWithTitle("attribute")));
         var kit = AssessmentKitMother.privateKit();
-        var param = new GetPublishedKitUseCase.Param(kit.getId(), UUID.randomUUID());
 
         var counts = new CountKitStatsPort.Result(1, 1, 115,
             1, 3, 1);
@@ -128,7 +128,6 @@ class GetPublishedKitServiceTest {
     void testGetPublishedKit_whenKitIsPublishedAndPublic_thenReturnValidResult() {
         var subject = SubjectMother.subjectWithAttributes("subject", List.of(AttributeMother.attributeWithTitle("attribute")));
         var kit = AssessmentKitMother.simpleKit();
-        var param = new GetPublishedKitUseCase.Param(kit.getId(), UUID.randomUUID());
 
         var counts = new CountKitStatsPort.Result(1, 1, 115,
             1, 3, 1);
@@ -157,5 +156,17 @@ class GetPublishedKitServiceTest {
         assertEquals(subject.getId(), result.subjects().getFirst().id());
 
         verifyNoInteractions(checkKitUserAccessPort);
+    }
+
+    private GetPublishedKitUseCase.Param createParam(Consumer<GetPublishedKitUseCase.Param.ParamBuilder> changer) {
+        var paramBuilder = paramBuilder();
+        changer.accept(paramBuilder);
+        return paramBuilder.build();
+    }
+
+    private GetPublishedKitUseCase.Param.ParamBuilder paramBuilder() {
+        return GetPublishedKitUseCase.Param.builder()
+            .kitId(0L)
+            .currentUserId(UUID.randomUUID());
     }
 }
