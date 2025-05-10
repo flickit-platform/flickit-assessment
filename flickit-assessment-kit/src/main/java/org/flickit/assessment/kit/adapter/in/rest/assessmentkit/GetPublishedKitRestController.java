@@ -27,6 +27,13 @@ public class GetPublishedKitRestController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    @GetMapping("public/assessment-kits/{kitId}")
+    public ResponseEntity<Result> getPublicKit(@PathVariable("kitId") Long kitId) {
+        UUID currentUserId = userContext.getUser().id();
+        Result result = useCase.getPublishedKit(toParam(kitId, currentUserId));
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
     private Param toParam(Long kitId, UUID currentUserId) {
         return new Param(kitId, currentUserId);
     }
