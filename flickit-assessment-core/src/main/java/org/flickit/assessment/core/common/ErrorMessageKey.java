@@ -22,6 +22,7 @@ public class ErrorMessageKey {
     public static final String ASSESSMENT_INSIGHT_ID_NOT_FOUND = "assessment-insight.id.notFound";
     public static final String SUBJECT_VALUE_NOT_FOUND = "subjectValue.subjectIdAssessmentResultId.notFound";
     public static final String SUBJECT_NOT_FOUND = "subjectId.notFound";
+    public static final String ASSESSMENT_REPORT_LINK_HASH_NOT_FOUND = "assessmentReport.linkHash.notFound";
 
     public static final String CREATE_ASSESSMENT_TITLE_NOT_BLANK = "create-assessment.title.notBlank";
     public static final String CREATE_ASSESSMENT_TITLE_SIZE_MIN = "create-assessment.title.size.min";
@@ -356,4 +357,6 @@ public class ErrorMessageKey {
     public static final String UPDATE_ASSESSMENT_REPORT_VISIBILITY_ASSESSMENT_REPORT_NOT_FOUND = "update-assessment-report-visibility.assessmentReport.notFound";
     public static final String UPDATE_ASSESSMENT_REPORT_VISIBILITY_VISIBILITY_INVALID = "update-assessment-report-visibility.visibility.invalid";
     public static final String UPDATE_ASSESSMENT_REPORT_VISIBILITY_ASSESSMENT_REPORT_NOT_PUBLISHED = "update-assessment-report-visibility.assessmentReport.notPublished";
+
+    public static final String GET_ASSESSMENT_PUBLIC_REPORT_LINK_HASH_NOT_NULL = "get-assessment-public-report.linkHash.notNull";
 }
