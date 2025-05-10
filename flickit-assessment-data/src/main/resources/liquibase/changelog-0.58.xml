@@ -164,4 +164,17 @@
                                  onDelete="CASCADE"/>
     </changeSet>
 
+    <changeSet id="0.58-25" author="Maziyar Gerami">
+        <dropForeignKeyConstraint baseTableName="fak_kit_custom"
+                                  constraintName="fk_fak_kitcustom_kit"/>
+    </changeSet>
+
+    <changeSet id="0.58-26" author="Maziyar Gerami">
+        <addForeignKeyConstraint baseTableName="fak_kit_custom" baseColumnNames="kit_id"
+                                 constraintName="fk_fak_kitcustom_kit"
+                                 referencedTableName="fak_assessment_kit"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
 </databaseChangeLog>
