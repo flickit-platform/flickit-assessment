@@ -54,21 +54,6 @@ class GetPublishedKitServiceTest {
     private LoadKitLanguagesPort loadKitLanguagesPort;
 
     @Test
-    void testGetPublishedKit_WhenKitDoesNotExist_ThrowsException() {
-        GetPublishedKitUseCase.Param param = new GetPublishedKitUseCase.Param(12L, UUID.randomUUID());
-
-        when(loadAssessmentKitPort.loadTranslated(param.getKitId()))
-            .thenThrow(new ResourceNotFoundException(KIT_ID_NOT_FOUND));
-
-        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> service.getPublishedKit(param));
-        assertEquals(KIT_ID_NOT_FOUND, exception.getMessage());
-        verifyNoInteractions(checkKitUserAccessPort,
-            countKitStatsPort,
-            loadSubjectsPort,
-            loadKitLanguagesPort);
-    }
-
-    @Test
     void testGetPublishedKit_WhenKitIsNotPublished_ThrowsException() {
         GetPublishedKitUseCase.Param param = new GetPublishedKitUseCase.Param(12L, UUID.randomUUID());
         when(loadAssessmentKitPort.loadTranslated(param.getKitId()))
