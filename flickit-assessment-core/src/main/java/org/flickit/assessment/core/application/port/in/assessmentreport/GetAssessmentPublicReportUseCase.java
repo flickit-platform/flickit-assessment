@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
-import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -39,8 +38,7 @@ public interface GetAssessmentPublicReportUseCase {
                   Advice advice,
                   AssessmentProcess assessmentProcess,
                   Permissions permissions,
-                  Language lang,
-                  Role role) {
+                  Language lang) {
     }
 
     record Assessment(String title,
@@ -130,11 +128,5 @@ public interface GetAssessmentPublicReportUseCase {
     }
 
     record Language(String code) {
-    }
-
-    record Role(int id, String title) {
-        public static Role of(AssessmentUserRole role) {
-            return new Role(role.getId(), role.getTitle());
-        }
     }
 }

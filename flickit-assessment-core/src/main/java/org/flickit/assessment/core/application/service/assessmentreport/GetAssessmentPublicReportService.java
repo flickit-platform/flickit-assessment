@@ -54,7 +54,7 @@ public class GetAssessmentPublicReportService implements GetAssessmentPublicRepo
         } else {
             var userRole = loadUserRoleForAssessmentPort.load(assessmentResult.getAssessment().getId(), param.getCurrentUserId());
             return userRole
-                .map(role -> generateReportWithPermission(report, assessmentResult, param.getCurrentUserId(), role))
+                .map(role -> generateReportWithPermission(report, assessmentResult, param.getCurrentUserId()))
                 .orElseGet(() -> generatePublicReport(report, assessmentResult));
         }
     }
@@ -71,13 +71,12 @@ public class GetAssessmentPublicReportService implements GetAssessmentPublicRepo
 
         var attributeMeasuresMap = buildAttributeMeasures(assessmentId, assessmentReportInfo);
 
-        return buildResult(assessmentReportInfo, attributeMeasuresMap, reportMetadata, assessmentId, null, null);
+        return buildResult(assessmentReportInfo, attributeMeasuresMap, reportMetadata, assessmentId, null);
     }
 
     private Result generateReportWithPermission(AssessmentReport report,
                                                 AssessmentResult assessmentResult,
-                                                UUID currentUserId,
-                                                AssessmentUserRole role) {
+                                                UUID currentUserId) {
         var assessmentId = assessmentResult.getAssessment().getId();
 
         if ((!Objects.equals(report.getVisibility(), VisibilityType.PUBLIC) || !report.isPublished()) &&
@@ -96,16 +95,14 @@ public class GetAssessmentPublicReportService implements GetAssessmentPublicRepo
             attributeMeasuresMap,
             reportMetadata,
             assessmentId,
-            currentUserId,
-            Role.of(role));
+            currentUserId);
     }
 
     private Result buildResult(LoadAssessmentReportInfoPort.Result assessmentReportInfo,
                                Map<Long, List<AttributeMeasure>> attributeMeasuresMap,
                                AssessmentReportMetadata metadata,
                                UUID assessmentId,
-                               UUID currentUserId,
-                               Role role) {
+                               UUID currentUserId) {
         var assessment = assessmentReportInfo.assessment();
         var assessmentKitItem = assessment.assessmentKit();
 
@@ -119,8 +116,7 @@ public class GetAssessmentPublicReportService implements GetAssessmentPublicRepo
             toAdvice(assessment.assessmentResultId(), Locale.of(assessment.language().name())),
             toAssessmentProcess(metadata),
             toPermissions(assessmentId, currentUserId),
-            toLanguage(assessment.language()),
-            role);
+            toLanguage(assessment.language()));
     }
 
     private List<MaturityLevel> toMaturityLevels(AssessmentKitItem assessmentKitItem) {

@@ -207,7 +207,6 @@ class GetAssessmentPublicReportServiceTest {
         assertAdviceItem(adviceItems, result.advice().adviceItems(), assessmentReport.language());
 
         assertFalse(result.permissions().canViewDashboard());
-        assertNull(result.role());
         verifyNoInteractions(loadUserRoleForAssessmentPort, assessmentAccessChecker);
     }
 
@@ -260,7 +259,6 @@ class GetAssessmentPublicReportServiceTest {
         assertAdviceItem(adviceItems, result.advice().adviceItems(), assessmentReport.language());
 
         assertFalse(result.permissions().canViewDashboard());
-        assertNull(result.role());
         verifyNoInteractions(assessmentAccessChecker);
     }
 
@@ -324,8 +322,6 @@ class GetAssessmentPublicReportServiceTest {
         assertTrue(result.permissions().canViewDashboard());
         assertFalse(result.permissions().canShareReport());
         assertTrue(result.permissions().canManageVisibility());
-        assertEquals(userRole.getId(), result.role().id());
-        assertEquals(userRole.getTitle(), result.role().title());
     }
 
     @Test
@@ -387,8 +383,6 @@ class GetAssessmentPublicReportServiceTest {
         assertTrue(result.permissions().canViewDashboard());
         assertTrue(result.permissions().canShareReport());
         assertFalse(result.permissions().canManageVisibility());
-        assertEquals(userRole.getId(), result.role().id());
-        assertEquals(userRole.getTitle(), result.role().title());
     }
 
     @Test
