@@ -168,6 +168,37 @@ class GetPublishedKitServiceTest {
         verifyNoInteractions(checkKitUserAccessPort);
     }
 
+    @Test
+    void testGetPublishedKit_whenKitIsPublishedAndPublicAndCurrentUserIdIsNull_thenReturnValidResult() {
+        param = createParam(b -> b.currentUserId(null));
+        var kit = AssessmentKitMother.simpleKit();
+
+        when(loadAssessmentKitPort.loadTranslated(param.getKitId())).thenReturn(kit);
+        when(countKitStatsPort.countKitStats(param.getKitId())).thenReturn(counts);
+        when(loadSubjectsPort.loadAllTranslated(kit.getActiveVersionId())).thenReturn(List.of(subject));
+        when(checkKitLikeExistencePort.exist(param.getKitId(), param.getCurrentUserId())).thenReturn(true);
+
+        GetPublishedKitUseCase.Result result = service.getPublishedKit(param);
+
+        assertEquals(kit.getId(), result.id());
+        assertEquals(kit.getTitle(), result.title());
+        assertEquals(kit.getSummary(), result.summary());
+        assertEquals(kit.getAbout(), result.about());
+        assertEquals(kit.isPublished(), result.published());
+        assertEquals(kit.isPrivate(), result.isPrivate());
+        assertEquals(kit.getCreationTime(), result.creationTime());
+        assertEquals(kit.getLastModificationTime(), result.lastModificationTime());
+        assertEquals(kit.getExpertGroupId(), result.expertGroupId());
+
+        assertEquals(counts.likes(), result.like().count());
+        assertTrue(result.like().liked());
+
+        assertEquals(1, result.subjects().size());
+        assertEquals(subject.getId(), result.subjects().getFirst().id());
+
+        verifyNoInteractions(checkKitUserAccessPort);
+    }
+
     private GetPublishedKitUseCase.Param createParam(Consumer<GetPublishedKitUseCase.Param.ParamBuilder> changer) {
         var paramBuilder = paramBuilder();
         changer.accept(paramBuilder);
