@@ -1,6 +1,7 @@
 package org.flickit.assessment.kit.application.port.in.assessmentkit;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
@@ -24,6 +25,7 @@ public interface GetPublishedKitUseCase {
 
         UUID currentUserId;
 
+        @Builder
         public Param(Long kitId, UUID currentUserId) {
             this.kitId = kitId;
             this.currentUserId = currentUserId;
