@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentReport;
-import org.flickit.assessment.core.application.domain.AssessmentReportMetadata;
 import org.flickit.assessment.core.application.port.out.assessmentreport.CreateAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentreport.UpdateAssessmentReportPort;
@@ -18,6 +17,7 @@ import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.core.adapter.out.persistence.assessmentreport.AssessmentReportMapper.mapToJpaEntity;
+import static org.flickit.assessment.core.common.ErrorMessageKey.ASSESSMENT_REPORT_LINK_HASH_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.UPDATE_ASSESSMENT_REPORT_PUBLISH_STATUS_ASSESSMENT_REPORT_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.UPDATE_ASSESSMENT_REPORT_VISIBILITY_ASSESSMENT_REPORT_NOT_FOUND;
 
@@ -40,11 +40,14 @@ public class AssessmentReportPersistenceJpaAdapter implements
 
         var reportEntity = repository.findByAssessmentResultId(assessmentResultId);
 
-        if (reportEntity.isPresent()) {
-            AssessmentReportMetadata metadata = objectMapper.readValue(reportEntity.get().getMetadata(), AssessmentReportMetadata.class);
-            return Optional.of(AssessmentReportMapper.mapToDomainModel(reportEntity.get(), metadata));
-        }
-        return Optional.empty();
+        return reportEntity.map(AssessmentReportMapper::mapToDomainModel);
+    }
+
+    @Override
+    public AssessmentReport loadByLinkHash(UUID linkHash) {
+        return repository.findByLinkHash(linkHash)
+            .map(AssessmentReportMapper::mapToDomainModel)
+            .orElseThrow(() -> new ResourceNotFoundException(ASSESSMENT_REPORT_LINK_HASH_NOT_FOUND));
     }
 
     @Override
