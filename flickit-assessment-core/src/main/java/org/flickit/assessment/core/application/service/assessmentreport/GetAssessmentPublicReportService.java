@@ -19,7 +19,6 @@ import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmen
 import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
-import org.flickit.assessment.core.application.port.out.assessmentuserrole.LoadUserRoleForAssessmentPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,7 +40,6 @@ public class GetAssessmentPublicReportService implements GetAssessmentPublicRepo
     private final LoadAssessmentReportInfoPort loadAssessmentReportInfoPort;
     private final LoadAssessmentQuestionsPort loadAssessmentQuestionsPort;
     private final AssessmentAccessChecker assessmentAccessChecker;
-    private final LoadUserRoleForAssessmentPort loadUserRoleForAssessmentPort;
     private final LoadAdviceNarrationPort loadAdviceNarrationPort;
     private final LoadAdviceItemsPort loadAdviceItemsPort;
 
@@ -51,60 +49,45 @@ public class GetAssessmentPublicReportService implements GetAssessmentPublicRepo
         var assessmentResult = loadAssessmentResultPort.load(report.getAssessmentResultId())
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
 
-        if (param.getCurrentUserId() == null) {
-            return generatePublicReport(report, assessmentResult);
-        } else {
-            var userRole = loadUserRoleForAssessmentPort.load(assessmentResult.getAssessment().getId(), param.getCurrentUserId());
-            return userRole
-                .map(role -> generateReportWithPermission(report, assessmentResult, param.getCurrentUserId()))
-                .orElseGet(() -> generatePublicReport(report, assessmentResult));
-        }
+        if (!isReportPublic(report) && !userHasAccess(param.getCurrentUserId(), assessmentResult.getAssessment().getId()))
+            throw new ResourceNotFoundException(ASSESSMENT_REPORT_LINK_HASH_NOT_FOUND);
+
+        return buildReport(report, assessmentResult, param.getCurrentUserId());
     }
 
-    private Result generatePublicReport(AssessmentReport report, AssessmentResult assessmentResult) {
-        if (!Objects.equals(report.getVisibility(), VisibilityType.PUBLIC) || !report.isPublished()) {
-            throw new ResourceNotFoundException(ASSESSMENT_REPORT_LINK_HASH_NOT_FOUND);
-        }
+    private static boolean isReportPublic(AssessmentReport report) {
+        return Objects.equals(report.getVisibility(), VisibilityType.PUBLIC) && report.isPublished();
+    }
+
+    private boolean userHasAccess(UUID currentUserId, UUID assessmentId) {
+        return currentUserId != null && assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_GRAPHICAL_REPORT);
+    }
+
+    private Result buildReport(AssessmentReport report, AssessmentResult assessmentResult, UUID currentUserId) {
         var reportMetadata = Optional.ofNullable(report.getMetadata())
             .orElse(new AssessmentReportMetadata(null, null, null, null));
 
         var assessmentId = assessmentResult.getAssessment().getId();
         var assessmentReportInfo = loadAssessmentReportInfoPort.load(assessmentId);
-
         var attributeMeasuresMap = buildAttributeMeasures(assessmentId, assessmentReportInfo);
+        var permissions = buildPermissions(assessmentId, currentUserId);
 
-        return buildResult(assessmentReportInfo, attributeMeasuresMap, reportMetadata, assessmentId, null);
+        return buildResult(assessmentReportInfo, attributeMeasuresMap, reportMetadata, permissions);
     }
 
-    private Result generateReportWithPermission(AssessmentReport report,
-                                                AssessmentResult assessmentResult,
-                                                UUID currentUserId) {
-        var assessmentId = assessmentResult.getAssessment().getId();
-
-        if ((!Objects.equals(report.getVisibility(), VisibilityType.PUBLIC) || !report.isPublished()) &&
-            !assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_GRAPHICAL_REPORT)) {
-            throw new ResourceNotFoundException(ASSESSMENT_REPORT_LINK_HASH_NOT_FOUND);
-        }
-
-        var reportMetadata = Optional.ofNullable(report.getMetadata())
-            .orElse(new AssessmentReportMetadata(null, null, null, null));
-
-        var assessmentReportInfo = loadAssessmentReportInfoPort.load(assessmentId);
-
-        var attributeMeasuresMap = buildAttributeMeasures(assessmentId, assessmentReportInfo);
-
-        return buildResult(assessmentReportInfo,
-            attributeMeasuresMap,
-            reportMetadata,
-            assessmentId,
-            currentUserId);
+    private Permissions buildPermissions(UUID assessmentId, UUID currentUserId) {
+        if (currentUserId == null)
+            return new Permissions(false, false, false);
+        var canViewDashboard = assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_DASHBOARD);
+        var canShareReport = assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, GRANT_ACCESS_TO_REPORT);
+        var canManageVisibility = assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, MANAGE_ASSESSMENT_REPORT_VISIBILITY);
+        return new Permissions(canViewDashboard, canShareReport, canManageVisibility);
     }
 
     private Result buildResult(LoadAssessmentReportInfoPort.Result assessmentReportInfo,
                                Map<Long, List<AttributeMeasure>> attributeMeasuresMap,
                                AssessmentReportMetadata metadata,
-                               UUID assessmentId,
-                               UUID currentUserId) {
+                               Permissions permissions) {
         var assessment = assessmentReportInfo.assessment();
         var assessmentKitItem = assessment.assessmentKit();
 
@@ -117,7 +100,7 @@ public class GetAssessmentPublicReportService implements GetAssessmentPublicRepo
             toSubjects(assessmentReportInfo.subjects(), maturityLevelMap, attributeMeasuresMap),
             toAdvice(assessment.assessmentResultId(), Locale.of(assessment.language().name())),
             toAssessmentProcess(metadata),
-            toPermissions(assessmentId, currentUserId),
+            permissions,
             toLanguage(assessment.language()));
     }
 
@@ -236,15 +219,6 @@ public class GetAssessmentPublicReportService implements GetAssessmentPublicRepo
 
     private AssessmentProcess toAssessmentProcess(AssessmentReportMetadata metadata) {
         return new AssessmentProcess(metadata.steps(), metadata.participants());
-    }
-
-    private Permissions toPermissions(UUID assessmentId, UUID currentUserId) {
-        if (currentUserId == null)
-            return new Permissions(false, false, false);
-        var canViewDashboard = assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_DASHBOARD);
-        var canShareReport = assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, GRANT_ACCESS_TO_REPORT);
-        var canManageVisibility = assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, MANAGE_ASSESSMENT_REPORT_VISIBILITY);
-        return new Permissions(canViewDashboard, canShareReport, canManageVisibility);
     }
 
     private Language toLanguage(KitLanguage language) {
