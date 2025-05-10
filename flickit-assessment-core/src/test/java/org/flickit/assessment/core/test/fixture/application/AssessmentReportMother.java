@@ -2,6 +2,7 @@ package org.flickit.assessment.core.test.fixture.application;
 
 import org.flickit.assessment.core.application.domain.AssessmentReport;
 import org.flickit.assessment.core.application.domain.AssessmentReportMetadata;
+import org.flickit.assessment.core.application.domain.VisibilityType;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -14,6 +15,8 @@ public class AssessmentReportMother {
             UUID.randomUUID(),
             metadata,
             false,
+            VisibilityType.RESTRICTED,
+            UUID.randomUUID(),
             LocalDateTime.now(),
             LocalDateTime.now(),
             userId,
@@ -26,6 +29,8 @@ public class AssessmentReportMother {
             UUID.randomUUID(),
             metadata,
             true,
+            VisibilityType.RESTRICTED,
+            UUID.randomUUID(),
             LocalDateTime.now(),
             LocalDateTime.now(),
             userId,
@@ -37,9 +42,25 @@ public class AssessmentReportMother {
             null,
             new AssessmentReportMetadata(null, null, null, null),
             false,
+            VisibilityType.RESTRICTED,
+            null,
             null,
             null,
             null,
             null);
+    }
+
+    public static AssessmentReport withVisibility(VisibilityType visibility) {
+        var userId = UUID.randomUUID();
+        return new AssessmentReport(UUID.randomUUID(),
+            UUID.randomUUID(),
+            null,
+            true,
+            visibility,
+            UUID.randomUUID(),
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            userId,
+            userId);
     }
 }

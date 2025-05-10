@@ -99,6 +99,8 @@ class GetAssessmentServiceTest {
         assertEquals(assessmentCreator.getDisplayName(), result.createdBy().getDisplayName());
         assertEquals(maturityLevel, result.maturityLevel());
         assertEquals(assessmentResult.getIsCalculateValid(), result.isCalculateValid());
+        assertEquals(assessmentResult.getLanguage().getCode(), result.language().code());
+        assertEquals(assessmentResult.getLanguage().getTitle(), result.language().title());
         assertTrue(result.manageable());
         assertTrue(result.viewable());
     }
@@ -145,7 +147,7 @@ class GetAssessmentServiceTest {
         when(loadAssessmentPort.getAssessmentById(assessmentId)).thenReturn(Optional.of(assessment));
         when(loadUserPort.loadById(assessment.getCreatedBy())).thenReturn(Optional.of(assessmentCreator));
         when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult));
-        when(assessmentPermissionChecker.isAuthorized (eq(assessmentId), eq(currentUserId),any())).thenReturn(false);
+        when(assessmentPermissionChecker.isAuthorized(eq(assessmentId), eq(currentUserId), any())).thenReturn(false);
         when(loadAssessmentKitPort.loadAssessmentKit(assessment.getAssessmentKit().getId(), assessmentResult.getLanguage()))
             .thenReturn(Optional.ofNullable(assessment.getAssessmentKit()));
 

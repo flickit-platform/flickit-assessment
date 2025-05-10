@@ -57,6 +57,8 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
             .orElse(false);
         var reportMetadata = assessmentReport.map(AssessmentReport::getMetadata)
             .orElse(new AssessmentReportMetadata(null, null, null, null));
+        var reportVisibility = assessmentReport.map(AssessmentReport::getVisibility)
+                .orElse(VisibilityType.RESTRICTED);
 
         validateReportPublication(param, published);
 
@@ -64,7 +66,7 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
 
         var attributeMeasuresMap = buildAttributeMeasures(param.getAssessmentId(), assessmentReportInfo);
 
-        return buildResult(assessmentReportInfo, attributeMeasuresMap, reportMetadata, param);
+        return buildResult(assessmentReportInfo, attributeMeasuresMap, reportMetadata, param, reportVisibility);
     }
 
     private void validateReportPublication(Param param, boolean published) {
@@ -76,7 +78,8 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
     private Result buildResult(LoadAssessmentReportInfoPort.Result assessmentReportInfo,
                                Map<Long, List<AttributeMeasure>> attributeMeasuresMap,
                                AssessmentReportMetadata metadata,
-                               Param param) {
+                               Param param,
+                               VisibilityType visibility) {
         var assessment = assessmentReportInfo.assessment();
         var assessmentKitItem = assessment.assessmentKit();
 
@@ -90,7 +93,8 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
             toAdvice(assessment.assessmentResultId(), Locale.of(assessment.language().name())),
             toAssessmentProcess(metadata),
             toPermissions(param),
-            toLanguage(assessment.language()));
+            toLanguage(assessment.language()),
+            visibility.name());
     }
 
     private List<MaturityLevel> toMaturityLevels(AssessmentKitItem assessmentKitItem) {

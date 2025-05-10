@@ -33,6 +33,15 @@ public class GetKitListRestController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @GetMapping("/public/assessment-kits")
+    public ResponseEntity<PaginatedResponse<KitListItem>> getPublicKitList(
+        @RequestParam(required = false) Set<String> langs,
+        @RequestParam(defaultValue = "50") int size,
+        @RequestParam(defaultValue = "0") int page) {
+        var response = useCase.getKitList(toParam(Boolean.FALSE, langs, page, size, null));
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     private Param toParam(Boolean isPrivate, Set<String> langs, int page, int size, UUID currentUserId) {
         return new Param(isPrivate, langs, page, size, currentUserId);
     }
