@@ -73,8 +73,7 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
 
     private void validateAccess(Param param, AssessmentKit kit) {
         if (kit.isPrivate() &&
-            (param.getCurrentUserId() == null ||
-                !checkKitUserAccessPort.hasAccess(param.getKitId(), param.getCurrentUserId())))
+            (param.getCurrentUserId() == null || !checkKitUserAccessPort.hasAccess(param.getKitId(), param.getCurrentUserId())))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
     }
 
