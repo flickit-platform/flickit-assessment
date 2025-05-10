@@ -68,7 +68,7 @@ class GetPublishedKitServiceTest {
     }
 
     @Test
-    void testGetPublishedKit_WhenKitIsPrivateAndUserHasNotAccess_ThrowsException() {
+    void testGetPublishedKit_whenKitIsPrivateAndUserHasNotAccess_thenThrowsResourceNotFoundException() {
         GetPublishedKitUseCase.Param param = new GetPublishedKitUseCase.Param(12L, UUID.randomUUID());
         when(loadAssessmentKitPort.loadTranslated(param.getKitId()))
             .thenReturn(AssessmentKitMother.privateKit());
@@ -83,7 +83,7 @@ class GetPublishedKitServiceTest {
     }
 
     @Test
-    void testGetPublishedKit_WhenKitIsPrivateAndUserHasAccess_ReturnValidResult() {
+    void testGetPublishedKit_whenKitIsPrivateAndUserHasAccess_thenReturnValidResult() {
         var subject = SubjectMother.subjectWithAttributes("subject", List.of(AttributeMother.attributeWithTitle("attribute")));
         var kit = AssessmentKitMother.privateKit();
         var param = new GetPublishedKitUseCase.Param(kit.getId(), UUID.randomUUID());
@@ -125,7 +125,7 @@ class GetPublishedKitServiceTest {
     }
 
     @Test
-    void testGetPublishedKit_WhenKitIsPublishedAndPublic_ReturnValidResult() {
+    void testGetPublishedKit_whenKitIsPublishedAndPublic_thenReturnValidResult() {
         var subject = SubjectMother.subjectWithAttributes("subject", List.of(AttributeMother.attributeWithTitle("attribute")));
         var kit = AssessmentKitMother.simpleKit();
         var param = new GetPublishedKitUseCase.Param(kit.getId(), UUID.randomUUID());
