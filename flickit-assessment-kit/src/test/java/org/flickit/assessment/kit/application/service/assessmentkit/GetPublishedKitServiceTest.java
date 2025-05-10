@@ -55,17 +55,31 @@ class GetPublishedKitServiceTest {
     @Mock
     private LoadKitLanguagesPort loadKitLanguagesPort;
 
-    private final GetPublishedKitUseCase.Param param = createParam(GetPublishedKitUseCase.Param.ParamBuilder::build);
+    private GetPublishedKitUseCase.Param param = createParam(GetPublishedKitUseCase.Param.ParamBuilder::build);
     private final Subject subject = SubjectMother.subjectWithAttributes("subject", List.of(AttributeMother.attributeWithTitle("attribute")));
     private final CountKitStatsPort.Result counts = new CountKitStatsPort.Result(1, 1, 115, 1, 3, 1);
 
     @Test
-    void testGetPublishedKit_whenKitIsNotPublished_ThrowsException() {
+    void testGetPublishedKit_whenKitIsNotPublished_thenThrowsResourceNotFoundException() {
         when(loadAssessmentKitPort.loadTranslated(param.getKitId()))
             .thenReturn(AssessmentKitMother.notPublishedKit());
 
-        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> service.getPublishedKit(param));
+        var exception = assertThrows(ResourceNotFoundException.class, () -> service.getPublishedKit(param));
         assertEquals(KIT_ID_NOT_FOUND, exception.getMessage());
+        verifyNoInteractions(checkKitUserAccessPort,
+            countKitStatsPort,
+            loadSubjectsPort,
+            loadKitLanguagesPort);
+    }
+
+    @Test
+    void testGetPublishedKit_whenKitIsPrivateAndCurrentUserIdIsNull_thenThrowsResourceNotFoundException() {
+        param = createParam(b -> b.currentUserId(null));
+        when(loadAssessmentKitPort.loadTranslated(param.getKitId()))
+            .thenReturn(AssessmentKitMother.privateKit());
+
+        var exception = assertThrows(AccessDeniedException.class, () -> service.getPublishedKit(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
         verifyNoInteractions(checkKitUserAccessPort,
             countKitStatsPort,
             loadSubjectsPort,
@@ -127,9 +141,6 @@ class GetPublishedKitServiceTest {
     @Test
     void testGetPublishedKit_whenKitIsPublishedAndPublic_thenReturnValidResult() {
         var kit = AssessmentKitMother.simpleKit();
-
-        var counts = new CountKitStatsPort.Result(1, 1, 115,
-            1, 3, 1);
 
         when(loadAssessmentKitPort.loadTranslated(param.getKitId())).thenReturn(kit);
         when(countKitStatsPort.countKitStats(param.getKitId())).thenReturn(counts);
