@@ -9,6 +9,7 @@ import org.flickit.assessment.kit.application.port.out.kitlanguage.LoadKitLangua
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.UUID;
 
 @Service
@@ -40,6 +41,7 @@ public class SearchKitOptionsService implements SearchKitOptionsUseCase {
                 idToLanguagesMap.get(e.getId()).stream()
                     .map(KitListItem.Language::of)
                     .toList()))
+            .sorted(Comparator.comparing(KitListItem::title))
             .toList();
 
         return new PaginatedResponse<>(
