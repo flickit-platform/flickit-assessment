@@ -89,8 +89,9 @@ class GetPublishedKitServiceTest {
     }
 
     @Test
-    void testGetPublishedKit_whenKitIsPrivateAndCurrentUserIdIsNull_thenThrowsResourceNotFoundException() {
+    void testGetPublishedKit_whenKitIsPrivateAndCurrentUserIdIsNull_thenThrowsAccessDeniedException() {
         param = createParam(b -> b.currentUserId(null));
+
         when(loadAssessmentKitPort.loadTranslated(param.getKitId()))
             .thenReturn(AssessmentKitMother.privateKit());
 
@@ -105,13 +106,13 @@ class GetPublishedKitServiceTest {
     }
 
     @Test
-    void testGetPublishedKit_whenKitIsPrivateAndUserHasNotAccess_thenThrowsResourceNotFoundException() {
+    void testGetPublishedKit_whenKitIsPrivateAndUserHasNotAccess_thenThrowsAccessDeniedException() {
         when(loadAssessmentKitPort.loadTranslated(param.getKitId()))
             .thenReturn(AssessmentKitMother.privateKit());
-
         when(checkKitUserAccessPort.hasAccess(param.getKitId(), param.getCurrentUserId()))
             .thenReturn(false);
-        AccessDeniedException exception = assertThrows(AccessDeniedException.class, () -> service.getPublishedKit(param));
+
+        var exception = assertThrows(AccessDeniedException.class, () -> service.getPublishedKit(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
         verifyNoInteractions(countKitStatsPort,
             loadSubjectsPort,
@@ -123,8 +124,7 @@ class GetPublishedKitServiceTest {
     @Test
     void testGetPublishedKit_whenKitIsPrivateAndUserHasAccess_thenReturnValidResult() {
         var kit = AssessmentKitMother.privateKit();
-
-        List<KitLanguage> languages = List.of(KitLanguage.EN, KitLanguage.FA);
+        var languages = List.of(KitLanguage.EN, KitLanguage.FA);
 
         when(loadAssessmentKitPort.loadTranslated(param.getKitId())).thenReturn(kit);
         when(checkKitUserAccessPort.hasAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(true);
@@ -178,7 +178,7 @@ class GetPublishedKitServiceTest {
         when(createFileDownloadLinkPort.createDownloadLink(any(String.class), any(Duration.class)))
             .thenReturn(pictureLink);
 
-        GetPublishedKitUseCase.Result result = service.getPublishedKit(param);
+        var result = service.getPublishedKit(param);
 
         assertEquals(kit.getId(), result.id());
         assertEquals(kit.getTitle(), result.title());
@@ -216,7 +216,7 @@ class GetPublishedKitServiceTest {
         when(createFileDownloadLinkPort.createDownloadLink(any(String.class), any(Duration.class)))
             .thenReturn(pictureLink);
 
-        GetPublishedKitUseCase.Result result = service.getPublishedKit(param);
+        var result = service.getPublishedKit(param);
 
         assertEquals(kit.getId(), result.id());
         assertEquals(kit.getTitle(), result.title());
