@@ -64,9 +64,6 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
         var context = kit.getMetadata() != null ? kit.getMetadata().context() : null;
 
         var expertGroup = loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId());
-        var pictureLink = isBlank(expertGroup.getPicture())
-            ? null
-            : createFileDownloadLinkPort.createDownloadLink(expertGroup.getPicture(), EXPIRY_DURATION);
 
         return new Result(
             kit.getId(),
@@ -83,7 +80,7 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
             subjects,
             new Metadata(goal, context),
             languages,
-            new ExpertGroup(expertGroup.getTitle(), pictureLink));
+            new ExpertGroup(expertGroup.getTitle(), getPictureDownloadLink(expertGroup.getPicture())));
     }
 
     private void checkAccess(AssessmentKit kit, Param param) {
@@ -109,5 +106,11 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
 
     private Language toLanguage(KitLanguage kitLanguage) {
         return new Language(kitLanguage.getCode(), kitLanguage.getTitle());
+    }
+
+    private String getPictureDownloadLink(String filePath) {
+        if (isBlank(filePath))
+            return null;
+        return createFileDownloadLinkPort.createDownloadLink(filePath, EXPIRY_DURATION);
     }
 }
