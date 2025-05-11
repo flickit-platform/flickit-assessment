@@ -37,6 +37,8 @@ public class GetAssessmentPublicReportService implements GetAssessmentPublicRepo
 
     private final LoadAssessmentReportPort loadAssessmentReportPort;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
+    private final CalculateMaturityLevelHelper calculateMaturityLevelHelper;
+    private final CalculateConfidenceHelper calculateConfidenceHelper;
     private final LoadAssessmentReportInfoPort loadAssessmentReportInfoPort;
     private final LoadAssessmentQuestionsPort loadAssessmentQuestionsPort;
     private final AssessmentAccessChecker assessmentAccessChecker;
@@ -48,6 +50,12 @@ public class GetAssessmentPublicReportService implements GetAssessmentPublicRepo
         var report = loadAssessmentReportPort.loadByLinkHash(param.getLinkHash());
         var assessmentResult = loadAssessmentResultPort.load(report.getAssessmentResultId())
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
+
+        if (!Boolean.TRUE.equals(assessmentResult.getIsCalculateValid()))
+            calculateMaturityLevelHelper.calculateMaturityLevel(assessmentResult.getAssessment().getId());
+
+        if (!Boolean.TRUE.equals(assessmentResult.getIsConfidenceValid()))
+            calculateConfidenceHelper.calculate(assessmentResult.getAssessment().getId());
 
         if (!isReportPublic(report) && !userHasAccess(param.getCurrentUserId(), assessmentResult.getAssessment().getId()))
             throw new ResourceNotFoundException(ASSESSMENT_REPORT_LINK_HASH_NOT_FOUND);
