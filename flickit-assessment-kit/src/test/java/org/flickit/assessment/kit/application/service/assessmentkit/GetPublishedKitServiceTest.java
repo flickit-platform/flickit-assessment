@@ -154,6 +154,7 @@ class GetPublishedKitServiceTest {
         assertEquals(1, result.subjects().size());
         assertEquals(subject.getId(), result.subjects().getFirst().id());
 
+        assertEquals(expertGroup.getId(), result.expertGroup().id());
         assertEquals(expertGroup.getTitle(), result.expertGroup().title());
         assertEquals(pictureLink, result.expertGroup().pictureLink());
 
@@ -195,6 +196,7 @@ class GetPublishedKitServiceTest {
         assertEquals(1, result.subjects().size());
         assertEquals(subject.getId(), result.subjects().getFirst().id());
 
+        assertEquals(expertGroup.getId(), result.expertGroup().id());
         assertEquals(expertGroup.getTitle(), result.expertGroup().title());
         assertNull(result.expertGroup().pictureLink());
 
@@ -232,6 +234,7 @@ class GetPublishedKitServiceTest {
         assertEquals(1, result.subjects().size());
         assertEquals(subject.getId(), result.subjects().getFirst().id());
 
+        assertEquals(expertGroup.getId(), result.expertGroup().id());
         assertEquals(expertGroup.getTitle(), result.expertGroup().title());
         assertEquals(pictureLink, result.expertGroup().pictureLink());
 

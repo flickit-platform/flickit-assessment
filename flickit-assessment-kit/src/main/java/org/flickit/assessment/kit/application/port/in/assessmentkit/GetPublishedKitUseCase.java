@@ -65,6 +65,6 @@ public interface GetPublishedKitUseCase {
     record Metadata(String goal, String context) {
     }
 
-    record ExpertGroup(String title, String pictureLink) {
+    record ExpertGroup(Long id, String title, String pictureLink) {
     }
 }
