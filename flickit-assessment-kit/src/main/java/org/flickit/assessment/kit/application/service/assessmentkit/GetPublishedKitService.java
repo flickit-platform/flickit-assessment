@@ -11,13 +11,18 @@ import org.flickit.assessment.kit.application.port.in.assessmentkit.GetPublished
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetPublishedKitUseCase.Result.Language;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CountKitStatsPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
+import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.kitlanguage.LoadKitLanguagesPort;
 import org.flickit.assessment.kit.application.port.out.kitlike.CheckKitLikeExistencePort;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.CheckKitUserAccessPort;
+import org.flickit.assessment.kit.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectsPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
+
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
 
@@ -26,12 +31,16 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND
 @RequiredArgsConstructor
 public class GetPublishedKitService implements GetPublishedKitUseCase {
 
+    private static final Duration EXPIRY_DURATION = Duration.ofDays(1);
+
     private final LoadAssessmentKitPort loadAssessmentKitPort;
     private final CheckKitUserAccessPort checkKitUserAccessPort;
     private final CountKitStatsPort countKitStatsPort;
     private final LoadSubjectsPort loadSubjectsPort;
     private final CheckKitLikeExistencePort checkKitLikeExistencePort;
     private final LoadKitLanguagesPort loadKitLanguagesPort;
+    private final LoadKitExpertGroupPort loadKitExpertGroupPort;
+    private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
     @Override
     public Result getPublishedKit(Param param) {
@@ -54,6 +63,8 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
         var goal = kit.getMetadata() != null ? kit.getMetadata().goal() : null;
         var context = kit.getMetadata() != null ? kit.getMetadata().context() : null;
 
+        var expertGroup = loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId());
+
         return new Result(
             kit.getId(),
             kit.getTitle(),
@@ -68,7 +79,10 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
             kit.getExpertGroupId(),
             subjects,
             new Metadata(goal, context),
-            languages);
+            languages,
+            new ExpertGroup(expertGroup.getId(),
+                expertGroup.getTitle(),
+                getPictureDownloadLink(expertGroup.getPicture())));
     }
 
     private void checkAccess(AssessmentKit kit, Param param) {
@@ -94,5 +108,11 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
 
     private Language toLanguage(KitLanguage kitLanguage) {
         return new Language(kitLanguage.getCode(), kitLanguage.getTitle());
+    }
+
+    private String getPictureDownloadLink(String filePath) {
+        if (isBlank(filePath))
+            return null;
+        return createFileDownloadLinkPort.createDownloadLink(filePath, EXPIRY_DURATION);
     }
 }

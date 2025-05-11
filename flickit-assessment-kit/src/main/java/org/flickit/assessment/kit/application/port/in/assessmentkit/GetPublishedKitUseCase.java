@@ -46,7 +46,8 @@ public interface GetPublishedKitUseCase {
                   long expertGroupId,
                   List<MinimalSubject> subjects,
                   Metadata metadata,
-                  List<Language> languages) {
+                  List<Language> languages,
+                  ExpertGroup expertGroup) {
         public record Language(String code,
                                String title) {
         }
@@ -62,5 +63,8 @@ public interface GetPublishedKitUseCase {
     }
 
     record Metadata(String goal, String context) {
+    }
+
+    record ExpertGroup(Long id, String title, String pictureLink) {
     }
 }
