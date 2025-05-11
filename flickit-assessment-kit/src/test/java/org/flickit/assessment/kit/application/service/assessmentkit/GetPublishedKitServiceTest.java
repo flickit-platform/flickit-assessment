@@ -69,7 +69,7 @@ class GetPublishedKitServiceTest {
     private GetPublishedKitUseCase.Param param = createParam(GetPublishedKitUseCase.Param.ParamBuilder::build);
     private final Subject subject = SubjectMother.subjectWithAttributes("subject", List.of(AttributeMother.attributeWithTitle("attribute")));
     private final CountKitStatsPort.Result counts = new CountKitStatsPort.Result(1, 1, 115, 1, 3, 1);
-    private final ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
+    private ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
     private final String pictureLink = "link/to/picture" + expertGroup.getPicture();
     private final Duration EXPIRY_DURATION = Duration.ofDays(1);
 
@@ -169,14 +169,13 @@ class GetPublishedKitServiceTest {
     @Test
     void testGetPublishedKit_whenKitIsPublishedAndPublic_thenReturnValidResult() {
         var kit = AssessmentKitMother.simpleKit();
+        expertGroup = ExpertGroupMother.createExpertGroupWithPicture(null);
 
         when(loadAssessmentKitPort.loadTranslated(param.getKitId())).thenReturn(kit);
         when(countKitStatsPort.countKitStats(param.getKitId())).thenReturn(counts);
         when(loadSubjectsPort.loadAllTranslated(kit.getActiveVersionId())).thenReturn(List.of(subject));
         when(checkKitLikeExistencePort.exist(param.getKitId(), param.getCurrentUserId())).thenReturn(true);
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
-        when(createFileDownloadLinkPort.createDownloadLink(any(String.class), any(Duration.class)))
-            .thenReturn(pictureLink);
 
         var result = service.getPublishedKit(param);
 
@@ -197,10 +196,9 @@ class GetPublishedKitServiceTest {
         assertEquals(subject.getId(), result.subjects().getFirst().id());
 
         assertEquals(expertGroup.getTitle(), result.expertGroup().title());
-        assertEquals(pictureLink, result.expertGroup().pictureLink());
+        assertNull(result.expertGroup().pictureLink());
 
-        verify(createFileDownloadLinkPort).createDownloadLink(expertGroup.getPicture(), EXPIRY_DURATION);
-        verifyNoInteractions(checkKitUserAccessPort);
+        verifyNoInteractions(checkKitUserAccessPort, createFileDownloadLinkPort);
     }
 
     @Test
