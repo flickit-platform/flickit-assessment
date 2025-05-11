@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
 
@@ -63,7 +64,9 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
         var context = kit.getMetadata() != null ? kit.getMetadata().context() : null;
 
         var expertGroup = loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId());
-        var pictureLink = createFileDownloadLinkPort.createDownloadLink(expertGroup.getPicture(), EXPIRY_DURATION);
+        var pictureLink = isBlank(expertGroup.getPicture())
+            ? null
+            : createFileDownloadLinkPort.createDownloadLink(expertGroup.getPicture(), EXPIRY_DURATION);
 
         return new Result(
             kit.getId(),
