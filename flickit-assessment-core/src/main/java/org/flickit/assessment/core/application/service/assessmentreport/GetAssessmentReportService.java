@@ -92,7 +92,7 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
             toSubjects(assessmentReportInfo.subjects(), maturityLevelMap, attributeMeasuresMap),
             toAdvice(assessment.assessmentResultId(), Locale.of(assessment.language().name())),
             toAssessmentProcess(metadata),
-            toPermissions(param),
+            toPermissions(param.getAssessmentId(), param.getCurrentUserId()),
             toLanguage(assessment.language()),
             visibility.name());
     }
@@ -214,9 +214,11 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
         return new AssessmentProcess(metadata.steps(), metadata.participants());
     }
 
-    private Permissions toPermissions(Param param) {
-        var canViewDashboard = assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_DASHBOARD);
-        return new Permissions(canViewDashboard);
+    private Permissions toPermissions(UUID assessmentId, UUID currentUserId) {
+        var canViewDashboard = assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_DASHBOARD);
+        var canShareReport = assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, GRANT_ACCESS_TO_REPORT);
+        var canManageVisibility = assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, MANAGE_ASSESSMENT_REPORT_VISIBILITY);
+        return new Permissions(canViewDashboard, canShareReport, canManageVisibility);
     }
 
     private Language toLanguage(KitLanguage language) {
