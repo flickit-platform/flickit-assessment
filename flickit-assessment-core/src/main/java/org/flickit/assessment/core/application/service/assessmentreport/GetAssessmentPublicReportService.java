@@ -38,7 +38,7 @@ public class GetAssessmentPublicReportService implements GetAssessmentPublicRepo
     private final LoadAssessmentReportPort loadAssessmentReportPort;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final InitializeAssessmentResultHelper initializeAssessmentResultHelper;
-    private final CalculateMaturityLevelHelper calculateMaturityLevelHelper;
+    private final CalculateAssessmentHelper calculateAssessmentHelper;
     private final CalculateConfidenceHelper calculateConfidenceHelper;
     private final LoadAssessmentReportInfoPort loadAssessmentReportInfoPort;
     private final LoadAssessmentQuestionsPort loadAssessmentQuestionsPort;
@@ -69,7 +69,7 @@ public class GetAssessmentPublicReportService implements GetAssessmentPublicRepo
             initializeAssessmentResultHelper.reinitializeAssessmentResultIfRequired(assessmentId);
 
             if (!isCalculateValid)
-                calculateMaturityLevelHelper.calculateMaturityLevel(assessmentId);
+                calculateAssessmentHelper.calculateMaturityLevel(assessmentId);
 
             if (!isConfidenceValid)
                 calculateConfidenceHelper.calculate(assessmentId);

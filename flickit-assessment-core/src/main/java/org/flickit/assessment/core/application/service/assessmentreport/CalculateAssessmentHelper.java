@@ -14,7 +14,7 @@ import java.util.*;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class CalculateMaturityLevelHelper {
+public class CalculateAssessmentHelper {
 
     private final LoadCalculateInfoPort loadCalculateInfoPort;
     private final UpdateCalculatedResultPort updateCalculatedResultPort;
