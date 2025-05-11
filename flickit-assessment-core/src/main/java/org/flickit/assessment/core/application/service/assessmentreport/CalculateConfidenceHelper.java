@@ -16,14 +16,11 @@ import java.util.*;
 @RequiredArgsConstructor
 public class CalculateConfidenceHelper {
 
-    private final InitializeAssessmentResultHelper initializeAssessmentResultHelper;
     private final LoadConfidenceLevelCalculateInfoPort loadConfidenceLevelCalculateInfoPort;
     private final UpdateCalculatedConfidencePort updateCalculatedConfidenceLevelResultPort;
     private final UpdateAssessmentPort updateAssessmentPort;
 
     public void calculate(UUID assessmentId) {
-        initializeAssessmentResultHelper.reinitializeAssessmentResultIfRequired(assessmentId);
-
         AssessmentResult assessmentResult = loadConfidenceLevelCalculateInfoPort.load(assessmentId);
 
         Double confidenceValue = assessmentResult.calculateConfidenceValue();
