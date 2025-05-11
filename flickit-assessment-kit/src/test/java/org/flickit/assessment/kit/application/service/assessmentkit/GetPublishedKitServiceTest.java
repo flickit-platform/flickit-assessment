@@ -71,7 +71,7 @@ class GetPublishedKitServiceTest {
     private final CountKitStatsPort.Result counts = new CountKitStatsPort.Result(1, 1, 115, 1, 3, 1);
     private ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
     private final String pictureLink = "link/to/picture" + expertGroup.getPicture();
-    private final Duration EXPIRY_DURATION = Duration.ofDays(1);
+    private static final Duration EXPIRY_DURATION = Duration.ofDays(1);
 
     @Test
     void testGetPublishedKit_whenKitIsNotPublished_thenThrowsResourceNotFoundException() {
