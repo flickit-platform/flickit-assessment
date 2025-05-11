@@ -37,6 +37,7 @@ public class GetAssessmentPublicReportService implements GetAssessmentPublicRepo
 
     private final LoadAssessmentReportPort loadAssessmentReportPort;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
+    private final InitializeAssessmentResultHelper initializeAssessmentResultHelper;
     private final CalculateMaturityLevelHelper calculateMaturityLevelHelper;
     private final CalculateConfidenceHelper calculateConfidenceHelper;
     private final LoadAssessmentReportInfoPort loadAssessmentReportInfoPort;
@@ -51,16 +52,28 @@ public class GetAssessmentPublicReportService implements GetAssessmentPublicRepo
         var assessmentResult = loadAssessmentResultPort.load(report.getAssessmentResultId())
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
 
-        if (!Boolean.TRUE.equals(assessmentResult.getIsCalculateValid()))
-            calculateMaturityLevelHelper.calculateMaturityLevel(assessmentResult.getAssessment().getId());
-
-        if (!Boolean.TRUE.equals(assessmentResult.getIsConfidenceValid()))
-            calculateConfidenceHelper.calculate(assessmentResult.getAssessment().getId());
+        recalculateAssessmentResultIfRequired(assessmentResult);
 
         if (!isReportPublic(report) && !userHasAccess(param.getCurrentUserId(), assessmentResult.getAssessment().getId()))
             throw new ResourceNotFoundException(ASSESSMENT_REPORT_LINK_HASH_NOT_FOUND);
 
         return buildReport(report, assessmentResult, param.getCurrentUserId());
+    }
+
+    private void recalculateAssessmentResultIfRequired(AssessmentResult assessmentResult) {
+        boolean isCalculateValid = Boolean.TRUE.equals(assessmentResult.getIsCalculateValid());
+        boolean isConfidenceValid = Boolean.TRUE.equals(assessmentResult.getIsConfidenceValid());
+
+        if (!isConfidenceValid || !isCalculateValid) {
+            UUID assessmentId = assessmentResult.getAssessment().getId();
+            initializeAssessmentResultHelper.reinitializeAssessmentResultIfRequired(assessmentId);
+
+            if (!isCalculateValid)
+                calculateMaturityLevelHelper.calculateMaturityLevel(assessmentId);
+
+            if (!isConfidenceValid)
+                calculateConfidenceHelper.calculate(assessmentId);
+        }
     }
 
     private static boolean isReportPublic(AssessmentReport report) {
