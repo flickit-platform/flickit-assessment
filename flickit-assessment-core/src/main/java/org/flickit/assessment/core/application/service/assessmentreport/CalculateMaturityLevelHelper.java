@@ -19,11 +19,8 @@ public class CalculateMaturityLevelHelper {
     private final LoadCalculateInfoPort loadCalculateInfoPort;
     private final UpdateCalculatedResultPort updateCalculatedResultPort;
     private final UpdateAssessmentPort updateAssessmentPort;
-    private final InitializeAssessmentResultHelper initializeAssessmentResultHelper;
 
     public void calculateMaturityLevel(UUID assessmentId) {
-        initializeAssessmentResultHelper.reinitializeAssessmentResultIfRequired(assessmentId);
-
         AssessmentResult assessmentResult = loadCalculateInfoPort.load(assessmentId);
 
         MaturityLevel calcResult = assessmentResult.calculate();
