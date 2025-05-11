@@ -13,6 +13,7 @@ import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpert
 import org.flickit.assessment.kit.application.port.out.kitlanguage.LoadKitLanguagesPort;
 import org.flickit.assessment.kit.application.port.out.kitlike.CheckKitLikeExistencePort;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.CheckKitUserAccessPort;
+import org.flickit.assessment.kit.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectsPort;
 import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
 import org.flickit.assessment.kit.test.fixture.application.AttributeMother;
@@ -24,6 +25,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -31,8 +33,8 @@ import java.util.function.Consumer;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class GetPublishedKitServiceTest {
@@ -61,10 +63,15 @@ class GetPublishedKitServiceTest {
     @Mock
     private LoadKitExpertGroupPort loadKitExpertGroupPort;
 
+    @Mock
+    private CreateFileDownloadLinkPort createFileDownloadLinkPort;
+
     private GetPublishedKitUseCase.Param param = createParam(GetPublishedKitUseCase.Param.ParamBuilder::build);
     private final Subject subject = SubjectMother.subjectWithAttributes("subject", List.of(AttributeMother.attributeWithTitle("attribute")));
     private final CountKitStatsPort.Result counts = new CountKitStatsPort.Result(1, 1, 115, 1, 3, 1);
     private final ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
+    private final String pictureLink = "link/to/picture" + expertGroup.getPicture();
+    private final Duration EXPIRY_DURATION = Duration.ofDays(1);
 
     @Test
     void testGetPublishedKit_whenKitIsNotPublished_thenThrowsResourceNotFoundException() {
@@ -77,7 +84,8 @@ class GetPublishedKitServiceTest {
             countKitStatsPort,
             loadSubjectsPort,
             loadKitLanguagesPort,
-            loadKitExpertGroupPort);
+            loadKitExpertGroupPort,
+            createFileDownloadLinkPort);
     }
 
     @Test
@@ -92,7 +100,8 @@ class GetPublishedKitServiceTest {
             countKitStatsPort,
             loadSubjectsPort,
             loadKitLanguagesPort,
-            loadKitExpertGroupPort);
+            loadKitExpertGroupPort,
+            createFileDownloadLinkPort);
     }
 
     @Test
@@ -107,7 +116,8 @@ class GetPublishedKitServiceTest {
         verifyNoInteractions(countKitStatsPort,
             loadSubjectsPort,
             loadKitLanguagesPort,
-            loadKitExpertGroupPort);
+            loadKitExpertGroupPort,
+            createFileDownloadLinkPort);
     }
 
     @Test
@@ -123,6 +133,8 @@ class GetPublishedKitServiceTest {
         when(checkKitLikeExistencePort.exist(param.getKitId(), param.getCurrentUserId())).thenReturn(false);
         when(loadKitLanguagesPort.loadByKitId(param.getKitId())).thenReturn(languages);
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
+        when(createFileDownloadLinkPort.createDownloadLink(any(String.class), any(Duration.class)))
+            .thenReturn(pictureLink);
 
         GetPublishedKitUseCase.Result result = service.getPublishedKit(param);
 
@@ -143,12 +155,15 @@ class GetPublishedKitServiceTest {
         assertEquals(subject.getId(), result.subjects().getFirst().id());
 
         assertEquals(expertGroup.getTitle(), result.expertGroup().title());
+        assertEquals(pictureLink, result.expertGroup().pictureLink());
 
         Assertions.assertThat(result.languages())
             .zipSatisfy(languages, (actual, expected) -> {
                 assertEquals(expected.getCode(), actual.code());
                 assertEquals(expected.getTitle(), actual.title());
             });
+
+        verify(createFileDownloadLinkPort).createDownloadLink(expertGroup.getPicture(), EXPIRY_DURATION);
     }
 
     @Test
@@ -160,6 +175,8 @@ class GetPublishedKitServiceTest {
         when(loadSubjectsPort.loadAllTranslated(kit.getActiveVersionId())).thenReturn(List.of(subject));
         when(checkKitLikeExistencePort.exist(param.getKitId(), param.getCurrentUserId())).thenReturn(true);
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
+        when(createFileDownloadLinkPort.createDownloadLink(any(String.class), any(Duration.class)))
+            .thenReturn(pictureLink);
 
         GetPublishedKitUseCase.Result result = service.getPublishedKit(param);
 
@@ -180,7 +197,9 @@ class GetPublishedKitServiceTest {
         assertEquals(subject.getId(), result.subjects().getFirst().id());
 
         assertEquals(expertGroup.getTitle(), result.expertGroup().title());
+        assertEquals(pictureLink, result.expertGroup().pictureLink());
 
+        verify(createFileDownloadLinkPort).createDownloadLink(expertGroup.getPicture(), EXPIRY_DURATION);
         verifyNoInteractions(checkKitUserAccessPort);
     }
 
@@ -194,6 +213,8 @@ class GetPublishedKitServiceTest {
         when(loadSubjectsPort.loadAllTranslated(kit.getActiveVersionId())).thenReturn(List.of(subject));
         when(checkKitLikeExistencePort.exist(param.getKitId(), param.getCurrentUserId())).thenReturn(true);
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
+        when(createFileDownloadLinkPort.createDownloadLink(any(String.class), any(Duration.class)))
+            .thenReturn(pictureLink);
 
         GetPublishedKitUseCase.Result result = service.getPublishedKit(param);
 
@@ -214,7 +235,9 @@ class GetPublishedKitServiceTest {
         assertEquals(subject.getId(), result.subjects().getFirst().id());
 
         assertEquals(expertGroup.getTitle(), result.expertGroup().title());
+        assertEquals(pictureLink, result.expertGroup().pictureLink());
 
+        verify(createFileDownloadLinkPort).createDownloadLink(expertGroup.getPicture(), EXPIRY_DURATION);
         verifyNoInteractions(checkKitUserAccessPort);
     }
 

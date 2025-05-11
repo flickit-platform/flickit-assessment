@@ -15,9 +15,12 @@ import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpert
 import org.flickit.assessment.kit.application.port.out.kitlanguage.LoadKitLanguagesPort;
 import org.flickit.assessment.kit.application.port.out.kitlike.CheckKitLikeExistencePort;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.CheckKitUserAccessPort;
+import org.flickit.assessment.kit.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectsPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Duration;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
@@ -27,6 +30,8 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND
 @RequiredArgsConstructor
 public class GetPublishedKitService implements GetPublishedKitUseCase {
 
+    private static final Duration EXPIRY_DURATION = Duration.ofDays(1);
+
     private final LoadAssessmentKitPort loadAssessmentKitPort;
     private final CheckKitUserAccessPort checkKitUserAccessPort;
     private final CountKitStatsPort countKitStatsPort;
@@ -34,6 +39,7 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
     private final CheckKitLikeExistencePort checkKitLikeExistencePort;
     private final LoadKitLanguagesPort loadKitLanguagesPort;
     private final LoadKitExpertGroupPort loadKitExpertGroupPort;
+    private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
     @Override
     public Result getPublishedKit(Param param) {
@@ -57,6 +63,7 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
         var context = kit.getMetadata() != null ? kit.getMetadata().context() : null;
 
         var expertGroup = loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId());
+        var pictureLink = createFileDownloadLinkPort.createDownloadLink(expertGroup.getPicture(), EXPIRY_DURATION);
 
         return new Result(
             kit.getId(),
@@ -73,7 +80,7 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
             subjects,
             new Metadata(goal, context),
             languages,
-            new ExpertGroup(expertGroup.getTitle(), expertGroup.getPicture()));
+            new ExpertGroup(expertGroup.getTitle(), pictureLink));
     }
 
     private void validateAccess(Param param, AssessmentKit kit) {
