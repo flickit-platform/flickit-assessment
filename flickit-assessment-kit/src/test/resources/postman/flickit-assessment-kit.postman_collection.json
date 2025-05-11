@@ -463,6 +463,32 @@
 					"response": []
 				},
 				{
+					"name": "Get Published Public Kit",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/public/assessment-kits/457",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"public",
+								"assessment-kits",
+								"457"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Grant User Access to Kit",
 					"request": {
 						"method": "POST",
