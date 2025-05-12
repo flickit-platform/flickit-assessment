@@ -20,7 +20,7 @@ public class CalculateAssessmentHelper {
     private final UpdateCalculatedResultPort updateCalculatedResultPort;
     private final UpdateAssessmentPort updateAssessmentPort;
 
-    public void calculateMaturityLevel(UUID assessmentId) {
+    public MaturityLevel calculateMaturityLevel(UUID assessmentId) {
         AssessmentResult assessmentResult = loadCalculateInfoPort.load(assessmentId);
 
         MaturityLevel calcResult = assessmentResult.calculate();
@@ -31,5 +31,7 @@ public class CalculateAssessmentHelper {
 
         updateCalculatedResultPort.updateCalculatedResult(assessmentResult);
         updateAssessmentPort.updateLastModificationTime(assessmentId, assessmentResult.getLastModificationTime());
+
+        return calcResult;
     }
 }
