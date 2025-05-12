@@ -14,7 +14,7 @@ public record AssessmentReportItem(UUID id,
                                    String insight,
                                    AssessmentKitItem assessmentKit,
                                    MaturityLevel maturityLevel,
-                                   Double confidenceValue,
+                                   double confidenceValue,
                                    KitLanguage language,
                                    LocalDateTime creationTime) {
     public record AssessmentKitItem(

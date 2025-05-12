@@ -102,7 +102,7 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             assessmentInsight,
             buildAssessmentKitItem(kitVersionId, assessmentKitEntity, maturityLevels, translationLanguage),
             idToMaturityLevel.get(assessmentResultEntity.getMaturityLevelId()),
-            assessmentResultEntity.getConfidenceValue(),
+            Objects.requireNonNullElse(assessmentResultEntity.getConfidenceValue(), 0.0),
             KitLanguage.valueOfById(assessmentResultEntity.getLangId()),
             assessment.getCreationTime()
         );
