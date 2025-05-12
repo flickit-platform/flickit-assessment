@@ -171,7 +171,7 @@ public class GetAssessmentPublicReportService implements GetAssessmentPublicRepo
     private Subject toSubject(AssessmentSubjectReportItem subject, Map<Long, MaturityLevel> maturityLevelMap,
                               Map<Long, List<AttributeMeasure>> attributeMeasuresMap) {
         var attributes = subject.attributes().stream()
-            .map(attribute -> toAttribute(attribute, maturityLevelMap, attributeMeasuresMap.get(attribute.id())))
+            .map(attribute -> toAttribute(attribute, maturityLevelMap, attributeMeasuresMap.getOrDefault(attribute.id(), List.of())))
             .sorted(Comparator.comparingInt(Attribute::index))
             .toList();
         return new Subject(subject.id(),
@@ -195,7 +195,7 @@ public class GetAssessmentPublicReportService implements GetAssessmentPublicRepo
             attribute.insight(),
             attribute.index(),
             attribute.weight(),
-            attribute.confidenceValue(),
+            attribute.confidenceValue() != null ? attribute.confidenceValue() : 0,
             maturityLevelMap.get(attribute.maturityLevel().getId()),
             sortedMeasures);
     }
