@@ -63,17 +63,16 @@ public class GetAssessmentPublicReportService implements GetAssessmentPublicRepo
     private void recalculateAssessmentResultIfRequired(AssessmentResult assessmentResult) {
         boolean isCalculateValid = Boolean.TRUE.equals(assessmentResult.getIsCalculateValid());
         boolean isConfidenceValid = Boolean.TRUE.equals(assessmentResult.getIsConfidenceValid());
+        UUID assessmentId = assessmentResult.getAssessment().getId();
 
-        if (!isConfidenceValid || !isCalculateValid) {
-            UUID assessmentId = assessmentResult.getAssessment().getId();
+        if (!isConfidenceValid || !isCalculateValid)
             initializeAssessmentResultHelper.reinitializeAssessmentResultIfRequired(assessmentId);
 
-            if (!isCalculateValid)
-                calculateAssessmentHelper.calculateMaturityLevel(assessmentId);
+        if (!isCalculateValid)
+            calculateAssessmentHelper.calculateMaturityLevel(assessmentId);
 
-            if (!isConfidenceValid)
-                calculateConfidenceHelper.calculate(assessmentId);
-        }
+        if (!isConfidenceValid)
+            calculateConfidenceHelper.calculate(assessmentId);
     }
 
     private static boolean isReportPublic(AssessmentReport report) {
