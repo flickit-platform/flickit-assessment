@@ -53,7 +53,7 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
         validateAssessmentResultPort.validate(param.getAssessmentId());
 
         var assessmentReport = loadAssessmentReportPort.load(param.getAssessmentId());
-        var published = assessmentReport.map(AssessmentReport::isPublished)
+        boolean published = assessmentReport.map(AssessmentReport::isPublished)
             .orElse(false);
         var reportMetadata = assessmentReport.map(AssessmentReport::getMetadata)
             .orElse(new AssessmentReportMetadata(null, null, null, null));
@@ -66,7 +66,7 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
 
         var attributeMeasuresMap = buildAttributeMeasures(param.getAssessmentId(), assessmentReportInfo);
 
-        return buildResult(assessmentReportInfo, attributeMeasuresMap, reportMetadata, param, reportVisibility);
+        return buildResult(assessmentReportInfo, attributeMeasuresMap, reportMetadata, param, published, reportVisibility);
     }
 
     private void validateReportPublication(Param param, boolean published) {
@@ -79,6 +79,7 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
                                Map<Long, List<AttributeMeasure>> attributeMeasuresMap,
                                AssessmentReportMetadata metadata,
                                Param param,
+                               boolean published,
                                VisibilityType visibility) {
         var assessment = assessmentReportInfo.assessment();
         var assessmentKitItem = assessment.assessmentKit();
@@ -92,7 +93,7 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
             toSubjects(assessmentReportInfo.subjects(), maturityLevelMap, attributeMeasuresMap),
             toAdvice(assessment.assessmentResultId(), Locale.of(assessment.language().name())),
             toAssessmentProcess(metadata),
-            toPermissions(param.getAssessmentId(), param.getCurrentUserId()),
+            toPermissions(param.getAssessmentId(), published, param.getCurrentUserId()),
             toLanguage(assessment.language()),
             visibility.name());
     }
@@ -214,10 +215,10 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
         return new AssessmentProcess(metadata.steps(), metadata.participants());
     }
 
-    private Permissions toPermissions(UUID assessmentId, UUID currentUserId) {
+    private Permissions toPermissions(UUID assessmentId, boolean published, UUID currentUserId) {
         var canViewDashboard = assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_DASHBOARD);
-        var canShareReport = assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, GRANT_ACCESS_TO_REPORT);
-        var canManageVisibility = assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, MANAGE_ASSESSMENT_REPORT_VISIBILITY);
+        var canShareReport = published && assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, GRANT_ACCESS_TO_REPORT);
+        var canManageVisibility = published && assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, MANAGE_ASSESSMENT_REPORT_VISIBILITY);
         return new Permissions(canViewDashboard, canShareReport, canManageVisibility);
     }
 

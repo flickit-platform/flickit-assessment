@@ -170,10 +170,6 @@ class GetAssessmentReportServiceTest {
             .thenReturn(true);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_DASHBOARD))
             .thenReturn(true);
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_ACCESS_TO_REPORT))
-            .thenReturn(true);
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MANAGE_ASSESSMENT_REPORT_VISIBILITY))
-            .thenReturn(false);
         when(loadAssessmentQuestionsPort.loadApplicableQuestions(param.getAssessmentId()))
             .thenReturn(questionAnswers);
 
@@ -191,11 +187,11 @@ class GetAssessmentReportServiceTest {
         assertEquals(adviceItems.size(), result.advice().adviceItems().size());
         assertAdviceItem(adviceItems, result.advice().adviceItems(), assessmentReport.language());
         assertTrue(result.permissions().canViewDashboard());
-        assertTrue(result.permissions().canShareReport());
+        assertFalse(result.permissions().canShareReport());
         assertFalse(result.permissions().canManageVisibility());
         assertEquals(VisibilityType.RESTRICTED.name(), result.visibility());
 
-        verify(assessmentAccessChecker, times(5))
+        verify(assessmentAccessChecker, times(3))
             .isAuthorized(eq(param.getAssessmentId()), eq(param.getCurrentUserId()), any(AssessmentPermission.class));
     }
 

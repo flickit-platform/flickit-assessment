@@ -70,17 +70,17 @@ public class GetAssessmentPublicReportService implements GetAssessmentPublicRepo
         var assessmentId = assessmentResult.getAssessment().getId();
         var assessmentReportInfo = loadAssessmentReportInfoPort.load(assessmentId);
         var attributeMeasuresMap = buildAttributeMeasures(assessmentId, assessmentReportInfo);
-        var permissions = buildPermissions(assessmentId, currentUserId);
+        var permissions = buildPermissions(assessmentId, report.isPublished(), currentUserId);
 
         return buildResult(assessmentReportInfo, attributeMeasuresMap, reportMetadata, permissions);
     }
 
-    private Permissions buildPermissions(UUID assessmentId, UUID currentUserId) {
+    private Permissions buildPermissions(UUID assessmentId, boolean published, UUID currentUserId) {
         if (currentUserId == null)
             return new Permissions(false, false, false);
         var canViewDashboard = assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_DASHBOARD);
-        var canShareReport = assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, GRANT_ACCESS_TO_REPORT);
-        var canManageVisibility = assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, MANAGE_ASSESSMENT_REPORT_VISIBILITY);
+        var canShareReport = published && assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, GRANT_ACCESS_TO_REPORT);
+        var canManageVisibility = published && assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, MANAGE_ASSESSMENT_REPORT_VISIBILITY);
         return new Permissions(canViewDashboard, canShareReport, canManageVisibility);
     }
 
