@@ -20,7 +20,7 @@ public class CalculateConfidenceHelper {
     private final UpdateCalculatedConfidencePort updateCalculatedConfidenceLevelResultPort;
     private final UpdateAssessmentPort updateAssessmentPort;
 
-    public void calculate(UUID assessmentId) {
+    public Double calculate(UUID assessmentId) {
         AssessmentResult assessmentResult = loadConfidenceLevelCalculateInfoPort.load(assessmentId);
 
         Double confidenceValue = assessmentResult.calculateConfidenceValue();
@@ -33,5 +33,7 @@ public class CalculateConfidenceHelper {
         updateCalculatedConfidenceLevelResultPort.updateCalculatedConfidence(assessmentResult);
 
         updateAssessmentPort.updateLastModificationTime(assessmentId, assessmentResult.getLastModificationTime());
+
+        return confidenceValue;
     }
 }
