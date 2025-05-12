@@ -78,55 +78,60 @@ public interface AssessmentKitJpaRepository extends
     CountKitStatsView countKitStats(@Param(value = "kitId") long kitId);
 
     @Query("""
-            SELECT DISTINCT(k.id)
+            SELECT k AS kit, g AS expertGroup
             FROM AssessmentKitJpaEntity k
-            LEFT JOIN KitLanguageJpaEntity kl ON k.id = kl.kitId
+            LEFT JOIN ExpertGroupJpaEntity g ON k.expertGroupId = g.id
             WHERE k.published = TRUE
                 AND k.isPrivate = FALSE
-                AND (:languageIds IS NULL OR kl.langId IN :languageIds)
+                AND EXISTS (SELECT 1 FROM KitLanguageJpaEntity kl
+                    WHERE kl.kitId = k.id
+                        AND (:languageIds IS NULL OR kl.langId IN :languageIds))
         """)
-    List<Long> findAllPublishedAndNotPrivate(@Nullable
-                                             @Param("languageIds")
-                                             Collection<Integer> languageIds);
-
-    @Query("""
-            SELECT DISTINCT(k.id)
-            FROM AssessmentKitJpaEntity k
-            LEFT JOIN KitLanguageJpaEntity kl ON k.id = kl.kitId
-            JOIN KitUserAccessJpaEntity kua ON k.id = kua.kitId
-            WHERE k.published = TRUE
-                AND k.isPrivate = TRUE
-                AND kua.userId = :userId
-                AND (:languageIds IS NULL OR kl.langId IN :languageIds)
-        """)
-    List<Long> findAllPublishedAndPrivateByUserId(@Param("userId")
-                                                  UUID userId,
-                                                  @Nullable
-                                                  @Param("languageIds")
-                                                  Collection<Integer> languageIds);
-
-    @Query("""
-            SELECT DISTINCT(k.id)
-            FROM AssessmentKitJpaEntity k
-            LEFT JOIN KitLanguageJpaEntity kl ON k.id = kl.kitId
-            JOIN KitUserAccessJpaEntity kua ON k.id = kua.kitId
-            WHERE k.published = TRUE
-                AND (k.isPrivate = FALSE OR (k.isPrivate = TRUE AND kua.userId = :userId))
-                AND (:languageIds IS NULL OR kl.langId IN :languageIds)
-        """)
-    List<Long> findAllPublished(@Param("userId")
-                                UUID userId,
-                                @Nullable
-                                @Param("languageIds")
-                                Collection<Integer> languageIds);
+    Page<KitWithExpertGroupView> findAllPublishedAndNotPrivate(@Nullable
+                                                               @Param("languageIds")
+                                                               Collection<Integer> languageIds,
+                                                               Pageable pageable);
 
     @Query("""
             SELECT k AS kit, g AS expertGroup
             FROM AssessmentKitJpaEntity k
             LEFT JOIN ExpertGroupJpaEntity g ON k.expertGroupId = g.id
-            WHERE k.id IN :ids
+            WHERE k.published = TRUE
+                AND EXISTS (SELECT 1 FROM KitLanguageJpaEntity kl
+                    WHERE kl.kitId = k.id
+                        AND (:languageIds IS NULL OR kl.langId IN :languageIds))
+                AND EXISTS (SELECT 1 FROM KitUserAccessJpaEntity kua
+                    WHERE kua.kitId = k.id
+                        AND k.isPrivate = TRUE
+                        AND kua.userId = :userId)
         """)
-    Page<KitWithExpertGroupView> findAllByIdIn(@Param("ids") Collection<Long> ids, Pageable pageable);
+    Page<KitWithExpertGroupView> findAllPublishedAndPrivateByUserId(@Param("userId")
+                                                                    UUID userId,
+                                                                    @Nullable
+                                                                    @Param("languageIds")
+                                                                    Collection<Integer> languageIds,
+                                                                    Pageable pageable);
+
+    @Query("""
+            SELECT k AS kit, g AS expertGroup
+            FROM AssessmentKitJpaEntity k
+            LEFT JOIN ExpertGroupJpaEntity g ON k.expertGroupId = g.id
+            WHERE k.published = TRUE
+                AND (k.isPrivate = FALSE
+                    OR EXISTS (SELECT 1 FROM KitUserAccessJpaEntity kua
+                        WHERE kua.kitId = k.id
+                            AND k.isPrivate = TRUE
+                            AND kua.userId = :userId))
+                AND EXISTS (SELECT 1 FROM KitLanguageJpaEntity kl
+                    WHERE kl.kitId = k.id
+                        AND (:languageIds IS NULL OR kl.langId IN :languageIds))
+        """)
+    Page<KitWithExpertGroupView> findAllPublished(@Param("userId")
+                                                  UUID userId,
+                                                  @Nullable
+                                                  @Param("languageIds")
+                                                  Collection<Integer> languageIds,
+                                                  Pageable pageable);
 
     @Query("""
             SELECT
