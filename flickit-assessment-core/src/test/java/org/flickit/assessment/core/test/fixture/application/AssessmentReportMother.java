@@ -37,6 +37,48 @@ public class AssessmentReportMother {
             userId);
     }
 
+    public static AssessmentReport publicAndPublishedReport() {
+        var userId = UUID.randomUUID();
+        return new AssessmentReport(UUID.randomUUID(),
+            UUID.randomUUID(),
+            AssessmentReportMetadataMother.fullMetadata(),
+            true,
+            VisibilityType.PUBLIC,
+            UUID.randomUUID(),
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            userId,
+            userId);
+    }
+
+    public static AssessmentReport restrictedAndPublishedReport() {
+        var userId = UUID.randomUUID();
+        return new AssessmentReport(UUID.randomUUID(),
+            UUID.randomUUID(),
+            AssessmentReportMetadataMother.fullMetadata(),
+            true,
+            VisibilityType.RESTRICTED,
+            UUID.randomUUID(),
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            userId,
+            userId);
+    }
+
+    public static AssessmentReport publicAndNotPublishedReport() {
+        var userId = UUID.randomUUID();
+        return new AssessmentReport(UUID.randomUUID(),
+            UUID.randomUUID(),
+            AssessmentReportMetadataMother.fullMetadata(),
+            false,
+            VisibilityType.PUBLIC,
+            UUID.randomUUID(),
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            userId,
+            userId);
+    }
+
     public static AssessmentReport empty() {
         return new AssessmentReport(null,
             null,

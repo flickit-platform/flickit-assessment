@@ -14,10 +14,10 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AssessmentReportMapper {
 
-    public static AssessmentReport mapToDomainModel(AssessmentReportJpaEntity entity, AssessmentReportMetadata metadata) {
+    public static AssessmentReport mapToDomainModel(AssessmentReportJpaEntity entity) {
         return new AssessmentReport(entity.getId(),
             entity.getAssessmentResultId(),
-            metadata,
+            JsonUtils.fromJson(entity.getMetadata(), AssessmentReportMetadata.class),
             entity.getPublished(),
             VisibilityType.valueOfById(entity.getVisibility()),
             entity.getLinkHash(),

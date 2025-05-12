@@ -10,26 +10,24 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
-import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_REPORT_ASSESSMENT_ID_NOT_NULL;
+import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_PUBLIC_REPORT_LINK_HASH_NOT_NULL;
 
-public interface GetAssessmentReportUseCase {
+public interface GetAssessmentPublicReportUseCase {
 
-    Result getAssessmentReport(Param param);
+    Result getAssessmentPublicReport(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = GET_ASSESSMENT_REPORT_ASSESSMENT_ID_NOT_NULL)
-        UUID assessmentId;
+        @NotNull(message = GET_ASSESSMENT_PUBLIC_REPORT_LINK_HASH_NOT_NULL)
+        UUID linkHash;
 
-        @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
         @Builder
-        public Param(UUID assessmentId, UUID currentUserId) {
-            this.assessmentId = assessmentId;
+        public Param(UUID linkHash, UUID currentUserId) {
+            this.linkHash = linkHash;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
@@ -40,8 +38,7 @@ public interface GetAssessmentReportUseCase {
                   Advice advice,
                   AssessmentProcess assessmentProcess,
                   Permissions permissions,
-                  Language lang,
-                  String visibility) {
+                  Language lang) {
     }
 
     record Assessment(String title,

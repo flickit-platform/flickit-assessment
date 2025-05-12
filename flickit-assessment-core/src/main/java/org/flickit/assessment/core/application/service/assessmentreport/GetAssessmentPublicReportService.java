@@ -3,9 +3,7 @@ package org.flickit.assessment.core.application.service.assessmentreport;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
-import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
-import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.common.exception.InvalidStateException;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.util.MathUtils;
 import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.domain.report.AssessmentReportItem;
@@ -13,13 +11,14 @@ import org.flickit.assessment.core.application.domain.report.AssessmentReportIte
 import org.flickit.assessment.core.application.domain.report.AssessmentSubjectReportItem;
 import org.flickit.assessment.core.application.domain.report.AttributeReportItem;
 import org.flickit.assessment.core.application.domain.report.QuestionnaireReportItem;
-import org.flickit.assessment.core.application.port.in.assessmentreport.GetAssessmentReportUseCase;
-import org.flickit.assessment.core.application.port.in.assessmentreport.GetAssessmentReportUseCase.AdviceItem.Level;
+import org.flickit.assessment.core.application.port.in.assessmentreport.GetAssessmentPublicReportUseCase;
+import org.flickit.assessment.core.application.port.in.assessmentreport.GetAssessmentPublicReportUseCase.AdviceItem.Level;
 import org.flickit.assessment.core.application.port.out.adviceitem.LoadAdviceItemsPort;
 import org.flickit.assessment.core.application.port.out.advicenarration.LoadAdviceNarrationPort;
 import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentQuestionsPort;
 import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
+import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,59 +27,67 @@ import java.util.function.Function;
 
 import static java.util.stream.Collectors.*;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.*;
-import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.common.exception.api.ErrorCodes.REPORT_UNPUBLISHED;
-import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_REPORT_REPORT_NOT_PUBLISHED;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
+import static org.flickit.assessment.core.common.ErrorMessageKey.ASSESSMENT_REPORT_LINK_HASH_NOT_FOUND;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class GetAssessmentReportService implements GetAssessmentReportUseCase {
+public class GetAssessmentPublicReportService implements GetAssessmentPublicReportUseCase {
 
-    private final AssessmentAccessChecker assessmentAccessChecker;
-    private final LoadAssessmentReportInfoPort loadAssessmentReportInfoPort;
     private final LoadAssessmentReportPort loadAssessmentReportPort;
-    private final ValidateAssessmentResultPort validateAssessmentResultPort;
+    private final LoadAssessmentResultPort loadAssessmentResultPort;
+    private final LoadAssessmentReportInfoPort loadAssessmentReportInfoPort;
     private final LoadAssessmentQuestionsPort loadAssessmentQuestionsPort;
+    private final AssessmentAccessChecker assessmentAccessChecker;
     private final LoadAdviceNarrationPort loadAdviceNarrationPort;
     private final LoadAdviceItemsPort loadAdviceItemsPort;
 
     @Override
-    public Result getAssessmentReport(Param param) {
-        if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_GRAPHICAL_REPORT))
-            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
+    public Result getAssessmentPublicReport(Param param) {
+        var report = loadAssessmentReportPort.loadByLinkHash(param.getLinkHash());
+        var assessmentResult = loadAssessmentResultPort.load(report.getAssessmentResultId())
+            .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
 
-        validateAssessmentResultPort.validate(param.getAssessmentId());
+        if (!isReportPublic(report) && !userHasAccess(param.getCurrentUserId(), assessmentResult.getAssessment().getId()))
+            throw new ResourceNotFoundException(ASSESSMENT_REPORT_LINK_HASH_NOT_FOUND);
 
-        var assessmentReport = loadAssessmentReportPort.load(param.getAssessmentId());
-        boolean published = assessmentReport.map(AssessmentReport::isPublished)
-            .orElse(false);
-        var reportMetadata = assessmentReport.map(AssessmentReport::getMetadata)
-            .orElse(new AssessmentReportMetadata(null, null, null, null));
-        var reportVisibility = assessmentReport.map(AssessmentReport::getVisibility)
-                .orElse(VisibilityType.RESTRICTED);
-
-        validateReportPublication(param, published);
-
-        var assessmentReportInfo = loadAssessmentReportInfoPort.load(param.getAssessmentId());
-
-        var attributeMeasuresMap = buildAttributeMeasures(param.getAssessmentId(), assessmentReportInfo);
-
-        return buildResult(assessmentReportInfo, attributeMeasuresMap, reportMetadata, param, published, reportVisibility);
+        return buildReport(report, assessmentResult, param.getCurrentUserId());
     }
 
-    private void validateReportPublication(Param param, boolean published) {
-        if (!published &&
-            !assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_REPORT_PREVIEW))
-            throw new InvalidStateException(REPORT_UNPUBLISHED, GET_ASSESSMENT_REPORT_REPORT_NOT_PUBLISHED);
+    private static boolean isReportPublic(AssessmentReport report) {
+        return Objects.equals(report.getVisibility(), VisibilityType.PUBLIC) && report.isPublished();
+    }
+
+    private boolean userHasAccess(UUID currentUserId, UUID assessmentId) {
+        return currentUserId != null && assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_GRAPHICAL_REPORT);
+    }
+
+    private Result buildReport(AssessmentReport report, AssessmentResult assessmentResult, UUID currentUserId) {
+        var reportMetadata = Optional.ofNullable(report.getMetadata())
+            .orElse(new AssessmentReportMetadata(null, null, null, null));
+
+        var assessmentId = assessmentResult.getAssessment().getId();
+        var assessmentReportInfo = loadAssessmentReportInfoPort.load(assessmentId);
+        var attributeMeasuresMap = buildAttributeMeasures(assessmentId, assessmentReportInfo);
+        var permissions = buildPermissions(assessmentId, report.isPublished(), currentUserId);
+
+        return buildResult(assessmentReportInfo, attributeMeasuresMap, reportMetadata, permissions);
+    }
+
+    private Permissions buildPermissions(UUID assessmentId, boolean published, UUID currentUserId) {
+        if (currentUserId == null)
+            return new Permissions(false, false, false);
+        var canViewDashboard = assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_DASHBOARD);
+        var canShareReport = published && assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, GRANT_ACCESS_TO_REPORT);
+        var canManageVisibility = published && assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, MANAGE_ASSESSMENT_REPORT_VISIBILITY);
+        return new Permissions(canViewDashboard, canShareReport, canManageVisibility);
     }
 
     private Result buildResult(LoadAssessmentReportInfoPort.Result assessmentReportInfo,
                                Map<Long, List<AttributeMeasure>> attributeMeasuresMap,
                                AssessmentReportMetadata metadata,
-                               Param param,
-                               boolean published,
-                               VisibilityType visibility) {
+                               Permissions permissions) {
         var assessment = assessmentReportInfo.assessment();
         var assessmentKitItem = assessment.assessmentKit();
 
@@ -93,9 +100,8 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
             toSubjects(assessmentReportInfo.subjects(), maturityLevelMap, attributeMeasuresMap),
             toAdvice(assessment.assessmentResultId(), Locale.of(assessment.language().name())),
             toAssessmentProcess(metadata),
-            toPermissions(param.getAssessmentId(), published, param.getCurrentUserId()),
-            toLanguage(assessment.language()),
-            visibility.name());
+            permissions,
+            toLanguage(assessment.language()));
     }
 
     private List<MaturityLevel> toMaturityLevels(AssessmentKitItem assessmentKitItem) {
@@ -215,13 +221,6 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
         return new AssessmentProcess(metadata.steps(), metadata.participants());
     }
 
-    private Permissions toPermissions(UUID assessmentId, boolean published, UUID currentUserId) {
-        var canViewDashboard = assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_DASHBOARD);
-        var canShareReport = published && assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, GRANT_ACCESS_TO_REPORT);
-        var canManageVisibility = published && assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, MANAGE_ASSESSMENT_REPORT_VISIBILITY);
-        return new Permissions(canViewDashboard, canShareReport, canManageVisibility);
-    }
-
     private Language toLanguage(KitLanguage language) {
         return new Language(language.getCode());
     }
@@ -302,13 +301,16 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
 
         var missedScore = measureMaxPossibleScore - gainedScore;
 
+        var gainedScorePercentage = attributeMaxPossibleScore == 0 ? 1 : (gainedScore / attributeMaxPossibleScore) * 100;
+        var missedScorePercentage = attributeMaxPossibleScore == 0 ? 1 : (missedScore / attributeMaxPossibleScore) * 100;
+
         return new AttributeMeasure(measure.getTitle(),
             MathUtils.round(impactPercentage, 2),
             MathUtils.round(measureMaxPossibleScore, 2),
             MathUtils.round(gainedScore, 2),
             MathUtils.round(missedScore, 2),
-            MathUtils.round((gainedScore / attributeMaxPossibleScore) * 100, 2),
-            MathUtils.round((missedScore / attributeMaxPossibleScore) * 100, 2)
+            MathUtils.round(gainedScorePercentage, 2),
+            MathUtils.round(missedScorePercentage, 2)
         );
     }
 
