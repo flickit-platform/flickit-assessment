@@ -146,23 +146,6 @@ jobs:
   deploy-latest:
     needs: [build-and-push-latest-image]
     name: deploy latest
-    container:
-      image: registry.hectora.cloud/hectora-public/darkube-cli:v1.1
-      env:
-        CONSOLE_API_BASE_URL: "https://api.hectora.cloud"
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Run script
-        run: darkube deploy --ref main --token ${DEPLOY_TOKEN} --app-id ${APP_ID}  --image-tag "${GITHUB_SHA:0:7}" --job-id "$GITHUB_RUN_ID" --stateless-app true
-        env:
-          DEPLOY_TOKEN: ${{ secrets.ASSESSMENT_CORE_DEPLOY_TOKEN_STAGING }}
-          APP_ID: ${{ secrets.ASSESSMENT_CORE_APP_ID_STAGING }}
-
-          
-  deploy-with-webhook:
-    needs: [build-and-push-latest-image]
-    name: deploy with webhook
     runs-on: ubuntu-latest
     steps:
       - name: Deploy service on Webhook
