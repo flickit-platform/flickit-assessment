@@ -195,7 +195,7 @@ public class GetAssessmentPublicReportService implements GetAssessmentPublicRepo
             attribute.insight(),
             attribute.index(),
             attribute.weight(),
-            attribute.confidenceValue() != null ? attribute.confidenceValue() : 0,
+            attribute.confidenceValue(),
             maturityLevelMap.get(attribute.maturityLevel().getId()),
             sortedMeasures);
     }
