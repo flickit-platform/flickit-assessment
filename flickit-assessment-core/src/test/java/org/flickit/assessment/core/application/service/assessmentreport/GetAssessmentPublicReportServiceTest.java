@@ -22,6 +22,7 @@ import org.flickit.assessment.core.application.port.out.assessmentkit.LoadKitLas
 import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
+import org.flickit.assessment.core.application.port.out.kitcustom.LoadKitCustomLastModificationTimePort;
 import org.flickit.assessment.core.application.service.assessment.CalculateAssessmentHelper;
 import org.flickit.assessment.core.application.service.assessment.CalculateConfidenceHelper;
 import org.flickit.assessment.core.application.service.assessment.InitializeAssessmentResultHelper;
@@ -70,6 +71,9 @@ class GetAssessmentPublicReportServiceTest {
     private LoadKitLastMajorModificationTimePort loadKitLastMajorModificationTimePort;
 
     @Mock
+    private LoadKitCustomLastModificationTimePort loadKitCustomLastModificationTimePort;
+
+    @Mock
     private InitializeAssessmentResultHelper initializeAssessmentResultHelper;
 
     @Mock
@@ -96,7 +100,7 @@ class GetAssessmentPublicReportServiceTest {
     @Mock
     private LoadAssessmentResultPort loadAssessmentResultPort;
 
-    private final AssessmentResult assessmentResult = AssessmentResultMother.validResult();
+    private AssessmentResult assessmentResult = AssessmentResultMother.validResultWithKitCustomId(null);
     private final AssessmentReport restrictedReport = AssessmentReportMother.restrictedAndPublishedReport();
     private final AssessmentReport notPublishedReport = AssessmentReportMother.publicAndNotPublishedReport();
     private final AssessmentReport publicReport = AssessmentReportMother.publicAndPublishedReport();
@@ -115,6 +119,7 @@ class GetAssessmentPublicReportServiceTest {
         assertEquals(ASSESSMENT_REPORT_LINK_HASH_NOT_FOUND, exception.getMessage());
         verifyNoInteractions(assessmentAccessChecker,
             loadAssessmentReportInfoPort,
+            loadKitCustomLastModificationTimePort,
             initializeAssessmentResultHelper,
             calculateAssessmentHelper,
             calculateConfidenceHelper,
@@ -136,6 +141,7 @@ class GetAssessmentPublicReportServiceTest {
 
         assertEquals(ASSESSMENT_REPORT_LINK_HASH_NOT_FOUND, exception.getMessage());
         verifyNoInteractions(assessmentAccessChecker,
+            loadKitCustomLastModificationTimePort,
             initializeAssessmentResultHelper,
             calculateAssessmentHelper,
             calculateConfidenceHelper,
@@ -198,6 +204,7 @@ class GetAssessmentPublicReportServiceTest {
         assertFalse(result.permissions().canManageVisibility());
         assertFalse(result.permissions().canShareReport());
         verifyNoInteractions(assessmentAccessChecker,
+            loadKitCustomLastModificationTimePort,
             initializeAssessmentResultHelper,
             calculateAssessmentHelper,
             calculateConfidenceHelper);
@@ -264,11 +271,14 @@ class GetAssessmentPublicReportServiceTest {
 
         verify(initializeAssessmentResultHelper).reinitializeAssessmentResultIfRequired(any(AssessmentResult.class));
         verify(calculateAssessmentHelper).calculateMaturityLevel(assessmentId);
-        verifyNoInteractions(calculateConfidenceHelper);
+        verifyNoInteractions(loadKitCustomLastModificationTimePort,
+            calculateConfidenceHelper);
     }
 
     @Test
     void testGetAssessmentPublicReport_whenReportIsPublicAndUserIsLoggedIn_thenReturnReportWithPermissions() {
+        var kitCustomId = 123L;
+        assessmentResult = AssessmentResultMother.validResultWithKitCustomId(kitCustomId);
         var assessmentId = assessmentResult.getAssessment().getId();
         assessmentResult.setIsConfidenceValid(false);
 
@@ -276,6 +286,8 @@ class GetAssessmentPublicReportServiceTest {
         when(loadAssessmentResultPort.load(publicReport.getAssessmentResultId())).thenReturn(Optional.of(assessmentResult));
         when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(assessmentResult.getAssessment().getAssessmentKit().getId()))
             .thenReturn(assessmentResult.getLastCalculationTime());
+        when(loadKitCustomLastModificationTimePort.loadLastModificationTime(kitCustomId))
+            .thenReturn(assessmentResult.getLastCalculationTime().plusDays(1));
 
         var assessmentReport = createAssessmentReportItem(assessmentId);
 
@@ -330,7 +342,7 @@ class GetAssessmentPublicReportServiceTest {
 
         verify(initializeAssessmentResultHelper).reinitializeAssessmentResultIfRequired(any(AssessmentResult.class));
         verify(calculateConfidenceHelper).calculate(assessmentId);
-        verifyNoInteractions(calculateAssessmentHelper);
+        verify(calculateAssessmentHelper).calculateMaturityLevel(assessmentId);
     }
 
     @Test
@@ -397,6 +409,7 @@ class GetAssessmentPublicReportServiceTest {
         verify(initializeAssessmentResultHelper).reinitializeAssessmentResultIfRequired(any(AssessmentResult.class));
         verify(calculateConfidenceHelper).calculate(assessmentId);
         verify(calculateAssessmentHelper).calculateMaturityLevel(assessmentId);
+        verifyNoInteractions(loadKitCustomLastModificationTimePort);
     }
 
     @Test
@@ -414,6 +427,7 @@ class GetAssessmentPublicReportServiceTest {
 
         verifyNoInteractions(loadAssessmentReportInfoPort,
             loadAssessmentQuestionsPort,
+            loadKitCustomLastModificationTimePort,
             initializeAssessmentResultHelper,
             calculateAssessmentHelper,
             calculateConfidenceHelper,

@@ -20,6 +20,7 @@ import org.flickit.assessment.core.application.port.out.assessmentkit.LoadKitLas
 import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
+import org.flickit.assessment.core.application.port.out.kitcustom.LoadKitCustomLastModificationTimePort;
 import org.flickit.assessment.core.application.service.assessment.CalculateAssessmentHelper;
 import org.flickit.assessment.core.application.service.assessment.CalculateConfidenceHelper;
 import org.flickit.assessment.core.application.service.assessment.InitializeAssessmentResultHelper;
@@ -43,6 +44,7 @@ public class GetAssessmentPublicReportService implements GetAssessmentPublicRepo
     private final LoadAssessmentReportPort loadAssessmentReportPort;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final LoadKitLastMajorModificationTimePort loadKitLastMajorModificationTimePort;
+    private final LoadKitCustomLastModificationTimePort loadKitCustomLastModificationTimePort;
     private final InitializeAssessmentResultHelper initializeAssessmentResultHelper;
     private final CalculateAssessmentHelper calculateAssessmentHelper;
     private final CalculateConfidenceHelper calculateConfidenceHelper;
@@ -75,7 +77,14 @@ public class GetAssessmentPublicReportService implements GetAssessmentPublicRepo
         var calculationTimeValid = validateCalculationTime(assessmentResult, kitLastMajorModificationTime);
         var confidenceTimeValid = confidenceValidateCalculationTime(assessmentResult, kitLastMajorModificationTime);
 
-        var isCalculationValid = calculateValid && calculationTimeValid;
+        var customKitUpdateTimeValid = true;
+        if (assessmentResult.getAssessment().getKitCustomId() != null) {
+            var kitCustomId = assessmentResult.getAssessment().getKitCustomId();
+            var kitCustomLastUpdate = loadKitCustomLastModificationTimePort.loadLastModificationTime(kitCustomId);
+            customKitUpdateTimeValid = validateCalculationTime(assessmentResult, kitCustomLastUpdate);
+        }
+
+        var isCalculationValid = calculateValid && calculationTimeValid && customKitUpdateTimeValid;
         var isConfidenceValid = confidenceValid && confidenceTimeValid;
         var assessmentId = assessmentResult.getAssessment().getId();
 
