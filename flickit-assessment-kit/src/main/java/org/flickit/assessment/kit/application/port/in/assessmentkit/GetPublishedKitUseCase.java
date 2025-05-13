@@ -1,6 +1,7 @@
 package org.flickit.assessment.kit.application.port.in.assessmentkit;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
@@ -9,7 +10,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_PUBLISHED_KIT_KIT_ID_NOT_NULL;
 
 public interface GetPublishedKitUseCase {
@@ -23,9 +23,9 @@ public interface GetPublishedKitUseCase {
         @NotNull(message = GET_PUBLISHED_KIT_KIT_ID_NOT_NULL)
         Long kitId;
 
-        @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
+        @Builder
         public Param(Long kitId, UUID currentUserId) {
             this.kitId = kitId;
             this.currentUserId = currentUserId;
@@ -46,7 +46,8 @@ public interface GetPublishedKitUseCase {
                   long expertGroupId,
                   List<MinimalSubject> subjects,
                   Metadata metadata,
-                  List<Language> languages) {
+                  List<Language> languages,
+                  ExpertGroup expertGroup) {
         public record Language(String code,
                                String title) {
         }
@@ -62,5 +63,8 @@ public interface GetPublishedKitUseCase {
     }
 
     record Metadata(String goal, String context) {
+    }
+
+    record ExpertGroup(Long id, String title, String pictureLink) {
     }
 }

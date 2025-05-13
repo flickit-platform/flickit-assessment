@@ -47,6 +47,12 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="0.58-07" author="Mahdi Rezazadeh">
+        <modifyDataType
+                tableName="fak_assessment_kit"
+                columnName="translations"
+                newDataType="json"/>
+    </changeSet>
     <changeSet id="0.58-07" author="Maziyar Gerami">
         <dropForeignKeyConstraint baseTableName="fak_kit_banner" constraintName="fk_fak_kitbanner_assessmentkit"/>
     </changeSet>

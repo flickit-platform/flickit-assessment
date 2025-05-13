@@ -14,4 +14,11 @@ public class ExpertGroupMother {
             "path/to/picture",
             UUID.randomUUID());
     }
+
+    public static ExpertGroup createExpertGroupWithPicture(String picture) {
+        return new ExpertGroup(id++,
+            "title" + id,
+            picture,
+            UUID.randomUUID());
+    }
 }
