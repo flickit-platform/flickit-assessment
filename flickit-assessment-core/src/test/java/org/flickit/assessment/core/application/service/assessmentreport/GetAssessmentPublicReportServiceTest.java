@@ -63,6 +63,15 @@ class GetAssessmentPublicReportServiceTest {
     private LoadAssessmentReportPort loadAssessmentReportPort;
 
     @Mock
+    private InitializeAssessmentResultHelper initializeAssessmentResultHelper;
+
+    @Mock
+    private CalculateAssessmentHelper calculateAssessmentHelper;
+
+    @Mock
+    private CalculateConfidenceHelper calculateConfidenceHelper;
+
+    @Mock
     private AssessmentAccessChecker assessmentAccessChecker;
 
     @Mock
@@ -96,6 +105,9 @@ class GetAssessmentPublicReportServiceTest {
         assertEquals(ASSESSMENT_REPORT_LINK_HASH_NOT_FOUND, exception.getMessage());
         verifyNoInteractions(assessmentAccessChecker,
             loadAssessmentReportInfoPort,
+            initializeAssessmentResultHelper,
+            calculateAssessmentHelper,
+            calculateConfidenceHelper,
             loadAssessmentQuestionsPort,
             loadAdviceNarrationPort,
             loadAdviceItemsPort);
@@ -110,6 +122,9 @@ class GetAssessmentPublicReportServiceTest {
 
         assertEquals(ASSESSMENT_REPORT_LINK_HASH_NOT_FOUND, exception.getMessage());
         verifyNoInteractions(assessmentAccessChecker,
+            initializeAssessmentResultHelper,
+            calculateAssessmentHelper,
+            calculateConfidenceHelper,
             loadAssessmentReportInfoPort,
             loadAssessmentQuestionsPort,
             loadAdviceNarrationPort,
@@ -166,12 +181,16 @@ class GetAssessmentPublicReportServiceTest {
         assertFalse(result.permissions().canViewDashboard());
         assertFalse(result.permissions().canManageVisibility());
         assertFalse(result.permissions().canShareReport());
-        verifyNoInteractions(assessmentAccessChecker);
+        verifyNoInteractions(assessmentAccessChecker,
+            initializeAssessmentResultHelper,
+            calculateAssessmentHelper,
+            calculateConfidenceHelper);
     }
 
     @Test
     void testGetAssessmentPublicReport_whenReportIsPublicAndLoggedInUserLacksViewGraphicalReportPermission_thenReturnReportWithoutPermissions() {
         var assessmentId = assessmentResult.getAssessment().getId();
+        assessmentResult.setIsCalculateValid(false);
 
         when(loadAssessmentReportPort.loadByLinkHash(paramWithUserId.getLinkHash())).thenReturn(publicReport);
         when(loadAssessmentResultPort.load(publicReport.getAssessmentResultId())).thenReturn(Optional.of(assessmentResult));
@@ -224,11 +243,16 @@ class GetAssessmentPublicReportServiceTest {
         assertFalse(result.permissions().canViewDashboard());
         assertFalse(result.permissions().canManageVisibility());
         assertFalse(result.permissions().canShareReport());
+
+        verify(initializeAssessmentResultHelper).reinitializeAssessmentResultIfRequired(any(AssessmentResult.class));
+        verify(calculateAssessmentHelper).calculateMaturityLevel(assessmentId);
+        verifyNoInteractions(calculateConfidenceHelper);
     }
 
     @Test
     void testGetAssessmentPublicReport_whenReportIsPublicAndUserIsLoggedIn_thenReturnReportWithPermissions() {
         var assessmentId = assessmentResult.getAssessment().getId();
+        assessmentResult.setIsConfidenceValid(false);
 
         when(loadAssessmentReportPort.loadByLinkHash(paramWithUserId.getLinkHash())).thenReturn(publicReport);
         when(loadAssessmentResultPort.load(publicReport.getAssessmentResultId())).thenReturn(Optional.of(assessmentResult));
@@ -283,11 +307,17 @@ class GetAssessmentPublicReportServiceTest {
         assertTrue(result.permissions().canViewDashboard());
         assertFalse(result.permissions().canShareReport());
         assertTrue(result.permissions().canManageVisibility());
+
+        verify(initializeAssessmentResultHelper).reinitializeAssessmentResultIfRequired(any(AssessmentResult.class));
+        verify(calculateConfidenceHelper).calculate(assessmentId);
+        verifyNoInteractions(calculateAssessmentHelper);
     }
 
     @Test
     void testGetAssessmentPublicReport_whenReportIsRestrictedAndLoggedInUserHasViewGraphicalReportPermission_thenReturnReportWithPermissions() {
         var assessmentId = assessmentResult.getAssessment().getId();
+        assessmentResult.setIsCalculateValid(false);
+        assessmentResult.setIsConfidenceValid(false);
 
         when(loadAssessmentReportPort.loadByLinkHash(paramWithUserId.getLinkHash())).thenReturn(restrictedReport);
         when(loadAssessmentResultPort.load(restrictedReport.getAssessmentResultId())).thenReturn(Optional.of(assessmentResult));
@@ -341,6 +371,10 @@ class GetAssessmentPublicReportServiceTest {
         assertTrue(result.permissions().canViewDashboard());
         assertTrue(result.permissions().canShareReport());
         assertFalse(result.permissions().canManageVisibility());
+
+        verify(initializeAssessmentResultHelper).reinitializeAssessmentResultIfRequired(any(AssessmentResult.class));
+        verify(calculateConfidenceHelper).calculate(assessmentId);
+        verify(calculateAssessmentHelper).calculateMaturityLevel(assessmentId);
     }
 
     @Test
@@ -355,6 +389,9 @@ class GetAssessmentPublicReportServiceTest {
 
         verifyNoInteractions(loadAssessmentReportInfoPort,
             loadAssessmentQuestionsPort,
+            initializeAssessmentResultHelper,
+            calculateAssessmentHelper,
+            calculateConfidenceHelper,
             loadAdviceNarrationPort,
             loadAdviceItemsPort);
     }
