@@ -18,6 +18,7 @@ import org.flickit.assessment.core.application.port.in.assessmentreport.GetAsses
 import org.flickit.assessment.core.application.port.out.adviceitem.LoadAdviceItemsPort;
 import org.flickit.assessment.core.application.port.out.advicenarration.LoadAdviceNarrationPort;
 import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentQuestionsPort;
+import org.flickit.assessment.core.application.port.out.assessmentkit.LoadKitLastMajorModificationTimePort;
 import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
@@ -66,6 +67,9 @@ class GetAssessmentPublicReportServiceTest {
     private LoadAssessmentReportPort loadAssessmentReportPort;
 
     @Mock
+    private LoadKitLastMajorModificationTimePort loadKitLastMajorModificationTimePort;
+
+    @Mock
     private InitializeAssessmentResultHelper initializeAssessmentResultHelper;
 
     @Mock
@@ -103,6 +107,9 @@ class GetAssessmentPublicReportServiceTest {
         Param param = createParam(p -> p.currentUserId(null));
         when(loadAssessmentReportPort.loadByLinkHash(param.getLinkHash())).thenReturn(restrictedReport);
         when(loadAssessmentResultPort.load(restrictedReport.getAssessmentResultId())).thenReturn(Optional.of(assessmentResult));
+        when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(assessmentResult.getAssessment().getAssessmentKit().getId()))
+            .thenReturn(assessmentResult.getLastCalculationTime());
+
         var exception = assertThrows(ResourceNotFoundException.class, () -> service.getAssessmentPublicReport(param));
 
         assertEquals(ASSESSMENT_REPORT_LINK_HASH_NOT_FOUND, exception.getMessage());
@@ -119,8 +126,12 @@ class GetAssessmentPublicReportServiceTest {
     @Test
     void testGetAssessmentPublicReport_whenReportIsUnpublishedAndUserIsNotLoggedIn_thenThrowResourceNotFoundException() {
         Param param = createParam(p -> p.currentUserId(null));
+
         when(loadAssessmentReportPort.loadByLinkHash(param.getLinkHash())).thenReturn(notPublishedReport);
         when(loadAssessmentResultPort.load(notPublishedReport.getAssessmentResultId())).thenReturn(Optional.of(assessmentResult));
+        when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(assessmentResult.getAssessment().getAssessmentKit().getId()))
+            .thenReturn(assessmentResult.getLastCalculationTime());
+
         var exception = assertThrows(ResourceNotFoundException.class, () -> service.getAssessmentPublicReport(param));
 
         assertEquals(ASSESSMENT_REPORT_LINK_HASH_NOT_FOUND, exception.getMessage());
@@ -141,6 +152,8 @@ class GetAssessmentPublicReportServiceTest {
 
         when(loadAssessmentReportPort.loadByLinkHash(param.getLinkHash())).thenReturn(publicReport);
         when(loadAssessmentResultPort.load(publicReport.getAssessmentResultId())).thenReturn(Optional.of(assessmentResult));
+        when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(assessmentResult.getAssessment().getAssessmentKit().getId()))
+            .thenReturn(assessmentResult.getLastCalculationTime());
 
         var assessmentReport = createAssessmentReportItem(assessmentId);
 
@@ -197,6 +210,8 @@ class GetAssessmentPublicReportServiceTest {
 
         when(loadAssessmentReportPort.loadByLinkHash(paramWithUserId.getLinkHash())).thenReturn(publicReport);
         when(loadAssessmentResultPort.load(publicReport.getAssessmentResultId())).thenReturn(Optional.of(assessmentResult));
+        when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(assessmentResult.getAssessment().getAssessmentKit().getId()))
+            .thenReturn(assessmentResult.getLastCalculationTime());
 
         var assessmentReport = createAssessmentReportItem(assessmentId);
 
@@ -259,6 +274,8 @@ class GetAssessmentPublicReportServiceTest {
 
         when(loadAssessmentReportPort.loadByLinkHash(paramWithUserId.getLinkHash())).thenReturn(publicReport);
         when(loadAssessmentResultPort.load(publicReport.getAssessmentResultId())).thenReturn(Optional.of(assessmentResult));
+        when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(assessmentResult.getAssessment().getAssessmentKit().getId()))
+            .thenReturn(assessmentResult.getLastCalculationTime());
 
         var assessmentReport = createAssessmentReportItem(assessmentId);
 
@@ -319,13 +336,15 @@ class GetAssessmentPublicReportServiceTest {
     @Test
     void testGetAssessmentPublicReport_whenReportIsRestrictedAndLoggedInUserHasViewGraphicalReportPermission_thenReturnReportWithPermissions() {
         var assessmentId = assessmentResult.getAssessment().getId();
-        assessmentResult.setIsCalculateValid(false);
-        assessmentResult.setIsConfidenceValid(false);
+        assessmentResult.setIsCalculateValid(true);
+        assessmentResult.setIsConfidenceValid(true);
 
         when(loadAssessmentReportPort.loadByLinkHash(paramWithUserId.getLinkHash())).thenReturn(restrictedReport);
         when(loadAssessmentResultPort.load(restrictedReport.getAssessmentResultId())).thenReturn(Optional.of(assessmentResult));
         when(assessmentAccessChecker.isAuthorized(assessmentId, paramWithUserId.getCurrentUserId(), VIEW_GRAPHICAL_REPORT))
             .thenReturn(true);
+        when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(assessmentResult.getAssessment().getAssessmentKit().getId()))
+            .thenReturn(assessmentResult.getLastCalculationTime().plusDays(1));
 
         var assessmentReport = createAssessmentReportItem(assessmentId);
 
@@ -386,6 +405,9 @@ class GetAssessmentPublicReportServiceTest {
         when(loadAssessmentResultPort.load(notPublishedReport.getAssessmentResultId())).thenReturn(Optional.of(assessmentResult));
         when(assessmentAccessChecker.isAuthorized(assessmentResult.getAssessment().getId(), paramWithUserId.getCurrentUserId(), VIEW_GRAPHICAL_REPORT))
             .thenReturn(false);
+        when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(assessmentResult.getAssessment().getAssessmentKit().getId()))
+            .thenReturn(assessmentResult.getLastCalculationTime());
+
         var exception = assertThrows(ResourceNotFoundException.class, () -> service.getAssessmentPublicReport(paramWithUserId));
 
         assertEquals(ASSESSMENT_REPORT_LINK_HASH_NOT_FOUND, exception.getMessage());

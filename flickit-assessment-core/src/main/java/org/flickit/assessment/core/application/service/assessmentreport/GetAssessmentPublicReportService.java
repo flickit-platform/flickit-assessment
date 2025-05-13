@@ -16,6 +16,7 @@ import org.flickit.assessment.core.application.port.in.assessmentreport.GetAsses
 import org.flickit.assessment.core.application.port.out.adviceitem.LoadAdviceItemsPort;
 import org.flickit.assessment.core.application.port.out.advicenarration.LoadAdviceNarrationPort;
 import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentQuestionsPort;
+import org.flickit.assessment.core.application.port.out.assessmentkit.LoadKitLastMajorModificationTimePort;
 import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
@@ -25,6 +26,7 @@ import org.flickit.assessment.core.application.service.assessment.InitializeAsse
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Function;
 
@@ -40,6 +42,7 @@ public class GetAssessmentPublicReportService implements GetAssessmentPublicRepo
 
     private final LoadAssessmentReportPort loadAssessmentReportPort;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
+    private final LoadKitLastMajorModificationTimePort loadKitLastMajorModificationTimePort;
     private final InitializeAssessmentResultHelper initializeAssessmentResultHelper;
     private final CalculateAssessmentHelper calculateAssessmentHelper;
     private final CalculateConfidenceHelper calculateConfidenceHelper;
@@ -64,18 +67,36 @@ public class GetAssessmentPublicReportService implements GetAssessmentPublicRepo
     }
 
     private void recalculateAssessmentResultIfRequired(AssessmentResult assessmentResult) {
-        boolean isCalculateValid = Boolean.TRUE.equals(assessmentResult.getIsCalculateValid());
-        boolean isConfidenceValid = Boolean.TRUE.equals(assessmentResult.getIsConfidenceValid());
-        UUID assessmentId = assessmentResult.getAssessment().getId();
+        var calculateValid = Boolean.TRUE.equals(assessmentResult.getIsCalculateValid());
+        var confidenceValid = Boolean.TRUE.equals(assessmentResult.getIsConfidenceValid());
 
-        if (!isConfidenceValid || !isCalculateValid)
+        var kitLastMajorModificationTime = loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(
+            assessmentResult.getAssessment().getAssessmentKit().getId());
+        var calculationTimeValid = validateCalculationTime(assessmentResult, kitLastMajorModificationTime);
+        var confidenceTimeValid = confidenceValidateCalculationTime(assessmentResult, kitLastMajorModificationTime);
+
+        var isCalculationValid = calculateValid && calculationTimeValid;
+        var isConfidenceValid = confidenceValid && confidenceTimeValid;
+        var assessmentId = assessmentResult.getAssessment().getId();
+
+        if (!isCalculationValid || !isConfidenceValid)
             initializeAssessmentResultHelper.reinitializeAssessmentResultIfRequired(assessmentResult);
 
-        if (!isCalculateValid)
+        if (!isCalculationValid)
             calculateAssessmentHelper.calculateMaturityLevel(assessmentId);
 
         if (!isConfidenceValid)
             calculateConfidenceHelper.calculate(assessmentId);
+    }
+
+    private boolean validateCalculationTime(AssessmentResult assessmentResult, LocalDateTime modificationTime) {
+        var calculationTime = assessmentResult.getLastCalculationTime();
+        return calculationTime != null && !calculationTime.isBefore(modificationTime);
+    }
+
+    private boolean confidenceValidateCalculationTime(AssessmentResult assessmentResult, LocalDateTime modificationTime) {
+        var confCalculationTime = assessmentResult.getLastConfidenceCalculationTime();
+        return confCalculationTime != null && !confCalculationTime.isBefore(modificationTime);
     }
 
     private static boolean isReportPublic(AssessmentReport report) {
