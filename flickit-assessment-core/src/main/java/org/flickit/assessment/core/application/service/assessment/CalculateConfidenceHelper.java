@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.application.service.assessmentreport;
+package org.flickit.assessment.core.application.service.assessment;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.core.application.domain.*;

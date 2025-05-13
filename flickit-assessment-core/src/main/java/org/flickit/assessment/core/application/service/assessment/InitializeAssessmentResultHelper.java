@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.application.service.assessmentreport;
+package org.flickit.assessment.core.application.service.assessment;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.core.application.domain.*;
@@ -23,7 +23,7 @@ public class InitializeAssessmentResultHelper {
     private final CreateSubjectValuePort createSubjectValuePort;
     private final CreateAttributeValuePort createAttributeValuePort;
 
-    void reinitializeAssessmentResultIfRequired(AssessmentResult assessmentResult) {
+    public void reinitializeAssessmentResultIfRequired(AssessmentResult assessmentResult) {
         if (isAssessmentResultReinitializationRequired(assessmentResult))
             reinitializeAssessmentResult(assessmentResult);
     }

@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.application.service.assessmentreport;
+package org.flickit.assessment.core.application.service.assessment;
 
 import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.port.out.assessment.UpdateAssessmentPort;

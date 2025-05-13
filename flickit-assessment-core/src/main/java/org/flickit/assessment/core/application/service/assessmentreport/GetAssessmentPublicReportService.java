@@ -19,6 +19,9 @@ import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmen
 import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
+import org.flickit.assessment.core.application.service.assessment.CalculateAssessmentHelper;
+import org.flickit.assessment.core.application.service.assessment.CalculateConfidenceHelper;
+import org.flickit.assessment.core.application.service.assessment.InitializeAssessmentResultHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
