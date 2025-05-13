@@ -90,17 +90,17 @@ public class GetAssessmentPublicReportService implements GetAssessmentPublicRepo
         var assessmentId = assessmentResult.getAssessment().getId();
         var assessmentReportInfo = loadAssessmentReportInfoPort.load(assessmentId);
         var attributeMeasuresMap = buildAttributeMeasures(assessmentId, assessmentReportInfo);
-        var permissions = buildPermissions(assessmentId, currentUserId);
+        var permissions = buildPermissions(assessmentId, report.isPublished(), currentUserId);
 
         return buildResult(assessmentReportInfo, attributeMeasuresMap, reportMetadata, permissions);
     }
 
-    private Permissions buildPermissions(UUID assessmentId, UUID currentUserId) {
+    private Permissions buildPermissions(UUID assessmentId, boolean published, UUID currentUserId) {
         if (currentUserId == null)
             return new Permissions(false, false, false);
         var canViewDashboard = assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_DASHBOARD);
-        var canShareReport = assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, GRANT_ACCESS_TO_REPORT);
-        var canManageVisibility = assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, MANAGE_ASSESSMENT_REPORT_VISIBILITY);
+        var canShareReport = published && assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, GRANT_ACCESS_TO_REPORT);
+        var canManageVisibility = published && assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, MANAGE_ASSESSMENT_REPORT_VISIBILITY);
         return new Permissions(canViewDashboard, canShareReport, canManageVisibility);
     }
 
@@ -191,7 +191,7 @@ public class GetAssessmentPublicReportService implements GetAssessmentPublicRepo
     private Subject toSubject(AssessmentSubjectReportItem subject, Map<Long, MaturityLevel> maturityLevelMap,
                               Map<Long, List<AttributeMeasure>> attributeMeasuresMap) {
         var attributes = subject.attributes().stream()
-            .map(attribute -> toAttribute(attribute, maturityLevelMap, attributeMeasuresMap.get(attribute.id())))
+            .map(attribute -> toAttribute(attribute, maturityLevelMap, attributeMeasuresMap.getOrDefault(attribute.id(), List.of())))
             .sorted(Comparator.comparingInt(Attribute::index))
             .toList();
         return new Subject(subject.id(),

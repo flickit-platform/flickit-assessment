@@ -102,7 +102,7 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             assessmentInsight,
             buildAssessmentKitItem(kitVersionId, assessmentKitEntity, maturityLevels, translationLanguage),
             idToMaturityLevel.get(assessmentResultEntity.getMaturityLevelId()),
-            assessmentResultEntity.getConfidenceValue(),
+            Objects.requireNonNullElse(assessmentResultEntity.getConfidenceValue(), 0.0),
             KitLanguage.valueOfById(assessmentResultEntity.getLangId()),
             assessment.getCreationTime()
         );
@@ -180,7 +180,7 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
                     translation.titleOrDefault(e.getTitle()),
                     e.getIndex(),
                     insight,
-                    subjectIdToSubjectValue.get(e.getId()).getConfidenceValue(),
+                    Objects.requireNonNullElse(subjectIdToSubjectValue.get(e.getId()).getConfidenceValue(), 0.0),
                     subjectMaturityLevel,
                     attributeValues == null ? List.of() : attributeValues.stream()
                         .map(x -> buildAttributeReportItem(idToMaturityLevel,
@@ -208,7 +208,7 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             insight,
             attribute.getIndex(),
             attributeWeight,
-            attributeValue.getConfidenceValue(),
+            Objects.requireNonNullElse(attributeValue.getConfidenceValue(), 0.0),
             maturityLevel);
     }
 
