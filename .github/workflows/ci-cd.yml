@@ -235,4 +235,4 @@ jobs:
             exit 1
           fi
         env:
-          PROJECT_VERSION: ${{ needs.sonar.outputs.project_version }}
+          PROJECT_VERSION: ${{ needs.build-and-push-image.outputs.project_version }}
