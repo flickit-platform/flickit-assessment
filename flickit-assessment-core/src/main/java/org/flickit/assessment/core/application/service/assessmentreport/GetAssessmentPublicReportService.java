@@ -66,7 +66,7 @@ public class GetAssessmentPublicReportService implements GetAssessmentPublicRepo
         UUID assessmentId = assessmentResult.getAssessment().getId();
 
         if (!isConfidenceValid || !isCalculateValid)
-            initializeAssessmentResultHelper.reinitializeAssessmentResultIfRequired(assessmentId);
+            initializeAssessmentResultHelper.reinitializeAssessmentResultIfRequired(assessmentResult);
 
         if (!isCalculateValid)
             calculateAssessmentHelper.calculateMaturityLevel(assessmentId);
