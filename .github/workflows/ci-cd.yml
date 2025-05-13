@@ -242,15 +242,12 @@ jobs:
   deploy:
     needs: [build-and-push-image]
     name:  deploy
-    container:
-      image: registry.hectora.cloud/hectora-public/darkube-cli:v1.1
-      env:
-        CONSOLE_API_BASE_URL: "https://api.hectora.cloud"
     runs-on: ubuntu-latest
     steps:
-      - name: Run script
-        run: darkube deploy --ref main --token ${DEPLOY_TOKEN} --app-id ${APP_ID}  --image-tag "${PROJECT_VERSION}" --job-id "$GITHUB_RUN_ID" --stateless-app true
-        env:
-          DEPLOY_TOKEN: ${{ secrets.ASSESSMENT_CORE_DEPLOY_TOKEN_PROD }}
-          APP_ID: ${{ secrets.ASSESSMENT_CORE_APP_ID_PROD }}
-          PROJECT_VERSION: ${{ needs.build-and-push-image.outputs.project_version }}
+      - name: Deploy service on Webhook
+        run: |
+          status_code=$(curl --silent --output /dev/null --write-out "%{http_code}" -X POST "${{ secrets.DEPLOY_WEBHOOK_URL_PRODUCTION }}?tag=${PROJECT_VERSION}")
+          if [ "$status_code" -ne 204 ]; then
+            echo "Unexpected status code: $status_code"
+            exit 1
+          fi
