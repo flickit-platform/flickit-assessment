@@ -24,6 +24,7 @@ import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAss
 import org.flickit.assessment.core.application.port.out.kitcustom.LoadKitCustomLastModificationTimePort;
 import org.flickit.assessment.core.application.service.assessment.CalculateAssessmentHelper;
 import org.flickit.assessment.core.application.service.assessment.CalculateConfidenceHelper;
+import org.flickit.assessment.core.application.service.assessment.MigrateAssessmentResultKitVersionHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,6 +47,7 @@ public class GetAssessmentPublicReportService implements GetAssessmentPublicRepo
     private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final LoadKitLastMajorModificationTimePort loadKitLastMajorModificationTimePort;
     private final LoadKitCustomLastModificationTimePort loadKitCustomLastModificationTimePort;
+    private final MigrateAssessmentResultKitVersionHelper migrateAssessmentResultKitVersionHelper;
     private final CalculateAssessmentHelper calculateAssessmentHelper;
     private final CalculateConfidenceHelper calculateConfidenceHelper;
     private final LoadAssessmentReportInfoPort loadAssessmentReportInfoPort;
@@ -97,6 +99,12 @@ public class GetAssessmentPublicReportService implements GetAssessmentPublicRepo
         if (!isConfidenceValid) {
             log.info("Recalculating confidence for assessmentTitle=[{}] due to invalid confidence value.", assessmentTitle);
             calculateConfidenceHelper.calculate(assessmentId);
+        }
+
+        if (!Objects.equals(assessmentResult.getAssessment().getAssessmentKit().getKitVersion(), assessmentResult.getKitVersionId())) {
+            log.info("Migrating kit version for [assessmentId={}, resultId={}, kitId={}].",
+                assessmentResult.getAssessment().getId(), assessmentResult.getId(), assessmentResult.getAssessment().getAssessmentKit().getId());
+            migrateAssessmentResultKitVersionHelper.migrateKitVersion(assessmentId);
         }
     }
 
