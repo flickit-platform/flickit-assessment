@@ -9,6 +9,7 @@ import org.flickit.assessment.common.exception.InvalidStateException;
 import org.flickit.assessment.core.application.domain.AssessmentReport;
 import org.flickit.assessment.core.application.domain.AssessmentReportMetadata;
 import org.flickit.assessment.core.application.domain.QuestionImpact;
+import org.flickit.assessment.core.application.domain.VisibilityType;
 import org.flickit.assessment.core.application.domain.report.AssessmentReportItem;
 import org.flickit.assessment.core.application.domain.report.AssessmentReportItem.AssessmentKitItem;
 import org.flickit.assessment.core.application.domain.report.AssessmentSubjectReportItem;
@@ -61,7 +62,7 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
         var reportMetadata = assessmentReport.map(AssessmentReport::getMetadata)
             .orElse(new AssessmentReportMetadata(null, null, null, null));
         var reportVisibility = assessmentReport.map(AssessmentReport::getVisibility)
-                .orElse(VisibilityType.RESTRICTED);
+            .orElse(VisibilityType.RESTRICTED);
 
         validateReportPublication(param, published);
 
