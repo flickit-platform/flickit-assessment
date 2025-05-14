@@ -6,8 +6,9 @@ import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.InvalidStateException;
-import org.flickit.assessment.common.util.MathUtils;
-import org.flickit.assessment.core.application.domain.*;
+import org.flickit.assessment.core.application.domain.AssessmentReport;
+import org.flickit.assessment.core.application.domain.AssessmentReportMetadata;
+import org.flickit.assessment.core.application.domain.QuestionImpact;
 import org.flickit.assessment.core.application.domain.report.AssessmentReportItem;
 import org.flickit.assessment.core.application.domain.report.AssessmentReportItem.AssessmentKitItem;
 import org.flickit.assessment.core.application.domain.report.AssessmentSubjectReportItem;
@@ -20,6 +21,7 @@ import org.flickit.assessment.core.application.port.out.advicenarration.LoadAdvi
 import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentQuestionsPort;
 import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
+import org.flickit.assessment.core.application.service.measure.CalculateMeasureHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,6 +46,7 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
     private final LoadAssessmentQuestionsPort loadAssessmentQuestionsPort;
     private final LoadAdviceNarrationPort loadAdviceNarrationPort;
     private final LoadAdviceItemsPort loadAdviceItemsPort;
+    private final CalculateMeasureHelper calculateMeasureHelper;
 
     @Override
     public Result getAssessmentReport(Param param) {
@@ -62,7 +65,7 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
 
         var assessmentReportInfo = loadAssessmentReportInfoPort.load(param.getAssessmentId());
 
-        var attributeMeasuresMap = buildAttributeMeasures(param.getAssessmentId(), assessmentReportInfo);
+        var attributeMeasuresMap = buildAttributeMeasures(param.getAssessmentId());
 
         return buildResult(assessmentReportInfo, attributeMeasuresMap, reportMetadata, param);
     }
@@ -219,11 +222,7 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
         return new Language(language.getCode());
     }
 
-    private Map<Long, List<AttributeMeasure>> buildAttributeMeasures(UUID assessmentId, LoadAssessmentReportInfoPort.Result reportInfo) {
-        var measures = reportInfo.assessment().assessmentKit().measures();
-        Map<Long, Measure> idToMeasureMap = measures.stream()
-            .collect(toMap(Measure::getId, Function.identity()));
-
+    private Map<Long, List<AttributeMeasure>> buildAttributeMeasures(UUID assessmentId) {
         var questions = loadAssessmentQuestionsPort.loadApplicableQuestions(assessmentId);
 
         Map<Long, Set<LoadAssessmentQuestionsPort.Result>> attrIdToQuestions = questions.stream()
@@ -236,11 +235,11 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
                 mapping(Map.Entry::getValue, toSet())
             ));
 
-        Map<Long, List<QuestionDto>> attrIdToQuestionDtos = attrIdToQuestions.entrySet().stream()
+        Map<Long, List<CalculateMeasureHelper.QuestionDto>> attrIdToQuestionDtos = attrIdToQuestions.entrySet().stream()
             .collect(toMap(
                 Map.Entry::getKey,
                 entry -> entry.getValue().stream()
-                    .map(r -> new QuestionDto(
+                    .map(r -> new CalculateMeasureHelper.QuestionDto(
                         r.question().getId(),
                         r.question().getAvgWeight(entry.getKey()),
                         r.question().getMeasure().getId(),
@@ -251,60 +250,19 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
         return attrIdToQuestionDtos.entrySet().stream()
             .collect(toMap(
                 Map.Entry::getKey,
-                entry -> toAttributeMeasures(entry.getValue(), idToMeasureMap)
+                entry -> calculateMeasureHelper.calculateMeasures(assessmentId, entry.getValue()).stream()
+                    .map(this::mapToResultMeasure)
+                    .toList()
             ));
     }
 
-    private List<AttributeMeasure> toAttributeMeasures(List<QuestionDto> attributeQuestions, Map<Long, Measure> idToMeasureMap) {
-        var attributeMaxPossibleScore = attributeQuestions.stream()
-            .mapToDouble(QuestionDto::weight)
-            .sum();
-
-        var measureIdToQuestions = attributeQuestions.stream()
-            .collect(groupingBy(QuestionDto::measureId));
-
-        var measureIdToMaxPossibleScore = attributeQuestions.stream()
-            .collect(groupingBy(
-                QuestionDto::measureId,
-                summingDouble(QuestionDto::weight) // Sum weights for each measureId
-            ));
-
-        return measureIdToQuestions.entrySet().stream()
-            .map(e -> buildMeasure(
-                idToMeasureMap.get(e.getKey()),
-                e.getValue(),
-                measureIdToMaxPossibleScore.get(e.getKey()),
-                attributeMaxPossibleScore))
-            .toList();
-    }
-
-    private AttributeMeasure buildMeasure(Measure measure,
-                                          List<QuestionDto> questions,
-                                          double measureMaxPossibleScore,
-                                          double attributeMaxPossibleScore) {
-        assert measureMaxPossibleScore != 0.0;
-        var impactPercentage = attributeMaxPossibleScore != 0
-            ? (measureMaxPossibleScore / attributeMaxPossibleScore) * 100
-            : 0.0;
-
-        var gainedScore = questions.stream()
-            .mapToDouble(q -> (q.answer() != null && q.answer().getSelectedOption() != null)
-                ? q.answer().getSelectedOption().getValue() * q.weight()
-                : 0.0)
-            .sum();
-
-        var missedScore = measureMaxPossibleScore - gainedScore;
-
-        return new AttributeMeasure(measure.getTitle(),
-            MathUtils.round(impactPercentage, 2),
-            MathUtils.round(measureMaxPossibleScore, 2),
-            MathUtils.round(gainedScore, 2),
-            MathUtils.round(missedScore, 2),
-            MathUtils.round((gainedScore / attributeMaxPossibleScore) * 100, 2),
-            MathUtils.round((missedScore / attributeMaxPossibleScore) * 100, 2)
-        );
-    }
-
-    record QuestionDto(long id, double weight, long measureId, Answer answer) {
+    private AttributeMeasure mapToResultMeasure(CalculateMeasureHelper.MeasureDto measureDto) {
+        return new AttributeMeasure(measureDto.title(),
+            measureDto.impactPercentage(),
+            measureDto.maxPossibleScore(),
+            measureDto.gainedScore(),
+            measureDto.missedScore(),
+            measureDto.gainedScorePercentage(),
+            measureDto.missedScorePercentage());
     }
 }

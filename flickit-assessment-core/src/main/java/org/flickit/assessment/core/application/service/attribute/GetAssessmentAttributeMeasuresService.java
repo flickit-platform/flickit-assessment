@@ -4,20 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.domain.crud.Order;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.common.util.MathUtils;
-import org.flickit.assessment.core.application.domain.Answer;
-import org.flickit.assessment.core.application.domain.Measure;
 import org.flickit.assessment.core.application.port.in.attribute.GetAssessmentAttributeMeasuresUseCase;
 import org.flickit.assessment.core.application.port.in.attribute.GetAssessmentAttributeMeasuresUseCase.Param.Sort;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeQuestionsPort;
-import org.flickit.assessment.core.application.port.out.measure.LoadMeasuresPort;
+import org.flickit.assessment.core.application.service.measure.CalculateMeasureHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.function.Function;
-
-import static java.util.stream.Collectors.*;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ATTRIBUTE_MEASURES;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
@@ -27,8 +20,8 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 public class GetAssessmentAttributeMeasuresService implements GetAssessmentAttributeMeasuresUseCase {
 
     private final AssessmentAccessChecker assessmentAccessChecker;
-    private final LoadMeasuresPort loadMeasuresPort;
     private final LoadAttributeQuestionsPort loadAttributeQuestionsPort;
+    private final CalculateMeasureHelper calculateMeasureHelper;
 
     @Override
     public Result getAssessmentAttributeMeasures(Param param) {
@@ -38,72 +31,31 @@ public class GetAssessmentAttributeMeasuresService implements GetAssessmentAttri
         var attributeQuestions = loadAttributeQuestionsPort.loadApplicableQuestions(param.getAssessmentId(), param.getAttributeId());
 
         var questionsDto = attributeQuestions.stream()
-            .map(r -> new QuestionDto(
+            .map(r -> new CalculateMeasureHelper.QuestionDto(
                 r.question().getId(),
                 r.question().getAvgWeight(param.getAttributeId()),
                 r.question().getMeasure().getId(),
                 r.answer()))
             .toList();
 
-        var attributeMaxPossibleScore = questionsDto.stream()
-            .mapToDouble(QuestionDto::weight)
-            .sum();
+        var measures = calculateMeasureHelper.calculateMeasures(param.getAssessmentId(), questionsDto);
 
-        var measureIdToQuestions = questionsDto.stream()
-            .collect(groupingBy(QuestionDto::measureId));
-
-        var measureIdToMaxPossibleScore = questionsDto.stream()
-            .collect(groupingBy(
-                QuestionDto::measureId,
-                summingDouble(QuestionDto::weight) // Sum weights for each measureId
-            ));
-
-        var measureIds = measureIdToQuestions.keySet().stream()
-            .toList();
-
-        var idToMeasureMap = loadMeasuresPort.loadAll(measureIds, param.getAssessmentId())
-            .stream().collect(toMap(Measure::getId, Function.identity()));
-
-        var resultMeasures = measureIdToQuestions.entrySet().stream()
-            .map(entry -> buildMeasure(
-                idToMeasureMap.get(entry.getKey()),
-                entry.getValue(),
-                measureIdToMaxPossibleScore.get(entry.getKey()),
-                attributeMaxPossibleScore))
+        var resultMeasures = measures.stream()
+            .map(this::mapToResultMeasure)
             .sorted((m1, m2) -> createComparator(m1, m2, param))
             .toList();
 
         return new Result(resultMeasures);
     }
 
-    private Result.Measure buildMeasure(Measure measure,
-                                        List<QuestionDto> questions,
-                                        double measureMaxPossibleScore,
-                                        double attributeMaxPossibleScore) {
-        assert measureMaxPossibleScore != 0.0;
-        var impactPercentage = attributeMaxPossibleScore != 0
-            ? (measureMaxPossibleScore / attributeMaxPossibleScore) * 100
-            : 0.0;
-
-        var gainedScore = questions.stream()
-            .mapToDouble(q -> (q.answer() != null && q.answer().getSelectedOption() != null)
-                ? q.answer().getSelectedOption().getValue() * q.weight()
-                : 0.0)
-            .sum();
-
-        var missedScore = measureMaxPossibleScore - gainedScore;
-
-        return new Result.Measure(measure.getTitle(),
-            MathUtils.round(impactPercentage, 2),
-            MathUtils.round(measureMaxPossibleScore, 2),
-            MathUtils.round(gainedScore, 2),
-            MathUtils.round(missedScore, 2),
-            MathUtils.round((gainedScore / attributeMaxPossibleScore) * 100, 2),
-            MathUtils.round((missedScore / attributeMaxPossibleScore) * 100, 2)
-        );
-    }
-
-    record QuestionDto(long id, double weight, long measureId, Answer answer) {
+    private Result.Measure mapToResultMeasure(CalculateMeasureHelper.MeasureDto measureDto) {
+        return new Result.Measure(measureDto.title(),
+            measureDto.impactPercentage(),
+            measureDto.maxPossibleScore(),
+            measureDto.gainedScore(),
+            measureDto.missedScore(),
+            measureDto.gainedScorePercentage(),
+            measureDto.missedScorePercentage());
     }
 
     private int createComparator(Result.Measure m1, Result.Measure m2, Param param) {
