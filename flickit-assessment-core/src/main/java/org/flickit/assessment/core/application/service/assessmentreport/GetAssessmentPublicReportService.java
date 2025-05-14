@@ -1,5 +1,6 @@
 package org.flickit.assessment.core.application.service.assessmentreport;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
@@ -36,6 +37,7 @@ import static org.flickit.assessment.common.application.domain.assessment.Assess
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.ASSESSMENT_REPORT_LINK_HASH_NOT_FOUND;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -87,15 +89,22 @@ public class GetAssessmentPublicReportService implements GetAssessmentPublicRepo
         var isCalculationValid = calculateValid && calculationTimeValid && customKitUpdateTimeValid;
         var isConfidenceValid = confidenceValid && confidenceTimeValid;
         var assessmentId = assessmentResult.getAssessment().getId();
+        var assessmentTitle = assessmentResult.getAssessment().getTitle();
 
-        if (!isCalculationValid || !isConfidenceValid)
+        if (!isCalculationValid || !isConfidenceValid) {
+            log.info("Reinitializing assessment result with assessmentResultId=[{}] for assessmentTitle=[{}] due to invalid calculation or confidence.", assessmentResult.getId(), assessmentTitle);
             initializeAssessmentResultHelper.reinitializeAssessmentResultIfRequired(assessmentResult);
+        }
 
-        if (!isCalculationValid)
+        if (!isCalculationValid) {
+            log.info("Recalculating assessment for assessmentTitle=[{}] due to invalid calculation.", assessmentTitle);
             calculateAssessmentHelper.calculateMaturityLevel(assessmentId);
+        }
 
-        if (!isConfidenceValid)
+        if (!isConfidenceValid) {
+            log.info("Recalculating confidence for assessmentTitle=[{}] due to invalid confidence value.", assessmentTitle);
             calculateConfidenceHelper.calculate(assessmentId);
+        }
     }
 
     private boolean validateCalculationTime(AssessmentResult assessmentResult, LocalDateTime modificationTime) {
