@@ -61,6 +61,8 @@ public class GetAssessmentPublicReportService implements GetAssessmentPublicRepo
         var report = loadAssessmentReportPort.loadByLinkHash(param.getLinkHash());
         var assessmentResult = loadAssessmentResultPort.load(report.getAssessmentResultId())
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
+        assessmentResult = loadAssessmentResultPort.loadByAssessmentId(assessmentResult.getAssessment().getId())
+            .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
 
         recalculateAssessmentResultIfRequired(assessmentResult);
 
