@@ -24,7 +24,6 @@ import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAss
 import org.flickit.assessment.core.application.port.out.kitcustom.LoadKitCustomLastModificationTimePort;
 import org.flickit.assessment.core.application.service.assessment.CalculateAssessmentHelper;
 import org.flickit.assessment.core.application.service.assessment.CalculateConfidenceHelper;
-import org.flickit.assessment.core.application.service.assessment.MigrateAssessmentResultKitVersionHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,7 +46,6 @@ public class GetAssessmentPublicReportService implements GetAssessmentPublicRepo
     private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final LoadKitLastMajorModificationTimePort loadKitLastMajorModificationTimePort;
     private final LoadKitCustomLastModificationTimePort loadKitCustomLastModificationTimePort;
-    private final InitializeAssessmentResultHelper initializeAssessmentResultHelper;
     private final CalculateAssessmentHelper calculateAssessmentHelper;
     private final CalculateConfidenceHelper calculateConfidenceHelper;
     private final LoadAssessmentReportInfoPort loadAssessmentReportInfoPort;
