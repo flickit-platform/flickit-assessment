@@ -24,7 +24,7 @@ import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAss
 import org.flickit.assessment.core.application.port.out.kitcustom.LoadKitCustomLastModificationTimePort;
 import org.flickit.assessment.core.application.service.assessment.CalculateAssessmentHelper;
 import org.flickit.assessment.core.application.service.assessment.CalculateConfidenceHelper;
-import org.flickit.assessment.core.application.service.assessment.InitializeAssessmentResultHelper;
+import org.flickit.assessment.core.application.service.assessment.MigrateAssessmentResultKitVersionHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -90,11 +90,6 @@ public class GetAssessmentPublicReportService implements GetAssessmentPublicRepo
         var isConfidenceValid = confidenceValid && confidenceTimeValid;
         var assessmentId = assessmentResult.getAssessment().getId();
         var assessmentTitle = assessmentResult.getAssessment().getTitle();
-
-        if (!isCalculationValid || !isConfidenceValid) {
-            log.info("Reinitializing assessment result with assessmentResultId=[{}] for assessmentTitle=[{}] due to invalid calculation or confidence.", assessmentResult.getId(), assessmentTitle);
-            initializeAssessmentResultHelper.reinitializeAssessmentResultIfRequired(assessmentResult);
-        }
 
         if (!isCalculationValid) {
             log.info("Recalculating assessment for assessmentTitle=[{}] due to invalid calculation.", assessmentTitle);
