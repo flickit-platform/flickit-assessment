@@ -22,78 +22,78 @@ import static java.util.stream.Collectors.*;
 public class CalculateMeasureHelper {
 
 
-	private final LoadMeasuresPort loadMeasuresPort;
+    private final LoadMeasuresPort loadMeasuresPort;
 
-	public List<MeasureDto> calculateMeasures(UUID assessmentId, Collection<QuestionDto> questions) {
-		var attributeMaxPossibleScore = questions.stream()
-			.mapToDouble(QuestionDto::weight)
-			.sum();
+    public List<MeasureDto> calculateMeasures(UUID assessmentId, Collection<QuestionDto> questions) {
+        var attributeMaxPossibleScore = questions.stream()
+            .mapToDouble(QuestionDto::weight)
+            .sum();
 
-		var measureIdToQuestions = questions.stream()
-			.collect(groupingBy(QuestionDto::measureId, LinkedHashMap::new, toList()));
+        var measureIdToQuestions = questions.stream()
+            .collect(groupingBy(QuestionDto::measureId, LinkedHashMap::new, toList()));
 
-		var measureIdToMaxPossibleScore = questions.stream()
-			.collect(groupingBy(
-				QuestionDto::measureId,
-				summingDouble(QuestionDto::weight) // Sum weights for each measureId
-			));
+        var measureIdToMaxPossibleScore = questions.stream()
+            .collect(groupingBy(
+                QuestionDto::measureId,
+                summingDouble(QuestionDto::weight) // Sum weights for each measureId
+            ));
 
-		var measureIds = measureIdToQuestions.keySet().stream()
-			.toList();
+        var measureIds = measureIdToQuestions.keySet().stream()
+            .toList();
 
-		var idToMeasureMap = loadMeasuresPort.loadAll(measureIds, assessmentId)
-			.stream().collect(toMap(Measure::getId, Function.identity()));
+        var idToMeasureMap = loadMeasuresPort.loadAll(measureIds, assessmentId)
+            .stream().collect(toMap(Measure::getId, Function.identity()));
 
-		return measureIdToQuestions.entrySet().stream()
-			.map(entry -> buildMeasure(
-				idToMeasureMap.get(entry.getKey()),
-				entry.getValue(),
-				measureIdToMaxPossibleScore.get(entry.getKey()),
-				attributeMaxPossibleScore))
-			.toList();
-	}
+        return measureIdToQuestions.entrySet().stream()
+            .map(entry -> buildMeasure(
+                idToMeasureMap.get(entry.getKey()),
+                entry.getValue(),
+                measureIdToMaxPossibleScore.get(entry.getKey()),
+                attributeMaxPossibleScore))
+            .toList();
+    }
 
-	private MeasureDto buildMeasure(Measure measure,
-									List<QuestionDto> questions,
-									double measureMaxPossibleScore,
-									double attributeMaxPossibleScore) {
-		assert measureMaxPossibleScore != 0.0;
-		var impactPercentage = attributeMaxPossibleScore != 0
-			? (measureMaxPossibleScore / attributeMaxPossibleScore) * 100
-			: 0.0;
+    private MeasureDto buildMeasure(Measure measure,
+                                    List<QuestionDto> questions,
+                                    double measureMaxPossibleScore,
+                                    double attributeMaxPossibleScore) {
+        assert measureMaxPossibleScore != 0.0;
+        var impactPercentage = attributeMaxPossibleScore != 0
+            ? (measureMaxPossibleScore / attributeMaxPossibleScore) * 100
+            : 0.0;
 
-		var gainedScore = questions.stream()
-			.mapToDouble(q -> (q.answer() != null && q.answer().getSelectedOption() != null)
-				? q.answer().getSelectedOption().getValue() * q.weight()
-				: 0.0)
-			.sum();
+        var gainedScore = questions.stream()
+            .mapToDouble(q -> (q.answer() != null && q.answer().getSelectedOption() != null)
+                ? q.answer().getSelectedOption().getValue() * q.weight()
+                : 0.0)
+            .sum();
 
-		var missedScore = measureMaxPossibleScore - gainedScore;
-		var gainedScorePercentage = attributeMaxPossibleScore != 0 ? gainedScore / attributeMaxPossibleScore : 1;
-		var missedScorePercentage = attributeMaxPossibleScore != 0 ? missedScore / attributeMaxPossibleScore : 1;
+        var missedScore = measureMaxPossibleScore - gainedScore;
+        var gainedScorePercentage = attributeMaxPossibleScore != 0 ? gainedScore / attributeMaxPossibleScore : 1;
+        var missedScorePercentage = attributeMaxPossibleScore != 0 ? missedScore / attributeMaxPossibleScore : 1;
 
-		return new MeasureDto(measure.getTitle(),
-			MathUtils.round(impactPercentage, 2),
-			MathUtils.round(measureMaxPossibleScore, 2),
-			MathUtils.round(gainedScore, 2),
-			MathUtils.round(missedScore, 2),
-			MathUtils.round(gainedScorePercentage * 100, 2),
-			MathUtils.round(missedScorePercentage * 100, 2)
-		);
-	}
+        return new MeasureDto(measure.getTitle(),
+            MathUtils.round(impactPercentage, 2),
+            MathUtils.round(measureMaxPossibleScore, 2),
+            MathUtils.round(gainedScore, 2),
+            MathUtils.round(missedScore, 2),
+            MathUtils.round(gainedScorePercentage * 100, 2),
+            MathUtils.round(missedScorePercentage * 100, 2)
+        );
+    }
 
-	public record QuestionDto(long id,
-							  double weight,
-							  long measureId,
-							  Answer answer) {
-	}
+    public record QuestionDto(long id,
+                              double weight,
+                              long measureId,
+                              Answer answer) {
+    }
 
-	public record MeasureDto(String title,
-							 Double impactPercentage,
-							 Double maxPossibleScore,
-							 Double gainedScore,
-							 Double missedScore,
-							 Double gainedScorePercentage,
-							 Double missedScorePercentage) {
-	}
+    public record MeasureDto(String title,
+                             Double impactPercentage,
+                             Double maxPossibleScore,
+                             Double gainedScore,
+                             Double missedScore,
+                             Double gainedScorePercentage,
+                             Double missedScorePercentage) {
+    }
 }
