@@ -40,7 +40,8 @@ public interface GetAssessmentReportUseCase {
                   Advice advice,
                   AssessmentProcess assessmentProcess,
                   Permissions permissions,
-                  Language lang) {
+                  Language lang,
+                  String visibility) {
     }
 
     record Assessment(String title,
@@ -113,7 +114,9 @@ public interface GetAssessmentReportUseCase {
                              String participant) {
     }
 
-    record Permissions(boolean canViewDashboard) {
+    record Permissions(boolean canViewDashboard,
+                       boolean canShareReport,
+                       boolean canManageVisibility) {
     }
 
     record AdviceItem(UUID id,

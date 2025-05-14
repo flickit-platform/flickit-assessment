@@ -31,4 +31,157 @@
                              columnNames="kit_id, lang_id, size"/>
     </changeSet>
 
+    <changeSet id="0.58-05" author="Maziyar Gerami">
+        <addColumn tableName="fac_assessment_report">
+            <column name="visibility" type="tinyint" defaultValue="0">
+                    <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.58-06" author="Mahdi Rezazadeh">
+        <addColumn tableName="fac_assessment_report">
+            <column name="link_hash" type="uuid" defaultValueComputed="gen_random_uuid()">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.58-07" author="Mahdi Rezazadeh">
+        <modifyDataType
+                tableName="fak_assessment_kit"
+                columnName="translations"
+                newDataType="json"/>
+    </changeSet>
+
+    <changeSet id="0.58-08" author="Maziyar Gerami">
+        <dropForeignKeyConstraint baseTableName="fak_kit_banner" constraintName="fk_fak_kitbanner_assessmentkit"/>
+    </changeSet>
+
+    <changeSet id="0.58-09" author="Maziyar Gerami">
+        <addForeignKeyConstraint baseTableName="fak_kit_banner"
+                                 baseColumnNames="kit_id"
+                                 referencedTableName="fak_assessment_kit"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fak_kitbanner_assessmentkit"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="0.58-10" author="Maziyar Gerami">
+        <dropForeignKeyConstraint baseTableName="fac_evidence" constraintName="fk_fac_evidence_assessment"/>
+    </changeSet>
+
+    <changeSet id="0.58-11" author="Maziyar Gerami">
+        <addForeignKeyConstraint baseTableName="fac_evidence"
+                                 baseColumnNames="assessment_id"
+                                 referencedTableName="fac_assessment"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fac_evidence_assessment"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="0.58-12" author="Maziyar Gerami">
+        <dropForeignKeyConstraint baseTableName="fac_assessment_result" constraintName="fk_fac_assessmentresult_assessment"/>
+    </changeSet>
+
+    <changeSet id="0.58-13" author="Maziyar Gerami">
+        <addForeignKeyConstraint baseTableName="fac_assessment_result"
+                                 baseColumnNames="assessment_id"
+                                 referencedTableName="fac_assessment"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fac_assessmentresult_assessment"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="0.58-14" author="Maziyar Gerami">
+        <dropForeignKeyConstraint baseTableName="fac_evidence_attachment" constraintName="fk_fac_evidence_attachment_evidence"/>
+    </changeSet>
+
+    <changeSet id="0.58-15" author="Maziyar Gerami">
+        <addForeignKeyConstraint baseTableName="fac_evidence_attachment"
+                                 baseColumnNames="evidence_id"
+                                 referencedTableName="fac_evidence"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fac_evidence_attachment_evidence"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="0.58-16" author="Maziyar Gerami">
+        <dropForeignKeyConstraint baseTableName="fac_attribute_maturity_score" constraintName="fk_fac_maturityscore_attributevalue"/>
+    </changeSet>
+
+    <changeSet id="0.58-17" author="Maziyar Gerami">
+        <addForeignKeyConstraint baseTableName="fac_attribute_maturity_score"
+                                 baseColumnNames="attribute_value_id"
+                                 referencedTableName="fac_attribute_value"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fac_maturityscore_attributevalue"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="0.58-18" author="Maziyar Gerami">
+        <dropForeignKeyConstraint baseTableName="fac_attribute_value" constraintName="fk_fac_attributevalue_assessmentresult"/>
+    </changeSet>
+
+    <changeSet id="0.58-19" author="Maziyar Gerami">
+        <addForeignKeyConstraint baseTableName="fac_attribute_value"
+                                 baseColumnNames="assessment_result_id"
+                                 constraintName="fk_fac_attributevalue_assessmentresult"
+                                 referencedTableName="fac_assessment_result"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="0.58-20" author="Maziyar Gerami">
+        <dropForeignKeyConstraint baseTableName="fac_subject_value" constraintName="fk_fac_subjectvalue_assessmentresult"/>
+    </changeSet>
+
+    <changeSet id="0.58-21" author="Maziyar Gerami">
+        <addForeignKeyConstraint baseTableName="fac_subject_value"
+                                 baseColumnNames="assessment_result_id"
+                                 constraintName="fk_fac_subjectvalue_assessmentresult"
+                                 referencedTableName="fac_assessment_result"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="0.58-22" author="Maziyar Gerami">
+        <dropForeignKeyConstraint baseTableName="fac_answer" constraintName="fk_fac_answer_assessmentresult"/>
+    </changeSet>
+
+    <changeSet id="0.58-23" author="Maziyar Gerami">
+        <addForeignKeyConstraint baseTableName="fac_answer"
+                                 baseColumnNames="assessment_result_id"
+                                 referencedTableName="fac_assessment_result"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fac_answer_assessmentresult"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="0.58-24" author="Maziyar Gerami">
+        <dropForeignKeyConstraint baseTableName="fac_assessment_invitee" constraintName="fk_fac_assessment_invitee_assessment"/>
+    </changeSet>
+
+    <changeSet id="0.58-25" author="Maziyar Gerami">
+        <addForeignKeyConstraint baseTableName="fac_assessment_invitee"
+                                 baseColumnNames="assessment_id"
+                                 referencedTableName="fac_assessment"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fac_assessment_invitee_assessment"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="0.58-26" author="Maziyar Gerami">
+        <dropForeignKeyConstraint baseTableName="fak_kit_custom"
+                                  constraintName="fk_fak_kitcustom_kit"/>
+    </changeSet>
+
+    <changeSet id="0.58-27" author="Maziyar Gerami">
+        <addForeignKeyConstraint baseTableName="fak_kit_custom" baseColumnNames="kit_id"
+                                 constraintName="fk_fak_kitcustom_kit"
+                                 referencedTableName="fak_assessment_kit"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
 </databaseChangeLog>

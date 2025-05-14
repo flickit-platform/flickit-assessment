@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldNameConstants;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -48,7 +50,8 @@ public class AssessmentKitJpaEntity {
     @Column(name = "language_id", nullable = false)
     private Integer languageId;
 
-    @Column(name = "translations")
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "translations", columnDefinition = "json")
     private String translations;
 
     @Column(name = "metadata")

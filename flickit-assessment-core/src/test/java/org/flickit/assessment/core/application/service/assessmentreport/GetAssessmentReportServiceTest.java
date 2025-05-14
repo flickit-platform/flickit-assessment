@@ -9,6 +9,7 @@ import org.flickit.assessment.common.exception.CalculateNotValidException;
 import org.flickit.assessment.common.exception.InvalidStateException;
 import org.flickit.assessment.core.application.domain.AdviceItem;
 import org.flickit.assessment.core.application.domain.AssessmentReport;
+import org.flickit.assessment.core.application.domain.VisibilityType;
 import org.flickit.assessment.core.application.domain.report.AssessmentReportItem;
 import org.flickit.assessment.core.application.domain.report.AssessmentSubjectReportItem;
 import org.flickit.assessment.core.application.domain.report.AttributeReportItem;
@@ -209,6 +210,9 @@ class GetAssessmentReportServiceTest {
         assertEquals(adviceItems.size(), result.advice().adviceItems().size());
         assertAdviceItem(adviceItems, result.advice().adviceItems(), assessmentReport.language());
         assertTrue(result.permissions().canViewDashboard());
+        assertFalse(result.permissions().canShareReport());
+        assertFalse(result.permissions().canManageVisibility());
+        assertEquals(VisibilityType.RESTRICTED.name(), result.visibility());
 
         verify(assessmentAccessChecker, times(3))
             .isAuthorized(eq(param.getAssessmentId()), eq(param.getCurrentUserId()), any(AssessmentPermission.class));
@@ -262,6 +266,10 @@ class GetAssessmentReportServiceTest {
         when(loadAdviceItemsPort.loadAll(assessmentReport.assessmentResultId())).thenReturn(adviceItems);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_DASHBOARD))
             .thenReturn(false);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_ACCESS_TO_REPORT))
+            .thenReturn(false);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MANAGE_ASSESSMENT_REPORT_VISIBILITY))
+            .thenReturn(true);
         when(loadAssessmentQuestionsPort.loadApplicableQuestions(param.getAssessmentId()))
             .thenReturn(questionAnswers);
 
@@ -279,6 +287,9 @@ class GetAssessmentReportServiceTest {
         assertEquals(adviceItems.size(), result.advice().adviceItems().size());
         assertAdviceItem(adviceItems, result.advice().adviceItems(), assessmentReport.language());
         assertFalse(result.permissions().canViewDashboard());
+        assertFalse(result.permissions().canShareReport());
+        assertTrue(result.permissions().canManageVisibility());
+        assertEquals(report.getVisibility().name(), result.visibility());
     }
 
     private AssessmentReportItem createAssessmentReportItem(GetAssessmentReportUseCase.Param param) {

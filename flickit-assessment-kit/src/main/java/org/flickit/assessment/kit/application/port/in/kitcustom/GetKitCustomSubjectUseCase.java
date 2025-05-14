@@ -8,8 +8,12 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.common.application.domain.kit.translation.AttributeTranslation;
+import org.flickit.assessment.common.application.domain.kit.translation.SubjectTranslation;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
@@ -49,10 +53,28 @@ public interface GetKitCustomSubjectUseCase {
         }
     }
 
-    record Subject(long id, String title, int index, Weight weight, List<Attribute> attributes) {
-
-        public record Attribute(long id, String title, int index, Weight weight) {}
+    record Subject(long id,
+                   String title,
+                   int index,
+                   Weight weight,
+                   List<Attribute> attributes,
+                   Language mainLanguage,
+                   Map<KitLanguage, SubjectTranslation> translations) {
     }
 
-    record Weight(int defaultValue, Integer customValue) {}
+    record Attribute(long id,
+                     String title,
+                     int index,
+                     Weight weight,
+                     Map<KitLanguage, AttributeTranslation> translations) {
+    }
+
+    record Weight(int defaultValue, Integer customValue) {
+    }
+
+    record Language(String code, String title) {
+        public static Language of(KitLanguage language) {
+            return new Language(language.getCode(), language.getTitle());
+        }
+    }
 }
