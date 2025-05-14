@@ -27,7 +27,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_KIT_NOT_FOUND;
-import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSMENT_RESULT_ASSESSMENT_ID_NOT_FOUND;
 
 @Component
@@ -89,13 +88,10 @@ public class AssessmentResultPersistenceJpaAdapter implements
 
     @Override
     public Optional<AssessmentResult> load(UUID id) {
-        var entity = repository.findById(id)
+        var entity = repository.findByIdWithAssessment(id)
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_KIT_NOT_FOUND));
 
-        var latestResult = repository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(entity.getAssessment().getId())
-            .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_KIT_NOT_FOUND));
-
-        var kit = kitRepository.findById(latestResult.getAssessment().getAssessmentKitId())
+        var kit = kitRepository.findById(entity.getAssessment().getAssessmentKitId())
             .map(AssessmentKitMapper::mapToDomainModel)
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_KIT_NOT_FOUND));
 
