@@ -39,7 +39,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.ASSESSMENT_REPO
 
 @Slf4j
 @Service
-@Transactional(readOnly = true)
+@Transactional
 @RequiredArgsConstructor
 public class GetAssessmentPublicReportService implements GetAssessmentPublicReportUseCase {
 
