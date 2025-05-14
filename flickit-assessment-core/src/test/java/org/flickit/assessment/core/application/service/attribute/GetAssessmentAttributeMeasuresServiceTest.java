@@ -4,7 +4,7 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentAcc
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.port.in.attribute.GetAssessmentAttributeMeasuresUseCase.Param;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeQuestionsPort;
-import org.flickit.assessment.core.application.port.out.measure.LoadMeasuresPort;
+import org.flickit.assessment.core.application.service.measure.CalculateMeasureHelper;
 import org.flickit.assessment.core.test.fixture.application.AnswerMother;
 import org.flickit.assessment.core.test.fixture.application.MeasureMother;
 import org.flickit.assessment.core.test.fixture.application.QuestionMother;
@@ -36,7 +36,7 @@ class GetAssessmentAttributeMeasuresServiceTest {
     private AssessmentAccessChecker assessmentAccessChecker;
 
     @Mock
-    private LoadMeasuresPort loadMeasuresPort;
+    private CalculateMeasureHelper calculateMeasureHelper;
 
     @Mock
     private LoadAttributeQuestionsPort loadAttributeQuestionsPort;
@@ -51,48 +51,42 @@ class GetAssessmentAttributeMeasuresServiceTest {
         var throwable = assertThrows(AccessDeniedException.class, () -> service.getAssessmentAttributeMeasures(param));
         assertThat(throwable.getMessage()).isEqualTo(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        verifyNoInteractions(loadMeasuresPort, loadAttributeQuestionsPort);
+        verifyNoInteractions(calculateMeasureHelper, loadAttributeQuestionsPort);
     }
 
     @Test
     void testGetAssessmentAttributeMeasures_whenParamIsValid_thenReturnResult() {
-        var measure1 = MeasureMother.createMeasure();
-        var measure2 = MeasureMother.createMeasure();
-        var question1 = QuestionMother.withMeasure(measure1);
-        var question2 = QuestionMother.withMeasure(measure1);
-        var question3 = QuestionMother.withMeasure(measure2);
-        var answer1 = AnswerMother.fullScore(question1.getId());
-        var answer2 = AnswerMother.noScore(question2.getId());
-        param = createParam(b -> b.attributeId(question1.getImpacts().getFirst().getAttributeId()));
+        var measure = MeasureMother.createMeasure();
+        var question = QuestionMother.withMeasure(measure);
+        var answer = AnswerMother.fullScore(question.getId());
+        param = createParam(b -> b.attributeId(question.getImpacts().getFirst().getAttributeId()));
+        var questionDto = new CalculateMeasureHelper.QuestionDto(question.getId(), question.getAvgWeight(param.getAttributeId()), measure.getId(), answer);
+        var measureDto = new CalculateMeasureHelper.MeasureDto(measure.getTitle(),
+            100.0,
+            90.0,
+            80.0,
+            70.0,
+            60.0,
+            50.0);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ATTRIBUTE_MEASURES))
             .thenReturn(true);
         when(loadAttributeQuestionsPort.loadApplicableQuestions(param.getAssessmentId(), param.getAttributeId()))
-            .thenReturn(List.of(new LoadAttributeQuestionsPort.Result(question1, answer1),
-                new LoadAttributeQuestionsPort.Result(question2, answer2),
-                new LoadAttributeQuestionsPort.Result(question3, null)));
-        when(loadMeasuresPort.loadAll(List.of(measure1.getId(), measure2.getId()), param.getAssessmentId()))
-            .thenReturn(List.of(measure1, measure2));
+            .thenReturn(List.of(new LoadAttributeQuestionsPort.Result(question, answer)));
+        when(calculateMeasureHelper.calculateMeasures(param.getAssessmentId(), List.of(questionDto)))
+            .thenReturn(List.of(measureDto));
 
         var result = service.getAssessmentAttributeMeasures(param);
 
-        assertEquals(2, result.measures().size());
+        assertEquals(1, result.measures().size());
 
-        assertEquals(measure1.getTitle(), result.measures().getFirst().title());
-        assertEquals(66.67, result.measures().getFirst().impactPercentage());
-        assertEquals(2, result.measures().getFirst().maxPossibleScore());
-        assertEquals(1, result.measures().getFirst().gainedScore());
-        assertEquals(1, result.measures().getFirst().missedScore());
-        assertEquals(33.33, result.measures().getFirst().gainedScorePercentage());
-        assertEquals(33.33, result.measures().getFirst().missedScorePercentage());
-
-        assertEquals(measure2.getTitle(), result.measures().get(1).title());
-        assertEquals(33.33, result.measures().get(1).impactPercentage());
-        assertEquals(1, result.measures().get(1).maxPossibleScore());
-        assertEquals(0, result.measures().get(1).gainedScore());
-        assertEquals(1, result.measures().get(1).missedScore());
-        assertEquals(0, result.measures().get(1).gainedScorePercentage());
-        assertEquals(33.33, result.measures().get(1).missedScorePercentage());
+        assertEquals(measureDto.title(), result.measures().getFirst().title());
+        assertEquals(measureDto.impactPercentage(), result.measures().getFirst().impactPercentage());
+        assertEquals(measureDto.maxPossibleScore(), result.measures().getFirst().maxPossibleScore());
+        assertEquals(measureDto.gainedScore(), result.measures().getFirst().gainedScore());
+        assertEquals(measureDto.missedScore(), result.measures().getFirst().missedScore());
+        assertEquals(measureDto.gainedScorePercentage(), result.measures().getFirst().gainedScorePercentage());
+        assertEquals(measureDto.missedScorePercentage(), result.measures().getFirst().missedScorePercentage());
     }
 
     private Param createParam(Consumer<Param.ParamBuilder> changes) {

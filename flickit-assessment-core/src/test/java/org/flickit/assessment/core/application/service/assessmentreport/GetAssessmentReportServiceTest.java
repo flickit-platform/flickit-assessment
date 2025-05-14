@@ -19,11 +19,14 @@ import org.flickit.assessment.core.application.port.out.advicenarration.LoadAdvi
 import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentQuestionsPort;
 import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
+import org.flickit.assessment.core.application.service.measure.CalculateMeasureHelper;
 import org.flickit.assessment.core.test.fixture.application.AssessmentReportMother;
 import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
 import org.flickit.assessment.core.test.fixture.application.QuestionMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -80,6 +83,13 @@ class GetAssessmentReportServiceTest {
     @Mock
     private LoadAdviceItemsPort loadAdviceItemsPort;
 
+    @Mock
+    private CalculateMeasureHelper calculateMeasureHelper;
+
+    @Captor
+    ArgumentCaptor<List<CalculateMeasureHelper.QuestionDto>> questionListCaptor;
+
+
     @Test
     void testGetAssessmentReport_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
         var param = createParam(GetAssessmentReportUseCase.Param.ParamBuilder::build);
@@ -95,7 +105,8 @@ class GetAssessmentReportServiceTest {
             loadAssessmentQuestionsPort,
             validateAssessmentResultPort,
             loadAdviceItemsPort,
-            loadAdviceNarrationPort);
+            loadAdviceNarrationPort,
+            calculateMeasureHelper);
     }
 
     @Test
@@ -114,7 +125,8 @@ class GetAssessmentReportServiceTest {
             loadAssessmentReportPort,
             loadAssessmentQuestionsPort,
             loadAdviceItemsPort,
-            loadAdviceNarrationPort);
+            loadAdviceNarrationPort,
+            calculateMeasureHelper);
     }
 
     @Test
@@ -138,7 +150,8 @@ class GetAssessmentReportServiceTest {
             .isAuthorized(eq(param.getAssessmentId()), eq(param.getCurrentUserId()), any(AssessmentPermission.class));
         verifyNoInteractions(loadAdviceItemsPort,
             loadAssessmentQuestionsPort,
-            loadAdviceNarrationPort);
+            loadAdviceNarrationPort,
+            calculateMeasureHelper);
     }
 
     @Test
@@ -157,6 +170,13 @@ class GetAssessmentReportServiceTest {
         var measure = assessmentReport.assessmentKit().measures().getFirst();
         var questionAnswers = List.of(new LoadAssessmentQuestionsPort.Result(QuestionMother.withMeasure(measure),
             answer(optionOne())));
+        var measureDto = new CalculateMeasureHelper.MeasureDto(measure.getTitle(),
+            100.0,
+            90.0,
+            80.0,
+            70.0,
+            60.0,
+            50.0);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_GRAPHICAL_REPORT))
             .thenReturn(true);
@@ -171,6 +191,9 @@ class GetAssessmentReportServiceTest {
             .thenReturn(true);
         when(loadAssessmentQuestionsPort.loadApplicableQuestions(param.getAssessmentId()))
             .thenReturn(questionAnswers);
+        when(calculateMeasureHelper.calculateMeasures(any(UUID.class), any(List.class)))
+            .thenReturn(List.of(measureDto));
+
 
         var result = service.getAssessmentReport(param);
 
@@ -189,6 +212,23 @@ class GetAssessmentReportServiceTest {
 
         verify(assessmentAccessChecker, times(3))
             .isAuthorized(eq(param.getAssessmentId()), eq(param.getCurrentUserId()), any(AssessmentPermission.class));
+
+        verify(calculateMeasureHelper, times(1))
+            .calculateMeasures(eq(param.getAssessmentId()), questionListCaptor.capture());
+
+        assertEquals(measure.getId(), questionListCaptor.getValue().getFirst().measureId());
+        assertEquals(questionAnswers.getFirst().answer(), questionListCaptor.getValue().getFirst().answer());
+        assertEquals(questionAnswers.getFirst().question().getId(), questionListCaptor.getValue().getFirst().id());
+        assertEquals(questionAnswers.getFirst().question().getAvgWeight(attributeReportItem.id()), questionListCaptor.getValue().getFirst().weight());
+
+        var attributeMeasures = result.subjects().getFirst().attributes().getFirst().attributeMeasures();
+        assertEquals(measureDto.title(), attributeMeasures.getFirst().title());
+        assertEquals(measureDto.impactPercentage(), attributeMeasures.getFirst().impactPercentage());
+        assertEquals(measureDto.maxPossibleScore(), attributeMeasures.getFirst().maxPossibleScore());
+        assertEquals(measureDto.gainedScore(), attributeMeasures.getFirst().gainedScore());
+        assertEquals(measureDto.missedScore(), attributeMeasures.getFirst().missedScore());
+        assertEquals(measureDto.gainedScorePercentage(), attributeMeasures.getFirst().gainedScorePercentage());
+        assertEquals(measureDto.missedScorePercentage(), attributeMeasures.getFirst().missedScorePercentage());
     }
 
     @Test
