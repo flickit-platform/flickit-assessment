@@ -25,7 +25,6 @@ import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAss
 import org.flickit.assessment.core.application.port.out.kitcustom.LoadKitCustomLastModificationTimePort;
 import org.flickit.assessment.core.application.service.assessment.CalculateAssessmentHelper;
 import org.flickit.assessment.core.application.service.assessment.CalculateConfidenceHelper;
-import org.flickit.assessment.core.application.service.assessment.InitializeAssessmentResultHelper;
 import org.flickit.assessment.core.test.fixture.application.AssessmentReportMother;
 import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
@@ -74,9 +73,6 @@ class GetAssessmentPublicReportServiceTest {
     private LoadKitCustomLastModificationTimePort loadKitCustomLastModificationTimePort;
 
     @Mock
-    private InitializeAssessmentResultHelper initializeAssessmentResultHelper;
-
-    @Mock
     private CalculateAssessmentHelper calculateAssessmentHelper;
 
     @Mock
@@ -120,7 +116,6 @@ class GetAssessmentPublicReportServiceTest {
         verifyNoInteractions(assessmentAccessChecker,
             loadAssessmentReportInfoPort,
             loadKitCustomLastModificationTimePort,
-            initializeAssessmentResultHelper,
             calculateAssessmentHelper,
             calculateConfidenceHelper,
             loadAssessmentQuestionsPort,
@@ -142,7 +137,6 @@ class GetAssessmentPublicReportServiceTest {
         assertEquals(ASSESSMENT_REPORT_LINK_HASH_NOT_FOUND, exception.getMessage());
         verifyNoInteractions(assessmentAccessChecker,
             loadKitCustomLastModificationTimePort,
-            initializeAssessmentResultHelper,
             calculateAssessmentHelper,
             calculateConfidenceHelper,
             loadAssessmentReportInfoPort,
@@ -205,7 +199,6 @@ class GetAssessmentPublicReportServiceTest {
         assertFalse(result.permissions().canShareReport());
         verifyNoInteractions(assessmentAccessChecker,
             loadKitCustomLastModificationTimePort,
-            initializeAssessmentResultHelper,
             calculateAssessmentHelper,
             calculateConfidenceHelper);
     }
@@ -269,7 +262,6 @@ class GetAssessmentPublicReportServiceTest {
         assertFalse(result.permissions().canManageVisibility());
         assertFalse(result.permissions().canShareReport());
 
-        verify(initializeAssessmentResultHelper).reinitializeAssessmentResultIfRequired(any(AssessmentResult.class));
         verify(calculateAssessmentHelper).calculateMaturityLevel(assessmentId);
         verifyNoInteractions(loadKitCustomLastModificationTimePort,
             calculateConfidenceHelper);
@@ -340,7 +332,6 @@ class GetAssessmentPublicReportServiceTest {
         assertFalse(result.permissions().canShareReport());
         assertTrue(result.permissions().canManageVisibility());
 
-        verify(initializeAssessmentResultHelper).reinitializeAssessmentResultIfRequired(any(AssessmentResult.class));
         verify(calculateConfidenceHelper).calculate(assessmentId);
         verify(calculateAssessmentHelper).calculateMaturityLevel(assessmentId);
     }
@@ -406,7 +397,6 @@ class GetAssessmentPublicReportServiceTest {
         assertTrue(result.permissions().canShareReport());
         assertFalse(result.permissions().canManageVisibility());
 
-        verify(initializeAssessmentResultHelper).reinitializeAssessmentResultIfRequired(any(AssessmentResult.class));
         verify(calculateConfidenceHelper).calculate(assessmentId);
         verify(calculateAssessmentHelper).calculateMaturityLevel(assessmentId);
         verifyNoInteractions(loadKitCustomLastModificationTimePort);
@@ -428,7 +418,6 @@ class GetAssessmentPublicReportServiceTest {
         verifyNoInteractions(loadAssessmentReportInfoPort,
             loadAssessmentQuestionsPort,
             loadKitCustomLastModificationTimePort,
-            initializeAssessmentResultHelper,
             calculateAssessmentHelper,
             calculateConfidenceHelper,
             loadAdviceNarrationPort,
