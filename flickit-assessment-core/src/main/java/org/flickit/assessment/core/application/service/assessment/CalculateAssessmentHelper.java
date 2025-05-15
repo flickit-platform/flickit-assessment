@@ -1,7 +1,6 @@
 package org.flickit.assessment.core.application.service.assessment;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.port.out.assessment.UpdateAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentkit.LoadKitLastMajorModificationTimePort;
@@ -18,8 +17,6 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.flickit.assessment.core.common.ErrorMessageKey.CALCULATE_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND;
-
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -34,26 +31,24 @@ public class CalculateAssessmentHelper {
     private final CreateSubjectValuePort createSubjectValuePort;
     private final CreateAttributeValuePort createAttributeValuePort;
 
-    public MaturityLevel calculateMaturityLevel(UUID assessmentId) {
-        reinitializeAssessmentResultIfRequired(assessmentId);
-        AssessmentResult assessmentResult = loadCalculateInfoPort.load(assessmentId);
+    public MaturityLevel calculateMaturityLevel(AssessmentResult assessmentResult) {
+        UUID assessmentId = assessmentResult.getAssessment().getId();
+        reinitializeAssessmentResultIfRequired(assessmentResult);
+        AssessmentResult calculateInfo = loadCalculateInfoPort.load(assessmentId);
 
-        MaturityLevel calcResult = assessmentResult.calculate();
-        assessmentResult.setMaturityLevel(calcResult);
-        assessmentResult.setIsCalculateValid(Boolean.TRUE);
-        assessmentResult.setLastModificationTime(LocalDateTime.now());
-        assessmentResult.setLastCalculationTime(LocalDateTime.now());
+        MaturityLevel calcResult = calculateInfo.calculate();
+        calculateInfo.setMaturityLevel(calcResult);
+        calculateInfo.setIsCalculateValid(Boolean.TRUE);
+        calculateInfo.setLastModificationTime(LocalDateTime.now());
+        calculateInfo.setLastCalculationTime(LocalDateTime.now());
 
-        updateCalculatedResultPort.updateCalculatedResult(assessmentResult);
-        updateAssessmentPort.updateLastModificationTime(assessmentId, assessmentResult.getLastModificationTime());
+        updateCalculatedResultPort.updateCalculatedResult(calculateInfo);
+        updateAssessmentPort.updateLastModificationTime(assessmentId, calculateInfo.getLastModificationTime());
 
         return calcResult;
     }
 
-
-    private void reinitializeAssessmentResultIfRequired(UUID assessmentId) {
-        var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(assessmentId)
-            .orElseThrow(() -> new ResourceNotFoundException(CALCULATE_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND));
+    private void reinitializeAssessmentResultIfRequired(AssessmentResult assessmentResult) {
         if (isAssessmentResultReinitializationRequired(assessmentResult))
             reinitializeAssessmentResult(assessmentResult);
     }

@@ -262,7 +262,7 @@ class GetAssessmentPublicReportServiceTest {
         assertFalse(result.permissions().canManageVisibility());
         assertFalse(result.permissions().canShareReport());
 
-        verify(calculateAssessmentHelper).calculateMaturityLevel(assessmentId);
+        verify(calculateAssessmentHelper).calculateMaturityLevel(assessmentResult);
         verifyNoInteractions(loadKitCustomLastModificationTimePort,
             calculateConfidenceHelper);
     }
@@ -333,7 +333,7 @@ class GetAssessmentPublicReportServiceTest {
         assertTrue(result.permissions().canManageVisibility());
 
         verify(calculateConfidenceHelper).calculate(assessmentId);
-        verify(calculateAssessmentHelper).calculateMaturityLevel(assessmentId);
+        verify(calculateAssessmentHelper).calculateMaturityLevel(assessmentResult);
     }
 
     @Test
@@ -398,7 +398,7 @@ class GetAssessmentPublicReportServiceTest {
         assertFalse(result.permissions().canManageVisibility());
 
         verify(calculateConfidenceHelper).calculate(assessmentId);
-        verify(calculateAssessmentHelper).calculateMaturityLevel(assessmentId);
+        verify(calculateAssessmentHelper).calculateMaturityLevel(assessmentResult);
         verifyNoInteractions(loadKitCustomLastModificationTimePort);
     }
 

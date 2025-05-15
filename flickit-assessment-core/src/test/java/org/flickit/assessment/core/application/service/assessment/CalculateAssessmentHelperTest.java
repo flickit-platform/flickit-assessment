@@ -3,7 +3,6 @@ package org.flickit.assessment.core.application.service.assessment;
 import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.port.out.assessment.UpdateAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentkit.LoadKitLastMajorModificationTimePort;
-import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadCalculateInfoPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.UpdateCalculatedResultPort;
 import org.flickit.assessment.core.application.port.out.attributevalue.CreateAttributeValuePort;
@@ -18,8 +17,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.invalidResultWithSubjectValues;
 import static org.flickit.assessment.core.test.fixture.application.AttributeValueMother.hasFullScoreOnLevel23WithWeight;
@@ -38,9 +35,6 @@ class CalculateAssessmentHelperTest {
 
     @InjectMocks
     private CalculateAssessmentHelper helper;
-
-    @Mock
-    private LoadAssessmentResultPort loadAssessmentResultPort;
 
     @Mock
     private LoadCalculateInfoPort loadCalculateInfoPort;
@@ -90,11 +84,10 @@ class CalculateAssessmentHelperTest {
         AssessmentResult assessmentResult = invalidResultWithSubjectValues(subjectValues);
         assessmentResult.setLastCalculationTime(LocalDateTime.now());
 
-        when(loadAssessmentResultPort.loadByAssessmentId(assessmentResult.getAssessment().getId())).thenReturn(Optional.of(assessmentResult));
         when(loadCalculateInfoPort.load(assessmentResult.getAssessment().getId())).thenReturn(assessmentResult);
         when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(any())).thenReturn(kitLastMajorModificationTime);
 
-        var result = helper.calculateMaturityLevel(assessmentResult.getAssessment().getId());
+        var result = helper.calculateMaturityLevel(assessmentResult);
         verify(updateCalculatedResultPort, times(1)).updateCalculatedResult(any(AssessmentResult.class));
         verify(updateAssessmentPort, times(1)).updateLastModificationTime(any(), any());
 
@@ -133,14 +126,13 @@ class CalculateAssessmentHelperTest {
         AssessmentResult assessmentResult = invalidResultWithSubjectValues(subjectValues);
         assessmentResult.setLastCalculationTime(LocalDateTime.now());
 
-        when(loadAssessmentResultPort.loadByAssessmentId(assessmentResult.getAssessment().getId())).thenReturn(Optional.of(assessmentResult));
         when(loadCalculateInfoPort.load(assessmentResult.getAssessment().getId())).thenReturn(assessmentResult);
         when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(any())).thenReturn(LocalDateTime.now());
         when(loadSubjectsPort.loadByKitVersionIdWithAttributes(any())).thenReturn(subjects);
         when(createSubjectValuePort.persistAll(anyList(), any())).thenReturn(List.of(newSubjectValue));
         when(createAttributeValuePort.persistAll(anySet(), any())).thenReturn(List.of(newAttributeValue));
 
-        var result = helper.calculateMaturityLevel(assessmentResult.getAssessment().getId());
+        var result = helper.calculateMaturityLevel(assessmentResult);
         verify(updateCalculatedResultPort, times(1)).updateCalculatedResult(any(AssessmentResult.class));
         verify(updateAssessmentPort, times(1)).updateLastModificationTime(any(), any());
 
