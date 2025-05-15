@@ -207,6 +207,7 @@ class GetAssessmentPublicReportServiceTest {
     void testGetAssessmentPublicReport_whenReportIsPublicAndLoggedInUserLacksViewGraphicalReportPermission_thenReturnReportWithoutPermissions() {
         var assessmentId = assessmentResult.getAssessment().getId();
         assessmentResult.setIsCalculateValid(false);
+        var kitLastMajorModificationTime = assessmentResult.getLastCalculationTime();
 
         when(loadAssessmentReportPort.loadByLinkHash(param.getLinkHash())).thenReturn(publicReport);
         when(loadAssessmentResultPort.load(publicReport.getAssessmentResultId())).thenReturn(Optional.of(assessmentResult));
@@ -262,7 +263,7 @@ class GetAssessmentPublicReportServiceTest {
         assertFalse(result.permissions().canManageVisibility());
         assertFalse(result.permissions().canShareReport());
 
-        verify(calculateAssessmentHelper).calculateMaturityLevel(assessmentResult);
+        verify(calculateAssessmentHelper).calculateMaturityLevel(assessmentResult, kitLastMajorModificationTime);
         verifyNoInteractions(loadKitCustomLastModificationTimePort,
             calculateConfidenceHelper);
     }
@@ -334,7 +335,7 @@ class GetAssessmentPublicReportServiceTest {
         assertTrue(result.permissions().canManageVisibility());
 
         verify(calculateConfidenceHelper).calculate(assessmentResult, kitLastMajorModificationTime);
-        verify(calculateAssessmentHelper).calculateMaturityLevel(assessmentResult);
+        verify(calculateAssessmentHelper).calculateMaturityLevel(assessmentResult, kitLastMajorModificationTime);
     }
 
     @Test
@@ -400,7 +401,7 @@ class GetAssessmentPublicReportServiceTest {
         assertFalse(result.permissions().canManageVisibility());
 
         verify(calculateConfidenceHelper).calculate(assessmentResult, kitLastMajorModificationTime);
-        verify(calculateAssessmentHelper).calculateMaturityLevel(assessmentResult);
+        verify(calculateAssessmentHelper).calculateMaturityLevel(assessmentResult, kitLastMajorModificationTime);
         verifyNoInteractions(loadKitCustomLastModificationTimePort);
     }
 

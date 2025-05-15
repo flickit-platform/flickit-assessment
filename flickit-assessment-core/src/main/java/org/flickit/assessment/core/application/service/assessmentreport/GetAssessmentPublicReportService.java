@@ -91,7 +91,7 @@ public class GetAssessmentPublicReportService implements GetAssessmentPublicRepo
 
         if (!isCalculationValid) {
             log.info("Recalculating assessment for resultId=[{}] of assessmentId=[{}] due to invalid calculation.", assessmentResultId, assessmentId);
-            calculateAssessmentHelper.calculateMaturityLevel(assessmentResult);
+            calculateAssessmentHelper.calculateMaturityLevel(assessmentResult, kitLastMajorModificationTime);
         }
 
         if (!isConfidenceValid) {
