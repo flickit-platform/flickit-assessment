@@ -2,7 +2,6 @@ package org.flickit.assessment.core.application.service.assessment;
 
 import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.port.out.assessment.UpdateAssessmentPort;
-import org.flickit.assessment.core.application.port.out.assessmentkit.LoadKitLastMajorModificationTimePort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadConfidenceLevelCalculateInfoPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.UpdateCalculatedConfidencePort;
 import org.flickit.assessment.core.application.port.out.attributevalue.CreateAttributeValuePort;
@@ -41,9 +40,6 @@ class CalculateConfidenceHelperTest {
     private UpdateAssessmentPort updateAssessmentPort;
 
     @Mock
-    private LoadKitLastMajorModificationTimePort loadKitLastMajorModificationTimePort;
-
-    @Mock
     private LoadSubjectsPort loadSubjectsPort;
 
     @Mock
@@ -79,9 +75,8 @@ class CalculateConfidenceHelperTest {
         when(loadSubjectsPort.loadByKitVersionIdWithAttributes(any())).thenReturn(subjects);
 
         LocalDateTime kitLastMajorModificationTime = LocalDateTime.now();
-        when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(any())).thenReturn(kitLastMajorModificationTime);
 
-        var confidenceValue = helper.calculate(assessmentResult);
+        var confidenceValue = helper.calculate(assessmentResult, kitLastMajorModificationTime);
         verify(updateCalculatedConfidenceLevelResultPort, times(1)).updateCalculatedConfidence(any(AssessmentResult.class));
         verify(updateAssessmentPort, times(1)).updateLastModificationTime(any(), any());
 
@@ -120,13 +115,13 @@ class CalculateConfidenceHelperTest {
         AssessmentResult assessmentResult = invalidResultWithSubjectValues(subjectValues);
         assessmentResult.setLastCalculationTime(LocalDateTime.now());
 
+        var kitLastMajorModificationTime = LocalDateTime.now();
         when(loadConfidenceLevelCalculateInfoPort.load(assessmentResult.getAssessment().getId())).thenReturn(assessmentResult);
-        when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(any())).thenReturn(LocalDateTime.now());
         when(loadSubjectsPort.loadByKitVersionIdWithAttributes(any())).thenReturn(subjects);
         when(createSubjectValuePort.persistAll(anyList(), any())).thenReturn(List.of(newSubjectValue));
         when(createAttributeValuePort.persistAll(anySet(), any())).thenReturn(List.of(newAttributeValue));
 
-        var confidenceValue = helper.calculate(assessmentResult);
+        var confidenceValue = helper.calculate(assessmentResult, kitLastMajorModificationTime);
         verify(updateCalculatedConfidenceLevelResultPort, times(1)).updateCalculatedConfidence(any(AssessmentResult.class));
         verify(updateAssessmentPort, times(1)).updateLastModificationTime(any(), any());
 

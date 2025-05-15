@@ -3,7 +3,6 @@ package org.flickit.assessment.core.application.service.assessment;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.port.out.assessment.UpdateAssessmentPort;
-import org.flickit.assessment.core.application.port.out.assessmentkit.LoadKitLastMajorModificationTimePort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadConfidenceLevelCalculateInfoPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.UpdateCalculatedConfidencePort;
 import org.flickit.assessment.core.application.port.out.attributevalue.CreateAttributeValuePort;
@@ -23,15 +22,15 @@ public class CalculateConfidenceHelper {
 
     private final LoadConfidenceLevelCalculateInfoPort loadConfidenceLevelCalculateInfoPort;
     private final UpdateCalculatedConfidencePort updateCalculatedConfidenceLevelResultPort;
-    private final LoadKitLastMajorModificationTimePort loadKitLastMajorModificationTimePort;
+
     private final UpdateAssessmentPort updateAssessmentPort;
     private final LoadSubjectsPort loadSubjectsPort;
     private final CreateSubjectValuePort createSubjectValuePort;
     private final CreateAttributeValuePort createAttributeValuePort;
 
-    public Double calculate(AssessmentResult assessmentResult) {
+    public Double calculate(AssessmentResult assessmentResult, LocalDateTime kitLastMajorModificationTime) {
         UUID assessmentId = assessmentResult.getAssessment().getId();
-        reinitializeAssessmentResultIfRequired(assessmentResult);
+        reinitializeAssessmentResultIfRequired(assessmentResult, kitLastMajorModificationTime);
 
         AssessmentResult confidenceCalculatedInfo = loadConfidenceLevelCalculateInfoPort.load(assessmentId);
 
@@ -49,15 +48,9 @@ public class CalculateConfidenceHelper {
         return confidenceValue;
     }
 
-    private void reinitializeAssessmentResultIfRequired(AssessmentResult assessmentResult) {
-        if (isAssessmentResultReinitializationRequired(assessmentResult))
+    private void reinitializeAssessmentResultIfRequired(AssessmentResult assessmentResult, LocalDateTime kitLastMajorModificationTime) {
+        if (assessmentResult.getLastConfidenceCalculationTime().isBefore(kitLastMajorModificationTime))
             reinitializeAssessmentResult(assessmentResult);
-    }
-
-    private boolean isAssessmentResultReinitializationRequired(AssessmentResult assessmentResult) {
-        Long kitId = assessmentResult.getAssessment().getAssessmentKit().getId();
-        LocalDateTime kitLastMajorModificationTime = loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(kitId);
-        return assessmentResult.getLastConfidenceCalculationTime().isBefore(kitLastMajorModificationTime);
     }
 
     private void reinitializeAssessmentResult(AssessmentResult assessmentResult) {

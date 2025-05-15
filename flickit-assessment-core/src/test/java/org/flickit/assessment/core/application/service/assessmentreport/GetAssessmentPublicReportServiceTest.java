@@ -273,11 +273,12 @@ class GetAssessmentPublicReportServiceTest {
         assessmentResult = AssessmentResultMother.validResultWithKitCustomId(kitCustomId);
         var assessmentId = assessmentResult.getAssessment().getId();
         assessmentResult.setIsConfidenceValid(false);
+        LocalDateTime kitLastMajorModificationTime = assessmentResult.getLastCalculationTime();
 
         when(loadAssessmentReportPort.loadByLinkHash(param.getLinkHash())).thenReturn(publicReport);
         when(loadAssessmentResultPort.load(publicReport.getAssessmentResultId())).thenReturn(Optional.of(assessmentResult));
         when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(assessmentResult.getAssessment().getAssessmentKit().getId()))
-            .thenReturn(assessmentResult.getLastCalculationTime());
+            .thenReturn(kitLastMajorModificationTime);
         when(loadKitCustomLastModificationTimePort.loadLastModificationTime(kitCustomId))
             .thenReturn(assessmentResult.getLastCalculationTime().plusDays(1));
 
@@ -332,7 +333,7 @@ class GetAssessmentPublicReportServiceTest {
         assertFalse(result.permissions().canShareReport());
         assertTrue(result.permissions().canManageVisibility());
 
-        verify(calculateConfidenceHelper).calculate(assessmentResult);
+        verify(calculateConfidenceHelper).calculate(assessmentResult, kitLastMajorModificationTime);
         verify(calculateAssessmentHelper).calculateMaturityLevel(assessmentResult);
     }
 
@@ -341,13 +342,14 @@ class GetAssessmentPublicReportServiceTest {
         var assessmentId = assessmentResult.getAssessment().getId();
         assessmentResult.setIsCalculateValid(true);
         assessmentResult.setIsConfidenceValid(true);
+        LocalDateTime kitLastMajorModificationTime = assessmentResult.getLastCalculationTime().plusDays(1);
 
         when(loadAssessmentReportPort.loadByLinkHash(param.getLinkHash())).thenReturn(restrictedReport);
         when(loadAssessmentResultPort.load(restrictedReport.getAssessmentResultId())).thenReturn(Optional.of(assessmentResult));
         when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), VIEW_GRAPHICAL_REPORT))
             .thenReturn(true);
         when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(assessmentResult.getAssessment().getAssessmentKit().getId()))
-            .thenReturn(assessmentResult.getLastCalculationTime().plusDays(1));
+            .thenReturn(kitLastMajorModificationTime);
 
         var assessmentReport = createAssessmentReportItem(assessmentId);
 
@@ -397,7 +399,7 @@ class GetAssessmentPublicReportServiceTest {
         assertTrue(result.permissions().canShareReport());
         assertFalse(result.permissions().canManageVisibility());
 
-        verify(calculateConfidenceHelper).calculate(assessmentResult);
+        verify(calculateConfidenceHelper).calculate(assessmentResult, kitLastMajorModificationTime);
         verify(calculateAssessmentHelper).calculateMaturityLevel(assessmentResult);
         verifyNoInteractions(loadKitCustomLastModificationTimePort);
     }
