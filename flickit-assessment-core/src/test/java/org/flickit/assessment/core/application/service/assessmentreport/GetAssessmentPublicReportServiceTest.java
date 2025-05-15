@@ -332,7 +332,7 @@ class GetAssessmentPublicReportServiceTest {
         assertFalse(result.permissions().canShareReport());
         assertTrue(result.permissions().canManageVisibility());
 
-        verify(calculateConfidenceHelper).calculate(assessmentId);
+        verify(calculateConfidenceHelper).calculate(assessmentResult);
         verify(calculateAssessmentHelper).calculateMaturityLevel(assessmentResult);
     }
 
@@ -397,7 +397,7 @@ class GetAssessmentPublicReportServiceTest {
         assertTrue(result.permissions().canShareReport());
         assertFalse(result.permissions().canManageVisibility());
 
-        verify(calculateConfidenceHelper).calculate(assessmentId);
+        verify(calculateConfidenceHelper).calculate(assessmentResult);
         verify(calculateAssessmentHelper).calculateMaturityLevel(assessmentResult);
         verifyNoInteractions(loadKitCustomLastModificationTimePort);
     }

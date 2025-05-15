@@ -96,7 +96,7 @@ public class GetAssessmentPublicReportService implements GetAssessmentPublicRepo
 
         if (!isConfidenceValid) {
             log.info("Recalculating confidence for assessmentTitle=[{}] due to invalid confidence value.", assessmentTitle);
-            calculateConfidenceHelper.calculate(assessmentId);
+            calculateConfidenceHelper.calculate(assessmentResult);
         }
     }
 

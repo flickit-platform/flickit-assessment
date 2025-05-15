@@ -1,11 +1,9 @@
 package org.flickit.assessment.core.application.service.assessment;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.port.out.assessment.UpdateAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentkit.LoadKitLastMajorModificationTimePort;
-import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadConfidenceLevelCalculateInfoPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.UpdateCalculatedConfidencePort;
 import org.flickit.assessment.core.application.port.out.attributevalue.CreateAttributeValuePort;
@@ -18,14 +16,11 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.flickit.assessment.core.common.ErrorMessageKey.CALCULATE_CONFIDENCE_ASSESSMENT_RESULT_NOT_FOUND;
-
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class CalculateConfidenceHelper {
 
-    private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final LoadConfidenceLevelCalculateInfoPort loadConfidenceLevelCalculateInfoPort;
     private final UpdateCalculatedConfidencePort updateCalculatedConfidenceLevelResultPort;
     private final LoadKitLastMajorModificationTimePort loadKitLastMajorModificationTimePort;
@@ -34,28 +29,27 @@ public class CalculateConfidenceHelper {
     private final CreateSubjectValuePort createSubjectValuePort;
     private final CreateAttributeValuePort createAttributeValuePort;
 
-    public Double calculate(UUID assessmentId) {
-        reinitializeAssessmentResultIfRequired(assessmentId);
+    public Double calculate(AssessmentResult assessmentResult) {
+        UUID assessmentId = assessmentResult.getAssessment().getId();
+        reinitializeAssessmentResultIfRequired(assessmentResult);
 
-        AssessmentResult assessmentResult = loadConfidenceLevelCalculateInfoPort.load(assessmentId);
+        AssessmentResult confidenceCalculatedInfo = loadConfidenceLevelCalculateInfoPort.load(assessmentId);
 
-        Double confidenceValue = assessmentResult.calculateConfidenceValue();
+        Double confidenceValue = confidenceCalculatedInfo.calculateConfidenceValue();
 
-        assessmentResult.setConfidenceValue(confidenceValue);
-        assessmentResult.setIsConfidenceValid(Boolean.TRUE);
-        assessmentResult.setLastModificationTime(LocalDateTime.now());
-        assessmentResult.setLastConfidenceCalculationTime(LocalDateTime.now());
+        confidenceCalculatedInfo.setConfidenceValue(confidenceValue);
+        confidenceCalculatedInfo.setIsConfidenceValid(Boolean.TRUE);
+        confidenceCalculatedInfo.setLastModificationTime(LocalDateTime.now());
+        confidenceCalculatedInfo.setLastConfidenceCalculationTime(LocalDateTime.now());
 
-        updateCalculatedConfidenceLevelResultPort.updateCalculatedConfidence(assessmentResult);
+        updateCalculatedConfidenceLevelResultPort.updateCalculatedConfidence(confidenceCalculatedInfo);
 
-        updateAssessmentPort.updateLastModificationTime(assessmentId, assessmentResult.getLastModificationTime());
+        updateAssessmentPort.updateLastModificationTime(assessmentId, confidenceCalculatedInfo.getLastModificationTime());
 
         return confidenceValue;
     }
 
-    private void reinitializeAssessmentResultIfRequired(UUID assessmentId) {
-        var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(assessmentId)
-            .orElseThrow(() -> new ResourceNotFoundException(CALCULATE_CONFIDENCE_ASSESSMENT_RESULT_NOT_FOUND));
+    private void reinitializeAssessmentResultIfRequired(AssessmentResult assessmentResult) {
         if (isAssessmentResultReinitializationRequired(assessmentResult))
             reinitializeAssessmentResult(assessmentResult);
     }
