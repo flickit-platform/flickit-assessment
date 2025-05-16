@@ -25,6 +25,7 @@ import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAss
 import org.flickit.assessment.core.application.port.out.kitcustom.LoadKitCustomLastModificationTimePort;
 import org.flickit.assessment.core.application.service.assessment.CalculateAssessmentHelper;
 import org.flickit.assessment.core.application.service.assessment.CalculateConfidenceHelper;
+import org.flickit.assessment.core.application.service.assessment.MigrateAssessmentResultKitVersionHelper;
 import org.flickit.assessment.core.test.fixture.application.AssessmentReportMother;
 import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
@@ -96,6 +97,10 @@ class GetAssessmentPublicReportServiceTest {
     @Mock
     private LoadAssessmentResultPort loadAssessmentResultPort;
 
+    @Mock
+    private MigrateAssessmentResultKitVersionHelper migrateAssessmentResultKitVersionHelper;
+
+
     private Param param = createParam(Param.ParamBuilder::build);
     private AssessmentResult assessmentResult = AssessmentResultMother.validResultWithKitCustomId(null);
     private final AssessmentReport restrictedReport = AssessmentReportMother.restrictedAndPublishedReport();
@@ -118,6 +123,7 @@ class GetAssessmentPublicReportServiceTest {
             loadKitCustomLastModificationTimePort,
             calculateAssessmentHelper,
             calculateConfidenceHelper,
+            migrateAssessmentResultKitVersionHelper,
             loadAssessmentQuestionsPort,
             loadAdviceNarrationPort,
             loadAdviceItemsPort);
@@ -139,6 +145,7 @@ class GetAssessmentPublicReportServiceTest {
             loadKitCustomLastModificationTimePort,
             calculateAssessmentHelper,
             calculateConfidenceHelper,
+            migrateAssessmentResultKitVersionHelper,
             loadAssessmentReportInfoPort,
             loadAssessmentQuestionsPort,
             loadAdviceNarrationPort,
@@ -199,6 +206,7 @@ class GetAssessmentPublicReportServiceTest {
         assertFalse(result.permissions().canShareReport());
         verifyNoInteractions(assessmentAccessChecker,
             loadKitCustomLastModificationTimePort,
+            migrateAssessmentResultKitVersionHelper,
             calculateAssessmentHelper,
             calculateConfidenceHelper);
     }
@@ -336,6 +344,7 @@ class GetAssessmentPublicReportServiceTest {
 
         verify(calculateConfidenceHelper).calculate(assessmentResult, kitLastMajorModificationTime);
         verify(calculateAssessmentHelper).calculateMaturityLevel(assessmentResult, kitLastMajorModificationTime);
+        verifyNoInteractions(migrateAssessmentResultKitVersionHelper);
     }
 
     @Test
@@ -402,7 +411,68 @@ class GetAssessmentPublicReportServiceTest {
 
         verify(calculateConfidenceHelper).calculate(assessmentResult, kitLastMajorModificationTime);
         verify(calculateAssessmentHelper).calculateMaturityLevel(assessmentResult, kitLastMajorModificationTime);
-        verifyNoInteractions(loadKitCustomLastModificationTimePort);
+        verifyNoInteractions(loadKitCustomLastModificationTimePort, migrateAssessmentResultKitVersionHelper);
+    }
+
+    @Test
+    void testGetAssessmentPublicReport_whenAssessmentKitVersionMigrationNeeded_thenMigrateKitVersionAndReturnReport(){
+        param = createParam(p -> p.currentUserId(null));
+        assessmentResult = AssessmentResultMother.resultWithDeprecatedKitVersion(null, null, null, null);
+        var assessmentId = assessmentResult.getAssessment().getId();
+        LocalDateTime kitLastMajorModificationTime = LocalDateTime.now();
+
+        when(loadAssessmentReportPort.loadByLinkHash(param.getLinkHash())).thenReturn(publicReport);
+        when(loadAssessmentResultPort.load(publicReport.getAssessmentResultId())).thenReturn(Optional.of(assessmentResult));
+        when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(assessmentResult.getAssessment().getAssessmentKit().getId()))
+            .thenReturn(kitLastMajorModificationTime);
+
+        var assessmentReport = createAssessmentReportItem(assessmentId);
+
+        var teamLevel = levelTwo();
+        var attributeReportItem = new AttributeReportItem(15L, "Agility", "agility of team",
+            "in very good state", 1, 3, 63.0, levelThree());
+        var subjects = List.of(new AssessmentSubjectReportItem(2L, "team", 2,
+            "subject Insight", 58.6, teamLevel, List.of(attributeReportItem)));
+        var assessmentReportInfo = new LoadAssessmentReportInfoPort.Result(assessmentReport, subjects);
+
+        var report = publishedReportWithMetadata(fullMetadata());
+        var adviceNarration = "assessor narration";
+        var adviceItems = List.of(adviceItem(), adviceItem());
+
+        var measure1 = assessmentReport.assessmentKit().measures().getFirst();
+        var measure2 = assessmentReport.assessmentKit().measures().getLast();
+        var questionAnswers = List.of(
+            new LoadAssessmentQuestionsPort.Result(QuestionMother.withMeasure(measure1), answer(optionOne())),
+            new LoadAssessmentQuestionsPort.Result(QuestionMother.withMeasure(measure2), answer(optionFour())));
+
+        when(loadAssessmentReportInfoPort.load(assessmentId)).thenReturn(assessmentReportInfo);
+        when(loadAdviceNarrationPort.load(assessmentReport.assessmentResultId())).thenReturn(adviceNarration);
+        when(loadAdviceItemsPort.loadAll(assessmentReport.assessmentResultId())).thenReturn(adviceItems);
+        when(loadAssessmentQuestionsPort.loadApplicableQuestions(assessmentId))
+            .thenReturn(questionAnswers);
+
+        var result = service.getAssessmentPublicReport(param);
+
+        assertAssessmentReport(assessmentReport, result, report);
+        assertEquals(subjects.size(), result.subjects().size());
+        var expectedSubjectItem = subjects.getFirst();
+        var actualSubjectItem = result.subjects().getFirst();
+        assertSubjectItem(expectedSubjectItem, actualSubjectItem);
+        var expectedAttributeItem = expectedSubjectItem.attributes().getFirst();
+        var actualAttributeItem = actualSubjectItem.attributes().getFirst();
+        assertAttributeItem(expectedAttributeItem, actualAttributeItem);
+        assertEquals(adviceNarration, result.advice().narration());
+        assertEquals(adviceItems.size(), result.advice().adviceItems().size());
+        assertAdviceItem(adviceItems, result.advice().adviceItems(), assessmentReport.language());
+
+        assertFalse(result.permissions().canViewDashboard());
+        assertFalse(result.permissions().canManageVisibility());
+        assertFalse(result.permissions().canShareReport());
+
+        verify(calculateConfidenceHelper).calculate(assessmentResult, kitLastMajorModificationTime);
+        verify(calculateAssessmentHelper).calculateMaturityLevel(assessmentResult, kitLastMajorModificationTime);
+        verify(migrateAssessmentResultKitVersionHelper).migrateKitVersion(assessmentResult);
+        verify(loadKitCustomLastModificationTimePort).loadLastModificationTime(assessmentResult.getAssessment().getKitCustomId());
     }
 
     @Test
@@ -421,6 +491,7 @@ class GetAssessmentPublicReportServiceTest {
         verifyNoInteractions(loadAssessmentReportInfoPort,
             loadAssessmentQuestionsPort,
             loadKitCustomLastModificationTimePort,
+            migrateAssessmentResultKitVersionHelper,
             calculateAssessmentHelper,
             calculateConfidenceHelper,
             loadAdviceNarrationPort,

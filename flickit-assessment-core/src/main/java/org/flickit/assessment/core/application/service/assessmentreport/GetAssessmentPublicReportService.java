@@ -102,9 +102,8 @@ public class GetAssessmentPublicReportService implements GetAssessmentPublicRepo
         }
 
         if (!Objects.equals(assessmentResult.getAssessment().getAssessmentKit().getKitVersion(), assessmentResult.getKitVersionId())) {
-            log.info("Migrating kit version for [assessmentId={}, resultId={}, kitId={}].",
-                assessmentResult.getAssessment().getId(), assessmentResult.getId(), assessmentResult.getAssessment().getAssessmentKit().getId());
-            migrateAssessmentResultKitVersionHelper.migrateKitVersion(assessmentId);
+            log.info("Migrate kit version of assessmentId=[{}].", assessmentResult.getAssessment().getId());
+            migrateAssessmentResultKitVersionHelper.migrateKitVersion(assessmentResult);
         }
     }
 
