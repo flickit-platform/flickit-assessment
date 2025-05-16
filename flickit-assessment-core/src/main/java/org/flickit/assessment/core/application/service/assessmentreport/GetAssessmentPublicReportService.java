@@ -90,12 +90,12 @@ public class GetAssessmentPublicReportService implements GetAssessmentPublicRepo
         var assessmentResultId = assessmentResult.getId();
 
         if (!isCalculationValid) {
-            log.info("Recalculating assessment for resultId=[{}] of assessmentId=[{}] due to invalid calculation.", assessmentResultId, assessmentId);
+            log.info("Recalculate assessment for resultId=[{}] of assessmentId=[{}] due to invalid calculation.", assessmentResultId, assessmentId);
             calculateAssessmentHelper.calculateMaturityLevel(assessmentResult, kitLastMajorModificationTime);
         }
 
         if (!isConfidenceValid) {
-            log.info("Recalculating confidence for resultId=[{}] of assessmentId=[{}] due to invalid confidence value.", assessmentResultId, assessmentId);
+            log.info("Recalculate confidence for resultId=[{}] of assessmentId=[{}] due to invalid confidence value.", assessmentResultId, assessmentId);
             calculateConfidenceHelper.calculate(assessmentResult, kitLastMajorModificationTime);
         }
     }
