@@ -89,16 +89,16 @@ public class GetAssessmentPublicReportService implements GetAssessmentPublicRepo
         var isCalculationValid = calculateValid && calculationTimeValid && customKitUpdateTimeValid;
         var isConfidenceValid = confidenceValid && confidenceTimeValid;
         var assessmentId = assessmentResult.getAssessment().getId();
-        var assessmentTitle = assessmentResult.getAssessment().getTitle();
+        var assessmentResultId = assessmentResult.getId();
 
         if (!isCalculationValid) {
-            log.info("Recalculating assessment for assessmentTitle=[{}] due to invalid calculation.", assessmentTitle);
-            calculateAssessmentHelper.calculateMaturityLevel(assessmentId);
+            log.info("Recalculate assessment for resultId=[{}] of assessmentId=[{}] due to invalid calculation.", assessmentResultId, assessmentId);
+            calculateAssessmentHelper.calculateMaturityLevel(assessmentResult, kitLastMajorModificationTime);
         }
 
         if (!isConfidenceValid) {
-            log.info("Recalculating confidence for assessmentTitle=[{}] due to invalid confidence value.", assessmentTitle);
-            calculateConfidenceHelper.calculate(assessmentId);
+            log.info("Recalculate confidence for resultId=[{}] of assessmentId=[{}] due to invalid confidence value.", assessmentResultId, assessmentId);
+            calculateConfidenceHelper.calculate(assessmentResult, kitLastMajorModificationTime);
         }
 
         if (!Objects.equals(assessmentResult.getAssessment().getAssessmentKit().getKitVersion(), assessmentResult.getKitVersionId())) {
