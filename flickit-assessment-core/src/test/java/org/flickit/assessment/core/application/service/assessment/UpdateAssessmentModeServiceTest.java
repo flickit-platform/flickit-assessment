@@ -6,6 +6,7 @@ import org.flickit.assessment.core.application.port.in.assessment.UpdateAssessme
 import org.flickit.assessment.core.application.port.out.assessment.UpdateAssessmentPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -15,8 +16,7 @@ import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.UPDATE_ASSESSMENT_MODE;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -47,10 +47,15 @@ class UpdateAssessmentModeServiceTest {
     void updateAssessmentMode_whenParamsAreValid_thenSuccess() {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), UPDATE_ASSESSMENT_MODE))
             .thenReturn(true);
+        ArgumentCaptor<UpdateAssessmentPort.UpdateModeParam> argumentCaptor = ArgumentCaptor.forClass(UpdateAssessmentPort.UpdateModeParam.class);
 
         service.updateAssessmentMode(param);
+        verify(updateAssessmentPort).updateMode(argumentCaptor.capture());
 
-        verify(updateAssessmentPort).updateMode(param.getAssessmentId(), AssessmentMode.valueOf(param.getMode()));
+        assertEquals(param.getAssessmentId(), argumentCaptor.getValue().assessmentId());
+        assertEquals(AssessmentMode.ADVANCED, argumentCaptor.getValue().mode());
+        assertNotNull(argumentCaptor.getValue().lastModificationTime());
+        assertEquals(param.getCurrentUserId(), argumentCaptor.getValue().lastModifiedBy());
     }
 
     private UpdateAssessmentModeUseCase.Param createParam(Consumer<UpdateAssessmentModeUseCase.Param.ParamBuilder> changer) {
