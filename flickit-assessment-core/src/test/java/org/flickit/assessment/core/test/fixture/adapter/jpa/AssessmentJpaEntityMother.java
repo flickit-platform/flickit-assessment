@@ -1,5 +1,6 @@
 package org.flickit.assessment.core.test.fixture.adapter.jpa;
 
+import org.flickit.assessment.core.application.domain.AssessmentMode;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
 
 import java.time.LocalDateTime;
@@ -23,6 +24,7 @@ public class AssessmentJpaEntityMother {
             kitId++,
             1L,
             823L,
+            AssessmentMode.QUICK.getId(),
             LocalDateTime.now(),
             LocalDateTime.now(),
             NOT_DELETED_DELETION_TIME,

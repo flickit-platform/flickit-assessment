@@ -377,6 +377,7 @@ class CreateAssessmentServiceTest {
         assertEquals(param.getShortTitle(), createPortParam.getValue().shortTitle());
         assertEquals(param.getKitId(), createPortParam.getValue().assessmentKitId());
         assertEquals(param.getSpaceId(), createPortParam.getValue().spaceId());
+        assertEquals(AssessmentMode.QUICK, createPortParam.getValue().mode());
         assertNotNull(createPortParam.getValue().creationTime());
         assertEquals(0, createPortParam.getValue().deletionTime());
         assertFalse(createPortParam.getValue().deleted());
