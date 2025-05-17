@@ -18,9 +18,14 @@ import org.flickit.assessment.core.application.port.in.assessmentreport.GetAsses
 import org.flickit.assessment.core.application.port.out.adviceitem.LoadAdviceItemsPort;
 import org.flickit.assessment.core.application.port.out.advicenarration.LoadAdviceNarrationPort;
 import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentQuestionsPort;
+import org.flickit.assessment.core.application.port.out.assessmentkit.LoadKitLastMajorModificationTimePort;
 import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
+import org.flickit.assessment.core.application.port.out.kitcustom.LoadKitCustomLastModificationTimePort;
+import org.flickit.assessment.core.application.service.assessment.CalculateAssessmentHelper;
+import org.flickit.assessment.core.application.service.assessment.CalculateConfidenceHelper;
+import org.flickit.assessment.core.application.service.assessment.MigrateAssessmentResultKitVersionHelper;
 import org.flickit.assessment.core.test.fixture.application.AssessmentReportMother;
 import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
@@ -63,6 +68,18 @@ class GetAssessmentPublicReportServiceTest {
     private LoadAssessmentReportPort loadAssessmentReportPort;
 
     @Mock
+    private LoadKitLastMajorModificationTimePort loadKitLastMajorModificationTimePort;
+
+    @Mock
+    private LoadKitCustomLastModificationTimePort loadKitCustomLastModificationTimePort;
+
+    @Mock
+    private CalculateAssessmentHelper calculateAssessmentHelper;
+
+    @Mock
+    private CalculateConfidenceHelper calculateConfidenceHelper;
+
+    @Mock
     private AssessmentAccessChecker assessmentAccessChecker;
 
     @Mock
@@ -80,22 +97,33 @@ class GetAssessmentPublicReportServiceTest {
     @Mock
     private LoadAssessmentResultPort loadAssessmentResultPort;
 
-    private final AssessmentResult assessmentResult = AssessmentResultMother.validResult();
+    @Mock
+    private MigrateAssessmentResultKitVersionHelper migrateAssessmentResultKitVersionHelper;
+
+
+    private Param param = createParam(Param.ParamBuilder::build);
+    private AssessmentResult assessmentResult = AssessmentResultMother.validResultWithKitCustomId(null);
     private final AssessmentReport restrictedReport = AssessmentReportMother.restrictedAndPublishedReport();
     private final AssessmentReport notPublishedReport = AssessmentReportMother.publicAndNotPublishedReport();
     private final AssessmentReport publicReport = AssessmentReportMother.publicAndPublishedReport();
-    private final Param paramWithUserId = createParam(Param.ParamBuilder::build);
 
     @Test
     void testGetAssessmentPublicReport_whenReportIsRestrictedAndUserIsNotLoggedIn_thenThrowResourceNotFoundException() {
-        Param param = createParam(p -> p.currentUserId(null));
+        param = createParam(p -> p.currentUserId(null));
         when(loadAssessmentReportPort.loadByLinkHash(param.getLinkHash())).thenReturn(restrictedReport);
         when(loadAssessmentResultPort.load(restrictedReport.getAssessmentResultId())).thenReturn(Optional.of(assessmentResult));
+        when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(assessmentResult.getAssessment().getAssessmentKit().getId()))
+            .thenReturn(assessmentResult.getLastCalculationTime());
+
         var exception = assertThrows(ResourceNotFoundException.class, () -> service.getAssessmentPublicReport(param));
 
         assertEquals(ASSESSMENT_REPORT_LINK_HASH_NOT_FOUND, exception.getMessage());
         verifyNoInteractions(assessmentAccessChecker,
             loadAssessmentReportInfoPort,
+            loadKitCustomLastModificationTimePort,
+            calculateAssessmentHelper,
+            calculateConfidenceHelper,
+            migrateAssessmentResultKitVersionHelper,
             loadAssessmentQuestionsPort,
             loadAdviceNarrationPort,
             loadAdviceItemsPort);
@@ -103,13 +131,21 @@ class GetAssessmentPublicReportServiceTest {
 
     @Test
     void testGetAssessmentPublicReport_whenReportIsUnpublishedAndUserIsNotLoggedIn_thenThrowResourceNotFoundException() {
-        Param param = createParam(p -> p.currentUserId(null));
+        param = createParam(p -> p.currentUserId(null));
+
         when(loadAssessmentReportPort.loadByLinkHash(param.getLinkHash())).thenReturn(notPublishedReport);
         when(loadAssessmentResultPort.load(notPublishedReport.getAssessmentResultId())).thenReturn(Optional.of(assessmentResult));
+        when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(assessmentResult.getAssessment().getAssessmentKit().getId()))
+            .thenReturn(assessmentResult.getLastCalculationTime());
+
         var exception = assertThrows(ResourceNotFoundException.class, () -> service.getAssessmentPublicReport(param));
 
         assertEquals(ASSESSMENT_REPORT_LINK_HASH_NOT_FOUND, exception.getMessage());
         verifyNoInteractions(assessmentAccessChecker,
+            loadKitCustomLastModificationTimePort,
+            calculateAssessmentHelper,
+            calculateConfidenceHelper,
+            migrateAssessmentResultKitVersionHelper,
             loadAssessmentReportInfoPort,
             loadAssessmentQuestionsPort,
             loadAdviceNarrationPort,
@@ -118,11 +154,13 @@ class GetAssessmentPublicReportServiceTest {
 
     @Test
     void testGetAssessmentPublicReport_whenReportIsPublicAndUserIsNotLoggedIn_thenReturnReportWithoutPermissions() {
-        var param = createParam(p -> p.currentUserId(null));
+        param = createParam(p -> p.currentUserId(null));
         var assessmentId = assessmentResult.getAssessment().getId();
 
         when(loadAssessmentReportPort.loadByLinkHash(param.getLinkHash())).thenReturn(publicReport);
         when(loadAssessmentResultPort.load(publicReport.getAssessmentResultId())).thenReturn(Optional.of(assessmentResult));
+        when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(assessmentResult.getAssessment().getAssessmentKit().getId()))
+            .thenReturn(assessmentResult.getLastCalculationTime());
 
         var assessmentReport = createAssessmentReportItem(assessmentId);
 
@@ -166,15 +204,23 @@ class GetAssessmentPublicReportServiceTest {
         assertFalse(result.permissions().canViewDashboard());
         assertFalse(result.permissions().canManageVisibility());
         assertFalse(result.permissions().canShareReport());
-        verifyNoInteractions(assessmentAccessChecker);
+        verifyNoInteractions(assessmentAccessChecker,
+            loadKitCustomLastModificationTimePort,
+            migrateAssessmentResultKitVersionHelper,
+            calculateAssessmentHelper,
+            calculateConfidenceHelper);
     }
 
     @Test
     void testGetAssessmentPublicReport_whenReportIsPublicAndLoggedInUserLacksViewGraphicalReportPermission_thenReturnReportWithoutPermissions() {
         var assessmentId = assessmentResult.getAssessment().getId();
+        assessmentResult.setIsCalculateValid(false);
+        var kitLastMajorModificationTime = assessmentResult.getLastCalculationTime();
 
-        when(loadAssessmentReportPort.loadByLinkHash(paramWithUserId.getLinkHash())).thenReturn(publicReport);
+        when(loadAssessmentReportPort.loadByLinkHash(param.getLinkHash())).thenReturn(publicReport);
         when(loadAssessmentResultPort.load(publicReport.getAssessmentResultId())).thenReturn(Optional.of(assessmentResult));
+        when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(assessmentResult.getAssessment().getAssessmentKit().getId()))
+            .thenReturn(assessmentResult.getLastCalculationTime());
 
         var assessmentReport = createAssessmentReportItem(assessmentId);
 
@@ -200,14 +246,14 @@ class GetAssessmentPublicReportServiceTest {
         when(loadAdviceItemsPort.loadAll(assessmentReport.assessmentResultId())).thenReturn(adviceItems);
         when(loadAssessmentQuestionsPort.loadApplicableQuestions(assessmentId))
             .thenReturn(questionAnswers);
-        when(assessmentAccessChecker.isAuthorized(assessmentId, paramWithUserId.getCurrentUserId(), VIEW_DASHBOARD))
+        when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), VIEW_DASHBOARD))
             .thenReturn(false);
-        when(assessmentAccessChecker.isAuthorized(assessmentId, paramWithUserId.getCurrentUserId(), GRANT_ACCESS_TO_REPORT))
+        when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), GRANT_ACCESS_TO_REPORT))
             .thenReturn(false);
-        when(assessmentAccessChecker.isAuthorized(assessmentId, paramWithUserId.getCurrentUserId(), MANAGE_ASSESSMENT_REPORT_VISIBILITY))
+        when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), MANAGE_ASSESSMENT_REPORT_VISIBILITY))
             .thenReturn(false);
 
-        var result = service.getAssessmentPublicReport(paramWithUserId);
+        var result = service.getAssessmentPublicReport(param);
 
         assertAssessmentReport(assessmentReport, result, report);
         assertEquals(subjects.size(), result.subjects().size());
@@ -224,14 +270,26 @@ class GetAssessmentPublicReportServiceTest {
         assertFalse(result.permissions().canViewDashboard());
         assertFalse(result.permissions().canManageVisibility());
         assertFalse(result.permissions().canShareReport());
+
+        verify(calculateAssessmentHelper).calculateMaturityLevel(assessmentResult, kitLastMajorModificationTime);
+        verifyNoInteractions(loadKitCustomLastModificationTimePort,
+            calculateConfidenceHelper);
     }
 
     @Test
     void testGetAssessmentPublicReport_whenReportIsPublicAndUserIsLoggedIn_thenReturnReportWithPermissions() {
+        var kitCustomId = 123L;
+        assessmentResult = AssessmentResultMother.validResultWithKitCustomId(kitCustomId);
         var assessmentId = assessmentResult.getAssessment().getId();
+        assessmentResult.setIsConfidenceValid(false);
+        LocalDateTime kitLastMajorModificationTime = assessmentResult.getLastCalculationTime();
 
-        when(loadAssessmentReportPort.loadByLinkHash(paramWithUserId.getLinkHash())).thenReturn(publicReport);
+        when(loadAssessmentReportPort.loadByLinkHash(param.getLinkHash())).thenReturn(publicReport);
         when(loadAssessmentResultPort.load(publicReport.getAssessmentResultId())).thenReturn(Optional.of(assessmentResult));
+        when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(assessmentResult.getAssessment().getAssessmentKit().getId()))
+            .thenReturn(kitLastMajorModificationTime);
+        when(loadKitCustomLastModificationTimePort.loadLastModificationTime(kitCustomId))
+            .thenReturn(assessmentResult.getLastCalculationTime().plusDays(1));
 
         var assessmentReport = createAssessmentReportItem(assessmentId);
 
@@ -255,19 +313,19 @@ class GetAssessmentPublicReportServiceTest {
         when(loadAssessmentReportInfoPort.load(assessmentId)).thenReturn(assessmentReportInfo);
         when(loadAdviceNarrationPort.load(assessmentReport.assessmentResultId())).thenReturn(adviceNarration);
         when(loadAdviceItemsPort.loadAll(assessmentReport.assessmentResultId())).thenReturn(adviceItems);
-        when(assessmentAccessChecker.isAuthorized(assessmentId, paramWithUserId.getCurrentUserId(), VIEW_DASHBOARD))
+        when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), VIEW_DASHBOARD))
             .thenReturn(true);
-        when(assessmentAccessChecker.isAuthorized(assessmentId, paramWithUserId.getCurrentUserId(), GRANT_ACCESS_TO_REPORT))
+        when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), GRANT_ACCESS_TO_REPORT))
             .thenReturn(false);
-        when(assessmentAccessChecker.isAuthorized(assessmentId, paramWithUserId.getCurrentUserId(), MANAGE_ASSESSMENT_REPORT_VISIBILITY))
+        when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), MANAGE_ASSESSMENT_REPORT_VISIBILITY))
             .thenReturn(true);
 
         when(loadAssessmentQuestionsPort.loadApplicableQuestions(assessmentId))
             .thenReturn(questionAnswers);
 
-        var result = service.getAssessmentPublicReport(paramWithUserId);
+        var result = service.getAssessmentPublicReport(param);
 
-        verify(assessmentAccessChecker, never()).isAuthorized(assessmentId, paramWithUserId.getCurrentUserId(), VIEW_GRAPHICAL_REPORT);
+        verify(assessmentAccessChecker, never()).isAuthorized(assessmentId, param.getCurrentUserId(), VIEW_GRAPHICAL_REPORT);
 
         assertAssessmentReport(assessmentReport, result, report);
         assertEquals(subjects.size(), result.subjects().size());
@@ -283,16 +341,25 @@ class GetAssessmentPublicReportServiceTest {
         assertTrue(result.permissions().canViewDashboard());
         assertFalse(result.permissions().canShareReport());
         assertTrue(result.permissions().canManageVisibility());
+
+        verify(calculateConfidenceHelper).calculate(assessmentResult, kitLastMajorModificationTime);
+        verify(calculateAssessmentHelper).calculateMaturityLevel(assessmentResult, kitLastMajorModificationTime);
+        verifyNoInteractions(migrateAssessmentResultKitVersionHelper);
     }
 
     @Test
     void testGetAssessmentPublicReport_whenReportIsRestrictedAndLoggedInUserHasViewGraphicalReportPermission_thenReturnReportWithPermissions() {
         var assessmentId = assessmentResult.getAssessment().getId();
+        assessmentResult.setIsCalculateValid(true);
+        assessmentResult.setIsConfidenceValid(true);
+        LocalDateTime kitLastMajorModificationTime = assessmentResult.getLastCalculationTime().plusDays(1);
 
-        when(loadAssessmentReportPort.loadByLinkHash(paramWithUserId.getLinkHash())).thenReturn(restrictedReport);
+        when(loadAssessmentReportPort.loadByLinkHash(param.getLinkHash())).thenReturn(restrictedReport);
         when(loadAssessmentResultPort.load(restrictedReport.getAssessmentResultId())).thenReturn(Optional.of(assessmentResult));
-        when(assessmentAccessChecker.isAuthorized(assessmentId, paramWithUserId.getCurrentUserId(), VIEW_GRAPHICAL_REPORT))
+        when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), VIEW_GRAPHICAL_REPORT))
             .thenReturn(true);
+        when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(assessmentResult.getAssessment().getAssessmentKit().getId()))
+            .thenReturn(kitLastMajorModificationTime);
 
         var assessmentReport = createAssessmentReportItem(assessmentId);
 
@@ -316,16 +383,16 @@ class GetAssessmentPublicReportServiceTest {
         when(loadAssessmentReportInfoPort.load(assessmentId)).thenReturn(assessmentReportInfo);
         when(loadAdviceNarrationPort.load(assessmentReport.assessmentResultId())).thenReturn(adviceNarration);
         when(loadAdviceItemsPort.loadAll(assessmentReport.assessmentResultId())).thenReturn(adviceItems);
-        when(assessmentAccessChecker.isAuthorized(assessmentId, paramWithUserId.getCurrentUserId(), VIEW_DASHBOARD))
+        when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), VIEW_DASHBOARD))
             .thenReturn(true);
-        when(assessmentAccessChecker.isAuthorized(assessmentId, paramWithUserId.getCurrentUserId(), GRANT_ACCESS_TO_REPORT))
+        when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), GRANT_ACCESS_TO_REPORT))
             .thenReturn(true);
-        when(assessmentAccessChecker.isAuthorized(assessmentId, paramWithUserId.getCurrentUserId(), MANAGE_ASSESSMENT_REPORT_VISIBILITY))
+        when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), MANAGE_ASSESSMENT_REPORT_VISIBILITY))
             .thenReturn(false);
         when(loadAssessmentQuestionsPort.loadApplicableQuestions(assessmentId))
             .thenReturn(questionAnswers);
 
-        var result = service.getAssessmentPublicReport(paramWithUserId);
+        var result = service.getAssessmentPublicReport(param);
 
         assertAssessmentReport(assessmentReport, result, report);
         assertEquals(subjects.size(), result.subjects().size());
@@ -341,20 +408,92 @@ class GetAssessmentPublicReportServiceTest {
         assertTrue(result.permissions().canViewDashboard());
         assertTrue(result.permissions().canShareReport());
         assertFalse(result.permissions().canManageVisibility());
+
+        verify(calculateConfidenceHelper).calculate(assessmentResult, kitLastMajorModificationTime);
+        verify(calculateAssessmentHelper).calculateMaturityLevel(assessmentResult, kitLastMajorModificationTime);
+        verifyNoInteractions(loadKitCustomLastModificationTimePort, migrateAssessmentResultKitVersionHelper);
+    }
+
+    @Test
+    void testGetAssessmentPublicReport_whenAssessmentKitVersionMigrationNeeded_thenMigrateKitVersionAndReturnReport(){
+        param = createParam(p -> p.currentUserId(null));
+        assessmentResult = AssessmentResultMother.resultWithDeprecatedKitVersion(null, null, null, null);
+        var assessmentId = assessmentResult.getAssessment().getId();
+        LocalDateTime kitLastMajorModificationTime = LocalDateTime.now();
+
+        when(loadAssessmentReportPort.loadByLinkHash(param.getLinkHash())).thenReturn(publicReport);
+        when(loadAssessmentResultPort.load(publicReport.getAssessmentResultId())).thenReturn(Optional.of(assessmentResult));
+        when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(assessmentResult.getAssessment().getAssessmentKit().getId()))
+            .thenReturn(kitLastMajorModificationTime);
+
+        var assessmentReport = createAssessmentReportItem(assessmentId);
+
+        var teamLevel = levelTwo();
+        var attributeReportItem = new AttributeReportItem(15L, "Agility", "agility of team",
+            "in very good state", 1, 3, 63.0, levelThree());
+        var subjects = List.of(new AssessmentSubjectReportItem(2L, "team", 2,
+            "subject Insight", 58.6, teamLevel, List.of(attributeReportItem)));
+        var assessmentReportInfo = new LoadAssessmentReportInfoPort.Result(assessmentReport, subjects);
+
+        var report = publishedReportWithMetadata(fullMetadata());
+        var adviceNarration = "assessor narration";
+        var adviceItems = List.of(adviceItem(), adviceItem());
+
+        var measure1 = assessmentReport.assessmentKit().measures().getFirst();
+        var measure2 = assessmentReport.assessmentKit().measures().getLast();
+        var questionAnswers = List.of(
+            new LoadAssessmentQuestionsPort.Result(QuestionMother.withMeasure(measure1), answer(optionOne())),
+            new LoadAssessmentQuestionsPort.Result(QuestionMother.withMeasure(measure2), answer(optionFour())));
+
+        when(loadAssessmentReportInfoPort.load(assessmentId)).thenReturn(assessmentReportInfo);
+        when(loadAdviceNarrationPort.load(assessmentReport.assessmentResultId())).thenReturn(adviceNarration);
+        when(loadAdviceItemsPort.loadAll(assessmentReport.assessmentResultId())).thenReturn(adviceItems);
+        when(loadAssessmentQuestionsPort.loadApplicableQuestions(assessmentId))
+            .thenReturn(questionAnswers);
+
+        var result = service.getAssessmentPublicReport(param);
+
+        assertAssessmentReport(assessmentReport, result, report);
+        assertEquals(subjects.size(), result.subjects().size());
+        var expectedSubjectItem = subjects.getFirst();
+        var actualSubjectItem = result.subjects().getFirst();
+        assertSubjectItem(expectedSubjectItem, actualSubjectItem);
+        var expectedAttributeItem = expectedSubjectItem.attributes().getFirst();
+        var actualAttributeItem = actualSubjectItem.attributes().getFirst();
+        assertAttributeItem(expectedAttributeItem, actualAttributeItem);
+        assertEquals(adviceNarration, result.advice().narration());
+        assertEquals(adviceItems.size(), result.advice().adviceItems().size());
+        assertAdviceItem(adviceItems, result.advice().adviceItems(), assessmentReport.language());
+
+        assertFalse(result.permissions().canViewDashboard());
+        assertFalse(result.permissions().canManageVisibility());
+        assertFalse(result.permissions().canShareReport());
+
+        verify(calculateConfidenceHelper).calculate(assessmentResult, kitLastMajorModificationTime);
+        verify(calculateAssessmentHelper).calculateMaturityLevel(assessmentResult, kitLastMajorModificationTime);
+        verify(migrateAssessmentResultKitVersionHelper).migrateKitVersion(assessmentResult);
+        verify(loadKitCustomLastModificationTimePort).loadLastModificationTime(assessmentResult.getAssessment().getKitCustomId());
     }
 
     @Test
     void testGetAssessmentPublicReport_whenReportIsRestrictedAndLoggedInUserLacksViewGraphicalReportPermission_thenThrowResourceNotFoundException() {
-        when(loadAssessmentReportPort.loadByLinkHash(paramWithUserId.getLinkHash())).thenReturn(notPublishedReport);
+        when(loadAssessmentReportPort.loadByLinkHash(param.getLinkHash())).thenReturn(notPublishedReport);
         when(loadAssessmentResultPort.load(notPublishedReport.getAssessmentResultId())).thenReturn(Optional.of(assessmentResult));
-        when(assessmentAccessChecker.isAuthorized(assessmentResult.getAssessment().getId(), paramWithUserId.getCurrentUserId(), VIEW_GRAPHICAL_REPORT))
+        when(assessmentAccessChecker.isAuthorized(assessmentResult.getAssessment().getId(), param.getCurrentUserId(), VIEW_GRAPHICAL_REPORT))
             .thenReturn(false);
-        var exception = assertThrows(ResourceNotFoundException.class, () -> service.getAssessmentPublicReport(paramWithUserId));
+        when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(assessmentResult.getAssessment().getAssessmentKit().getId()))
+            .thenReturn(assessmentResult.getLastCalculationTime());
+
+        var exception = assertThrows(ResourceNotFoundException.class, () -> service.getAssessmentPublicReport(param));
 
         assertEquals(ASSESSMENT_REPORT_LINK_HASH_NOT_FOUND, exception.getMessage());
 
         verifyNoInteractions(loadAssessmentReportInfoPort,
             loadAssessmentQuestionsPort,
+            loadKitCustomLastModificationTimePort,
+            migrateAssessmentResultKitVersionHelper,
+            calculateAssessmentHelper,
+            calculateConfidenceHelper,
             loadAdviceNarrationPort,
             loadAdviceItemsPort);
     }
