@@ -1,6 +1,7 @@
 package org.flickit.assessment.core.application.port.out.assessment;
 
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.domain.AssessmentMode;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -8,6 +9,8 @@ import java.util.UUID;
 public interface UpdateAssessmentPort {
 
     Result update(AllParam param);
+
+    void updateMode(UUID assessmentId, AssessmentMode mode);
 
     record AllParam(UUID id,
                     String title,
