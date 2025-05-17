@@ -117,6 +117,7 @@ public enum AssessmentUserRole {
             CREATE_ASSESSMENT,
             DELETE_ASSESSMENT,
             UPDATE_ASSESSMENT,
+            UPDATE_ASSESSMENT_MODE,
             GRANT_USER_ASSESSMENT_ROLE,
             UPDATE_USER_ASSESSMENT_ROLE,
             DELETE_USER_ASSESSMENT_ROLE,
