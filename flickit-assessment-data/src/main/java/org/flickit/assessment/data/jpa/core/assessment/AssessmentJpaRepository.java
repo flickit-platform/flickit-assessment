@@ -186,8 +186,13 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
     @Modifying
     @Query("""
             UPDATE AssessmentJpaEntity a
-            SET a.mode = :mode
+                SET a.mode = :mode,
+                    a.lastModificationTime = :lastModificationTime,
+                    a.lastModifiedBy = :lastModifiedBy
             WHERE a.id = :assessmentId
         """)
-    void updateMode(@Param("assessmentId") UUID assessmentId, @Param("mode") Integer mode);
+    void updateMode(@Param("assessmentId") UUID assessmentId,
+                    @Param("mode") Integer mode,
+                    @Param("lastModificationTime") LocalDateTime lastModificationTime,
+                    @Param("lastModifiedBy") UUID lastModifiedBy);
 }

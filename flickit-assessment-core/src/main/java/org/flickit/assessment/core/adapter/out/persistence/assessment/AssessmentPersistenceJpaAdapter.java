@@ -212,10 +212,10 @@ public class AssessmentPersistenceJpaAdapter implements
     }
 
     @Override
-    public void updateMode(UUID assessmentId, AssessmentMode mode) {
-        if (!repository.existsByIdAndDeletedFalse(assessmentId))
+    public void updateMode(UpdateAssessmentPort.UpdateModeParam param) {
+        if (!repository.existsByIdAndDeletedFalse(param.assessmentId()))
             throw new ResourceNotFoundException(UPDATE_ASSESSMENT_MODE_ASSESSMENT_ID_NOT_FOUND);
-        repository.updateMode(assessmentId, mode.getId());
+        repository.updateMode(param.assessmentId(), param.mode().getId(), param.lastModificationTime(), param.lastModifiedBy());
     }
 
     @Override

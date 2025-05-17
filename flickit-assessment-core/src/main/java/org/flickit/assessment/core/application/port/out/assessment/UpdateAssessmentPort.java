@@ -10,7 +10,12 @@ public interface UpdateAssessmentPort {
 
     Result update(AllParam param);
 
-    void updateMode(UUID assessmentId, AssessmentMode mode);
+    void updateMode(UpdateModeParam param);
+
+    record UpdateModeParam(UUID assessmentId,
+                           AssessmentMode mode,
+                           LocalDateTime lastModificationTime,
+                           UUID lastModifiedBy) {}
 
     record AllParam(UUID id,
                     String title,
