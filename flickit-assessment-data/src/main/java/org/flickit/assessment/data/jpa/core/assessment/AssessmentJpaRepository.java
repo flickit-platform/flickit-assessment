@@ -182,4 +182,17 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
         """)
     List<QuestionAnswerView> findAttributeQuestionsAndAnswers(@Param("assessmentResultId") UUID assessmentResultId,
                                                               @Param("kitVersionId") Long kitVersionId);
+
+    @Modifying
+    @Query("""
+            UPDATE AssessmentJpaEntity a
+                SET a.mode = :mode,
+                    a.lastModificationTime = :lastModificationTime,
+                    a.lastModifiedBy = :lastModifiedBy
+            WHERE a.id = :assessmentId
+        """)
+    void updateMode(@Param("assessmentId") UUID assessmentId,
+                    @Param("mode") Integer mode,
+                    @Param("lastModificationTime") LocalDateTime lastModificationTime,
+                    @Param("lastModifiedBy") UUID lastModifiedBy);
 }

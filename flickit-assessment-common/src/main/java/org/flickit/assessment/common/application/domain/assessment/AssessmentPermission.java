@@ -10,6 +10,7 @@ public enum AssessmentPermission {
     CREATE_ASSESSMENT("createAssessment"),
     VIEW_ASSESSMENT("viewAssessment"),
     UPDATE_ASSESSMENT("updateAssessment"),
+    UPDATE_ASSESSMENT_MODE("updateAssessmentMode"),
     DELETE_ASSESSMENT("deleteAssessment"),
     VIEW_ASSESSMENT_LIST("viewAssessmentList"),
     VIEW_ASSESSMENT_PROGRESS("viewAssessmentProgress"),

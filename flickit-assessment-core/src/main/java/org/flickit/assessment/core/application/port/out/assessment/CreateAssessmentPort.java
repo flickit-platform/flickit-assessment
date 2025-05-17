@@ -1,5 +1,7 @@
 package org.flickit.assessment.core.application.port.out.assessment;
 
+import org.flickit.assessment.core.application.domain.AssessmentMode;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -12,6 +14,7 @@ public interface CreateAssessmentPort {
                  String shortTitle,
                  Long assessmentKitId,
                  Long spaceId,
+                 AssessmentMode mode,
                  LocalDateTime creationTime,
                  Long deletionTime,
                  boolean deleted,

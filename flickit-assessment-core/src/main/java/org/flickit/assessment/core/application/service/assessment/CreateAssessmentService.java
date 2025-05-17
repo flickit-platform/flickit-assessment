@@ -127,6 +127,7 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
             param.getShortTitle(),
             param.getKitId(),
             param.getSpaceId(),
+            AssessmentMode.QUICK,
             creationTime,
             NOT_DELETED_DELETION_TIME,
             false,
