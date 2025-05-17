@@ -1,6 +1,7 @@
 package org.flickit.assessment.core.application.service.assessment;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.port.out.assessment.UpdateAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadConfidenceLevelCalculateInfoPort;
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -49,8 +51,10 @@ public class CalculateConfidenceHelper {
     }
 
     private void reinitializeAssessmentResultIfRequired(AssessmentResult assessmentResult, LocalDateTime kitLastMajorModificationTime) {
-        if (assessmentResult.getLastConfidenceCalculationTime().isBefore(kitLastMajorModificationTime))
+        if (assessmentResult.getLastConfidenceCalculationTime().isBefore(kitLastMajorModificationTime)) {
+            log.info("Initialize assessment result for resultId=[{}] of assessmentId=[{}]", assessmentResult.getId(), assessmentResult.getAssessment().getId());
             reinitializeAssessmentResult(assessmentResult);
+        }
     }
 
     private void reinitializeAssessmentResult(AssessmentResult assessmentResult) {
