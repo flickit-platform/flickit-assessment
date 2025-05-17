@@ -23,6 +23,7 @@ public class AssessmentJpaEntityMother {
             kitId++,
             1L,
             823L,
+            0,
             LocalDateTime.now(),
             LocalDateTime.now(),
             NOT_DELETED_DELETION_TIME,
