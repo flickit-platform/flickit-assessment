@@ -11,6 +11,7 @@ public enum AssessmentPermission {
     VIEW_ASSESSMENT("viewAssessment"),
     UPDATE_ASSESSMENT("updateAssessment"),
     UPDATE_ASSESSMENT_MODE("updateAssessmentMode"),
+    CREATE_QUICK_ASSESSMENT_REPORT("createQuickAssessmentReport"),
     DELETE_ASSESSMENT("deleteAssessment"),
     VIEW_ASSESSMENT_LIST("viewAssessmentList"),
     VIEW_ASSESSMENT_PROGRESS("viewAssessmentProgress"),

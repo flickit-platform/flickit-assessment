@@ -18,6 +18,7 @@ class AssessmentPermissionTest {
             Map.entry(VIEW_ASSESSMENT, "viewAssessment"),
             Map.entry(UPDATE_ASSESSMENT, "updateAssessment"),
             Map.entry(UPDATE_ASSESSMENT_MODE, "updateAssessmentMode"),
+            Map.entry(CREATE_QUICK_ASSESSMENT_REPORT, "createQuickAssessmentReport"),
             Map.entry(DELETE_ASSESSMENT, "deleteAssessment"),
             Map.entry(VIEW_ASSESSMENT_LIST, "viewAssessmentList"),
             Map.entry(VIEW_ASSESSMENT_PROGRESS, "viewAssessmentProgress"),
@@ -81,6 +82,6 @@ class AssessmentPermissionTest {
         Arrays.stream(AssessmentPermission.values()).forEach(e ->
             assertTrue(permissionCodesMap.containsValue(e.getCode()))
         );
-        assertEquals(62, AssessmentPermission.values().length);
+        assertEquals(63, AssessmentPermission.values().length);
     }
 }
