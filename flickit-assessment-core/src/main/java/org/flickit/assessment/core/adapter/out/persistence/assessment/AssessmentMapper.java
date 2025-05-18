@@ -23,6 +23,7 @@ public class AssessmentMapper {
             param.assessmentKitId(),
             param.spaceId(),
             null,
+            param.mode().getId(),
             param.creationTime(),
             param.creationTime(),
             param.deletionTime(),
