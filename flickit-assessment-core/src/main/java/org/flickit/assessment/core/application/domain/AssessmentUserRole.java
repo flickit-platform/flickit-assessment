@@ -91,6 +91,7 @@ public enum AssessmentUserRole {
             ANSWER_QUESTION,
             VIEW_ATTRIBUTE_SCORE_DETAIL,
             CREATE_ADVICE,
+            UPDATE_ASSESSMENT_MODE,
             VIEW_ANSWER_HISTORY_LIST,
             CREATE_ATTRIBUTE_INSIGHT,
             CREATE_ASSESSMENT_INSIGHT,

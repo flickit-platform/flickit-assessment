@@ -211,6 +211,11 @@ public class AssessmentPersistenceJpaAdapter implements
     }
 
     @Override
+    public void updateMode(UpdateAssessmentPort.UpdateModeParam param) {
+        repository.updateMode(param.assessmentId(), param.mode().getId(), param.lastModificationTime(), param.lastModifiedBy());
+    }
+
+    @Override
     public GetAssessmentProgressPort.Result getProgress(UUID assessmentId) {
         var assessmentResult = resultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_PROGRESS_ASSESSMENT_NOT_FOUND));
