@@ -32,7 +32,7 @@ class UpdateAssessmentModeServiceTest {
     @Mock
     private UpdateAssessmentPort updateAssessmentPort;
 
-    UpdateAssessmentModeUseCase.Param param = createParam(UpdateAssessmentModeUseCase.Param.ParamBuilder::build);
+    private final UpdateAssessmentModeUseCase.Param param = createParam(UpdateAssessmentModeUseCase.Param.ParamBuilder::build);
 
     @Test
     void updateAssessmentMode_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
