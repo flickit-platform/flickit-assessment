@@ -43,7 +43,7 @@ class CreateQuickAssessmentReportServiceTest {
     private CreateAssessmentReportPort createAssessmentReportPort;
 
     @Captor
-    private ArgumentCaptor<CreateAssessmentReportPort.Param> argumentCaptor;
+    private ArgumentCaptor<CreateAssessmentReportPort.QuickAssessmentReportParam> argumentCaptor;
 
     private final CreateQuickAssessmentReportUseCase.Param param = createParam(CreateQuickAssessmentReportUseCase.Param.ParamBuilder::build);
     private final AssessmentResult assessmentResult = AssessmentResultMother.validResult();
@@ -77,7 +77,6 @@ class CreateQuickAssessmentReportServiceTest {
         verify(createAssessmentReportPort).persist(argumentCaptor.capture());
 
         assertEquals(assessmentResult.getId(), argumentCaptor.getValue().assessmentResultId());
-        assertNull(argumentCaptor.getValue().metadata());
         assertEquals(param.getCurrentUserId(), argumentCaptor.getValue().createdBy());
         assertNotNull(argumentCaptor.getValue().creationTime());
     }

@@ -14,9 +14,21 @@ public interface CreateAssessmentReportPort {
      */
     void persist(Param param);
 
+    /**
+     * Persists a new quick assessment report in an UNPUBLISHED and RESTRICTED state.
+     *
+     * @param param
+     */
+    void persist(QuickAssessmentReportParam param);
+
     record Param(UUID assessmentResultId,
                  AssessmentReportMetadata metadata,
                  LocalDateTime creationTime,
                  UUID createdBy) {
+    }
+
+    record QuickAssessmentReportParam(UUID assessmentResultId,
+                                      LocalDateTime creationTime,
+                                      UUID createdBy){
     }
 }

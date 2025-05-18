@@ -39,4 +39,17 @@ public class AssessmentReportMapper {
             param.createdBy(),
             param.createdBy());
     }
+
+    public static AssessmentReportJpaEntity mapToJpaEntity(CreateAssessmentReportPort.QuickAssessmentReportParam param) {
+        return new AssessmentReportJpaEntity(null,
+            param.assessmentResultId(),
+            null,
+            Boolean.TRUE,
+            VisibilityType.RESTRICTED.getId(),
+            UUID.randomUUID(),
+            param.creationTime(),
+            param.creationTime(),
+            param.createdBy(),
+            param.createdBy());
+    }
 }

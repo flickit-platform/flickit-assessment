@@ -57,6 +57,11 @@ public class AssessmentReportPersistenceJpaAdapter implements
     }
 
     @Override
+    public void persist(CreateAssessmentReportPort.QuickAssessmentReportParam param) {
+        repository.save(mapToJpaEntity(param));
+    }
+
+    @Override
     @SneakyThrows
     public void updateMetadata(UpdateAssessmentReportPort.UpdateMetadataParam param) {
         repository.updateMetadata(param.id(),
