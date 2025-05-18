@@ -53,7 +53,7 @@ class UpdateAssessmentModeServiceTest {
         verify(updateAssessmentPort).updateMode(argumentCaptor.capture());
 
         assertEquals(param.getAssessmentId(), argumentCaptor.getValue().assessmentId());
-        assertEquals(AssessmentMode.ADVANCED, argumentCaptor.getValue().mode());
+        assertEquals(AssessmentMode.valueOf(param.getMode()), argumentCaptor.getValue().mode());
         assertNotNull(argumentCaptor.getValue().lastModificationTime());
         assertEquals(param.getCurrentUserId(), argumentCaptor.getValue().lastModifiedBy());
     }
