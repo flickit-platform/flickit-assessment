@@ -16,31 +16,30 @@ class UpdateAssessmentModeUseCaseParamTest {
     @Test
     void testUpdateAssessmentModeUseCaseParam_assessmentIdParamIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.assessmentId(null)));
+                () -> createParam(b -> b.assessmentId(null)));
         assertThat(throwable).hasMessage("assessmentId: " + UPDATE_ASSESSMENT_MODE_ID_NOT_NULL);
     }
 
     @Test
     void testUpdateAssessmentModeUseCaseParam_modeParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.mode(null)));
+                () -> createParam(b -> b.mode(null)));
         assertThat(throwable).hasMessage("mode: " + UPDATE_ASSESSMENT_MODE_MODE_NOT_NULL);
 
         throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.mode("invalid_mode")));
+                () -> createParam(b -> b.mode("invalid_mode")));
         assertThat(throwable).hasMessage("mode: " + UPDATE_ASSESSMENT_MODE_MODE_INVALID);
-
     }
 
     @Test
-    void testUpdateAssessmentModeUseCaseParam_modeParamIsAdvanced_Success() {
-        assertDoesNotThrow(() ->createParam(b -> b.mode("ADVANCED")));
+    void testUpdateAssessmentModeUseCaseParam_modeParamIsValid_Success() {
+        assertDoesNotThrow(() -> createParam(b -> b.mode("ADVANCED")));
     }
 
     @Test
     void testUpdateAssessmentModeUseCaseParam_currentUserIdParamIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.currentUserId(null)));
+                () -> createParam(b -> b.currentUserId(null)));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 
@@ -52,8 +51,8 @@ class UpdateAssessmentModeUseCaseParamTest {
 
     private UpdateAssessmentModeUseCase.Param.ParamBuilder paramBuilder() {
         return UpdateAssessmentModeUseCase.Param.builder()
-            .assessmentId(UUID.randomUUID())
-            .mode("QUICK")
-            .currentUserId(UUID.randomUUID());
+                .assessmentId(UUID.randomUUID())
+                .mode("QUICK")
+                .currentUserId(UUID.randomUUID());
     }
 }
