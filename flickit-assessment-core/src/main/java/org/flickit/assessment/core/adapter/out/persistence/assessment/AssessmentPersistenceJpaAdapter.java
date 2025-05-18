@@ -10,7 +10,6 @@ import org.flickit.assessment.core.adapter.out.persistence.kit.question.Question
 import org.flickit.assessment.core.adapter.out.persistence.kit.questionimpact.QuestionImpactMapper;
 import org.flickit.assessment.core.application.domain.Assessment;
 import org.flickit.assessment.core.application.domain.AssessmentListItem;
-import org.flickit.assessment.core.application.domain.AssessmentMode;
 import org.flickit.assessment.core.application.port.out.assessment.*;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
@@ -213,8 +212,6 @@ public class AssessmentPersistenceJpaAdapter implements
 
     @Override
     public void updateMode(UpdateAssessmentPort.UpdateModeParam param) {
-        if (!repository.existsByIdAndDeletedFalse(param.assessmentId()))
-            throw new ResourceNotFoundException(UPDATE_ASSESSMENT_MODE_ASSESSMENT_ID_NOT_FOUND);
         repository.updateMode(param.assessmentId(), param.mode().getId(), param.lastModificationTime(), param.lastModifiedBy());
     }
 
