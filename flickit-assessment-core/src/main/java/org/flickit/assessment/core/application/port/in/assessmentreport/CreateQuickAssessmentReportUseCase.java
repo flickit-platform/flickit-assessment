@@ -11,7 +11,7 @@ import java.util.UUID;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSMENT_QUICK_REPORT_ASSESSMENT_ID_NOT_NULL;
 
-public interface CreateAssessmentQuickReportUseCase {
+public interface CreateQuickAssessmentReportUseCase {
 
     void create(Param param);
 
