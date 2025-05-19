@@ -1,16 +1,20 @@
 package org.flickit.assessment.core.application.service.assessmentreport;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.port.in.assessmentreport.CreateQuickAssessmentReportUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentreport.CreateAssessmentReportPort;
+import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
+import org.flickit.assessment.core.application.service.insight.InitInsightsHelper;
+import org.flickit.assessment.core.application.service.insight.RegenerateExpiredInsightsHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Locale;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_QUICK_ASSESSMENT_REPORT;
@@ -24,6 +28,9 @@ public class CreateQuickAssessmentReportService implements CreateQuickAssessment
 
     private final AssessmentAccessChecker assessmentAccessChecker;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
+    private final InitInsightsHelper initInsightsHelper;
+    private final RegenerateExpiredInsightsHelper regenerateExpiredInsightsHelper;
+    private final LoadAssessmentReportPort loadAssessmentReportPort;
     private final CreateAssessmentReportPort createAssessmentReportPort;
 
     @Override
@@ -34,12 +41,17 @@ public class CreateQuickAssessmentReportService implements CreateQuickAssessment
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
 
-        createAssessmentReportPort.persist(toParam(assessmentResult.getId(), param.getCurrentUserId()));
+        var locale = Locale.of(assessmentResult.getLanguage().getCode());
+        initInsightsHelper.initInsights(assessmentResult, locale);
+        regenerateExpiredInsightsHelper.regenerateExpiredInsights(assessmentResult, locale);
+
+        if (loadAssessmentReportPort.load(param.getAssessmentId()).isEmpty())
+            createAssessmentReportPort.persist(toParam(assessmentResult.getId(), param.getCurrentUserId()));
+
     }
 
     private CreateAssessmentReportPort.QuickAssessmentReportParam toParam(UUID assessmentResultId, UUID currentUserId) {
-        return new CreateAssessmentReportPort.QuickAssessmentReportParam(
-            assessmentResultId,
+        return new CreateAssessmentReportPort.QuickAssessmentReportParam(assessmentResultId,
             LocalDateTime.now(),
             currentUserId
         );
