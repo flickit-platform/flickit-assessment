@@ -4,9 +4,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import org.flickit.assessment.common.application.MessageBundle;
 
-import java.util.Objects;
-import java.util.stream.Stream;
-
 @Getter
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum AssessmentMode {
@@ -22,11 +19,14 @@ public enum AssessmentMode {
         return MessageBundle.message(getClass().getSimpleName() + "_" + name());
     }
 
-    public static AssessmentMode valueOfById(Integer id) {
-        return Stream.of(AssessmentMode.values())
-            .filter(x -> Objects.equals(x.getId(), id))
-            .findFirst()
-            .orElse(null);
+    public static AssessmentMode valueOfById(int id) {
+        if (!isValidId(id))
+            return null;
+        return values()[id];
+    }
+
+    public static boolean isValidId(int id) {
+        return id >= 0 && id < AssessmentMode.values().length;
     }
 
     public int getId() {
