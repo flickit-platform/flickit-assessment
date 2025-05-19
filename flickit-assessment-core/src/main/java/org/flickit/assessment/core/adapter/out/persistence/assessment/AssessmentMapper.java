@@ -6,6 +6,7 @@ import org.flickit.assessment.core.adapter.out.persistence.kit.assessmentkit.Ass
 import org.flickit.assessment.core.adapter.out.persistence.space.SpaceMapper;
 import org.flickit.assessment.core.application.domain.Assessment;
 import org.flickit.assessment.core.application.domain.AssessmentKit;
+import org.flickit.assessment.core.application.domain.AssessmentMode;
 import org.flickit.assessment.core.application.domain.Space;
 import org.flickit.assessment.core.application.port.out.assessment.CreateAssessmentPort;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
@@ -48,6 +49,7 @@ public class AssessmentMapper {
             kit,
             space,
             assessment.getKitCustomId(),
+            AssessmentMode.valueOfById(assessment.getMode()),
             assessment.getCreationTime(),
             assessment.getLastModificationTime(),
             assessment.getDeletionTime(),

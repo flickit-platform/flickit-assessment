@@ -3,6 +3,7 @@ package org.flickit.assessment.core.test.fixture.application;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.core.application.domain.Assessment;
 import org.flickit.assessment.core.application.domain.AssessmentListItem;
+import org.flickit.assessment.core.application.domain.AssessmentMode;
 
 import java.time.LocalDateTime;
 import java.util.Random;
@@ -26,6 +27,7 @@ public class AssessmentMother {
             AssessmentKitMother.kitWithLanguage(language),
             SpaceMother.createBasicSpace(),
             234L,
+            AssessmentMode.ADVANCED,
             LocalDateTime.now(),
             LocalDateTime.now(),
             0L,
@@ -44,6 +46,7 @@ public class AssessmentMother {
             AssessmentKitMother.AssessmentKitWithoutActiveKitVersion(),
             SpaceMother.createBasicSpace(),
             234L,
+            AssessmentMode.ADVANCED,
             LocalDateTime.now(),
             LocalDateTime.now(),
             0L,

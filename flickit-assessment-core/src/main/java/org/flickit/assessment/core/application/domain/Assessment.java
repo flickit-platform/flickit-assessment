@@ -17,6 +17,7 @@ public class Assessment {
     private final AssessmentKit assessmentKit;
     private final Space space;
     private final Long kitCustomId;
+    private final AssessmentMode mode;
     private final LocalDateTime creationTime;
     private final LocalDateTime lastModificationTime;
     private final long deletionTime;
