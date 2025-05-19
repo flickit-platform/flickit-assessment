@@ -9,6 +9,7 @@ import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.domain.User;
 import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentUseCase;
 import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentUseCase.Result.Language;
+import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentUseCase.Result.Mode;
 import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
@@ -70,7 +71,7 @@ public class GetAssessmentService implements GetAssessmentUseCase {
             assessment.getSpace(),
             assessment.getKitCustomId(),
             new Result.AssessmentKit(assessmentKit.getId(), assessmentKit.getTitle()),
-            Result.Mode.of(assessment.getMode()),
+            Mode.of(assessment.getMode()),
             assessment.getCreationTime(),
             assessment.getLastModificationTime(),
             new User(createdBy.getId(), createdBy.getDisplayName(), null),
