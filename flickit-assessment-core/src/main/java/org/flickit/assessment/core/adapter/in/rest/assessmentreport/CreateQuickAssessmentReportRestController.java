@@ -29,6 +29,5 @@ public class CreateQuickAssessmentReportRestController {
 
     private Param toParam(UUID assessmentId, UUID currentUserId) {
         return new Param(assessmentId, currentUserId);
-
     }
 }
