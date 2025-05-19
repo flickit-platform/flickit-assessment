@@ -42,6 +42,7 @@ public class GetAssessmentRestController {
             result.maturityLevel(),
             result.isCalculateValid(),
             result.language(),
+            result.mode(),
             result.manageable(),
             result.viewable());
     }

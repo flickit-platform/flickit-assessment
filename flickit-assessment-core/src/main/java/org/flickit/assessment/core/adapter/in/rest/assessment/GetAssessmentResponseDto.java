@@ -1,6 +1,7 @@
 package org.flickit.assessment.core.adapter.in.rest.assessment;
 
 import org.flickit.assessment.core.application.domain.MaturityLevel;
+import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentUseCase.Result.Mode;
 import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentUseCase.Result.Language;
 
 import java.time.LocalDateTime;
@@ -19,6 +20,7 @@ public record GetAssessmentResponseDto(
     MaturityLevel maturityLevel,
     boolean isCalculateValid,
     Language language,
+    Mode mode,
     boolean manageable,
     boolean viewable) {
 
