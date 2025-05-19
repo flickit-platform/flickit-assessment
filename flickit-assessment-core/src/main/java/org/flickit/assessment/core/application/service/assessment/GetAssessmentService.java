@@ -70,6 +70,7 @@ public class GetAssessmentService implements GetAssessmentUseCase {
             assessment.getSpace(),
             assessment.getKitCustomId(),
             new Result.AssessmentKit(assessmentKit.getId(), assessmentKit.getTitle()),
+            Result.Mode.of(assessment.getMode()),
             assessment.getCreationTime(),
             assessment.getLastModificationTime(),
             new User(createdBy.getId(), createdBy.getDisplayName(), null),
