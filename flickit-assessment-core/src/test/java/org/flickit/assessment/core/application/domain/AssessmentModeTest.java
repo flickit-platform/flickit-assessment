@@ -25,6 +25,12 @@ class AssessmentModeTest {
     }
 
     @Test
+    void testAssessmentMode_ValueOfByIdMethodShouldReturnCorrectMode() {
+        assertEquals(AssessmentMode.QUICK, AssessmentMode.valueOfById(0));
+        assertEquals(AssessmentMode.ADVANCED, AssessmentMode.valueOfById(1));
+    }
+
+    @Test
     void testAssessmentMode_SizeOfItemsShouldNotBeChanged() {
         assertEquals(2, AssessmentMode.values().length);
     }
