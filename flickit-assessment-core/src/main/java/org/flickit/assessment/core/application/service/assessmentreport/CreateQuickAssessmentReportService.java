@@ -47,7 +47,6 @@ public class CreateQuickAssessmentReportService implements CreateQuickAssessment
 
         if (loadAssessmentReportPort.load(param.getAssessmentId()).isEmpty())
             createAssessmentReportPort.persist(toParam(assessmentResult.getId(), param.getCurrentUserId()));
-
     }
 
     private CreateAssessmentReportPort.QuickAssessmentReportParam toParam(UUID assessmentResultId, UUID currentUserId) {

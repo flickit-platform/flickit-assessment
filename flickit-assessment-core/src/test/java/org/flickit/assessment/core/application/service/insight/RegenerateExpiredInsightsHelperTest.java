@@ -4,7 +4,6 @@ import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.insight.AssessmentInsight;
 import org.flickit.assessment.core.application.domain.insight.SubjectInsight;
-import org.flickit.assessment.core.application.port.out.attribute.LoadAttributesPort;
 import org.flickit.assessment.core.application.port.out.insight.assessment.LoadAssessmentInsightPort;
 import org.flickit.assessment.core.application.port.out.insight.assessment.UpdateAssessmentInsightPort;
 import org.flickit.assessment.core.application.port.out.insight.attribute.LoadAttributeInsightsPort;
@@ -187,18 +186,5 @@ class RegenerateExpiredInsightsHelperTest {
 
         verifyNoInteractions(updateAttributeInsightPort, updateSubjectInsightPort, updateAssessmentInsightPort,
             createAttributeAiInsightHelper, createSubjectInsightsHelper, createAssessmentInsightHelper);
-    }
-
-    private static LoadAttributesPort.Result createAttribute() {
-        return new LoadAttributesPort.Result(1769L,
-            "Software Reliability" + 13,
-            "How?",
-            13,
-            3,
-            11.22,
-            new LoadAttributesPort.MaturityLevel(1991L,
-                "Unprepared" + 13,
-                "causing frequent issues and inefficiencies. " + 13, 13, 4),
-            new LoadAttributesPort.Subject(464L, "Software" + 13));
     }
 }
