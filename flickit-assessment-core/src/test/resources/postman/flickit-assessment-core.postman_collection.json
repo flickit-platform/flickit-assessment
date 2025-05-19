@@ -2089,6 +2089,36 @@
 					"response": []
 				},
 				{
+					"name": "Create Quick Assessment Report",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/1124cf20-51eb-4de6-ae6f-096fb4d92adb/quick-report",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"1124cf20-51eb-4de6-ae6f-096fb4d92adb",
+								"quick-report"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Get Assessment Public Report",
 					"request": {
 						"method": "GET",
