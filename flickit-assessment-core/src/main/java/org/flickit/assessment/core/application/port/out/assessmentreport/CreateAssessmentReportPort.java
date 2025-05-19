@@ -29,6 +29,6 @@ public interface CreateAssessmentReportPort {
 
     record QuickAssessmentReportParam(UUID assessmentResultId,
                                       LocalDateTime creationTime,
-                                      UUID createdBy){
+                                      UUID createdBy) {
     }
 }
