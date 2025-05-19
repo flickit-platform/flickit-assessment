@@ -38,10 +38,10 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @ExtendWith(MockitoExtension.class)
-class InitInsightsHelperTest {
+class InitAssessmentInsightsHelperTest {
 
     @InjectMocks
-    private InitInsightsHelper helper;
+    private InitAssessmentInsightsHelper helper;
 
     @Mock
     private LoadAttributesPort loadAttributesPort;

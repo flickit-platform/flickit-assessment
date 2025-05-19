@@ -8,7 +8,7 @@ import org.flickit.assessment.core.application.port.in.assessmentreport.CreateQu
 import org.flickit.assessment.core.application.port.out.assessmentreport.CreateAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
-import org.flickit.assessment.core.application.service.insight.InitInsightsHelper;
+import org.flickit.assessment.core.application.service.insight.InitAssessmentInsightsHelper;
 import org.flickit.assessment.core.application.service.insight.RegenerateExpiredInsightsHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +28,7 @@ public class CreateQuickAssessmentReportService implements CreateQuickAssessment
 
     private final AssessmentAccessChecker assessmentAccessChecker;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
-    private final InitInsightsHelper initInsightsHelper;
+    private final InitAssessmentInsightsHelper initAssessmentInsightsHelper;
     private final RegenerateExpiredInsightsHelper regenerateExpiredInsightsHelper;
     private final LoadAssessmentReportPort loadAssessmentReportPort;
     private final CreateAssessmentReportPort createAssessmentReportPort;
@@ -42,7 +42,7 @@ public class CreateQuickAssessmentReportService implements CreateQuickAssessment
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
 
         var locale = Locale.of(assessmentResult.getLanguage().getCode());
-        initInsightsHelper.initInsights(assessmentResult, locale);
+        initAssessmentInsightsHelper.initInsights(assessmentResult, locale);
         regenerateExpiredInsightsHelper.regenerateExpiredInsights(assessmentResult, locale);
 
         if (loadAssessmentReportPort.load(param.getAssessmentId()).isEmpty())

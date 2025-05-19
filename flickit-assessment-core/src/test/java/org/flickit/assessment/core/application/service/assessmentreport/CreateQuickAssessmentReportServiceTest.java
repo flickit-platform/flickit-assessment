@@ -8,7 +8,7 @@ import org.flickit.assessment.core.application.port.in.assessmentreport.CreateQu
 import org.flickit.assessment.core.application.port.out.assessmentreport.CreateAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
-import org.flickit.assessment.core.application.service.insight.InitInsightsHelper;
+import org.flickit.assessment.core.application.service.insight.InitAssessmentInsightsHelper;
 import org.flickit.assessment.core.application.service.insight.RegenerateExpiredInsightsHelper;
 import org.flickit.assessment.core.test.fixture.application.AssessmentReportMother;
 import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
@@ -47,7 +47,7 @@ class CreateQuickAssessmentReportServiceTest {
     private CreateAssessmentReportPort createAssessmentReportPort;
 
     @Mock
-    private InitInsightsHelper initInsightsHelper;
+    private InitAssessmentInsightsHelper initAssessmentInsightsHelper;
 
     @Mock
     private RegenerateExpiredInsightsHelper regenerateExpiredInsightsHelper;
@@ -69,7 +69,7 @@ class CreateQuickAssessmentReportServiceTest {
         var throwable = assertThrows(AccessDeniedException.class, () -> service.create(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
-        verifyNoInteractions(loadAssessmentResultPort, createAssessmentReportPort, initInsightsHelper, regenerateExpiredInsightsHelper, loadAssessmentReportPort);
+        verifyNoInteractions(loadAssessmentResultPort, createAssessmentReportPort, initAssessmentInsightsHelper, regenerateExpiredInsightsHelper, loadAssessmentReportPort);
     }
 
     @Test
@@ -81,7 +81,7 @@ class CreateQuickAssessmentReportServiceTest {
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.create(param));
         assertEquals(COMMON_ASSESSMENT_RESULT_NOT_FOUND, throwable.getMessage());
 
-        verifyNoInteractions(createAssessmentReportPort, initInsightsHelper, regenerateExpiredInsightsHelper, loadAssessmentReportPort);
+        verifyNoInteractions(createAssessmentReportPort, initAssessmentInsightsHelper, regenerateExpiredInsightsHelper, loadAssessmentReportPort);
     }
 
     @Test
@@ -99,7 +99,7 @@ class CreateQuickAssessmentReportServiceTest {
         assertNotNull(argumentCaptor.getValue().creationTime());
 
         var locale = Locale.of(assessmentResult.getLanguage().getCode());
-        verify(initInsightsHelper).initInsights(assessmentResult, locale);
+        verify(initAssessmentInsightsHelper).initInsights(assessmentResult, locale);
         verify(regenerateExpiredInsightsHelper).regenerateExpiredInsights(assessmentResult, locale);
     }
 
@@ -113,7 +113,7 @@ class CreateQuickAssessmentReportServiceTest {
         service.create(param);
 
         var locale = Locale.of(assessmentResult.getLanguage().getCode());
-        verify(initInsightsHelper).initInsights(assessmentResult, locale);
+        verify(initAssessmentInsightsHelper).initInsights(assessmentResult, locale);
         verify(regenerateExpiredInsightsHelper).regenerateExpiredInsights(assessmentResult, locale);
 
         verifyNoInteractions(createAssessmentReportPort);

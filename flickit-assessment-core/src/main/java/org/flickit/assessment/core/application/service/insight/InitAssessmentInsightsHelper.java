@@ -29,7 +29,7 @@ import static java.util.stream.Collectors.toList;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class InitInsightsHelper {
+public class InitAssessmentInsightsHelper {
 
     private final LoadAttributesPort loadAttributesPort;
     private final LoadAttributeInsightsPort loadAttributeInsightsPort;
