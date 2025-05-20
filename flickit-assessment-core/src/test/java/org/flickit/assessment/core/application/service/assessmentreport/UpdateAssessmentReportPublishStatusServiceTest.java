@@ -51,7 +51,7 @@ class UpdateAssessmentReportPublishStatusServiceTest {
     private UpdateAssessmentReportPort updateAssessmentReportPort;
 
     @Captor
-    ArgumentCaptor<UpdateAssessmentReportPort.UpdatePublishParam> updatePublishPortParam;
+    ArgumentCaptor<UpdateAssessmentReportPort.UpdatePublishParam> updatePublishPortParamCaptor;
 
     @Captor
     ArgumentCaptor<CreateAssessmentReportPort.Param> assessmentReportCaptor;
@@ -100,17 +100,14 @@ class UpdateAssessmentReportPublishStatusServiceTest {
         when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.of(assessmentReport));
 
         service.updateReportPublishStatus(param);
+        verify(updateAssessmentReportPort, times(1)).updatePublishStatus(updatePublishPortParamCaptor.capture());
 
-        verify(updateAssessmentReportPort, times(1)).updatePublishStatus(updatePublishPortParam.capture());
-
-        assertEquals(assessmentResult.getId(), updatePublishPortParam.getValue().assessmentResultId());
-        assertNotNull(updatePublishPortParam.getValue().lastModificationTime());
-        assertEquals(param.getCurrentUserId(), updatePublishPortParam.getValue().lastModifiedBy());
-        assertEquals(VisibilityType.RESTRICTED, updatePublishPortParam.getValue().visibilityType());
-        assertEquals(assessmentResult.getId(), updatePublishPortParam.getValue().assessmentResultId());
-        assertTrue(updatePublishPortParam.getValue().published());
-        assertEquals(param.getCurrentUserId(), updatePublishPortParam.getValue().lastModifiedBy());
-        assertNotNull(updatePublishPortParam.getValue().lastModificationTime());
+        assertEquals(assessmentResult.getId(), updatePublishPortParamCaptor.getValue().assessmentResultId());
+        assertNotNull(updatePublishPortParamCaptor.getValue().lastModificationTime());
+        assertEquals(param.getCurrentUserId(), updatePublishPortParamCaptor.getValue().lastModifiedBy());
+        assertEquals(VisibilityType.RESTRICTED, updatePublishPortParamCaptor.getValue().visibilityType());
+        assertTrue(updatePublishPortParamCaptor.getValue().published());
+        assertNotNull(updatePublishPortParamCaptor.getValue().lastModificationTime());
 
         verifyNoInteractions(createAssessmentReportPort);
     }
@@ -131,9 +128,9 @@ class UpdateAssessmentReportPublishStatusServiceTest {
         assertEquals(assessmentResult.getId(), assessmentReportCaptor.getValue().assessmentResultId());
         assertNotNull(assessmentReportCaptor.getValue().creationTime());
         assertEquals(param.getCurrentUserId(), assessmentReportCaptor.getValue().createdBy());
+        assertEquals(VisibilityType.RESTRICTED, assessmentReportCaptor.getValue().visibilityType());
         assertNotNull(assessmentReportCaptor.getValue().creationTime());
         assertEquals(param.getPublished(), assessmentReportCaptor.getValue().published());
-        assertEquals(VisibilityType.RESTRICTED, assessmentReportCaptor.getValue().visibilityType());
 
         verifyNoInteractions(updateAssessmentReportPort);
     }
@@ -150,18 +147,14 @@ class UpdateAssessmentReportPublishStatusServiceTest {
         when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.of(assessmentReport));
 
         service.updateReportPublishStatus(param);
+        verify(updateAssessmentReportPort, times(1)).updatePublishStatus(updatePublishPortParamCaptor.capture());
 
-        verify(updateAssessmentReportPort, times(1)).updatePublishStatus(updatePublishPortParam.capture());
-
-        assertEquals(assessmentResult.getId(), updatePublishPortParam.getValue().assessmentResultId());
-        assertNotNull(updatePublishPortParam.getValue().lastModificationTime());
-        assertEquals(param.getCurrentUserId(), updatePublishPortParam.getValue().lastModifiedBy());
-        assertEquals(VisibilityType.RESTRICTED, updatePublishPortParam.getValue().visibilityType());
-        assertEquals(assessmentResult.getId(), updatePublishPortParam.getValue().assessmentResultId());
-        assertFalse(updatePublishPortParam.getValue().published());
-        assertEquals(assessmentReport.getVisibility(), updatePublishPortParam.getValue().visibilityType());
-        assertNotNull(updatePublishPortParam.getValue().lastModificationTime());
-        assertEquals(param.getPublished(), updatePublishPortParam.getValue().published());
+        assertEquals(assessmentResult.getId(), updatePublishPortParamCaptor.getValue().assessmentResultId());
+        assertNotNull(updatePublishPortParamCaptor.getValue().lastModificationTime());
+        assertEquals(param.getCurrentUserId(), updatePublishPortParamCaptor.getValue().lastModifiedBy());
+        assertEquals(assessmentReport.getVisibility(), updatePublishPortParamCaptor.getValue().visibilityType());
+        assertNotNull(updatePublishPortParamCaptor.getValue().lastModificationTime());
+        assertEquals(param.getPublished(), updatePublishPortParamCaptor.getValue().published());
 
         verifyNoInteractions(createAssessmentReportPort);
     }
@@ -178,18 +171,14 @@ class UpdateAssessmentReportPublishStatusServiceTest {
         when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.of(assessmentReport));
 
         service.updateReportPublishStatus(param);
+        verify(updateAssessmentReportPort, times(1)).updatePublishStatus(updatePublishPortParamCaptor.capture());
 
-        verify(updateAssessmentReportPort, times(1)).updatePublishStatus(updatePublishPortParam.capture());
-
-        assertEquals(assessmentResult.getId(), updatePublishPortParam.getValue().assessmentResultId());
-        assertNotNull(updatePublishPortParam.getValue().lastModificationTime());
-        assertEquals(param.getCurrentUserId(), updatePublishPortParam.getValue().lastModifiedBy());
-        assertEquals(VisibilityType.RESTRICTED, updatePublishPortParam.getValue().visibilityType());
-        assertEquals(assessmentResult.getId(), updatePublishPortParam.getValue().assessmentResultId());
-        assertTrue(updatePublishPortParam.getValue().published());
-        assertEquals(param.getCurrentUserId(), updatePublishPortParam.getValue().lastModifiedBy());
-        assertNotNull(updatePublishPortParam.getValue().lastModificationTime());
-        assertEquals(param.getPublished(), updatePublishPortParam.getValue().published());
+        assertEquals(assessmentResult.getId(), updatePublishPortParamCaptor.getValue().assessmentResultId());
+        assertNotNull(updatePublishPortParamCaptor.getValue().lastModificationTime());
+        assertEquals(VisibilityType.RESTRICTED, updatePublishPortParamCaptor.getValue().visibilityType());
+        assertEquals(param.getCurrentUserId(), updatePublishPortParamCaptor.getValue().lastModifiedBy());
+        assertNotNull(updatePublishPortParamCaptor.getValue().lastModificationTime());
+        assertEquals(param.getPublished(), updatePublishPortParamCaptor.getValue().published());
 
         verifyNoInteractions(createAssessmentReportPort);
     }
