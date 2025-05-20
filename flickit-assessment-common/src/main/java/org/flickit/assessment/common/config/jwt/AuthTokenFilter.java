@@ -30,7 +30,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 context.setUser(user);
             }
         } catch (Exception e) {
-            logger.error("Can not set user UserContext", e);
+			logger.error("Cannot set user UserContext", e);
         }
 
         filterChain.doFilter(request, response);

@@ -9,7 +9,7 @@ import java.util.List;
 public class PaginatedResponse<T> {
 
     /**
-     * The items in the requested page, can not be null.
+	 * The items in the requested page, cannot be null.
      */
     @NonNull
     List<T> items;
