@@ -10,6 +10,7 @@ import org.flickit.assessment.core.adapter.out.persistence.kit.question.Question
 import org.flickit.assessment.core.adapter.out.persistence.kit.questionimpact.QuestionImpactMapper;
 import org.flickit.assessment.core.application.domain.Assessment;
 import org.flickit.assessment.core.application.domain.AssessmentListItem;
+import org.flickit.assessment.core.application.domain.AssessmentMode;
 import org.flickit.assessment.core.application.port.out.assessment.*;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
@@ -117,6 +118,7 @@ public class AssessmentPersistenceJpaAdapter implements
                     e.getAssessmentResult().getIsCalculateValid(),
                     e.getAssessmentResult().getIsConfidenceValid(),
                     KitLanguage.valueOfById(e.getAssessmentKit().getLanguageId()),
+                    AssessmentMode.valueOfById(e.getAssessment().getMode()),
                     null,
                     false);
             }).toList();
@@ -181,6 +183,7 @@ public class AssessmentPersistenceJpaAdapter implements
                     e.getAssessmentResult().getIsCalculateValid(),
                     e.getAssessmentResult().getIsConfidenceValid(),
                     KitLanguage.valueOfById(e.getAssessmentResult().getLangId()),
+                    AssessmentMode.valueOfById(e.getAssessment().getMode()),
                     e.getManageable(),
                     e.getHasReport());
             }).toList();

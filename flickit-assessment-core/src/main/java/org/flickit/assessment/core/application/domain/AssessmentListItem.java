@@ -15,6 +15,7 @@ public record AssessmentListItem(UUID id,
                                  boolean isCalculateValid,
                                  boolean isConfidenceValid,
                                  KitLanguage language,
+                                 AssessmentMode mode,
                                  Boolean manageable,
                                  boolean hasReport) {
 
