@@ -129,7 +129,7 @@ class GetSpaceAssessmentListServiceTest {
         assertFalse(firstAssessment.permissions().canViewReport());
         assertFalse(firstAssessment.permissions().canViewDashboard());
         assertTrue(firstAssessment.permissions().canViewQuestionnaires());
-        assertEquals(assessment1.mode().getCode(), firstAssessment.mode());
+        assertEquals(assessment1.mode().getCode(), firstAssessment.mode().code());
 
         // for second assessment
         var secondAssessment = result.getItems().get(1);
@@ -139,7 +139,7 @@ class GetSpaceAssessmentListServiceTest {
         assertTrue(secondAssessment.permissions().canViewReport());
         assertFalse(secondAssessment.permissions().canViewDashboard());
         assertTrue(secondAssessment.permissions().canViewQuestionnaires());
-        assertEquals(assessment2.mode().getCode(), secondAssessment.mode());
+        assertEquals(assessment2.mode().getCode(), secondAssessment.mode().code());
 
         // for third assessment
         var thirdAssessment = result.getItems().getLast();
@@ -149,7 +149,7 @@ class GetSpaceAssessmentListServiceTest {
         assertTrue(thirdAssessment.permissions().canViewReport());
         assertTrue(thirdAssessment.permissions().canViewDashboard());
         assertTrue(thirdAssessment.permissions().canViewQuestionnaires());
-        assertEquals(assessment3.mode().getCode(), thirdAssessment.mode());
+        assertEquals(assessment3.mode().getCode(), thirdAssessment.mode().code());
     }
 
     private static void assertPaginationProperties(PaginatedResponse<AssessmentListItem> expected,
