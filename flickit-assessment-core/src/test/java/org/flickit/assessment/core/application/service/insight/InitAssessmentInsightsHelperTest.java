@@ -208,7 +208,6 @@ class InitAssessmentInsightsHelperTest {
         );
     }
 
-
     private static LoadAttributesPort.Result createAttribute() {
         return new LoadAttributesPort.Result(1769L,
             "Software Reliability" + 13,
@@ -222,4 +221,3 @@ class InitAssessmentInsightsHelperTest {
             new LoadAttributesPort.Subject(464L, "Software" + 13));
     }
 }
-
