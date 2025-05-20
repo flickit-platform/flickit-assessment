@@ -13,7 +13,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.PREPARE_REPORT_
 
 public interface PrepareReportUseCase {
 
-    void create(Param param);
+    void prepareReport(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)

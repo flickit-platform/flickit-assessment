@@ -22,7 +22,7 @@ public class PrepareReportRestController {
     @PostMapping("/assessments/{assessmentId}/prepare-report")
     ResponseEntity<Void> prepareReport(@PathVariable("assessmentId") UUID assessmentId) {
         UUID userId = userContext.getUser().id();
-        useCase.create(toParam(assessmentId, userId));
+        useCase.prepareReport(toParam(assessmentId, userId));
 
         return new ResponseEntity<>(HttpStatus.OK);
     }

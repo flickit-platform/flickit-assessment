@@ -66,7 +66,7 @@ class PrepareReportServiceTest {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_QUICK_ASSESSMENT_REPORT))
                 .thenReturn(false);
 
-        var throwable = assertThrows(AccessDeniedException.class, () -> service.create(param));
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.prepareReport(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
         verifyNoInteractions(loadAssessmentResultPort, createAssessmentReportPort, initAssessmentInsightsHelper, regenerateExpiredInsightsHelper, loadAssessmentReportPort);
@@ -78,20 +78,20 @@ class PrepareReportServiceTest {
                 .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.empty());
 
-        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.create(param));
+        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.prepareReport(param));
         assertEquals(COMMON_ASSESSMENT_RESULT_NOT_FOUND, throwable.getMessage());
 
         verifyNoInteractions(createAssessmentReportPort, initAssessmentInsightsHelper, regenerateExpiredInsightsHelper, loadAssessmentReportPort);
     }
 
     @Test
-    void testCreateAssessmentReport_whenParamsAreValid_thenInitOrGenerateInsightsWithCreatingReport() {
+    void testPrepareReport_whenParamsAreValid_thenInitOrGenerateInsightsWithCreatingReport() {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_QUICK_ASSESSMENT_REPORT))
                 .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.empty());
 
-        service.create(param);
+        service.prepareReport(param);
         verify(createAssessmentReportPort).persist(argumentCaptor.capture());
 
         assertEquals(assessmentResult.getId(), argumentCaptor.getValue().assessmentResultId());
@@ -104,13 +104,13 @@ class PrepareReportServiceTest {
     }
 
     @Test
-    void testCreateAssessmentReport_whenParamsAreValidAndReportAlreadyExists_thenInitOrGenerateInsightsWithoutCreatingReport() {
+    void testPrepareReport_whenParamsAreValidAndReportAlreadyExists_thenInitOrGenerateInsightsWithoutCreatingReport() {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_QUICK_ASSESSMENT_REPORT))
                 .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.of(AssessmentReportMother.empty()));
 
-        service.create(param);
+        service.prepareReport(param);
 
         var locale = Locale.of(assessmentResult.getLanguage().getCode());
         verify(initAssessmentInsightsHelper).initInsights(assessmentResult, locale);

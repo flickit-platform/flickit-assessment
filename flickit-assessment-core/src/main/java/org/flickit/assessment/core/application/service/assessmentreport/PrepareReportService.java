@@ -35,7 +35,7 @@ public class PrepareReportService implements PrepareReportUseCase {
     private final CreateAssessmentReportPort createAssessmentReportPort;
 
     @Override
-    public void create(Param param) {
+    public void prepareReport(Param param) {
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_QUICK_ASSESSMENT_REPORT))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
