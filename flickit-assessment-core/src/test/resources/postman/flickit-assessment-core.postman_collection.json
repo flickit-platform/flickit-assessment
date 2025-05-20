@@ -2089,7 +2089,7 @@
 					"response": []
 				},
 				{
-					"name": "Create Quick Assessment Report",
+					"name": "Prepare Report",
 					"request": {
 						"method": "POST",
 						"header": [
