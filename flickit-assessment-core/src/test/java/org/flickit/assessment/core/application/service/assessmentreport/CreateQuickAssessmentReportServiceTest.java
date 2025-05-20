@@ -3,10 +3,12 @@ package org.flickit.assessment.core.application.service.assessmentreport;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.domain.AssessmentReport;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.port.in.assessmentreport.PrepareReportUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentreport.CreateAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportPort;
+import org.flickit.assessment.core.application.port.out.assessmentreport.UpdateAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.service.insight.InitAssessmentInsightsHelper;
 import org.flickit.assessment.core.application.service.insight.RegenerateExpiredInsightsHelper;
@@ -55,8 +57,14 @@ class PrepareReportServiceTest {
     @Mock
     private LoadAssessmentReportPort loadAssessmentReportPort;
 
+    @Mock
+    private UpdateAssessmentReportPort updateAssessmentReportPort;
+
     @Captor
     private ArgumentCaptor<CreateAssessmentReportPort.Param> argumentCaptor;
+
+    @Captor
+    private ArgumentCaptor<UpdateAssessmentReportPort.UpdatePublishParam> updatePublishPortParam;
 
     private final PrepareReportUseCase.Param param = createParam(PrepareReportUseCase.Param.ParamBuilder::build);
     private final AssessmentResult assessmentResult = AssessmentResultMother.validResult();
@@ -69,7 +77,8 @@ class PrepareReportServiceTest {
         var throwable = assertThrows(AccessDeniedException.class, () -> service.prepareReport(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
-        verifyNoInteractions(loadAssessmentResultPort, createAssessmentReportPort, initAssessmentInsightsHelper, regenerateExpiredInsightsHelper, loadAssessmentReportPort);
+        verifyNoInteractions(loadAssessmentResultPort, createAssessmentReportPort,
+                initAssessmentInsightsHelper, regenerateExpiredInsightsHelper, loadAssessmentReportPort, updateAssessmentReportPort);
     }
 
     @Test
@@ -81,7 +90,8 @@ class PrepareReportServiceTest {
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.prepareReport(param));
         assertEquals(COMMON_ASSESSMENT_RESULT_NOT_FOUND, throwable.getMessage());
 
-        verifyNoInteractions(createAssessmentReportPort, initAssessmentInsightsHelper, regenerateExpiredInsightsHelper, loadAssessmentReportPort);
+        verifyNoInteractions(createAssessmentReportPort, initAssessmentInsightsHelper, regenerateExpiredInsightsHelper,
+                loadAssessmentReportPort, updateAssessmentReportPort);
     }
 
     @Test
@@ -101,20 +111,31 @@ class PrepareReportServiceTest {
         var locale = Locale.of(assessmentResult.getLanguage().getCode());
         verify(initAssessmentInsightsHelper).initInsights(assessmentResult, locale);
         verify(regenerateExpiredInsightsHelper).regenerateExpiredInsights(assessmentResult, locale);
+
+        verifyNoInteractions(updateAssessmentReportPort);
     }
 
     @Test
     void testPrepareReport_whenParamsAreValidAndReportAlreadyExists_thenInitOrGenerateInsightsWithoutCreatingReport() {
+        AssessmentReport assessmentReport = AssessmentReportMother.empty();
+
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_QUICK_ASSESSMENT_REPORT))
                 .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
-        when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.of(AssessmentReportMother.empty()));
+        when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.of(assessmentReport));
 
         service.prepareReport(param);
 
         var locale = Locale.of(assessmentResult.getLanguage().getCode());
         verify(initAssessmentInsightsHelper).initInsights(assessmentResult, locale);
         verify(regenerateExpiredInsightsHelper).regenerateExpiredInsights(assessmentResult, locale);
+        verify(updateAssessmentReportPort).updatePublishStatus(updatePublishPortParam.capture());
+
+        assertEquals(assessmentResult.getId(), updatePublishPortParam.getValue().assessmentResultId());
+        assertTrue(updatePublishPortParam.getValue().published());
+        assertNotNull(updatePublishPortParam.getValue().lastModificationTime());
+        assertEquals(assessmentReport.getVisibility(), updatePublishPortParam.getValue().visibilityType());
+        assertEquals(param.getCurrentUserId(), updatePublishPortParam.getValue().lastModifiedBy());
 
         verifyNoInteractions(createAssessmentReportPort);
     }

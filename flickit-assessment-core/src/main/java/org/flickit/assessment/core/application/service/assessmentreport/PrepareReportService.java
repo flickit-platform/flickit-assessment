@@ -8,6 +8,7 @@ import org.flickit.assessment.core.application.domain.VisibilityType;
 import org.flickit.assessment.core.application.port.in.assessmentreport.PrepareReportUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentreport.CreateAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportPort;
+import org.flickit.assessment.core.application.port.out.assessmentreport.UpdateAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.service.insight.InitAssessmentInsightsHelper;
 import org.flickit.assessment.core.application.service.insight.RegenerateExpiredInsightsHelper;
@@ -33,6 +34,7 @@ public class PrepareReportService implements PrepareReportUseCase {
     private final RegenerateExpiredInsightsHelper regenerateExpiredInsightsHelper;
     private final LoadAssessmentReportPort loadAssessmentReportPort;
     private final CreateAssessmentReportPort createAssessmentReportPort;
+    private final UpdateAssessmentReportPort updateAssessmentReportPort;
 
     @Override
     public void prepareReport(Param param) {
@@ -46,8 +48,20 @@ public class PrepareReportService implements PrepareReportUseCase {
         initAssessmentInsightsHelper.initInsights(assessmentResult, locale);
         regenerateExpiredInsightsHelper.regenerateExpiredInsights(assessmentResult, locale);
 
-        if (loadAssessmentReportPort.load(param.getAssessmentId()).isEmpty())
+        var report = loadAssessmentReportPort.load(param.getAssessmentId());
+        if (report.isEmpty())
             createAssessmentReportPort.persist(toParam(assessmentResult.getId(), param.getCurrentUserId()));
+        else if (!report.get().isPublished())
+            updateAssessmentReportPort.updatePublishStatus(
+                toUpdateParam(assessmentResult.getId(), report.get().getVisibility(), param.getCurrentUserId()));
+    }
+
+    private UpdateAssessmentReportPort.UpdatePublishParam toUpdateParam(UUID assessmentResultId, VisibilityType visibilityType, UUID currentUserId) {
+        return new UpdateAssessmentReportPort.UpdatePublishParam(assessmentResultId,
+            Boolean.TRUE,
+            visibilityType,
+            LocalDateTime.now(),
+            currentUserId);
     }
 
     private CreateAssessmentReportPort.Param toParam(UUID assessmentResultId, UUID currentUserId) {
