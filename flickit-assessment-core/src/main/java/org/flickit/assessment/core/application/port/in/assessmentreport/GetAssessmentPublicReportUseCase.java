@@ -38,8 +38,7 @@ public interface GetAssessmentPublicReportUseCase {
                   Advice advice,
                   AssessmentProcess assessmentProcess,
                   Permissions permissions,
-                  Language lang,
-                  Mode mode) {
+                  Language lang) {
     }
 
     record Assessment(String title,
@@ -49,6 +48,7 @@ public interface GetAssessmentPublicReportUseCase {
                       AssessmentKit assessmentKit,
                       MaturityLevel maturityLevel,
                       double confidenceValue,
+                      Mode mode,
                       LocalDateTime creationTime) {
     }
 

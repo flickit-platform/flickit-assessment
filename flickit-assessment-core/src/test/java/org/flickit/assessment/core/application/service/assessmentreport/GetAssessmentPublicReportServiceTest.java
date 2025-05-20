@@ -163,6 +163,7 @@ class GetAssessmentPublicReportServiceTest {
         assertEquals(adviceNarration, result.advice().narration());
         assertEquals(adviceItems.size(), result.advice().adviceItems().size());
         assertAdviceItem(adviceItems, result.advice().adviceItems(), assessmentReport.language());
+        assertEquals(result.assessment().mode().code(), assessmentReport.mode().getCode());
 
         assertFalse(result.permissions().canViewDashboard());
         assertFalse(result.permissions().canManageVisibility());
@@ -221,6 +222,7 @@ class GetAssessmentPublicReportServiceTest {
         assertEquals(adviceNarration, result.advice().narration());
         assertEquals(adviceItems.size(), result.advice().adviceItems().size());
         assertAdviceItem(adviceItems, result.advice().adviceItems(), assessmentReport.language());
+        assertEquals(result.assessment().mode().code(), assessmentReport.mode().getCode());
 
         assertFalse(result.permissions().canViewDashboard());
         assertFalse(result.permissions().canManageVisibility());
@@ -284,6 +286,7 @@ class GetAssessmentPublicReportServiceTest {
         assertTrue(result.permissions().canViewDashboard());
         assertFalse(result.permissions().canShareReport());
         assertTrue(result.permissions().canManageVisibility());
+        assertEquals(result.assessment().mode().code(), assessmentReport.mode().getCode());
     }
 
     @Test
@@ -342,6 +345,7 @@ class GetAssessmentPublicReportServiceTest {
         assertTrue(result.permissions().canViewDashboard());
         assertTrue(result.permissions().canShareReport());
         assertFalse(result.permissions().canManageVisibility());
+        assertEquals(result.assessment().mode().code(), assessmentReport.mode().getCode());
     }
 
     @Test

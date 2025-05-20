@@ -95,8 +95,7 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
             toAssessmentProcess(metadata),
             toPermissions(param.getAssessmentId(), published, param.getCurrentUserId()),
             toLanguage(assessment.language()),
-            visibility.name(),
-            toMode(assessment.mode()));
+            visibility.name());
     }
 
     private List<MaturityLevel> toMaturityLevels(AssessmentKitItem assessmentKitItem) {
@@ -130,6 +129,7 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
             toAssessmentKit(assessmentKitItem, attributesCount, levels),
             maturityLevelMap.get(assessment.maturityLevel().getId()),
             assessment.confidenceValue(),
+            toMode(assessment.mode()),
             assessment.creationTime());
     }
 
