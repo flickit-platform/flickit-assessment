@@ -2104,15 +2104,15 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessments/1124cf20-51eb-4de6-ae6f-096fb4d92adb/quick-report",
+							"raw": "{{base_url}}/{{api_path}}/assessments/83349858-c15a-4d53-b380-330180dfe514/prepare-report",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"{{api_path}}",
 								"assessments",
-								"1124cf20-51eb-4de6-ae6f-096fb4d92adb",
-								"quick-report"
+								"83349858-c15a-4d53-b380-330180dfe514",
+								"prepare-report"
 							]
 						}
 					},
