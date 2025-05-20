@@ -51,6 +51,7 @@ public class GetSpaceAssessmentListService implements GetSpaceAssessmentListUseC
                     e.isCalculateValid(),
                     e.isConfidenceValid(),
                     Language.of(e.language()),
+                    e.mode().getCode(),
                     e.hasReport(),
                     new SpaceAssessmentListItem.Permissions(e.manageable(),
                         viewable,
