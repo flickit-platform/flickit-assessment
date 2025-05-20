@@ -95,7 +95,8 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
             toAssessmentProcess(metadata),
             toPermissions(param.getAssessmentId(), published, param.getCurrentUserId()),
             toLanguage(assessment.language()),
-            visibility.name());
+            visibility.name(),
+            toMode(assessment.mode()));
     }
 
     private List<MaturityLevel> toMaturityLevels(AssessmentKitItem assessmentKitItem) {
@@ -224,6 +225,10 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
 
     private Language toLanguage(KitLanguage language) {
         return new Language(language.getCode());
+    }
+
+    private Mode toMode(AssessmentMode mode) {
+        return new Mode(mode.getCode());
     }
 
     private Map<Long, List<AttributeMeasure>> buildAttributeMeasures(UUID assessmentId, LoadAssessmentReportInfoPort.Result reportInfo) {
