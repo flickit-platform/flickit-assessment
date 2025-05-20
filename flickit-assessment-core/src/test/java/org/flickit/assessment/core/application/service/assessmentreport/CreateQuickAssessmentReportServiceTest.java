@@ -56,7 +56,7 @@ class PrepareReportServiceTest {
     private LoadAssessmentReportPort loadAssessmentReportPort;
 
     @Captor
-    private ArgumentCaptor<CreateAssessmentReportPort.QuickAssessmentReportParam> argumentCaptor;
+    private ArgumentCaptor<CreateAssessmentReportPort.Param> argumentCaptor;
 
     private final PrepareReportUseCase.Param param = createParam(PrepareReportUseCase.Param.ParamBuilder::build);
     private final AssessmentResult assessmentResult = AssessmentResultMother.validResult();
@@ -64,7 +64,7 @@ class PrepareReportServiceTest {
     @Test
     void testPrepareReport_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_QUICK_ASSESSMENT_REPORT))
-            .thenReturn(false);
+                .thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.create(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
@@ -75,7 +75,7 @@ class PrepareReportServiceTest {
     @Test
     void testPrepareReport_whenAssessmentResultNotExists_thenResourceNotFoundException() {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_QUICK_ASSESSMENT_REPORT))
-            .thenReturn(true);
+                .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.empty());
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.create(param));
@@ -87,7 +87,7 @@ class PrepareReportServiceTest {
     @Test
     void testCreateAssessmentReport_whenParamsAreValid_thenInitOrGenerateInsightsWithCreatingReport() {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_QUICK_ASSESSMENT_REPORT))
-            .thenReturn(true);
+                .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.empty());
 
@@ -106,7 +106,7 @@ class PrepareReportServiceTest {
     @Test
     void testCreateAssessmentReport_whenParamsAreValidAndReportAlreadyExists_thenInitOrGenerateInsightsWithoutCreatingReport() {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_QUICK_ASSESSMENT_REPORT))
-            .thenReturn(true);
+                .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.of(AssessmentReportMother.empty()));
 
@@ -127,7 +127,7 @@ class PrepareReportServiceTest {
 
     private PrepareReportUseCase.Param.ParamBuilder paramBuilder() {
         return PrepareReportUseCase.Param.builder()
-            .assessmentId(UUID.randomUUID())
-            .currentUserId(UUID.randomUUID());
+                .assessmentId(UUID.randomUUID())
+                .currentUserId(UUID.randomUUID());
     }
 }

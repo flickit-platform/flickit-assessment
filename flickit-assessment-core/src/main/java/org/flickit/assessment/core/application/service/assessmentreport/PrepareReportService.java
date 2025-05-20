@@ -49,8 +49,10 @@ public class PrepareReportService implements PrepareReportUseCase {
             createAssessmentReportPort.persist(toParam(assessmentResult.getId(), param.getCurrentUserId()));
     }
 
-    private CreateAssessmentReportPort.QuickAssessmentReportParam toParam(UUID assessmentResultId, UUID currentUserId) {
-        return new CreateAssessmentReportPort.QuickAssessmentReportParam(assessmentResultId,
+    private CreateAssessmentReportPort.Param toParam(UUID assessmentResultId, UUID currentUserId) {
+        return new CreateAssessmentReportPort.Param(assessmentResultId,
+            null,
+            Boolean.TRUE,
             LocalDateTime.now(),
             currentUserId
         );

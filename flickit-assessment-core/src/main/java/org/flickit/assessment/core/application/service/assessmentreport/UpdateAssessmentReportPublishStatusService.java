@@ -57,6 +57,7 @@ public class UpdateAssessmentReportPublishStatusService implements UpdateAssessm
         return new CreateAssessmentReportPort.Param(
             assessmentResultId,
             null,
+            Boolean.FALSE,
             LocalDateTime.now(),
             currentUserId);
     }

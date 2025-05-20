@@ -31,20 +31,7 @@ public class AssessmentReportMapper {
         return new AssessmentReportJpaEntity(null,
             param.assessmentResultId(),
             JsonUtils.toJson(param.metadata()),
-            Boolean.FALSE,
-            VisibilityType.RESTRICTED.getId(),
-            UUID.randomUUID(),
-            param.creationTime(),
-            param.creationTime(),
-            param.createdBy(),
-            param.createdBy());
-    }
-
-    public static AssessmentReportJpaEntity mapToJpaEntity(CreateAssessmentReportPort.QuickAssessmentReportParam param) {
-        return new AssessmentReportJpaEntity(null,
-            param.assessmentResultId(),
-            null,
-            Boolean.TRUE,
+            param.published(),
             VisibilityType.RESTRICTED.getId(),
             UUID.randomUUID(),
             param.creationTime(),
