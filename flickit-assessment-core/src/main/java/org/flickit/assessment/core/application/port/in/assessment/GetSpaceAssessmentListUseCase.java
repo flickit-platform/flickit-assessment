@@ -57,6 +57,7 @@ public interface GetSpaceAssessmentListUseCase {
                                    boolean isCalculateValid,
                                    boolean isConfidenceValid,
                                    Language language,
+                                   String mode,
                                    boolean hasReport,
                                    Permissions permissions) {
 
