@@ -116,7 +116,7 @@ class PrepareReportServiceTest {
     }
 
     @Test
-    void testPrepareReport_whenParamsAreValidAndReportAlreadyExists_thenInitOrGenerateInsightsWithoutCreatingReport() {
+    void testPrepareReport_whenParamsAreValidAndReportAlreadyExistsButNotPublished_thenInitOrGenerateInsightsWithoutCreatingReport() {
         AssessmentReport assessmentReport = AssessmentReportMother.empty();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_QUICK_ASSESSMENT_REPORT))
@@ -138,6 +138,24 @@ class PrepareReportServiceTest {
         assertEquals(param.getCurrentUserId(), updatePublishPortParam.getValue().lastModifiedBy());
 
         verifyNoInteractions(createAssessmentReportPort);
+    }
+
+    @Test
+    void testPrepareReport_whenParamsAreValidAndReportAlreadyExistsAndPublished_thenInitOrGenerateInsightsWithoutCreatingReport() {
+        AssessmentReport assessmentReport = AssessmentReportMother.publicAndPublishedReport();
+
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_QUICK_ASSESSMENT_REPORT))
+                .thenReturn(true);
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.of(assessmentReport));
+
+        service.prepareReport(param);
+
+        var locale = Locale.of(assessmentResult.getLanguage().getCode());
+        verify(initAssessmentInsightsHelper).initInsights(assessmentResult, locale);
+        verify(regenerateExpiredInsightsHelper).regenerateExpiredInsights(assessmentResult, locale);
+
+        verifyNoInteractions(createAssessmentReportPort, updateAssessmentReportPort);
     }
 
     private PrepareReportUseCase.Param createParam(Consumer<PrepareReportUseCase.Param.ParamBuilder> changer) {
