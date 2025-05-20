@@ -56,10 +56,10 @@ public class AssessmentMother {
     }
 
     public static AssessmentListItem assessmentListItem(Long spaceId, Long kitId) {
-        return assessmentListItem(spaceId, kitId, Boolean.FALSE);
+        return assessmentListItem(spaceId, kitId, Boolean.FALSE, AssessmentMode.ADVANCED);
     }
 
-    public static AssessmentListItem assessmentListItem(Long spaceId, Long kitId, boolean manageable) {
+    public static AssessmentListItem assessmentListItem(Long spaceId, Long kitId, boolean manageable, AssessmentMode mode) {
         counter++;
         return new AssessmentListItem(
             UUID.randomUUID(),
@@ -72,6 +72,7 @@ public class AssessmentMother {
             Boolean.TRUE,
             Boolean.TRUE,
             KitLanguage.FA,
+            mode,
             manageable,
             Boolean.FALSE);
     }
