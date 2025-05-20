@@ -18,7 +18,7 @@ class AssessmentPermissionTest {
             Map.entry(VIEW_ASSESSMENT, "viewAssessment"),
             Map.entry(UPDATE_ASSESSMENT, "updateAssessment"),
             Map.entry(UPDATE_ASSESSMENT_MODE, "updateAssessmentMode"),
-            Map.entry(PREPARE_ASSESSMENT_REPORT, "createQuickAssessmentReport"),
+            Map.entry(PREPARE_ASSESSMENT_REPORT, "prepareAssessmentReport"),
             Map.entry(DELETE_ASSESSMENT, "deleteAssessment"),
             Map.entry(VIEW_ASSESSMENT_LIST, "viewAssessmentList"),
             Map.entry(VIEW_ASSESSMENT_PROGRESS, "viewAssessmentProgress"),
