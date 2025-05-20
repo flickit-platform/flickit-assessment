@@ -80,7 +80,7 @@ public interface SubmitAnswerUseCase {
     /**
      * Represents the case where an answer is successfully submitted.
      *
-	 * @param id              the ID of the submitted answer, which cannot be {@code null}.
+     * @param id              the ID of the submitted answer, which cannot be {@code null}.
      * @param notificationCmd the command that may trigger a notification
      */
     record Submitted(UUID id, SubmitAnswerNotificationCmd notificationCmd) implements Result, HasNotificationCmd {
