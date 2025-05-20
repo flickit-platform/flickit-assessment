@@ -43,7 +43,7 @@ public class UpdateAssessmentReportPublishStatusService implements UpdateAssessm
 
         CreateAssessmentReportPort.Param newAssessmentReport;
         if (assessmentReport.isEmpty()) {
-            newAssessmentReport = buildAssessmentReportParam(assessmentResult.getId(), param);
+            newAssessmentReport = buildAssessmentReportParam(assessmentResult.getId(), param.getCurrentUserId());
             createAssessmentReportPort.persist(newAssessmentReport);
         } else {
             var visibility = assessmentReport.get().getVisibility();
@@ -51,14 +51,14 @@ public class UpdateAssessmentReportPublishStatusService implements UpdateAssessm
         }
     }
 
-    private CreateAssessmentReportPort.Param buildAssessmentReportParam(UUID assessmentResultId, Param param) {
+    private CreateAssessmentReportPort.Param buildAssessmentReportParam(UUID assessmentResultId, UUID currentUserId) {
         return new CreateAssessmentReportPort.Param(
             assessmentResultId,
             null,
-            param.getPublished(),
+            Boolean.TRUE,
             VisibilityType.RESTRICTED,
             LocalDateTime.now(),
-            param.getCurrentUserId());
+            currentUserId);
     }
 
     private void updatePublishStatus(UUID assessmentResultId, Param param, VisibilityType visibility) {
