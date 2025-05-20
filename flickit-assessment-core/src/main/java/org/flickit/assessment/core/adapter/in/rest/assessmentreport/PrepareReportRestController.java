@@ -2,8 +2,8 @@ package org.flickit.assessment.core.adapter.in.rest.assessmentreport;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
-import org.flickit.assessment.core.application.port.in.assessmentreport.CreateQuickAssessmentReportUseCase;
-import org.flickit.assessment.core.application.port.in.assessmentreport.CreateQuickAssessmentReportUseCase.Param;
+import org.flickit.assessment.core.application.port.in.assessmentreport.PrepareReportUseCase;
+import org.flickit.assessment.core.application.port.in.assessmentreport.PrepareReportUseCase.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,13 +14,13 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-public class CreateQuickAssessmentReportRestController {
+public class PrepareReportRestController {
 
-    private final CreateQuickAssessmentReportUseCase useCase;
+    private final PrepareReportUseCase useCase;
     private final UserContext userContext;
 
-    @PostMapping("/assessments/{assessmentId}/quick-report")
-    ResponseEntity<Void> createQuickAssessmentReport(@PathVariable("assessmentId") UUID assessmentId) {
+    @PostMapping("/assessments/{assessmentId}/prepare-report")
+    ResponseEntity<Void> prepareReport(@PathVariable("assessmentId") UUID assessmentId) {
         UUID userId = userContext.getUser().id();
         useCase.create(toParam(assessmentId, userId));
 

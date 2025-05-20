@@ -4,7 +4,7 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentAcc
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
-import org.flickit.assessment.core.application.port.in.assessmentreport.CreateQuickAssessmentReportUseCase;
+import org.flickit.assessment.core.application.port.in.assessmentreport.PrepareReportUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentreport.CreateAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
@@ -32,10 +32,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class CreateQuickAssessmentReportServiceTest {
+class PrepareReportServiceTest {
 
     @InjectMocks
-    private CreateQuickAssessmentReportService service;
+    private PrepareReportService service;
 
     @Mock
     private AssessmentAccessChecker assessmentAccessChecker;
@@ -58,11 +58,11 @@ class CreateQuickAssessmentReportServiceTest {
     @Captor
     private ArgumentCaptor<CreateAssessmentReportPort.QuickAssessmentReportParam> argumentCaptor;
 
-    private final CreateQuickAssessmentReportUseCase.Param param = createParam(CreateQuickAssessmentReportUseCase.Param.ParamBuilder::build);
+    private final PrepareReportUseCase.Param param = createParam(PrepareReportUseCase.Param.ParamBuilder::build);
     private final AssessmentResult assessmentResult = AssessmentResultMother.validResult();
 
     @Test
-    void testCreateQuickAssessmentReport_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
+    void testPrepareReport_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_QUICK_ASSESSMENT_REPORT))
             .thenReturn(false);
 
@@ -73,7 +73,7 @@ class CreateQuickAssessmentReportServiceTest {
     }
 
     @Test
-    void testCreateAssessmentReport_whenAssessmentResultNotExists_thenResourceNotFoundException() {
+    void testPrepareReport_whenAssessmentResultNotExists_thenResourceNotFoundException() {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_QUICK_ASSESSMENT_REPORT))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.empty());
@@ -119,14 +119,14 @@ class CreateQuickAssessmentReportServiceTest {
         verifyNoInteractions(createAssessmentReportPort);
     }
 
-    private CreateQuickAssessmentReportUseCase.Param createParam(Consumer<CreateQuickAssessmentReportUseCase.Param.ParamBuilder> changer) {
+    private PrepareReportUseCase.Param createParam(Consumer<PrepareReportUseCase.Param.ParamBuilder> changer) {
         var paramBuilder = paramBuilder();
         changer.accept(paramBuilder);
         return paramBuilder.build();
     }
 
-    private CreateQuickAssessmentReportUseCase.Param.ParamBuilder paramBuilder() {
-        return CreateQuickAssessmentReportUseCase.Param.builder()
+    private PrepareReportUseCase.Param.ParamBuilder paramBuilder() {
+        return PrepareReportUseCase.Param.builder()
             .assessmentId(UUID.randomUUID())
             .currentUserId(UUID.randomUUID());
     }

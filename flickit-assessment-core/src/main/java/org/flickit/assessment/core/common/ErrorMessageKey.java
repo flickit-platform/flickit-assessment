@@ -364,5 +364,5 @@ public class ErrorMessageKey {
     public static final String UPDATE_ASSESSMENT_MODE_MODE_NOT_NULL = "update-assessment-mode.mode.notNull";
     public static final String UPDATE_ASSESSMENT_MODE_MODE_INVALID = "update-assessment-mode.mode.invalid";
 
-    public static final String CREATE_QUICK_ASSESSMENT_REPORT_ASSESSMENT_ID_NOT_NULL = "create-quick-assessment-report.assessmentId.notNull";
+    public static final String PREPARE_REPORT_ASSESSMENT_ID_NOT_NULL = "prepare-report.assessmentId.notNull";
 }

@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.application.port.in.assessmentreport.CreateQuickAssessmentReportUseCase;
+import org.flickit.assessment.core.application.port.in.assessmentreport.PrepareReportUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentreport.CreateAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
@@ -24,7 +24,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class CreateQuickAssessmentReportService implements CreateQuickAssessmentReportUseCase {
+public class PrepareReportService implements PrepareReportUseCase {
 
     private final AssessmentAccessChecker assessmentAccessChecker;
     private final LoadAssessmentResultPort loadAssessmentResultPort;

@@ -8,33 +8,33 @@ import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
-import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_QUICK_ASSESSMENT_REPORT_ASSESSMENT_ID_NOT_NULL;
+import static org.flickit.assessment.core.common.ErrorMessageKey.PREPARE_REPORT_ASSESSMENT_ID_NOT_NULL;
 import static org.junit.jupiter.api.Assertions.*;
 
-class CreateQuickAssessmentReportUseCaseParamTest {
+class PrepareReportUseCaseParamTest {
 
     @Test
-    void createAssessmentQuickReportUseCaseParamTest_assessmentIdParamViolatesConstraint_ErrorMessage() {
+    void prepareReportUseCaseParamTest_assessmentIdParamViolatesConstraint_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.assessmentId(null)));
-        assertThat(throwable).hasMessage("assessmentId: " + CREATE_QUICK_ASSESSMENT_REPORT_ASSESSMENT_ID_NOT_NULL);
+        assertThat(throwable).hasMessage("assessmentId: " + PREPARE_REPORT_ASSESSMENT_ID_NOT_NULL);
     }
 
     @Test
-    void createAssessmentQuickReportUseCaseParamTest_currentUserIdParamViolatesConstraint_ErrorMessage() {
+    void prepareReportUseCaseParamTest_currentUserIdParamViolatesConstraint_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.currentUserId(null)));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 
-    private void createParam(Consumer<CreateQuickAssessmentReportUseCase.Param.ParamBuilder> changer) {
+    private void createParam(Consumer<PrepareReportUseCase.Param.ParamBuilder> changer) {
         var paramBuilder = paramBuilder();
         changer.accept(paramBuilder);
         paramBuilder.build();
     }
 
-    private CreateQuickAssessmentReportUseCase.Param.ParamBuilder paramBuilder() {
-        return CreateQuickAssessmentReportUseCase.Param.builder()
+    private PrepareReportUseCase.Param.ParamBuilder paramBuilder() {
+        return PrepareReportUseCase.Param.builder()
             .assessmentId(UUID.randomUUID())
             .currentUserId(UUID.randomUUID());
     }
