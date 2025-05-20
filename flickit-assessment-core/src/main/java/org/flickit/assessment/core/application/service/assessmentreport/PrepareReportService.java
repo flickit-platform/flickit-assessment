@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.domain.VisibilityType;
 import org.flickit.assessment.core.application.port.in.assessmentreport.PrepareReportUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentreport.CreateAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportPort;
@@ -53,6 +54,7 @@ public class PrepareReportService implements PrepareReportUseCase {
         return new CreateAssessmentReportPort.Param(assessmentResultId,
             null,
             Boolean.TRUE,
+            VisibilityType.RESTRICTED,
             LocalDateTime.now(),
             currentUserId
         );

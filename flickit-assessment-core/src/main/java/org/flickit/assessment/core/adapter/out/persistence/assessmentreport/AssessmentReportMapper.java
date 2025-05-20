@@ -32,7 +32,7 @@ public class AssessmentReportMapper {
             param.assessmentResultId(),
             JsonUtils.toJson(param.metadata()),
             param.published(),
-            VisibilityType.RESTRICTED.getId(),
+            param.visibilityType().getId(),
             UUID.randomUUID(),
             param.creationTime(),
             param.creationTime(),
