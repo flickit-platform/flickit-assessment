@@ -38,7 +38,8 @@ public interface GetAssessmentPublicReportUseCase {
                   Advice advice,
                   AssessmentProcess assessmentProcess,
                   Permissions permissions,
-                  Language lang) {
+                  Language lang,
+                  Mode mode) {
     }
 
     record Assessment(String title,
@@ -128,5 +129,8 @@ public interface GetAssessmentPublicReportUseCase {
     }
 
     record Language(String code) {
+    }
+
+    record Mode(String code) {
     }
 }

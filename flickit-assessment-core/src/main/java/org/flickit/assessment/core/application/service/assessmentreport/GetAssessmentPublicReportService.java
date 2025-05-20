@@ -101,7 +101,8 @@ public class GetAssessmentPublicReportService implements GetAssessmentPublicRepo
             toAdvice(assessment.assessmentResultId(), Locale.of(assessment.language().name())),
             toAssessmentProcess(metadata),
             permissions,
-            toLanguage(assessment.language()));
+            toLanguage(assessment.language()),
+            toMode(assessment.mode()));
     }
 
     private List<MaturityLevel> toMaturityLevels(AssessmentKitItem assessmentKitItem) {
@@ -223,6 +224,10 @@ public class GetAssessmentPublicReportService implements GetAssessmentPublicRepo
 
     private Language toLanguage(KitLanguage language) {
         return new Language(language.getCode());
+    }
+
+    private Mode toMode(AssessmentMode mode) {
+        return new Mode(mode.getCode());
     }
 
     private Map<Long, List<AttributeMeasure>> buildAttributeMeasures(UUID assessmentId, LoadAssessmentReportInfoPort.Result reportInfo) {
