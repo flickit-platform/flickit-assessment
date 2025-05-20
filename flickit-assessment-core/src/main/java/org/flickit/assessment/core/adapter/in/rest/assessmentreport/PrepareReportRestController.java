@@ -24,7 +24,7 @@ public class PrepareReportRestController {
         UUID userId = userContext.getUser().id();
         useCase.create(toParam(assessmentId, userId));
 
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     private Param toParam(UUID assessmentId, UUID currentUserId) {
