@@ -27,7 +27,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_QUICK_ASSESSMENT_REPORT;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.PREPARE_ASSESSMENT_REPORT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.*;
@@ -71,7 +71,7 @@ class PrepareReportServiceTest {
 
     @Test
     void testPrepareReport_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_QUICK_ASSESSMENT_REPORT))
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), PREPARE_ASSESSMENT_REPORT))
                 .thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.prepareReport(param));
@@ -83,7 +83,7 @@ class PrepareReportServiceTest {
 
     @Test
     void testPrepareReport_whenAssessmentResultNotExists_thenResourceNotFoundException() {
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_QUICK_ASSESSMENT_REPORT))
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), PREPARE_ASSESSMENT_REPORT))
                 .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.empty());
 
@@ -96,7 +96,7 @@ class PrepareReportServiceTest {
 
     @Test
     void testPrepareReport_whenParamsAreValid_thenInitOrGenerateInsightsWithCreatingReport() {
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_QUICK_ASSESSMENT_REPORT))
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), PREPARE_ASSESSMENT_REPORT))
                 .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.empty());
@@ -119,7 +119,7 @@ class PrepareReportServiceTest {
     void testPrepareReport_whenParamsAreValidAndReportAlreadyExistsButNotPublished_thenInitOrGenerateInsightsWithoutCreatingReport() {
         AssessmentReport assessmentReport = AssessmentReportMother.empty();
 
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_QUICK_ASSESSMENT_REPORT))
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), PREPARE_ASSESSMENT_REPORT))
                 .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.of(assessmentReport));
@@ -144,7 +144,7 @@ class PrepareReportServiceTest {
     void testPrepareReport_whenParamsAreValidAndReportAlreadyExistsAndPublished_thenInitOrGenerateInsightsWithoutCreatingReport() {
         AssessmentReport assessmentReport = AssessmentReportMother.publicAndPublishedReport();
 
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_QUICK_ASSESSMENT_REPORT))
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), PREPARE_ASSESSMENT_REPORT))
                 .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.of(assessmentReport));
