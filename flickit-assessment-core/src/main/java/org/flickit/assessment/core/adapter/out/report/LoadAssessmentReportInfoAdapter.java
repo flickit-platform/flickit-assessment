@@ -12,6 +12,7 @@ import org.flickit.assessment.common.util.JsonUtils;
 import org.flickit.assessment.core.adapter.out.persistence.kit.assessmentkit.AssessmentKitMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.measure.MeasureMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.questionnaire.QuestionnaireMapper;
+import org.flickit.assessment.core.application.domain.AssessmentMode;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.domain.report.AssessmentReportItem;
 import org.flickit.assessment.core.application.domain.report.AssessmentSubjectReportItem;
@@ -104,6 +105,7 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             idToMaturityLevel.get(assessmentResultEntity.getMaturityLevelId()),
             Objects.requireNonNullElse(assessmentResultEntity.getConfidenceValue(), 0.0),
             KitLanguage.valueOfById(assessmentResultEntity.getLangId()),
+            AssessmentMode.valueOfById(assessment.getMode()),
             assessment.getCreationTime()
         );
 

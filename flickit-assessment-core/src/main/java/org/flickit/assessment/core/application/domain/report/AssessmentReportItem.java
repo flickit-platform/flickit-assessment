@@ -1,6 +1,7 @@
 package org.flickit.assessment.core.application.domain.report;
 
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.core.application.domain.AssessmentMode;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.domain.Measure;
 
@@ -16,6 +17,7 @@ public record AssessmentReportItem(UUID id,
                                    MaturityLevel maturityLevel,
                                    double confidenceValue,
                                    KitLanguage language,
+                                   AssessmentMode mode,
                                    LocalDateTime creationTime) {
     public record AssessmentKitItem(
         Long id,
