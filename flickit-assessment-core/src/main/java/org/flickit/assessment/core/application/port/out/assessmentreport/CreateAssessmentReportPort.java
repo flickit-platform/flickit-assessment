@@ -9,7 +9,7 @@ import java.util.UUID;
 public interface CreateAssessmentReportPort {
 
     /**
-     * Persists a new assessment report in an UNPUBLISHED and RESTRICTED state.
+     * Persists a new assessment report with the specified parameters.
      *
      * @param param
      */

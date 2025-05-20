@@ -39,16 +39,15 @@ public class UpdateAssessmentReportPublishStatusService implements UpdateAssessm
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
 
-        var assessmentReport = loadAssessmentReportPort.load(param.getAssessmentId());
-
-        CreateAssessmentReportPort.Param newAssessmentReport;
-        if (assessmentReport.isEmpty()) {
-            newAssessmentReport = buildAssessmentReportParam(assessmentResult.getId(), param);
-            createAssessmentReportPort.persist(newAssessmentReport);
-        } else {
-            var visibility = assessmentReport.get().getVisibility();
-            updatePublishStatus(assessmentResult.getId(), param, visibility);
-        }
+        loadAssessmentReportPort.load(param.getAssessmentId())
+            .ifPresentOrElse(
+                report ->
+                    updatePublishStatus(assessmentResult.getId(), param, report.getVisibility()),
+                () -> {
+                    var createReportParam = buildAssessmentReportParam(assessmentResult.getId(), param);
+                    createAssessmentReportPort.persist(createReportParam);
+                }
+            );
     }
 
     private CreateAssessmentReportPort.Param buildAssessmentReportParam(UUID assessmentResultId, Param param) {
