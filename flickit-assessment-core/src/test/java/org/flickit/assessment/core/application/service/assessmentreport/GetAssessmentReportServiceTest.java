@@ -8,6 +8,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.CalculateNotValidException;
 import org.flickit.assessment.common.exception.InvalidStateException;
 import org.flickit.assessment.core.application.domain.AdviceItem;
+import org.flickit.assessment.core.application.domain.AssessmentMode;
 import org.flickit.assessment.core.application.domain.AssessmentReport;
 import org.flickit.assessment.core.application.domain.VisibilityType;
 import org.flickit.assessment.core.application.domain.report.AssessmentReportItem;
@@ -261,6 +262,7 @@ class GetAssessmentReportServiceTest {
             levelTwo(),
             1.5,
             KitLanguage.FA,
+            AssessmentMode.QUICK,
             LocalDateTime.now()
         );
     }
@@ -296,6 +298,7 @@ class GetAssessmentReportServiceTest {
         assertEquals(assessmentReport.maturityLevel().getTitle(), result.assessment().maturityLevel().title());
         assertEquals(assessmentReport.assessmentKit().id(), result.assessment().assessmentKit().id());
         assertEquals(assessmentReport.assessmentKit().title(), result.assessment().assessmentKit().title());
+        assertEquals(assessmentReport.mode().getCode(), result.assessment().mode().code());
     }
 
     private void assertSubjectItem(AssessmentSubjectReportItem expectedSubjectItem, GetAssessmentReportUseCase.Subject actualSubjectItem) {
