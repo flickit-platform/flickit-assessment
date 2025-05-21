@@ -191,7 +191,6 @@ class GetAssessmentReportServiceTest {
         assertFalse(result.permissions().canShareReport());
         assertFalse(result.permissions().canManageVisibility());
         assertEquals(VisibilityType.RESTRICTED.name(), result.visibility());
-        assertEquals(result.assessment().mode().code(), assessmentReport.mode().getCode());
 
         verify(assessmentAccessChecker, times(3))
             .isAuthorized(eq(param.getAssessmentId()), eq(param.getCurrentUserId()), any(AssessmentPermission.class));
@@ -252,7 +251,6 @@ class GetAssessmentReportServiceTest {
         assertFalse(result.permissions().canShareReport());
         assertTrue(result.permissions().canManageVisibility());
         assertEquals(report.getVisibility().name(), result.visibility());
-        assertEquals(result.assessment().mode().code(), assessmentReport.mode().getCode());
     }
 
     private AssessmentReportItem createAssessmentReportItem(GetAssessmentReportUseCase.Param param) {
@@ -300,6 +298,7 @@ class GetAssessmentReportServiceTest {
         assertEquals(assessmentReport.maturityLevel().getTitle(), result.assessment().maturityLevel().title());
         assertEquals(assessmentReport.assessmentKit().id(), result.assessment().assessmentKit().id());
         assertEquals(assessmentReport.assessmentKit().title(), result.assessment().assessmentKit().title());
+        assertEquals(assessmentReport.mode().getCode(), result.assessment().mode().code());
     }
 
     private void assertSubjectItem(AssessmentSubjectReportItem expectedSubjectItem, GetAssessmentReportUseCase.Subject actualSubjectItem) {
