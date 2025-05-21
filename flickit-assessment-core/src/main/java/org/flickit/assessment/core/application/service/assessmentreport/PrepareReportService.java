@@ -48,12 +48,17 @@ public class PrepareReportService implements PrepareReportUseCase {
         initAssessmentInsightsHelper.initInsights(assessmentResult, locale);
         regenerateExpiredInsightsHelper.regenerateExpiredInsights(assessmentResult, locale);
 
-        var report = loadAssessmentReportPort.load(param.getAssessmentId());
-        if (report.isEmpty())
-            createAssessmentReportPort.persist(toParam(assessmentResult.getId(), param.getCurrentUserId()));
-        else if (!report.get().isPublished())
-            updateAssessmentReportPort.updatePublishStatus(
-                toUpdateParam(assessmentResult.getId(), report.get().getVisibility(), param.getCurrentUserId()));
+        loadAssessmentReportPort.load(param.getAssessmentId())
+            .ifPresentOrElse(
+                report -> {
+                    if (!report.isPublished()) {
+                        updateAssessmentReportPort.updatePublishStatus(
+                            toUpdateParam(assessmentResult.getId(), report.getVisibility(), param.getCurrentUserId())
+                        );
+                    }
+                },
+                () -> createAssessmentReportPort.persist(toParam(assessmentResult.getId(), param.getCurrentUserId()))
+            );
     }
 
     private UpdateAssessmentReportPort.UpdatePublishParam toUpdateParam(UUID assessmentResultId, VisibilityType visibilityType, UUID currentUserId) {
