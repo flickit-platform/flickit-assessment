@@ -51,13 +51,11 @@ public class PrepareReportService implements PrepareReportUseCase {
         loadAssessmentReportPort.load(param.getAssessmentId())
             .ifPresentOrElse(
                 report -> {
-                    if (!report.isPublished()) {
+                    if (!report.isPublished())
                         updateAssessmentReportPort.updatePublishStatus(
-                            toUpdateParam(assessmentResult.getId(), report.getVisibility(), param.getCurrentUserId())
-                        );
-                    }
+                            toUpdateParam(assessmentResult.getId(), report.getVisibility(), param.getCurrentUserId()));
                 },
-                () -> createAssessmentReportPort.persist(toParam(assessmentResult.getId(), param.getCurrentUserId()))
+                () -> createAssessmentReportPort.persist(toCreateParam(assessmentResult.getId(), param.getCurrentUserId()))
             );
     }
 
@@ -69,7 +67,7 @@ public class PrepareReportService implements PrepareReportUseCase {
             currentUserId);
     }
 
-    private CreateAssessmentReportPort.Param toParam(UUID assessmentResultId, UUID currentUserId) {
+    private CreateAssessmentReportPort.Param toCreateParam(UUID assessmentResultId, UUID currentUserId) {
         return new CreateAssessmentReportPort.Param(assessmentResultId,
             null,
             Boolean.TRUE,
