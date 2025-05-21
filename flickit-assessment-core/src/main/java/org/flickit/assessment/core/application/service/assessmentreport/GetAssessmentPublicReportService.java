@@ -1,5 +1,6 @@
 package org.flickit.assessment.core.application.service.assessmentreport;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
@@ -16,12 +17,18 @@ import org.flickit.assessment.core.application.port.in.assessmentreport.GetAsses
 import org.flickit.assessment.core.application.port.out.adviceitem.LoadAdviceItemsPort;
 import org.flickit.assessment.core.application.port.out.advicenarration.LoadAdviceNarrationPort;
 import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentQuestionsPort;
+import org.flickit.assessment.core.application.port.out.assessmentkit.LoadKitLastMajorModificationTimePort;
 import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
+import org.flickit.assessment.core.application.port.out.kitcustom.LoadKitCustomLastModificationTimePort;
+import org.flickit.assessment.core.application.service.assessment.CalculateAssessmentHelper;
+import org.flickit.assessment.core.application.service.assessment.CalculateConfidenceHelper;
+import org.flickit.assessment.core.application.service.assessment.MigrateAssessmentResultKitVersionHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Function;
 
@@ -30,13 +37,19 @@ import static org.flickit.assessment.common.application.domain.assessment.Assess
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.ASSESSMENT_REPORT_LINK_HASH_NOT_FOUND;
 
+@Slf4j
 @Service
-@Transactional(readOnly = true)
+@Transactional
 @RequiredArgsConstructor
 public class GetAssessmentPublicReportService implements GetAssessmentPublicReportUseCase {
 
     private final LoadAssessmentReportPort loadAssessmentReportPort;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
+    private final LoadKitLastMajorModificationTimePort loadKitLastMajorModificationTimePort;
+    private final LoadKitCustomLastModificationTimePort loadKitCustomLastModificationTimePort;
+    private final MigrateAssessmentResultKitVersionHelper migrateAssessmentResultKitVersionHelper;
+    private final CalculateAssessmentHelper calculateAssessmentHelper;
+    private final CalculateConfidenceHelper calculateConfidenceHelper;
     private final LoadAssessmentReportInfoPort loadAssessmentReportInfoPort;
     private final LoadAssessmentQuestionsPort loadAssessmentQuestionsPort;
     private final AssessmentAccessChecker assessmentAccessChecker;
@@ -49,10 +62,59 @@ public class GetAssessmentPublicReportService implements GetAssessmentPublicRepo
         var assessmentResult = loadAssessmentResultPort.load(report.getAssessmentResultId())
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
 
+        recalculateAssessmentResultIfRequired(assessmentResult);
+
         if (!isReportPublic(report) && !userHasAccess(param.getCurrentUserId(), assessmentResult.getAssessment().getId()))
             throw new ResourceNotFoundException(ASSESSMENT_REPORT_LINK_HASH_NOT_FOUND);
 
         return buildReport(report, assessmentResult, param.getCurrentUserId());
+    }
+
+    private void recalculateAssessmentResultIfRequired(AssessmentResult assessmentResult) {
+        var calculateValid = Boolean.TRUE.equals(assessmentResult.getIsCalculateValid());
+        var confidenceValid = Boolean.TRUE.equals(assessmentResult.getIsConfidenceValid());
+
+        var kitLastMajorModificationTime = loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(
+            assessmentResult.getAssessment().getAssessmentKit().getId());
+        var calculationTimeValid = validateCalculationTime(assessmentResult, kitLastMajorModificationTime);
+        var confidenceTimeValid = confidenceValidateCalculationTime(assessmentResult, kitLastMajorModificationTime);
+
+        var customKitUpdateTimeValid = true;
+        if (assessmentResult.getAssessment().getKitCustomId() != null) {
+            var kitCustomId = assessmentResult.getAssessment().getKitCustomId();
+            var kitCustomLastUpdate = loadKitCustomLastModificationTimePort.loadLastModificationTime(kitCustomId);
+            customKitUpdateTimeValid = validateCalculationTime(assessmentResult, kitCustomLastUpdate);
+        }
+
+        var isCalculationValid = calculateValid && calculationTimeValid && customKitUpdateTimeValid;
+        var isConfidenceValid = confidenceValid && confidenceTimeValid;
+        var assessmentId = assessmentResult.getAssessment().getId();
+        var assessmentResultId = assessmentResult.getId();
+
+        if (!isCalculationValid) {
+            log.info("Recalculate assessment for resultId=[{}] of assessmentId=[{}] due to invalid calculation.", assessmentResultId, assessmentId);
+            calculateAssessmentHelper.calculateMaturityLevel(assessmentResult, kitLastMajorModificationTime);
+        }
+
+        if (!isConfidenceValid) {
+            log.info("Recalculate confidence for resultId=[{}] of assessmentId=[{}] due to invalid confidence value.", assessmentResultId, assessmentId);
+            calculateConfidenceHelper.calculate(assessmentResult, kitLastMajorModificationTime);
+        }
+
+        if (!Objects.equals(assessmentResult.getAssessment().getAssessmentKit().getKitVersion(), assessmentResult.getKitVersionId())) {
+            log.info("Migrate kit version of assessmentId=[{}].", assessmentResult.getAssessment().getId());
+            migrateAssessmentResultKitVersionHelper.migrateKitVersion(assessmentResult);
+        }
+    }
+
+    private boolean validateCalculationTime(AssessmentResult assessmentResult, LocalDateTime modificationTime) {
+        var calculationTime = assessmentResult.getLastCalculationTime();
+        return calculationTime != null && !calculationTime.isBefore(modificationTime);
+    }
+
+    private boolean confidenceValidateCalculationTime(AssessmentResult assessmentResult, LocalDateTime modificationTime) {
+        var confCalculationTime = assessmentResult.getLastConfidenceCalculationTime();
+        return confCalculationTime != null && !confCalculationTime.isBefore(modificationTime);
     }
 
     private static boolean isReportPublic(AssessmentReport report) {
