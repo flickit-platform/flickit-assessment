@@ -95,7 +95,7 @@ class GenerateAllAssessmentInsightsServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
             .thenReturn(Optional.of(assessmentResult));
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
-        doNothing().when(initAssessmentInsightsHelper).initInsights(eq(assessmentResult), any(Locale.class));
+        doNothing().when(initAssessmentInsightsHelper).initInsights(assessmentResult, Locale.of(assessmentResult.getLanguage().getCode()));
 
         service.generateAllAssessmentInsights(param);
     }
