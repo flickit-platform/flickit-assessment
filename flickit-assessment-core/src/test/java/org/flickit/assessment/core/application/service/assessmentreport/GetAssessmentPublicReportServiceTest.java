@@ -22,6 +22,7 @@ import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmen
 import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
+import org.flickit.assessment.core.application.service.measure.CalculateMeasureHelper;
 import org.flickit.assessment.core.test.fixture.application.AssessmentReportMother;
 import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
@@ -80,6 +81,9 @@ class GetAssessmentPublicReportServiceTest {
 
     @Mock
     private LoadAssessmentResultPort loadAssessmentResultPort;
+
+    @Mock
+    private CalculateMeasureHelper calculateMeasureHelper;
 
     private final AssessmentResult assessmentResult = AssessmentResultMother.validResult();
     private final AssessmentReport restrictedReport = AssessmentReportMother.restrictedAndPublishedReport();
