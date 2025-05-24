@@ -95,6 +95,8 @@ class GetAssessmentServiceTest {
         assertEquals(assessment.getAssessmentKit().getTitle(), result.kit().title());
         assertEquals(assessment.getCreationTime(), result.creationTime());
         assertEquals(assessment.getLastModificationTime(), result.lastModificationTime());
+        assertEquals(assessment.getMode().getCode(), result.mode().code());
+        assertEquals(assessment.getMode().getTitle(), result.mode().title());
         assertEquals(assessmentCreator.getId(), result.createdBy().getId());
         assertEquals(assessmentCreator.getDisplayName(), result.createdBy().getDisplayName());
         assertEquals(maturityLevel, result.maturityLevel());

@@ -135,6 +135,7 @@ public class GetAssessmentPublicReportService implements GetAssessmentPublicRepo
             toAssessmentKit(assessmentKitItem, attributesCount, levels),
             maturityLevelMap.get(assessment.maturityLevel().getId()),
             assessment.confidenceValue(),
+            toMode(assessment.mode()),
             assessment.creationTime());
     }
 
@@ -223,6 +224,10 @@ public class GetAssessmentPublicReportService implements GetAssessmentPublicRepo
 
     private Language toLanguage(KitLanguage language) {
         return new Language(language.getCode());
+    }
+
+    private Mode toMode(AssessmentMode mode) {
+        return new Mode(mode.getCode());
     }
 
     private Map<Long, List<AttributeMeasure>> buildAttributeMeasures(UUID assessmentId, LoadAssessmentReportInfoPort.Result reportInfo) {

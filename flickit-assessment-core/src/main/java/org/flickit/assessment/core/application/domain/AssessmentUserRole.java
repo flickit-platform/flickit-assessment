@@ -91,6 +91,7 @@ public enum AssessmentUserRole {
             ANSWER_QUESTION,
             VIEW_ATTRIBUTE_SCORE_DETAIL,
             CREATE_ADVICE,
+            UPDATE_ASSESSMENT_MODE,
             VIEW_ANSWER_HISTORY_LIST,
             CREATE_ATTRIBUTE_INSIGHT,
             CREATE_ASSESSMENT_INSIGHT,
@@ -146,7 +147,8 @@ public enum AssessmentUserRole {
             GRANT_ACCESS_TO_REPORT,
             VIEW_GRAPHICAL_REPORT,
             VIEW_ASSESSMENT_ATTRIBUTES,
-            VIEW_ASSESSMENT_MATURITY_LEVELS
+            VIEW_ASSESSMENT_MATURITY_LEVELS,
+            PREPARE_ASSESSMENT_REPORT
         ));
 
         private final Set<AssessmentPermission> permissions;

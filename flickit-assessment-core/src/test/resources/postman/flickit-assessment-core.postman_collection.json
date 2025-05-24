@@ -518,6 +518,45 @@
 					"response": []
 				},
 				{
+					"name": "Update Assessment Mode",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"mode\": \"ADVANCED\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/ff1b2ae3-92b7-437d-b321-539753b71608/mode",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"ff1b2ae3-92b7-437d-b321-539753b71608",
+								"mode"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Migrate Assessment Result Kit Version",
 					"request": {
 						"method": "POST",
@@ -2044,6 +2083,36 @@
 								"assessments",
 								"1124cf20-51eb-4de6-ae6f-096fb4d92adb",
 								"graphical-report"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Prepare Report",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/83349858-c15a-4d53-b380-330180dfe514/prepare-report",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"83349858-c15a-4d53-b380-330180dfe514",
+								"prepare-report"
 							]
 						}
 					},

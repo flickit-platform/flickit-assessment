@@ -4,6 +4,7 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentPer
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.domain.AssessmentListItem;
+import org.flickit.assessment.core.application.domain.AssessmentMode;
 import org.flickit.assessment.core.application.port.in.assessment.GetSpaceAssessmentListUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentListPort;
 import org.flickit.assessment.core.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
@@ -76,9 +77,9 @@ class GetSpaceAssessmentListServiceTest {
     void testGetSpaceAssessmentList_ResultsFoundForSpaceId_ItemsReturned() {
         var param = createParam(GetSpaceAssessmentListUseCase.Param.ParamBuilder::build);
 
-        var assessment1 = assessmentListItem(param.getSpaceId(), kit().getId(), false);
-        var assessment2 = assessmentListItem(param.getSpaceId(), kit().getId(), true);
-        var assessment3 = assessmentListItem(param.getSpaceId(), kit().getId(), true);
+        var assessment1 = assessmentListItem(param.getSpaceId(), kit().getId(), false, AssessmentMode.ADVANCED);
+        var assessment2 = assessmentListItem(param.getSpaceId(), kit().getId(), true, AssessmentMode.QUICK);
+        var assessment3 = assessmentListItem(param.getSpaceId(), kit().getId(), true, AssessmentMode.QUICK);
 
         var paginatedRes = new PaginatedResponse<>(
             List.of(assessment1, assessment2, assessment3),
@@ -128,6 +129,7 @@ class GetSpaceAssessmentListServiceTest {
         assertFalse(firstAssessment.permissions().canViewReport());
         assertFalse(firstAssessment.permissions().canViewDashboard());
         assertTrue(firstAssessment.permissions().canViewQuestionnaires());
+        assertEquals(assessment1.mode().getCode(), firstAssessment.mode().code());
 
         // for second assessment
         var secondAssessment = result.getItems().get(1);
@@ -137,6 +139,7 @@ class GetSpaceAssessmentListServiceTest {
         assertTrue(secondAssessment.permissions().canViewReport());
         assertFalse(secondAssessment.permissions().canViewDashboard());
         assertTrue(secondAssessment.permissions().canViewQuestionnaires());
+        assertEquals(assessment2.mode().getCode(), secondAssessment.mode().code());
 
         // for third assessment
         var thirdAssessment = result.getItems().getLast();
@@ -146,6 +149,7 @@ class GetSpaceAssessmentListServiceTest {
         assertTrue(thirdAssessment.permissions().canViewReport());
         assertTrue(thirdAssessment.permissions().canViewDashboard());
         assertTrue(thirdAssessment.permissions().canViewQuestionnaires());
+        assertEquals(assessment3.mode().getCode(), thirdAssessment.mode().code());
     }
 
     private static void assertPaginationProperties(PaginatedResponse<AssessmentListItem> expected,

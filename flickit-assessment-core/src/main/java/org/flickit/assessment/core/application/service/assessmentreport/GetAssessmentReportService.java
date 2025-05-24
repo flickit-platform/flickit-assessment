@@ -62,7 +62,7 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
         var reportMetadata = assessmentReport.map(AssessmentReport::getMetadata)
             .orElse(new AssessmentReportMetadata(null, null, null, null));
         var reportVisibility = assessmentReport.map(AssessmentReport::getVisibility)
-            .orElse(VisibilityType.RESTRICTED);
+                .orElse(VisibilityType.RESTRICTED);
 
         validateReportPublication(param, published);
 
@@ -133,6 +133,7 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
             toAssessmentKit(assessmentKitItem, attributesCount, levels),
             maturityLevelMap.get(assessment.maturityLevel().getId()),
             assessment.confidenceValue(),
+            toMode(assessment.mode()),
             assessment.creationTime());
     }
 
@@ -228,6 +229,10 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
 
     private Language toLanguage(KitLanguage language) {
         return new Language(language.getCode());
+    }
+
+    private Mode toMode(AssessmentMode mode) {
+        return new Mode(mode.getCode());
     }
 
     private Map<Long, List<AttributeMeasure>> buildAttributeMeasures(UUID assessmentId) {

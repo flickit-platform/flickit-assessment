@@ -3,6 +3,7 @@ package org.flickit.assessment.core.test.fixture.application;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.core.application.domain.Assessment;
 import org.flickit.assessment.core.application.domain.AssessmentListItem;
+import org.flickit.assessment.core.application.domain.AssessmentMode;
 
 import java.time.LocalDateTime;
 import java.util.Random;
@@ -26,6 +27,7 @@ public class AssessmentMother {
             AssessmentKitMother.kitWithLanguage(language),
             SpaceMother.createBasicSpace(),
             234L,
+            AssessmentMode.ADVANCED,
             LocalDateTime.now(),
             LocalDateTime.now(),
             0L,
@@ -44,6 +46,7 @@ public class AssessmentMother {
             AssessmentKitMother.AssessmentKitWithoutActiveKitVersion(),
             SpaceMother.createBasicSpace(),
             234L,
+            AssessmentMode.ADVANCED,
             LocalDateTime.now(),
             LocalDateTime.now(),
             0L,
@@ -53,10 +56,10 @@ public class AssessmentMother {
     }
 
     public static AssessmentListItem assessmentListItem(Long spaceId, Long kitId) {
-        return assessmentListItem(spaceId, kitId, Boolean.FALSE);
+        return assessmentListItem(spaceId, kitId, Boolean.FALSE, AssessmentMode.ADVANCED);
     }
 
-    public static AssessmentListItem assessmentListItem(Long spaceId, Long kitId, boolean manageable) {
+    public static AssessmentListItem assessmentListItem(Long spaceId, Long kitId, boolean manageable, AssessmentMode mode) {
         counter++;
         return new AssessmentListItem(
             UUID.randomUUID(),
@@ -69,6 +72,7 @@ public class AssessmentMother {
             Boolean.TRUE,
             Boolean.TRUE,
             KitLanguage.FA,
+            mode,
             manageable,
             Boolean.FALSE);
     }
