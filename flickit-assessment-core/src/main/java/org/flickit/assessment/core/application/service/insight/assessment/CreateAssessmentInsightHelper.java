@@ -51,7 +51,7 @@ public class CreateAssessmentInsightHelper {
 
     private static String buildDefaultCompleteInsight(AssessmentInsightParam param) {
         return (AssessmentMode.ADVANCED.equals(param.mode))
-            ? MessageBundle.message(ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_COMPLETED,
+            ? MessageBundle.message(ADVANCED_ASSESSMENT_DEFAULT_INSIGHT_COMPLETED,
                 param.locale,
                 param.maturityLevelTitle,
                 param.questionsCount,
@@ -64,7 +64,7 @@ public class CreateAssessmentInsightHelper {
 
     private static String buildDefaultIncompleteInsight(AssessmentInsightParam param) {
         return (AssessmentMode.ADVANCED.equals(param.mode))
-            ? MessageBundle.message(ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_INCOMPLETE,
+            ? MessageBundle.message(ADVANCED_ASSESSMENT_DEFAULT_INSIGHT_INCOMPLETE,
                 param.locale,
                 param.maturityLevelTitle,
                 param.answersCount,

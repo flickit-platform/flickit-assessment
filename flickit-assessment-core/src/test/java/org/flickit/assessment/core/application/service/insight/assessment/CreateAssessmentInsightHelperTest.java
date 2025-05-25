@@ -89,7 +89,7 @@ class CreateAssessmentInsightHelperTest {
         var assessmentResult = validResultWithSubjectValuesAndMaturityLevel(null, levelFive());
         var locale = Locale.of(KitLanguage.FA.getCode());
         var progress = new GetAssessmentProgressPort.Result(assessmentResult.getId(), 10, 11);
-        var expectedDefaultInsight = MessageBundle.message(ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_INCOMPLETE,
+        var expectedDefaultInsight = MessageBundle.message(ADVANCED_ASSESSMENT_DEFAULT_INSIGHT_INCOMPLETE,
             locale,
             assessmentResult.getMaturityLevel().getTitle(),
             progress.answersCount(),
@@ -116,7 +116,7 @@ class CreateAssessmentInsightHelperTest {
         var assessmentResult = validResultWithAssessmentMode(AssessmentMode.ADVANCED);
         var locale = Locale.of(KitLanguage.EN.getCode());
         var progress = new GetAssessmentProgressPort.Result(assessmentResult.getId(), 11, 11);
-        var expectedDefaultInsight = MessageBundle.message(ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_COMPLETED,
+        var expectedDefaultInsight = MessageBundle.message(ADVANCED_ASSESSMENT_DEFAULT_INSIGHT_COMPLETED,
             locale,
             assessmentResult.getMaturityLevel().getTitle(),
             progress.questionsCount(),
