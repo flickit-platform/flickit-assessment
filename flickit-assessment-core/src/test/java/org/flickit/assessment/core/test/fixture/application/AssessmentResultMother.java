@@ -44,6 +44,8 @@ public class AssessmentResultMother {
             LocalDateTime.now());
 
         assessmentResult.setLanguage(KitLanguage.EN);
+        assessmentResult.setMaturityLevel(levelFour());
+        assessmentResult.setConfidenceValue(0.69);
         return assessmentResult;
     }
 
