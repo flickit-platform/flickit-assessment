@@ -22,4 +22,15 @@ public class AssessmentTestHelper {
             .extract()
             .response();
     }
+
+    public Response delete(ScenarioContext context, String id) {
+        return given()
+            .contentType(JSON)
+            .auth().oauth2(context.getCurrentUser().getJwt())
+            .when()
+            .delete("/assessment-core/api/assessments/" + id)
+            .then()
+            .extract()
+            .response();
+    }
 }
