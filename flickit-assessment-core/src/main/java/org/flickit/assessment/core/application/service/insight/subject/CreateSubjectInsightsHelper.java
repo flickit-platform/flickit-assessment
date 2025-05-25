@@ -78,7 +78,7 @@ public class CreateSubjectInsightsHelper {
     }
 
     private String buildSubjectInsight(AssessmentMode mode, SubjectValue subjectValues, int maturityLevelsSize, Locale locale) {
-        return mode == AssessmentMode.ADVANCED
+        return AssessmentMode.ADVANCED.equals(mode)
             ? buildAdvancedAssessmentDefaultInsight(subjectValues, maturityLevelsSize, locale)
             : buildQuickAssessmentDefaultInsight(subjectValues, maturityLevelsSize, locale);
     }
