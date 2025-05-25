@@ -30,7 +30,7 @@ import java.util.function.Consumer;
 
 import static org.flickit.assessment.core.common.ErrorMessageKey.SUBJECT_NOT_FOUND;
 import static org.flickit.assessment.core.common.MessageKey.QUICK_ASSESSMENT_SUBJECT_DEFAULT_INSIGHT;
-import static org.flickit.assessment.core.common.MessageKey.SUBJECT_DEFAULT_INSIGHT;
+import static org.flickit.assessment.core.common.MessageKey.ADVANCED_ASSESSMENT_SUBJECT_DEFAULT_INSIGHT;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.validResult;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.validResultWithKitLanguage;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.validResultWithAssessmentMode;
@@ -202,7 +202,7 @@ class CreateSubjectInsightsHelperTest {
     }
 
     private String createAdvancedAssessmentSubjectDefaultInsight(SubjectValue subjectValue, Locale locale) {
-        return MessageBundle.message(SUBJECT_DEFAULT_INSIGHT,
+        return MessageBundle.message(ADVANCED_ASSESSMENT_SUBJECT_DEFAULT_INSIGHT,
             locale,
             subjectValue.getSubject().getTitle(),
             subjectValue.getSubject().getDescription(),

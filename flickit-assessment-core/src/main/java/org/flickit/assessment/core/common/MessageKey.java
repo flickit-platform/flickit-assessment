@@ -11,7 +11,7 @@ public class MessageKey {
     public static final String ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_COMPLETED = "assessment-default-insight.completed";
     public static final String ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_INCOMPLETE = "assessment-default-insight.incomplete";
 
-    public static final String SUBJECT_DEFAULT_INSIGHT = "subject-default-insight";
+    public static final String ADVANCED_ASSESSMENT_SUBJECT_DEFAULT_INSIGHT = "advanced-assessment-subject-default-insight";
     public static final String QUICK_ASSESSMENT_SUBJECT_DEFAULT_INSIGHT = "quick-assessment-subject-default-insight";
 
     public static final String NOTIFICATION_TITLE_GRANT_ASSESSMENT_USER_ROLE = "notification-title.grant-assessment-user-role";
