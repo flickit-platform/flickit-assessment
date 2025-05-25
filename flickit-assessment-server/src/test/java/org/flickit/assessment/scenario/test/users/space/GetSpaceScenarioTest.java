@@ -2,6 +2,7 @@ package org.flickit.assessment.scenario.test.users.space;
 
 import org.flickit.assessment.common.application.domain.space.SpaceType;
 import org.flickit.assessment.common.config.AppSpecProperties;
+import org.flickit.assessment.common.exception.api.ErrorResponseDto;
 import org.flickit.assessment.scenario.fixture.request.CreateAssessmentRequestDtoMother;
 import org.flickit.assessment.scenario.test.AbstractScenarioTest;
 import org.flickit.assessment.scenario.test.core.assessment.AssessmentTestHelper;
@@ -9,17 +10,21 @@ import org.flickit.assessment.scenario.test.kit.assessmentkit.KitTestHelper;
 import org.flickit.assessment.scenario.test.kit.kitdsl.KitDslTestHelper;
 import org.flickit.assessment.scenario.test.kit.tag.KitTagTestHelper;
 import org.flickit.assessment.scenario.test.users.expertgroup.ExpertGroupTestHelper;
+import org.flickit.assessment.scenario.test.users.spaceuseraccess.SpaceUserAccessTestHelper;
 import org.flickit.assessment.users.adapter.in.rest.space.GetSpaceResponseDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.UUID;
 
+import static org.flickit.assessment.common.exception.api.ErrorCodes.ACCESS_DENIED;
 import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
+import static org.flickit.assessment.scenario.fixture.request.AddSpaceMemberRequestDtoMother.addSpaceMemberRequestDto;
 import static org.flickit.assessment.scenario.fixture.request.CreateExpertGroupRequestDtoMother.createExpertGroupRequestDto;
 import static org.flickit.assessment.scenario.fixture.request.CreateKitByDslRequestDtoMother.createKitByDslRequestDto;
 import static org.flickit.assessment.scenario.fixture.request.CreateSpaceRequestDtoMother.createSpaceRequestDto;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.flickit.assessment.scenario.fixture.request.CreateUserRequestDtoMother.createUserRequestDto;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class GetSpaceScenarioTest extends AbstractScenarioTest {
@@ -43,18 +48,24 @@ public class GetSpaceScenarioTest extends AbstractScenarioTest {
     KitTagTestHelper kitTagHelper;
 
     @Autowired
+    SpaceUserAccessTestHelper spaceUserAccessHelper;
+
+    @Autowired
     AppSpecProperties appSpecProperties;
 
     @Test
     void getSpace() {
-        var createRequest = createSpaceRequestDto();
-        var createResponse = spaceHelper.create(context, createRequest);
+        var title = "new space";
+        var spaceId = createBasicSpace(title);
 
-        createResponse.then()
-            .statusCode(201)
-            .body("id", notNullValue());
+        // Create assessments and delete one of them
+        var limit = appSpecProperties.getSpace().getMaxBasicSpaceAssessments();
+        var lastAssessmentId = createAssessments(spaceId, limit);
+        deleteAssessment(lastAssessmentId);
 
-        Number spaceId = createResponse.body().path("id");
+        // Add another member to space
+        addMember(spaceId);
+
         var result = spaceHelper.get(context, spaceId).then()
             .statusCode(200)
             .extract()
@@ -62,13 +73,13 @@ public class GetSpaceScenarioTest extends AbstractScenarioTest {
             .as(GetSpaceResponseDto.class);
 
         // Assert Space
-        assertEquals(spaceId.longValue(), result.id());
-        assertEquals(createRequest.title(), result.title());
-        assertEquals(generateSlugCode(createRequest.title()), result.code());
+        assertEquals(spaceId, result.id());
+        assertEquals(title, result.title());
+        assertEquals(generateSlugCode(title), result.code());
         assertTrue(result.editable());
         assertNotNull(result.lastModificationTime());
-        assertEquals(0, result.assessmentsCount());
-        assertEquals(1, result.membersCount());
+        assertEquals(limit - 1, result.assessmentsCount());
+        assertEquals(2, result.membersCount());
         assertTrue(result.canCreateAssessment());
         // Assert SpaceType
         assertEquals(SpaceType.BASIC.getCode(), result.type().code());
@@ -76,20 +87,24 @@ public class GetSpaceScenarioTest extends AbstractScenarioTest {
     }
 
     @Test
-    void getSpace_withBasicSpace_assessmentLimitReached() {
+    void getSpace_withBasicSpace_assessmentLimitReached_byNonOwer() {
         var limit = appSpecProperties.getSpace().getMaxBasicSpaceAssessments();
-        var spaceId = createBasicSpace();
+        var spaceId = createBasicSpace("new space");
 
-        var kitId = createKit();
-        kitHelper.publishKit(context, kitId);
+        var newMemberId = addMember(spaceId);
+
+        // Set new user as currentUser which is not owner of the space and does not have access to edit it
+        context.setCurrentUser(newMemberId);
+
         // #assessments = limit
-        createAssessments(spaceId, kitId, limit);
-        // Check the `canCreateAssessment` field of the space.
+        createAssessments(spaceId, limit);
         var result = spaceHelper.get(context, spaceId).then()
             .statusCode(200)
             .extract()
             .body()
             .as(GetSpaceResponseDto.class);
+
+        assertFalse(result.editable());
 
         // If the limit has been reached, no additional assessments can be created.
         assertEquals(limit, result.assessmentsCount());
@@ -101,10 +116,8 @@ public class GetSpaceScenarioTest extends AbstractScenarioTest {
         var limit = appSpecProperties.getSpace().getMaxBasicSpaceAssessments();
         var spaceId = createPremiumSpace();
 
-        var kitId = createKit();
-        kitHelper.publishKit(context, kitId);
         // #assessments = limit
-        createAssessments(spaceId, kitId, limit);
+        createAssessments(spaceId, limit);
         // Check the `canCreateAssessment` field of the space.
         var result = spaceHelper.get(context, spaceId).then()
             .statusCode(200)
@@ -117,20 +130,26 @@ public class GetSpaceScenarioTest extends AbstractScenarioTest {
         assertTrue(result.canCreateAssessment());
     }
 
-    private void createAssessments(long spaceId, long kitId, int limit) {
-        for (int i = 0; i < limit; i++)
-            createAssessment(spaceId, kitId);
+    @Test
+    void getSpace_notAllowed() {
+        // Create a space
+        Number spaceId = createBasicSpace("space");
+        // Change currentUser which is not a member of the space
+        context.getNextCurrentUser();
+
+        // Get space by not member user
+        var response = spaceHelper.get(context, spaceId);
+
+        var error = response.then()
+            .statusCode(403)
+            .extract().as(ErrorResponseDto.class);
+
+        assertEquals(ACCESS_DENIED, error.code());
+        assertNotNull(error.message());
     }
 
-    private void createAssessment(Long spaceId, Long kitId) {
-        var request = CreateAssessmentRequestDtoMother.createAssessmentRequestDto(a -> a
-            .spaceId(spaceId)
-            .assessmentKitId(kitId));
-        assessmentHelper.create(context, request);
-    }
-
-    private Long createBasicSpace() {
-        var response = spaceHelper.create(context, createSpaceRequestDto());
+    private Long createBasicSpace(String title) {
+        var response = spaceHelper.create(context, createSpaceRequestDto(b -> b.title(title)));
         Number id = response.path("id");
         return id.longValue();
     }
@@ -139,6 +158,43 @@ public class GetSpaceScenarioTest extends AbstractScenarioTest {
         var response = spaceHelper.create(context, createSpaceRequestDto(b -> b.type(SpaceType.PREMIUM.getCode())));
         Number id = response.path("id");
         return id.longValue();
+    }
+
+    private UUID createAssessments(long spaceId, int limit) {
+        var kitId = createKit();
+        kitHelper.publishKit(context, kitId);
+
+        UUID lastAssessmentId = null;
+        for (int i = 0; i < limit; i++)
+            lastAssessmentId = createAssessment(spaceId, kitId);
+        return lastAssessmentId;
+    }
+
+    private UUID createAssessment(Long spaceId, Long kitId) {
+        var request = CreateAssessmentRequestDtoMother.createAssessmentRequestDto(a -> a
+            .spaceId(spaceId)
+            .assessmentKitId(kitId));
+        var response = assessmentHelper.create(context, request);
+
+        return UUID.fromString(response.path("id"));
+    }
+
+    private UUID addMember(long spaceId) {
+        var createUserRequest = createUserRequestDto();
+        var createUserResponse = userHelper.create(createUserRequest);
+        createUserResponse.then()
+            .statusCode(201);
+
+        var request = addSpaceMemberRequestDto(b -> b.email(createUserRequest.email()));
+        spaceUserAccessHelper.create(context, spaceId, request);
+
+        return UUID.fromString(createUserResponse.path("userId"));
+    }
+
+    private void deleteAssessment(UUID assessmentId) {
+        assessmentHelper.delete(context, assessmentId.toString())
+            .then()
+            .statusCode(204);
     }
 
     private Long createKit() {
@@ -156,6 +212,7 @@ public class GetSpaceScenarioTest extends AbstractScenarioTest {
         var response = kitHelper.create(context, request);
 
         Number kitId = response.path("kitId");
+        kitHelper.publishKit(context, kitId.longValue());
         return kitId.longValue();
     }
 
