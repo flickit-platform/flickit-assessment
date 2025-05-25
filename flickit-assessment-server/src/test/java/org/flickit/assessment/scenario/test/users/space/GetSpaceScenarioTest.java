@@ -27,7 +27,7 @@ import static org.flickit.assessment.scenario.fixture.request.CreateSpaceRequest
 import static org.flickit.assessment.scenario.fixture.request.CreateUserRequestDtoMother.createUserRequestDto;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class GetSpaceScenarioTest extends AbstractScenarioTest {
+class GetSpaceScenarioTest extends AbstractScenarioTest {
 
     @Autowired
     SpaceTestHelper spaceHelper;
