@@ -14,10 +14,20 @@ public class AssessmentMother {
     private static int counter = 341;
 
     public static Assessment assessment() {
-        return assessmentWithKitLanguage(KitLanguage.EN);
+        return assessmentWithKitLanguageAndMode(KitLanguage.EN, AssessmentMode.ADVANCED);
+    }
+
+    public static Assessment assessmentWithMode(AssessmentMode mode) {
+        counter++;
+        return assessmentWithKitLanguageAndMode(KitLanguage.EN, mode);
     }
 
     public static Assessment assessmentWithKitLanguage(KitLanguage language) {
+        counter++;
+        return assessmentWithKitLanguageAndMode(language, AssessmentMode.ADVANCED);
+    }
+
+    public static Assessment assessmentWithKitLanguageAndMode(KitLanguage language, AssessmentMode mode) {
         counter++;
         return new Assessment(
             UUID.randomUUID(),
@@ -27,7 +37,7 @@ public class AssessmentMother {
             AssessmentKitMother.kitWithLanguage(language),
             SpaceMother.createBasicSpace(),
             234L,
-            AssessmentMode.ADVANCED,
+            mode,
             LocalDateTime.now(),
             LocalDateTime.now(),
             0L,
