@@ -2,6 +2,7 @@ package org.flickit.assessment.core.application.service.insight.assessment;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.MessageBundle;
+import org.flickit.assessment.core.application.domain.AssessmentMode;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.insight.AssessmentInsight;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentProgressPort;
@@ -13,8 +14,7 @@ import java.time.LocalDateTime;
 import java.util.Locale;
 import java.util.UUID;
 
-import static org.flickit.assessment.core.common.MessageKey.ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_COMPLETED;
-import static org.flickit.assessment.core.common.MessageKey.ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_INCOMPLETE;
+import static org.flickit.assessment.core.common.MessageKey.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -34,19 +34,47 @@ public class CreateAssessmentInsightHelper {
         var maturityLevelTitle = loadMaturityLevelPort.load(assessmentResult.getMaturityLevel().getId(),
                 assessmentResult.getAssessment().getId())
             .getTitle();
-        String insight = (questionsCount == answersCount)
-            ? MessageBundle.message(ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_COMPLETED,
-            locale,
-            maturityLevelTitle,
-            questionsCount,
-            confidenceValue)
-            : MessageBundle.message(ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_INCOMPLETE,
-            locale,
-            maturityLevelTitle,
-            answersCount,
-            questionsCount,
-            confidenceValue);
+        var assessmentInsightParam = toAssessmentInsightParam(maturityLevelTitle, assessmentResult.getAssessment().getMode(), questionsCount, answersCount, confidenceValue, locale);
+        String insight = buildInsight(assessmentInsightParam);
         return toAssessmentInsight(assessmentResult.getId(), insight);
+    }
+
+    private AssessmentInsightParam toAssessmentInsightParam(String maturityLevelTitle, AssessmentMode mode, int questionsCount, int answersCount, int confidenceValue, Locale locale) {
+        return new AssessmentInsightParam(mode, maturityLevelTitle, questionsCount, answersCount, confidenceValue, locale);
+    }
+
+    private static String buildInsight(AssessmentInsightParam param) {
+        return (param.questionsCount == param.answersCount)
+            ? buildDefaultCompleteInsight(param)
+            : buildDefaultIncompleteInsight(param);
+    }
+
+    private static String buildDefaultCompleteInsight(AssessmentInsightParam param) {
+        return (AssessmentMode.ADVANCED.equals(param.mode))
+            ? MessageBundle.message(ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_COMPLETED,
+                param.locale,
+                param.maturityLevelTitle,
+                param.questionsCount,
+                param.confidenceValue)
+            : MessageBundle.message(QUICK_ASSESSMENT_DEFAULT_INSIGHT_COMPLETED,
+                param.locale,
+                param.maturityLevelTitle,
+                param.questionsCount);
+    }
+
+    private static String buildDefaultIncompleteInsight(AssessmentInsightParam param) {
+        return (AssessmentMode.ADVANCED.equals(param.mode))
+            ? MessageBundle.message(ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_INCOMPLETE,
+                param.locale,
+                param.maturityLevelTitle,
+                param.answersCount,
+                param.questionsCount,
+                param.confidenceValue)
+            : MessageBundle.message(QUICK_ASSESSMENT_DEFAULT_INSIGHT_INCOMPLETE,
+                param.locale,
+                param.maturityLevelTitle,
+                param.answersCount,
+                param.questionsCount);
     }
 
     AssessmentInsight toAssessmentInsight(UUID assessmentResultId, String insight) {
@@ -57,5 +85,13 @@ public class CreateAssessmentInsightHelper {
             LocalDateTime.now(),
             null,
             false);
+    }
+
+    record AssessmentInsightParam(AssessmentMode mode,
+                                  String maturityLevelTitle,
+                                  int questionsCount,
+                                  int answersCount,
+                                  int confidenceValue,
+                                  Locale locale) {
     }
 }
