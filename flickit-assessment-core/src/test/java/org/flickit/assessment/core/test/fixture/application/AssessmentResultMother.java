@@ -1,10 +1,7 @@
 package org.flickit.assessment.core.test.fixture.application;
 
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
-import org.flickit.assessment.core.application.domain.Assessment;
-import org.flickit.assessment.core.application.domain.AssessmentResult;
-import org.flickit.assessment.core.application.domain.MaturityLevel;
-import org.flickit.assessment.core.application.domain.SubjectValue;
+import org.flickit.assessment.core.application.domain.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -35,6 +32,19 @@ public class AssessmentResultMother {
 
     public static AssessmentResult validResult() {
         return validResultWithKitLanguage(KitLanguage.EN);
+    }
+
+    public static AssessmentResult validResultWithAssessmentMode(AssessmentMode mode) {
+        var assessment = AssessmentMother.assessmentWithMode(mode);
+        var assessmentResult = new AssessmentResult(UUID.randomUUID(),
+            assessment,
+            assessment.getAssessmentKit().getKitVersion(),
+            new ArrayList<>(),
+            LocalDateTime.now(),
+            LocalDateTime.now());
+
+        assessmentResult.setLanguage(KitLanguage.EN);
+        return assessmentResult;
     }
 
     public static AssessmentResult validResultWithKitLanguage(KitLanguage language) {
