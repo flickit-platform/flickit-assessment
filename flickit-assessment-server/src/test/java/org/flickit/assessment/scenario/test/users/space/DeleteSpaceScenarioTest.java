@@ -59,6 +59,9 @@ class DeleteSpaceScenarioTest extends AbstractScenarioTest {
             .statusCode(403)
             .extract().as(ErrorResponseDto.class);
 
+        assertEquals(ACCESS_DENIED, error.code());
+        assertNotNull(error.message());
+
         // Change currentUser which is a member (not owner) of the space
         context.setCurrentUser(newMemberId);
 
