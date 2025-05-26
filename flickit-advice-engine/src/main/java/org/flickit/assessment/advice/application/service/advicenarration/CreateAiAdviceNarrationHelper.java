@@ -59,7 +59,6 @@ public class CreateAiAdviceNarrationHelper {
 
         attributeLevelTargets = filterValidAttributeLevelTargets(assessmentResult.getAssessmentId(), attributeLevelTargets);
 
-
         var prompt = createPrompt(adviceListItems, attributeLevelTargets, assessmentResult);
         AdviceDto aiAdvice = callAiPromptPort.call(prompt, AdviceDto.class);
 
