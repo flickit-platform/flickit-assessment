@@ -34,13 +34,14 @@ public class CreateAssessmentInsightHelper {
         var maturityLevelTitle = loadMaturityLevelPort.load(assessmentResult.getMaturityLevel().getId(),
                 assessmentResult.getAssessment().getId())
             .getTitle();
-        var assessmentInsightParam = toAssessmentInsightParam(maturityLevelTitle, assessmentResult.getAssessment().getMode(), questionsCount, answersCount, confidenceValue, locale);
+        var assessmentInsightParam = new AssessmentInsightParam(assessmentResult.getAssessment().getMode(),
+            maturityLevelTitle,
+            questionsCount,
+            answersCount,
+            confidenceValue,
+            locale);
         String insight = buildInsight(assessmentInsightParam);
         return toAssessmentInsight(assessmentResult.getId(), insight);
-    }
-
-    private AssessmentInsightParam toAssessmentInsightParam(String maturityLevelTitle, AssessmentMode mode, int questionsCount, int answersCount, int confidenceValue, Locale locale) {
-        return new AssessmentInsightParam(mode, maturityLevelTitle, questionsCount, answersCount, confidenceValue, locale);
     }
 
     private static String buildInsight(AssessmentInsightParam param) {
