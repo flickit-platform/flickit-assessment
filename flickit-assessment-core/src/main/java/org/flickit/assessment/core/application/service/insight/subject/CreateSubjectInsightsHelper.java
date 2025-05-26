@@ -35,10 +35,10 @@ public class CreateSubjectInsightsHelper {
     public SubjectInsight createSubjectInsight(SubjectInsightParam param) {
         var subject = loadSubjectPort.loadByIdAndKitVersionId(param.subjectId(), param.assessmentResult().getKitVersionId())
             .orElseThrow(() -> new ResourceNotFoundException(SUBJECT_NOT_FOUND));
-        var subjectValues = loadSubjectValuePort.load(param.assessmentResult().getId(), subject.getId());
+        var subjectValue = loadSubjectValuePort.load(param.assessmentResult().getId(), subject.getId());
         int maturityLevelsSize = countMaturityLevelsPort.count(param.assessmentResult().getKitVersionId());
         var assessmentMode = param.assessmentResult.getAssessment().getMode();
-        var defaultInsight = buildSubjectInsight(assessmentMode, subjectValues, maturityLevelsSize, param.locale);
+        var defaultInsight = buildSubjectInsight(assessmentMode, subjectValue, maturityLevelsSize, param.locale);
 
         return new SubjectInsight(param.assessmentResult().getId(),
             subject.getId(),
@@ -77,10 +77,10 @@ public class CreateSubjectInsightsHelper {
                                        Locale locale) {
     }
 
-    private String buildSubjectInsight(AssessmentMode mode, SubjectValue subjectValues, int maturityLevelsSize, Locale locale) {
+    private String buildSubjectInsight(AssessmentMode mode, SubjectValue subjectValue, int maturityLevelsSize, Locale locale) {
         return AssessmentMode.ADVANCED.equals(mode)
-            ? buildAdvancedAssessmentDefaultInsight(subjectValues, maturityLevelsSize, locale)
-            : buildQuickAssessmentDefaultInsight(subjectValues, maturityLevelsSize, locale);
+            ? buildAdvancedAssessmentDefaultInsight(subjectValue, maturityLevelsSize, locale)
+            : buildQuickAssessmentDefaultInsight(subjectValue, maturityLevelsSize, locale);
     }
 
     String buildAdvancedAssessmentDefaultInsight(SubjectValue subjectValue, int maturityLevelsSize, Locale locale) {
