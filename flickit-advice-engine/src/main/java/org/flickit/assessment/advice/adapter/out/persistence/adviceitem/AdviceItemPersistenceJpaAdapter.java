@@ -92,6 +92,14 @@ public class AdviceItemPersistenceJpaAdapter implements
     }
 
     @Override
+    public List<AdviceItem> loadAll(UUID assessmentResultId) {
+        return repository.findByAssessmentResultId(assessmentResultId, null)
+            .stream()
+            .map(AdviceItemMapper::mapToDomainModel)
+            .toList();
+    }
+
+    @Override
     public void delete(UUID id) {
         if (!repository.existsById(id))
             throw new ResourceNotFoundException(ADVICE_ITEM_ID_NOT_FOUND);
