@@ -20,7 +20,7 @@ public class AssessmentReportMapper {
             JsonUtils.fromJson(entity.getMetadata(), AssessmentReportMetadata.class),
             entity.getPublished(),
             VisibilityType.valueOfById(entity.getVisibility()),
-            entity.getLinkHash(),
+            entity.getLinkHash() != null ? entity.getLinkHash().toString() : null,
             entity.getCreationTime(),
             entity.getLastModificationTime(),
             entity.getCreatedBy(),
