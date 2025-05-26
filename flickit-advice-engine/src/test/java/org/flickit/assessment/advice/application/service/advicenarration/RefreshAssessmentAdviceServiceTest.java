@@ -86,8 +86,7 @@ class RefreshAssessmentAdviceServiceTest {
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.refreshAssessmentAdvice(param));
         assertEquals(COMMON_ASSESSMENT_RESULT_NOT_FOUND, throwable.getMessage());
 
-        verifyNoInteractions(loadAssessmentResultPort,
-            loadMaturityLevelsPort,
+        verifyNoInteractions(loadMaturityLevelsPort,
             loadAttributesPort,
             createAdviceHelper);
     }
@@ -114,19 +113,17 @@ class RefreshAssessmentAdviceServiceTest {
         when(createAdviceHelper.createAdvice(eq(assessmentResult.getAssessmentId()), captor.capture())).thenReturn(adviceListItems);
         @SuppressWarnings("unchecked")
         ArgumentCaptor<List<AttributeLevelTarget>> narrationCaptor = ArgumentCaptor.forClass(List.class);
+
+        service.refreshAssessmentAdvice(param);
         verify(createAiAdviceNarrationHelper).createAiAdviceNarration(
             eq(assessmentResult),
             eq(adviceListItems),
             narrationCaptor.capture()
         );
-
-        service.refreshAssessmentAdvice(param);
-
         List<AttributeLevelTarget> capturedTargets = captor.getValue();
         assertEquals(1, capturedTargets.size());
         assertEquals(123L, capturedTargets.getFirst().getAttributeId());
         assertEquals(2L, capturedTargets.getFirst().getMaturityLevelId());
-
 
         List<AttributeLevelTarget> narratedTargets = narrationCaptor.getValue();
         assertEquals(1, narratedTargets.size());
