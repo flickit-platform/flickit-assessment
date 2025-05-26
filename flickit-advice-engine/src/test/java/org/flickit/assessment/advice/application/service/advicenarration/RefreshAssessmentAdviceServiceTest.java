@@ -95,10 +95,11 @@ class RefreshAssessmentAdviceServiceTest {
     @Test
     void testRefreshAssessmentAdvice_whenParametersAreValid_shouldMakeSuccessfulAdvice() {
         MaturityLevel level1 = new MaturityLevel(1L, "Low", 1);
-        MaturityLevel level2 = new MaturityLevel(2L, "Medium", 2);
-        List<MaturityLevel> maturityLevels = List.of(level1, level2);
+        MaturityLevel level2 = new MaturityLevel(3L, "Medium", 2);
+        MaturityLevel level3 = new MaturityLevel(2L, "High", 3);
+        List<MaturityLevel> maturityLevels = List.of(level2, level3, level1);
 
-        LoadAttributesPort.Result attributeResult = new LoadAttributesPort.Result(123L, new LoadAttributesPort.MaturityLevel(1L, "title", "des", 1, 2));
+        LoadAttributesPort.Result attributeResult = new LoadAttributesPort.Result(123L, new LoadAttributesPort.MaturityLevel(1L, "Low", "Low", 1, 2));
         List<LoadAttributesPort.Result> attributes = List.of(attributeResult);
 
         AdviceListItem adviceListItem = AdviceListItemMother.createSimpleAdviceListItem();
@@ -109,8 +110,8 @@ class RefreshAssessmentAdviceServiceTest {
         when(loadMaturityLevelsPort.loadAll(assessmentResult.getAssessmentId())).thenReturn(maturityLevels);
         when(loadAttributesPort.loadAll(param.getAssessmentId())).thenReturn(attributes);
         @SuppressWarnings("unchecked")
-        ArgumentCaptor<List<AttributeLevelTarget>> captor = ArgumentCaptor.forClass(List.class);
-        when(createAdviceHelper.createAdvice(eq(assessmentResult.getAssessmentId()), captor.capture())).thenReturn(adviceListItems);
+        ArgumentCaptor<List<AttributeLevelTarget>> targetCaptor = ArgumentCaptor.forClass(List.class);
+        when(createAdviceHelper.createAdvice(eq(assessmentResult.getAssessmentId()), targetCaptor.capture())).thenReturn(adviceListItems);
         @SuppressWarnings("unchecked")
         ArgumentCaptor<List<AttributeLevelTarget>> narrationCaptor = ArgumentCaptor.forClass(List.class);
 
@@ -120,15 +121,15 @@ class RefreshAssessmentAdviceServiceTest {
             eq(adviceListItems),
             narrationCaptor.capture()
         );
-        List<AttributeLevelTarget> capturedTargets = captor.getValue();
+        List<AttributeLevelTarget> capturedTargets = targetCaptor.getValue();
         assertEquals(1, capturedTargets.size());
         assertEquals(123L, capturedTargets.getFirst().getAttributeId());
-        assertEquals(2L, capturedTargets.getFirst().getMaturityLevelId());
+        assertEquals(3L, capturedTargets.getFirst().getMaturityLevelId());
 
         List<AttributeLevelTarget> narratedTargets = narrationCaptor.getValue();
         assertEquals(1, narratedTargets.size());
         assertEquals(123L, narratedTargets.getFirst().getAttributeId());
-        assertEquals(2L, narratedTargets.getFirst().getMaturityLevelId());
+        assertEquals(3L, narratedTargets.getFirst().getMaturityLevelId());
     }
 
     private RefreshAssessmentAdviceUseCase.Param createParam(Consumer<RefreshAssessmentAdviceUseCase.Param.ParamBuilder> changer) {
