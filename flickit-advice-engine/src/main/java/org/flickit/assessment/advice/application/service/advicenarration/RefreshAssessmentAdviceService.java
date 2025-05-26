@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.advice.application.domain.AttributeLevelTarget;
 import org.flickit.assessment.advice.application.domain.MaturityLevel;
 import org.flickit.assessment.advice.application.port.in.advicenarration.RefreshAssessmentAdviceUseCase;
+import org.flickit.assessment.advice.application.port.out.adviceitem.LoadAdviceItemPort;
+import org.flickit.assessment.advice.application.port.out.advicenarration.LoadAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.advice.application.port.out.atribute.LoadAttributesPort;
 import org.flickit.assessment.advice.application.port.out.maturitylevel.LoadMaturityLevelsPort;
@@ -33,6 +35,8 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
     private final LoadAttributesPort loadAttributesPort;
     private final CreateAdviceHelper createAdviceHelper;
     private final CreateAiAdviceNarrationHelper createAiAdviceNarrationHelper;
+    private final LoadAdviceItemPort loadAdviceItemPort;
+    private final LoadAdviceNarrationPort loadAdviceNarrationPort;
 
     @Override
     public void refreshAssessmentAdvice(Param param) {
@@ -46,8 +50,11 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
         List<LoadAttributesPort.Result> attributes = loadAttributesPort.loadAll(param.getAssessmentId());
         var attributeLevelTargets = buildAttributeLevelTargets(attributes, maturityLevels);
 
-        var adviceListItems = createAdviceHelper.createAdvice(assessmentResult.getAssessmentId(), attributeLevelTargets);
-        createAiAdviceNarrationHelper.createAiAdviceNarration(assessmentResult, adviceListItems, attributeLevelTargets);
+        if (!(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId()).isPresent() ||
+            loadAdviceItemPort.load(assessmentResult.getId()).isPresent())) {
+            var adviceListItems = createAdviceHelper.createAdvice(assessmentResult.getAssessmentId(), attributeLevelTargets);
+            createAiAdviceNarrationHelper.createAiAdviceNarration(assessmentResult, adviceListItems, attributeLevelTargets);
+        }
     }
 
     List<AttributeLevelTarget> buildAttributeLevelTargets(List<LoadAttributesPort.Result> attributes, List<MaturityLevel> maturityLevels) {
