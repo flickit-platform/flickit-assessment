@@ -16,4 +16,12 @@ public class AssessmentResultMother {
             true,
             KitLanguage.FA);
     }
+
+    public static AssessmentResult invalidAssessmentResult() {
+        return new AssessmentResult(UUID.randomUUID(),
+            ++kitVersionId,
+            UUID.randomUUID(),
+            false,
+            KitLanguage.FA);
+    }
 }
