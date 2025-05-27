@@ -13,6 +13,7 @@ public class AssessmentResultMother {
         return new AssessmentResult(UUID.randomUUID(),
             ++kitVersionId,
             UUID.randomUUID(),
+            true,
             KitLanguage.FA);
     }
 }
