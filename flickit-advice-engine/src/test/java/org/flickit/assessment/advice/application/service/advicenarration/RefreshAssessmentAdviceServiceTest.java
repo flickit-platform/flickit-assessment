@@ -102,14 +102,15 @@ class RefreshAssessmentAdviceServiceTest {
     }
 
     @Test
-    void testRefreshAssessmentAdvice_whenAdviceNotExists_shouldMakeSuccessfulAdvice() {
+    void testRefreshAssessmentAdvice_whenAdviceNotExists_thenMakeAdviceNarrationOrAdviceItem() {
         MaturityLevel level1 = new MaturityLevel(1L, "Low", 1);
         MaturityLevel level2 = new MaturityLevel(3L, "Medium", 2);
         MaturityLevel level3 = new MaturityLevel(2L, "High", 3);
         List<MaturityLevel> maturityLevels = List.of(level2, level3, level1);
 
-        LoadAttributesPort.Result attributeResult = new LoadAttributesPort.Result(123L, new LoadAttributesPort.MaturityLevel(1L, "Low", "Low", 1, 2));
-        List<LoadAttributesPort.Result> attributes = List.of(attributeResult);
+        LoadAttributesPort.Result attributeResult1 = new LoadAttributesPort.Result(123L, new LoadAttributesPort.MaturityLevel(1L, "Low", "Low", 1, 2));
+        LoadAttributesPort.Result attributeResult2 = new LoadAttributesPort.Result(123L, new LoadAttributesPort.MaturityLevel(2L, "High", "High", 3, 2));
+        List<LoadAttributesPort.Result> attributes = List.of(attributeResult1, attributeResult2);
 
         AdviceListItem adviceListItem = AdviceListItemMother.createSimpleAdviceListItem();
         List<AdviceListItem> adviceListItems = List.of(adviceListItem);
@@ -143,7 +144,7 @@ class RefreshAssessmentAdviceServiceTest {
     }
 
     @Test
-    void testRefreshAssessmentAdvice_whenAdviceNarrationExists_shouldMakeSuccessfulAdvice() {
+    void testRefreshAssessmentAdvice_whenAdviceNarrationExists_thenShouldNotMakeAdviceNarrationOrAdviceItem() {
         MaturityLevel level1 = new MaturityLevel(1L, "Low", 1);
         MaturityLevel level2 = new MaturityLevel(3L, "Medium", 2);
         MaturityLevel level3 = new MaturityLevel(2L, "High", 3);
