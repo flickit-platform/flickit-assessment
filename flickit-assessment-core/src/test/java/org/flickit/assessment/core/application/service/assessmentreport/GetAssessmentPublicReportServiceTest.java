@@ -4,6 +4,7 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentAcc
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AdviceItem;
+import org.flickit.assessment.core.application.domain.AssessmentMode;
 import org.flickit.assessment.core.application.domain.AssessmentReport;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.report.AssessmentReportItem;
@@ -406,6 +407,7 @@ class GetAssessmentPublicReportServiceTest {
             levelTwo(),
             1.5,
             KitLanguage.FA,
+            AssessmentMode.QUICK,
             LocalDateTime.now()
         );
     }
@@ -441,6 +443,7 @@ class GetAssessmentPublicReportServiceTest {
         assertEquals(assessmentReport.maturityLevel().getTitle(), result.assessment().maturityLevel().title());
         assertEquals(assessmentReport.assessmentKit().id(), result.assessment().assessmentKit().id());
         assertEquals(assessmentReport.assessmentKit().title(), result.assessment().assessmentKit().title());
+        assertEquals(assessmentReport.mode().getCode(), result.assessment().mode().code());
     }
 
     private void assertSubjectItem(AssessmentSubjectReportItem expectedSubjectItem, Subject actualSubjectItem) {

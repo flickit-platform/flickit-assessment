@@ -41,7 +41,8 @@ public interface GetAssessmentReportUseCase {
                   AssessmentProcess assessmentProcess,
                   Permissions permissions,
                   Language lang,
-                  String visibility) {
+                  String visibility,
+                  String linkHash) {
     }
 
     record Assessment(String title,
@@ -51,6 +52,7 @@ public interface GetAssessmentReportUseCase {
                       AssessmentKit assessmentKit,
                       MaturityLevel maturityLevel,
                       double confidenceValue,
+                      Mode mode,
                       LocalDateTime creationTime) {
     }
 
@@ -131,5 +133,8 @@ public interface GetAssessmentReportUseCase {
     }
 
     record Language(String code) {
+    }
+
+    record Mode(String code) {
     }
 }

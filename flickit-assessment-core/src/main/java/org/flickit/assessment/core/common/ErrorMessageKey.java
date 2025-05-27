@@ -359,4 +359,10 @@ public class ErrorMessageKey {
     public static final String UPDATE_ASSESSMENT_REPORT_VISIBILITY_ASSESSMENT_REPORT_NOT_PUBLISHED = "update-assessment-report-visibility.assessmentReport.notPublished";
 
     public static final String GET_ASSESSMENT_PUBLIC_REPORT_LINK_HASH_NOT_NULL = "get-assessment-public-report.linkHash.notNull";
+
+    public static final String UPDATE_ASSESSMENT_MODE_ID_NOT_NULL = "update-assessment-mode.assessmentId.notNull";
+    public static final String UPDATE_ASSESSMENT_MODE_MODE_NOT_NULL = "update-assessment-mode.mode.notNull";
+    public static final String UPDATE_ASSESSMENT_MODE_MODE_INVALID = "update-assessment-mode.mode.invalid";
+
+    public static final String PREPARE_REPORT_ASSESSMENT_ID_NOT_NULL = "prepare-report.assessmentId.notNull";
 }

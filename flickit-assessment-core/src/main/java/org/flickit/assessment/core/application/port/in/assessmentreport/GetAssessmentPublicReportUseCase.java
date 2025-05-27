@@ -48,6 +48,7 @@ public interface GetAssessmentPublicReportUseCase {
                       AssessmentKit assessmentKit,
                       MaturityLevel maturityLevel,
                       double confidenceValue,
+                      Mode mode,
                       LocalDateTime creationTime) {
     }
 
@@ -128,5 +129,8 @@ public interface GetAssessmentPublicReportUseCase {
     }
 
     record Language(String code) {
+    }
+
+    record Mode(String code) {
     }
 }

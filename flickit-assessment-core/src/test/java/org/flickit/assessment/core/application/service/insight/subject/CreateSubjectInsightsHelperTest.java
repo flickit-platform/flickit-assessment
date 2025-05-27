@@ -3,6 +3,7 @@ package org.flickit.assessment.core.application.service.insight.subject;
 import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.domain.AssessmentMode;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.Subject;
 import org.flickit.assessment.core.application.domain.SubjectValue;
@@ -28,9 +29,11 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.core.common.ErrorMessageKey.SUBJECT_NOT_FOUND;
-import static org.flickit.assessment.core.common.MessageKey.SUBJECT_DEFAULT_INSIGHT;
+import static org.flickit.assessment.core.common.MessageKey.QUICK_ASSESSMENT_SUBJECT_DEFAULT_INSIGHT;
+import static org.flickit.assessment.core.common.MessageKey.ADVANCED_ASSESSMENT_SUBJECT_DEFAULT_INSIGHT;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.validResult;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.validResultWithKitLanguage;
+import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.validResultWithAssessmentMode;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -54,9 +57,9 @@ class CreateSubjectInsightsHelperTest {
     private final SubjectValue subjectValue = SubjectValueMother.createSubjectValue();
     private final Subject subject = subjectValue.getSubject();
     private final int maturityLevelsCount = MaturityLevelMother.allLevels().size();
-    private final SubjectInsightsParam subjectInsightsParam =
+    private SubjectInsightsParam subjectInsightsParam =
         createSubjectInsightsParam(SubjectInsightsParamBuilder::build);
-    private final SubjectInsightParam subjectInsightParam =
+    private SubjectInsightParam subjectInsightParam =
         createSubjectInsightParam(SubjectInsightParamBuilder::build);
 
     @Test
@@ -71,7 +74,10 @@ class CreateSubjectInsightsHelperTest {
     }
 
     @Test
-    void testCreateSubjectInsight_whenSubjectIdIsValid_thenReturnSubjectInsight() {
+    void testCreateSubjectInsight_whenSubjectIdIsValidAndAssessmentModeIsQuick_thenReturnSubjectInsight() {
+        assessmentResult = validResultWithAssessmentMode(AssessmentMode.QUICK);
+        subjectInsightParam = createSubjectInsightParam(b -> b.assessmentResult(assessmentResult));
+
         when(loadSubjectPort.loadByIdAndKitVersionId(subjectInsightParam.subjectId(), assessmentResult.getKitVersionId()))
             .thenReturn(Optional.of(subject));
         when(loadSubjectValuePort.load(assessmentResult.getId(), subjectInsightParam.subjectId()))
@@ -82,7 +88,7 @@ class CreateSubjectInsightsHelperTest {
         var result = helper.createSubjectInsight(subjectInsightParam);
 
         assertNotNull(result);
-        String defaultInsight = createSubjectDefaultInsight(subjectValue, subjectInsightsParam.locale());
+        String defaultInsight = createQuickAssessmentSubjectDefaultInsight(subjectValue, subjectInsightsParam.locale());
         assertEquals(assessmentResult.getId(), result.getAssessmentResultId());
         assertEquals(subjectValue.getSubject().getId(), result.getSubjectId());
         assertEquals(defaultInsight, result.getInsight());
@@ -93,7 +99,7 @@ class CreateSubjectInsightsHelperTest {
     }
 
     @Test
-    void testCreateSubjectInsight_whenLocaleIsPersian_thenReturnSubjectInsightInPersian() {
+    void testCreateSubjectInsight_whenLocaleIsPersianAndModeIsAdvanced_thenReturnAdvancedModeSubjectInsightInPersian() {
         assessmentResult = validResultWithKitLanguage(KitLanguage.FA);
 
         when(loadSubjectPort.loadByIdAndKitVersionId(subjectInsightParam.subjectId(), assessmentResult.getKitVersionId()))
@@ -107,7 +113,7 @@ class CreateSubjectInsightsHelperTest {
         var result = helper.createSubjectInsight(paramWithPersianLocale);
 
         assertNotNull(result);
-        String defaultInsight = createSubjectDefaultInsight(subjectValue, paramWithPersianLocale.locale());
+        String defaultInsight = createAdvancedAssessmentSubjectDefaultInsight(subjectValue, paramWithPersianLocale.locale());
         assertEquals(assessmentResult.getId(), result.getAssessmentResultId());
         assertEquals(subjectValue.getSubject().getId(), result.getSubjectId());
         assertEquals(defaultInsight, result.getInsight());
@@ -132,7 +138,10 @@ class CreateSubjectInsightsHelperTest {
     }
 
     @Test
-    void testCreateSubjectInsights_whenSubjectIdIsValid_thenReturnSubjectInsight() {
+    void testCreateSubjectInsights_whenSubjectIdIsValidAndAssessmentModeIsQuick_thenReturnSubjectInsight() {
+        assessmentResult = validResultWithAssessmentMode(AssessmentMode.QUICK);
+        subjectInsightsParam = createSubjectInsightsParam(b -> b.assessmentResult(assessmentResult));
+
         when(loadSubjectValuePort.loadAll(assessmentResult.getId(), subjectInsightsParam.subjectIds()))
             .thenReturn(List.of(subjectValue));
         when(countMaturityLevelsPort.count(assessmentResult.getKitVersionId()))
@@ -140,7 +149,7 @@ class CreateSubjectInsightsHelperTest {
 
         var result = helper.createSubjectInsights(subjectInsightsParam);
         assertFalse(result.isEmpty());
-        String defaultInsight = createSubjectDefaultInsight(subjectValue, subjectInsightsParam.locale());
+        String defaultInsight = createQuickAssessmentSubjectDefaultInsight(subjectValue, subjectInsightsParam.locale());
         SubjectInsight subjectInsight = result.getFirst();
 
         assertEquals(assessmentResult.getId(), subjectInsight.getAssessmentResultId());
@@ -155,16 +164,17 @@ class CreateSubjectInsightsHelperTest {
     }
 
     @Test
-    void testCreateSubjectInsights_whenLocaleIsPersian_thenReturnSubjectInsightInPersian() {
-        var paramWithPersianLocale = createSubjectInsightsParam(b -> b.locale(Locale.of(KitLanguage.FA.getCode())));
-        when(loadSubjectValuePort.loadAll(assessmentResult.getId(), paramWithPersianLocale.subjectIds()))
+    void testCreateSubjectInsights_whenLocaleIsPersianAndModeIsAdvanced_thenReturnAdvancedModeSubjectInsightInPersian() {
+        subjectInsightsParam = createSubjectInsightsParam(b -> b.locale(Locale.of(KitLanguage.FA.getCode())));
+
+        when(loadSubjectValuePort.loadAll(assessmentResult.getId(), subjectInsightsParam.subjectIds()))
             .thenReturn(List.of(subjectValue));
         when(countMaturityLevelsPort.count(assessmentResult.getKitVersionId()))
             .thenReturn(maturityLevelsCount);
 
-        var result = helper.createSubjectInsights(paramWithPersianLocale);
+        var result = helper.createSubjectInsights(subjectInsightsParam);
         assertFalse(result.isEmpty());
-        String defaultInsight = createSubjectDefaultInsight(subjectValue, paramWithPersianLocale.locale());
+        String defaultInsight = createAdvancedAssessmentSubjectDefaultInsight(subjectValue, subjectInsightsParam.locale());
         SubjectInsight subjectInsight = result.getFirst();
 
         assertEquals(assessmentResult.getId(), subjectInsight.getAssessmentResultId());
@@ -178,8 +188,21 @@ class CreateSubjectInsightsHelperTest {
         verifyNoInteractions(loadSubjectPort);
     }
 
-    private String createSubjectDefaultInsight(SubjectValue subjectValue, Locale locale) {
-        return MessageBundle.message(SUBJECT_DEFAULT_INSIGHT,
+    private String createQuickAssessmentSubjectDefaultInsight(SubjectValue subjectValue, Locale locale) {
+        return MessageBundle.message(QUICK_ASSESSMENT_SUBJECT_DEFAULT_INSIGHT,
+            locale,
+            subjectValue.getSubject().getTitle(),
+            subjectValue.getSubject().getDescription(),
+            subjectValue.getSubject().getTitle(),
+            subjectValue.getMaturityLevel().getIndex(),
+            maturityLevelsCount,
+            subjectValue.getMaturityLevel().getTitle(),
+            subjectValue.getSubject().getAttributes().size(),
+            subjectValue.getSubject().getTitle());
+    }
+
+    private String createAdvancedAssessmentSubjectDefaultInsight(SubjectValue subjectValue, Locale locale) {
+        return MessageBundle.message(ADVANCED_ASSESSMENT_SUBJECT_DEFAULT_INSIGHT,
             locale,
             subjectValue.getSubject().getTitle(),
             subjectValue.getSubject().getDescription(),
