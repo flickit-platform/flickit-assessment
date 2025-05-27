@@ -75,6 +75,7 @@ public class AssessmentMother {
             AssessmentKitMother.publicKit(),
             SpaceMother.createBasicSpace(),
             kitCustomId,
+            AssessmentMode.ADVANCED,
             LocalDateTime.now(),
             LocalDateTime.now(),
             0L,
