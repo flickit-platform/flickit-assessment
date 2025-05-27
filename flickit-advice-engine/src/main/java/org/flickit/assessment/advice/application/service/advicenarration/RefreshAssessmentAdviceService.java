@@ -50,8 +50,8 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
         List<LoadAttributesPort.Result> attributes = loadAttributesPort.loadAll(param.getAssessmentId());
         var attributeLevelTargets = buildAttributeLevelTargets(attributes, maturityLevels);
 
-        if (!(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId()).isPresent() ||
-            loadAdviceItemPort.load(assessmentResult.getId()).isPresent())) {
+        if (loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId()).isEmpty() ||
+            loadAdviceItemPort.loadAll(assessmentResult.getId()).isEmpty()) {
             var adviceListItems = createAdviceHelper.createAdvice(assessmentResult.getAssessmentId(), attributeLevelTargets);
             createAiAdviceNarrationHelper.createAiAdviceNarration(assessmentResult, adviceListItems, attributeLevelTargets);
         }
