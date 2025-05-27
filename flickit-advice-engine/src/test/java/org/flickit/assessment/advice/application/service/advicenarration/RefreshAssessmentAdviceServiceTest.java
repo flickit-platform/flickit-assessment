@@ -30,8 +30,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-import static org.flickit.assessment.advice.test.fixture.application.MaturityLevelMother.allLevels;
-import static org.flickit.assessment.advice.test.fixture.application.MaturityLevelMother.levelTwo;
+import static org.flickit.assessment.advice.test.fixture.application.MaturityLevelMother.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -71,8 +70,13 @@ class RefreshAssessmentAdviceServiceTest {
     private final AssessmentResult assessmentResult = AssessmentResultMother.createAssessmentResult();
     private final RefreshAssessmentAdviceUseCase.Param param = createParam(RefreshAssessmentAdviceUseCase.Param.ParamBuilder::build);
 
-    LoadAttributesPort.Result attributeResult = new LoadAttributesPort.Result(123L, new LoadAttributesPort.MaturityLevel(1L, "Low", "Low", 1, 2));
-    List<LoadAttributesPort.Result> attributes = List.of(attributeResult);
+    private final LoadAttributesPort.Result attributeResult1 = new LoadAttributesPort.Result(123L, new LoadAttributesPort.MaturityLevel(levelOne().getId(), levelOne().getTitle(), "des", levelOne().getIndex(), 2));
+    private final LoadAttributesPort.Result attributeResult2 = new LoadAttributesPort.Result(123L, new LoadAttributesPort.MaturityLevel(levelThree().getId(), levelThree().getTitle(), "des", levelThree().getIndex(), 2));
+    private final List<LoadAttributesPort.Result> attributes = List.of(attributeResult1, attributeResult2);
+
+    private final AdviceListItem adviceListItem = AdviceListItemMother.createSimpleAdviceListItem();
+    private final List<AdviceListItem> adviceListItems = List.of(adviceListItem);
+
 
     @Test
     void testRefreshAssessmentAdvice_whenUserNotAuthorized_thenThrowAccessDeniedException() {
@@ -106,13 +110,6 @@ class RefreshAssessmentAdviceServiceTest {
 
     @Test
     void testRefreshAssessmentAdvice_whenAdviceNotExists_thenMakeAdviceNarrationOrAdviceItem() {
-        LoadAttributesPort.Result attributeResult1 = new LoadAttributesPort.Result(123L, new LoadAttributesPort.MaturityLevel(1L, "Low", "Low", 1, 2));
-        LoadAttributesPort.Result attributeResult2 = new LoadAttributesPort.Result(123L, new LoadAttributesPort.MaturityLevel(2L, "High", "High", 3, 2));
-        List<LoadAttributesPort.Result> attributes = List.of(attributeResult1, attributeResult2);
-
-        AdviceListItem adviceListItem = AdviceListItemMother.createSimpleAdviceListItem();
-        List<AdviceListItem> adviceListItems = List.of(adviceListItem);
-
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.REFRESH_ASSESSMENT_ADVICE)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(loadMaturityLevelsPort.loadAll(param.getAssessmentId())).thenReturn(allLevels());
