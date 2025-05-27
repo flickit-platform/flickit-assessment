@@ -58,17 +58,20 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
     }
 
     List<AttributeLevelTarget> buildAttributeLevelTargets(List<LoadAttributesPort.Result> attributes, List<MaturityLevel> maturityLevels) {
+        List<MaturityLevel> sortedMaturityLevels = maturityLevels.stream()
+            .sorted(Comparator.comparingInt(MaturityLevel::getIndex))
+            .toList();
+
         return attributes.stream()
-            .map(attribute -> buildAttributeLevelTarget(attribute, maturityLevels))
+            .map(attribute -> buildAttributeLevelTarget(attribute, sortedMaturityLevels))
             .filter(Objects::nonNull)
             .toList();
     }
 
-    AttributeLevelTarget buildAttributeLevelTarget(LoadAttributesPort.Result attribute, List<MaturityLevel> maturityLevels) {
+    AttributeLevelTarget buildAttributeLevelTarget(LoadAttributesPort.Result attribute, List<MaturityLevel> sortedMaturityLevels) {
         int currentLevelIndex = attribute.maturityLevel().index();
 
-        return maturityLevels.stream()
-            .sorted(Comparator.comparingInt(MaturityLevel::getIndex))
+        return sortedMaturityLevels.stream()
             .filter(level -> level.getIndex() > currentLevelIndex)
             .findFirst()
             .map(level -> new AttributeLevelTarget(attribute.id(), level.getId()))
