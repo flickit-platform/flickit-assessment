@@ -54,7 +54,6 @@ public class CreateAiAdviceNarrationHelper {
         if (!appAiProperties.isEnabled())
             return MessageBundle.message(ADVICE_NARRATION_AI_IS_DISABLED);
 
-
         var adviceNarration = loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId());
 
         attributeLevelTargets = filterValidAttributeLevelTargets(assessmentResult.getAssessmentId(), attributeLevelTargets);

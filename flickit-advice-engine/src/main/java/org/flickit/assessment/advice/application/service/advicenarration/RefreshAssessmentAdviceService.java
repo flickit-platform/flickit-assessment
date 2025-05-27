@@ -25,8 +25,8 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSM
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
 @Service
-@RequiredArgsConstructor
 @Transactional
+@RequiredArgsConstructor
 public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUseCase {
 
     private final AssessmentAccessChecker assessmentAccessChecker;

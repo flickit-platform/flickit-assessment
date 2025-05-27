@@ -198,5 +198,3 @@ class RefreshAssessmentAdviceServiceTest {
             .currentUserId(UUID.randomUUID());
     }
 }
-
-

@@ -65,7 +65,6 @@ class CreateAdviceHelperTest {
         List.of(new AttributeLevelTarget(1L, 2L),
             new AttributeLevelTarget(2L, 3L));
 
-
     @Test
     void testCreateAdviceHelper_whenAssessmentAttributeNotRelated_thenThrowResourceNotFoundException() {
         when(loadSelectedAttributeIdsRelatedToAssessmentPort.loadSelectedAttributeIdsRelatedToAssessment(assessmentId, Set.of(1L, 2L)))
@@ -100,7 +99,6 @@ class CreateAdviceHelperTest {
         );
     }
 
-
     @SneakyThrows
     @Test
     void testCreateAdviceHelper_whenAttributeLevelTargetsAreNotValid_thenThrowValidationException() {
@@ -123,7 +121,6 @@ class CreateAdviceHelperTest {
             loadCreatedAdviceDetailsPort
         );
     }
-
 
     @SneakyThrows
     @Test
@@ -232,7 +229,6 @@ class CreateAdviceHelperTest {
         verify(solverManager, times(1)).solve(any(), any());
         verify(loadCreatedAdviceDetailsPort, times(1)).loadAdviceDetails(any(), any());
     }
-
 
     private void mockPorts() throws InterruptedException, ExecutionException {
         when(loadSelectedAttributeIdsRelatedToAssessmentPort.loadSelectedAttributeIdsRelatedToAssessment(assessmentId, Set.of(1L)))
