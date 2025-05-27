@@ -55,10 +55,6 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
         var assessmentReport = loadAssessmentReportPort.load(param.getAssessmentId());
         boolean published = assessmentReport.map(AssessmentReport::isPublished)
             .orElse(false);
-        var reportMetadata = assessmentReport.map(AssessmentReport::getMetadata)
-            .orElse(new AssessmentReportMetadata(null, null, null, null));
-        var reportVisibility = assessmentReport.map(AssessmentReport::getVisibility)
-                .orElse(VisibilityType.RESTRICTED);
 
         validateReportPublication(param, published);
 
@@ -66,7 +62,7 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
 
         var attributeMeasuresMap = buildAttributeMeasures(param.getAssessmentId(), assessmentReportInfo);
 
-        return buildResult(assessmentReportInfo, attributeMeasuresMap, reportMetadata, param, published, reportVisibility);
+        return buildResult(assessmentReportInfo, attributeMeasuresMap, assessmentReport.orElse(null), param, published);
     }
 
     private void validateReportPublication(Param param, boolean published) {
@@ -77,10 +73,9 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
 
     private Result buildResult(LoadAssessmentReportInfoPort.Result assessmentReportInfo,
                                Map<Long, List<AttributeMeasure>> attributeMeasuresMap,
-                               AssessmentReportMetadata metadata,
+                               AssessmentReport assessmentReport,
                                Param param,
-                               boolean published,
-                               VisibilityType visibility) {
+                               boolean published) {
         var assessment = assessmentReportInfo.assessment();
         var assessmentKitItem = assessment.assessmentKit();
 
@@ -89,13 +84,22 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
         var maturityLevelMap = maturityLevels.stream()
             .collect(toMap(MaturityLevel::id, Function.identity()));
 
-        return new Result(toAssessment(assessment, assessmentKitItem, metadata, maturityLevels, attributesCount, maturityLevelMap),
+        Optional<AssessmentReport> optionalReport = Optional.ofNullable(assessmentReport);
+        var reportMetadata = optionalReport.map(AssessmentReport::getMetadata)
+            .orElse(new AssessmentReportMetadata(null, null, null, null));
+        var reportVisibility = optionalReport.map(AssessmentReport::getVisibility)
+            .orElse(VisibilityType.RESTRICTED);
+        var linkHash = optionalReport.map(AssessmentReport::getLinkHash)
+            .orElse(null);
+
+        return new Result(toAssessment(assessment, assessmentKitItem, reportMetadata, maturityLevels, attributesCount, maturityLevelMap),
             toSubjects(assessmentReportInfo.subjects(), maturityLevelMap, attributeMeasuresMap),
             toAdvice(assessment.assessmentResultId(), Locale.of(assessment.language().name())),
-            toAssessmentProcess(metadata),
+            toAssessmentProcess(reportMetadata),
             toPermissions(param.getAssessmentId(), published, param.getCurrentUserId()),
             toLanguage(assessment.language()),
-            visibility.name());
+            reportVisibility.name(),
+            linkHash);
     }
 
     private List<MaturityLevel> toMaturityLevels(AssessmentKitItem assessmentKitItem) {

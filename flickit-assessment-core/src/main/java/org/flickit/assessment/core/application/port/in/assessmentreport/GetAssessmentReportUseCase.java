@@ -41,7 +41,8 @@ public interface GetAssessmentReportUseCase {
                   AssessmentProcess assessmentProcess,
                   Permissions permissions,
                   Language lang,
-                  String visibility) {
+                  String visibility,
+                  String linkHash) {
     }
 
     record Assessment(String title,

@@ -191,6 +191,7 @@ class GetAssessmentReportServiceTest {
         assertFalse(result.permissions().canShareReport());
         assertFalse(result.permissions().canManageVisibility());
         assertEquals(VisibilityType.RESTRICTED.name(), result.visibility());
+        assertNull(result.linkHash());
 
         verify(assessmentAccessChecker, times(3))
             .isAuthorized(eq(param.getAssessmentId()), eq(param.getCurrentUserId()), any(AssessmentPermission.class));
@@ -251,6 +252,7 @@ class GetAssessmentReportServiceTest {
         assertFalse(result.permissions().canShareReport());
         assertTrue(result.permissions().canManageVisibility());
         assertEquals(report.getVisibility().name(), result.visibility());
+        assertEquals(report.getLinkHash(), result.linkHash());
     }
 
     private AssessmentReportItem createAssessmentReportItem(GetAssessmentReportUseCase.Param param) {
