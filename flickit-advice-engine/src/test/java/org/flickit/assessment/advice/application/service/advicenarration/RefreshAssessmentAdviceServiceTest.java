@@ -117,7 +117,7 @@ class RefreshAssessmentAdviceServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.REFRESH_ASSESSMENT_ADVICE)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
-        when(loadMaturityLevelsPort.loadAll(assessmentResult.getAssessmentId())).thenReturn(maturityLevels);
+        when(loadMaturityLevelsPort.loadAll(param.getAssessmentId())).thenReturn(maturityLevels);
         when(loadAttributesPort.loadAll(param.getAssessmentId())).thenReturn(attributes);
         when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.empty());
         @SuppressWarnings("unchecked")
@@ -155,7 +155,7 @@ class RefreshAssessmentAdviceServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.REFRESH_ASSESSMENT_ADVICE)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
-        when(loadMaturityLevelsPort.loadAll(assessmentResult.getAssessmentId())).thenReturn(maturityLevels);
+        when(loadMaturityLevelsPort.loadAll(param.getAssessmentId())).thenReturn(maturityLevels);
         when(loadAttributesPort.loadAll(param.getAssessmentId())).thenReturn(attributes);
         when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(AdviceNarrationMother.aiNarration()));
         when(loadAdviceItemPort.loadAll(assessmentResult.getId())).thenReturn(List.of(AdviceItemMother.adviceItem()));
@@ -180,7 +180,7 @@ class RefreshAssessmentAdviceServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.REFRESH_ASSESSMENT_ADVICE)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
-        when(loadMaturityLevelsPort.loadAll(assessmentResult.getAssessmentId())).thenReturn(maturityLevels);
+        when(loadMaturityLevelsPort.loadAll(param.getAssessmentId())).thenReturn(maturityLevels);
         when(loadAttributesPort.loadAll(param.getAssessmentId())).thenReturn(attributes);
         when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.empty());
         @SuppressWarnings("unchecked")

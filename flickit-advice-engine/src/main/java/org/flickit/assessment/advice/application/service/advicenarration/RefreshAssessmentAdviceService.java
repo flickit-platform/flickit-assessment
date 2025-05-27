@@ -46,7 +46,7 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
 
-        List<MaturityLevel> maturityLevels = loadMaturityLevelsPort.loadAll(assessmentResult.getAssessmentId());
+        List<MaturityLevel> maturityLevels = loadMaturityLevelsPort.loadAll(param.getAssessmentId());
         List<LoadAttributesPort.Result> attributes = loadAttributesPort.loadAll(param.getAssessmentId());
         var attributeLevelTargets = buildAttributeLevelTargets(attributes, maturityLevels);
 
