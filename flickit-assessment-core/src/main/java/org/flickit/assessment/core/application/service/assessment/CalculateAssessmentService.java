@@ -1,6 +1,7 @@
 package org.flickit.assessment.core.application.service.assessment;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
@@ -25,6 +26,7 @@ import static org.flickit.assessment.common.application.domain.assessment.Assess
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.CALCULATE_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -45,7 +47,7 @@ public class CalculateAssessmentService implements CalculateAssessmentUseCase {
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CALCULATE_ASSESSMENT))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        reinitializeAssessmentResultIfRequired(param.getAssessmentId());
+        var isReinitialized = reinitializeAssessmentResultIfRequired(param.getAssessmentId());
 
         AssessmentResult assessmentResult = loadCalculateInfoPort.load(param.getAssessmentId());
 
@@ -58,14 +60,18 @@ public class CalculateAssessmentService implements CalculateAssessmentUseCase {
         updateCalculatedResultPort.updateCalculatedResult(assessmentResult);
         updateAssessmentPort.updateLastModificationTime(param.getAssessmentId(), assessmentResult.getLastModificationTime());
 
-        return new Result(calcResult);
+        return new Result(calcResult, isReinitialized);
     }
 
-    private void reinitializeAssessmentResultIfRequired(UUID assessmentId) {
-        var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(assessmentId)
-            .orElseThrow(() -> new ResourceNotFoundException(CALCULATE_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND));
-        if (isAssessmentResultReinitializationRequired(assessmentResult))
-            reinitializeAssessmentResult(assessmentResult);
+    private boolean reinitializeAssessmentResultIfRequired(UUID assessmentId) {
+        return Optional.ofNullable(loadAssessmentResultPort.loadByAssessmentId(assessmentId)
+                .orElseThrow(() -> new ResourceNotFoundException(CALCULATE_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND)))
+            .filter(this::isAssessmentResultReinitializationRequired)
+            .map(result -> {
+                reinitializeAssessmentResult(result);
+                return true;
+            })
+            .orElse(false);
     }
 
     private boolean isAssessmentResultReinitializationRequired(AssessmentResult assessmentResult) {

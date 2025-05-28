@@ -114,6 +114,9 @@ class CalculateAssessmentServiceTest {
         assertNotNull(result);
         assertNotNull(result.maturityLevel());
         assertEquals(levelTwo().getValue(), result.maturityLevel().getValue());
+        assertFalse(result.resultAffected());
+
+        verifyNoInteractions(loadSubjectsPort, createSubjectValuePort, createAttributeValuePort);
     }
 
     @Test
@@ -165,6 +168,7 @@ class CalculateAssessmentServiceTest {
         assertNotNull(result);
         assertNotNull(result.maturityLevel());
         assertEquals(levelThree().getValue(), result.maturityLevel().getValue());
+        assertTrue(result.resultAffected());
     }
 
     @Test
