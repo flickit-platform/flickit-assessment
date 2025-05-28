@@ -15,6 +15,8 @@ public interface AdviceNarrationJpaRepository extends JpaRepository<AdviceNarrat
 
     Optional<AdviceNarrationJpaEntity> findByAssessmentResultId(UUID assessmentResultId);
 
+    void deleteByAssessmentResultId(UUID assessmentResultId);
+
     @Modifying
     @Query("""
             UPDATE AdviceNarrationJpaEntity a
