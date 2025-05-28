@@ -4,6 +4,8 @@ import org.flickit.assessment.advice.application.domain.AssessmentResult;
 import org.flickit.assessment.advice.application.domain.AttributeLevelTarget;
 import org.flickit.assessment.advice.application.domain.advice.AdviceListItem;
 import org.flickit.assessment.advice.application.port.in.advicenarration.RefreshAssessmentAdviceUseCase;
+import org.flickit.assessment.advice.application.port.out.adviceitem.DeleteAdviceItemPort;
+import org.flickit.assessment.advice.application.port.out.advicenarration.DeleteAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.advice.application.port.out.atribute.LoadAttributesPort;
 import org.flickit.assessment.advice.application.port.out.maturitylevel.LoadMaturityLevelsPort;
@@ -26,7 +28,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-import static org.flickit.assessment.advice.test.fixture.application.AssessmentResultMother.invalidAssessmentResult;
+import static org.flickit.assessment.advice.test.fixture.application.AssessmentResultMother.invalidAssessmentResultWithAssessmentId;
 import static org.flickit.assessment.advice.test.fixture.application.MaturityLevelMother.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -38,25 +40,31 @@ import static org.mockito.Mockito.*;
 class RefreshAssessmentAdviceServiceTest {
 
     @InjectMocks
-    RefreshAssessmentAdviceService service;
+    private RefreshAssessmentAdviceService service;
 
     @Mock
-    AssessmentAccessChecker assessmentAccessChecker;
+    private AssessmentAccessChecker assessmentAccessChecker;
 
     @Mock
-    LoadAssessmentResultPort loadAssessmentResultPort;
+    private LoadAssessmentResultPort loadAssessmentResultPort;
 
     @Mock
-    LoadMaturityLevelsPort loadMaturityLevelsPort;
+    private LoadMaturityLevelsPort loadMaturityLevelsPort;
 
     @Mock
-    LoadAttributesPort loadAttributesPort;
+    private LoadAttributesPort loadAttributesPort;
 
     @Mock
-    CreateAdviceHelper createAdviceHelper;
+    private CreateAdviceHelper createAdviceHelper;
 
     @Mock
-    CreateAiAdviceNarrationHelper createAiAdviceNarrationHelper;
+    private CreateAiAdviceNarrationHelper createAiAdviceNarrationHelper;
+
+    @Mock
+    private DeleteAdviceItemPort deleteAdviceItemPort;
+
+    @Mock
+    private DeleteAdviceNarrationPort deleteAdviceNarrationPort;
 
     private AssessmentResult assessmentResult = AssessmentResultMother.createAssessmentResult();
     private final RefreshAssessmentAdviceUseCase.Param param = createParam(RefreshAssessmentAdviceUseCase.Param.ParamBuilder::build);
@@ -67,7 +75,6 @@ class RefreshAssessmentAdviceServiceTest {
 
     private final AdviceListItem adviceListItem = AdviceListItemMother.createSimpleAdviceListItem();
     private final List<AdviceListItem> adviceListItems = List.of(adviceListItem);
-
 
     @Test
     void testRefreshAssessmentAdvice_whenUserNotAuthorized_thenThrowAccessDeniedException() {
@@ -100,8 +107,8 @@ class RefreshAssessmentAdviceServiceTest {
     }
 
     @Test
-    void testRefreshAssessmentAdvice_whenAssessmentCalculationIsValid_thenMakeAdviceAdvice() {
-        assessmentResult = invalidAssessmentResult();
+    void testRefreshAssessmentAdvice_whenAssessmentCalculationIsNotValid_thenMakeAdvice() {
+        assessmentResult = invalidAssessmentResultWithAssessmentId(param.getAssessmentId());
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.REFRESH_ASSESSMENT_ADVICE)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
@@ -128,6 +135,9 @@ class RefreshAssessmentAdviceServiceTest {
         assertEquals(1, narratedTargets.size());
         assertEquals(123L, narratedTargets.getFirst().getAttributeId());
         assertEquals(levelTwo().getId(), narratedTargets.getFirst().getMaturityLevelId());
+
+        verify(deleteAdviceItemPort).deleteAll(assessmentResult.getId());
+        verify(deleteAdviceNarrationPort).deleteAll(assessmentResult.getId());
     }
 
     @Test
