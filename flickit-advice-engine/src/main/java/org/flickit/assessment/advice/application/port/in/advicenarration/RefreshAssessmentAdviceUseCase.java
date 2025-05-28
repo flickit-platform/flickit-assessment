@@ -9,6 +9,7 @@ import org.flickit.assessment.common.application.SelfValidating;
 import java.util.UUID;
 
 import static org.flickit.assessment.advice.common.ErrorMessageKey.REFRESH_ASSESSMENT_ADVICE_ASSESSMENT_ID_NOT_NULL;
+import static org.flickit.assessment.advice.common.ErrorMessageKey.REFRESH_ASSESSMENT_ADVICE_FORCE_REGENERATE_NOT_NULL;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 
 public interface RefreshAssessmentAdviceUseCase {
@@ -22,12 +23,16 @@ public interface RefreshAssessmentAdviceUseCase {
         @NotNull(message = REFRESH_ASSESSMENT_ADVICE_ASSESSMENT_ID_NOT_NULL)
         UUID assessmentId;
 
+        @NotNull(message = REFRESH_ASSESSMENT_ADVICE_FORCE_REGENERATE_NOT_NULL)
+        Boolean forceRegenerate;
+
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
         @Builder
-        public Param(UUID assessmentId, UUID currentUserId) {
+        public Param(UUID assessmentId, Boolean forceRegenerate, UUID currentUserId) {
             this.assessmentId = assessmentId;
+            this.forceRegenerate = forceRegenerate;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }

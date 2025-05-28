@@ -216,7 +216,8 @@ class RefreshAssessmentAdviceServiceTest {
 
     private RefreshAssessmentAdviceUseCase.Param.ParamBuilder paramBuilder() {
         return RefreshAssessmentAdviceUseCase.Param.builder()
-            .assessmentId(UUID.randomUUID())
-            .currentUserId(UUID.randomUUID());
+                .assessmentId(UUID.randomUUID())
+                .forceRegenerate(true)
+                .currentUserId(UUID.randomUUID());
     }
 }
