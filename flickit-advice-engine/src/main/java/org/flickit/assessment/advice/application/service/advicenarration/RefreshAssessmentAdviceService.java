@@ -50,7 +50,7 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
 
         if (param.getForceRegenerate()) {
             log.info("Regenerating advice for assessmentId=[{}]", param.getAssessmentId());
-            var adviceListItems = createAdviceHelper.createAdvice(assessmentResult.getAssessmentId(), attributeLevelTargets);
+            var adviceListItems = createAdviceHelper.createAdvice(param.getAssessmentId(), attributeLevelTargets);
             createAiAdviceNarrationHelper.createAiAdviceNarration(assessmentResult, adviceListItems, attributeLevelTargets);
         }
     }
