@@ -5,4 +5,6 @@ import java.util.UUID;
 public interface DeleteAdviceItemPort {
 
     void delete(UUID id);
+
+    void deleteAll(UUID assessmentResultId);
 }
