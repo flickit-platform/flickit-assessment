@@ -17,10 +17,10 @@ public class AssessmentResultMother {
             KitLanguage.FA);
     }
 
-    public static AssessmentResult invalidAssessmentResult() {
+    public static AssessmentResult invalidAssessmentResultWithAssessmentId(UUID assessmentId) {
         return new AssessmentResult(UUID.randomUUID(),
             ++kitVersionId,
-            UUID.randomUUID(),
+            assessmentId,
             false,
             KitLanguage.FA);
     }
