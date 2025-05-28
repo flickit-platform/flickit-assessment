@@ -32,6 +32,7 @@ public interface CalculateAssessmentUseCase {
         }
     }
 
-    record Result(MaturityLevel maturityLevel) {
+    record Result(MaturityLevel maturityLevel,
+                  boolean resultAffected) {
     }
 }
