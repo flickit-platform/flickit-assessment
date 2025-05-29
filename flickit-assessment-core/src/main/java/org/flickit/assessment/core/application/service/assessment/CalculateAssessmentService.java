@@ -69,6 +69,7 @@ public class CalculateAssessmentService implements CalculateAssessmentUseCase {
             .filter(this::isAssessmentResultReinitializationRequired)
             .map(result -> {
                 reinitializeAssessmentResult(result);
+                log.info("Reinitialized assessmentResultId=[{}] of assessmentId=[{}].", result.getId(), result.getAssessment().getId());
                 return true;
             })
             .orElse(false);
