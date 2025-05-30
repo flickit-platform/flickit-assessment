@@ -117,12 +117,11 @@ class RefreshAssessmentAdviceServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.REFRESH_ASSESSMENT_ADVICE)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
-        when(loadMaturityLevelsPort.loadAll(param.getAssessmentId())).thenReturn(allLevels());
-        when(loadAttributesPort.loadAll(param.getAssessmentId(), assessmentResult.getKitVersionId(), assessmentResult.getLanguage())).thenReturn(attributes);
 
         service.refreshAssessmentAdvice(param);
 
-        verifyNoInteractions(createAdviceHelper, createAiAdviceNarrationHelper,
+        verifyNoInteractions(loadMaturityLevelsPort, loadAttributesPort,
+            createAdviceHelper, createAiAdviceNarrationHelper,
             deleteAdviceItemPort, deleteAdviceNarrationPort);
     }
 

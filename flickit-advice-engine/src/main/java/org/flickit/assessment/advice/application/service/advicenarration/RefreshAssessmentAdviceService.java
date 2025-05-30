@@ -47,17 +47,18 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
 
-        var attributeLevelTargets = prepareAttributeLevelTargets(assessmentResult);
-        if (param.getForceRegenerate() && !attributeLevelTargets.isEmpty()) {
-            deleteAdvice(assessmentResult);
-            regenerateAdvice(assessmentResult, attributeLevelTargets);
+        if (param.getForceRegenerate()) {
+            var targets = prepareAttributeLevelTargets(assessmentResult);
+            regenerateAdviceIfNecessary(assessmentResult, targets);
         }
     }
 
-    private void deleteAdvice(AssessmentResult assessmentResult) {
-        log.info("Deleting advice for [assessmentId={}, resultId={}]",assessmentResult.getAssessmentId(), assessmentResult.getId());
-        deleteAdviceItemPort.deleteAll(assessmentResult.getId());
-        deleteAdviceNarrationPort.deleteAll(assessmentResult.getId());
+    private void regenerateAdviceIfNecessary(AssessmentResult assessmentResult, List<AttributeLevelTarget> targets) {
+        if (!targets.isEmpty()) {
+            log.info("Regenerating advice for [assessmentId={} and assessmentResultId={}]", assessmentResult.getAssessmentId(), assessmentResult.getId());
+            deleteAdvice(assessmentResult);
+            generateAdvice(assessmentResult, targets);
+        }
     }
 
     private List<AttributeLevelTarget> prepareAttributeLevelTargets(AssessmentResult result) {
@@ -77,12 +78,6 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
             .toList();
     }
 
-    private void regenerateAdvice(AssessmentResult result, List<AttributeLevelTarget> targets) {
-        log.info("Regenerating advice for [assessmentId={}, resultId={}]", result.getAssessmentId(), result.getId());
-        var adviceListItems = createAdviceHelper.createAdvice(result.getAssessmentId(), targets);
-        createAiAdviceNarrationHelper.createAiAdviceNarration(result, adviceListItems, targets);
-    }
-
     Optional<AttributeLevelTarget> buildAttributeLevelTarget(LoadAttributesPort.Result attribute, List<MaturityLevel> sortedMaturityLevels) {
         int currentLevelIndex = attribute.maturityLevel().index();
 
@@ -90,5 +85,15 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
             .filter(level -> level.getIndex() > currentLevelIndex)
             .findFirst()
             .map(level -> new AttributeLevelTarget(attribute.id(), level.getId()));
+    }
+
+    private void deleteAdvice(AssessmentResult assessmentResult) {
+        deleteAdviceItemPort.deleteAll(assessmentResult.getId());
+        deleteAdviceNarrationPort.deleteAll(assessmentResult.getId());
+    }
+
+    private void generateAdvice(AssessmentResult result, List<AttributeLevelTarget> targets) {
+        var adviceListItems = createAdviceHelper.createAdvice(result.getAssessmentId(), targets);
+        createAiAdviceNarrationHelper.createAiAdviceNarration(result, adviceListItems, targets);
     }
 }
