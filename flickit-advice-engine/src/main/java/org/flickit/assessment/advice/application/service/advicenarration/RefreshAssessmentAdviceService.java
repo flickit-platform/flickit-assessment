@@ -1,6 +1,7 @@
 package org.flickit.assessment.advice.application.service.advicenarration;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.advice.application.domain.AssessmentResult;
 import org.flickit.assessment.advice.application.domain.AttributeLevelTarget;
 import org.flickit.assessment.advice.application.domain.MaturityLevel;
@@ -25,6 +26,7 @@ import static org.flickit.assessment.common.application.domain.assessment.Assess
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -47,24 +49,15 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
 
-        if (!assessmentResult.getIsCalculateValid())
-            refreshAdvice(assessmentResult);
-    }
-
-    private void refreshAdvice(AssessmentResult assessmentResult) {
-        deleteAdviceItemPort.deleteAll(assessmentResult.getId());
-        deleteAdviceNarrationPort.deleteAll(assessmentResult.getId());
-
-        createAdvice(assessmentResult);
-    }
-
-    private void createAdvice(AssessmentResult assessmentResult) {
-        List<MaturityLevel> maturityLevels = loadMaturityLevelsPort.loadAll(assessmentResult.getAssessmentId());
-        List<LoadAttributesPort.Result> attributes = loadAttributesPort.loadAll(assessmentResult.getAssessmentId());
+        List<MaturityLevel> maturityLevels = loadMaturityLevelsPort.loadAll(param.getAssessmentId());
+        List<LoadAttributesPort.Result> attributes = loadAttributesPort.loadAll(param.getAssessmentId());
         var attributeLevelTargets = buildAttributeLevelTargets(attributes, maturityLevels);
 
-        var adviceListItems = createAdviceHelper.createAdvice(assessmentResult.getAssessmentId(), attributeLevelTargets);
-        createAiAdviceNarrationHelper.createAiAdviceNarration(assessmentResult, adviceListItems, attributeLevelTargets);
+        if (param.getForceRegenerate()) {
+            log.info("Regenerating advice for assessmentId=[{}]", param.getAssessmentId());
+            var adviceListItems = createAdviceHelper.createAdvice(param.getAssessmentId(), attributeLevelTargets);
+            createAiAdviceNarrationHelper.createAiAdviceNarration(assessmentResult, adviceListItems, attributeLevelTargets);
+        }
     }
 
     List<AttributeLevelTarget> buildAttributeLevelTargets(List<LoadAttributesPort.Result> attributes, List<MaturityLevel> maturityLevels) {

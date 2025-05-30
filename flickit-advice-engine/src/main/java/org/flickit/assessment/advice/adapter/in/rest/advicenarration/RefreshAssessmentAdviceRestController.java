@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
@@ -20,9 +21,16 @@ public class RefreshAssessmentAdviceRestController {
     private final UserContext userContext;
 
     @PostMapping("/assessments/{assessmentId}/refresh-advice")
-    ResponseEntity<Void> refreshAssessmentAdvice(@PathVariable("assessmentId") UUID assessmentId) {
+    ResponseEntity<Void> refreshAssessmentAdvice(@PathVariable("assessmentId") UUID assessmentId,
+                                                 @RequestBody RefreshAssessmentAdviceRequestDto requestDto) {
         var currentUserId = userContext.getUser().id();
-        useCase.refreshAssessmentAdvice(new Param(assessmentId, currentUserId));
+        useCase.refreshAssessmentAdvice(toParam(assessmentId, requestDto, currentUserId));
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    private Param toParam(UUID assessmentId, RefreshAssessmentAdviceRequestDto requestDto, UUID currentUserId) {
+        return new Param(assessmentId,
+            requestDto.forceRegenerate(),
+            currentUserId);
     }
 }
