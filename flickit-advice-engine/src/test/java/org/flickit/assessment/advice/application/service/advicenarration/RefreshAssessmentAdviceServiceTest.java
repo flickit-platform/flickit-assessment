@@ -143,7 +143,7 @@ class RefreshAssessmentAdviceServiceTest {
 
     @Test
     void testRefreshAssessmentAdvice_whenAttributeHasMaxMaturityLevel_thenNoTargetGenerated() {
-        attributeResult = new LoadAttributesPort.Result(123L, new LoadAttributesPort.MaturityLevel(levelThree().getId(), levelOne().getTitle(), "Low", levelThree().getIndex(), 2));
+        attributeResult = new LoadAttributesPort.Result(123L, new LoadAttributesPort.MaturityLevel(levelThree().getId(), levelOne().getTitle(), "High", levelThree().getIndex(), 2));
         attributes = List.of(attributeResult);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.REFRESH_ASSESSMENT_ADVICE)).thenReturn(true);
@@ -172,7 +172,6 @@ class RefreshAssessmentAdviceServiceTest {
         verify(createAdviceHelper).createAdvice(eq(param.getAssessmentId()), eq(List.of()));
         verify(createAiAdviceNarrationHelper).createAiAdviceNarration(eq(assessmentResult), eq(adviceListItems), eq(List.of()));
     }
-
 
     private RefreshAssessmentAdviceUseCase.Param createParam(Consumer<RefreshAssessmentAdviceUseCase.Param.ParamBuilder> changer) {
         var paramBuilder = paramBuilder();
