@@ -13,7 +13,6 @@ public class AssessmentResultMapper {
         return new AssessmentResult(entity.getId(),
             entity.getKitVersionId(),
             entity.getAssessment().getId(),
-            entity.getIsCalculateValid(),
             KitLanguage.valueOfById(entity.getLangId()));
     }
 }

@@ -17,8 +17,6 @@ public class AssessmentResult {
 
     private final UUID assessmentId;
 
-    private final Boolean isCalculateValid;
-
     @Setter
     private KitLanguage language;
 }
