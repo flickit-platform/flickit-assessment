@@ -10,7 +10,6 @@ import org.flickit.assessment.users.application.domain.SpaceStatus;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.flickit.assessment.common.exception.api.ErrorCodes.INVALID_INPUT;
 import static org.flickit.assessment.common.exception.api.ErrorCodes.UPGRADE_REQUIRED;
 import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
 import static org.flickit.assessment.scenario.fixture.request.CreateSpaceRequestDtoMother.createSpaceRequestDto;
@@ -66,40 +65,10 @@ class CreateSpaceScenarioTest extends AbstractScenarioTest {
 
         // Second invoke with the same request
         var response2 = spaceHelper.create(context, request);
-        var error = response2.then()
-            .statusCode(400)
-            .extract().as(ErrorResponseDto.class);
-
-        assertEquals(INVALID_INPUT, error.code());
-        assertNotNull(error.message());
+        response2.then()
+            .statusCode(201);
 
         int countAfter = jpaTemplate.count(SpaceJpaEntity.class);
-        assertEquals(countBefore, countAfter);
-    }
-
-    @Test
-    void createSpace_withSameTitleAsDeleted() {
-        final var request = createSpaceRequestDto();
-        // First invoke
-        var firstCreateResponse = spaceHelper.create(context, request);
-        firstCreateResponse.then()
-            .statusCode(201);
-
-        Number createdSpaceId = firstCreateResponse.body().path("id");
-
-        // Delete created space
-        spaceHelper.delete(context, createdSpaceId)
-            .then()
-            .statusCode(204);
-
-        final int countBefore = jpaTemplate.count(SpaceJpaEntity.class);
-
-        // Second invoke with the same request
-        spaceHelper.create(context, request).then()
-            .statusCode(201);
-
-        final int countAfter = jpaTemplate.count(SpaceJpaEntity.class);
-
         assertEquals(countBefore + 1, countAfter);
     }
 
