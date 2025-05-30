@@ -48,14 +48,14 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
 
         var attributeLevelTargets = prepareAttributeLevelTargets(assessmentResult);
-        if (param.getForceRegenerate()) {
+        if (param.getForceRegenerate() && !attributeLevelTargets.isEmpty()) {
             deleteAdvice(assessmentResult);
             regenerateAdvice(assessmentResult, attributeLevelTargets);
         }
     }
 
     private void deleteAdvice(AssessmentResult assessmentResult) {
-        log.info("Deleting advice for assessmentResultId=[{}] of assessmentId[{}]", assessmentResult.getId(), assessmentResult.getAssessmentId());
+        log.info("Deleting advice for [assessmentId={}, resultId={}]",assessmentResult.getAssessmentId(), assessmentResult.getId());
         deleteAdviceItemPort.deleteAll(assessmentResult.getId());
         deleteAdviceNarrationPort.deleteAll(assessmentResult.getId());
     }
@@ -78,7 +78,7 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
     }
 
     private void regenerateAdvice(AssessmentResult result, List<AttributeLevelTarget> targets) {
-        log.info("Regenerating advice for assessmentId=[{}]", result.getAssessmentId());
+        log.info("Regenerating advice for [assessmentId={}, resultId={}]", result.getAssessmentId(), result.getId());
         var adviceListItems = createAdviceHelper.createAdvice(result.getAssessmentId(), targets);
         createAiAdviceNarrationHelper.createAiAdviceNarration(result, adviceListItems, targets);
     }
