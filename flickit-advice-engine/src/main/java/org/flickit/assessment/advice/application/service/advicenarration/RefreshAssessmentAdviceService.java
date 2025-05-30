@@ -18,9 +18,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.REFRESH_ASSESSMENT_ADVICE;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
@@ -49,25 +47,23 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
 
+        var attributeLevelTargets = prepareAttributeLevelTargets(assessmentResult);
         if (param.getForceRegenerate()) {
-            log.info("Regenerating advice for assessmentId=[{}]", param.getAssessmentId());
             deleteAdvice(assessmentResult);
-            createAdvice(assessmentResult);
+            regenerateAdvice(assessmentResult, attributeLevelTargets);
         }
     }
 
     private void deleteAdvice(AssessmentResult assessmentResult) {
+        log.info("Deleting advice for assessmentResultId=[{}] of assessmentId[{}]", assessmentResult.getId(), assessmentResult.getAssessmentId());
         deleteAdviceItemPort.deleteAll(assessmentResult.getId());
         deleteAdviceNarrationPort.deleteAll(assessmentResult.getId());
     }
 
-    private void createAdvice(AssessmentResult assessmentResult) {
-        List<MaturityLevel> maturityLevels = loadMaturityLevelsPort.loadAll(assessmentResult.getAssessmentId());
-        List<LoadAttributesPort.Result> attributes = loadAttributesPort.loadAll(assessmentResult.getAssessmentId());
-        var attributeLevelTargets = buildAttributeLevelTargets(attributes, maturityLevels);
-
-        var adviceListItems = createAdviceHelper.createAdvice(assessmentResult.getAssessmentId(), attributeLevelTargets);
-        createAiAdviceNarrationHelper.createAiAdviceNarration(assessmentResult, adviceListItems, attributeLevelTargets);
+    private List<AttributeLevelTarget> prepareAttributeLevelTargets(AssessmentResult result) {
+        var attributes = loadAttributesPort.loadAll(result.getAssessmentId(), result.getKitVersionId(), result.getLanguage());
+        var maturityLevels = loadMaturityLevelsPort.loadAll(result.getAssessmentId());
+        return buildAttributeLevelTargets(attributes, maturityLevels);
     }
 
     List<AttributeLevelTarget> buildAttributeLevelTargets(List<LoadAttributesPort.Result> attributes, List<MaturityLevel> maturityLevels) {
@@ -77,17 +73,22 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
 
         return attributes.stream()
             .map(attribute -> buildAttributeLevelTarget(attribute, sortedMaturityLevels))
-            .filter(Objects::nonNull)
+            .flatMap(Optional::stream)
             .toList();
     }
 
-    AttributeLevelTarget buildAttributeLevelTarget(LoadAttributesPort.Result attribute, List<MaturityLevel> sortedMaturityLevels) {
+    private void regenerateAdvice(AssessmentResult result, List<AttributeLevelTarget> targets) {
+        log.info("Regenerating advice for assessmentId=[{}]", result.getAssessmentId());
+        var adviceListItems = createAdviceHelper.createAdvice(result.getAssessmentId(), targets);
+        createAiAdviceNarrationHelper.createAiAdviceNarration(result, adviceListItems, targets);
+    }
+
+    Optional<AttributeLevelTarget> buildAttributeLevelTarget(LoadAttributesPort.Result attribute, List<MaturityLevel> sortedMaturityLevels) {
         int currentLevelIndex = attribute.maturityLevel().index();
 
         return sortedMaturityLevels.stream()
             .filter(level -> level.getIndex() > currentLevelIndex)
             .findFirst()
-            .map(level -> new AttributeLevelTarget(attribute.id(), level.getId()))
-            .orElse(null);
+            .map(level -> new AttributeLevelTarget(attribute.id(), level.getId()));
     }
 }

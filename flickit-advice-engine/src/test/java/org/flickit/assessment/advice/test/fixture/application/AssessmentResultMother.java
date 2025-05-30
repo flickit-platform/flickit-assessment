@@ -10,18 +10,13 @@ public class AssessmentResultMother {
     private static long kitVersionId = 0L;
 
     public static AssessmentResult createAssessmentResult() {
-        return new AssessmentResult(UUID.randomUUID(),
-            ++kitVersionId,
-            UUID.randomUUID(),
-            true,
-            KitLanguage.FA);
+        return createAssessmentResultWithAssessmentId(UUID.randomUUID());
     }
 
-    public static AssessmentResult invalidAssessmentResultWithAssessmentId(UUID assessmentId) {
+    public static AssessmentResult createAssessmentResultWithAssessmentId(UUID assessmentId) {
         return new AssessmentResult(UUID.randomUUID(),
             ++kitVersionId,
             assessmentId,
-            false,
             KitLanguage.FA);
     }
 }

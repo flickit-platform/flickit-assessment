@@ -5,7 +5,6 @@ import org.flickit.assessment.advice.application.domain.Attribute;
 import org.flickit.assessment.advice.application.port.out.atribute.LoadAttributesPort;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.core.attribute.AttributeMaturityLevelSubjectView;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
@@ -35,19 +34,16 @@ public class AttributePersistenceJpaAdapter implements LoadAttributesPort {
         var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
 
-        var translationLanguage = resolveLanguage(assessmentResult);
+        var translationLanguage = resolveLanguage(assessmentResult.getKitVersionId(), assessmentResult.getLangId());
         return repository.findAllByIdInAndKitVersionId(attributeIds, assessmentResult.getKitVersionId()).stream()
             .map(entity -> mapToDomainModel(entity, translationLanguage))
             .toList();
     }
 
     @Override
-    public List<Result> loadAll(UUID assessmentId) {
-        var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
-            .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
-        var kitLanguage = resolveLanguage(assessmentResult);
-
+    public List<Result> loadAll(UUID assessmentId, long kitVersionId, KitLanguage assessmentLanguage) {
         var attributeViews = repository.findAllByAssessmentIdWithSubjectAndMaturityLevel(assessmentId);
+        var kitLanguage = resolveLanguage(kitVersionId, assessmentLanguage.getId());
 
         return attributeViews.stream()
             .sorted(Comparator.comparingInt((AttributeMaturityLevelSubjectView v) -> v.getSubject().getIndex())
@@ -56,11 +52,11 @@ public class AttributePersistenceJpaAdapter implements LoadAttributesPort {
             .toList();
     }
 
-    private KitLanguage resolveLanguage(AssessmentResultJpaEntity assessmentResult) {
-        var assessmentKit = assessmentKitRepository.findByKitVersionId(assessmentResult.getKitVersionId())
+    private KitLanguage resolveLanguage(long kitVersionId, int langId) {
+        var assessmentKit = assessmentKitRepository.findByKitVersionId(kitVersionId)
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_KIT_NOT_FOUND));
-        return Objects.equals(assessmentResult.getLangId(), assessmentKit.getLanguageId())
+        return Objects.equals(langId, assessmentKit.getLanguageId())
             ? null
-            : KitLanguage.valueOfById(assessmentResult.getLangId());
+            : KitLanguage.valueOfById(langId);
     }
 }
