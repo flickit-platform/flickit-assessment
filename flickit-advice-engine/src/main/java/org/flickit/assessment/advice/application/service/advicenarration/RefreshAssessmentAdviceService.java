@@ -49,15 +49,25 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
 
-        List<MaturityLevel> maturityLevels = loadMaturityLevelsPort.loadAll(param.getAssessmentId());
-        List<LoadAttributesPort.Result> attributes = loadAttributesPort.loadAll(param.getAssessmentId());
-        var attributeLevelTargets = buildAttributeLevelTargets(attributes, maturityLevels);
-
         if (param.getForceRegenerate()) {
             log.info("Regenerating advice for assessmentId=[{}]", param.getAssessmentId());
-            var adviceListItems = createAdviceHelper.createAdvice(param.getAssessmentId(), attributeLevelTargets);
-            createAiAdviceNarrationHelper.createAiAdviceNarration(assessmentResult, adviceListItems, attributeLevelTargets);
+            deleteAdvice(assessmentResult);
+            createAdvice(assessmentResult);
         }
+    }
+
+    private void deleteAdvice(AssessmentResult assessmentResult) {
+        deleteAdviceItemPort.deleteAll(assessmentResult.getId());
+        deleteAdviceNarrationPort.deleteAll(assessmentResult.getId());
+    }
+
+    private void createAdvice(AssessmentResult assessmentResult) {
+        List<MaturityLevel> maturityLevels = loadMaturityLevelsPort.loadAll(assessmentResult.getAssessmentId());
+        List<LoadAttributesPort.Result> attributes = loadAttributesPort.loadAll(assessmentResult.getAssessmentId());
+        var attributeLevelTargets = buildAttributeLevelTargets(attributes, maturityLevels);
+
+        var adviceListItems = createAdviceHelper.createAdvice(assessmentResult.getAssessmentId(), attributeLevelTargets);
+        createAiAdviceNarrationHelper.createAiAdviceNarration(assessmentResult, adviceListItems, attributeLevelTargets);
     }
 
     List<AttributeLevelTarget> buildAttributeLevelTargets(List<LoadAttributesPort.Result> attributes, List<MaturityLevel> maturityLevels) {
