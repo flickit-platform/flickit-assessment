@@ -59,7 +59,7 @@ class RefreshAssessmentAdviceServiceTest {
     CreateAiAdviceNarrationHelper createAiAdviceNarrationHelper;
 
     private RefreshAssessmentAdviceUseCase.Param param = createParam(RefreshAssessmentAdviceUseCase.Param.ParamBuilder::build);
-    private final AssessmentResult assessmentResult = AssessmentResultMother.createAssessmentResult();
+    private AssessmentResult assessmentResult = AssessmentResultMother.createAssessmentResultWithAssessmentId(param.getAssessmentId());
 
     private LoadAttributesPort.Result attributeResult = new LoadAttributesPort.Result(123L, new LoadAttributesPort.MaturityLevel(levelOne().getId(), levelOne().getTitle(), "Low", 1, 2));
     private List<LoadAttributesPort.Result> attributes = List.of(attributeResult);
@@ -99,6 +99,7 @@ class RefreshAssessmentAdviceServiceTest {
     @Test
     void testRefreshAssessmentAdvice_whenForceRegenerateIsFalse_thenShouldNotCreateAndSaveAdvice() {
         param = createParam(b -> b.forceRegenerate(false));
+        assessmentResult = AssessmentResultMother.createAssessmentResultWithAssessmentId(param.getAssessmentId());
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.REFRESH_ASSESSMENT_ADVICE)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
