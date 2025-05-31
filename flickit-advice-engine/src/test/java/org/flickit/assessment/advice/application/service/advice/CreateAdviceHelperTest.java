@@ -8,7 +8,6 @@ import org.flickit.assessment.advice.application.domain.AttributeLevelTarget;
 import org.flickit.assessment.advice.application.domain.Plan;
 import org.flickit.assessment.advice.application.domain.advice.*;
 import org.flickit.assessment.advice.application.exception.FinalSolutionNotFoundException;
-import org.flickit.assessment.advice.application.port.in.advice.CreateAdviceUseCase;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadSelectedAttributeIdsRelatedToAssessmentPort;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadSelectedLevelIdsRelatedToAssessmentPort;
 import org.flickit.assessment.advice.application.port.out.attributevalue.LoadAttributeCurrentAndTargetLevelIndexPort;
@@ -124,7 +123,7 @@ class CreateAdviceHelperTest {
 
     @SneakyThrows
     @Test
-    void testCreateAdviceHelper_CalculationInterrupted_ThrowException() {
+    void testCreateAdviceHelper_whenCalculationInterrupted_thenThrowFinalSolutionNotFoundException() {
         attributeLevelTargets = List.of(new AttributeLevelTarget(1L, 2L));
 
         when(loadSelectedAttributeIdsRelatedToAssessmentPort.loadSelectedAttributeIdsRelatedToAssessment(assessmentId, Set.of(1L)))
@@ -165,7 +164,7 @@ class CreateAdviceHelperTest {
 
     @SneakyThrows
     @Test
-    void testCreateAdviceHelper_CalculationExecutionException_ThrowException() {
+    void testCreateAdviceHelper_whenCalculationExecutionException_thenThrowFinalSolutionNotFoundException() {
         attributeLevelTargets = List.of(new AttributeLevelTarget(1L, 2L));
 
         when(loadSelectedAttributeIdsRelatedToAssessmentPort.loadSelectedAttributeIdsRelatedToAssessment(assessmentId, Set.of(1L)))
@@ -210,7 +209,7 @@ class CreateAdviceHelperTest {
 
     @SneakyThrows
     @Test
-    void testCreateAdviceHelper_whenParametersAreValidParam_ReturnsAdvice() {
+    void testCreateAdviceHelper_whenParametersAreValid_thenReturnsAdvice() {
         attributeLevelTargets = List.of(new AttributeLevelTarget(1L, 2L));
 
         mockPorts();
