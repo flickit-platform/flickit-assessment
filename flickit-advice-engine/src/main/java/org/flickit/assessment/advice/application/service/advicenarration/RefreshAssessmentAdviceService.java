@@ -7,7 +7,7 @@ import org.flickit.assessment.advice.application.domain.AttributeLevelTarget;
 import org.flickit.assessment.advice.application.domain.MaturityLevel;
 import org.flickit.assessment.advice.application.port.in.advicenarration.RefreshAssessmentAdviceUseCase;
 import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadAssessmentResultPort;
-import org.flickit.assessment.advice.application.port.out.atribute.LoadAttributesPort;
+import org.flickit.assessment.advice.application.port.out.attributevalue.LoadAttributeValuesPort;
 import org.flickit.assessment.advice.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.advice.application.service.advice.CreateAdviceHelper;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
@@ -16,7 +16,10 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.REFRESH_ASSESSMENT_ADVICE;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
@@ -31,7 +34,7 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
     private final AssessmentAccessChecker assessmentAccessChecker;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final LoadMaturityLevelsPort loadMaturityLevelsPort;
-    private final LoadAttributesPort loadAttributesPort;
+    private final LoadAttributeValuesPort loadAttributeValuesPort;
     private final CreateAdviceHelper createAdviceHelper;
     private final CreateAiAdviceNarrationHelper createAiAdviceNarrationHelper;
 
@@ -49,18 +52,18 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
     }
 
     private List<AttributeLevelTarget> prepareAttributeLevelTargets(AssessmentResult result) {
-        var attributes = loadAttributesPort.loadAll(result.getAssessmentId(), result.getKitVersionId(), result.getLanguage());
+        var attributeValues = loadAttributeValuesPort.loadAll(result.getId());
         var maturityLevels = loadMaturityLevelsPort.loadAll(result.getAssessmentId());
-        return buildAttributeLevelTargets(attributes, maturityLevels);
+        return buildAttributeLevelTargets(attributeValues, maturityLevels);
     }
 
-    List<AttributeLevelTarget> buildAttributeLevelTargets(List<LoadAttributesPort.Result> attributes, List<MaturityLevel> maturityLevels) {
+    List<AttributeLevelTarget> buildAttributeLevelTargets(List<LoadAttributeValuesPort.Result> attributeValues, List<MaturityLevel> maturityLevels) {
         List<MaturityLevel> sortedMaturityLevels = maturityLevels.stream()
             .sorted(Comparator.comparingInt(MaturityLevel::getIndex))
             .toList();
 
-        return attributes.stream()
-            .map(attribute -> buildAttributeLevelTarget(attribute, sortedMaturityLevels))
+        return attributeValues.stream()
+            .map(av -> buildAttributeLevelTarget(av, sortedMaturityLevels))
             .flatMap(Optional::stream)
             .toList();
     }
@@ -71,12 +74,14 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
         createAiAdviceNarrationHelper.createAiAdviceNarration(result, adviceListItems, targets);
     }
 
-    Optional<AttributeLevelTarget> buildAttributeLevelTarget(LoadAttributesPort.Result attribute, List<MaturityLevel> sortedMaturityLevels) {
-        int currentLevelIndex = attribute.maturityLevel().index();
+    Optional<AttributeLevelTarget> buildAttributeLevelTarget(LoadAttributeValuesPort.Result attributeValue, List<MaturityLevel> sortedMaturityLevels) {
+        var map = sortedMaturityLevels.stream()
+            .collect(Collectors.toMap(MaturityLevel::getId, MaturityLevel::getIndex));
+        int currentLevelIndex = map.get(attributeValue.maturityLevelId());
 
         return sortedMaturityLevels.stream()
             .filter(level -> level.getIndex() > currentLevelIndex)
             .findFirst()
-            .map(level -> new AttributeLevelTarget(attribute.id(), level.getId()));
+            .map(level -> new AttributeLevelTarget(attributeValue.attributeId(), level.getId()));
     }
 }
