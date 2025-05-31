@@ -5,7 +5,6 @@ import org.flickit.assessment.advice.application.domain.AttributeLevelTarget;
 import org.flickit.assessment.advice.application.domain.advice.AdviceListItem;
 import org.flickit.assessment.advice.application.port.in.advicenarration.RefreshAssessmentAdviceUseCase;
 import org.flickit.assessment.advice.application.port.out.adviceitem.DeleteAdviceItemPort;
-import org.flickit.assessment.advice.application.port.out.advicenarration.DeleteAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.advice.application.port.out.atribute.LoadAttributesPort;
 import org.flickit.assessment.advice.application.port.out.maturitylevel.LoadMaturityLevelsPort;
@@ -63,9 +62,6 @@ class RefreshAssessmentAdviceServiceTest {
     @Mock
     DeleteAdviceItemPort deleteAdviceItemPort;
 
-    @Mock
-    DeleteAdviceNarrationPort deleteAdviceNarrationPort;
-
     private RefreshAssessmentAdviceUseCase.Param param = createParam(RefreshAssessmentAdviceUseCase.Param.ParamBuilder::build);
     private AssessmentResult assessmentResult = AssessmentResultMother.createAssessmentResultWithAssessmentId(param.getAssessmentId());
 
@@ -78,36 +74,34 @@ class RefreshAssessmentAdviceServiceTest {
     @Test
     void testRefreshAssessmentAdvice_whenUserNotAuthorized_thenThrowAccessDeniedException() {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.REFRESH_ASSESSMENT_ADVICE))
-            .thenReturn(false);
+                .thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.refreshAssessmentAdvice(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
         verifyNoInteractions(loadAssessmentResultPort,
-            loadMaturityLevelsPort,
-            loadAttributesPort,
-            createAdviceHelper,
-            createAiAdviceNarrationHelper,
-            deleteAdviceItemPort,
-            deleteAdviceNarrationPort);
+                loadMaturityLevelsPort,
+                loadAttributesPort,
+                createAdviceHelper,
+                createAiAdviceNarrationHelper,
+                deleteAdviceItemPort);
     }
 
     @Test
     void testRefreshAssessmentAdvice_whenAssessmentResultNotFound_thenThrowResourceNotFoundException() {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.REFRESH_ASSESSMENT_ADVICE))
-            .thenReturn(true);
+                .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
-            .thenReturn(Optional.empty());
+                .thenReturn(Optional.empty());
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.refreshAssessmentAdvice(param));
         assertEquals(COMMON_ASSESSMENT_RESULT_NOT_FOUND, throwable.getMessage());
 
         verifyNoInteractions(loadMaturityLevelsPort,
-            loadAttributesPort,
-            createAdviceHelper,
-            createAiAdviceNarrationHelper,
-            deleteAdviceItemPort,
-            deleteAdviceNarrationPort);
+                loadAttributesPort,
+                createAdviceHelper,
+                createAiAdviceNarrationHelper,
+                deleteAdviceItemPort);
     }
 
     @Test
@@ -120,9 +114,11 @@ class RefreshAssessmentAdviceServiceTest {
 
         service.refreshAssessmentAdvice(param);
 
-        verifyNoInteractions(loadMaturityLevelsPort, loadAttributesPort,
-            createAdviceHelper, createAiAdviceNarrationHelper,
-            deleteAdviceItemPort, deleteAdviceNarrationPort);
+        verifyNoInteractions(loadMaturityLevelsPort,
+                loadAttributesPort,
+                createAdviceHelper,
+                createAiAdviceNarrationHelper,
+                deleteAdviceItemPort);
     }
 
     @Test
@@ -140,9 +136,9 @@ class RefreshAssessmentAdviceServiceTest {
         service.refreshAssessmentAdvice(param);
         verify(createAdviceHelper).createAdvice(eq(param.getAssessmentId()), targetCaptor.capture());
         verify(createAiAdviceNarrationHelper).createAiAdviceNarration(
-            eq(assessmentResult),
-            eq(adviceListItems),
-            narrationCaptor.capture()
+                eq(assessmentResult),
+                eq(adviceListItems),
+                narrationCaptor.capture()
         );
         List<AttributeLevelTarget> capturedTargets = targetCaptor.getValue();
         assertEquals(1, capturedTargets.size());
@@ -155,7 +151,6 @@ class RefreshAssessmentAdviceServiceTest {
         assertEquals(levelTwo().getId(), narratedTargets.getFirst().getMaturityLevelId());
 
         verify(deleteAdviceItemPort).deleteAllAiGenerated(assessmentResult.getId());
-        verify(deleteAdviceNarrationPort).deleteAll(assessmentResult.getId());
     }
 
     @Test
@@ -170,8 +165,8 @@ class RefreshAssessmentAdviceServiceTest {
 
         service.refreshAssessmentAdvice(param);
 
-        verifyNoInteractions(deleteAdviceItemPort, deleteAdviceNarrationPort,
-            createAdviceHelper, createAiAdviceNarrationHelper);
+        verifyNoInteractions(deleteAdviceItemPort,
+                createAdviceHelper, createAiAdviceNarrationHelper);
     }
 
     private RefreshAssessmentAdviceUseCase.Param createParam(Consumer<RefreshAssessmentAdviceUseCase.Param.ParamBuilder> changer) {
@@ -182,8 +177,8 @@ class RefreshAssessmentAdviceServiceTest {
 
     private RefreshAssessmentAdviceUseCase.Param.ParamBuilder paramBuilder() {
         return RefreshAssessmentAdviceUseCase.Param.builder()
-            .assessmentId(UUID.randomUUID())
-            .forceRegenerate(true)
-            .currentUserId(UUID.randomUUID());
+                .assessmentId(UUID.randomUUID())
+                .forceRegenerate(true)
+                .currentUserId(UUID.randomUUID());
     }
 }

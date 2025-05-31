@@ -7,7 +7,6 @@ import org.flickit.assessment.advice.application.domain.AttributeLevelTarget;
 import org.flickit.assessment.advice.application.domain.MaturityLevel;
 import org.flickit.assessment.advice.application.port.in.advicenarration.RefreshAssessmentAdviceUseCase;
 import org.flickit.assessment.advice.application.port.out.adviceitem.DeleteAdviceItemPort;
-import org.flickit.assessment.advice.application.port.out.advicenarration.DeleteAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.advice.application.port.out.atribute.LoadAttributesPort;
 import org.flickit.assessment.advice.application.port.out.maturitylevel.LoadMaturityLevelsPort;
@@ -37,7 +36,6 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
     private final CreateAdviceHelper createAdviceHelper;
     private final CreateAiAdviceNarrationHelper createAiAdviceNarrationHelper;
     private final DeleteAdviceItemPort deleteAdviceItemPort;
-    private final DeleteAdviceNarrationPort deleteAdviceNarrationPort;
 
     @Override
     public void refreshAssessmentAdvice(Param param) {
@@ -56,7 +54,7 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
     private void regenerateAdviceIfNecessary(AssessmentResult assessmentResult, List<AttributeLevelTarget> targets) {
         if (!targets.isEmpty()) {
             log.info("Regenerating advice for [assessmentId={} and assessmentResultId={}]", assessmentResult.getAssessmentId(), assessmentResult.getId());
-            deleteAdvice(assessmentResult);
+            deleteAdviceItemPort.deleteAllAiGenerated(assessmentResult.getId());
             generateAdvice(assessmentResult, targets);
         }
     }
@@ -85,11 +83,6 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
             .filter(level -> level.getIndex() > currentLevelIndex)
             .findFirst()
             .map(level -> new AttributeLevelTarget(attribute.id(), level.getId()));
-    }
-
-    private void deleteAdvice(AssessmentResult assessmentResult) {
-        deleteAdviceItemPort.deleteAllAiGenerated(assessmentResult.getId());
-        deleteAdviceNarrationPort.deleteAll(assessmentResult.getId());
     }
 
     private void generateAdvice(AssessmentResult result, List<AttributeLevelTarget> targets) {
