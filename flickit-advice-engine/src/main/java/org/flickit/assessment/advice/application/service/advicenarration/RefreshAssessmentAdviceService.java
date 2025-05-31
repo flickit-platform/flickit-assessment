@@ -16,11 +16,11 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
+import static java.util.Comparator.comparingInt;
+import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.REFRESH_ASSESSMENT_ADVICE;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -54,34 +54,36 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
     private List<AttributeLevelTarget> prepareAttributeLevelTargets(AssessmentResult result) {
         var attributeValues = loadAttributeValuesPort.loadAll(result.getId());
         var maturityLevels = loadMaturityLevelsPort.loadAll(result.getAssessmentId());
-        return buildAttributeLevelTargets(attributeValues, maturityLevels);
+
+        return buildTargets(attributeValues, maturityLevels);
     }
 
-    List<AttributeLevelTarget> buildAttributeLevelTargets(List<LoadAttributeValuesPort.Result> attributeValues, List<MaturityLevel> maturityLevels) {
-        List<MaturityLevel> sortedMaturityLevels = maturityLevels.stream()
-            .sorted(Comparator.comparingInt(MaturityLevel::getIndex))
+    private List<AttributeLevelTarget> buildTargets(List<LoadAttributeValuesPort.Result> attributeValues,
+                                                    List<MaturityLevel> maturityLevels) {
+        var maturityIndexMap = maturityLevels.stream()
+            .collect(toMap(MaturityLevel::getId, MaturityLevel::getIndex));
+
+        var sortedLevels = maturityLevels.stream()
+            .sorted(comparingInt(MaturityLevel::getIndex))
             .toList();
 
         return attributeValues.stream()
-            .map(av -> buildAttributeLevelTarget(av, sortedMaturityLevels))
-            .flatMap(Optional::stream)
+            .flatMap(value -> toTarget(value, maturityIndexMap.get(value.maturityLevelId()), sortedLevels).stream())
             .toList();
+    }
+
+    private Optional<AttributeLevelTarget> toTarget(LoadAttributeValuesPort.Result value,
+                                                    int currentLevelIndex,
+                                                    List<MaturityLevel> sortedLevels) {
+        return sortedLevels.stream()
+            .dropWhile(level -> level.getIndex() <= currentLevelIndex)
+            .findFirst()
+            .map(nextLevel -> new AttributeLevelTarget(value.attributeId(), nextLevel.getId()));
     }
 
     private void regenerateAdvice(AssessmentResult result, List<AttributeLevelTarget> targets) {
         log.info("Regenerating advice for assessmentId=[{}]", result.getAssessmentId());
         var adviceListItems = createAdviceHelper.createAdvice(result.getAssessmentId(), targets);
         createAiAdviceNarrationHelper.createAiAdviceNarration(result, adviceListItems, targets);
-    }
-
-    Optional<AttributeLevelTarget> buildAttributeLevelTarget(LoadAttributeValuesPort.Result attributeValue, List<MaturityLevel> sortedMaturityLevels) {
-        var map = sortedMaturityLevels.stream()
-            .collect(Collectors.toMap(MaturityLevel::getId, MaturityLevel::getIndex));
-        int currentLevelIndex = map.get(attributeValue.maturityLevelId());
-
-        return sortedMaturityLevels.stream()
-            .filter(level -> level.getIndex() > currentLevelIndex)
-            .findFirst()
-            .map(level -> new AttributeLevelTarget(attributeValue.attributeId(), level.getId()));
     }
 }
