@@ -8,7 +8,6 @@ import org.flickit.assessment.advice.application.port.out.advicenarration.LoadAd
 import org.flickit.assessment.advice.application.port.out.advicenarration.UpdateAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentPort;
 import org.flickit.assessment.advice.application.port.out.atribute.LoadAttributesPort;
-import org.flickit.assessment.advice.application.port.out.attributevalue.LoadAttributeCurrentAndTargetLevelIndexPort;
 import org.flickit.assessment.advice.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.advice.application.service.advicenarration.CreateAiAdviceNarrationHelper.AdviceDto;
 import org.flickit.assessment.advice.test.fixture.application.AdviceListItemMother;
@@ -16,7 +15,6 @@ import org.flickit.assessment.advice.test.fixture.application.AttributeLevelTarg
 import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.port.out.CallAiPromptPort;
 import org.flickit.assessment.common.config.AppAiProperties;
-import org.flickit.assessment.common.exception.ValidationException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
@@ -31,11 +29,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.flickit.assessment.advice.common.ErrorMessageKey.CREATE_AI_ADVICE_NARRATION_ATTRIBUTE_LEVEL_TARGETS_SIZE_MIN;
 import static org.flickit.assessment.advice.common.MessageKey.ADVICE_NARRATION_AI_IS_DISABLED;
 import static org.flickit.assessment.advice.test.fixture.application.AssessmentMother.assessmentWithShortTitle;
 import static org.flickit.assessment.advice.test.fixture.application.AssessmentResultMother.createAssessmentResult;
-import static org.flickit.assessment.advice.test.fixture.application.AttributeLevelTargetMother.createAttributeLevelTarget;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -47,9 +43,6 @@ class CreateAiAdviceNarrationHelperTest {
 
     @Mock
     private LoadAssessmentPort loadAssessmentPort;
-
-    @Mock
-    private LoadAttributeCurrentAndTargetLevelIndexPort loadAttributeCurrentAndTargetLevelIndexPort;
 
     @Mock
     private LoadMaturityLevelsPort loadMaturityLevelsPort;
@@ -114,30 +107,10 @@ class CreateAiAdviceNarrationHelperTest {
             callAiPromptPort,
             loadAdviceNarrationPort,
             createAdviceNarrationPort,
-            loadAttributeCurrentAndTargetLevelIndexPort,
             loadAttributesPort,
             loadAssessmentPort,
             loadMaturityLevelsPort,
             createAdviceItemPort);
-    }
-
-    @Test
-    void testCreateAiAdviceNarration_whenNoValidTargetExists_thenThrowValidationException() {
-        var attributeLevelTargets = List.of(createAttributeLevelTarget());
-        var adviceNarration = new AdviceNarration(UUID.randomUUID(), assessmentResult.getId(), aiNarration, null, LocalDateTime.now(), null, UUID.randomUUID());
-
-        when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(adviceNarration));
-        when(loadAttributeCurrentAndTargetLevelIndexPort.load(assessmentResult.getAssessmentId(), attributeLevelTargets))
-            .thenReturn(List.of(new LoadAttributeCurrentAndTargetLevelIndexPort.Result(attributeLevelTargets.getFirst().getAttributeId(), 1, 1)));
-
-        var throwable = assertThrows(ValidationException.class,
-            () -> helper.createAiAdviceNarration(assessmentResult, adviceListItems, attributeLevelTargets));
-        assertEquals(CREATE_AI_ADVICE_NARRATION_ATTRIBUTE_LEVEL_TARGETS_SIZE_MIN, throwable.getMessageKey());
-
-        verifyNoInteractions(loadAttributesPort,
-            loadMaturityLevelsPort,
-            callAiPromptPort,
-            createAdviceNarrationPort);
     }
 
     @Test
@@ -151,8 +124,6 @@ class CreateAiAdviceNarrationHelperTest {
                 "language", assessmentResult.getLanguage().getTitle())).create();
 
         when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.empty());
-        when(loadAttributeCurrentAndTargetLevelIndexPort.load(assessmentResult.getAssessmentId(), attributeLevelTargets))
-            .thenReturn(List.of(new LoadAttributeCurrentAndTargetLevelIndexPort.Result(attributeLevelTargets.getFirst().getAttributeId(), 1, 2)));
         when(loadMaturityLevelsPort.loadAll(assessmentResult.getAssessmentId())).thenReturn(maturityLevels);
         when(loadAttributesPort.loadByIdsAndAssessmentId(List.of(attributeLevelTargets.getFirst().getAttributeId()), assessmentResult.getAssessmentId())).thenReturn(attributes);
         when(loadAssessmentPort.loadById(assessmentResult.getAssessmentId())).thenReturn(assessment);
@@ -192,8 +163,6 @@ class CreateAiAdviceNarrationHelperTest {
                 "language", assessmentResult.getLanguage().getTitle())).create();
 
         when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(adviceNarration));
-        when(loadAttributeCurrentAndTargetLevelIndexPort.load(assessmentResult.getAssessmentId(), attributeLevelTargets))
-            .thenReturn(List.of(new LoadAttributeCurrentAndTargetLevelIndexPort.Result(attributeLevelTargets.getFirst().getAttributeId(), 1, 2)));
         when(loadMaturityLevelsPort.loadAll(assessmentResult.getAssessmentId())).thenReturn(maturityLevels);
         when(loadAttributesPort.loadByIdsAndAssessmentId(List.of(attributeLevelTargets.getFirst().getAttributeId()), assessmentResult.getAssessmentId())).thenReturn(attributes);
         when(loadAssessmentPort.loadById(assessmentResult.getAssessmentId())).thenReturn(assessment);
@@ -229,8 +198,6 @@ class CreateAiAdviceNarrationHelperTest {
                 "language", assessmentResult.getLanguage().getTitle())).create();
 
         when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(adviceNarration));
-        when(loadAttributeCurrentAndTargetLevelIndexPort.load(assessmentResult.getAssessmentId(), attributeLevelTargets))
-            .thenReturn(List.of(new LoadAttributeCurrentAndTargetLevelIndexPort.Result(attributeLevelTargets.getFirst().getAttributeId(), 1, 2)));
         when(loadMaturityLevelsPort.loadAll(assessmentResult.getAssessmentId())).thenReturn(maturityLevels);
         when(loadAttributesPort.loadByIdsAndAssessmentId(List.of(attributeLevelTargets.getFirst().getAttributeId()), assessmentResult.getAssessmentId())).thenReturn(attributes);
         when(loadAssessmentPort.loadById(assessmentResult.getAssessmentId())).thenReturn(assessment);
@@ -253,7 +220,6 @@ class CreateAiAdviceNarrationHelperTest {
 
         verifyNoInteractions(createAdviceNarrationPort);
     }
-
 
     private void assertAdviceItems(List<AdviceDto.AdviceItemDto> expectedAdviceItems, List<AdviceItem> capturedAdviceItems) {
         assertEquals(expectedAdviceItems.size(), capturedAdviceItems.size());
