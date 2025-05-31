@@ -16,7 +16,7 @@ public interface AdviceItemJpaRepository extends JpaRepository<AdviceItemJpaEnti
 
     int countByAssessmentResultId(UUID assessmentResultId);
 
-    void deleteByAssessmentResultId(UUID assessmentResultId);
+    void deleteByAssessmentResultIdAndCreatedByIsNullAndLastModifiedByIsNull(UUID assessmentResultId);
 
     @Modifying
     @Query("""

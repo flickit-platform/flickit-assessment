@@ -100,7 +100,7 @@ public class AdviceItemPersistenceJpaAdapter implements
     }
 
     @Override
-    public void deleteAll(UUID assessmentResultId) {
-        repository.deleteByAssessmentResultId(assessmentResultId);
+    public void deleteAllAiGenerated(UUID assessmentResultId) {
+        repository.deleteByAssessmentResultIdAndCreatedByIsNullAndLastModifiedByIsNull(assessmentResultId);
     }
 }
