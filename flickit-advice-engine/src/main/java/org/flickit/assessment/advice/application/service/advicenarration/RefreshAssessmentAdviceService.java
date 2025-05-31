@@ -88,7 +88,7 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
     }
 
     private void deleteAdvice(AssessmentResult assessmentResult) {
-        deleteAdviceItemPort.deleteAll(assessmentResult.getId());
+        deleteAdviceItemPort.deleteAllAiGenerated(assessmentResult.getId());
         deleteAdviceNarrationPort.deleteAll(assessmentResult.getId());
     }
 

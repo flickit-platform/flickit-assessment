@@ -154,7 +154,7 @@ class RefreshAssessmentAdviceServiceTest {
         assertEquals(123L, narratedTargets.getFirst().getAttributeId());
         assertEquals(levelTwo().getId(), narratedTargets.getFirst().getMaturityLevelId());
 
-        verify(deleteAdviceItemPort).deleteAll(assessmentResult.getId());
+        verify(deleteAdviceItemPort).deleteAllAiGenerated(assessmentResult.getId());
         verify(deleteAdviceNarrationPort).deleteAll(assessmentResult.getId());
     }
 
