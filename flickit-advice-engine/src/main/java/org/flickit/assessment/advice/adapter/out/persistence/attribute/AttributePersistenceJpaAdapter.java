@@ -6,18 +6,15 @@ import org.flickit.assessment.advice.application.port.out.atribute.LoadAttribute
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
-import org.flickit.assessment.data.jpa.core.attribute.AttributeMaturityLevelSubjectView;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
 import org.springframework.stereotype.Component;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
 import static org.flickit.assessment.advice.adapter.out.persistence.attribute.AttributeMapper.mapToDomainModel;
-import static org.flickit.assessment.advice.adapter.out.persistence.attribute.AttributeMapper.mapToResult;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_KIT_NOT_FOUND;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 
@@ -37,18 +34,6 @@ public class AttributePersistenceJpaAdapter implements LoadAttributesPort {
         var translationLanguage = resolveLanguage(assessmentResult.getKitVersionId(), assessmentResult.getLangId());
         return repository.findAllByIdInAndKitVersionId(attributeIds, assessmentResult.getKitVersionId()).stream()
             .map(entity -> mapToDomainModel(entity, translationLanguage))
-            .toList();
-    }
-
-    @Override
-    public List<Result> loadAll(UUID assessmentId, long kitVersionId, KitLanguage assessmentLanguage) {
-        var attributeViews = repository.findAllByAssessmentIdWithSubjectAndMaturityLevel(assessmentId);
-        var kitLanguage = resolveLanguage(kitVersionId, assessmentLanguage.getId());
-
-        return attributeViews.stream()
-            .sorted(Comparator.comparingInt((AttributeMaturityLevelSubjectView v) -> v.getSubject().getIndex())
-                .thenComparingInt(v -> v.getAttribute().getIndex()))
-            .map(e -> mapToResult(e, kitLanguage))
             .toList();
     }
 
