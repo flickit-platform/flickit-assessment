@@ -51,15 +51,25 @@ public class CalculateAssessmentService implements CalculateAssessmentUseCase {
 
         AssessmentResult assessmentResult = loadCalculateInfoPort.load(param.getAssessmentId());
 
-        return Optional.ofNullable(assessmentResult.getIsCalculateValid())
-            .filter(Boolean::booleanValue)
-            .map(valid -> new Result(assessmentResult.getMaturityLevel(), false))
-            .orElseGet(() -> {
-                MaturityLevel calcResult = calculate(assessmentResult);
-                updateCalculatedResultPort.updateCalculatedResult(assessmentResult);
-                updateAssessmentPort.updateLastModificationTime(param.getAssessmentId(), assessmentResult.getLastModificationTime());
-                return new Result(calcResult, true);
-            });
+        if (isCalculationValid(assessmentResult)) {
+            return new Result(assessmentResult.getMaturityLevel(), false);
+        } else {
+            MaturityLevel calcResult = calculate(assessmentResult);
+            updateCalculatedResultPort.updateCalculatedResult(assessmentResult);
+            updateAssessmentPort.updateLastModificationTime(param.getAssessmentId(), assessmentResult.getLastModificationTime());
+            return new Result(calcResult, true);
+        }
+    }
+
+    boolean isCalculationValid(AssessmentResult assessmentResult) {
+        var kitId = assessmentResult.getAssessment().getAssessmentKit().getId();
+        var kitLastMajorModificationTime = loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(kitId);
+
+        var calculationTime = assessmentResult.getLastCalculationTime();
+        boolean isCalculationTimeValid = calculationTime != null && calculationTime.isAfter(kitLastMajorModificationTime);
+        boolean isCalculationValid = Boolean.TRUE.equals(assessmentResult.getIsCalculateValid());
+
+        return isCalculationValid && isCalculationTimeValid;
     }
 
     private static MaturityLevel calculate(AssessmentResult assessmentResult) {
@@ -81,7 +91,7 @@ public class CalculateAssessmentService implements CalculateAssessmentUseCase {
     private boolean isAssessmentResultReinitializationRequired(AssessmentResult assessmentResult) {
         Long kitId = assessmentResult.getAssessment().getAssessmentKit().getId();
         LocalDateTime kitLastMajorModificationTime = loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(kitId);
-        return assessmentResult.getLastCalculationTime().isBefore(kitLastMajorModificationTime);
+        return assessmentResult.getLastCalculationTime() == null || assessmentResult.getLastCalculationTime().isBefore(kitLastMajorModificationTime);
     }
 
     private void reinitializeAssessmentResult(AssessmentResult assessmentResult) {
