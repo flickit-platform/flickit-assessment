@@ -3,7 +3,6 @@ package org.flickit.assessment.core.adapter.in.rest.assessment;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
 import org.flickit.assessment.core.application.port.in.assessment.CalculateAssessmentUseCase;
-import org.flickit.assessment.core.adapter.in.rest.assessment.CalculateAssessmentResponseDto.MaturityLevelDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,10 +31,10 @@ public class CalculateAssessmentRestController {
     }
 
     private CalculateAssessmentResponseDto toResponseDto(CalculateAssessmentUseCase.Result result) {
-        return new CalculateAssessmentResponseDto(new MaturityLevelDto(result.maturityLevel().getId(),
+        return new CalculateAssessmentResponseDto(result.maturityLevel().getId(),
             result.maturityLevel().getTitle(),
             result.maturityLevel().getValue(),
-            result.maturityLevel().getIndex()),
+            result.maturityLevel().getIndex(),
             result.resultAffected());
     }
 }
