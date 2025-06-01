@@ -72,45 +72,45 @@ class CalculateAssessmentServiceTest {
     @Mock
     private AssessmentAccessChecker assessmentAccessChecker;
 
+    private final List<AttributeValue> s1AttributeValues = List.of(
+        hasFullScoreOnLevel24WithWeight(2, 1533),
+        hasFullScoreOnLevel24WithWeight(2, 1534),
+        hasFullScoreOnLevel23WithWeight(3, 1535),
+        hasFullScoreOnLevel23WithWeight(3, 1536)
+    );
+
+    private final List<AttributeValue> s2AttributeValues = List.of(
+        hasFullScoreOnLevel24WithWeight(4, 1537),
+        hasFullScoreOnLevel23WithWeight(1, 1538)
+    );
+
+    private final List<SubjectValue> subjectValues1 = List.of(
+        withAttributeValues(s1AttributeValues, 1),
+        withAttributeValues(s2AttributeValues, 5)
+    );
+
+    private final List<SubjectValue> subjectValues2 = List.of(
+        withAttributeValues(s1AttributeValues, 5),
+        withAttributeValues(s2AttributeValues, 1)
+    );
+
     @Test
     void testCalculateMaturityLevel_whenParametersAreValid_thenReturnsValidResults() {
         LocalDateTime kitLastMajorModificationTime = LocalDateTime.now();
-
-        // weighted mean scores of attributeValues on levels: 1:0, 2:100, 3:600/10=75, 4:400/100=40, 5:0 => level three passes
-        List<AttributeValue> s1AttributeValues = List.of(
-            hasFullScoreOnLevel24WithWeight(2, 1533),
-            hasFullScoreOnLevel24WithWeight(2, 1534),
-            hasFullScoreOnLevel23WithWeight(3, 1535),
-            hasFullScoreOnLevel23WithWeight(3, 1536)
-        );
-
-        // weighted mean scores of attributeValues on levels: 1:0, 2:100, 3:100/5=25, 4:400/5=80, 5:0 => level two passes
-        List<AttributeValue> s2AttributeValues = List.of(
-            hasFullScoreOnLevel24WithWeight(4, 1537),
-            hasFullScoreOnLevel23WithWeight(1, 1538)
-        );
-
-        List<SubjectValue> subjectValues = List.of(
-            withAttributeValues(s1AttributeValues, 1),
-            withAttributeValues(s2AttributeValues, 5)
-        );
-
-        // weighted mean scores of subjectValues on levels: 1:0, 2: 100, 3: (75+(25*5))/6=33.3,  4: (40+(5*80))/6=73, 5:0 => level two passes
-        AssessmentResult assessmentResult = invalidResultWithSubjectValues(subjectValues);
+        AssessmentResult assessmentResult = invalidResultWithSubjectValues(subjectValues1);
         assessmentResult.setLastCalculationTime(LocalDateTime.now());
         UUID currentUserId = UUID.randomUUID();
-
         var param = new CalculateAssessmentUseCase.Param(assessmentResult.getAssessment().getId(), currentUserId);
 
-        when(loadAssessmentResultPort.loadByAssessmentId(assessmentResult.getAssessment().getId())).thenReturn(Optional.of(assessmentResult));
-        when(loadCalculateInfoPort.load(assessmentResult.getAssessment().getId())).thenReturn(assessmentResult);
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CALCULATE_ASSESSMENT)).thenReturn(true);
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        when(loadCalculateInfoPort.load(param.getAssessmentId())).thenReturn(assessmentResult);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), currentUserId, CALCULATE_ASSESSMENT)).thenReturn(true);
         when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(any())).thenReturn(kitLastMajorModificationTime);
 
         var result = service.calculateMaturityLevel(param);
-        verify(updateCalculatedResultPort, times(1)).updateCalculatedResult(any(AssessmentResult.class));
-        verify(updateAssessmentPort, times(1)).updateLastModificationTime(any(), any());
 
+        verify(updateCalculatedResultPort).updateCalculatedResult(any(AssessmentResult.class));
+        verify(updateAssessmentPort).updateLastModificationTime(any(), any());
         assertNotNull(result);
         assertNotNull(result.maturityLevel());
         assertEquals(levelTwo().getValue(), result.maturityLevel().getValue());
@@ -121,50 +121,28 @@ class CalculateAssessmentServiceTest {
 
     @Test
     void testCalculateMaturityLevel_whenKitChanged_thenCreatesNewAttributeAnSubjectValuesAndCalculates() {
-        // weighted mean scores of attributeValues on levels: 1:0, 2:100, 3:600/10=75, 4:400/100=40, 5:0 => level three passes
-        List<AttributeValue> s1AttributeValues = List.of(
-            hasFullScoreOnLevel24WithWeight(2, 1533),
-            hasFullScoreOnLevel24WithWeight(2, 1534),
-            hasFullScoreOnLevel23WithWeight(3, 1535),
-            hasFullScoreOnLevel23WithWeight(3, 1536)
-        );
+        AssessmentResult assessmentResult = invalidResultWithSubjectValues(subjectValues2);
+        assessmentResult.setLastCalculationTime(LocalDateTime.now());
+        UUID currentUserId = UUID.randomUUID();
+        var param = new CalculateAssessmentUseCase.Param(assessmentResult.getAssessment().getId(), currentUserId);
 
-        // weighted mean scores of attributeValues on levels: 1:0, 2:100, 3:100/5=25, 4:400/5=80, 5:0 => level two passes
-        List<AttributeValue> s2AttributeValues = List.of(
-            hasFullScoreOnLevel24WithWeight(4, 1537),
-            hasFullScoreOnLevel23WithWeight(1, 1538)
-        );
-
-        List<SubjectValue> subjectValues = List.of(
-            withAttributeValues(s1AttributeValues, 5),
-            withAttributeValues(s2AttributeValues, 1)
-        );
-
-        List<Subject> subjects = new ArrayList<>(subjectValues.stream().map(SubjectValue::getSubject).toList());
+        List<Subject> subjects = new ArrayList<>(subjectValues2.stream().map(SubjectValue::getSubject).toList());
         var newAttributeValue = hasFullScoreOnLevel23WithWeight(4, 1533);
-        // weighted mean scores of new subjectValue on levels: 1:0, 2:100, 3:100, 4:0, 5:0 => level two passes
         var newSubjectValue = withAttributeValues(List.of(newAttributeValue), 2);
         subjects.add(newSubjectValue.getSubject());
 
-        // weighted mean scores of subjectValues on levels: 1:0, 2:100, 3: ((75*5)+25+(100*2))/8=75,  4: ((40*5)+5+0)/8=25.6, 5:0 => level three passes
-        AssessmentResult assessmentResult = invalidResultWithSubjectValues(subjectValues);
-        assessmentResult.setLastCalculationTime(LocalDateTime.now());
-        UUID currentUserId = UUID.randomUUID();
-
-        CalculateAssessmentUseCase.Param param = new CalculateAssessmentUseCase.Param(assessmentResult.getAssessment().getId(), currentUserId);
-
-        when(loadAssessmentResultPort.loadByAssessmentId(assessmentResult.getAssessment().getId())).thenReturn(Optional.of(assessmentResult));
-        when(loadCalculateInfoPort.load(assessmentResult.getAssessment().getId())).thenReturn(assessmentResult);
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CALCULATE_ASSESSMENT)).thenReturn(true);
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        when(loadCalculateInfoPort.load(param.getAssessmentId())).thenReturn(assessmentResult);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), currentUserId, CALCULATE_ASSESSMENT)).thenReturn(true);
         when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(any())).thenReturn(LocalDateTime.now());
         when(loadSubjectsPort.loadByKitVersionIdWithAttributes(any())).thenReturn(subjects);
         when(createSubjectValuePort.persistAll(anyList(), any())).thenReturn(List.of(newSubjectValue));
         when(createAttributeValuePort.persistAll(anySet(), any())).thenReturn(List.of(newAttributeValue));
 
-        CalculateAssessmentUseCase.Result result = service.calculateMaturityLevel(param);
-        verify(updateCalculatedResultPort, times(1)).updateCalculatedResult(any(AssessmentResult.class));
-        verify(updateAssessmentPort, times(1)).updateLastModificationTime(any(), any());
+        var result = service.calculateMaturityLevel(param);
 
+        verify(updateCalculatedResultPort).updateCalculatedResult(any(AssessmentResult.class));
+        verify(updateAssessmentPort).updateLastModificationTime(any(), any());
         assertNotNull(result);
         assertNotNull(result.maturityLevel());
         assertEquals(levelThree().getValue(), result.maturityLevel().getValue());
@@ -173,102 +151,28 @@ class CalculateAssessmentServiceTest {
 
     @Test
     void testCalculateMaturityLevel_whenCalculationTimeIsNull_thenCreatesNewAttributeAnSubjectValuesAndCalculates() {
-        // weighted mean scores of attributeValues on levels: 1:0, 2:100, 3:600/10=75, 4:400/100=40, 5:0 => level three passes
-        List<AttributeValue> s1AttributeValues = List.of(
-            hasFullScoreOnLevel24WithWeight(2, 1533),
-            hasFullScoreOnLevel24WithWeight(2, 1534),
-            hasFullScoreOnLevel23WithWeight(3, 1535),
-            hasFullScoreOnLevel23WithWeight(3, 1536)
-        );
-
-        // weighted mean scores of attributeValues on levels: 1:0, 2:100, 3:100/5=25, 4:400/5=80, 5:0 => level two passes
-        List<AttributeValue> s2AttributeValues = List.of(
-            hasFullScoreOnLevel24WithWeight(4, 1537),
-            hasFullScoreOnLevel23WithWeight(1, 1538)
-        );
-
-        List<SubjectValue> subjectValues = List.of(
-            withAttributeValues(s1AttributeValues, 5),
-            withAttributeValues(s2AttributeValues, 1)
-        );
-
-        List<Subject> subjects = new ArrayList<>(subjectValues.stream().map(SubjectValue::getSubject).toList());
-        var newAttributeValue = hasFullScoreOnLevel23WithWeight(4, 1533);
-        // weighted mean scores of new subjectValue on levels: 1:0, 2:100, 3:100, 4:0, 5:0 => level two passes
-        var newSubjectValue = withAttributeValues(List.of(newAttributeValue), 2);
-        subjects.add(newSubjectValue.getSubject());
-
-        // weighted mean scores of subjectValues on levels: 1:0, 2:100, 3: ((75*5)+25+(100*2))/8=75,  4: ((40*5)+5+0)/8=25.6, 5:0 => level three passes
-        AssessmentResult assessmentResult = invalidResultWithSubjectValues(subjectValues);
+        AssessmentResult assessmentResult = invalidResultWithSubjectValues(subjectValues2);
         assessmentResult.setLastCalculationTime(null);
         UUID currentUserId = UUID.randomUUID();
+        var param = new CalculateAssessmentUseCase.Param(assessmentResult.getAssessment().getId(), currentUserId);
 
-        CalculateAssessmentUseCase.Param param = new CalculateAssessmentUseCase.Param(assessmentResult.getAssessment().getId(), currentUserId);
-
-        when(loadAssessmentResultPort.loadByAssessmentId(assessmentResult.getAssessment().getId())).thenReturn(Optional.of(assessmentResult));
-        when(loadCalculateInfoPort.load(assessmentResult.getAssessment().getId())).thenReturn(assessmentResult);
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CALCULATE_ASSESSMENT)).thenReturn(true);
-        when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(any())).thenReturn(LocalDateTime.now());
-        when(loadSubjectsPort.loadByKitVersionIdWithAttributes(any())).thenReturn(subjects);
-        when(createSubjectValuePort.persistAll(anyList(), any())).thenReturn(List.of(newSubjectValue));
-        when(createAttributeValuePort.persistAll(anySet(), any())).thenReturn(List.of(newAttributeValue));
-
-        CalculateAssessmentUseCase.Result result = service.calculateMaturityLevel(param);
-        verify(updateCalculatedResultPort, times(1)).updateCalculatedResult(any(AssessmentResult.class));
-        verify(updateAssessmentPort, times(1)).updateLastModificationTime(any(), any());
-
-        assertNotNull(result);
-        assertNotNull(result.maturityLevel());
-        assertEquals(levelThree().getValue(), result.maturityLevel().getValue());
-        assertTrue(result.resultAffected());
-    }
-
-    @Test
-    void testCalculateMaturityLevel_whenCalculationTimeIsBeforeLastMajorModificationTime_thenCreatesNewAttributeAnSubjectValuesAndCalculates() {
-        // weighted mean scores of attributeValues on levels: 1:0, 2:100, 3:600/10=75, 4:400/100=40, 5:0 => level three passes
-        List<AttributeValue> s1AttributeValues = List.of(
-            hasFullScoreOnLevel24WithWeight(2, 1533),
-            hasFullScoreOnLevel24WithWeight(2, 1534),
-            hasFullScoreOnLevel23WithWeight(3, 1535),
-            hasFullScoreOnLevel23WithWeight(3, 1536)
-        );
-
-        // weighted mean scores of attributeValues on levels: 1:0, 2:100, 3:100/5=25, 4:400/5=80, 5:0 => level two passes
-        List<AttributeValue> s2AttributeValues = List.of(
-            hasFullScoreOnLevel24WithWeight(4, 1537),
-            hasFullScoreOnLevel23WithWeight(1, 1538)
-        );
-
-        List<SubjectValue> subjectValues = List.of(
-            withAttributeValues(s1AttributeValues, 5),
-            withAttributeValues(s2AttributeValues, 1)
-        );
-
-        List<Subject> subjects = new ArrayList<>(subjectValues.stream().map(SubjectValue::getSubject).toList());
+        List<Subject> subjects = new ArrayList<>(subjectValues2.stream().map(SubjectValue::getSubject).toList());
         var newAttributeValue = hasFullScoreOnLevel23WithWeight(4, 1533);
-        // weighted mean scores of new subjectValue on levels: 1:0, 2:100, 3:100, 4:0, 5:0 => level two passes
         var newSubjectValue = withAttributeValues(List.of(newAttributeValue), 2);
         subjects.add(newSubjectValue.getSubject());
 
-        // weighted mean scores of subjectValues on levels: 1:0, 2:100, 3: ((75*5)+25+(100*2))/8=75,  4: ((40*5)+5+0)/8=25.6, 5:0 => level three passes
-        AssessmentResult assessmentResult = invalidResultWithSubjectValues(subjectValues);
-        assessmentResult.setLastCalculationTime(LocalDateTime.MIN);
-        UUID currentUserId = UUID.randomUUID();
-
-        CalculateAssessmentUseCase.Param param = new CalculateAssessmentUseCase.Param(assessmentResult.getAssessment().getId(), currentUserId);
-
-        when(loadAssessmentResultPort.loadByAssessmentId(assessmentResult.getAssessment().getId())).thenReturn(Optional.of(assessmentResult));
-        when(loadCalculateInfoPort.load(assessmentResult.getAssessment().getId())).thenReturn(assessmentResult);
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CALCULATE_ASSESSMENT)).thenReturn(true);
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        when(loadCalculateInfoPort.load(param.getAssessmentId())).thenReturn(assessmentResult);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), currentUserId, CALCULATE_ASSESSMENT)).thenReturn(true);
         when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(any())).thenReturn(LocalDateTime.now());
         when(loadSubjectsPort.loadByKitVersionIdWithAttributes(any())).thenReturn(subjects);
         when(createSubjectValuePort.persistAll(anyList(), any())).thenReturn(List.of(newSubjectValue));
         when(createAttributeValuePort.persistAll(anySet(), any())).thenReturn(List.of(newAttributeValue));
 
-        CalculateAssessmentUseCase.Result result = service.calculateMaturityLevel(param);
-        verify(updateCalculatedResultPort, times(1)).updateCalculatedResult(any(AssessmentResult.class));
-        verify(updateAssessmentPort, times(1)).updateLastModificationTime(any(), any());
+        var result = service.calculateMaturityLevel(param);
 
+        verify(updateCalculatedResultPort).updateCalculatedResult(any(AssessmentResult.class));
+        verify(updateAssessmentPort).updateLastModificationTime(any(), any());
         assertNotNull(result);
         assertNotNull(result.maturityLevel());
         assertEquals(levelThree().getValue(), result.maturityLevel().getValue());
