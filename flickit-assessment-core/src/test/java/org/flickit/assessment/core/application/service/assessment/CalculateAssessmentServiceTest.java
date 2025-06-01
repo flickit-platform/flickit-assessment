@@ -116,6 +116,7 @@ class CalculateAssessmentServiceTest {
         assertEquals(levelTwo().getValue(), result.maturityLevel().getValue());
         assertTrue(result.resultAffected());
 
+        verify(loadKitLastMajorModificationTimePort, times(1)).loadLastMajorModificationTime(any());
         verifyNoInteractions(loadSubjectsPort, createSubjectValuePort, createAttributeValuePort);
     }
 
@@ -140,13 +141,14 @@ class CalculateAssessmentServiceTest {
         when(createAttributeValuePort.persistAll(anySet(), any())).thenReturn(List.of(newAttributeValue));
 
         var result = service.calculateMaturityLevel(param);
-
-        verify(updateCalculatedResultPort).updateCalculatedResult(any(AssessmentResult.class));
-        verify(updateAssessmentPort).updateLastModificationTime(any(), any());
         assertNotNull(result);
         assertNotNull(result.maturityLevel());
         assertEquals(levelThree().getValue(), result.maturityLevel().getValue());
         assertTrue(result.resultAffected());
+
+        verify(loadKitLastMajorModificationTimePort, times(1)).loadLastMajorModificationTime(any());
+        verify(updateCalculatedResultPort, times(1)).updateCalculatedResult(any(AssessmentResult.class));
+        verify(updateAssessmentPort, times(1)).updateLastModificationTime(any(), any());
     }
 
     @Test
@@ -170,13 +172,14 @@ class CalculateAssessmentServiceTest {
         when(createAttributeValuePort.persistAll(anySet(), any())).thenReturn(List.of(newAttributeValue));
 
         var result = service.calculateMaturityLevel(param);
-
-        verify(updateCalculatedResultPort).updateCalculatedResult(any(AssessmentResult.class));
-        verify(updateAssessmentPort).updateLastModificationTime(any(), any());
         assertNotNull(result);
         assertNotNull(result.maturityLevel());
         assertEquals(levelThree().getValue(), result.maturityLevel().getValue());
         assertTrue(result.resultAffected());
+
+        verify(loadKitLastMajorModificationTimePort, times(1)).loadLastMajorModificationTime(any());
+        verify(updateCalculatedResultPort, times(1)).updateCalculatedResult(any(AssessmentResult.class));
+        verify(updateAssessmentPort, times(1)).updateLastModificationTime(any(), any());
     }
 
     @Test
