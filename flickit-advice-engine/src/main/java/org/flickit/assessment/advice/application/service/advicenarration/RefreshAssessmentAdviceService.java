@@ -48,13 +48,12 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
 
-        if (param.getForceRegenerate()) {
-            var targets = prepareAttributeLevelTargets(assessmentResult);
-            regenerateAdviceIfNecessary(assessmentResult, targets);
-        }
+        if (param.getForceRegenerate())
+            regenerateAdviceIfNecessary(assessmentResult);
     }
 
-    private void regenerateAdviceIfNecessary(AssessmentResult assessmentResult, List<AttributeLevelTarget> targets) {
+    private void regenerateAdviceIfNecessary(AssessmentResult assessmentResult) {
+        var targets = prepareAttributeLevelTargets(assessmentResult);
         if (!targets.isEmpty()) {
             log.info("Regenerating advice for [assessmentId={} and assessmentResultId={}]", assessmentResult.getAssessmentId(), assessmentResult.getId());
             deleteAdviceItemPort.deleteAllAiGenerated(assessmentResult.getId());
