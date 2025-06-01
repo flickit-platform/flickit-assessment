@@ -98,4 +98,9 @@ public class AdviceItemPersistenceJpaAdapter implements
 
         repository.deleteById(id);
     }
+
+    @Override
+    public void deleteAllAiGenerated(UUID assessmentResultId) {
+        repository.deleteByAssessmentResultIdAndCreatedByIsNullAndLastModifiedByIsNull(assessmentResultId);
+    }
 }
