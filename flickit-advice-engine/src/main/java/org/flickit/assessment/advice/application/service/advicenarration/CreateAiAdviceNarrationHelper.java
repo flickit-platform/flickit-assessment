@@ -9,7 +9,6 @@ import org.flickit.assessment.advice.application.port.out.advicenarration.LoadAd
 import org.flickit.assessment.advice.application.port.out.advicenarration.UpdateAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentPort;
 import org.flickit.assessment.advice.application.port.out.atribute.LoadAttributesPort;
-import org.flickit.assessment.advice.application.port.out.attributevalue.LoadAttributeCurrentAndTargetLevelIndexPort;
 import org.flickit.assessment.advice.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.domain.adviceitem.CostLevel;
@@ -17,7 +16,6 @@ import org.flickit.assessment.common.application.domain.adviceitem.ImpactLevel;
 import org.flickit.assessment.common.application.domain.adviceitem.PriorityLevel;
 import org.flickit.assessment.common.application.port.out.CallAiPromptPort;
 import org.flickit.assessment.common.config.AppAiProperties;
-import org.flickit.assessment.common.exception.ValidationException;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.stereotype.Service;
@@ -29,7 +27,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static org.flickit.assessment.advice.common.ErrorMessageKey.CREATE_AI_ADVICE_NARRATION_ATTRIBUTE_LEVEL_TARGETS_SIZE_MIN;
 import static org.flickit.assessment.advice.common.MessageKey.ADVICE_NARRATION_AI_IS_DISABLED;
 
 @Service
@@ -37,7 +34,6 @@ import static org.flickit.assessment.advice.common.MessageKey.ADVICE_NARRATION_A
 @RequiredArgsConstructor
 public class CreateAiAdviceNarrationHelper {
 
-    private final LoadAttributeCurrentAndTargetLevelIndexPort loadAttributeCurrentAndTargetLevelIndexPort;
     private final LoadMaturityLevelsPort loadMaturityLevelsPort;
     private final LoadAttributesPort loadAttributesPort;
     private final LoadAdviceNarrationPort loadAdviceNarrationPort;
@@ -56,8 +52,6 @@ public class CreateAiAdviceNarrationHelper {
 
         var adviceNarration = loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId());
 
-        attributeLevelTargets = filterValidAttributeLevelTargets(assessmentResult.getAssessmentId(), attributeLevelTargets);
-
         var prompt = createPrompt(adviceListItems, attributeLevelTargets, assessmentResult);
         AdviceDto aiAdvice = callAiPromptPort.call(prompt, AdviceDto.class);
 
@@ -75,20 +69,6 @@ public class CreateAiAdviceNarrationHelper {
             createAdviceNarrationPort.persist(toAdviceNarration(assessmentResultId, aiAdvice.narration()));
         }
         return aiAdvice.narration();
-    }
-
-    private List<AttributeLevelTarget> filterValidAttributeLevelTargets(UUID assessmentId, List<AttributeLevelTarget> attributeLevelTargets) {
-        var attributeCurrentAndTargetLevelIndexes = loadAttributeCurrentAndTargetLevelIndexPort.load(assessmentId, attributeLevelTargets);
-        var validAttributeIds = attributeCurrentAndTargetLevelIndexes.stream()
-            .filter(a -> a.targetMaturityLevelIndex() > a.currentMaturityLevelIndex())
-            .map(LoadAttributeCurrentAndTargetLevelIndexPort.Result::attributeId)
-            .collect(Collectors.toSet());
-        if (validAttributeIds.isEmpty())
-            throw new ValidationException(CREATE_AI_ADVICE_NARRATION_ATTRIBUTE_LEVEL_TARGETS_SIZE_MIN);
-
-        return attributeLevelTargets.stream()
-            .filter(a -> validAttributeIds.contains(a.getAttributeId()))
-            .toList();
     }
 
     private Prompt createPrompt(List<AdviceListItem> adviceItems, List<AttributeLevelTarget> targets, AssessmentResult assessmentResult) {
