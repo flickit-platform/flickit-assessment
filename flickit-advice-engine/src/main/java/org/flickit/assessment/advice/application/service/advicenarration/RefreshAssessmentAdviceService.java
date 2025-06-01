@@ -48,8 +48,9 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
 
-        if (param.getForceRegenerate())
+        if (Boolean.TRUE.equals(param.getForceRegenerate()))
             regenerateAdviceIfNecessary(assessmentResult);
+
     }
 
     private void regenerateAdviceIfNecessary(AssessmentResult assessmentResult) {
