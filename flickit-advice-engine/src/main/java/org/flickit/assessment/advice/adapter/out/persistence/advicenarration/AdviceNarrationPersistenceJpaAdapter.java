@@ -49,7 +49,7 @@ public class AdviceNarrationPersistenceJpaAdapter implements
     }
 
     @Override
-    public void deleteAll(UUID assessmentResultId) {
+    public void delete(UUID assessmentResultId) {
         repository.deleteByAssessmentResultId(assessmentResultId);
     }
 }
