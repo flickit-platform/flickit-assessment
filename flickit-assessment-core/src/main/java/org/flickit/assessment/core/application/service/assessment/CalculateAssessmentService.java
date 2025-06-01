@@ -47,32 +47,35 @@ public class CalculateAssessmentService implements CalculateAssessmentUseCase {
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CALCULATE_ASSESSMENT))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        var isReinitialized = reinitializeAssessmentResultIfRequired(param.getAssessmentId());
+        reinitializeAssessmentResultIfRequired(param.getAssessmentId());
 
         AssessmentResult assessmentResult = loadCalculateInfoPort.load(param.getAssessmentId());
 
+        return Optional.ofNullable(assessmentResult.getIsCalculateValid())
+            .filter(Boolean::booleanValue)
+            .map(valid -> new Result(assessmentResult.getMaturityLevel(), false))
+            .orElseGet(() -> {
+                MaturityLevel calcResult = calculate(assessmentResult);
+                updateCalculatedResultPort.updateCalculatedResult(assessmentResult);
+                updateAssessmentPort.updateLastModificationTime(param.getAssessmentId(), assessmentResult.getLastModificationTime());
+                return new Result(calcResult, true);
+            });
+    }
+
+    private static MaturityLevel calculate(AssessmentResult assessmentResult) {
         MaturityLevel calcResult = assessmentResult.calculate();
         assessmentResult.setMaturityLevel(calcResult);
         assessmentResult.setIsCalculateValid(Boolean.TRUE);
         assessmentResult.setLastModificationTime(LocalDateTime.now());
         assessmentResult.setLastCalculationTime(LocalDateTime.now());
-
-        updateCalculatedResultPort.updateCalculatedResult(assessmentResult);
-        updateAssessmentPort.updateLastModificationTime(param.getAssessmentId(), assessmentResult.getLastModificationTime());
-
-        return new Result(calcResult, isReinitialized);
+        return calcResult;
     }
 
-    private boolean reinitializeAssessmentResultIfRequired(UUID assessmentId) {
-        return Optional.ofNullable(loadAssessmentResultPort.loadByAssessmentId(assessmentId)
-                .orElseThrow(() -> new ResourceNotFoundException(CALCULATE_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND)))
-            .filter(this::isAssessmentResultReinitializationRequired)
-            .map(result -> {
-                reinitializeAssessmentResult(result);
-                log.info("Reinitialized assessmentResultId=[{}] of assessmentId=[{}].", result.getId(), result.getAssessment().getId());
-                return true;
-            })
-            .orElse(false);
+    private void reinitializeAssessmentResultIfRequired(UUID assessmentId) {
+        var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(assessmentId)
+            .orElseThrow(() -> new ResourceNotFoundException(CALCULATE_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND));
+        if (isAssessmentResultReinitializationRequired(assessmentResult))
+            reinitializeAssessmentResult(assessmentResult);
     }
 
     private boolean isAssessmentResultReinitializationRequired(AssessmentResult assessmentResult) {

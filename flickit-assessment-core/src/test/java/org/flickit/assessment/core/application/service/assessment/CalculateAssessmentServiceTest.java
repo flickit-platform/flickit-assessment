@@ -29,7 +29,7 @@ import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CALCULATE_ASSESSMENT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.invalidResultWithSubjectValues;
+import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.*;
 import static org.flickit.assessment.core.test.fixture.application.AttributeValueMother.hasFullScoreOnLevel23WithWeight;
 import static org.flickit.assessment.core.test.fixture.application.AttributeValueMother.hasFullScoreOnLevel24WithWeight;
 import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.levelThree;
@@ -73,7 +73,7 @@ class CalculateAssessmentServiceTest {
     private AssessmentAccessChecker assessmentAccessChecker;
 
     @Test
-    void testCalculateMaturityLevel_ValidInput_ValidResults() {
+    void testCalculateMaturityLevel_whenParametersAreValid_thenReturnsValidResults() {
         LocalDateTime kitLastMajorModificationTime = LocalDateTime.now();
 
         // weighted mean scores of attributeValues on levels: 1:0, 2:100, 3:600/10=75, 4:400/100=40, 5:0 => level three passes
@@ -114,13 +114,13 @@ class CalculateAssessmentServiceTest {
         assertNotNull(result);
         assertNotNull(result.maturityLevel());
         assertEquals(levelTwo().getValue(), result.maturityLevel().getValue());
-        assertFalse(result.resultAffected());
+        assertTrue(result.resultAffected());
 
         verifyNoInteractions(loadSubjectsPort, createSubjectValuePort, createAttributeValuePort);
     }
 
     @Test
-    void testCalculateMaturityLevel_KitChanged_CreatesNewAttributeAnSubjectValuesAndCalculates() {
+    void testCalculateMaturityLevel_whenKitChanged_thenCreatesNewAttributeAnSubjectValuesAndCalculates() {
         // weighted mean scores of attributeValues on levels: 1:0, 2:100, 3:600/10=75, 4:400/100=40, 5:0 => level three passes
         List<AttributeValue> s1AttributeValues = List.of(
             hasFullScoreOnLevel24WithWeight(2, 1533),
@@ -172,7 +172,28 @@ class CalculateAssessmentServiceTest {
     }
 
     @Test
-    void testCalculateMaturityLevel_CurrentUserDoesNotHaveAccessToAssessment_ThrowsAccessDeniedException() {
+    void testCalculateMaturityLevel_whenCalculationIsValid_resultAffectedIsFalse() {
+        var param = new CalculateAssessmentUseCase.Param(UUID.randomUUID(), UUID.randomUUID());
+        var assessmentResult = validResult();
+
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CALCULATE_ASSESSMENT)).thenReturn(true);
+        when(loadCalculateInfoPort.load(param.getAssessmentId())).thenReturn(assessmentResult);
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(any())).thenReturn(LocalDateTime.MIN);
+
+        var result = service.calculateMaturityLevel(param);
+        assertFalse(result.resultAffected());
+        assertEquals(assessmentResult.getMaturityLevel(), result.maturityLevel());
+
+        verifyNoInteractions(updateCalculatedResultPort,
+            updateAssessmentPort,
+            updateCalculatedResultPort,
+            createSubjectValuePort,
+            createAttributeValuePort);
+    }
+
+    @Test
+    void testCalculateMaturityLevel_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowsAccessDeniedException() {
         var param = new CalculateAssessmentUseCase.Param(UUID.randomUUID(), UUID.randomUUID());
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CALCULATE_ASSESSMENT)).thenReturn(false);

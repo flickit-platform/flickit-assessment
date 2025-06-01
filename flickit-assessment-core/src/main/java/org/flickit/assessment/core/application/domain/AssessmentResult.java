@@ -59,6 +59,17 @@ public class AssessmentResult {
         this.lastConfidenceCalculationTime = lastConfidenceCalculationTime;
     }
 
+    public AssessmentResult(UUID assessmentResultId, Assessment assessment, long kitVersionId, List<SubjectValue> subjectValues, Boolean isCalculateValid,
+                            LocalDateTime lastCalculationTime, LocalDateTime lastConfidenceCalculationTime) {
+        this.id = assessmentResultId;
+        this.assessment = assessment;
+        this.kitVersionId = kitVersionId;
+        this.subjectValues = subjectValues;
+        this.isCalculateValid = isCalculateValid;
+        this.lastCalculationTime = lastCalculationTime;
+        this.lastConfidenceCalculationTime = lastConfidenceCalculationTime;
+    }
+
     public MaturityLevel calculate() {
         List<MaturityLevel> maturityLevels = assessment.getAssessmentKit().getMaturityLevels();
         calculateSubjectValuesAndSetMaturityLevel(maturityLevels);

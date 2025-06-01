@@ -75,6 +75,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
             .orElseThrow(() -> new ResourceNotFoundException(CALCULATE_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND));
         UUID assessmentResultId = assessmentResultEntity.getId();
         long kitVersionId = assessmentResultEntity.getKitVersionId();
+        Boolean isCalculateValid = assessmentResultEntity.getIsCalculateValid();
 
         /*
          load all subjectValue and attributeValue entities
@@ -131,6 +132,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
             buildAssessment(assessment, kitVersionId),
             kitVersionId,
             subjectValues,
+            isCalculateValid,
             assessmentResultEntity.getLastCalculationTime(),
             assessmentResultEntity.getLastConfidenceCalculationTime());
     }
