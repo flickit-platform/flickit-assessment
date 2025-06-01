@@ -3,7 +3,6 @@ package org.flickit.assessment.advice.adapter.out.persistence.advicenarration;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.advice.application.domain.AdviceNarration;
 import org.flickit.assessment.advice.application.port.out.advicenarration.CreateAdviceNarrationPort;
-import org.flickit.assessment.advice.application.port.out.advicenarration.DeleteAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.LoadAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.UpdateAdviceNarrationPort;
 import org.flickit.assessment.data.jpa.advice.advicenarration.AdviceNarrationJpaRepository;
@@ -17,8 +16,7 @@ import java.util.UUID;
 public class AdviceNarrationPersistenceJpaAdapter implements
     CreateAdviceNarrationPort,
     UpdateAdviceNarrationPort,
-    LoadAdviceNarrationPort,
-    DeleteAdviceNarrationPort {
+    LoadAdviceNarrationPort {
 
     private final AdviceNarrationJpaRepository repository;
 
@@ -46,10 +44,5 @@ public class AdviceNarrationPersistenceJpaAdapter implements
     public Optional<AdviceNarration> loadByAssessmentResultId(UUID assessmentResultId) {
         return repository.findByAssessmentResultId(assessmentResultId)
             .map(AdviceNarrationMapper::toDomain);
-    }
-
-    @Override
-    public void delete(UUID assessmentResultId) {
-        repository.deleteByAssessmentResultId(assessmentResultId);
     }
 }
