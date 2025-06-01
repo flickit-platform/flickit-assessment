@@ -6,6 +6,7 @@ import org.flickit.assessment.advice.application.domain.AssessmentResult;
 import org.flickit.assessment.advice.application.domain.AttributeLevelTarget;
 import org.flickit.assessment.advice.application.domain.MaturityLevel;
 import org.flickit.assessment.advice.application.port.in.advicenarration.RefreshAssessmentAdviceUseCase;
+import org.flickit.assessment.advice.application.port.out.adviceitem.DeleteAdviceItemPort;
 import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.advice.application.port.out.attributevalue.LoadAttributeValuesPort;
 import org.flickit.assessment.advice.application.port.out.maturitylevel.LoadMaturityLevelsPort;
@@ -37,6 +38,7 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
     private final LoadAttributeValuesPort loadAttributeValuesPort;
     private final CreateAdviceHelper createAdviceHelper;
     private final CreateAiAdviceNarrationHelper createAiAdviceNarrationHelper;
+    private final DeleteAdviceItemPort deleteAdviceItemPort;
 
     @Override
     public void refreshAssessmentAdvice(Param param) {
@@ -46,9 +48,17 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
 
-        var attributeLevelTargets = prepareAttributeLevelTargets(assessmentResult);
-        if (param.getForceRegenerate())
-            regenerateAdvice(assessmentResult, attributeLevelTargets);
+        if (Boolean.TRUE.equals(param.getForceRegenerate()))
+            regenerateAdviceIfNecessary(assessmentResult);
+    }
+
+    private void regenerateAdviceIfNecessary(AssessmentResult assessmentResult) {
+        var targets = prepareAttributeLevelTargets(assessmentResult);
+        if (!targets.isEmpty()) {
+            log.info("Regenerating advice for [assessmentId={} and assessmentResultId={}]", assessmentResult.getAssessmentId(), assessmentResult.getId());
+            deleteAdviceItemPort.deleteAllAiGenerated(assessmentResult.getId());
+            generateAdvice(assessmentResult, targets);
+        }
     }
 
     private List<AttributeLevelTarget> prepareAttributeLevelTargets(AssessmentResult result) {
@@ -81,8 +91,7 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
             .map(nextLevel -> new AttributeLevelTarget(value.attributeId(), nextLevel.getId()));
     }
 
-    private void regenerateAdvice(AssessmentResult result, List<AttributeLevelTarget> targets) {
-        log.info("Regenerating advice for assessmentId=[{}]", result.getAssessmentId());
+    private void generateAdvice(AssessmentResult result, List<AttributeLevelTarget> targets) {
         var adviceListItems = createAdviceHelper.createAdvice(result.getAssessmentId(), targets);
         createAiAdviceNarrationHelper.createAiAdviceNarration(result, adviceListItems, targets);
     }
