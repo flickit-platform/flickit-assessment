@@ -69,7 +69,8 @@ public enum AssessmentPermission {
     RESOLVE_ALL_COMMENTS("resolveAllComments"),
     VIEW_ASSESSMENT_INSIGHTS("viewAssessmentInsights"),
     APPROVE_ALL_ANSWERS("approveAllAnswers"),
-    VIEW_ATTRIBUTE_MEASURES("viewAttributeMeasures");
+    VIEW_ATTRIBUTE_MEASURES("viewAttributeMeasures"),
+    REFRESH_ASSESSMENT_ADVICE("refreshAssessmentAdvice"),;
 
     private final String code;
 }

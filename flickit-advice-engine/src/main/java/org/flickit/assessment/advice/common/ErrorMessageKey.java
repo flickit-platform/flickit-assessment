@@ -73,4 +73,7 @@ public class ErrorMessageKey {
     public static final String DELETE_ADVICE_ITEM_ID_NOT_NULL = "delete-advice-item.id.notNull";
     public static final String DELETE_ADVICE_ITEM_ADVICE_ITEM_NOT_FOUND = "delete-advice-item.adviceItem.notFound";
     public static final String DELETE_ADVICE_ITEM_ASSESSMENT_RESULT_NOT_FOUND = "delete-advice-item.assessmentResult.notFound";
+
+    public static final String REFRESH_ASSESSMENT_ADVICE_ASSESSMENT_ID_NOT_NULL = "refresh-assessment-advice.assessmentId.notNull";
+    public static final String REFRESH_ASSESSMENT_ADVICE_FORCE_REGENERATE_NOT_NULL = "refresh-assessment-advice.forceRegenerate.notNull";
 }
