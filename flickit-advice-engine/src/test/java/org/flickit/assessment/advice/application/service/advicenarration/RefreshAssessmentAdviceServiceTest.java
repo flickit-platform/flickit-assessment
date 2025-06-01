@@ -9,9 +9,7 @@ import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadA
 import org.flickit.assessment.advice.application.port.out.attributevalue.LoadAttributeValuesPort;
 import org.flickit.assessment.advice.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.advice.application.service.advice.CreateAdviceHelper;
-import org.flickit.assessment.advice.test.fixture.application.AdviceListItemMother;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
-import org.flickit.assessment.common.application.domain.assessment.AssessmentPermission;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.Test;
@@ -26,6 +24,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import static org.flickit.assessment.advice.test.fixture.application.AdviceListItemMother.createSimpleAdviceListItem;
 import static org.flickit.assessment.advice.test.fixture.application.AssessmentResultMother.createAssessmentResultWithAssessmentId;
 import static org.flickit.assessment.advice.test.fixture.application.MaturityLevelMother.*;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.REFRESH_ASSESSMENT_ADVICE;
@@ -64,18 +63,14 @@ class RefreshAssessmentAdviceServiceTest {
     DeleteAdviceItemPort deleteAdviceItemPort;
 
     private RefreshAssessmentAdviceUseCase.Param param = createParam(RefreshAssessmentAdviceUseCase.Param.ParamBuilder::build);
-    private AssessmentResult assessmentResult = createAssessmentResultWithAssessmentId(param.getAssessmentId());
+    private final AssessmentResult assessmentResult = createAssessmentResultWithAssessmentId(param.getAssessmentId());
 
-    private LoadAttributeValuesPort.Result attributeResult = new LoadAttributeValuesPort.Result(123L, levelOne().getId());
-    private List<LoadAttributeValuesPort.Result> attributes = List.of(attributeResult);
-
-    private final AdviceListItem adviceListItem = AdviceListItemMother.createSimpleAdviceListItem();
+    private final AdviceListItem adviceListItem = createSimpleAdviceListItem();
     private final List<AdviceListItem> adviceListItems = List.of(adviceListItem);
 
     @Test
-    void testRefreshAssessmentAdvice_whenUserNotAuthorized_thenThrowAccessDeniedException() {
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), REFRESH_ASSESSMENT_ADVICE))
-            .thenReturn(false);
+    void testRefreshAssessmentAdvice_whenUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), REFRESH_ASSESSMENT_ADVICE)).thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.refreshAssessmentAdvice(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
@@ -90,10 +85,8 @@ class RefreshAssessmentAdviceServiceTest {
 
     @Test
     void testRefreshAssessmentAdvice_whenAssessmentResultNotFound_thenThrowResourceNotFoundException() {
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.REFRESH_ASSESSMENT_ADVICE))
-            .thenReturn(true);
-        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
-            .thenReturn(Optional.empty());
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), REFRESH_ASSESSMENT_ADVICE)).thenReturn(true);
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.empty());
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.refreshAssessmentAdvice(param));
         assertEquals(COMMON_ASSESSMENT_RESULT_NOT_FOUND, throwable.getMessage());
@@ -106,9 +99,8 @@ class RefreshAssessmentAdviceServiceTest {
     }
 
     @Test
-    void testRefreshAssessmentAdvice_whenForceRegenerateIsFalse_thenShouldNotCreateAndSaveAdvice() {
+    void testRefreshAssessmentAdvice_whenForceRegenerateIsFalse_thenDoNotRegenerateAdvice() {
         param = createParam(b -> b.forceRegenerate(false));
-        assessmentResult = createAssessmentResultWithAssessmentId(param.getAssessmentId());
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), REFRESH_ASSESSMENT_ADVICE)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
@@ -123,11 +115,13 @@ class RefreshAssessmentAdviceServiceTest {
     }
 
     @Test
-    void testRefreshAssessmentAdvice_whenForceRegenerateIsTrue_thenCreateAndSaveAdvice() {
+    void testRefreshAssessmentAdvice_whenForceRegenerateIsTrue_thenRegenerateAdvice() {
+        var attributeValues = List.of(new LoadAttributeValuesPort.Result(123L, levelOne().getId()));
+
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), REFRESH_ASSESSMENT_ADVICE)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(loadMaturityLevelsPort.loadAll(param.getAssessmentId())).thenReturn(allLevels());
-        when(loadAttributeValuesPort.loadAll(assessmentResult.getId())).thenReturn(attributes);
+        when(loadAttributeValuesPort.loadAll(assessmentResult.getId())).thenReturn(attributeValues);
         @SuppressWarnings("unchecked")
         ArgumentCaptor<List<AttributeLevelTarget>> targetCaptor = ArgumentCaptor.forClass(List.class);
         when(createAdviceHelper.createAdvice(eq(param.getAssessmentId()), anyList())).thenReturn(adviceListItems);
@@ -156,8 +150,7 @@ class RefreshAssessmentAdviceServiceTest {
 
     @Test
     void testRefreshAssessmentAdvice_whenAttributeHasMaxMaturityLevel_thenNoTargetGenerated() {
-        attributeResult = new LoadAttributeValuesPort.Result(123L, levelThree().getId());
-        attributes = List.of(attributeResult);
+        var attributes = List.of(new LoadAttributeValuesPort.Result(123L, levelThree().getId()));
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), REFRESH_ASSESSMENT_ADVICE)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));

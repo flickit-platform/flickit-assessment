@@ -50,7 +50,6 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
 
         if (Boolean.TRUE.equals(param.getForceRegenerate()))
             regenerateAdviceIfNecessary(assessmentResult);
-
     }
 
     private void regenerateAdviceIfNecessary(AssessmentResult assessmentResult) {
