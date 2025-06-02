@@ -22,14 +22,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CALCULATE_ASSESSMENT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.*;
+import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.invalidResultWithSubjectValues;
+import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.validResult;
 import static org.flickit.assessment.core.test.fixture.application.AttributeValueMother.hasFullScoreOnLevel23WithWeight;
 import static org.flickit.assessment.core.test.fixture.application.AttributeValueMother.hasFullScoreOnLevel24WithWeight;
 import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.levelThree;
@@ -49,6 +48,9 @@ class CalculateAssessmentServiceTest {
     private LoadAssessmentResultPort loadAssessmentResultPort;
 
     @Mock
+    private LoadKitLastMajorModificationTimePort loadKitLastMajorModificationTimePort;
+
+    @Mock
     private LoadCalculateInfoPort loadCalculateInfoPort;
 
     @Mock
@@ -56,9 +58,6 @@ class CalculateAssessmentServiceTest {
 
     @Mock
     private UpdateAssessmentPort updateAssessmentPort;
-
-    @Mock
-    private LoadKitLastMajorModificationTimePort loadKitLastMajorModificationTimePort;
 
     @Mock
     private LoadSubjectsPort loadSubjectsPort;
@@ -72,123 +71,29 @@ class CalculateAssessmentServiceTest {
     @Mock
     private AssessmentAccessChecker assessmentAccessChecker;
 
-    private final List<AttributeValue> s1AttributeValues = List.of(
-        hasFullScoreOnLevel24WithWeight(2, 1533),
-        hasFullScoreOnLevel24WithWeight(2, 1534),
-        hasFullScoreOnLevel23WithWeight(3, 1535),
-        hasFullScoreOnLevel23WithWeight(3, 1536)
-    );
-
-    private final List<AttributeValue> s2AttributeValues = List.of(
-        hasFullScoreOnLevel24WithWeight(4, 1537),
-        hasFullScoreOnLevel23WithWeight(1, 1538)
-    );
-
-    private final List<SubjectValue> subjectValues1 = List.of(
-        withAttributeValues(s1AttributeValues, 1),
-        withAttributeValues(s2AttributeValues, 5)
-    );
-
-    private final List<SubjectValue> subjectValues2 = List.of(
-        withAttributeValues(s1AttributeValues, 5),
-        withAttributeValues(s2AttributeValues, 1)
-    );
-
     @Test
-    void testCalculateMaturityLevel_whenParametersAreValid_thenReturnsValidResults() {
-        LocalDateTime kitLastMajorModificationTime = LocalDateTime.now();
-        AssessmentResult assessmentResult = invalidResultWithSubjectValues(subjectValues1);
-        assessmentResult.setLastCalculationTime(LocalDateTime.now());
-        UUID currentUserId = UUID.randomUUID();
-        var param = new CalculateAssessmentUseCase.Param(assessmentResult.getAssessment().getId(), currentUserId);
+    void testCalculateMaturityLevel_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
+        var param = createParam(CalculateAssessmentUseCase.Param.ParamBuilder::build);
 
-        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
-        when(loadCalculateInfoPort.load(param.getAssessmentId())).thenReturn(assessmentResult);
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), currentUserId, CALCULATE_ASSESSMENT)).thenReturn(true);
-        when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(any())).thenReturn(kitLastMajorModificationTime);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CALCULATE_ASSESSMENT)).thenReturn(false);
 
-        var result = service.calculateMaturityLevel(param);
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.calculateMaturityLevel(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
-        verify(updateCalculatedResultPort).updateCalculatedResult(any(AssessmentResult.class));
-        verify(updateAssessmentPort).updateLastModificationTime(any(), any());
-        assertNotNull(result);
-        assertNotNull(result.maturityLevel());
-        assertEquals(levelTwo().getValue(), result.maturityLevel().getValue());
-        assertTrue(result.resultAffected());
-
-        verify(loadKitLastMajorModificationTimePort, times(1)).loadLastMajorModificationTime(any());
-        verifyNoInteractions(loadSubjectsPort, createSubjectValuePort, createAttributeValuePort);
+        verifyNoInteractions(updateCalculatedResultPort,
+            updateAssessmentPort,
+            loadCalculateInfoPort,
+            createSubjectValuePort,
+            createAttributeValuePort,
+            loadKitLastMajorModificationTimePort);
     }
 
     @Test
-    void testCalculateMaturityLevel_whenKitChanged_thenCreatesNewAttributeAnSubjectValuesAndCalculates() {
-        AssessmentResult assessmentResult = invalidResultWithSubjectValues(subjectValues2);
-        assessmentResult.setLastCalculationTime(LocalDateTime.now());
-        UUID currentUserId = UUID.randomUUID();
-        var param = new CalculateAssessmentUseCase.Param(assessmentResult.getAssessment().getId(), currentUserId);
-
-        List<Subject> subjects = new ArrayList<>(subjectValues2.stream().map(SubjectValue::getSubject).toList());
-        var newAttributeValue = hasFullScoreOnLevel23WithWeight(4, 1533);
-        var newSubjectValue = withAttributeValues(List.of(newAttributeValue), 2);
-        subjects.add(newSubjectValue.getSubject());
-
-        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
-        when(loadCalculateInfoPort.load(param.getAssessmentId())).thenReturn(assessmentResult);
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), currentUserId, CALCULATE_ASSESSMENT)).thenReturn(true);
-        when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(any())).thenReturn(LocalDateTime.now());
-        when(loadSubjectsPort.loadByKitVersionIdWithAttributes(any())).thenReturn(subjects);
-        when(createSubjectValuePort.persistAll(anyList(), any())).thenReturn(List.of(newSubjectValue));
-        when(createAttributeValuePort.persistAll(anySet(), any())).thenReturn(List.of(newAttributeValue));
-
-        var result = service.calculateMaturityLevel(param);
-        assertNotNull(result);
-        assertNotNull(result.maturityLevel());
-        assertEquals(levelThree().getValue(), result.maturityLevel().getValue());
-        assertTrue(result.resultAffected());
-
-        verify(loadKitLastMajorModificationTimePort, times(1)).loadLastMajorModificationTime(any());
-        verify(updateCalculatedResultPort, times(1)).updateCalculatedResult(any(AssessmentResult.class));
-        verify(updateAssessmentPort, times(1)).updateLastModificationTime(any(), any());
-    }
-
-    @Test
-    void testCalculateMaturityLevel_whenCalculationTimeIsNull_thenCreatesNewAttributeAnSubjectValuesAndCalculates() {
-        AssessmentResult assessmentResult = invalidResultWithSubjectValues(subjectValues2);
-        assessmentResult.setLastCalculationTime(null);
-        UUID currentUserId = UUID.randomUUID();
-        var param = new CalculateAssessmentUseCase.Param(assessmentResult.getAssessment().getId(), currentUserId);
-
-        List<Subject> subjects = new ArrayList<>(subjectValues2.stream().map(SubjectValue::getSubject).toList());
-        var newAttributeValue = hasFullScoreOnLevel23WithWeight(4, 1533);
-        var newSubjectValue = withAttributeValues(List.of(newAttributeValue), 2);
-        subjects.add(newSubjectValue.getSubject());
-
-        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
-        when(loadCalculateInfoPort.load(param.getAssessmentId())).thenReturn(assessmentResult);
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), currentUserId, CALCULATE_ASSESSMENT)).thenReturn(true);
-        when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(any())).thenReturn(LocalDateTime.now());
-        when(loadSubjectsPort.loadByKitVersionIdWithAttributes(any())).thenReturn(subjects);
-        when(createSubjectValuePort.persistAll(anyList(), any())).thenReturn(List.of(newSubjectValue));
-        when(createAttributeValuePort.persistAll(anySet(), any())).thenReturn(List.of(newAttributeValue));
-
-        var result = service.calculateMaturityLevel(param);
-        assertNotNull(result);
-        assertNotNull(result.maturityLevel());
-        assertEquals(levelThree().getValue(), result.maturityLevel().getValue());
-        assertTrue(result.resultAffected());
-
-        verify(loadKitLastMajorModificationTimePort, times(1)).loadLastMajorModificationTime(any());
-        verify(updateCalculatedResultPort, times(1)).updateCalculatedResult(any(AssessmentResult.class));
-        verify(updateAssessmentPort, times(1)).updateLastModificationTime(any(), any());
-    }
-
-    @Test
-    void testCalculateMaturityLevel_whenCalculationIsValid_resultAffectedIsFalse() {
+    void testCalculateMaturityLevel_whenCalculationIsValid_thenDoNotCalculateAndReturnResultAffectedAsFalse() {
         var param = new CalculateAssessmentUseCase.Param(UUID.randomUUID(), UUID.randomUUID());
         var assessmentResult = validResult();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CALCULATE_ASSESSMENT)).thenReturn(true);
-        when(loadCalculateInfoPort.load(param.getAssessmentId())).thenReturn(assessmentResult);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(any())).thenReturn(LocalDateTime.MIN);
 
@@ -198,19 +103,165 @@ class CalculateAssessmentServiceTest {
 
         verifyNoInteractions(updateCalculatedResultPort,
             updateAssessmentPort,
-            updateCalculatedResultPort,
+            loadCalculateInfoPort,
             createSubjectValuePort,
             createAttributeValuePort);
     }
 
     @Test
-    void testCalculateMaturityLevel_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowsAccessDeniedException() {
-        var param = new CalculateAssessmentUseCase.Param(UUID.randomUUID(), UUID.randomUUID());
+    void testCalculateMaturityLevel_whenCalculationIsNotValidAndKitHasNotChanged_thenDoCalculateAndDoNotReinitialize() {
+        // weighted mean scores of attributeValues on levels: 1:0, 2:100, 3:600/10=75, 4:400/100=40, 5:0 => level three passes
 
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CALCULATE_ASSESSMENT)).thenReturn(false);
-        verifyNoInteractions(loadCalculateInfoPort);
+        List<AttributeValue> s1AttributeValues = List.of(
+            hasFullScoreOnLevel24WithWeight(2, 1533),
+            hasFullScoreOnLevel24WithWeight(2, 1534),
+            hasFullScoreOnLevel23WithWeight(3, 1535),
+            hasFullScoreOnLevel23WithWeight(3, 1536)
+        );
 
-        var throwable = assertThrows(AccessDeniedException.class, () -> service.calculateMaturityLevel(param));
-        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+        // weighted mean scores of attributeValues on levels: 1:0, 2:100, 3:100/5=25, 4:400/5=80, 5:0 => level two passes
+        List<AttributeValue> s2AttributeValues = List.of(
+            hasFullScoreOnLevel24WithWeight(4, 1537),
+            hasFullScoreOnLevel23WithWeight(1, 1538)
+        );
+
+        List<SubjectValue> subjectValues = List.of(
+            withAttributeValues(s1AttributeValues, 1),
+            withAttributeValues(s2AttributeValues, 5)
+        );
+
+        // weighted mean scores of subjectValues on levels: 1:0, 2: 100, 3: (75+(25*5))/6=33.3,  4: (40+(5*80))/6=73, 5:0 => level two passes
+        AssessmentResult assessmentResult = invalidResultWithSubjectValues(subjectValues);
+
+        assessmentResult.setLastCalculationTime(LocalDateTime.now());
+        var param = createParam(b -> b.assessmentId(assessmentResult.getAssessment().getId()));
+
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        when(loadCalculateInfoPort.load(param.getAssessmentId())).thenReturn(assessmentResult);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CALCULATE_ASSESSMENT)).thenReturn(true);
+        when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(assessmentResult.getAssessment().getAssessmentKit().getId()))
+            .thenReturn(assessmentResult.getLastCalculationTime().minusHours(1));
+
+        var result = service.calculateMaturityLevel(param);
+
+        assertNotNull(result);
+        assertNotNull(result.maturityLevel());
+        assertEquals(levelTwo().getValue(), result.maturityLevel().getValue());
+        assertTrue(result.resultAffected());
+
+        verify(updateCalculatedResultPort).updateCalculatedResult(any(AssessmentResult.class));
+        verify(updateAssessmentPort).updateLastModificationTime(any(), any());
+        verifyNoInteractions(loadSubjectsPort, createSubjectValuePort, createAttributeValuePort);
+    }
+
+    @Test
+    void testCalculateMaturityLevel_whenKitHasChanged_thenReinitializeAndCalculate() {
+        // weighted mean scores of attributeValues on levels: 1:0, 2:100, 3:600/10=75, 4:400/100=40, 5:0 => level three passes
+        List<AttributeValue> s1AttributeValues = List.of(
+            hasFullScoreOnLevel24WithWeight(2, 1533),
+            hasFullScoreOnLevel24WithWeight(2, 1534),
+            hasFullScoreOnLevel23WithWeight(3, 1535),
+            hasFullScoreOnLevel23WithWeight(3, 1536)
+        );
+
+        // weighted mean scores of attributeValues on levels: 1:0, 2:100, 3:100/5=25, 4:400/5=80, 5:0 => level two passes
+        List<AttributeValue> s2AttributeValues = List.of(
+            hasFullScoreOnLevel24WithWeight(4, 1537),
+            hasFullScoreOnLevel23WithWeight(1, 1538)
+        );
+
+        List<SubjectValue> subjectValues = List.of(
+            withAttributeValues(s1AttributeValues, 5),
+            withAttributeValues(s2AttributeValues, 1)
+        );
+
+        List<Subject> subjects = new ArrayList<>(subjectValues.stream().map(SubjectValue::getSubject).toList());
+        var newAttributeValue = hasFullScoreOnLevel23WithWeight(4, 1533);
+        // weighted mean scores of new subjectValue on levels: 1:0, 2:100, 3:100, 4:0, 5:0 => level two passes
+        var newSubjectValue = withAttributeValues(List.of(newAttributeValue), 2);
+        subjects.add(newSubjectValue.getSubject());
+
+        // weighted mean scores of subjectValues on levels: 1:0, 2:100, 3: ((75*5)+25+(100*2))/8=75,  4: ((40*5)+5+0)/8=25.6, 5:0 => level three passes
+        AssessmentResult assessmentResult = invalidResultWithSubjectValues(subjectValues);
+        assessmentResult.setLastCalculationTime(LocalDateTime.now());
+
+        var param = createParam(b -> b.assessmentId(assessmentResult.getAssessment().getId()));
+
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        when(loadCalculateInfoPort.load(param.getAssessmentId())).thenReturn(assessmentResult);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CALCULATE_ASSESSMENT)).thenReturn(true);
+        when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(assessmentResult.getAssessment().getAssessmentKit().getId()))
+            .thenReturn(assessmentResult.getLastCalculationTime().plusHours(1));
+        when(loadSubjectsPort.loadByKitVersionIdWithAttributes(any())).thenReturn(subjects);
+        when(createSubjectValuePort.persistAll(List.of(newSubjectValue.getSubject().getId()), assessmentResult.getId()))
+            .thenReturn(List.of(newSubjectValue));
+        when(createAttributeValuePort.persistAll(Set.of(), assessmentResult.getId())).thenReturn(List.of(newAttributeValue));
+
+        var result = service.calculateMaturityLevel(param);
+        assertNotNull(result);
+        assertEquals(levelThree().getValue(), result.maturityLevel().getValue());
+        assertTrue(result.resultAffected());
+
+        verify(loadKitLastMajorModificationTimePort, times(1)).loadLastMajorModificationTime(any());
+        verify(updateCalculatedResultPort, times(1)).updateCalculatedResult(any(AssessmentResult.class));
+        verify(updateAssessmentPort, times(1)).updateLastModificationTime(any(), any());
+    }
+
+    @Test
+    void testCalculateMaturityLevel_whenCalculationTimeIsNull_thenCreateNewAttributeAnSubjectValuesAndCalculate() {
+        List<AttributeValue> s1AttributeValues = List.of(
+            hasFullScoreOnLevel24WithWeight(2, 1533),
+            hasFullScoreOnLevel24WithWeight(2, 1534),
+            hasFullScoreOnLevel23WithWeight(3, 1535),
+            hasFullScoreOnLevel23WithWeight(3, 1536)
+        );
+
+        List<AttributeValue> s2AttributeValues = List.of(
+            hasFullScoreOnLevel24WithWeight(4, 1537),
+            hasFullScoreOnLevel23WithWeight(1, 1538)
+        );
+
+        List<SubjectValue> subjectValues = List.of(
+            withAttributeValues(s1AttributeValues, 5),
+            withAttributeValues(s2AttributeValues, 1)
+        );
+
+        AssessmentResult assessmentResult = invalidResultWithSubjectValues(subjectValues);
+        assessmentResult.setLastCalculationTime(null);
+        var param = createParam(b -> b.assessmentId(assessmentResult.getAssessment().getId()));
+
+        List<Subject> subjects = new ArrayList<>(subjectValues.stream().map(SubjectValue::getSubject).toList());
+        var newAttributeValue = hasFullScoreOnLevel23WithWeight(4, 1533);
+        var newSubjectValue = withAttributeValues(List.of(newAttributeValue), 2);
+        subjects.add(newSubjectValue.getSubject());
+
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        when(loadCalculateInfoPort.load(param.getAssessmentId())).thenReturn(assessmentResult);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CALCULATE_ASSESSMENT)).thenReturn(true);
+        when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(any())).thenReturn(LocalDateTime.now());
+        when(loadSubjectsPort.loadByKitVersionIdWithAttributes(any())).thenReturn(subjects);
+        when(createSubjectValuePort.persistAll(anyList(), any())).thenReturn(List.of(newSubjectValue));
+        when(createAttributeValuePort.persistAll(anySet(), any())).thenReturn(List.of(newAttributeValue));
+
+        var result = service.calculateMaturityLevel(param);
+
+        assertNotNull(result);
+        assertNotNull(result.maturityLevel());
+        assertTrue(result.resultAffected());
+
+        verify(updateCalculatedResultPort, times(1)).updateCalculatedResult(any(AssessmentResult.class));
+        verify(updateAssessmentPort, times(1)).updateLastModificationTime(any(), any());
+    }
+
+    private CalculateAssessmentUseCase.Param createParam(Consumer<CalculateAssessmentUseCase.Param.ParamBuilder> changer) {
+        var param = paramBuilder();
+        changer.accept(param);
+        return param.build();
+    }
+
+    private CalculateAssessmentUseCase.Param.ParamBuilder paramBuilder() {
+        return CalculateAssessmentUseCase.Param.builder()
+            .assessmentId(UUID.randomUUID())
+            .currentUserId(UUID.randomUUID());
     }
 }
