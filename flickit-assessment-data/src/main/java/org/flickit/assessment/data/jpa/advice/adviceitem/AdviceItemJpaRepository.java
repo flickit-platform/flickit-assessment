@@ -18,6 +18,8 @@ public interface AdviceItemJpaRepository extends JpaRepository<AdviceItemJpaEnti
 
     void deleteByAssessmentResultIdAndCreatedByIsNullAndLastModifiedByIsNull(UUID assessmentResultId);
 
+    boolean existsByAssessmentResultId(UUID assessmentResultId);
+
     @Modifying
     @Query("""
             UPDATE AdviceItemJpaEntity a
