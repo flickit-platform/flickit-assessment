@@ -30,15 +30,15 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.CALCULATE_ASSES
 @RequiredArgsConstructor
 public class CalculateAssessmentService implements CalculateAssessmentUseCase {
 
+    private final AssessmentAccessChecker assessmentAccessChecker;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
+    private final LoadKitLastMajorModificationTimePort loadKitLastMajorModificationTimePort;
     private final LoadCalculateInfoPort loadCalculateInfoPort;
     private final UpdateCalculatedResultPort updateCalculatedResultPort;
     private final UpdateAssessmentPort updateAssessmentPort;
-    private final LoadKitLastMajorModificationTimePort loadKitLastMajorModificationTimePort;
     private final LoadSubjectsPort loadSubjectsPort;
     private final CreateSubjectValuePort createSubjectValuePort;
     private final CreateAttributeValuePort createAttributeValuePort;
-    private final AssessmentAccessChecker assessmentAccessChecker;
 
     @Override
     public Result calculateMaturityLevel(Param param) {
@@ -51,13 +51,13 @@ public class CalculateAssessmentService implements CalculateAssessmentUseCase {
         var kitId = assessmentResult.getAssessment().getAssessmentKit().getId();
         var kitLastMajorModificationTime = loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(kitId);
 
+        if (isCalculationValid(assessmentResult, kitLastMajorModificationTime))
+            return new Result(assessmentResult.getMaturityLevel(), false);
+
         if (assessmentResult.getLastCalculationTime() == null || assessmentResult.getLastCalculationTime().isBefore(kitLastMajorModificationTime))
             reinitializeAssessmentResult(assessmentResult);
 
         var assessmentResultCalculateInfo = loadCalculateInfoPort.load(param.getAssessmentId());
-
-        if (isCalculationValid(assessmentResultCalculateInfo, kitLastMajorModificationTime))
-            return new Result(assessmentResultCalculateInfo.getMaturityLevel(), false);
 
         MaturityLevel calcResult = calculate(assessmentResultCalculateInfo);
         updateCalculatedResultPort.updateCalculatedResult(assessmentResultCalculateInfo);
