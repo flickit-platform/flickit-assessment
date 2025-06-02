@@ -7,6 +7,8 @@ import org.flickit.assessment.advice.application.domain.AttributeLevelTarget;
 import org.flickit.assessment.advice.application.domain.MaturityLevel;
 import org.flickit.assessment.advice.application.port.in.advicenarration.RefreshAssessmentAdviceUseCase;
 import org.flickit.assessment.advice.application.port.out.adviceitem.DeleteAdviceItemPort;
+import org.flickit.assessment.advice.application.port.out.adviceitem.LoadAdviceItemPort;
+import org.flickit.assessment.advice.application.port.out.advicenarration.LoadAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.advice.application.port.out.attributevalue.LoadAttributeValuesPort;
 import org.flickit.assessment.advice.application.port.out.maturitylevel.LoadMaturityLevelsPort;
@@ -39,6 +41,8 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
     private final CreateAdviceHelper createAdviceHelper;
     private final CreateAiAdviceNarrationHelper createAiAdviceNarrationHelper;
     private final DeleteAdviceItemPort deleteAdviceItemPort;
+    private final LoadAdviceItemPort loadAdviceItemPort;
+    private final LoadAdviceNarrationPort loadAdviceNarrationPort;
 
     @Override
     public void refreshAssessmentAdvice(Param param) {
@@ -48,7 +52,8 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
 
-        if (Boolean.TRUE.equals(param.getForceRegenerate()))
+        if (param.getForceRegenerate() || !loadAdviceItemPort.existsByAssessmentResultId(assessmentResult.getId())
+            || !loadAdviceNarrationPort.existsByAssessmentResultId(assessmentResult.getId()))
             regenerateAdviceIfNecessary(assessmentResult);
     }
 
