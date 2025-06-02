@@ -6,10 +6,7 @@ import lombok.SneakyThrows;
 import org.flickit.assessment.advice.application.domain.AttributeLevelScore;
 import org.flickit.assessment.advice.application.domain.AttributeLevelTarget;
 import org.flickit.assessment.advice.application.domain.Plan;
-import org.flickit.assessment.advice.application.domain.advice.AdviceAttribute;
-import org.flickit.assessment.advice.application.domain.advice.AdviceOption;
-import org.flickit.assessment.advice.application.domain.advice.AdviceQuestion;
-import org.flickit.assessment.advice.application.domain.advice.AdviceQuestionnaire;
+import org.flickit.assessment.advice.application.domain.advice.*;
 import org.flickit.assessment.advice.application.exception.FinalSolutionNotFoundException;
 import org.flickit.assessment.advice.application.port.out.calculation.LoadAdviceCalculationInfoPort;
 import org.flickit.assessment.advice.application.port.out.calculation.LoadCreatedAdviceDetailsPort;
@@ -25,7 +22,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.advice.common.ErrorMessageKey.CREATE_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION;
 import static org.flickit.assessment.advice.test.fixture.application.QuestionMother.createQuestionWithTargetAndCurrentOption;
 import static org.junit.jupiter.api.Assertions.*;
@@ -129,14 +125,13 @@ class CreateAdviceHelperTest {
         mockPorts();
 
         var result = helper.createAdvice(assessmentId, attributeLevelTargets);
-        assertThat(result)
-            .allSatisfy(advice -> {
-                assertNotNull(advice.recommendedOption());
-                assertNotNull(advice.attributes());
-                assertNotNull(advice.questionnaire());
-                assertFalse(advice.question().title().isBlank());
-                assertNotEquals(0, advice.benefit());
-            });
+        for (AdviceListItem question : result) {
+            assertNotNull(question.recommendedOption());
+            assertNotNull(question.attributes());
+            assertNotNull(question.questionnaire());
+            assertFalse(question.question().title().isBlank());
+            assertNotEquals(0, question.benefit());
+        }
 
         verify(loadInfoPort, times(1)).loadAdviceCalculationInfo(assessmentId, attributeLevelTargets);
         verify(solverManager, times(1)).solve(any(), any());
