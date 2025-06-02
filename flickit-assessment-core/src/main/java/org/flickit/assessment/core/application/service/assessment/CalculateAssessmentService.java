@@ -30,48 +30,55 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.CALCULATE_ASSES
 @RequiredArgsConstructor
 public class CalculateAssessmentService implements CalculateAssessmentUseCase {
 
+    private final AssessmentAccessChecker assessmentAccessChecker;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
+    private final LoadKitLastMajorModificationTimePort loadKitLastMajorModificationTimePort;
     private final LoadCalculateInfoPort loadCalculateInfoPort;
     private final UpdateCalculatedResultPort updateCalculatedResultPort;
     private final UpdateAssessmentPort updateAssessmentPort;
-    private final LoadKitLastMajorModificationTimePort loadKitLastMajorModificationTimePort;
     private final LoadSubjectsPort loadSubjectsPort;
     private final CreateSubjectValuePort createSubjectValuePort;
     private final CreateAttributeValuePort createAttributeValuePort;
-    private final AssessmentAccessChecker assessmentAccessChecker;
 
     @Override
     public Result calculateMaturityLevel(Param param) {
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CALCULATE_ASSESSMENT))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        reinitializeAssessmentResultIfRequired(param.getAssessmentId());
+        var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
+            .orElseThrow(() -> new ResourceNotFoundException(CALCULATE_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND));
 
-        AssessmentResult assessmentResult = loadCalculateInfoPort.load(param.getAssessmentId());
+        var kitId = assessmentResult.getAssessment().getAssessmentKit().getId();
+        var kitLastMajorModificationTime = loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(kitId);
 
+        if (isCalculationValid(assessmentResult, kitLastMajorModificationTime))
+            return new Result(assessmentResult.getMaturityLevel(), false);
+
+        if (assessmentResult.getLastCalculationTime() == null || assessmentResult.getLastCalculationTime().isBefore(kitLastMajorModificationTime))
+            reinitializeAssessmentResult(assessmentResult);
+
+        var assessmentResultCalculateInfo = loadCalculateInfoPort.load(param.getAssessmentId());
+
+        MaturityLevel calcResult = calculate(assessmentResultCalculateInfo);
+        updateCalculatedResultPort.updateCalculatedResult(assessmentResultCalculateInfo);
+        updateAssessmentPort.updateLastModificationTime(param.getAssessmentId(), assessmentResultCalculateInfo.getLastModificationTime());
+        return new Result(calcResult, true);
+    }
+
+    boolean isCalculationValid(AssessmentResult assessmentResult, LocalDateTime kitLastMajorModificationTime) {
+        var calculationTime = assessmentResult.getLastCalculationTime();
+        return Boolean.TRUE.equals(assessmentResult.getIsCalculateValid())
+            && calculationTime != null
+            && calculationTime.isAfter(kitLastMajorModificationTime);
+    }
+
+    private static MaturityLevel calculate(AssessmentResult assessmentResult) {
         MaturityLevel calcResult = assessmentResult.calculate();
         assessmentResult.setMaturityLevel(calcResult);
         assessmentResult.setIsCalculateValid(Boolean.TRUE);
         assessmentResult.setLastModificationTime(LocalDateTime.now());
         assessmentResult.setLastCalculationTime(LocalDateTime.now());
-
-        updateCalculatedResultPort.updateCalculatedResult(assessmentResult);
-        updateAssessmentPort.updateLastModificationTime(param.getAssessmentId(), assessmentResult.getLastModificationTime());
-
-        return new Result(calcResult);
-    }
-
-    private void reinitializeAssessmentResultIfRequired(UUID assessmentId) {
-        var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(assessmentId)
-            .orElseThrow(() -> new ResourceNotFoundException(CALCULATE_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND));
-        if (isAssessmentResultReinitializationRequired(assessmentResult))
-            reinitializeAssessmentResult(assessmentResult);
-    }
-
-    private boolean isAssessmentResultReinitializationRequired(AssessmentResult assessmentResult) {
-        Long kitId = assessmentResult.getAssessment().getAssessmentKit().getId();
-        LocalDateTime kitLastMajorModificationTime = loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(kitId);
-        return assessmentResult.getLastCalculationTime().isBefore(kitLastMajorModificationTime);
+        return calcResult;
     }
 
     private void reinitializeAssessmentResult(AssessmentResult assessmentResult) {
