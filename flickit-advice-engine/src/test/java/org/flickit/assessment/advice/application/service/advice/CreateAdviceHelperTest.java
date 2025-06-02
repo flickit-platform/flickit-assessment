@@ -6,15 +6,14 @@ import lombok.SneakyThrows;
 import org.flickit.assessment.advice.application.domain.AttributeLevelScore;
 import org.flickit.assessment.advice.application.domain.AttributeLevelTarget;
 import org.flickit.assessment.advice.application.domain.Plan;
-import org.flickit.assessment.advice.application.domain.advice.*;
+import org.flickit.assessment.advice.application.domain.advice.AdviceAttribute;
+import org.flickit.assessment.advice.application.domain.advice.AdviceOption;
+import org.flickit.assessment.advice.application.domain.advice.AdviceQuestion;
+import org.flickit.assessment.advice.application.domain.advice.AdviceQuestionnaire;
 import org.flickit.assessment.advice.application.exception.FinalSolutionNotFoundException;
-import org.flickit.assessment.advice.application.port.out.assessment.LoadSelectedAttributeIdsRelatedToAssessmentPort;
-import org.flickit.assessment.advice.application.port.out.assessment.LoadSelectedLevelIdsRelatedToAssessmentPort;
-import org.flickit.assessment.advice.application.port.out.attributevalue.LoadAttributeCurrentAndTargetLevelIndexPort;
 import org.flickit.assessment.advice.application.port.out.calculation.LoadAdviceCalculationInfoPort;
 import org.flickit.assessment.advice.application.port.out.calculation.LoadCreatedAdviceDetailsPort;
 import org.flickit.assessment.advice.application.port.out.calculation.LoadCreatedAdviceDetailsPort.Result;
-import org.flickit.assessment.common.exception.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -23,12 +22,11 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.flickit.assessment.advice.common.ErrorMessageKey.*;
+import static org.flickit.assessment.advice.common.ErrorMessageKey.CREATE_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION;
 import static org.flickit.assessment.advice.test.fixture.application.QuestionMother.createQuestionWithTargetAndCurrentOption;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -39,15 +37,6 @@ class CreateAdviceHelperTest {
 
     @InjectMocks
     private CreateAdviceHelper helper;
-
-    @Mock
-    private LoadSelectedAttributeIdsRelatedToAssessmentPort loadSelectedAttributeIdsRelatedToAssessmentPort;
-
-    @Mock
-    private LoadSelectedLevelIdsRelatedToAssessmentPort loadSelectedLevelIdsRelatedToAssessmentPort;
-
-    @Mock
-    private LoadAttributeCurrentAndTargetLevelIndexPort loadAttributeCurrentAndTargetLevelIndexPort;
 
     @Mock
     private LoadAdviceCalculationInfoPort loadInfoPort;
@@ -64,74 +53,10 @@ class CreateAdviceHelperTest {
         List.of(new AttributeLevelTarget(1L, 2L),
             new AttributeLevelTarget(2L, 3L));
 
-    @Test
-    void testCreateAdviceHelper_whenAssessmentAttributeNotRelated_thenThrowResourceNotFoundException() {
-        when(loadSelectedAttributeIdsRelatedToAssessmentPort.loadSelectedAttributeIdsRelatedToAssessment(assessmentId, Set.of(1L, 2L)))
-            .thenReturn(Set.of(1L));
-
-        var throwable = assertThrows(ResourceNotFoundException.class,
-            () -> helper.createAdvice(assessmentId, attributeLevelTargets));
-        assertEquals(CREATE_ADVICE_ASSESSMENT_ATTRIBUTE_RELATION_NOT_FOUND, throwable.getMessage());
-
-        verifyNoInteractions(
-            loadInfoPort,
-            solverManager,
-            loadCreatedAdviceDetailsPort
-        );
-    }
-
-    @Test
-    void testCreateAdviceHelper_whenAssessmentMaturityLevelNotRelated_thenThrowResourceNotFoundException() {
-        when(loadSelectedAttributeIdsRelatedToAssessmentPort.loadSelectedAttributeIdsRelatedToAssessment(assessmentId, Set.of(1L, 2L)))
-            .thenReturn(Set.of(1L, 2L));
-        when(loadSelectedLevelIdsRelatedToAssessmentPort.loadSelectedLevelIdsRelatedToAssessment(assessmentId, Set.of(2L, 3L)))
-            .thenReturn(Set.of(2L));
-
-        var throwable = assertThrows(ResourceNotFoundException.class,
-            () -> helper.createAdvice(assessmentId, attributeLevelTargets));
-        assertEquals(CREATE_ADVICE_ASSESSMENT_LEVEL_RELATION_NOT_FOUND, throwable.getMessage());
-
-        verifyNoInteractions(
-            loadInfoPort,
-            solverManager,
-            loadCreatedAdviceDetailsPort
-        );
-    }
-
-    @SneakyThrows
-    @Test
-    void testCreateAdviceHelper_whenAttributeLevelTargetsAreNotValid_thenThrowValidationException() {
-        attributeLevelTargets = List.of(new AttributeLevelTarget(1L, 2L));
-
-        when(loadSelectedAttributeIdsRelatedToAssessmentPort.loadSelectedAttributeIdsRelatedToAssessment(assessmentId, Set.of(1L)))
-            .thenReturn(Set.of(1L));
-        when(loadSelectedLevelIdsRelatedToAssessmentPort.loadSelectedLevelIdsRelatedToAssessment(assessmentId, Set.of(2L)))
-            .thenReturn(Set.of(2L));
-
-        var throwable = assertThrows(ValidationException.class,
-            () -> helper.createAdvice(assessmentId, attributeLevelTargets));
-        assertEquals(CREATE_ADVICE_ATTRIBUTE_LEVEL_TARGETS_SIZE_MIN, throwable.getMessageKey());
-
-        verify(loadAttributeCurrentAndTargetLevelIndexPort, times(1))
-            .load(assessmentId, attributeLevelTargets);
-        verifyNoInteractions(
-            loadInfoPort,
-            solverManager,
-            loadCreatedAdviceDetailsPort
-        );
-    }
-
     @SneakyThrows
     @Test
     void testCreateAdviceHelper_whenCalculationInterrupted_thenThrowFinalSolutionNotFoundException() {
         attributeLevelTargets = List.of(new AttributeLevelTarget(1L, 2L));
-
-        when(loadSelectedAttributeIdsRelatedToAssessmentPort.loadSelectedAttributeIdsRelatedToAssessment(assessmentId, Set.of(1L)))
-            .thenReturn(Set.of(1L));
-        when(loadSelectedLevelIdsRelatedToAssessmentPort.loadSelectedLevelIdsRelatedToAssessment(assessmentId, Set.of(2L)))
-            .thenReturn(Set.of(2L));
-        when(loadAttributeCurrentAndTargetLevelIndexPort.load(assessmentId, attributeLevelTargets))
-            .thenReturn(List.of(new LoadAttributeCurrentAndTargetLevelIndexPort.Result(1L, 2, 3)));
 
         var attributeLevelScore = new AttributeLevelScore(2, 12, 1L, 2L);
         var question1 = createQuestionWithTargetAndCurrentOption(attributeLevelScore, null);
@@ -155,8 +80,6 @@ class CreateAdviceHelperTest {
         var throwable = assertThrows(FinalSolutionNotFoundException.class, () -> helper.createAdvice(assessmentId, attributeLevelTargets));
         assertEquals(CREATE_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION, throwable.getMessage());
 
-        verify(loadAttributeCurrentAndTargetLevelIndexPort, times(1))
-            .load(assessmentId, attributeLevelTargets);
         verify(loadInfoPort, times(1)).loadAdviceCalculationInfo(assessmentId, attributeLevelTargets);
         verify(solverManager, times(1)).solve(any(), any());
         verifyNoInteractions(loadCreatedAdviceDetailsPort);
@@ -166,13 +89,6 @@ class CreateAdviceHelperTest {
     @Test
     void testCreateAdviceHelper_whenCalculationExecutionException_thenThrowFinalSolutionNotFoundException() {
         attributeLevelTargets = List.of(new AttributeLevelTarget(1L, 2L));
-
-        when(loadSelectedAttributeIdsRelatedToAssessmentPort.loadSelectedAttributeIdsRelatedToAssessment(assessmentId, Set.of(1L)))
-            .thenReturn(Set.of(1L));
-        when(loadSelectedLevelIdsRelatedToAssessmentPort.loadSelectedLevelIdsRelatedToAssessment(assessmentId, Set.of(2L)))
-            .thenReturn(Set.of(2L));
-        when(loadAttributeCurrentAndTargetLevelIndexPort.load(assessmentId, attributeLevelTargets))
-            .thenReturn(List.of(new LoadAttributeCurrentAndTargetLevelIndexPort.Result(1L, 2, 3)));
 
         var attributeLevelScore = new AttributeLevelScore(2, 12, 1L, 2L);
         var question1 = createQuestionWithTargetAndCurrentOption(attributeLevelScore, null);
@@ -197,8 +113,6 @@ class CreateAdviceHelperTest {
             () -> helper.createAdvice(assessmentId, attributeLevelTargets));
         assertEquals(CREATE_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION, throwable.getMessage());
 
-        verify(loadAttributeCurrentAndTargetLevelIndexPort, times(1))
-            .load(assessmentId, attributeLevelTargets);
         verify(loadInfoPort, times(1)).loadAdviceCalculationInfo(assessmentId, attributeLevelTargets);
         verify(solverManager, times(1)).solve(any(), any());
 
@@ -230,13 +144,6 @@ class CreateAdviceHelperTest {
     }
 
     private void mockPorts() throws InterruptedException, ExecutionException {
-        when(loadSelectedAttributeIdsRelatedToAssessmentPort.loadSelectedAttributeIdsRelatedToAssessment(assessmentId, Set.of(1L)))
-            .thenReturn(Set.of(1L));
-        when(loadSelectedLevelIdsRelatedToAssessmentPort.loadSelectedLevelIdsRelatedToAssessment(assessmentId, Set.of(2L)))
-            .thenReturn(Set.of(2L));
-        when(loadAttributeCurrentAndTargetLevelIndexPort.load(assessmentId, attributeLevelTargets))
-            .thenReturn(List.of(new LoadAttributeCurrentAndTargetLevelIndexPort.Result(1L, 2, 3)));
-
         var attributeLevelScore = new AttributeLevelScore(2, 12, 1L, 2L);
         var question1 = createQuestionWithTargetAndCurrentOption(attributeLevelScore, null);
         var question2 = createQuestionWithTargetAndCurrentOption(attributeLevelScore, 0);

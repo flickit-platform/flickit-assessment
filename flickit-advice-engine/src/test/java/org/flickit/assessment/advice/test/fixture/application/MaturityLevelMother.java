@@ -1,6 +1,5 @@
 package org.flickit.assessment.advice.test.fixture.application;
 
-
 import org.flickit.assessment.advice.application.domain.MaturityLevel;
 
 import java.util.List;
