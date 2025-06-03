@@ -144,6 +144,7 @@ public enum AssessmentUserRole {
             RESOLVE_OWN_COMMENT)),
         REPORT_VIEWER_PERMISSIONS(Set.of(
             VIEW_ASSESSMENT,
+            REFRESH_ASSESSMENT_ADVICE,
             GRANT_ACCESS_TO_REPORT,
             VIEW_GRAPHICAL_REPORT,
             VIEW_ASSESSMENT_ATTRIBUTES,

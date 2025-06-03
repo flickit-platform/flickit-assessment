@@ -45,4 +45,9 @@ public class AdviceNarrationPersistenceJpaAdapter implements
         return repository.findByAssessmentResultId(assessmentResultId)
             .map(AdviceNarrationMapper::toDomain);
     }
+
+    @Override
+    public boolean existsByAssessmentResultId(UUID assessmentResultId) {
+        return repository.existsByAssessmentResultId(assessmentResultId);
+    }
 }

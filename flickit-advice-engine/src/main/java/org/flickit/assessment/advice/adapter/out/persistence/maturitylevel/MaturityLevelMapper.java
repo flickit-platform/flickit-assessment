@@ -16,7 +16,8 @@ public class MaturityLevelMapper {
         var translation = getTranslation(entity, language);
         return new MaturityLevel(
             entity.getId(),
-            translation.titleOrDefault(entity.getTitle()));
+            translation.titleOrDefault(entity.getTitle()),
+            entity.getIndex());
     }
 
     private static MaturityLevelTranslation getTranslation(MaturityLevelJpaEntity entity, @Nullable KitLanguage language) {

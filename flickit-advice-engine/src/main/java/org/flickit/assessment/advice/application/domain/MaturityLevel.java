@@ -10,4 +10,6 @@ public class MaturityLevel {
     private final long id;
 
     private final String title;
+
+    private final int index;
 }

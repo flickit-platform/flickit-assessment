@@ -34,6 +34,7 @@ public class CalculateAssessmentRestController {
         return new CalculateAssessmentResponseDto(result.maturityLevel().getId(),
             result.maturityLevel().getTitle(),
             result.maturityLevel().getValue(),
-            result.maturityLevel().getIndex());
+            result.maturityLevel().getIndex(),
+            result.resultAffected());
     }
 }
