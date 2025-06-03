@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -77,6 +78,24 @@ public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> 
             ORDER BY lastSeen DESC
         """)
     Page<SpaceWithDetails> findByUserId(@Param(value = "userId") UUID userId, Pageable pageable);
+
+    @Query("""
+            SELECT
+                s as space,
+                COUNT(DISTINCT (CASE WHEN fa.deleted = FALSE THEN fa.id ELSE NULL END)) as assessmentsCount,
+                MAX(sua.lastSeen) as lastSeen
+            FROM SpaceJpaEntity s
+            LEFT JOIN AssessmentJpaEntity fa on s.id = fa.spaceId
+            LEFT JOIN SpaceUserAccessJpaEntity sua on s.id = sua.spaceId
+            WHERE s.deleted = FALSE
+                AND EXISTS (
+                    SELECT 1 FROM SpaceUserAccessJpaEntity sua
+                    WHERE sua.spaceId = s.id AND sua.userId = :userId
+            )
+            GROUP BY s.id
+            ORDER BY MAX(sua.lastSeen) DESC
+        """)
+    List<SpaceWithDetails> findByUserId(@Param(value = "userId") UUID userId);
 
     @Query("""
             SELECT

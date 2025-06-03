@@ -58,6 +58,17 @@ public class SpacePersistenceJpaAdapter implements
     }
 
     @Override
+    public List<SpaceWithAssessmentCount> loadSpaceList(UUID currentUserId) {
+        var pageResult = repository.findByUserId(currentUserId);
+
+        return pageResult.stream()
+            .map(entity -> new SpaceWithAssessmentCount(
+                mapToDomain(entity.getSpace()),
+                entity.getAssessmentsCount()))
+            .toList();
+    }
+
+    @Override
     public long persist(Space space) {
         var unsavedEntity = SpaceMapper.mapToJpaEntity(space);
         var savedEntity = repository.save(unsavedEntity);
