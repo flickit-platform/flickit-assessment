@@ -55,34 +55,27 @@ public class GetTopSpacesService implements GetTopSpacesUseCase {
             throw new UpgradeRequiredException(GET_TOP_SPACES_BASIC_SPACE_ASSESSMENTS_MAX);
         else if (validItems.size() == 1 && validItems.getFirst().space().getType() == SpaceType.PREMIUM)
             return List.of(new SpaceListItem(validItems.getFirst().space().getId(), validItems.getFirst().space().getTitle(), validItems.getFirst().space().getType(), Boolean.TRUE));
-        else if (items.size() == 2
-                && items.stream().filter(this::spaceIsPremium).count() == 1
-                && items.stream().anyMatch(item -> item.space().getType() == SpaceType.BASIC && basicSpaceHasCapacity(item))) {
-            var spaces = validItems.stream().map(item -> new SpaceListItem(item.space().getId(), item.space().getTitle(), item.space().getType(), Boolean.FALSE))
-                    .toList();
-            var firstSpaceId = spaces.getFirst().id();
-            return spaces.stream()
-                    .map(item -> item.id() == firstSpaceId ? new SpaceListItem(item.id(), item.title(), item.type(), Boolean.TRUE) : item)
-                    .toList();
-        }
         else if (validItems.size() > 1
                 && validItems.stream().anyMatch(this::spaceIsPremium)
                 && validItems.stream().anyMatch(this::basicSpaceHasCapacity)) {
-
-            var spaces = validItems.stream()
-                    .map(item -> new SpaceListItem(item.space().getId(), item.space().getTitle(), item.space().getType(), Boolean.FALSE))
-                    .toList();
-
-            var firstSpaceId = spaces.getFirst().id();
-
-            return spaces.stream()
-                    .map(item -> item.id() == firstSpaceId
-                            ? new SpaceListItem(item.id(), item.title(), item.type(), Boolean.TRUE)
-                            : item)
-                    .toList();
+            return getMultipleBasicsAndPremium(validItems);
         }
 
         else return List.of();
+    }
+
+    private static List<SpaceListItem> getMultipleBasicsAndPremium(List<LoadSpaceListPort.SpaceWithAssessmentCount> validItems) {
+        var spaces = validItems.stream()
+                .map(item -> new SpaceListItem(item.space().getId(), item.space().getTitle(), item.space().getType(), Boolean.FALSE))
+                .toList();
+
+        var firstSpaceId = spaces.getFirst().id();
+
+        return spaces.stream()
+                .map(item -> item.id() == firstSpaceId
+                        ? new SpaceListItem(item.id(), item.title(), item.type(), Boolean.TRUE)
+                        : item)
+                .toList();
     }
 
     private SpaceListItem createNewSpace(KitLanguage lang, UUID currentUserId) {
