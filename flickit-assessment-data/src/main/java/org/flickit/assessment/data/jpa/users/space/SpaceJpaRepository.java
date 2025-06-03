@@ -87,7 +87,7 @@ public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> 
             FROM SpaceJpaEntity s
             LEFT JOIN AssessmentJpaEntity fa on s.id = fa.spaceId
             LEFT JOIN SpaceUserAccessJpaEntity sua on s.id = sua.spaceId
-            WHERE s.deleted = FALSE
+            WHERE s.deleted = FALSE AND s.status = 0
                 AND EXISTS (
                     SELECT 1 FROM SpaceUserAccessJpaEntity sua
                     WHERE sua.spaceId = s.id AND sua.userId = :userId
