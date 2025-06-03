@@ -5,6 +5,8 @@ import org.flickit.assessment.advice.application.domain.AttributeLevelTarget;
 import org.flickit.assessment.advice.application.domain.advice.AdviceListItem;
 import org.flickit.assessment.advice.application.port.in.advicenarration.RefreshAssessmentAdviceUseCase;
 import org.flickit.assessment.advice.application.port.out.adviceitem.DeleteAdviceItemPort;
+import org.flickit.assessment.advice.application.port.out.adviceitem.LoadAdviceItemPort;
+import org.flickit.assessment.advice.application.port.out.advicenarration.LoadAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.advice.application.port.out.attributevalue.LoadAttributeValuesPort;
 import org.flickit.assessment.advice.application.port.out.maturitylevel.LoadMaturityLevelsPort;
@@ -62,8 +64,14 @@ class RefreshAssessmentAdviceServiceTest {
     @Mock
     DeleteAdviceItemPort deleteAdviceItemPort;
 
+    @Mock
+    LoadAdviceItemPort loadAdviceItemPort;
+
+    @Mock
+    LoadAdviceNarrationPort loadAdviceNarrationPort;
+
     private RefreshAssessmentAdviceUseCase.Param param = createParam(RefreshAssessmentAdviceUseCase.Param.ParamBuilder::build);
-    private final AssessmentResult assessmentResult = createAssessmentResultWithAssessmentId(param.getAssessmentId());
+    private AssessmentResult assessmentResult = createAssessmentResultWithAssessmentId(param.getAssessmentId());
 
     private final AdviceListItem adviceListItem = createSimpleAdviceListItem();
     private final List<AdviceListItem> adviceListItems = List.of(adviceListItem);
@@ -80,7 +88,9 @@ class RefreshAssessmentAdviceServiceTest {
             loadMaturityLevelsPort,
             createAdviceHelper,
             createAiAdviceNarrationHelper,
-            deleteAdviceItemPort);
+            deleteAdviceItemPort,
+            loadAdviceItemPort,
+            loadAdviceNarrationPort);
     }
 
     @Test
@@ -95,15 +105,19 @@ class RefreshAssessmentAdviceServiceTest {
             loadAttributeValuesPort,
             createAdviceHelper,
             createAiAdviceNarrationHelper,
-            deleteAdviceItemPort);
+            deleteAdviceItemPort,
+            loadAdviceItemPort,
+            loadAdviceNarrationPort);
     }
 
     @Test
-    void testRefreshAssessmentAdvice_whenForceRegenerateIsFalse_thenDoNotRegenerateAdvice() {
+    void testRefreshAssessmentAdvice_whenForceRegenerateIsFalseAndAdviceExists_thenDoNotRegenerateAdvice() {
         param = createParam(b -> b.forceRegenerate(false));
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), REFRESH_ASSESSMENT_ADVICE)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        when(loadAdviceItemPort.existsByAssessmentResultId(assessmentResult.getId())).thenReturn(true);
+        when(loadAdviceNarrationPort.existsByAssessmentResultId(assessmentResult.getId())).thenReturn(true);
 
         service.refreshAssessmentAdvice(param);
 
@@ -146,6 +160,83 @@ class RefreshAssessmentAdviceServiceTest {
         assertEquals(levelTwo().getId(), narratedTargets.getFirst().getMaturityLevelId());
 
         verify(deleteAdviceItemPort).deleteAllAiGenerated(assessmentResult.getId());
+        verifyNoInteractions(loadAdviceItemPort, loadAdviceNarrationPort);
+    }
+
+    @Test
+    void testRefreshAssessmentAdvice_whenForceRegenerateIsFalseAndAdviceItemsDoesNotExists_thenRegenerateAdvice() {
+        param = createParam(b -> b.forceRegenerate(false));
+        assessmentResult = createAssessmentResultWithAssessmentId(param.getAssessmentId());
+        var attributeValues = List.of(new LoadAttributeValuesPort.Result(123L, levelOne().getId()));
+
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), REFRESH_ASSESSMENT_ADVICE)).thenReturn(true);
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        when(loadMaturityLevelsPort.loadAll(param.getAssessmentId())).thenReturn(allLevels());
+        when(loadAttributeValuesPort.loadAll(assessmentResult.getId())).thenReturn(attributeValues);
+        when(loadAdviceItemPort.existsByAssessmentResultId(assessmentResult.getId())).thenReturn(false);
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<List<AttributeLevelTarget>> targetCaptor = ArgumentCaptor.forClass(List.class);
+        when(createAdviceHelper.createAdvice(eq(param.getAssessmentId()), anyList())).thenReturn(adviceListItems);
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<List<AttributeLevelTarget>> narrationCaptor = ArgumentCaptor.forClass(List.class);
+
+        service.refreshAssessmentAdvice(param);
+        verify(createAdviceHelper).createAdvice(eq(param.getAssessmentId()), targetCaptor.capture());
+        verify(createAiAdviceNarrationHelper).createAiAdviceNarration(
+            eq(assessmentResult),
+            eq(adviceListItems),
+            narrationCaptor.capture()
+        );
+        List<AttributeLevelTarget> capturedTargets = targetCaptor.getValue();
+        assertEquals(1, capturedTargets.size());
+        assertEquals(123L, capturedTargets.getFirst().getAttributeId());
+        assertEquals(levelTwo().getId(), capturedTargets.getFirst().getMaturityLevelId());
+
+        List<AttributeLevelTarget> narratedTargets = narrationCaptor.getValue();
+        assertEquals(1, narratedTargets.size());
+        assertEquals(123L, narratedTargets.getFirst().getAttributeId());
+        assertEquals(levelTwo().getId(), narratedTargets.getFirst().getMaturityLevelId());
+
+        verify(deleteAdviceItemPort).deleteAllAiGenerated(assessmentResult.getId());
+        verifyNoInteractions(loadAdviceNarrationPort);
+    }
+
+    @Test
+    void testRefreshAssessmentAdvice_whenForceRegenerateIsFalseAndAdviceItemExistsAndAdviceNarrationDoesNotExists_thenRegenerateAdvice() {
+        param = createParam(b -> b.forceRegenerate(false));
+        assessmentResult = createAssessmentResultWithAssessmentId(param.getAssessmentId());
+        var attributeValues = List.of(new LoadAttributeValuesPort.Result(123L, levelOne().getId()));
+
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), REFRESH_ASSESSMENT_ADVICE)).thenReturn(true);
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        when(loadMaturityLevelsPort.loadAll(param.getAssessmentId())).thenReturn(allLevels());
+        when(loadAttributeValuesPort.loadAll(assessmentResult.getId())).thenReturn(attributeValues);
+        when(loadAdviceItemPort.existsByAssessmentResultId(assessmentResult.getId())).thenReturn(true);
+        when(loadAdviceNarrationPort.existsByAssessmentResultId(assessmentResult.getId())).thenReturn(false);
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<List<AttributeLevelTarget>> targetCaptor = ArgumentCaptor.forClass(List.class);
+        when(createAdviceHelper.createAdvice(eq(param.getAssessmentId()), anyList())).thenReturn(adviceListItems);
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<List<AttributeLevelTarget>> narrationCaptor = ArgumentCaptor.forClass(List.class);
+
+        service.refreshAssessmentAdvice(param);
+        verify(createAdviceHelper).createAdvice(eq(param.getAssessmentId()), targetCaptor.capture());
+        verify(createAiAdviceNarrationHelper).createAiAdviceNarration(
+            eq(assessmentResult),
+            eq(adviceListItems),
+            narrationCaptor.capture()
+        );
+        List<AttributeLevelTarget> capturedTargets = targetCaptor.getValue();
+        assertEquals(1, capturedTargets.size());
+        assertEquals(123L, capturedTargets.getFirst().getAttributeId());
+        assertEquals(levelTwo().getId(), capturedTargets.getFirst().getMaturityLevelId());
+
+        List<AttributeLevelTarget> narratedTargets = narrationCaptor.getValue();
+        assertEquals(1, narratedTargets.size());
+        assertEquals(123L, narratedTargets.getFirst().getAttributeId());
+        assertEquals(levelTwo().getId(), narratedTargets.getFirst().getMaturityLevelId());
+
+        verify(deleteAdviceItemPort).deleteAllAiGenerated(assessmentResult.getId());
     }
 
     @Test
@@ -161,7 +252,11 @@ class RefreshAssessmentAdviceServiceTest {
 
         verifyNoInteractions(deleteAdviceItemPort,
             createAdviceHelper,
-            createAiAdviceNarrationHelper);
+            createAiAdviceNarrationHelper,
+            loadAdviceItemPort,
+            loadAdviceNarrationPort,
+            loadAdviceItemPort,
+            loadAdviceNarrationPort);
     }
 
     private RefreshAssessmentAdviceUseCase.Param createParam(Consumer<RefreshAssessmentAdviceUseCase.Param.ParamBuilder> changer) {
