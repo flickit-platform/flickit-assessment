@@ -36,32 +36,30 @@ public class GetTopSpacesService implements GetTopSpacesUseCase {
     public List<SpaceListItem> getSpaceList(Param param) {
         var portResult = loadSpaceListPort.loadSpaceList(param.getCurrentUserId());
 
-        var spaces = topSpaceSelector(portResult, param.getCurrentUserId());
-
-        return spaces;
+        return topSpaceSelector(portResult, param.getCurrentUserId());
     }
 
     private List<SpaceListItem> topSpaceSelector(List<LoadSpaceListPort.SpaceWithAssessmentCount> items, UUID currentUserId) {
+        if (items.isEmpty())
+            return List.of(createNewSpace(getCurrentLanguage(), currentUserId));
+
         var validItems = items.stream()
-                .filter(item -> (item.space().getType() == SpaceType.PREMIUM || basicSpaceHasCapacity(item)))
+                .filter(item -> isPremium(item) || basicSpaceHasCapacity(item))
                 .limit(NUMBER_OF_SPACES)
                 .toList();
 
-        if (items.isEmpty())
-            return List.of(createNewSpace(KitLanguage.valueOf(LocaleContextHolder.getLocale().getLanguage().toUpperCase()), currentUserId));
-        else if (validItems.size() == 1 && validItems.getFirst().space().getType() == SpaceType.BASIC && basicSpaceHasCapacity(validItems.getFirst()))
-            return List.of(new SpaceListItem(validItems.getFirst().space().getId(), validItems.getFirst().space().getTitle(), validItems.getFirst().space().getType(), Boolean.TRUE));
-        else if (items.size() == 1 && validItems.isEmpty())
+        if (items.size() == 1 && validItems.isEmpty())
             throw new UpgradeRequiredException(GET_TOP_SPACES_BASIC_SPACE_ASSESSMENTS_MAX);
-        else if (validItems.size() == 1 && validItems.getFirst().space().getType() == SpaceType.PREMIUM)
-            return List.of(new SpaceListItem(validItems.getFirst().space().getId(), validItems.getFirst().space().getTitle(), validItems.getFirst().space().getType(), Boolean.TRUE));
-        else if (validItems.size() > 1
-                && validItems.stream().anyMatch(this::spaceIsPremium)
-                && validItems.stream().anyMatch(this::basicSpaceHasCapacity)) {
-            return getMultipleBasicsAndPremium(validItems);
-        }
 
-        else return List.of();
+        if (validItems.size() == 1)
+            return List.of(toSpaceListItem(validItems.getFirst()));
+
+        if (validItems.size() > 1
+                && validItems.stream().anyMatch(this::isPremium)
+                && validItems.stream().anyMatch(this::basicSpaceHasCapacity))
+            return getMultipleBasicsAndPremium(validItems);
+
+        return List.of();
     }
 
     private static List<SpaceListItem> getMultipleBasicsAndPremium(List<LoadSpaceListPort.SpaceWithAssessmentCount> validItems) {
@@ -101,7 +99,20 @@ public class GetTopSpacesService implements GetTopSpacesUseCase {
                 && item.assessmentCount() < appSpecProperties.getSpace().getMaxBasicSpaceAssessments();
     }
 
-    private boolean spaceIsPremium(LoadSpaceListPort.SpaceWithAssessmentCount item) {
+    private  boolean isPremium(LoadSpaceListPort.SpaceWithAssessmentCount item) {
         return item.space().getType() == SpaceType.PREMIUM;
+    }
+
+    private KitLanguage getCurrentLanguage() {
+        return KitLanguage.valueOf(LocaleContextHolder.getLocale().getLanguage().toUpperCase());
+    }
+
+    private SpaceListItem toSpaceListItem(LoadSpaceListPort.SpaceWithAssessmentCount item) {
+        return new SpaceListItem(
+                item.space().getId(),
+                item.space().getTitle(),
+                item.space().getType(),
+                Boolean.TRUE
+        );
     }
 }
