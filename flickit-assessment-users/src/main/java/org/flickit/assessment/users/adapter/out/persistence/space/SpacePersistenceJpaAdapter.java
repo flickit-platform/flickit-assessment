@@ -59,9 +59,9 @@ public class SpacePersistenceJpaAdapter implements
 
     @Override
     public List<SpaceWithAssessmentCount> loadSpaceList(UUID currentUserId) {
-        var pageResult = repository.findByUserId(currentUserId);
+        var result = repository.findByUserId(currentUserId);
 
-        return pageResult.stream()
+        return result.stream()
             .map(entity -> new SpaceWithAssessmentCount(
                 mapToDomain(entity.getSpace()),
                 entity.getAssessmentsCount()))

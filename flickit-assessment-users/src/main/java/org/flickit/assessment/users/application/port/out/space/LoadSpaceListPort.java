@@ -22,7 +22,7 @@ public interface LoadSpaceListPort {
      * Loads a list of spaces for the specified user.
      *
      * @param currentUserId The ID of the current user.
-     * @return A list of the user's spaces based and assessment count.
+     * @return A list of the user's spaces and assessment count.
      */
     List<SpaceWithAssessmentCount> loadSpaceList(UUID currentUserId);
 
