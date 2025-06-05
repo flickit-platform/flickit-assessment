@@ -1,5 +1,6 @@
 package org.flickit.assessment.users.application.service.space;
 
+import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.domain.space.SpaceType;
 import org.flickit.assessment.common.config.AppSpecProperties;
 import org.flickit.assessment.common.exception.UpgradeRequiredException;
@@ -16,12 +17,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
 import static org.flickit.assessment.users.common.ErrorMessageKey.GET_TOP_SPACES_BASIC_SPACE_ASSESSMENTS_MAX;
+import static org.flickit.assessment.users.common.MessageKey.SPACE_DRAFT_TITLE;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -47,8 +52,10 @@ class GetTopSpacesServiceTest {
     private final Space basicSpace = SpaceMother.basicSpace(param.getCurrentUserId());
 
     @Test
-    void testGetTopSpaces_whenNoSpacesExist_thenCreateNewSpace() {
+    void testGetTopSpaces_whenNoSpacesExistAndLanguageIsEN_thenCreateNewSpace() {
+        var expectedTitle = MessageBundle.message(SPACE_DRAFT_TITLE, Locale.ENGLISH);
         ArgumentCaptor<Space> spaceCaptor = ArgumentCaptor.forClass(Space.class);
+        LocaleContextHolder.setLocale(Locale.ENGLISH);
 
         when(loadSpaceListPort.loadSpaceList(param.getCurrentUserId())).thenReturn(List.of());
         when(createSpacePort.persist(spaceCaptor.capture())).thenReturn(123L);
@@ -59,6 +66,33 @@ class GetTopSpacesServiceTest {
         assertEquals(123L, result.getFirst().id());
 
         var capturedSpace = spaceCaptor.getValue();
+        assertEquals(expectedTitle, capturedSpace.getTitle());
+        assertEquals(generateSlugCode(expectedTitle), capturedSpace.getCode());
+        assertEquals(param.getCurrentUserId(), capturedSpace.getCreatedBy());
+        assertEquals(param.getCurrentUserId(), capturedSpace.getLastModifiedBy());
+        assertEquals(SpaceStatus.ACTIVE, capturedSpace.getStatus());
+        assertEquals(SpaceType.BASIC, capturedSpace.getType());
+        assertNotNull(capturedSpace.getCreationTime());
+        assertNotNull(capturedSpace.getLastModificationTime());
+    }
+
+    @Test
+    void testGetTopSpaces_whenNoSpacesExistAndLanguageIsFa_thenCreateNewSpace() {
+        var expectedTitle = MessageBundle.message(SPACE_DRAFT_TITLE, Locale.of("FA"));
+        ArgumentCaptor<Space> spaceCaptor = ArgumentCaptor.forClass(Space.class);
+        LocaleContextHolder.setLocale(Locale.of("FA"));
+
+        when(loadSpaceListPort.loadSpaceList(param.getCurrentUserId())).thenReturn(List.of());
+        when(createSpacePort.persist(spaceCaptor.capture())).thenReturn(123L);
+
+        var result = service.getSpaceList(param);
+
+        assertEquals(1, result.size());
+        assertEquals(123L, result.getFirst().id());
+
+        var capturedSpace = spaceCaptor.getValue();
+        assertEquals(expectedTitle, capturedSpace.getTitle());
+        assertEquals(generateSlugCode(expectedTitle), capturedSpace.getCode());
         assertEquals(param.getCurrentUserId(), capturedSpace.getCreatedBy());
         assertEquals(param.getCurrentUserId(), capturedSpace.getLastModifiedBy());
         assertEquals(SpaceStatus.ACTIVE, capturedSpace.getStatus());

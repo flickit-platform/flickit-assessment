@@ -1,6 +1,7 @@
 package org.flickit.assessment.users.application.service.space;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.application.domain.space.SpaceType;
 import org.flickit.assessment.common.config.AppSpecProperties;
@@ -20,6 +21,7 @@ import java.util.UUID;
 
 import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
 import static org.flickit.assessment.users.common.ErrorMessageKey.GET_TOP_SPACES_BASIC_SPACE_ASSESSMENTS_MAX;
+import static org.flickit.assessment.users.common.MessageKey.SPACE_DRAFT_TITLE;
 
 @Service
 @Transactional(readOnly = true)
@@ -77,7 +79,7 @@ public class GetTopSpacesService implements GetTopSpacesUseCase {
     }
 
     private SpaceListItem createNewSpace(KitLanguage lang, UUID currentUserId) {
-        var title = "title";
+        var title = MessageBundle.message(SPACE_DRAFT_TITLE, lang);
         var newSpace = new Space(null,
                 generateSlugCode(title),
                 title,
