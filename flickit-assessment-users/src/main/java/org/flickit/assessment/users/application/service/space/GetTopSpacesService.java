@@ -46,10 +46,7 @@ public class GetTopSpacesService implements GetTopSpacesUseCase {
             return List.of(createNewSpace(getCurrentLanguage(), currentUserId));
 
         final int maxBasicAssessments = appSpecProperties.getSpace().getMaxBasicSpaceAssessments();
-        var validItems = items.stream()
-                .filter(item -> isPremium(item) || basicSpaceHasCapacity(item, maxBasicAssessments))
-                .limit(NUMBER_OF_SPACES)
-                .toList();
+        var validItems = extractValidItems(items, maxBasicAssessments);
 
         if (items.size() == 1 && validItems.isEmpty())
             throw new UpgradeRequiredException(GET_TOP_SPACES_BASIC_SPACE_ASSESSMENTS_MAX);
@@ -57,12 +54,37 @@ public class GetTopSpacesService implements GetTopSpacesUseCase {
         if (validItems.size() == 1)
             return List.of(toSpaceListItem(validItems.getFirst()));
 
-        if (validItems.size() > 1
-                && validItems.stream().anyMatch(this::isPremium)
-                && validItems.stream().anyMatch(item -> basicSpaceHasCapacity(item, maxBasicAssessments)))
+        boolean hasPremium = validItems.stream().anyMatch(this::isPremium);
+        boolean hasBasicWithCapacity = validItems.stream().anyMatch(item -> basicSpaceHasCapacity(item, maxBasicAssessments));
+        if (validItems.size() > 1 && hasPremium && hasBasicWithCapacity)
             return getMultipleBasicsAndPremium(validItems);
 
         return List.of();
+    }
+
+    private SpaceListItem createNewSpace(KitLanguage lang, UUID currentUserId) {
+        var title = MessageBundle.message(SPACE_DRAFT_TITLE, lang);
+        var newSpace = new Space(null,
+            generateSlugCode(title),
+            title,
+            SpaceType.BASIC,
+            currentUserId,
+            SpaceStatus.ACTIVE,
+            null,
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            currentUserId,
+            currentUserId
+        );
+        var spaceId = createSpacePort.persist(newSpace);
+        return new SpaceListItem(spaceId, newSpace.getTitle(), toType(newSpace.getType()), Boolean.TRUE);
+    }
+
+    private List<LoadSpaceListPort.SpaceWithAssessmentCount> extractValidItems(List<LoadSpaceListPort.SpaceWithAssessmentCount> items, int maxBasicAssessments) {
+        return items.stream()
+            .filter(item -> isPremium(item) || basicSpaceHasCapacity(item, maxBasicAssessments))
+            .limit(NUMBER_OF_SPACES)
+            .toList();
     }
 
     private boolean isPremium(LoadSpaceListPort.SpaceWithAssessmentCount item) {
@@ -74,7 +96,7 @@ public class GetTopSpacesService implements GetTopSpacesUseCase {
     }
 
     private static List<SpaceListItem> getMultipleBasicsAndPremium(List<LoadSpaceListPort.SpaceWithAssessmentCount> validItems) {
-        var firstSpaceId = validItems.getFirst().space().getId();
+        var firstSpaceId = validItems.stream().map(item -> item.space().getId()).findFirst().orElseThrow();
 
         return validItems.stream()
                 .map(item -> new SpaceListItem(item.space().getId(),
@@ -85,24 +107,6 @@ public class GetTopSpacesService implements GetTopSpacesUseCase {
                         ? new SpaceListItem(item.id(), item.title(), item.type(), Boolean.TRUE)
                         : item)
                 .toList();
-    }
-
-    private SpaceListItem createNewSpace(KitLanguage lang, UUID currentUserId) {
-        var title = MessageBundle.message(SPACE_DRAFT_TITLE, lang);
-        var newSpace = new Space(null,
-                generateSlugCode(title),
-                title,
-                SpaceType.BASIC,
-                currentUserId,
-                SpaceStatus.ACTIVE,
-                null,
-                LocalDateTime.now(),
-                LocalDateTime.now(),
-                currentUserId,
-                currentUserId
-        );
-        var spaceId = createSpacePort.persist(newSpace);
-        return new SpaceListItem(spaceId, newSpace.getTitle(), toType(newSpace.getType()), Boolean.TRUE);
     }
 
     private KitLanguage getCurrentLanguage() {
