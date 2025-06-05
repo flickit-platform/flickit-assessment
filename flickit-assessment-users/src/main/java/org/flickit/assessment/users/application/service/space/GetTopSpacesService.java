@@ -64,14 +64,23 @@ public class GetTopSpacesService implements GetTopSpacesUseCase {
         return List.of();
     }
 
+    private boolean isPremium(LoadSpaceListPort.SpaceWithAssessmentCount item) {
+        return item.space().getType() == SpaceType.PREMIUM;
+    }
+
+    private boolean basicSpaceHasCapacity(LoadSpaceListPort.SpaceWithAssessmentCount item) {
+        return item.space().getType() == SpaceType.BASIC
+                && item.assessmentCount() < appSpecProperties.getSpace().getMaxBasicSpaceAssessments();
+    }
+
     private static List<SpaceListItem> getMultipleBasicsAndPremium(List<LoadSpaceListPort.SpaceWithAssessmentCount> validItems) {
-        var spaces = validItems.stream()
-                .map(item -> new SpaceListItem(item.space().getId(), item.space().getTitle(), item.space().getType(), Boolean.FALSE))
-                .toList();
+        var firstSpaceId = validItems.getFirst().space().getId();
 
-        var firstSpaceId = spaces.getFirst().id();
-
-        return spaces.stream()
+        return validItems.stream()
+                .map(item -> new SpaceListItem(item.space().getId(),
+                        item.space().getTitle(),
+                        new SpaceListItem.Type(item.space().getType().getCode(), item.space().getType().getTitle()),
+                        Boolean.FALSE))
                 .map(item -> item.id() == firstSpaceId
                         ? new SpaceListItem(item.id(), item.title(), item.type(), Boolean.TRUE)
                         : item)
@@ -93,16 +102,7 @@ public class GetTopSpacesService implements GetTopSpacesUseCase {
                 currentUserId
         );
         var spaceId = createSpacePort.persist(newSpace);
-        return new SpaceListItem(spaceId, newSpace.getTitle(), newSpace.getType(), Boolean.TRUE);
-    }
-
-    private boolean basicSpaceHasCapacity(LoadSpaceListPort.SpaceWithAssessmentCount item) {
-        return item.space().getType() == SpaceType.BASIC
-                && item.assessmentCount() < appSpecProperties.getSpace().getMaxBasicSpaceAssessments();
-    }
-
-    private  boolean isPremium(LoadSpaceListPort.SpaceWithAssessmentCount item) {
-        return item.space().getType() == SpaceType.PREMIUM;
+        return new SpaceListItem(spaceId, newSpace.getTitle(), toType(newSpace.getType()), Boolean.TRUE);
     }
 
     private KitLanguage getCurrentLanguage() {
@@ -113,8 +113,12 @@ public class GetTopSpacesService implements GetTopSpacesUseCase {
         return new SpaceListItem(
                 item.space().getId(),
                 item.space().getTitle(),
-                item.space().getType(),
+                new SpaceListItem.Type(item.space().getType().getCode(), item.space().getType().getTitle()),
                 Boolean.TRUE
         );
+    }
+
+    private SpaceListItem.Type toType(SpaceType type) {
+        return new SpaceListItem.Type(type.getCode(), type.getTitle());
     }
 }

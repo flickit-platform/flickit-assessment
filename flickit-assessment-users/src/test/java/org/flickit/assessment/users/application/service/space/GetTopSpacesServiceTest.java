@@ -113,7 +113,8 @@ class GetTopSpacesServiceTest {
         var returnedItem = result.getFirst();
         assertEquals(basicSpace.getId(), returnedItem.id());
         assertEquals(basicSpace.getTitle(), returnedItem.title());
-        assertEquals(SpaceType.BASIC, returnedItem.type());
+        assertEquals(SpaceType.BASIC.getTitle(), returnedItem.type().title());
+        assertEquals(SpaceType.BASIC.getCode(), returnedItem.type().code());
         assertTrue(returnedItem.isDefault());
 
         verifyNoInteractions(createSpacePort);
@@ -157,7 +158,8 @@ class GetTopSpacesServiceTest {
         assertEquals(1, result.size());
         var returnedItem = result.getFirst();
         assertEquals(premiumSpace.getId(), returnedItem.id());
-        assertEquals(SpaceType.PREMIUM, returnedItem.type());
+        assertEquals(SpaceType.PREMIUM.getCode(), returnedItem.type().code());
+        assertEquals(SpaceType.PREMIUM.getTitle(), returnedItem.type().title());
         assertEquals(premiumSpace.getTitle(), returnedItem.title());
         assertTrue(returnedItem.isDefault());
 
@@ -177,7 +179,8 @@ class GetTopSpacesServiceTest {
         assertEquals(2, result.size());
         var returnedItem = result.getFirst();
         assertEquals(basicSpace.getId(), returnedItem.id());
-        assertEquals(SpaceType.BASIC, returnedItem.type());
+        assertEquals(SpaceType.BASIC.getCode(), returnedItem.type().code());
+        assertEquals(SpaceType.BASIC.getTitle(), returnedItem.type().title());
         assertTrue(returnedItem.isDefault());
 
         verifyNoInteractions(createSpacePort);
@@ -198,7 +201,8 @@ class GetTopSpacesServiceTest {
         assertEquals(1, result.size());
         var returnedItem = result.getFirst();
         assertEquals(anotherBasicSpace.getId(), returnedItem.id());
-        assertEquals(SpaceType.BASIC, returnedItem.type());
+        assertEquals(SpaceType.BASIC.getCode(), returnedItem.type().code());
+        assertEquals(SpaceType.BASIC.getTitle(), returnedItem.type().title());
         assertTrue(returnedItem.isDefault());
 
         assertTrue(result.stream().anyMatch(GetTopSpacesUseCase.SpaceListItem::isDefault));

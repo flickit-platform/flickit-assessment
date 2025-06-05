@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
-import org.flickit.assessment.common.application.domain.space.SpaceType;
 
 import java.util.List;
 import java.util.UUID;
@@ -31,9 +30,9 @@ public interface GetTopSpacesUseCase {
         }
     }
 
-    record SpaceListItem(long id,
-                         String title,
-                         SpaceType type,
-                         boolean isDefault) {
+    record SpaceListItem(long id, String title, Type type, boolean isDefault) {
+
+        public record Type(String code, String title) {
+        }
     }
 }
