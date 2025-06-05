@@ -87,7 +87,7 @@ public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> 
             FROM SpaceJpaEntity s
             LEFT JOIN AssessmentJpaEntity fa on s.id = fa.spaceId
             LEFT JOIN SpaceUserAccessJpaEntity sua on s.id = sua.spaceId
-            WHERE s.deleted = FALSE AND s.status = 0
+            WHERE s.deleted = FALSE AND s.status = :status
                 AND EXISTS (
                     SELECT 1 FROM SpaceUserAccessJpaEntity sua
                     WHERE sua.spaceId = s.id AND sua.userId = :userId
@@ -95,7 +95,8 @@ public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> 
             GROUP BY s.id
             ORDER BY MAX(sua.lastSeen) DESC
         """)
-    List<SpaceWithDetails> findByUserId(@Param(value = "userId") UUID userId);
+    List<SpaceWithDetails> findByUserId(@Param("userId") UUID userId,
+                                        @Param("status") Integer status);
 
     @Query("""
             SELECT

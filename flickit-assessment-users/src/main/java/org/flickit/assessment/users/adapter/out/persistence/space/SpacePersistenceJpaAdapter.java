@@ -7,6 +7,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.users.space.SpaceJpaRepository;
 import org.flickit.assessment.data.jpa.users.spaceuseraccess.SpaceUserAccessJpaEntity;
 import org.flickit.assessment.users.application.domain.Space;
+import org.flickit.assessment.users.application.domain.SpaceStatus;
 import org.flickit.assessment.users.application.port.out.space.*;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.UpdateSpaceLastSeenPort;
 import org.springframework.data.domain.PageRequest;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.assessment.users.adapter.out.persistence.space.SpaceMapper.mapToDomain;
@@ -59,7 +61,8 @@ public class SpacePersistenceJpaAdapter implements
 
     @Override
     public List<SpaceWithAssessmentCount> loadSpaceList(UUID currentUserId) {
-        var result = repository.findByUserId(currentUserId);
+        var result = Optional.ofNullable(repository.findByUserId(currentUserId, SpaceStatus.ACTIVE.getId()))
+            .orElseGet(List::of);
 
         return result.stream()
             .map(entity -> new SpaceWithAssessmentCount(
