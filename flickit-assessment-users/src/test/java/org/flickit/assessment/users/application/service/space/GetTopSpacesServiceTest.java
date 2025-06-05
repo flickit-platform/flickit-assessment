@@ -80,7 +80,7 @@ class GetTopSpacesServiceTest {
     }
 
     @Test
-    void testGetTopSpaces_whenNoSpacesExistsAndLanguageIsFa_thenCreateNewSpace() {
+    void testGetTopSpaces_whenNoSpacesExistAndLanguageIsFA_thenCreateNewSpace() {
         var expectedTitle = MessageBundle.message(SPACE_DRAFT_TITLE, Locale.of("FA"));
         ArgumentCaptor<Space> spaceCaptor = ArgumentCaptor.forClass(Space.class);
         LocaleContextHolder.setLocale(Locale.of("FA"));
@@ -226,7 +226,7 @@ class GetTopSpacesServiceTest {
     }
 
     @Test
-    void testGetTopSpaces_whenMultipleSpacesWithCapacityExist_thenReturnAllAndNoneDefault() {
+    void testGetTopSpaces_whenMultipleSpacesWithCapacityExist_thenReturnAllAndOneDefault() {
         var basicSpaceItem1 = new LoadSpaceListPort.SpaceWithAssessmentCount(basicSpace, 0);
         var anotherBasicSpace = SpaceMother.basicSpace(param.getCurrentUserId());
         var basicSpaceItem2 = new LoadSpaceListPort.SpaceWithAssessmentCount(anotherBasicSpace, 0);
