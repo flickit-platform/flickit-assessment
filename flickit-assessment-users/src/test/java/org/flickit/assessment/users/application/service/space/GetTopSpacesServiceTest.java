@@ -149,7 +149,8 @@ class GetTopSpacesServiceTest {
         assertEquals(premiumSpace.getId(), result.getFirst().id());
         assertTrue(result.getFirst().isDefault());
 
-        verifyNoInteractions(createSpacePort, appSpecProperties);
+        verify(appSpecProperties, times(1)).getSpace();
+        verifyNoInteractions(createSpacePort);
     }
 
 
@@ -200,7 +201,7 @@ class GetTopSpacesServiceTest {
             });
         assertThat(result).filteredOn(GetTopSpacesUseCase.SpaceListItem::isDefault).hasSize(1);
 
-        verify(appSpecProperties, times(2)).getSpace();
+        verify(appSpecProperties, times(1)).getSpace();
         verifyNoInteractions(createSpacePort);
     }
 
@@ -251,7 +252,7 @@ class GetTopSpacesServiceTest {
             });
         assertThat(result).filteredOn(GetTopSpacesUseCase.SpaceListItem::isDefault).hasSize(1);
 
-        verify(appSpecProperties, times(3)).getSpace();
+        verify(appSpecProperties, times(1)).getSpace();
         verifyNoInteractions(createSpacePort);
     }
 

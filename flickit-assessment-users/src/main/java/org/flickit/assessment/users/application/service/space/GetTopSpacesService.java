@@ -45,8 +45,9 @@ public class GetTopSpacesService implements GetTopSpacesUseCase {
         if (items.isEmpty())
             return List.of(createNewSpace(getCurrentLanguage(), currentUserId));
 
+        final int maxBasicAssessments = appSpecProperties.getSpace().getMaxBasicSpaceAssessments();
         var validItems = items.stream()
-                .filter(item -> isPremium(item) || basicSpaceHasCapacity(item))
+                .filter(item -> isPremium(item) || basicSpaceHasCapacity(item, maxBasicAssessments))
                 .limit(NUMBER_OF_SPACES)
                 .toList();
 
@@ -58,7 +59,7 @@ public class GetTopSpacesService implements GetTopSpacesUseCase {
 
         if (validItems.size() > 1
                 && validItems.stream().anyMatch(this::isPremium)
-                && validItems.stream().anyMatch(this::basicSpaceHasCapacity))
+                && validItems.stream().anyMatch(item -> basicSpaceHasCapacity(item, maxBasicAssessments)))
             return getMultipleBasicsAndPremium(validItems);
 
         return List.of();
@@ -68,9 +69,8 @@ public class GetTopSpacesService implements GetTopSpacesUseCase {
         return item.space().getType() == SpaceType.PREMIUM;
     }
 
-    private boolean basicSpaceHasCapacity(LoadSpaceListPort.SpaceWithAssessmentCount item) {
-        return item.space().getType() == SpaceType.BASIC
-                && item.assessmentCount() < appSpecProperties.getSpace().getMaxBasicSpaceAssessments();
+    private boolean basicSpaceHasCapacity(LoadSpaceListPort.SpaceWithAssessmentCount item, int maxBasicAssessments) {
+        return item.space().getType() == SpaceType.BASIC && item.assessmentCount() < maxBasicAssessments;
     }
 
     private static List<SpaceListItem> getMultipleBasicsAndPremium(List<LoadSpaceListPort.SpaceWithAssessmentCount> validItems) {
