@@ -153,7 +153,6 @@ class GetTopSpacesServiceTest {
         verifyNoInteractions(createSpacePort);
     }
 
-
     @Test
     void testGetTopSpaces_whenBasicSpaceIsFullAndPremiumSpaceExists_thenReturnPremiumSpace() {
         var basicSpaceItem = new LoadSpaceListPort.SpaceWithAssessmentCount(basicSpace, maxBasicAssessments);
