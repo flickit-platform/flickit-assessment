@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 import java.util.function.Consumer;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
@@ -221,29 +223,37 @@ class GetTopSpacesServiceTest {
 
     @Test
     void testGetTopSpaces_whenMultipleSpacesWithCapacityExist_thenReturnAllAndOneDefault() {
-        var basicSpaceItem1 = new LoadSpaceListPort.SpaceWithAssessmentCount(basicSpace, 0);
-        var anotherBasicSpace = SpaceMother.basicSpace(param.getCurrentUserId());
-        var basicSpaceItem2 = new LoadSpaceListPort.SpaceWithAssessmentCount(anotherBasicSpace, 0);
+        int LIMIT = 10;
+        List<LoadSpaceListPort.SpaceWithAssessmentCount> premiumSpaces =
+            IntStream.range(0, 6)
+                .mapToObj(i -> new LoadSpaceListPort.SpaceWithAssessmentCount(
+                    SpaceMother.premiumSpace(param.getCurrentUserId()), 0))
+                .toList();
 
-        var premiumSpaceItem1 = new LoadSpaceListPort.SpaceWithAssessmentCount(premiumSpace, 0);
-        var anotherPremiumSpace = SpaceMother.premiumSpace(param.getCurrentUserId());
-        var premiumSpaceItem2 = new LoadSpaceListPort.SpaceWithAssessmentCount(anotherPremiumSpace, 0);
+        List<LoadSpaceListPort.SpaceWithAssessmentCount> basicSpaces =
+            IntStream.range(0, 5)
+                .mapToObj(i -> new LoadSpaceListPort.SpaceWithAssessmentCount(
+                    SpaceMother.basicSpace(param.getCurrentUserId()), 0))
+                .toList();
 
-        var portResult = List.of(basicSpaceItem1, basicSpaceItem2, premiumSpaceItem1, premiumSpaceItem2);
+        var portResult = Stream.concat(premiumSpaces.stream(), basicSpaces.stream()).toList();
+
         when(loadSpaceListPort.loadSpaceList(param.getCurrentUserId()))
             .thenReturn(portResult);
 
         var result = service.getSpaceList(param);
-        assertEquals(4, result.size());
+        assertEquals(LIMIT, result.size());
 
         assertThat(result)
-            .zipSatisfy(portResult, (expected, actual) -> {
+            .zipSatisfy(portResult.stream().limit(LIMIT).toList(), (expected, actual) -> {
                 assertEquals(expected.id(), actual.space().getId());
                 assertEquals(expected.title(), actual.space().getTitle());
                 assertEquals(expected.type().code(), actual.space().getType().getCode());
                 assertEquals(expected.type().title(), actual.space().getType().getTitle());
             });
         assertThat(result).filteredOn(GetTopSpacesUseCase.SpaceListItem::isDefault).hasSize(1);
+        assertThat(result).filteredOn(i -> i.type().code().equals(SpaceType.BASIC.getCode())).hasSize(4);
+        assertThat(result).filteredOn(i -> i.type().code().equals(SpaceType.PREMIUM.getCode())).hasSize(6);
 
         verify(appSpecProperties, times(1)).getSpace();
         verifyNoInteractions(createSpacePort, createSpaceUserAccessPort);
