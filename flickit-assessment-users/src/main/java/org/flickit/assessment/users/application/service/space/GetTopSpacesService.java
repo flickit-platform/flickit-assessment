@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
@@ -54,12 +55,10 @@ public class GetTopSpacesService implements GetTopSpacesUseCase {
         if (spaces.size() == 1 && validItems.isEmpty())
             throw new UpgradeRequiredException(GET_TOP_SPACES_BASIC_SPACE_ASSESSMENTS_MAX);
 
-        if (validItems.size() == 1)
-            return List.of(toSpaceListItem(validItems.getFirst()));
-        else if (validItems.size() > 1)
-            return getMultipleBasicsAndPremium(validItems);
-
-        return List.of();
+        return Optional.of(validItems)
+            .filter(items -> items.size() == 1)
+            .map(items -> List.of(toSpaceListItem(items.getFirst())))
+            .orElseGet(() -> getMultipleBasicsAndPremium(validItems));
     }
 
     private SpaceListItem createNewSpace(KitLanguage lang, UUID currentUserId) {
