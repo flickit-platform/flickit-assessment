@@ -274,6 +274,34 @@ class GetTopSpacesServiceTest {
         verifyNoInteractions(createSpacePort, createSpaceUserAccessPort);
     }
 
+    @Test
+    void testGetTopSpaces_whenMultiplePremiumSpacesExist_thenReturnAllAndOneDefault() {
+        var premiumSpaceItem1 = new LoadSpaceListPort.SpaceWithAssessmentCount(premiumSpace, 0);
+        var anotherPremiumSpace = SpaceMother.premiumSpace(param.getCurrentUserId());
+        var premiumSpaceItem2 = new LoadSpaceListPort.SpaceWithAssessmentCount(anotherPremiumSpace, 0);
+        var otherPremiumSpace = SpaceMother.premiumSpace(param.getCurrentUserId());
+        var premiumSpaceItem3 = new LoadSpaceListPort.SpaceWithAssessmentCount(otherPremiumSpace, 0);
+
+        var portResult = List.of(premiumSpaceItem1, premiumSpaceItem2, premiumSpaceItem3);
+        when(loadSpaceListPort.loadSpaceList(param.getCurrentUserId()))
+            .thenReturn(portResult);
+
+        var result = service.getSpaceList(param);
+        assertEquals(3, result.size());
+
+        assertThat(result)
+            .zipSatisfy(portResult, (expected, actual) -> {
+                assertEquals(expected.id(), actual.space().getId());
+                assertEquals(expected.title(), actual.space().getTitle());
+                assertEquals(expected.type().code(), actual.space().getType().getCode());
+                assertEquals(expected.type().title(), actual.space().getType().getTitle());
+            });
+        assertThat(result).filteredOn(GetTopSpacesUseCase.SpaceListItem::isDefault).hasSize(1);
+
+        verify(appSpecProperties, times(1)).getSpace();
+        verifyNoInteractions(createSpacePort, createSpaceUserAccessPort);
+    }
+
     private AppSpecProperties appSpecProperties() {
         var properties = new AppSpecProperties();
         properties.setSpace(new AppSpecProperties.Space());
