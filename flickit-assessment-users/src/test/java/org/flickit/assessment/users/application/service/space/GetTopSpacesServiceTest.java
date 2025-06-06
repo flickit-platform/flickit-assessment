@@ -56,6 +56,7 @@ class GetTopSpacesServiceTest {
 
     private final Space premiumSpace = SpaceMother.premiumSpace(param.getCurrentUserId());
     private final Space basicSpace = SpaceMother.basicSpace(param.getCurrentUserId());
+    private final long spaceId = 123L;
 
     @Test
     void testGetTopSpaces_whenNoSpacesExistAndLanguageIsEN_thenCreateNewSpace() {
@@ -64,29 +65,16 @@ class GetTopSpacesServiceTest {
 
         when(loadSpaceListPort.loadSpaceList(param.getCurrentUserId())).thenReturn(List.of());
         var spaceCaptor = ArgumentCaptor.forClass(Space.class);
-        when(createSpacePort.persist(spaceCaptor.capture())).thenReturn(123L);
+        when(createSpacePort.persist(spaceCaptor.capture())).thenReturn(spaceId);
         var userAccessCaptor = ArgumentCaptor.forClass(SpaceUserAccess.class);
 
         var result = service.getSpaceList(param);
         verify(createSpaceUserAccessPort).persist(userAccessCaptor.capture());
 
         assertEquals(1, result.size());
-        assertEquals(123L, result.getFirst().id());
-        var capturedSpace = spaceCaptor.getValue();
-        assertEquals(generateSlugCode(expectedTitle), capturedSpace.getCode());
-        assertEquals(expectedTitle, capturedSpace.getTitle());
-        assertEquals(SpaceType.BASIC, capturedSpace.getType());
-        assertEquals(param.getCurrentUserId(), capturedSpace.getOwnerId());
-        assertEquals(SpaceStatus.ACTIVE, capturedSpace.getStatus());
-        assertNotNull(capturedSpace.getCreationTime());
-        assertNotNull(capturedSpace.getLastModificationTime());
-        assertEquals(param.getCurrentUserId(), capturedSpace.getCreatedBy());
-        assertEquals(param.getCurrentUserId(), capturedSpace.getLastModifiedBy());
-
-        assertEquals(123L, userAccessCaptor.getValue().getSpaceId());
-        assertEquals(param.getCurrentUserId(), userAccessCaptor.getValue().getCreatedBy());
-        assertEquals(param.getCurrentUserId(), userAccessCaptor.getValue().getUserId());
-        assertNotNull(userAccessCaptor.getValue().getCreationTime());
+        assertEquals(spaceId, result.getFirst().id());
+        assertSpace(spaceCaptor.getValue(), expectedTitle);
+        assertSpaceUserAccess(userAccessCaptor);
 
         verifyNoInteractions(appSpecProperties);
     }
@@ -98,29 +86,16 @@ class GetTopSpacesServiceTest {
 
         when(loadSpaceListPort.loadSpaceList(param.getCurrentUserId())).thenReturn(List.of());
         var spaceCaptor = ArgumentCaptor.forClass(Space.class);
-        when(createSpacePort.persist(spaceCaptor.capture())).thenReturn(123L);
+        when(createSpacePort.persist(spaceCaptor.capture())).thenReturn(spaceId);
         var userAccessCaptor = ArgumentCaptor.forClass(SpaceUserAccess.class);
 
         var result = service.getSpaceList(param);
         verify(createSpaceUserAccessPort).persist(userAccessCaptor.capture());
 
         assertEquals(1, result.size());
-        assertEquals(123L, result.getFirst().id());
-        var capturedSpace = spaceCaptor.getValue();
-        assertEquals(generateSlugCode(expectedTitle), capturedSpace.getCode());
-        assertEquals(expectedTitle, capturedSpace.getTitle());
-        assertEquals(SpaceType.BASIC, capturedSpace.getType());
-        assertEquals(param.getCurrentUserId(), capturedSpace.getOwnerId());
-        assertEquals(SpaceStatus.ACTIVE, capturedSpace.getStatus());
-        assertNotNull(capturedSpace.getCreationTime());
-        assertNotNull(capturedSpace.getLastModificationTime());
-        assertEquals(param.getCurrentUserId(), capturedSpace.getCreatedBy());
-        assertEquals(param.getCurrentUserId(), capturedSpace.getLastModifiedBy());
-
-        assertEquals(123L, userAccessCaptor.getValue().getSpaceId());
-        assertEquals(param.getCurrentUserId(), userAccessCaptor.getValue().getCreatedBy());
-        assertEquals(param.getCurrentUserId(), userAccessCaptor.getValue().getUserId());
-        assertNotNull(userAccessCaptor.getValue().getCreationTime());
+        assertEquals(spaceId, result.getFirst().id());
+        assertSpace(spaceCaptor.getValue(), expectedTitle);
+        assertSpaceUserAccess(userAccessCaptor);
 
         verifyNoInteractions(appSpecProperties);
     }
@@ -300,6 +275,25 @@ class GetTopSpacesServiceTest {
 
         verify(appSpecProperties, times(1)).getSpace();
         verifyNoInteractions(createSpacePort, createSpaceUserAccessPort);
+    }
+
+    private void assertSpaceUserAccess(ArgumentCaptor<SpaceUserAccess> userAccessCaptor) {
+        assertEquals(spaceId, userAccessCaptor.getValue().getSpaceId());
+        assertEquals(param.getCurrentUserId(), userAccessCaptor.getValue().getCreatedBy());
+        assertEquals(param.getCurrentUserId(), userAccessCaptor.getValue().getUserId());
+        assertNotNull(userAccessCaptor.getValue().getCreationTime());
+    }
+
+    private void assertSpace(Space capturedSpace, String expectedTitle) {
+        assertEquals(generateSlugCode(expectedTitle), capturedSpace.getCode());
+        assertEquals(expectedTitle, capturedSpace.getTitle());
+        assertEquals(SpaceType.BASIC, capturedSpace.getType());
+        assertEquals(param.getCurrentUserId(), capturedSpace.getOwnerId());
+        assertEquals(SpaceStatus.ACTIVE, capturedSpace.getStatus());
+        assertNotNull(capturedSpace.getCreationTime());
+        assertNotNull(capturedSpace.getLastModificationTime());
+        assertEquals(param.getCurrentUserId(), capturedSpace.getCreatedBy());
+        assertEquals(param.getCurrentUserId(), capturedSpace.getLastModifiedBy());
     }
 
     private AppSpecProperties appSpecProperties() {
