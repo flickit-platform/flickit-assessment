@@ -8,9 +8,11 @@ import org.flickit.assessment.common.config.AppSpecProperties;
 import org.flickit.assessment.common.exception.UpgradeRequiredException;
 import org.flickit.assessment.users.application.domain.Space;
 import org.flickit.assessment.users.application.domain.SpaceStatus;
+import org.flickit.assessment.users.application.domain.SpaceUserAccess;
 import org.flickit.assessment.users.application.port.in.space.GetTopSpacesUseCase;
 import org.flickit.assessment.users.application.port.out.space.CreateSpacePort;
 import org.flickit.assessment.users.application.port.out.space.LoadSpaceListPort;
+import org.flickit.assessment.users.application.port.out.spaceuseraccess.CreateSpaceUserAccessPort;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +26,7 @@ import static org.flickit.assessment.users.common.ErrorMessageKey.GET_TOP_SPACES
 import static org.flickit.assessment.users.common.MessageKey.SPACE_DRAFT_TITLE;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 @RequiredArgsConstructor
 public class GetTopSpacesService implements GetTopSpacesUseCase {
 
@@ -33,6 +35,7 @@ public class GetTopSpacesService implements GetTopSpacesUseCase {
     private final LoadSpaceListPort loadSpaceListPort;
     private final AppSpecProperties appSpecProperties;
     private final CreateSpacePort createSpacePort;
+    private final CreateSpaceUserAccessPort createSpaceUserAccessPort;
 
     @Override
     public List<SpaceListItem> getSpaceList(Param param) {
@@ -41,14 +44,14 @@ public class GetTopSpacesService implements GetTopSpacesUseCase {
         return topSpaceSelector(portResult, param.getCurrentUserId());
     }
 
-    private List<SpaceListItem> topSpaceSelector(List<LoadSpaceListPort.SpaceWithAssessmentCount> items, UUID currentUserId) {
-        if (items.isEmpty())
+    private List<SpaceListItem> topSpaceSelector(List<LoadSpaceListPort.SpaceWithAssessmentCount> spaces, UUID currentUserId) {
+        if (spaces.isEmpty())
             return List.of(createNewSpace(getCurrentLanguage(), currentUserId));
 
         final int maxBasicAssessments = appSpecProperties.getSpace().getMaxBasicSpaceAssessments();
-        var validItems = extractValidItems(items, maxBasicAssessments);
+        var validItems = extractValidItems(spaces, maxBasicAssessments);
 
-        if (items.size() == 1 && validItems.isEmpty())
+        if (spaces.size() == 1 && validItems.isEmpty())
             throw new UpgradeRequiredException(GET_TOP_SPACES_BASIC_SPACE_ASSESSMENTS_MAX);
 
         if (validItems.size() == 1)
@@ -56,7 +59,7 @@ public class GetTopSpacesService implements GetTopSpacesUseCase {
 
         boolean hasPremium = validItems.stream().anyMatch(this::isPremium);
         boolean hasBasicWithCapacity = validItems.stream().anyMatch(item -> basicSpaceHasCapacity(item, maxBasicAssessments));
-        if (validItems.size() > 1 && hasPremium && hasBasicWithCapacity)
+        if (validItems.size() > 1 && (hasPremium || hasBasicWithCapacity))
             return getMultipleBasicsAndPremium(validItems);
 
         return List.of();
@@ -77,6 +80,8 @@ public class GetTopSpacesService implements GetTopSpacesUseCase {
             currentUserId
         );
         var spaceId = createSpacePort.persist(newSpace);
+        var spaceUserAccess = new SpaceUserAccess(spaceId, currentUserId, currentUserId, LocalDateTime.now());
+        createSpaceUserAccessPort.persist(spaceUserAccess);
         return new SpaceListItem(spaceId, newSpace.getTitle(), toType(newSpace.getType()), Boolean.TRUE);
     }
 
