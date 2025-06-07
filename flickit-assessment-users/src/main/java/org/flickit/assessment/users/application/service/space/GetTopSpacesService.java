@@ -41,13 +41,14 @@ public class GetTopSpacesService implements GetTopSpacesUseCase {
     @Override
     public List<SpaceListItem> getSpaceList(Param param) {
         var portResult = loadSpaceListPort.loadSpaceList(param.getCurrentUserId());
+        var lang = KitLanguage.valueOf(LocaleContextHolder.getLocale().getLanguage().toUpperCase());
 
-        return topSpaceSelector(portResult, param.getCurrentUserId());
+        return topSpaceSelector(lang, portResult, param.getCurrentUserId());
     }
 
-    private List<SpaceListItem> topSpaceSelector(List<LoadSpaceListPort.SpaceWithAssessmentCount> spaces, UUID currentUserId) {
+    private List<SpaceListItem> topSpaceSelector(KitLanguage lang, List<LoadSpaceListPort.SpaceWithAssessmentCount> spaces, UUID currentUserId) {
         if (spaces.isEmpty())
-            return List.of(createNewSpace(getCurrentLanguage(), currentUserId));
+            return List.of(createNewSpace(lang, currentUserId));
 
         final int maxBasicAssessments = appSpecProperties.getSpace().getMaxBasicSpaceAssessments();
         var validItems = extractValidItems(spaces, maxBasicAssessments);
@@ -119,10 +120,6 @@ public class GetTopSpacesService implements GetTopSpacesUseCase {
                 );
             })
             .toList();
-    }
-
-    private KitLanguage getCurrentLanguage() {
-        return KitLanguage.valueOf(LocaleContextHolder.getLocale().getLanguage().toUpperCase());
     }
 
     private SpaceListItem toSpaceListItem(LoadSpaceListPort.SpaceWithAssessmentCount item) {
