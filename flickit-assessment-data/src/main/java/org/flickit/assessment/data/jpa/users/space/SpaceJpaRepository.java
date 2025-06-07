@@ -95,8 +95,8 @@ public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> 
             GROUP BY s.id
             ORDER BY MAX(sua.lastSeen) DESC
         """)
-    List<SpaceWithDetails> findByUserId(@Param("userId") UUID userId,
-                                        @Param("status") Integer status);
+    List<SpaceWithDetails> findByUserIdOrderByLastSeenDesc(@Param("userId") UUID userId,
+                                                           @Param("status") Integer status);
 
     @Query("""
             SELECT

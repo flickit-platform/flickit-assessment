@@ -61,7 +61,7 @@ public class SpacePersistenceJpaAdapter implements
 
     @Override
     public List<SpaceWithAssessmentCount> loadSpaceList(UUID currentUserId) {
-        var result = Optional.ofNullable(repository.findByUserId(currentUserId, SpaceStatus.ACTIVE.getId()))
+        var result = Optional.ofNullable(repository.findByUserIdOrderByLastSeenDesc(currentUserId, SpaceStatus.ACTIVE.getId()))
             .orElseGet(List::of);
 
         return result.stream()
