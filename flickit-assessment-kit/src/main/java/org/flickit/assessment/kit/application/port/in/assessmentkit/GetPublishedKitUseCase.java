@@ -47,7 +47,8 @@ public interface GetPublishedKitUseCase {
                   List<MinimalSubject> subjects,
                   Metadata metadata,
                   List<Language> languages,
-                  ExpertGroup expertGroup) {
+                  ExpertGroup expertGroup,
+                  boolean isFree) {
         public record Language(String code,
                                String title) {
         }
