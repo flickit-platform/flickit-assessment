@@ -52,7 +52,10 @@ public class GetTopSpacesService implements GetTopSpacesUseCase {
         if (availableSpaces.isEmpty())
             throw new UpgradeRequiredException(GET_TOP_SPACES_BASIC_SPACE_ASSESSMENTS_MAX);
 
-        return topSpaceSelector(availableSpaces);
+        return Optional.of(availableSpaces)
+            .filter(items -> items.size() == 1)
+            .map(items -> List.of(toSpaceListItem(items.getFirst())))
+            .orElseGet(() -> getMultipleBasicsAndPremium(availableSpaces));
     }
 
     private SpaceListItem createNewSpace(KitLanguage lang, UUID currentUserId) {
@@ -86,13 +89,6 @@ public class GetTopSpacesService implements GetTopSpacesUseCase {
                 || (item.space().getType() == SpaceType.BASIC && item.assessmentCount() < maxBasicAssessments))
             .limit(TOP_SPACES_LIMIT)
             .toList();
-    }
-
-    private List<SpaceListItem> topSpaceSelector(List<LoadSpaceListPort.SpaceWithAssessmentCount> availableSpaces) {
-        return Optional.of(availableSpaces)
-            .filter(items -> items.size() == 1)
-            .map(items -> List.of(toSpaceListItem(items.getFirst())))
-            .orElseGet(() -> getMultipleBasicsAndPremium(availableSpaces));
     }
 
     private static List<SpaceListItem> getMultipleBasicsAndPremium(List<LoadSpaceListPort.SpaceWithAssessmentCount> validItems) {
