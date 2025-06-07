@@ -31,7 +31,7 @@ import static org.flickit.assessment.users.common.MessageKey.SPACE_DRAFT_TITLE;
 @RequiredArgsConstructor
 public class GetTopSpacesService implements GetTopSpacesUseCase {
 
-    private static final int NUMBER_OF_SPACES = 10;
+    private static final int TOP_SPACES_LIMIT = 10;
 
     private final LoadSpaceListPort loadSpaceListPort;
     private final AppSpecProperties appSpecProperties;
@@ -84,7 +84,7 @@ public class GetTopSpacesService implements GetTopSpacesUseCase {
         return items.stream()
             .filter(item -> item.space().getType() == SpaceType.PREMIUM
                 || (item.space().getType() == SpaceType.BASIC && item.assessmentCount() < maxBasicAssessments))
-            .limit(NUMBER_OF_SPACES)
+            .limit(TOP_SPACES_LIMIT)
             .toList();
     }
 
