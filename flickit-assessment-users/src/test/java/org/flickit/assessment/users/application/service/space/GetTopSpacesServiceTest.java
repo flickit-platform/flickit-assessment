@@ -223,14 +223,14 @@ class GetTopSpacesServiceTest {
 
     @Test
     void testGetTopSpaces_whenMultipleSpacesWithCapacityExist_thenReturnAllAndOneDefault() {
-        int LIMIT = 10;
-        List<LoadSpaceListPort.SpaceWithAssessmentCount> premiumSpaces =
+        var limit = 10;
+        var premiumSpaces =
             IntStream.range(0, 6)
                 .mapToObj(i -> new LoadSpaceListPort.SpaceWithAssessmentCount(
                     SpaceMother.premiumSpace(param.getCurrentUserId()), 0))
                 .toList();
 
-        List<LoadSpaceListPort.SpaceWithAssessmentCount> basicSpaces =
+        var basicSpaces =
             IntStream.range(0, 5)
                 .mapToObj(i -> new LoadSpaceListPort.SpaceWithAssessmentCount(
                     SpaceMother.basicSpace(param.getCurrentUserId()), 0))
@@ -242,10 +242,10 @@ class GetTopSpacesServiceTest {
             .thenReturn(portResult);
 
         var result = service.getSpaceList(param);
-        assertEquals(LIMIT, result.size());
+        assertEquals(limit, result.size());
 
         assertThat(result)
-            .zipSatisfy(portResult.stream().limit(LIMIT).toList(), (expected, actual) -> {
+            .zipSatisfy(portResult.stream().limit(limit).toList(), (expected, actual) -> {
                 assertEquals(expected.id(), actual.space().getId());
                 assertEquals(expected.title(), actual.space().getTitle());
                 assertEquals(expected.type().code(), actual.space().getType().getCode());
