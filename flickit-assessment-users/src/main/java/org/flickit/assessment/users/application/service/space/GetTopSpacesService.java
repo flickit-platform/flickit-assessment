@@ -40,26 +40,19 @@ public class GetTopSpacesService implements GetTopSpacesUseCase {
 
     @Override
     public List<SpaceListItem> getSpaceList(Param param) {
-        var portResult = loadSpaceListPort.loadSpaceList(param.getCurrentUserId());
+        var loadedSpaces = loadSpaceListPort.loadSpaceList(param.getCurrentUserId());
         var lang = KitLanguage.valueOf(LocaleContextHolder.getLocale().getLanguage().toUpperCase());
 
-        return topSpaceSelector(lang, portResult, param.getCurrentUserId());
-    }
-
-    private List<SpaceListItem> topSpaceSelector(KitLanguage lang, List<LoadSpaceListPort.SpaceWithAssessmentCount> spaces, UUID currentUserId) {
-        if (spaces.isEmpty())
-            return List.of(createNewSpace(lang, currentUserId));
+        if (loadedSpaces.isEmpty())
+            return List.of(createNewSpace(lang, param.getCurrentUserId()));
 
         final int maxBasicAssessments = appSpecProperties.getSpace().getMaxBasicSpaceAssessments();
-        var validItems = extractValidItems(spaces, maxBasicAssessments);
+        var availableSpaces = extractSpacesWithCapacity(loadedSpaces, maxBasicAssessments);
 
-        if (spaces.size() == 1 && validItems.isEmpty())
+        if (availableSpaces.isEmpty())
             throw new UpgradeRequiredException(GET_TOP_SPACES_BASIC_SPACE_ASSESSMENTS_MAX);
 
-        return Optional.of(validItems)
-            .filter(items -> items.size() == 1)
-            .map(items -> List.of(toSpaceListItem(items.getFirst())))
-            .orElseGet(() -> getMultipleBasicsAndPremium(validItems));
+        return topSpaceSelector(availableSpaces);
     }
 
     private SpaceListItem createNewSpace(KitLanguage lang, UUID currentUserId) {
@@ -67,13 +60,9 @@ public class GetTopSpacesService implements GetTopSpacesUseCase {
         var newSpace = toSpace(title, currentUserId);
         var spaceId = createSpacePort.persist(newSpace);
 
-        var spaceUserAccess = toSpaceUserAccess(spaceId, currentUserId);
+        var spaceUserAccess = new SpaceUserAccess(spaceId, currentUserId, currentUserId, LocalDateTime.now());
         createSpaceUserAccessPort.persist(spaceUserAccess);
         return new SpaceListItem(spaceId, newSpace.getTitle(), toType(newSpace.getType()), Boolean.TRUE);
-    }
-
-    private static SpaceUserAccess toSpaceUserAccess(long spaceId, UUID currentUserId) {
-        return new SpaceUserAccess(spaceId, currentUserId, currentUserId, LocalDateTime.now());
     }
 
     private static Space toSpace(String title, UUID currentUserId) {
@@ -91,15 +80,19 @@ public class GetTopSpacesService implements GetTopSpacesUseCase {
         );
     }
 
-    private List<LoadSpaceListPort.SpaceWithAssessmentCount> extractValidItems(List<LoadSpaceListPort.SpaceWithAssessmentCount> items, int maxBasicAssessments) {
+    private List<LoadSpaceListPort.SpaceWithAssessmentCount> extractSpacesWithCapacity(List<LoadSpaceListPort.SpaceWithAssessmentCount> items, int maxBasicAssessments) {
         return items.stream()
-            .filter(item -> item.space().getType() == SpaceType.PREMIUM || basicSpaceHasCapacity(item, maxBasicAssessments))
+            .filter(item -> item.space().getType() == SpaceType.PREMIUM
+                || (item.space().getType() == SpaceType.BASIC && item.assessmentCount() < maxBasicAssessments))
             .limit(NUMBER_OF_SPACES)
             .toList();
     }
 
-    private boolean basicSpaceHasCapacity(LoadSpaceListPort.SpaceWithAssessmentCount item, int maxBasicAssessments) {
-        return item.space().getType() == SpaceType.BASIC && item.assessmentCount() < maxBasicAssessments;
+    private List<SpaceListItem> topSpaceSelector(List<LoadSpaceListPort.SpaceWithAssessmentCount> availableSpaces) {
+        return Optional.of(availableSpaces)
+            .filter(items -> items.size() == 1)
+            .map(items -> List.of(toSpaceListItem(items.getFirst())))
+            .orElseGet(() -> getMultipleBasicsAndPremium(availableSpaces));
     }
 
     private static List<SpaceListItem> getMultipleBasicsAndPremium(List<LoadSpaceListPort.SpaceWithAssessmentCount> validItems) {
