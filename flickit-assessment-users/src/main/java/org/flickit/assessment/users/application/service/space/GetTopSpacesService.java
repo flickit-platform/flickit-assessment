@@ -21,6 +21,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
 import static org.flickit.assessment.users.common.ErrorMessageKey.GET_TOP_SPACES_BASIC_SPACE_ASSESSMENTS_MAX;
@@ -53,9 +54,9 @@ public class GetTopSpacesService implements GetTopSpacesUseCase {
             throw new UpgradeRequiredException(GET_TOP_SPACES_BASIC_SPACE_ASSESSMENTS_MAX);
 
         return Optional.of(availableSpaces)
-            .filter(items -> items.size() == 1)
-            .map(items -> List.of(toSpaceListItem(items.getFirst())))
-            .orElseGet(() -> getMultipleBasicsAndPremium(availableSpaces));
+                .filter(items -> items.size() == 1)
+                .map(items -> List.of(toSpaceListItem(items.getFirst())))
+                .orElseGet(() -> getMultipleBasicsAndPremium(availableSpaces));
     }
 
     private SpaceListItem createNewSpace(KitLanguage lang, UUID currentUserId) {
@@ -70,53 +71,63 @@ public class GetTopSpacesService implements GetTopSpacesUseCase {
 
     private static Space toSpace(String title, UUID currentUserId) {
         return new Space(null,
-            generateSlugCode(title),
-            title,
-            SpaceType.BASIC,
-            currentUserId,
-            SpaceStatus.ACTIVE,
-            null,
-            LocalDateTime.now(),
-            LocalDateTime.now(),
-            currentUserId,
-            currentUserId
+                generateSlugCode(title),
+                title,
+                SpaceType.BASIC,
+                currentUserId,
+                SpaceStatus.ACTIVE,
+                null,
+                LocalDateTime.now(),
+                LocalDateTime.now(),
+                currentUserId,
+                currentUserId
         );
     }
 
     private List<LoadSpaceListPort.SpaceWithAssessmentCount> extractSpacesWithCapacity(List<LoadSpaceListPort.SpaceWithAssessmentCount> items, int maxBasicAssessments) {
         return items.stream()
-            .filter(item -> item.space().getType() == SpaceType.PREMIUM
-                || (item.space().getType() == SpaceType.BASIC && item.assessmentCount() < maxBasicAssessments))
-            .limit(TOP_SPACES_LIMIT)
-            .toList();
+                .filter(item -> item.space().getType() == SpaceType.PREMIUM
+                        || (item.space().getType() == SpaceType.BASIC && item.assessmentCount() < maxBasicAssessments))
+                .limit(TOP_SPACES_LIMIT)
+                .toList();
     }
 
-    private static List<SpaceListItem> getMultipleBasicsAndPremium(List<LoadSpaceListPort.SpaceWithAssessmentCount> validItems) {
-        var firstSpaceId = validItems.stream().map(item -> item.space().getId()).findFirst().orElseThrow();
+    private static List<SpaceListItem> getMultipleBasicsAndPremium(List<LoadSpaceListPort.SpaceWithAssessmentCount> availableSpaces) {
+        var selectedSpaceId = availableSpaces.stream()
+                .map(LoadSpaceListPort.SpaceWithAssessmentCount::space)
+                .collect(Collectors.collectingAndThen(
+                        Collectors.toList(),
+                        spaces -> spaces.stream()
+                                .filter(space -> space.getType().equals(SpaceType.PREMIUM))
+                                .findFirst()
+                                .or(() -> spaces.stream().findFirst())
+                                .map(Space::getId)
+                                .orElseThrow()
+                ));
 
-        return validItems.stream()
-            .map(item -> {
-                var space = item.space();
-                boolean isDefault = space.getId().equals(firstSpaceId);
-                return new SpaceListItem(
-                    space.getId(),
-                    space.getTitle(),
-                    new SpaceListItem.Type(
-                        space.getType().getCode(),
-                        space.getType().getTitle()
-                    ),
-                    isDefault
-                );
-            })
-            .toList();
+        return availableSpaces.stream()
+                .map(item -> {
+                    var space = item.space();
+                    boolean isDefault = space.getId().equals(selectedSpaceId);
+                    return new SpaceListItem(
+                            space.getId(),
+                            space.getTitle(),
+                            new SpaceListItem.Type(
+                                    space.getType().getCode(),
+                                    space.getType().getTitle()
+                            ),
+                            isDefault
+                    );
+                })
+                .toList();
     }
 
     private SpaceListItem toSpaceListItem(LoadSpaceListPort.SpaceWithAssessmentCount item) {
         return new SpaceListItem(
-            item.space().getId(),
-            item.space().getTitle(),
-            new SpaceListItem.Type(item.space().getType().getCode(), item.space().getType().getTitle()),
-            Boolean.TRUE
+                item.space().getId(),
+                item.space().getTitle(),
+                new SpaceListItem.Type(item.space().getType().getCode(), item.space().getType().getTitle()),
+                Boolean.TRUE
         );
     }
 
