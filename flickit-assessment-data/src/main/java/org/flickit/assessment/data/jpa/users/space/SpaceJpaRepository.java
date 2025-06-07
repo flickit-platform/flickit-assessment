@@ -81,19 +81,17 @@ public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> 
 
     @Query("""
             SELECT
-                s as space,
-                COUNT(DISTINCT (CASE WHEN fa.deleted = FALSE THEN fa.id ELSE NULL END)) as assessmentsCount,
-                MAX(sua.lastSeen) as lastSeen
+                s AS space,
+                COUNT(DISTINCT fa.id) AS assessmentsCount,
+                sua.lastSeen AS lastSeen
             FROM SpaceJpaEntity s
-            LEFT JOIN AssessmentJpaEntity fa on s.id = fa.spaceId
-            LEFT JOIN SpaceUserAccessJpaEntity sua on s.id = sua.spaceId
-            WHERE s.deleted = FALSE AND s.status = :status
-                AND EXISTS (
-                    SELECT 1 FROM SpaceUserAccessJpaEntity sua
-                    WHERE sua.spaceId = s.id AND sua.userId = :userId
-            )
-            GROUP BY s.id
-            ORDER BY MAX(sua.lastSeen) DESC
+            LEFT JOIN AssessmentJpaEntity fa ON s.id = fa.spaceId AND fa.deleted = FALSE
+            LEFT JOIN SpaceUserAccessJpaEntity sua ON s.id = sua.spaceId AND sua.userId = :userId
+            WHERE s.deleted = FALSE
+                AND s.status = :status
+                AND sua.userId IS NOT NULL
+            GROUP BY s.id, sua.lastSeen
+            ORDER BY sua.lastSeen DESC
         """)
     List<SpaceWithDetails> findByUserIdOrderByLastSeenDesc(@Param("userId") UUID userId,
                                                            @Param("status") Integer status);
