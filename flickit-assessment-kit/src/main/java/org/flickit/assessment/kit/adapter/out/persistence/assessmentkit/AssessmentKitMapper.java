@@ -35,6 +35,7 @@ public class AssessmentKitMapper {
             param.lang().getId(),
             null,
             null,
+            0L, // TODO: Replace with actual price from input when pricing support is implemented
             LocalDateTime.now(),
             LocalDateTime.now(),
             param.createdBy(),
@@ -66,6 +67,7 @@ public class AssessmentKitMapper {
             param.lang() != null ? param.lang().getId() : entity.getLanguageId(),
             translations,
             metadata,
+            0L, // TODO: Replace with actual price from input when pricing support is implemented
             entity.getCreationTime(),
             param.lastModificationTime(),
             entity.getCreatedBy(),
