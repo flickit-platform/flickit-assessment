@@ -20,7 +20,6 @@ import org.flickit.assessment.scenario.test.kit.tag.KitTagTestHelper;
 import org.flickit.assessment.scenario.test.users.expertgroup.ExpertGroupTestHelper;
 import org.flickit.assessment.scenario.test.users.space.SpaceTestHelper;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -72,54 +71,16 @@ class CreateAssessmentScenarioTest extends AbstractScenarioTest {
         assessmentUserRolesCountBefore = jpaTemplate.count(AssessmentUserRoleJpaEntity.class);
     }
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "{0}")
     @MethodSource("assessmentCreationProvider")
-    void createAssessmentParameterized(boolean isPremiumSpace, boolean isPrivateKit, int kitPrice) {
+    void createAssessment(String name, boolean isPremiumSpace, boolean isPrivateKit, int kitPrice) {
         Long spaceId = isPremiumSpace ? createPremiumSpace() : createBasicSpace();
         Long kitId = createKit(isPrivateKit, kitPrice);
         kitHelper.publishKit(context, kitId);
 
-        var request = createRequest(spaceId, kitId);
-        var response = assessmentHelper.create(context, request);
-        response.then()
-            .statusCode(201)
-            .body("id", notNullValue());
-
-        UUID assessmentId = UUID.fromString(response.path("id"));
-
-        assertAssessment(assessmentId, request, kitId);
-        assertAssessmentResult(assessmentId, kitId);
-        assertAssessmentUserRoles(assessmentId);
-    }
-
-    @Test
-    void createAssessment_privatePaidKitWithAccessInPremiumSpace() {
-        var spaceId = createPremiumSpace();
-        // Create a private paid kit
-        var kitId = createKit(true, 1000);
-        kitHelper.publishKit(context, kitId);
-
-        var request = createRequest(spaceId, kitId);
-        var response = assessmentHelper.create(context, request);
-        response.then()
-            .statusCode(201)
-            .body("id", notNullValue());
-
-        UUID assessmentId = UUID.fromString(response.path("id"));
-
-        assertAssessment(assessmentId, request, kitId);
-        assertAssessmentResult(assessmentId, kitId);
-        assertAssessmentUserRoles(assessmentId);
-    }
-
-    @Test
-    void createAssessment_publicFreeKitInPremiumSpace() {
-        var spaceId = createPremiumSpace();
-        // Create a public free kit
-        var kitId = createKit(false, 0);
-        kitHelper.publishKit(context, kitId);
-
-        var request = createRequest(spaceId, kitId);
+        var request = CreateAssessmentRequestDtoMother.createAssessmentRequestDto(a -> a
+            .spaceId(spaceId)
+            .assessmentKitId(kitId));
         var response = assessmentHelper.create(context, request);
         response.then()
             .statusCode(201)
@@ -134,15 +95,11 @@ class CreateAssessmentScenarioTest extends AbstractScenarioTest {
 
     private static Stream<Arguments> assessmentCreationProvider() {
         return Stream.of(
-            // Premium space cases
-            Arguments.of(true, false, 0),    // public free
-            Arguments.of(true, true, 0),     // private free
-            Arguments.of(true, true, 1000),  // private paid
-
-            // Basic space case that is valid
-            Arguments.of(false, false, 0),   // public free
-            Arguments.of(false, false, 1000) // public paid
-            // Invalid cases like (false, true, 0) should go in separate negative tests
+            Arguments.of("Public free kit in Premium space", true, false, 0),
+            Arguments.of("Private free kit in Premium space", true, true, 0),
+            Arguments.of("Private paid kit with access in Premium space", true, true, 1000),
+            Arguments.of("Public free kit in Basic space", false, false, 0),
+            Arguments.of("Public paid kit with access in Basic space", false, false, 1000)
         );
     }
 
@@ -175,12 +132,6 @@ class CreateAssessmentScenarioTest extends AbstractScenarioTest {
 
         Number kitId = response.path("kitId");
         return kitId.longValue();
-    }
-
-    private CreateAssessmentRequestDto createRequest(Long spaceId, Long kitId) {
-        return CreateAssessmentRequestDtoMother.createAssessmentRequestDto(a -> a
-            .spaceId(spaceId)
-            .assessmentKitId(kitId));
     }
 
     private Long createExpertGroup() {
