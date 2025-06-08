@@ -1,5 +1,6 @@
 package org.flickit.assessment.scenario.test.core.assessment;
 
+import org.flickit.assessment.common.application.domain.space.SpaceType;
 import org.flickit.assessment.core.adapter.in.rest.assessment.CreateAssessmentRequestDto;
 import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
@@ -68,15 +69,12 @@ class CreateAssessmentScenarioTest extends AbstractScenarioTest {
     }
 
     @Test
-    void createAssessment() {
-        var spaceId = createSpace();
-        var kitId = createKit();
+    void createAssessment_privateFreeKitInBasicSpace() {
+        var spaceId = createBasicSpace();
+        var kitId = createKit(false, 0);
         kitHelper.publishKit(context, kitId);
 
-        var request = CreateAssessmentRequestDtoMother.createAssessmentRequestDto(a -> a
-            .spaceId(spaceId)
-            .assessmentKitId(kitId));
-
+        var request = createRequest(spaceId, kitId);
         var response = assessmentHelper.create(context, request);
         response.then()
             .statusCode(201)
@@ -89,13 +87,119 @@ class CreateAssessmentScenarioTest extends AbstractScenarioTest {
         assertAssessmentUserRoles(assessmentId);
     }
 
-    private Long createSpace() {
+    @Test
+    void createAssessment_publicPaidKitWithAccessInBasicSpace() {
+        var spaceId = createBasicSpace();
+        // Create a public paid kit
+        var kitId = createKit(false, 1000);
+        kitHelper.publishKit(context, kitId);
+
+        var request = createRequest(spaceId, kitId);
+        var response = assessmentHelper.create(context, request);
+        response.then()
+            .statusCode(201)
+            .body("id", notNullValue());
+
+        UUID assessmentId = UUID.fromString(response.path("id"));
+
+        assertAssessment(assessmentId, request, kitId);
+        assertAssessmentResult(assessmentId, kitId);
+        assertAssessmentUserRoles(assessmentId);
+    }
+
+    @Test
+    void createAssessment_privateFreeKitWithAccessInPremiumSpace() {
+        var spaceId = createPremiumSpace();
+        // Create a private free kit
+        var kitId = createKit(true, 0);
+        kitHelper.publishKit(context, kitId);
+
+        var request = createRequest(spaceId, kitId);
+        var response = assessmentHelper.create(context, request);
+        response.then()
+            .statusCode(201)
+            .body("id", notNullValue());
+
+        UUID assessmentId = UUID.fromString(response.path("id"));
+
+        assertAssessment(assessmentId, request, kitId);
+        assertAssessmentResult(assessmentId, kitId);
+        assertAssessmentUserRoles(assessmentId);
+    }
+
+    @Test
+    void createAssessment_privatePaidKitWithAccessInPremiumSpace() {
+        var spaceId = createPremiumSpace();
+        // Create a private paid kit
+        var kitId = createKit(true, 1000);
+        kitHelper.publishKit(context, kitId);
+
+        var request = createRequest(spaceId, kitId);
+        var response = assessmentHelper.create(context, request);
+        response.then()
+            .statusCode(201)
+            .body("id", notNullValue());
+
+        UUID assessmentId = UUID.fromString(response.path("id"));
+
+        assertAssessment(assessmentId, request, kitId);
+        assertAssessmentResult(assessmentId, kitId);
+        assertAssessmentUserRoles(assessmentId);
+    }
+
+    @Test
+    void createAssessment_publicFreeKitInBasicSpace() {
+        var spaceId = createBasicSpace();
+        // Create a public free kit
+        var kitId = createKit(false, 0);
+        kitHelper.publishKit(context, kitId);
+
+        var request = createRequest(spaceId, kitId);
+        var response = assessmentHelper.create(context, request);
+        response.then()
+            .statusCode(201)
+            .body("id", notNullValue());
+
+        UUID assessmentId = UUID.fromString(response.path("id"));
+
+        assertAssessment(assessmentId, request, kitId);
+        assertAssessmentResult(assessmentId, kitId);
+        assertAssessmentUserRoles(assessmentId);
+    }
+
+    @Test
+    void createAssessment_publicFreeKitInPremiumSpace() {
+        var spaceId = createPremiumSpace();
+        // Create a public free kit
+        var kitId = createKit(false, 0);
+        kitHelper.publishKit(context, kitId);
+
+        var request = createRequest(spaceId, kitId);
+        var response = assessmentHelper.create(context, request);
+        response.then()
+            .statusCode(201)
+            .body("id", notNullValue());
+
+        UUID assessmentId = UUID.fromString(response.path("id"));
+
+        assertAssessment(assessmentId, request, kitId);
+        assertAssessmentResult(assessmentId, kitId);
+        assertAssessmentUserRoles(assessmentId);
+    }
+
+    private Long createBasicSpace() {
         var response = spaceHelper.create(context, createSpaceRequestDto());
         Number id = response.path("id");
         return id.longValue();
     }
 
-    private Long createKit() {
+    private Long createPremiumSpace() {
+        var response = spaceHelper.create(context, createSpaceRequestDto(s -> s.type(SpaceType.PREMIUM.getCode())));
+        Number id = response.path("id");
+        return id.longValue();
+    }
+
+    private Long createKit(boolean isPrivate, long price) {
         Long expertGroupId = createExpertGroup();
         Long kitDslId = uploadDsl(expertGroupId);
         Long kitTagId = kitTagHelper.createKitTag();
@@ -104,12 +208,20 @@ class CreateAssessmentScenarioTest extends AbstractScenarioTest {
             .expertGroupId(expertGroupId)
             .kitDslId(kitDslId)
             .tagIds(List.of(kitTagId))
+            .isPrivate(isPrivate)
+            .price(price)
         );
 
         var response = kitHelper.create(context, request);
 
         Number kitId = response.path("kitId");
         return kitId.longValue();
+    }
+
+    private CreateAssessmentRequestDto createRequest(Long spaceId, Long kitId) {
+        return CreateAssessmentRequestDtoMother.createAssessmentRequestDto(a -> a
+            .spaceId(spaceId)
+            .assessmentKitId(kitId));
     }
 
     private Long createExpertGroup() {
