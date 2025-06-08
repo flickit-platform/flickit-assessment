@@ -147,6 +147,7 @@ class GetPublishedKitServiceTest {
         assertEquals(kit.getCreationTime(), result.creationTime());
         assertEquals(kit.getLastModificationTime(), result.lastModificationTime());
         assertEquals(kit.getExpertGroupId(), result.expertGroupId());
+        assertTrue(result.isFree());
 
         assertEquals(counts.likes(), result.like().count());
         assertFalse(result.like().liked());
@@ -169,7 +170,7 @@ class GetPublishedKitServiceTest {
 
     @Test
     void testGetPublishedKit_whenKitIsPublishedAndPublic_thenReturnValidResult() {
-        var kit = AssessmentKitMother.simpleKit();
+        var kit = AssessmentKitMother.simpleKitWithPrice(1000);
         expertGroup = ExpertGroupMother.createExpertGroupWithPicture(null);
 
         when(loadAssessmentKitPort.loadTranslated(param.getKitId())).thenReturn(kit);
@@ -189,6 +190,7 @@ class GetPublishedKitServiceTest {
         assertEquals(kit.getCreationTime(), result.creationTime());
         assertEquals(kit.getLastModificationTime(), result.lastModificationTime());
         assertEquals(kit.getExpertGroupId(), result.expertGroupId());
+        assertFalse(result.isFree());
 
         assertEquals(counts.likes(), result.like().count());
         assertTrue(result.like().liked());
@@ -206,7 +208,7 @@ class GetPublishedKitServiceTest {
     @Test
     void testGetPublishedKit_whenKitIsPublishedAndPublicAndCurrentUserIdIsNull_thenReturnValidResult() {
         param = createParam(b -> b.currentUserId(null));
-        var kit = AssessmentKitMother.simpleKit();
+        var kit = AssessmentKitMother.simpleKitWithPrice(0);
 
         when(loadAssessmentKitPort.loadTranslated(param.getKitId())).thenReturn(kit);
         when(countKitStatsPort.countKitStats(param.getKitId())).thenReturn(counts);
@@ -227,6 +229,7 @@ class GetPublishedKitServiceTest {
         assertEquals(kit.getCreationTime(), result.creationTime());
         assertEquals(kit.getLastModificationTime(), result.lastModificationTime());
         assertEquals(kit.getExpertGroupId(), result.expertGroupId());
+        assertTrue(result.isFree());
 
         assertEquals(counts.likes(), result.like().count());
         assertTrue(result.like().liked());
