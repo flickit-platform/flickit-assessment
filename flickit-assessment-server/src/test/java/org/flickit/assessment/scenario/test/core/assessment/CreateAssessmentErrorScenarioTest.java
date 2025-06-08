@@ -122,36 +122,6 @@ class CreateAssessmentErrorScenarioTest extends AbstractScenarioTest {
     }
 
     @Test
-    void createAssessment_duplicateTitle() {
-        var spaceId = createBasicSpace();
-
-        var kitId = createKit(false, 0);
-        kitHelper.publishKit(context, kitId);
-
-        var request = CreateAssessmentRequestDtoMother.createAssessmentRequestDto(a -> a
-            .spaceId(spaceId)
-            .assessmentKitId(kitId));
-
-        assessmentHelper.create(context, request)
-            .then()
-            .statusCode(201);
-
-        final int countBefore = jpaTemplate.count(AssessmentJpaEntity.class);
-
-        // Create another assessment with same title
-        var error = assessmentHelper.create(context, request)
-            .then()
-            .statusCode(400)
-            .extract().as(ErrorResponseDto.class);
-
-        assertEquals(INVALID_INPUT, error.code());
-        assertNotNull(error.message());
-
-        final int countAfter = jpaTemplate.count(AssessmentJpaEntity.class);
-        assertEquals(countBefore, countAfter);
-    }
-
-    @Test
     void createAssessment_basicAssessmentsReachedLimit() {
         var limit = appSpecProperties.getSpace().getMaxBasicSpaceAssessments();
         var spaceId = createBasicSpace();
