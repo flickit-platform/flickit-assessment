@@ -21,10 +21,14 @@ import org.flickit.assessment.scenario.test.users.expertgroup.ExpertGroupTestHel
 import org.flickit.assessment.scenario.test.users.space.SpaceTestHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import static java.util.Comparator.comparingLong;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -68,30 +72,11 @@ class CreateAssessmentScenarioTest extends AbstractScenarioTest {
         assessmentUserRolesCountBefore = jpaTemplate.count(AssessmentUserRoleJpaEntity.class);
     }
 
-    @Test
-    void createAssessment_privateFreeKitInBasicSpace() {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("kitConfigurationProvider")
+    void createAssessment_withValidPublicKitTypes(String testName, boolean isPrivate, int price) {
         var spaceId = createBasicSpace();
-        var kitId = createKit(false, 0);
-        kitHelper.publishKit(context, kitId);
-
-        var request = createRequest(spaceId, kitId);
-        var response = assessmentHelper.create(context, request);
-        response.then()
-            .statusCode(201)
-            .body("id", notNullValue());
-
-        UUID assessmentId = UUID.fromString(response.path("id"));
-
-        assertAssessment(assessmentId, request, kitId);
-        assertAssessmentResult(assessmentId, kitId);
-        assertAssessmentUserRoles(assessmentId);
-    }
-
-    @Test
-    void createAssessment_publicPaidKitWithAccessInBasicSpace() {
-        var spaceId = createBasicSpace();
-        // Create a public paid kit
-        var kitId = createKit(false, 1000);
+        var kitId = createKit(isPrivate, price);
         kitHelper.publishKit(context, kitId);
 
         var request = createRequest(spaceId, kitId);
@@ -148,26 +133,6 @@ class CreateAssessmentScenarioTest extends AbstractScenarioTest {
     }
 
     @Test
-    void createAssessment_publicFreeKitInBasicSpace() {
-        var spaceId = createBasicSpace();
-        // Create a public free kit
-        var kitId = createKit(false, 0);
-        kitHelper.publishKit(context, kitId);
-
-        var request = createRequest(spaceId, kitId);
-        var response = assessmentHelper.create(context, request);
-        response.then()
-            .statusCode(201)
-            .body("id", notNullValue());
-
-        UUID assessmentId = UUID.fromString(response.path("id"));
-
-        assertAssessment(assessmentId, request, kitId);
-        assertAssessmentResult(assessmentId, kitId);
-        assertAssessmentUserRoles(assessmentId);
-    }
-
-    @Test
     void createAssessment_publicFreeKitInPremiumSpace() {
         var spaceId = createPremiumSpace();
         // Create a public free kit
@@ -185,6 +150,13 @@ class CreateAssessmentScenarioTest extends AbstractScenarioTest {
         assertAssessment(assessmentId, request, kitId);
         assertAssessmentResult(assessmentId, kitId);
         assertAssessmentUserRoles(assessmentId);
+    }
+
+    private static Stream<Arguments> kitConfigurationProvider() {
+        return Stream.of(
+            Arguments.of("Public Paid Kit", false, 1000),
+            Arguments.of("Public Free Kit", false, 0)
+        );
     }
 
     private Long createBasicSpace() {
