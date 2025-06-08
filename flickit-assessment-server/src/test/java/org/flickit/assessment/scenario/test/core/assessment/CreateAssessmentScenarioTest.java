@@ -72,31 +72,11 @@ class CreateAssessmentScenarioTest extends AbstractScenarioTest {
         assessmentUserRolesCountBefore = jpaTemplate.count(AssessmentUserRoleJpaEntity.class);
     }
 
-    @ParameterizedTest(name = "{0}")
-    @MethodSource("kitConfigurationProvider")
-    void createAssessment_withValidPublicKitTypes(String testName, boolean isPrivate, int price) {
-        var spaceId = createBasicSpace();
-        var kitId = createKit(isPrivate, price);
-        kitHelper.publishKit(context, kitId);
-
-        var request = createRequest(spaceId, kitId);
-        var response = assessmentHelper.create(context, request);
-        response.then()
-            .statusCode(201)
-            .body("id", notNullValue());
-
-        UUID assessmentId = UUID.fromString(response.path("id"));
-
-        assertAssessment(assessmentId, request, kitId);
-        assertAssessmentResult(assessmentId, kitId);
-        assertAssessmentUserRoles(assessmentId);
-    }
-
-    @Test
-    void createAssessment_privateFreeKitWithAccessInPremiumSpace() {
-        var spaceId = createPremiumSpace();
-        // Create a private free kit
-        var kitId = createKit(true, 0);
+    @ParameterizedTest
+    @MethodSource("assessmentCreationProvider")
+    void createAssessmentParameterized(boolean isPremiumSpace, boolean isPrivateKit, int kitPrice) {
+        Long spaceId = isPremiumSpace ? createPremiumSpace() : createBasicSpace();
+        Long kitId = createKit(isPrivateKit, kitPrice);
         kitHelper.publishKit(context, kitId);
 
         var request = createRequest(spaceId, kitId);
@@ -152,10 +132,17 @@ class CreateAssessmentScenarioTest extends AbstractScenarioTest {
         assertAssessmentUserRoles(assessmentId);
     }
 
-    private static Stream<Arguments> kitConfigurationProvider() {
+    private static Stream<Arguments> assessmentCreationProvider() {
         return Stream.of(
-            Arguments.of("Public Paid Kit", false, 1000),
-            Arguments.of("Public Free Kit", false, 0)
+            // Premium space cases
+            Arguments.of(true, false, 0),    // public free
+            Arguments.of(true, true, 0),     // private free
+            Arguments.of(true, true, 1000),  // private paid
+
+            // Basic space case that is valid
+            Arguments.of(false, false, 0),   // public free
+            Arguments.of(false, false, 1000) // public paid
+            // Invalid cases like (false, true, 0) should go in separate negative tests
         );
     }
 
