@@ -30,7 +30,7 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
-import static org.flickit.assessment.users.common.ErrorMessageKey.GET_TOP_SPACES_BASIC_SPACE_ASSESSMENTS_MAX;
+import static org.flickit.assessment.users.common.ErrorMessageKey.GET_TOP_SPACES_NO_SPACE_AVAILABLE;
 import static org.flickit.assessment.users.common.MessageKey.SPACE_DRAFT_TITLE;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -127,7 +127,7 @@ class GetTopSpacesServiceTest {
         when(loadSpaceListPort.loadSpaceList(param.getCurrentUserId())).thenReturn(List.of(fullBasicSpace));
 
         var throwable = assertThrows(UpgradeRequiredException.class, () -> service.getSpaceList(param));
-        assertEquals(GET_TOP_SPACES_BASIC_SPACE_ASSESSMENTS_MAX, throwable.getMessage());
+        assertEquals(GET_TOP_SPACES_NO_SPACE_AVAILABLE, throwable.getMessage());
 
         verify(appSpecProperties, times(1)).getSpace();
         verifyNoInteractions(createSpacePort, createSpaceUserAccessPort);

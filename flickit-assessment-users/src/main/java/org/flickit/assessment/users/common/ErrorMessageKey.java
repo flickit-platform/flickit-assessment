@@ -154,5 +154,5 @@ public class ErrorMessageKey {
 
     public static final String UPDATE_USER_PROFILE_PICTURE_NOT_NULL = "update-user-profile-picture.picture.notNull";
 
-    public static final String GET_TOP_SPACES_BASIC_SPACE_ASSESSMENTS_MAX = "get-top-spaces.basicSpaceAssessments.max";
+    public static final String GET_TOP_SPACES_NO_SPACE_AVAILABLE = "get-top-spaces.noSpace.available";
 }

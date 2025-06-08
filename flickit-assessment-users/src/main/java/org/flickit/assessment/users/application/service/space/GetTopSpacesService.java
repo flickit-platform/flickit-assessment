@@ -24,7 +24,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
-import static org.flickit.assessment.users.common.ErrorMessageKey.GET_TOP_SPACES_BASIC_SPACE_ASSESSMENTS_MAX;
+import static org.flickit.assessment.users.common.ErrorMessageKey.GET_TOP_SPACES_NO_SPACE_AVAILABLE;
 import static org.flickit.assessment.users.common.MessageKey.SPACE_DRAFT_TITLE;
 
 @Service
@@ -51,7 +51,7 @@ public class GetTopSpacesService implements GetTopSpacesUseCase {
         var availableSpaces = extractSpacesWithCapacity(loadedSpaces, maxBasicAssessments);
 
         if (availableSpaces.isEmpty())
-            throw new UpgradeRequiredException(GET_TOP_SPACES_BASIC_SPACE_ASSESSMENTS_MAX);
+            throw new UpgradeRequiredException(GET_TOP_SPACES_NO_SPACE_AVAILABLE);
 
         return Optional.of(availableSpaces)
                 .filter(items -> items.size() == 1)
