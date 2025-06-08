@@ -21,7 +21,11 @@ public class AssessmentKitMother {
     public static final long EXPERT_GROUP_ID = 1L;
     private static long id = 134L;
 
-    public static AssessmentKit simpleKit() {
+    public static AssessmentKit simpleKit(){
+        return simpleKitWithPrice(0);
+    }
+
+    public static AssessmentKit simpleKitWithPrice(long price) {
         return new AssessmentKit(
             id++,
             CODE + id,
@@ -42,7 +46,7 @@ public class AssessmentKitMother {
             null,
             null,
             id++,
-            0L,
+            price,
             null,
             null);
     }
