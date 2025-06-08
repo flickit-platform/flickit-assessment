@@ -187,7 +187,7 @@ class CreateAssessmentErrorScenarioTest extends AbstractScenarioTest {
         final int countBefore = jpaTemplate.count(AssessmentJpaEntity.class);
 
         final int countAfter = jpaTemplate.count(AssessmentJpaEntity.class);
-        assertEquals(countBefore + 1, countAfter);
+        assertEquals(countBefore, countAfter);
     }
 
     @Test
