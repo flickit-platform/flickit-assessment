@@ -66,16 +66,22 @@ class GetTopSpacesServiceTest {
         LocaleContextHolder.setLocale(Locale.ENGLISH);
 
         when(loadSpaceListPort.loadSpaceList(param.getCurrentUserId())).thenReturn(List.of());
-        var spaceCaptor = ArgumentCaptor.forClass(Space.class);
-        when(createSpacePort.persist(spaceCaptor.capture())).thenReturn(spaceId);
-        var userAccessCaptor = ArgumentCaptor.forClass(SpaceUserAccess.class);
+        when(createSpacePort.persist(any(Space.class))).thenReturn(spaceId);
 
         var result = service.getSpaceList(param);
-        verify(createSpaceUserAccessPort).persist(userAccessCaptor.capture());
-
         assertEquals(1, result.size());
         assertEquals(spaceId, result.getFirst().id());
+        assertEquals(expectedTitle, result.getFirst().title());
+        assertEquals(SpaceType.BASIC.getCode(), result.getFirst().type().code());
+        assertEquals(SpaceType.BASIC.getTitle(), result.getFirst().type().title());
+        assertTrue(result.getFirst().isDefault());
+
+        var spaceCaptor = ArgumentCaptor.forClass(Space.class);
+        verify(createSpacePort).persist(spaceCaptor.capture());
         assertSpace(spaceCaptor.getValue(), expectedTitle);
+
+        var userAccessCaptor = ArgumentCaptor.forClass(SpaceUserAccess.class);
+        verify(createSpaceUserAccessPort).persist(userAccessCaptor.capture());
         assertSpaceUserAccess(userAccessCaptor);
 
         verifyNoInteractions(appSpecProperties);
@@ -87,18 +93,23 @@ class GetTopSpacesServiceTest {
         LocaleContextHolder.setLocale(Locale.of("FA"));
 
         when(loadSpaceListPort.loadSpaceList(param.getCurrentUserId())).thenReturn(List.of());
-        var spaceCaptor = ArgumentCaptor.forClass(Space.class);
-        when(createSpacePort.persist(spaceCaptor.capture())).thenReturn(spaceId);
-        var userAccessCaptor = ArgumentCaptor.forClass(SpaceUserAccess.class);
+        when(createSpacePort.persist(any(Space.class))).thenReturn(spaceId);
 
         var result = service.getSpaceList(param);
-        verify(createSpaceUserAccessPort).persist(userAccessCaptor.capture());
-
         assertEquals(1, result.size());
         assertEquals(spaceId, result.getFirst().id());
-        assertSpace(spaceCaptor.getValue(), expectedTitle);
-        assertSpaceUserAccess(userAccessCaptor);
+        assertEquals(expectedTitle, result.getFirst().title());
+        assertEquals(SpaceType.BASIC.getCode(), result.getFirst().type().code());
+        assertEquals(SpaceType.BASIC.getTitle(), result.getFirst().type().title());
+        assertTrue(result.getFirst().isDefault());
 
+        var spaceCaptor = ArgumentCaptor.forClass(Space.class);
+        verify(createSpacePort).persist(spaceCaptor.capture());
+        assertSpace(spaceCaptor.getValue(), expectedTitle);
+
+        var userAccessCaptor = ArgumentCaptor.forClass(SpaceUserAccess.class);
+        verify(createSpaceUserAccessPort).persist(userAccessCaptor.capture());
+        assertSpaceUserAccess(userAccessCaptor);
         verifyNoInteractions(appSpecProperties);
     }
 
@@ -109,6 +120,7 @@ class GetTopSpacesServiceTest {
         when(loadSpaceListPort.loadSpaceList(param.getCurrentUserId())).thenReturn(List.of(resultItem));
 
         var result = service.getSpaceList(param);
+
         assertEquals(1, result.size());
         var returnedItem = result.getFirst();
         assertEquals(basicSpace.getId(), returnedItem.id());
@@ -124,6 +136,7 @@ class GetTopSpacesServiceTest {
     @Test
     void testGetTopSpaces_whenOnlyOneBasicSpaceExistsAndIsFull_thenThrowException() {
         var fullBasicSpace = new LoadSpaceListPort.SpaceWithAssessmentCount(basicSpace, maxBasicAssessments);
+
         when(loadSpaceListPort.loadSpaceList(param.getCurrentUserId())).thenReturn(List.of(fullBasicSpace));
 
         var throwable = assertThrows(UpgradeRequiredException.class, () -> service.getSpaceList(param));
@@ -154,7 +167,7 @@ class GetTopSpacesServiceTest {
         var premiumSpaceItem = new LoadSpaceListPort.SpaceWithAssessmentCount(premiumSpace, 10);
 
         when(loadSpaceListPort.loadSpaceList(param.getCurrentUserId()))
-                .thenReturn(List.of(basicSpaceItem, premiumSpaceItem));
+            .thenReturn(List.of(basicSpaceItem, premiumSpaceItem));
 
         var result = service.getSpaceList(param);
         assertEquals(1, result.size());
@@ -176,25 +189,25 @@ class GetTopSpacesServiceTest {
         var portResult = List.of(basicSpaceItem, premiumSpaceItem);
 
         when(loadSpaceListPort.loadSpaceList(param.getCurrentUserId()))
-                .thenReturn(portResult);
+            .thenReturn(portResult);
 
         var result = service.getSpaceList(param);
         assertEquals(2, result.size());
         var defaultItem = result.stream()
-                .filter(GetTopSpacesUseCase.SpaceListItem::isDefault)
-                .findFirst()
-                .orElseThrow();
+            .filter(GetTopSpacesUseCase.SpaceListItem::isDefault)
+            .findFirst()
+            .orElseThrow();
         assertEquals(premiumSpace.getId(), defaultItem.id());
         assertEquals(SpaceType.PREMIUM.getCode(), defaultItem.type().code());
         assertEquals(SpaceType.PREMIUM.getTitle(), defaultItem.type().title());
         assertTrue(defaultItem.isDefault());
         assertThat(result)
-                .zipSatisfy(portResult, (expected, actual) -> {
-                    assertEquals(expected.id(), actual.space().getId());
-                    assertEquals(expected.title(), actual.space().getTitle());
-                    assertEquals(expected.type().code(), actual.space().getType().getCode());
-                    assertEquals(expected.type().title(), actual.space().getType().getTitle());
-                });
+            .zipSatisfy(portResult, (expected, actual) -> {
+                assertEquals(expected.id(), actual.space().getId());
+                assertEquals(expected.title(), actual.space().getTitle());
+                assertEquals(expected.type().code(), actual.space().getType().getCode());
+                assertEquals(expected.type().title(), actual.space().getType().getTitle());
+            });
         assertThat(result).filteredOn(GetTopSpacesUseCase.SpaceListItem::isDefault).hasSize(1);
 
         verify(appSpecProperties, times(1)).getSpace();
@@ -208,7 +221,7 @@ class GetTopSpacesServiceTest {
         var fullBasicSpace = new LoadSpaceListPort.SpaceWithAssessmentCount(basicSpace, maxBasicAssessments);
 
         when(loadSpaceListPort.loadSpaceList(param.getCurrentUserId()))
-                .thenReturn(List.of(fullBasicSpace, basicWithCapacity));
+            .thenReturn(List.of(fullBasicSpace, basicWithCapacity));
 
         var result = service.getSpaceList(param);
         assertEquals(1, result.size());
@@ -226,34 +239,34 @@ class GetTopSpacesServiceTest {
     void testGetTopSpaces_whenMultipleSpacesWithCapacityExist_thenReturnAllAndOneDefault() {
         var limit = 10;
         var basicSpaces = IntStream.range(0, 6)
-                .mapToObj(i -> new LoadSpaceListPort.SpaceWithAssessmentCount(
-                        SpaceMother.basicSpace(param.getCurrentUserId()), 0))
-                .toList();
+            .mapToObj(i -> new LoadSpaceListPort.SpaceWithAssessmentCount(
+                SpaceMother.basicSpace(param.getCurrentUserId()), 0))
+            .toList();
         var premiumSpaces = IntStream.range(0, 5)
-                .mapToObj(i -> new LoadSpaceListPort.SpaceWithAssessmentCount(
-                        SpaceMother.premiumSpace(param.getCurrentUserId()), 0))
-                .toList();
+            .mapToObj(i -> new LoadSpaceListPort.SpaceWithAssessmentCount(
+                SpaceMother.premiumSpace(param.getCurrentUserId()), 0))
+            .toList();
         var portResult = Stream.concat(basicSpaces.stream(), premiumSpaces.stream()).toList();
 
         when(loadSpaceListPort.loadSpaceList(param.getCurrentUserId()))
-                .thenReturn(portResult);
+            .thenReturn(portResult);
 
         var result = service.getSpaceList(param);
         assertEquals(limit, result.size());
         assertThat(result)
-                .zipSatisfy(portResult.stream().limit(limit).toList(), (expected, actual) -> {
-                    assertEquals(expected.id(), actual.space().getId());
-                    assertEquals(expected.title(), actual.space().getTitle());
-                    assertEquals(expected.type().code(), actual.space().getType().getCode());
-                    assertEquals(expected.type().title(), actual.space().getType().getTitle());
-                });
+            .zipSatisfy(portResult.stream().limit(limit).toList(), (expected, actual) -> {
+                assertEquals(expected.id(), actual.space().getId());
+                assertEquals(expected.title(), actual.space().getTitle());
+                assertEquals(expected.type().code(), actual.space().getType().getCode());
+                assertEquals(expected.type().title(), actual.space().getType().getTitle());
+            });
         assertThat(result).filteredOn(GetTopSpacesUseCase.SpaceListItem::isDefault).hasSize(1);
         assertThat(result).filteredOn(i -> i.type().code().equals(SpaceType.BASIC.getCode())).hasSize(6);
         assertThat(result).filteredOn(i -> i.type().code().equals(SpaceType.PREMIUM.getCode())).hasSize(4);
         var defaultItem = result.stream()
-                .filter(GetTopSpacesUseCase.SpaceListItem::isDefault)
-                .findFirst()
-                .orElseThrow();
+            .filter(GetTopSpacesUseCase.SpaceListItem::isDefault)
+            .findFirst()
+            .orElseThrow();
         assertEquals(SpaceType.PREMIUM.getCode(), defaultItem.type().code());
 
         verify(appSpecProperties, times(1)).getSpace();
@@ -276,12 +289,12 @@ class GetTopSpacesServiceTest {
         assertThat(result).filteredOn(GetTopSpacesUseCase.SpaceListItem::isDefault).hasSize(1);
         assertTrue(result.getFirst().isDefault());
         assertThat(result)
-                .zipSatisfy(portResult, (expected, actual) -> {
-                    assertEquals(expected.id(), actual.space().getId());
-                    assertEquals(expected.title(), actual.space().getTitle());
-                    assertEquals(expected.type().code(), actual.space().getType().getCode());
-                    assertEquals(expected.type().title(), actual.space().getType().getTitle());
-                });
+            .zipSatisfy(portResult, (expected, actual) -> {
+                assertEquals(expected.id(), actual.space().getId());
+                assertEquals(expected.title(), actual.space().getTitle());
+                assertEquals(expected.type().code(), actual.space().getType().getCode());
+                assertEquals(expected.type().title(), actual.space().getType().getTitle());
+            });
 
         verify(appSpecProperties, times(1)).getSpace();
         verifyNoInteractions(createSpacePort, createSpaceUserAccessPort);
@@ -303,12 +316,12 @@ class GetTopSpacesServiceTest {
         assertThat(result).filteredOn(GetTopSpacesUseCase.SpaceListItem::isDefault).hasSize(1);
         assertTrue(result.getFirst().isDefault());
         assertThat(result)
-                .zipSatisfy(portResult, (expected, actual) -> {
-                    assertEquals(expected.id(), actual.space().getId());
-                    assertEquals(expected.title(), actual.space().getTitle());
-                    assertEquals(expected.type().code(), actual.space().getType().getCode());
-                    assertEquals(expected.type().title(), actual.space().getType().getTitle());
-                });
+            .zipSatisfy(portResult, (expected, actual) -> {
+                assertEquals(expected.id(), actual.space().getId());
+                assertEquals(expected.title(), actual.space().getTitle());
+                assertEquals(expected.type().code(), actual.space().getType().getCode());
+                assertEquals(expected.type().title(), actual.space().getType().getTitle());
+            });
 
         verify(appSpecProperties, times(1)).getSpace();
         verifyNoInteractions(createSpacePort, createSpaceUserAccessPort);
@@ -331,6 +344,7 @@ class GetTopSpacesServiceTest {
         assertNotNull(capturedSpace.getLastModificationTime());
         assertEquals(param.getCurrentUserId(), capturedSpace.getCreatedBy());
         assertEquals(param.getCurrentUserId(), capturedSpace.getLastModifiedBy());
+        assertNull(capturedSpace.getSubscriptionExpiry());
     }
 
     private AppSpecProperties appSpecProperties() {
@@ -348,6 +362,6 @@ class GetTopSpacesServiceTest {
 
     private GetTopSpacesUseCase.Param.ParamBuilder paramBuilder() {
         return GetTopSpacesUseCase.Param.builder()
-                .currentUserId(UUID.randomUUID());
+            .currentUserId(UUID.randomUUID());
     }
 }
