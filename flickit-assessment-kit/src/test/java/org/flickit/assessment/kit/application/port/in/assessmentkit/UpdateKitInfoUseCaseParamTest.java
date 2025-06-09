@@ -168,7 +168,7 @@ class UpdateKitInfoUseCaseParamTest {
 
         throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(a -> a.translations(Map.of("EN", new KitTranslation("title", "summary", "about",
-                new KitTranslation.MetadataTranslation(RandomStringUtils.randomAlphabetic(301), "context"))))));
+                new KitTranslation.MetadataTranslation(RandomStringUtils.randomAlphabetic(1001), "context"))))));
         assertThat(throwable).hasMessage("translations[EN].metadata.goal: " + TRANSLATION_ASSESSMENT_KIT_METADATA_GOAL_SIZE_MAX);
 
         throwable = assertThrows(ConstraintViolationException.class,
@@ -178,7 +178,7 @@ class UpdateKitInfoUseCaseParamTest {
 
         throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(a -> a.translations(Map.of("EN", new KitTranslation("title", "summary", "about",
-                new KitTranslation.MetadataTranslation("goal", RandomStringUtils.randomAlphabetic(301)))))));
+                new KitTranslation.MetadataTranslation("goal", RandomStringUtils.randomAlphabetic(1001)))))));
         assertThat(throwable).hasMessage("translations[EN].metadata.context: " + TRANSLATION_ASSESSMENT_KIT_METADATA_CONTEXT_SIZE_MAX);
     }
 
@@ -189,7 +189,7 @@ class UpdateKitInfoUseCaseParamTest {
         assertThat(throwable).hasMessage("metadata.goal: " + KIT_METADATA_GOAL_SIZE_MIN);
 
         throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(a -> a.metadata(new KitMetadata(RandomStringUtils.randomAlphabetic(301), "context"))));
+            () -> createParam(a -> a.metadata(new KitMetadata(RandomStringUtils.randomAlphabetic(1001), "context"))));
         assertThat(throwable).hasMessage("metadata.goal: " + KIT_METADATA_GOAL_SIZE_MAX);
 
         throwable = assertThrows(ConstraintViolationException.class,
@@ -197,7 +197,7 @@ class UpdateKitInfoUseCaseParamTest {
         assertThat(throwable).hasMessage("metadata.context: " + KIT_METADATA_CONTEXT_SIZE_MIN);
 
         throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(a -> a.metadata(new KitMetadata("goal", RandomStringUtils.randomAlphabetic(301)))));
+            () -> createParam(a -> a.metadata(new KitMetadata("goal", RandomStringUtils.randomAlphabetic(1001)))));
         assertThat(throwable).hasMessage("metadata.context: " + KIT_METADATA_CONTEXT_SIZE_MAX);
     }
 
