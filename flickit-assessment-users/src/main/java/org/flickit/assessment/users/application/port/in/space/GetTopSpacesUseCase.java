@@ -14,7 +14,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 
 public interface GetTopSpacesUseCase {
 
-    List<SpaceListItem> getSpaceList(Param param);
+    Result getSpaceList(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
@@ -30,12 +30,15 @@ public interface GetTopSpacesUseCase {
         }
     }
 
-    record SpaceListItem(long id, String title, Type type, boolean isDefault) {
+    record Result(List<SpaceListItem> items) {
 
-        public record Type(String code, String title) {
+        public record SpaceListItem(long id, String title, Type type, boolean isDefault) {
 
-            public static Type of(SpaceType spaceType) {
-                return new Type(spaceType.getCode(), spaceType.getTitle());
+            public record Type(String code, String title) {
+
+                public static Type of(SpaceType spaceType) {
+                    return new Type(spaceType.getCode(), spaceType.getTitle());
+                }
             }
         }
     }
