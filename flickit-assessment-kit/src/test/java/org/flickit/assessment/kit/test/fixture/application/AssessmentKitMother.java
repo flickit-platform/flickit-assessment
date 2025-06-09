@@ -22,6 +22,10 @@ public class AssessmentKitMother {
     private static long id = 134L;
 
     public static AssessmentKit simpleKit() {
+        return kitWithPrice(0);
+    }
+
+    public static AssessmentKit kitWithPrice(long price) {
         return new AssessmentKit(
             id++,
             CODE + id,
@@ -44,7 +48,7 @@ public class AssessmentKitMother {
             id++,
             null,
             null,
-            0);
+            price);
     }
 
     public static AssessmentKit notPublishedKit() {
