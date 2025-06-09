@@ -43,7 +43,8 @@ public class AssessmentKitMother {
             null,
             id++,
             null,
-            null);
+            null,
+            0);
     }
 
     public static AssessmentKit notPublishedKit() {
@@ -64,7 +65,8 @@ public class AssessmentKitMother {
             null,
             null,
             null,
-            id++);
+            id++,
+            0);
     }
 
     public static AssessmentKit kitWithMetadata(KitMetadata metadata) {
@@ -89,7 +91,8 @@ public class AssessmentKitMother {
             null,
             id++,
             metadata,
-            null);
+            null,
+            0);
     }
 
     public static AssessmentKit completeKit(List<Subject> subjects,
@@ -114,7 +117,8 @@ public class AssessmentKitMother {
             questionnaires,
             measures,
             reusableAnswerRanges,
-            id++);
+            id++,
+            0);
     }
 
     public static AssessmentKit kitWithMaturityLevels(List<MaturityLevel> maturityLevels) {
@@ -135,7 +139,8 @@ public class AssessmentKitMother {
             null,
             null,
             null,
-            id++);
+            id++,
+            0);
     }
 
     public static AssessmentKit kitWithQuestionnaires(List<Questionnaire> questionnaires) {
@@ -156,7 +161,8 @@ public class AssessmentKitMother {
             questionnaires,
             null,
             null,
-            id++);
+            id++,
+            0);
     }
 
     public static AssessmentKit kitWithMeasures(List<Measure> measures) {
@@ -177,7 +183,8 @@ public class AssessmentKitMother {
             null,
             measures,
             null,
-            id++);
+            id++,
+            0);
     }
 
     public static AssessmentKit kitWithSubjects(List<Subject> subjects) {
@@ -202,7 +209,8 @@ public class AssessmentKitMother {
             null,
             null,
             answerRanges,
-            id++);
+            id++,
+            0);
     }
 
     public static AssessmentKit kitWithSubjects(List<Subject> subjects, boolean isPrivate) {
@@ -223,7 +231,8 @@ public class AssessmentKitMother {
             null,
             null,
             null,
-            id++);
+            id++,
+            0);
     }
 
     public static AssessmentKit kitWithSubjectsAndQuestionnaires(List<Subject> subjects, List<Questionnaire> questionnaires) {
@@ -244,7 +253,8 @@ public class AssessmentKitMother {
             questionnaires,
             null,
             null,
-            id++);
+            id++,
+            0);
     }
 
     public static AssessmentKit privateKit() {
@@ -265,7 +275,8 @@ public class AssessmentKitMother {
             null,
             null,
             null,
-            id++);
+            id++,
+            0);
     }
 
     public static AssessmentKit kitWithKitVersionId(Long activeVersionId) {
@@ -286,6 +297,7 @@ public class AssessmentKitMother {
             null,
             null,
             null,
-            activeVersionId);
+            activeVersionId,
+            0);
     }
 }

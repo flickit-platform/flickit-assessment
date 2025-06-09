@@ -105,7 +105,8 @@ public class AssessmentKitMapper {
             entity.getMetadata() != null
                 ? JsonUtils.fromJson(entity.getMetadata(), KitMetadata.class)
                 : null,
-            null);
+            null,
+            entity.getPrice());
     }
 
     public static AssessmentKit mapToDomainModel(KitWithDraftVersionIdView view) {
@@ -127,7 +128,8 @@ public class AssessmentKitMapper {
             null,
             null,
             null,
-            entity.getKitVersionId());
+            entity.getKitVersionId(),
+            entity.getPrice());
         kit.setDraftVersionId(view.getDraftVersionId());
         return kit;
     }
@@ -166,7 +168,8 @@ public class AssessmentKitMapper {
             null,
             entity.getKitVersionId(),
             metadata,
-            null);
+            null,
+            entity.getPrice());
     }
 
     private static KitTranslation getTranslation(AssessmentKitJpaEntity assessmentKitEntity, @Nullable KitLanguage language) {
