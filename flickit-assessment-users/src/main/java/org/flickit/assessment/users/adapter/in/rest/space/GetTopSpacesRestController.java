@@ -18,8 +18,18 @@ public class GetTopSpacesRestController {
     private final UserContext userContext;
 
     @GetMapping("/top-spaces")
-    public List<SpaceListItem> getTopSpaces() {
+    public List<GetTopSpacesResponseDto> getTopSpaces() {
         UUID currentUserId = userContext.getUser().id();
-        return getTopSpacesUseCase.getSpaceList(new Param(currentUserId));
+        var result = getTopSpacesUseCase.getSpaceList(new Param(currentUserId));
+        return toResponseDto(result);
+    }
+
+    private List<GetTopSpacesResponseDto> toResponseDto(List<SpaceListItem> result) {
+        return result.stream()
+            .map(r -> new GetTopSpacesResponseDto(r.id(),
+                r.title(),
+                GetTopSpacesResponseDto.Type.of(r.type()),
+                r.isDefault()))
+            .toList();
     }
 }
