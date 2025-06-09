@@ -68,4 +68,16 @@ public class SpaceTestHelper {
             .extract()
             .response();
     }
+
+    public Response getTopSpaces(ScenarioContext context, String lang) {
+        return given()
+            .header("Accept-Language", lang)
+            .contentType(JSON)
+            .auth().oauth2(context.getCurrentUser().getJwt())
+            .when()
+            .get("/assessment-core/api/top-spaces")
+            .then()
+            .extract()
+            .response();
+    }
 }
