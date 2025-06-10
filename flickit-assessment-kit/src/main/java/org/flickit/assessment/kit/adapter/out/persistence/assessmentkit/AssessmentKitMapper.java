@@ -35,6 +35,7 @@ public class AssessmentKitMapper {
             param.lang().getId(),
             null,
             null,
+            0L, // TODO: Replace with actual price from input when pricing support is implemented
             LocalDateTime.now(),
             LocalDateTime.now(),
             param.createdBy(),
@@ -66,6 +67,7 @@ public class AssessmentKitMapper {
             param.lang() != null ? param.lang().getId() : entity.getLanguageId(),
             translations,
             metadata,
+            0L, // TODO: Replace with actual price from input when pricing support is implemented
             entity.getCreationTime(),
             param.lastModificationTime(),
             entity.getCreatedBy(),
@@ -103,7 +105,8 @@ public class AssessmentKitMapper {
             entity.getMetadata() != null
                 ? JsonUtils.fromJson(entity.getMetadata(), KitMetadata.class)
                 : null,
-            null);
+            null,
+            entity.getPrice());
     }
 
     public static AssessmentKit mapToDomainModel(KitWithDraftVersionIdView view) {
@@ -125,7 +128,8 @@ public class AssessmentKitMapper {
             null,
             null,
             null,
-            entity.getKitVersionId());
+            entity.getKitVersionId(),
+            entity.getPrice());
         kit.setDraftVersionId(view.getDraftVersionId());
         return kit;
     }
@@ -164,7 +168,8 @@ public class AssessmentKitMapper {
             null,
             entity.getKitVersionId(),
             metadata,
-            null);
+            null,
+            entity.getPrice());
     }
 
     private static KitTranslation getTranslation(AssessmentKitJpaEntity assessmentKitEntity, @Nullable KitLanguage language) {
