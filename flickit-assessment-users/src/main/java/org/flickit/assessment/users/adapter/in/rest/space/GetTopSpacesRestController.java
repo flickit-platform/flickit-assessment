@@ -7,6 +7,7 @@ import org.flickit.assessment.users.application.port.in.space.GetTopSpacesUseCas
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -17,8 +18,20 @@ public class GetTopSpacesRestController {
     private final UserContext userContext;
 
     @GetMapping("/top-spaces")
-    public Result getTopSpaces() {
+    public GetTopSpacesResponseDto getTopSpaces() {
         UUID currentUserId = userContext.getUser().id();
-        return getTopSpacesUseCase.getSpaceList(new Param(currentUserId));
+        var result = getTopSpacesUseCase.getSpaceList(new Param(currentUserId));
+        return toResponseDto(result.items());
+    }
+
+    private GetTopSpacesResponseDto toResponseDto(List<Result.SpaceListItem> items) {
+        var result = items.stream()
+            .map(r -> new GetTopSpacesResponseDto.SpaceListItem(r.id(),
+                r.title(),
+                GetTopSpacesResponseDto.SpaceListItem.Type.of(r.type()),
+                r.isDefault()))
+            .toList();
+
+        return new GetTopSpacesResponseDto(result);
     }
 }

@@ -187,7 +187,7 @@ class GetTopSpacesServiceTest {
     }
 
     @Test
-    void testGetTopSpaces_whenOnePremiumAndOneBasicSpacesWithCapacityExist_thenReturnPremiumSpace() {
+    void testGetTopSpaces_whenOnePremiumAndOneBasicSpaceWithCapacityExist_thenReturnBothAndPremiumSpaceIsDefault() {
         var basicSpaceItem = new LoadSpaceListPort.SpaceWithAssessmentCount(basicSpace, 0);
         var premiumSpaceItem = new LoadSpaceListPort.SpaceWithAssessmentCount(premiumSpace, 0);
         var portResult = List.of(basicSpaceItem, premiumSpaceItem);
