@@ -122,7 +122,8 @@ public class LoadAssessmentKitFullInfoAdapter implements
             questionnaires,
             measures,
             reusableAnswerRanges,
-            activeVersionId);
+            activeVersionId,
+            entity.getPrice());
     }
 
     private void setLevelCompetences(List<MaturityLevel> levels, Long kitVersionId) {

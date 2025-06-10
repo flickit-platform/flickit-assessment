@@ -7,4 +7,6 @@ public interface KitWithExpertGroupView {
     AssessmentKitJpaEntity getKit();
 
     ExpertGroupJpaEntity getExpertGroup();
+
+    Boolean getKitUserAccess();
 }

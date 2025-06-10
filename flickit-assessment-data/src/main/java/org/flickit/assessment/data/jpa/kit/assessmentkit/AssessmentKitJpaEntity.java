@@ -57,6 +57,9 @@ public class AssessmentKitJpaEntity {
     @Column(name = "metadata")
     private String metadata;
 
+    @Column(name = "price", nullable = false)
+    private Long price;
+
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
 

@@ -18,6 +18,6 @@ public interface LoadPublishedKitListPort {
 
     PaginatedResponse<Result> loadPrivateAndPublicKits(UUID currentUserId, @Nullable Set<KitLanguage> kitLanguages, int page, int size);
 
-    record Result(AssessmentKit kit, ExpertGroup expertGroup) {
+    record Result(AssessmentKit kit, ExpertGroup expertGroup, Boolean hasKitAccess) {
     }
 }

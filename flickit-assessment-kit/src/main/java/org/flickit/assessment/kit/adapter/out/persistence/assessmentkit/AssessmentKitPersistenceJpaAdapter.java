@@ -253,7 +253,8 @@ public class AssessmentKitPersistenceJpaAdapter implements
         var items = pageResult.getContent().stream()
             .map(v -> new LoadPublishedKitListPort.Result(
                 mapToDomainModel(v.getKit(), language),
-                ExpertGroupMapper.mapToDomainModel(v.getExpertGroup())))
+                ExpertGroupMapper.mapToDomainModel(v.getExpertGroup()),
+                v.getKitUserAccess()))
             .toList();
 
         return new PaginatedResponse<>(
