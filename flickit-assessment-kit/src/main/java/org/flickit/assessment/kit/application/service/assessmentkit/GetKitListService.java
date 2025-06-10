@@ -42,12 +42,7 @@ public class GetKitListService implements GetKitListUseCase {
     @Override
     public PaginatedResponse<KitListItem> getKitList(Param param) {
         var kitLanguages = resolveKitLanguages(param.getLangs());
-        PaginatedResponse<LoadPublishedKitListPort.Result> kitsPage;
-
-        if (param.getCurrentUserId() == null)
-            kitsPage = loadPublishedKitListPort.loadPublicKits(kitLanguages, param.getPage(), param.getSize());
-        else
-            kitsPage = getPaginatedKits(param, kitLanguages);
+        var kitsPage = getPaginatedKits(param, kitLanguages);
 
         var ids = kitsPage.getItems().stream()
             .map((Result t) -> t.kit().getId()).toList();
