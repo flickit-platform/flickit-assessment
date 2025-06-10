@@ -117,7 +117,9 @@ public class GetKitListService implements GetKitListUseCase {
                 .toList(),
             kitLanguages.stream()
                 .map(KitLanguage::getTitle)
-                .toList());
+                .toList(),
+            item.kit().getPrice() == 0,
+            !item.kit().isPrivate() && item.kit().getPrice() == 0 || item.hasKitAccess());
     }
 
     private KitListItem.ExpertGroup toExpertGroup(ExpertGroup expertGroup) {
