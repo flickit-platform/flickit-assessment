@@ -55,14 +55,7 @@ class GetPublicKitListServiceTest {
         AssessmentKit assessmentKit = kitWithPrice(0);
         long kitId = assessmentKit.getId();
         List<Long> kitIds = List.of(kitId);
-        PaginatedResponse<LoadPublishedKitListPort.Result> expectedKitsPage = new PaginatedResponse<>(
-            List.of(new LoadPublishedKitListPort.Result(assessmentKit, expertGroup)),
-            0,
-            10,
-            AssessmentKitJpaEntity.Fields.title,
-            Sort.Direction.ASC.name().toLowerCase(),
-            1
-        );
+        var expectedKitsPage = getExpectedKitsPage(assessmentKit);
 
         when(loadPublishedKitListPort.loadPublicKits(Set.of(KitLanguage.EN), param.getPage(), param.getSize()))
             .thenReturn(expectedKitsPage);
@@ -90,14 +83,7 @@ class GetPublicKitListServiceTest {
         AssessmentKit assessmentKit = kitWithPrice(100);
         long kitId = assessmentKit.getId();
         List<Long> kitIds = List.of(kitId);
-        PaginatedResponse<LoadPublishedKitListPort.Result> expectedKitsPage = new PaginatedResponse<>(
-            List.of(new LoadPublishedKitListPort.Result(assessmentKit, expertGroup)),
-            0,
-            10,
-            AssessmentKitJpaEntity.Fields.title,
-            Sort.Direction.ASC.name().toLowerCase(),
-            1
-        );
+        var expectedKitsPage = getExpectedKitsPage(assessmentKit);
 
         when(loadPublishedKitListPort.loadPublicKits(Set.of(KitLanguage.EN), param.getPage(), param.getSize()))
             .thenReturn(expectedKitsPage);
@@ -117,6 +103,17 @@ class GetPublicKitListServiceTest {
         assertEquals(KitLanguage.EN.getTitle(), item.languages().getFirst());
         assertExpertGroup(item);
         assertFalse(item.isFree());
+    }
+
+    private PaginatedResponse<LoadPublishedKitListPort.Result> getExpectedKitsPage(AssessmentKit assessmentKit) {
+        return new PaginatedResponse<>(
+            List.of(new LoadPublishedKitListPort.Result(assessmentKit, expertGroup)),
+            0,
+            10,
+            AssessmentKitJpaEntity.Fields.title,
+            Sort.Direction.ASC.name().toLowerCase(),
+            1
+        );
     }
 
     private static void assertPage(PaginatedResponse<LoadPublishedKitListPort.Result> expectedKitsPage, PaginatedResponse<GetPublicKitListUseCase.KitListItem> kitList) {
