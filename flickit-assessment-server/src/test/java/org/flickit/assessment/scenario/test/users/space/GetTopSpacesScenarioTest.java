@@ -110,12 +110,11 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
         assertEquals(spaceTitle, space.title());
         assertEquals(SpaceType.BASIC.getCode(), space.type().code());
         assertTrue(space.isDefault());
-
         assertEquals(countBefore, countAfter);
     }
 
     @Test
-    void topSpaces_whenOnlyOneBasicSpaceExistsAndIsFul() {
+    void topSpaces_whenOnlyOneBasicSpaceExistsAndIsFull() {
         var spaceTitle = "Space Title";
         var spaceId = createBasicSpace(spaceTitle);
         createAssessments(spaceId, appSpecProperties.getSpace().getMaxBasicSpaces());
@@ -127,11 +126,10 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
             .statusCode(403)
             .extract().as(ErrorResponseDto.class);
 
-        assertEquals(UPGRADE_REQUIRED, response.code());
-        assertNotNull(response.message());
-
         final int countAfter = jpaTemplate.count(SpaceJpaEntity.class);
 
+        assertEquals(UPGRADE_REQUIRED, response.code());
+        assertNotNull(response.message());
         assertEquals(countBefore, countAfter);
     }
 
@@ -155,7 +153,6 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
         assertEquals(spaceTitle, space.title());
         assertEquals(SpaceType.PREMIUM.getCode(), space.type().code());
         assertTrue(space.isDefault());
-
         assertEquals(countBefore, countAfter);
     }
 
@@ -182,7 +179,6 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
         assertEquals(premiumSpaceTitle, space.title());
         assertEquals(SpaceType.PREMIUM.getCode(), space.type().code());
         assertTrue(space.isDefault());
-
         assertEquals(countBefore, countAfter);
     }
 
@@ -209,7 +205,6 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
         var basicSpace = items.stream().filter(e -> e.type().code().equals(SpaceType.BASIC.getCode())).toList().getFirst();
         assertEquals(basicSpaceId, basicSpace.id());
         assertFalse(basicSpace.isDefault());
-
         assertEquals(countBefore, countAfter);
     }
 
@@ -236,7 +231,6 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
         assertEquals(basicSpaceTitle1, space.title());
         assertEquals(SpaceType.BASIC.getCode(), space.type().code());
         assertTrue(space.isDefault());
-
         assertEquals(countBefore, countAfter);
     }
 
@@ -262,7 +256,6 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
         assertEquals(SpaceType.PREMIUM.getCode(), defaultSpace.type().code());
         assertThat(items.stream().filter(e -> e.type().code().equals(SpaceType.BASIC.getCode()))).hasSize(1);
         assertThat(items.stream().filter(e -> e.type().code().equals(SpaceType.PREMIUM.getCode()))).hasSize(9);
-
         assertEquals(countBefore, countAfter);
     }
 
@@ -285,7 +278,6 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
         assertTrue(defaultSpace.isDefault());
         assertEquals(SpaceType.PREMIUM.getCode(), defaultSpace.type().code());
         assertThat(items.stream().filter(e -> e.type().code().equals(SpaceType.PREMIUM.getCode()))).hasSize(3);
-
         assertEquals(countBefore, countAfter);
     }
 
@@ -297,6 +289,7 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
         final int countBefore = jpaTemplate.count(SpaceJpaEntity.class);
 
         var response = getTopSpacesResponse(Locale.ENGLISH.getLanguage());
+
         final int countAfter = jpaTemplate.count(SpaceJpaEntity.class);
 
         assertNotNull(response);
@@ -306,7 +299,6 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
         var defaultSpace = items.stream().filter(GetTopSpacesResponseDto.SpaceListItem::isDefault).toList().getFirst();
         assertEquals(SpaceType.BASIC.getCode(), defaultSpace.type().code());
         assertThat(items.stream().filter(GetTopSpacesResponseDto.SpaceListItem::isDefault)).hasSize(1);
-
         assertEquals(countBefore, countAfter);
     }
 
