@@ -82,7 +82,8 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
             languages,
             new ExpertGroup(expertGroup.getId(),
                 expertGroup.getTitle(),
-                getPictureDownloadLink(expertGroup.getPicture())));
+                getPictureDownloadLink(expertGroup.getPicture())),
+            kit.getPrice() == 0);
     }
 
     private void checkAccess(AssessmentKit kit, Param param) {

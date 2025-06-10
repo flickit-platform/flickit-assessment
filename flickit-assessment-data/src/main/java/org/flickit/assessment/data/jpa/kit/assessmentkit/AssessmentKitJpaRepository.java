@@ -183,9 +183,17 @@ public interface AssessmentKitJpaRepository extends
     @Query("""
             SELECT k.id
             FROM AssessmentKitJpaEntity k
-            WHERE k.id = :kitId and k.published AND (k.isPrivate = FALSE
-                OR (k.isPrivate = TRUE
-                AND (k.id IN (SELECT kua.kitId FROM KitUserAccessJpaEntity kua WHERE kua.userId  = :userId))))
+            WHERE k.id = :kitId
+              AND k.published
+              AND ((k.isPrivate = false AND k.price = 0)
+                OR ((k.isPrivate = true OR k.price > 0)
+                  AND EXISTS (
+                    SELECT 1
+                    FROM KitUserAccessJpaEntity kua
+                    WHERE kua.userId = :userId AND kua.kitId = k.id
+                  )
+                )
+              )
         """)
     Optional<Long> existsByUserId(@Param("kitId") long kitId, @Param("userId") UUID userId);
 }
