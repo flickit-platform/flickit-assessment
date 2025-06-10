@@ -53,8 +53,8 @@ class GetKitListServiceTest {
     @Mock
     private CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
-    private final static ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
-    private final static String expertGroupPictureUrl = "https://picureLink";
+    private static final ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
+    private static final String EXPERT_GROUP_PICTURE_URL = "https://picureLink";
 
     @Test
     void testGetKitList_whenPublicKitsAreWantedAndResultIsFreeKitAndUserDoesNotHaveAccess_thenReturnPublicKits() {
@@ -76,7 +76,7 @@ class GetKitListServiceTest {
         when(loadKitLanguagesPort.loadByKitIds(kitIds)).thenReturn(
             Map.of(kitId, List.of(KitLanguage.EN)));
         when(createFileDownloadLinkPort.createDownloadLink(any(), any()))
-            .thenReturn(expertGroupPictureUrl);
+            .thenReturn(EXPERT_GROUP_PICTURE_URL);
 
         var result = service.getKitList(param);
         assertPage(expectedKitsPage, result);
@@ -110,7 +110,7 @@ class GetKitListServiceTest {
         when(loadKitLanguagesPort.loadByKitIds(kitIds)).thenReturn(
             Map.of(kitId, List.of(KitLanguage.EN)));
         when(createFileDownloadLinkPort.createDownloadLink(any(), any()))
-            .thenReturn(expertGroupPictureUrl);
+            .thenReturn(EXPERT_GROUP_PICTURE_URL);
 
         var result = service.getKitList(param);
         assertPage(expectedKitsPage, result);
@@ -144,7 +144,7 @@ class GetKitListServiceTest {
         when(loadKitLanguagesPort.loadByKitIds(kitIds)).thenReturn(
             Map.of(kitId, List.of(KitLanguage.EN)));
         when(createFileDownloadLinkPort.createDownloadLink(any(), any()))
-            .thenReturn(expertGroupPictureUrl);
+            .thenReturn(EXPERT_GROUP_PICTURE_URL);
 
         var result = service.getKitList(param);
         assertPage(expectedKitsPage, result);
@@ -180,7 +180,7 @@ class GetKitListServiceTest {
         when(loadKitLanguagesPort.loadByKitIds(kitIds)).thenReturn(
             Map.of(kitId, List.of(KitLanguage.EN)));
         when(createFileDownloadLinkPort.createDownloadLink(any(), any()))
-            .thenReturn(expertGroupPictureUrl);
+            .thenReturn(EXPERT_GROUP_PICTURE_URL);
 
         var result = service.getKitList(param);
         assertPage(expectedKitsPage, result);
@@ -250,7 +250,7 @@ class GetKitListServiceTest {
     private static void assertExpertGroup(GetKitListUseCase.KitListItem item) {
         assertEquals(expertGroup.getId(), item.expertGroup().id());
         assertEquals(expertGroup.getTitle(), item.expertGroup().title());
-        assertEquals(expertGroupPictureUrl, item.expertGroup().picture());
+        assertEquals(EXPERT_GROUP_PICTURE_URL, item.expertGroup().picture());
     }
 
     private Param createParam(Consumer<Param.ParamBuilder> changer) {
