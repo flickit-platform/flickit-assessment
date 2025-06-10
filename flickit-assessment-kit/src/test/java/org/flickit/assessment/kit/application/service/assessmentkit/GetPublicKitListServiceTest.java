@@ -46,9 +46,9 @@ class GetPublicKitListServiceTest {
     @Mock
     private CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
-    GetPublicKitListUseCase.Param param = createParam(GetPublicKitListUseCase.Param.ParamBuilder::build);
-    ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
-    String expertGroupPictureUrl = "https://picureLink";
+    private final GetPublicKitListUseCase.Param param = createParam(GetPublicKitListUseCase.Param.ParamBuilder::build);
+    private final ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
+    private final String expertGroupPictureUrl = "https://picureLink";
 
     @Test
     void testGetPublicList_whenPublicKitsAreWantedAnkAndKitIsFree_thenReturnPublicKits() {
@@ -66,8 +66,9 @@ class GetPublicKitListServiceTest {
 
         when(loadPublishedKitListPort.loadPublicKits(Set.of(KitLanguage.EN), param.getPage(), param.getSize()))
             .thenReturn(expectedKitsPage);
+        int likes = 3, assessmentsCount = 15;
         when(countKitStatsPort.countKitsStats(kitIds))
-            .thenReturn(List.of(new CountKitListStatsPort.Result(kitId, 3, 15)));
+            .thenReturn(List.of(new CountKitListStatsPort.Result(kitId, likes, assessmentsCount)));
         when(loadKitLanguagesPort.loadByKitIds(kitIds)).thenReturn(
             Map.of(kitId, List.of(KitLanguage.EN)));
         when(createFileDownloadLinkPort.createDownloadLink(any(), any()))
@@ -78,15 +79,9 @@ class GetPublicKitListServiceTest {
         assertPage(expectedKitsPage, kitList);
 
         var item = kitList.getItems().getFirst();
-        assertEquals(assessmentKit.getId(), item.id());
-        assertEquals(assessmentKit.getTitle(), item.title());
-        assertEquals(assessmentKit.getSummary(), item.summary());
-        assertEquals(3, item.likes());
-        assertEquals(15, item.assessmentsCount());
+        assertAssessmentKit(assessmentKit, item, likes, assessmentsCount);
         assertEquals(KitLanguage.EN.getTitle(), item.languages().getFirst());
-        assertEquals(expertGroup.getId(), item.expertGroup().id());
-        assertEquals(expertGroup.getTitle(), item.expertGroup().title());
-        assertEquals(expertGroupPictureUrl, item.expertGroup().picture());
+        assertExpertGroup(item);
         assertTrue(item.isFree());
     }
 
@@ -106,8 +101,9 @@ class GetPublicKitListServiceTest {
 
         when(loadPublishedKitListPort.loadPublicKits(Set.of(KitLanguage.EN), param.getPage(), param.getSize()))
             .thenReturn(expectedKitsPage);
+        int likes = 2, assessmentsCount = 10;
         when(countKitStatsPort.countKitsStats(kitIds))
-            .thenReturn(List.of(new CountKitListStatsPort.Result(kitId, 3, 15)));
+            .thenReturn(List.of(new CountKitListStatsPort.Result(kitId, likes, assessmentsCount)));
         when(loadKitLanguagesPort.loadByKitIds(kitIds)).thenReturn(
             Map.of(kitId, List.of(KitLanguage.EN)));
         when(createFileDownloadLinkPort.createDownloadLink(any(), any()))
@@ -116,17 +112,10 @@ class GetPublicKitListServiceTest {
         var kitList = service.getPublicKitList(param);
 
         assertPage(expectedKitsPage, kitList);
-
         var item = kitList.getItems().getFirst();
-        assertEquals(assessmentKit.getId(), item.id());
-        assertEquals(assessmentKit.getTitle(), item.title());
-        assertEquals(assessmentKit.getSummary(), item.summary());
-        assertEquals(3, item.likes());
-        assertEquals(15, item.assessmentsCount());
+        assertAssessmentKit(assessmentKit, item, likes, assessmentsCount);
         assertEquals(KitLanguage.EN.getTitle(), item.languages().getFirst());
-        assertEquals(expertGroup.getId(), item.expertGroup().id());
-        assertEquals(expertGroup.getTitle(), item.expertGroup().title());
-        assertEquals(expertGroupPictureUrl, item.expertGroup().picture());
+        assertExpertGroup(item);
         assertFalse(item.isFree());
     }
 
@@ -137,6 +126,20 @@ class GetPublicKitListServiceTest {
         assertEquals(expectedKitsPage.getOrder(), kitList.getOrder());
         assertEquals(expectedKitsPage.getTotal(), kitList.getTotal());
         assertEquals(expectedKitsPage.getItems().size(), kitList.getItems().size());
+    }
+
+    private static void assertAssessmentKit(AssessmentKit assessmentKit, GetPublicKitListUseCase.KitListItem item, int likes, int assessmentsCount) {
+        assertEquals(assessmentKit.getId(), item.id());
+        assertEquals(assessmentKit.getTitle(), item.title());
+        assertEquals(assessmentKit.getSummary(), item.summary());
+        assertEquals(likes, item.likes());
+        assertEquals(assessmentsCount, item.assessmentsCount());
+    }
+
+    private void assertExpertGroup(GetPublicKitListUseCase.KitListItem item) {
+        assertEquals(expertGroup.getId(), item.expertGroup().id());
+        assertEquals(expertGroup.getTitle(), item.expertGroup().title());
+        assertEquals(expertGroupPictureUrl, item.expertGroup().picture());
     }
 
     private GetPublicKitListUseCase.Param createParam(Consumer<GetPublicKitListUseCase.Param.ParamBuilder> changer) {
