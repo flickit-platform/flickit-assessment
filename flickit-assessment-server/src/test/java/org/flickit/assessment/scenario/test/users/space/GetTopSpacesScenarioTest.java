@@ -56,20 +56,20 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
     void topSpaces_whenNoSpaceExistedLangIsEN() {
         final int countBefore = jpaTemplate.count(SpaceJpaEntity.class);
 
-        List<GetTopSpacesResponseDto> response = spaceHelper.getTopSpaces(context, KitLanguage.EN.getCode())
+        var response = spaceHelper.getTopSpaces(context, KitLanguage.EN.getCode())
             .then()
             .statusCode(200)
             .extract()
             .body()
-            .jsonPath()
-            .getList(".", GetTopSpacesResponseDto.class);
+            .as(GetTopSpacesResponseDto.class);
 
         final int countAfter = jpaTemplate.count(SpaceJpaEntity.class);
 
         assertNotNull(response);
-        assertFalse(response.isEmpty());
-        assertEquals(1, response.size());
-        GetTopSpacesResponseDto space = response.getFirst();
+        var items = response.items();
+        assertFalse(items.isEmpty());
+        assertEquals(1, items.size());
+        GetTopSpacesResponseDto.SpaceListItem space = items.getFirst();
         assertEquals(MessageBundle.message(SPACE_DRAFT_TITLE, Locale.ENGLISH), space.title());
         assertEquals(SpaceType.BASIC.getCode(), space.type().code());
         assertEquals(SpaceType.BASIC.getTitle(), space.type().title());
@@ -81,20 +81,20 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
     void topSpaces_whenNoSpaceExistedLangIsFA() {
         final int countBefore = jpaTemplate.count(SpaceJpaEntity.class);
 
-        List<GetTopSpacesResponseDto> response = spaceHelper.getTopSpaces(context, KitLanguage.FA.getCode())
+        var response = spaceHelper.getTopSpaces(context, KitLanguage.FA.getCode())
             .then()
             .statusCode(200)
             .extract()
             .body()
-            .jsonPath()
-            .getList(".", GetTopSpacesResponseDto.class);
+            .as(GetTopSpacesResponseDto.class);
 
         final int countAfter = jpaTemplate.count(SpaceJpaEntity.class);
 
         assertNotNull(response);
-        assertFalse(response.isEmpty());
-        assertEquals(1, response.size());
-        GetTopSpacesResponseDto space = response.getFirst();
+        var items = response.items();
+        assertFalse(items.isEmpty());
+        assertEquals(1, items.size());
+        var space = items.getFirst();
         assertEquals(MessageBundle.message(SPACE_DRAFT_TITLE, Locale.of(KitLanguage.FA.getCode())), space.title());
         assertEquals(SpaceType.BASIC.getCode(), space.type().code());
         assertTrue(space.isDefault());
@@ -107,20 +107,20 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
         var spaceId = createBasicSpace(spaceTitle);
         final int countBefore = jpaTemplate.count(SpaceJpaEntity.class);
 
-        List<GetTopSpacesResponseDto> response = spaceHelper.getTopSpaces(context, Locale.ENGLISH.getLanguage())
+        var response = spaceHelper.getTopSpaces(context, KitLanguage.EN.getCode())
             .then()
             .statusCode(200)
             .extract()
             .body()
-            .jsonPath()
-            .getList(".", GetTopSpacesResponseDto.class);
+            .as(GetTopSpacesResponseDto.class);
 
         final int countAfter = jpaTemplate.count(SpaceJpaEntity.class);
 
         assertNotNull(response);
-        assertFalse(response.isEmpty());
-        assertEquals(1, response.size());
-        GetTopSpacesResponseDto space = response.getFirst();
+        var items = response.items();
+        assertFalse(items.isEmpty());
+        assertEquals(1, items.size());
+        var space = items.getFirst();
         assertEquals(spaceId, space.id());
         assertEquals(spaceTitle, space.title());
         assertEquals(SpaceType.BASIC.getCode(), space.type().code());
@@ -157,20 +157,20 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
 
         final int countBefore = jpaTemplate.count(SpaceJpaEntity.class);
 
-        List<GetTopSpacesResponseDto> response = spaceHelper.getTopSpaces(context, Locale.ENGLISH.getLanguage())
+        var response = spaceHelper.getTopSpaces(context, Locale.ENGLISH.getLanguage())
             .then()
             .statusCode(200)
             .extract()
             .body()
-            .jsonPath()
-            .getList(".", GetTopSpacesResponseDto.class);
+            .as(GetTopSpacesResponseDto.class);
 
         final int countAfter = jpaTemplate.count(SpaceJpaEntity.class);
 
         assertNotNull(response);
-        assertFalse(response.isEmpty());
-        assertEquals(1, response.size());
-        GetTopSpacesResponseDto space = response.getFirst();
+        var items = response.items();
+        assertFalse(items.isEmpty());
+        assertEquals(1, items.size());
+        var space = items.getFirst();
         assertEquals(spaceId, space.id());
         assertEquals(spaceTitle, space.title());
         assertEquals(SpaceType.PREMIUM.getCode(), space.type().code());
@@ -189,20 +189,20 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
 
         final int countBefore = jpaTemplate.count(SpaceJpaEntity.class);
 
-        List<GetTopSpacesResponseDto> response = spaceHelper.getTopSpaces(context, Locale.ENGLISH.getLanguage())
+        var response = spaceHelper.getTopSpaces(context, Locale.ENGLISH.getLanguage())
             .then()
             .statusCode(200)
             .extract()
             .body()
-            .jsonPath()
-            .getList(".", GetTopSpacesResponseDto.class);
+            .as(GetTopSpacesResponseDto.class);
 
         final int countAfter = jpaTemplate.count(SpaceJpaEntity.class);
 
         assertNotNull(response);
-        assertFalse(response.isEmpty());
-        assertEquals(1, response.size());
-        GetTopSpacesResponseDto space = response.getFirst();
+        var items = response.items();
+        assertFalse(items.isEmpty());
+        assertEquals(1, items.size());
+        var space = items.getFirst();
         assertEquals(premiumSpaceId, space.id());
         assertEquals(premiumSpaceTitle, space.title());
         assertEquals(SpaceType.PREMIUM.getCode(), space.type().code());
@@ -220,23 +220,23 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
 
         final int countBefore = jpaTemplate.count(SpaceJpaEntity.class);
 
-        List<GetTopSpacesResponseDto> response = spaceHelper.getTopSpaces(context, Locale.ENGLISH.getLanguage())
+        var response = spaceHelper.getTopSpaces(context, Locale.ENGLISH.getLanguage())
             .then()
             .statusCode(200)
             .extract()
             .body()
-            .jsonPath()
-            .getList(".", GetTopSpacesResponseDto.class);
+            .as(GetTopSpacesResponseDto.class);
 
         final int countAfter = jpaTemplate.count(SpaceJpaEntity.class);
 
         assertNotNull(response);
-        assertFalse(response.isEmpty());
-        assertEquals(2, response.size());
-        var premiumSpace = response.stream().filter(e -> e.type().code().equals(SpaceType.PREMIUM.getCode())).toList().getFirst();
+        var items = response.items();
+        assertFalse(items.isEmpty());
+        assertEquals(2, items.size());
+        var premiumSpace = items.stream().filter(e -> e.type().code().equals(SpaceType.PREMIUM.getCode())).toList().getFirst();
         assertTrue(premiumSpace.isDefault());
         assertEquals(premiumSpaceId, premiumSpace.id());
-        var basicSpace = response.stream().filter(e -> e.type().code().equals(SpaceType.BASIC.getCode())).toList().getFirst();
+        var basicSpace = items.stream().filter(e -> e.type().code().equals(SpaceType.BASIC.getCode())).toList().getFirst();
         assertEquals(basicSpaceId, basicSpace.id());
         assertFalse(basicSpace.isDefault());
 
@@ -253,20 +253,20 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
 
         final int countBefore = jpaTemplate.count(SpaceJpaEntity.class);
 
-        List<GetTopSpacesResponseDto> response = spaceHelper.getTopSpaces(context, Locale.ENGLISH.getLanguage())
+        var response = spaceHelper.getTopSpaces(context, Locale.ENGLISH.getLanguage())
             .then()
             .statusCode(200)
             .extract()
             .body()
-            .jsonPath()
-            .getList(".", GetTopSpacesResponseDto.class);
+            .as(GetTopSpacesResponseDto.class);
 
         final int countAfter = jpaTemplate.count(SpaceJpaEntity.class);
 
         assertNotNull(response);
-        assertFalse(response.isEmpty());
-        assertEquals(1, response.size());
-        GetTopSpacesResponseDto space = response.getFirst();
+        var items = response.items();
+        assertFalse(items.isEmpty());
+        assertEquals(1, items.size());
+        var space = items.getFirst();
         assertEquals(basicSpaceId1, space.id());
         assertEquals(basicSpaceTitle1, space.title());
         assertEquals(SpaceType.BASIC.getCode(), space.type().code());
@@ -284,24 +284,24 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
 
         final int countBefore = jpaTemplate.count(SpaceJpaEntity.class);
 
-        List<GetTopSpacesResponseDto> response = spaceHelper.getTopSpaces(context, Locale.ENGLISH.getLanguage())
+        var response = spaceHelper.getTopSpaces(context, Locale.ENGLISH.getLanguage())
             .then()
             .statusCode(200)
             .extract()
             .body()
-            .jsonPath()
-            .getList(".", GetTopSpacesResponseDto.class);
+            .as(GetTopSpacesResponseDto.class);
 
         final int countAfter = jpaTemplate.count(SpaceJpaEntity.class);
 
         assertNotNull(response);
-        assertFalse(response.isEmpty());
-        assertEquals(10, response.size());
-        var defaultSpace = response.stream().filter(GetTopSpacesResponseDto::isDefault).toList().getFirst();
+        var items = response.items();
+        assertFalse(items.isEmpty());
+        assertEquals(10, items.size());
+        var defaultSpace = items.stream().filter(GetTopSpacesResponseDto.SpaceListItem::isDefault).toList().getFirst();
         assertTrue(defaultSpace.isDefault());
         assertEquals(SpaceType.PREMIUM.getCode(), defaultSpace.type().code());
-        assertThat(response.stream().filter(e -> e.type().code().equals(SpaceType.BASIC.getCode()))).hasSize(1);
-        assertThat(response.stream().filter(e -> e.type().code().equals(SpaceType.PREMIUM.getCode()))).hasSize(9);
+        assertThat(items.stream().filter(e -> e.type().code().equals(SpaceType.BASIC.getCode()))).hasSize(1);
+        assertThat(items.stream().filter(e -> e.type().code().equals(SpaceType.PREMIUM.getCode()))).hasSize(9);
 
         assertEquals(countBefore, countAfter);
     }
@@ -313,23 +313,23 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
 
         final int countBefore = jpaTemplate.count(SpaceJpaEntity.class);
 
-        List<GetTopSpacesResponseDto> response = spaceHelper.getTopSpaces(context, Locale.ENGLISH.getLanguage())
+        var response = spaceHelper.getTopSpaces(context, Locale.ENGLISH.getLanguage())
             .then()
             .statusCode(200)
             .extract()
             .body()
-            .jsonPath()
-            .getList(".", GetTopSpacesResponseDto.class);
+            .as(GetTopSpacesResponseDto.class);
 
         final int countAfter = jpaTemplate.count(SpaceJpaEntity.class);
 
         assertNotNull(response);
-        assertFalse(response.isEmpty());
-        assertEquals(3, response.size());
-        var defaultSpace = response.stream().filter(GetTopSpacesResponseDto::isDefault).toList().getFirst();
+        var items = response.items();
+        assertFalse(items.isEmpty());
+        assertEquals(3, items.size());
+        var defaultSpace = items.stream().filter(GetTopSpacesResponseDto.SpaceListItem::isDefault).toList().getFirst();
         assertTrue(defaultSpace.isDefault());
         assertEquals(SpaceType.PREMIUM.getCode(), defaultSpace.type().code());
-        assertThat(response.stream().filter(e -> e.type().code().equals(SpaceType.PREMIUM.getCode()))).hasSize(3);
+        assertThat(items.stream().filter(e -> e.type().code().equals(SpaceType.PREMIUM.getCode()))).hasSize(3);
 
         assertEquals(countBefore, countAfter);
     }
@@ -341,22 +341,21 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
 
         final int countBefore = jpaTemplate.count(SpaceJpaEntity.class);
 
-        List<GetTopSpacesResponseDto> response = spaceHelper.getTopSpaces(context, Locale.ENGLISH.getLanguage())
+        var response = spaceHelper.getTopSpaces(context, Locale.ENGLISH.getLanguage())
             .then()
             .statusCode(200)
             .extract()
             .body()
-            .jsonPath()
-            .getList(".", GetTopSpacesResponseDto.class);
-
+            .as(GetTopSpacesResponseDto.class);
         final int countAfter = jpaTemplate.count(SpaceJpaEntity.class);
 
         assertNotNull(response);
-        assertFalse(response.isEmpty());
-        assertEquals(appSpecProperties.getSpace().getMaxBasicSpaceAssessments(), response.size());
-        var defaultSpace = response.stream().filter(GetTopSpacesResponseDto::isDefault).toList().getFirst();
+        var items = response.items();
+        assertFalse(items.isEmpty());
+        assertEquals(appSpecProperties.getSpace().getMaxBasicSpaceAssessments(), items.size());
+        var defaultSpace = items.stream().filter(GetTopSpacesResponseDto.SpaceListItem::isDefault).toList().getFirst();
         assertEquals(SpaceType.BASIC.getCode(), defaultSpace.type().code());
-        assertThat(response.stream().filter(GetTopSpacesResponseDto::isDefault)).hasSize(1);
+        assertThat(items.stream().filter(GetTopSpacesResponseDto.SpaceListItem::isDefault)).hasSize(1);
 
         assertEquals(countBefore, countAfter);
     }

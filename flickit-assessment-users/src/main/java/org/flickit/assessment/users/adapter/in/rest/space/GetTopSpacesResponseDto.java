@@ -1,14 +1,18 @@
 package org.flickit.assessment.users.adapter.in.rest.space;
 
-import org.flickit.assessment.users.application.port.in.space.GetTopSpacesUseCase;
+import org.flickit.assessment.users.application.port.in.space.GetTopSpacesUseCase.Result;
 
-public record GetTopSpacesResponseDto(long id, String title, Type type, boolean isDefault) {
+import java.util.List;
 
-    public record Type(String code, String title) {
+public record GetTopSpacesResponseDto(List<SpaceListItem> items) {
 
-        public static Type of(GetTopSpacesUseCase.SpaceListItem.Type type) {
+    public record SpaceListItem(long id, String title, Type type, boolean isDefault) {
 
-            return new Type(type.code(), type.title());
+        public record Type(String code, String title) {
+
+            public static Type of(Result.SpaceListItem.Type spaceType) {
+                return new Type(spaceType.code(), spaceType.title());
+            }
         }
     }
 }
