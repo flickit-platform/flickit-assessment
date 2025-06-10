@@ -56,12 +56,7 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
     void topSpaces_whenNoSpaceExistedLangIsEN() {
         final int countBefore = jpaTemplate.count(SpaceJpaEntity.class);
 
-        var response = spaceHelper.getTopSpaces(context, KitLanguage.EN.getCode())
-            .then()
-            .statusCode(200)
-            .extract()
-            .body()
-            .as(GetTopSpacesResponseDto.class);
+        var response = getTopSpacesResponse(KitLanguage.EN.getCode());
 
         final int countAfter = jpaTemplate.count(SpaceJpaEntity.class);
 
@@ -81,12 +76,7 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
     void topSpaces_whenNoSpaceExistedLangIsFA() {
         final int countBefore = jpaTemplate.count(SpaceJpaEntity.class);
 
-        var response = spaceHelper.getTopSpaces(context, KitLanguage.FA.getCode())
-            .then()
-            .statusCode(200)
-            .extract()
-            .body()
-            .as(GetTopSpacesResponseDto.class);
+        var response = getTopSpacesResponse(KitLanguage.FA.getCode());
 
         final int countAfter = jpaTemplate.count(SpaceJpaEntity.class);
 
@@ -107,12 +97,7 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
         var spaceId = createBasicSpace(spaceTitle);
         final int countBefore = jpaTemplate.count(SpaceJpaEntity.class);
 
-        var response = spaceHelper.getTopSpaces(context, KitLanguage.EN.getCode())
-            .then()
-            .statusCode(200)
-            .extract()
-            .body()
-            .as(GetTopSpacesResponseDto.class);
+        var response = getTopSpacesResponse(KitLanguage.EN.getCode());
 
         final int countAfter = jpaTemplate.count(SpaceJpaEntity.class);
 
@@ -157,12 +142,7 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
 
         final int countBefore = jpaTemplate.count(SpaceJpaEntity.class);
 
-        var response = spaceHelper.getTopSpaces(context, Locale.ENGLISH.getLanguage())
-            .then()
-            .statusCode(200)
-            .extract()
-            .body()
-            .as(GetTopSpacesResponseDto.class);
+        var response = getTopSpacesResponse(Locale.ENGLISH.getLanguage());
 
         final int countAfter = jpaTemplate.count(SpaceJpaEntity.class);
 
@@ -189,12 +169,7 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
 
         final int countBefore = jpaTemplate.count(SpaceJpaEntity.class);
 
-        var response = spaceHelper.getTopSpaces(context, Locale.ENGLISH.getLanguage())
-            .then()
-            .statusCode(200)
-            .extract()
-            .body()
-            .as(GetTopSpacesResponseDto.class);
+        var response = getTopSpacesResponse(Locale.ENGLISH.getLanguage());
 
         final int countAfter = jpaTemplate.count(SpaceJpaEntity.class);
 
@@ -220,12 +195,7 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
 
         final int countBefore = jpaTemplate.count(SpaceJpaEntity.class);
 
-        var response = spaceHelper.getTopSpaces(context, Locale.ENGLISH.getLanguage())
-            .then()
-            .statusCode(200)
-            .extract()
-            .body()
-            .as(GetTopSpacesResponseDto.class);
+        var response = getTopSpacesResponse(Locale.ENGLISH.getLanguage());
 
         final int countAfter = jpaTemplate.count(SpaceJpaEntity.class);
 
@@ -253,12 +223,7 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
 
         final int countBefore = jpaTemplate.count(SpaceJpaEntity.class);
 
-        var response = spaceHelper.getTopSpaces(context, Locale.ENGLISH.getLanguage())
-            .then()
-            .statusCode(200)
-            .extract()
-            .body()
-            .as(GetTopSpacesResponseDto.class);
+        var response = getTopSpacesResponse(Locale.ENGLISH.getLanguage());
 
         final int countAfter = jpaTemplate.count(SpaceJpaEntity.class);
 
@@ -284,12 +249,7 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
 
         final int countBefore = jpaTemplate.count(SpaceJpaEntity.class);
 
-        var response = spaceHelper.getTopSpaces(context, Locale.ENGLISH.getLanguage())
-            .then()
-            .statusCode(200)
-            .extract()
-            .body()
-            .as(GetTopSpacesResponseDto.class);
+        var response = getTopSpacesResponse(Locale.ENGLISH.getLanguage());
 
         final int countAfter = jpaTemplate.count(SpaceJpaEntity.class);
 
@@ -313,12 +273,7 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
 
         final int countBefore = jpaTemplate.count(SpaceJpaEntity.class);
 
-        var response = spaceHelper.getTopSpaces(context, Locale.ENGLISH.getLanguage())
-            .then()
-            .statusCode(200)
-            .extract()
-            .body()
-            .as(GetTopSpacesResponseDto.class);
+        var response = getTopSpacesResponse(Locale.ENGLISH.getLanguage());
 
         final int countAfter = jpaTemplate.count(SpaceJpaEntity.class);
 
@@ -341,12 +296,7 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
 
         final int countBefore = jpaTemplate.count(SpaceJpaEntity.class);
 
-        var response = spaceHelper.getTopSpaces(context, Locale.ENGLISH.getLanguage())
-            .then()
-            .statusCode(200)
-            .extract()
-            .body()
-            .as(GetTopSpacesResponseDto.class);
+        var response = getTopSpacesResponse(Locale.ENGLISH.getLanguage());
         final int countAfter = jpaTemplate.count(SpaceJpaEntity.class);
 
         assertNotNull(response);
@@ -370,6 +320,15 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
         var response = spaceHelper.create(context, createSpaceRequestDto(b -> b.title(title).type(SpaceType.PREMIUM.getCode())));
         Number id = response.path("id");
         return id.longValue();
+    }
+
+    private GetTopSpacesResponseDto getTopSpacesResponse(String EN) {
+        return spaceHelper.getTopSpaces(context, EN)
+            .then()
+            .statusCode(200)
+            .extract()
+            .body()
+            .as(GetTopSpacesResponseDto.class);
     }
 
     private void createAssessments(long spaceId, int limit) {
