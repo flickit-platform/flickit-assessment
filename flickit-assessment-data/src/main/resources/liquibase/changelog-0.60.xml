@@ -8,4 +8,13 @@
             <dropUniqueConstraint tableName="fac_assessment"
                                   constraintName="uq_fac_assessment_spaceid_code_deletion_time"/>
     </changeSet>
+
+    <changeSet id="0.60-02" author="Maziyar Gerami">
+        <addColumn tableName="fak_assessment_kit">
+            <column name="price" type="bigint" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
