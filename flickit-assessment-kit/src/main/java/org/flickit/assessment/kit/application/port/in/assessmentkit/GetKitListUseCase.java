@@ -59,7 +59,9 @@ public interface GetKitListUseCase {
         int assessmentsCount,
         ExpertGroup expertGroup,
         List<KitTag> tags,
-        List<String> languages) {
+        List<String> languages,
+        boolean isFree,
+        boolean hasAccess) {
 
         public record ExpertGroup(
             long id,
