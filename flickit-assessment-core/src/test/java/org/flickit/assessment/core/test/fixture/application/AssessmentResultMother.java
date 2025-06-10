@@ -113,4 +113,21 @@ public class AssessmentResultMother {
         assessmentResult.setLanguage(assessmentLanguage);
         return assessmentResult;
     }
+
+    public static AssessmentResult validResultWithKitCustomId(Long kitCustomId) {
+        var assessment = AssessmentMother.assessmentWithKitCustomId(kitCustomId);
+        var assessmentResult = new AssessmentResult(UUID.randomUUID(),
+            assessment,
+            assessment.getAssessmentKit().getKitVersion(),
+            new ArrayList<>(),
+            LocalDateTime.now(),
+            LocalDateTime.now());
+
+        assessmentResult.setIsCalculateValid(true);
+        assessmentResult.setMaturityLevel(levelFour());
+        assessmentResult.setIsConfidenceValid(true);
+        assessmentResult.setConfidenceValue(69.0);
+        assessmentResult.setLanguage(KitLanguage.EN);
+        return assessmentResult;
+    }
 }
