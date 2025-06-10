@@ -56,15 +56,11 @@ public class AssessmentKitSearchSpecification implements Specification<Assessmen
 
         Predicate isFree = cb.equal(root.get(AssessmentKitJpaEntity.Fields.price), 0);
         Predicate isPublic = cb.isFalse(root.get(AssessmentKitJpaEntity.Fields.isPrivate));
-        Predicate freeAndPublic = cb.and(isFree, isPublic);
+        Predicate publicAndFree = cb.and(isPublic, isFree);
 
-        Predicate isPrivate = cb.isTrue(root.get(AssessmentKitJpaEntity.Fields.isPrivate));
         Predicate userHasAccess = cb.in(root.get(AssessmentKitJpaEntity.Fields.id)).value(subQuery);
-        Predicate privateAndAccessible = cb.and(isPrivate, userHasAccess);
+        Predicate publicAndFreeOrAccessible = cb.or(publicAndFree, userHasAccess);
 
-        Predicate isPaid = cb.gt(root.get(AssessmentKitJpaEntity.Fields.price), 0);
-        Predicate paidAndAccessible = cb.and(isPaid, userHasAccess);
-
-        return cb.or(freeAndPublic, privateAndAccessible, paidAndAccessible);
+        return cb.or(publicAndFreeOrAccessible);
     }
 }
