@@ -49,17 +49,17 @@ public class AssessmentKitSearchSpecification implements Specification<Assessmen
     private Predicate toAccessCheckPredicate(Root<AssessmentKitJpaEntity> root,
                                              CriteriaQuery<?> query,
                                              CriteriaBuilder cb) {
-        Predicate isPublic = cb.isFalse(root.get(AssessmentKitJpaEntity.Fields.isPrivate));
-
         Subquery<Long> subQuery = query.subquery(Long.class);
         Root<KitUserAccessJpaEntity> subRoot = subQuery.from(KitUserAccessJpaEntity.class);
         subQuery.select(subRoot.get(KitUserAccessJpaEntity.Fields.kitId))
             .where(cb.equal(subRoot.get(KitUserAccessJpaEntity.Fields.userId), userId));
 
-        Predicate isPrivate = cb.isTrue(root.get(AssessmentKitJpaEntity.Fields.isPrivate));
-        Predicate userHasAccess = cb.in(root.get(AssessmentKitJpaEntity.Fields.id)).value(subQuery);
-        Predicate privateAndAccessible = cb.and(isPrivate, userHasAccess);
+        Predicate isPublic = cb.isFalse(root.get(AssessmentKitJpaEntity.Fields.isPrivate));
+        Predicate isFree = cb.equal(root.get(AssessmentKitJpaEntity.Fields.price), 0);
+        Predicate publicAndFree = cb.and(isPublic, isFree);
 
-        return cb.or(isPublic, privateAndAccessible);
+        Predicate userHasAccess = cb.in(root.get(AssessmentKitJpaEntity.Fields.id)).value(subQuery);
+
+        return cb.or(publicAndFree, userHasAccess);
     }
 }
