@@ -8,4 +8,6 @@ import java.util.UUID;
 public interface LoadAdviceItemPort {
 
     Optional<AdviceItem> load(UUID id);
+
+    boolean existsByAssessmentResultId(UUID assessmentResultId);
 }
