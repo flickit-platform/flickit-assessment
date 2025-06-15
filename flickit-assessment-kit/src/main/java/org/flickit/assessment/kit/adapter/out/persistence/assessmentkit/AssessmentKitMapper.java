@@ -102,6 +102,7 @@ public class AssessmentKitMapper {
             null,
             null,
             entity.getKitVersionId(),
+            entity.getPrice(),
             entity.getMetadata() != null
                 ? JsonUtils.fromJson(entity.getMetadata(), KitMetadata.class)
                 : null,
@@ -127,7 +128,8 @@ public class AssessmentKitMapper {
             null,
             null,
             null,
-            entity.getKitVersionId());
+            entity.getKitVersionId(),
+            entity.getPrice());
         kit.setDraftVersionId(view.getDraftVersionId());
         return kit;
     }
@@ -165,6 +167,7 @@ public class AssessmentKitMapper {
             null,
             null,
             entity.getKitVersionId(),
+            entity.getPrice(),
             metadata,
             null);
     }
