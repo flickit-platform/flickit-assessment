@@ -22,8 +22,7 @@ public record KitTranslation(
     String about,
 
     @Valid
-    MetadataTranslation metadata
-) {
+    MetadataTranslation metadata) {
 
     public String titleOrDefault(String defaultTitle) {
         return isBlank(title) ? defaultTitle : title;
@@ -41,13 +40,12 @@ public record KitTranslation(
     public record MetadataTranslation(
 
         @Size(min = 3, message = TRANSLATION_ASSESSMENT_KIT_METADATA_GOAL_SIZE_MIN)
-        @Size(max = 300, message = TRANSLATION_ASSESSMENT_KIT_METADATA_GOAL_SIZE_MAX)
+        @Size(max = 1000, message = TRANSLATION_ASSESSMENT_KIT_METADATA_GOAL_SIZE_MAX)
         String goal,
 
         @Size(min = 3, message = TRANSLATION_ASSESSMENT_KIT_METADATA_CONTEXT_SIZE_MIN)
-        @Size(max = 300, message = TRANSLATION_ASSESSMENT_KIT_METADATA_CONTEXT_SIZE_MAX)
-        String context
-    ) {
+        @Size(max = 1000, message = TRANSLATION_ASSESSMENT_KIT_METADATA_CONTEXT_SIZE_MAX)
+        String context) {
         public String goalOrDefault(String defaultGoal) {
             return isBlank(goal) ? defaultGoal : goal;
         }

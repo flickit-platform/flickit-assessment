@@ -153,4 +153,6 @@ public class ErrorMessageKey {
     public static final String LEAVE_EXPERT_GROUP_NOT_ALLOWED = "leave-expert-group.owner.notAllowed";
 
     public static final String UPDATE_USER_PROFILE_PICTURE_NOT_NULL = "update-user-profile-picture.picture.notNull";
+
+    public static final String GET_TOP_SPACES_NO_SPACE_AVAILABLE = "get-top-spaces.noSpace.available";
 }
