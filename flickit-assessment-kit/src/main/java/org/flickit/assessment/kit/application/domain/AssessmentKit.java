@@ -47,5 +47,4 @@ public class AssessmentKit {
     @Setter
     @Nullable
     private Long draftVersionId;
-    private final long price;
 }

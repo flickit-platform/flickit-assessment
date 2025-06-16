@@ -23,10 +23,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.kitWithPrice;
+import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKitWithPrice;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class GetPublicKitListServiceTest {
@@ -52,7 +52,7 @@ class GetPublicKitListServiceTest {
 
     @Test
     void testGetPublicList_whenPublicKitsAreWantedAnkAndKitIsFree_thenReturnPublicKits() {
-        AssessmentKit assessmentKit = kitWithPrice(0);
+        AssessmentKit assessmentKit = simpleKitWithPrice(0);
         long kitId = assessmentKit.getId();
         List<Long> kitIds = List.of(kitId);
         var expectedKitsPage = getExpectedKitsPage(assessmentKit);
@@ -80,7 +80,7 @@ class GetPublicKitListServiceTest {
 
     @Test
     void testGetPublicList_whenPublicKitsAreWantedAndKitIsPaid_thenReturnPublicKits() {
-        AssessmentKit assessmentKit = kitWithPrice(100);
+        AssessmentKit assessmentKit = simpleKitWithPrice(100);
         long kitId = assessmentKit.getId();
         List<Long> kitIds = List.of(kitId);
         var expectedKitsPage = getExpectedKitsPage(assessmentKit);

@@ -106,8 +106,7 @@ public class AssessmentKitMapper {
             entity.getMetadata() != null
                 ? JsonUtils.fromJson(entity.getMetadata(), KitMetadata.class)
                 : null,
-            null,
-            entity.getPrice());
+            null);
     }
 
     public static AssessmentKit mapToDomainModel(KitWithDraftVersionIdView view) {
@@ -170,8 +169,7 @@ public class AssessmentKitMapper {
             entity.getKitVersionId(),
             entity.getPrice(),
             metadata,
-            null,
-            entity.getPrice());
+            null);
     }
 
     private static KitTranslation getTranslation(AssessmentKitJpaEntity assessmentKitEntity, @Nullable KitLanguage language) {
