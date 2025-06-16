@@ -548,6 +548,11 @@ public class ErrorMessageKey {
     public static final String ADD_LANGUAGE_TO_KIT_LANG_NOT_NULL = "add-language-to-kit.lang.notNull";
     public static final String ADD_LANGUAGE_TO_KIT_LANGUAGE_INVALID = "add-language-to-kit.lang.invalid";
 
+    public static final String GET_PUBLIC_KIT_LIST_LANGS_INVALID = "get-public-kit-list.langs.invalid";
+    public static final String GET_PUBLIC_KIT_LIST_PAGE_MIN = "get-public-kit-list.page.min";
+    public static final String GET_PUBLIC_KIT_LIST_SIZE_MIN = "get-public-kit-list.size.min";
+    public static final String GET_PUBLIC_KIT_LIST_SIZE_MAX = "get-public-kit-list.size.max";
+
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
     }
