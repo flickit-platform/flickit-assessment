@@ -59,7 +59,7 @@ class GetKitListServiceTest {
     @Test
     void testGetKitList_whenPublicKitsAreWantedAndResultIsFreeKitAndUserDoesNotHaveAccess_thenReturnPublicKits() {
         var param = createParam(Param.ParamBuilder::build);
-        var assessmentKit = kitWithPrice(0);
+        var assessmentKit = simpleKitWithPrice(0);
         var kitId = assessmentKit.getId();
         var kitIds = List.of(kitId);
 
@@ -93,7 +93,7 @@ class GetKitListServiceTest {
     @Test
     void testGetKitList_whenPublicKitsAreWantedAndResultIsPaidKitAndUserDoesNotHaveAccess_thenReturnPublicKits() {
         var param = createParam(Param.ParamBuilder::build);
-        var assessmentKit = kitWithPrice(1000);
+        var assessmentKit = simpleKitWithPrice(1000);
         var kitId = assessmentKit.getId();
         var kitIds = List.of(kitId);
 
