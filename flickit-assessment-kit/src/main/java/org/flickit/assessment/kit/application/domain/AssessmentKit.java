@@ -37,6 +37,7 @@ public class AssessmentKit {
     private final List<Measure> measures;
     private final List<AnswerRange> reusableAnswerRanges;
     private final Long activeVersionId;
+    private final long price;
     @Nullable private KitMetadata metadata;
 
     /**
@@ -46,5 +47,4 @@ public class AssessmentKit {
     @Setter
     @Nullable
     private Long draftVersionId;
-    private final long price;
 }
