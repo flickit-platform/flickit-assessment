@@ -77,7 +77,8 @@ public class QuestionnairePersistenceJpaAdapter implements
     public Map<Long, Result> loadQuestionnaireDetails(long kitVersionId, UUID assessmentResultId) {
         var questionnaireViews = repository.findAllWithQuestionCountByKitVersionId(kitVersionId, null);
         var questionnaireIds = questionnaireViews.getContent().stream()
-            .map(v -> v.getQuestionnaire().getId()).toList();
+            .map(v -> v.getQuestionnaire().getId())
+            .toList();
 
         var questionnaireIdToAnswerCountMap = answerRepository.getQuestionnairesProgressByAssessmentResultId(assessmentResultId, questionnaireIds)
             .stream()
