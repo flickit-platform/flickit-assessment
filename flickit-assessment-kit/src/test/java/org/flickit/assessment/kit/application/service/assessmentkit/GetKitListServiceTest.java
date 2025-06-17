@@ -10,10 +10,8 @@ import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitListUs
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CountKitListStatsPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadPublishedKitListPort;
 import org.flickit.assessment.kit.application.port.out.kitlanguage.LoadKitLanguagesPort;
-import org.flickit.assessment.kit.application.port.out.kittag.LoadKitTagListPort;
 import org.flickit.assessment.kit.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.flickit.assessment.kit.test.fixture.application.ExpertGroupMother;
-import org.flickit.assessment.kit.test.fixture.application.KitTagMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -45,9 +43,6 @@ class GetKitListServiceTest {
     private CountKitListStatsPort countKitStatsPort;
 
     @Mock
-    private LoadKitTagListPort loadKitTagListPort;
-
-    @Mock
     private LoadKitLanguagesPort loadKitLanguagesPort;
 
     @Mock
@@ -64,15 +59,12 @@ class GetKitListServiceTest {
         var kitIds = List.of(kitId);
 
         var expectedKitsPage = getExpectedKitsPage(assessmentKit, true);
-        var sampleTag = KitTagMother.createKitTag("sample tag");
 
         when(loadPublishedKitListPort.loadPublicKits(Set.of(KitLanguage.EN), param.getPage(), param.getSize()))
             .thenReturn(expectedKitsPage);
         int kitLikes = 3, assessmentsCount = 15;
         when(countKitStatsPort.countKitsStats(kitIds))
             .thenReturn(List.of(new CountKitListStatsPort.Result(kitId, kitLikes, assessmentsCount)));
-        when(loadKitTagListPort.loadByKitIds(kitIds)).thenReturn(
-            List.of(new LoadKitTagListPort.Result(kitId, List.of(sampleTag))));
         when(loadKitLanguagesPort.loadByKitIds(kitIds)).thenReturn(
             Map.of(kitId, List.of(KitLanguage.EN)));
         when(createFileDownloadLinkPort.createDownloadLink(any(), any()))
@@ -98,15 +90,12 @@ class GetKitListServiceTest {
         var kitIds = List.of(kitId);
 
         var expectedKitsPage = getExpectedKitsPage(assessmentKit, false);
-        var sampleTag = KitTagMother.createKitTag("sample tag");
 
         when(loadPublishedKitListPort.loadPublicKits(Set.of(KitLanguage.EN), param.getPage(), param.getSize()))
             .thenReturn(expectedKitsPage);
         int kitLikes = 3, assessmentsCount = 15;
         when(countKitStatsPort.countKitsStats(kitIds))
             .thenReturn(List.of(new CountKitListStatsPort.Result(kitId, kitLikes, assessmentsCount)));
-        when(loadKitTagListPort.loadByKitIds(kitIds)).thenReturn(
-            List.of(new LoadKitTagListPort.Result(kitId, List.of(sampleTag))));
         when(loadKitLanguagesPort.loadByKitIds(kitIds)).thenReturn(
             Map.of(kitId, List.of(KitLanguage.EN)));
         when(createFileDownloadLinkPort.createDownloadLink(any(), any()))
@@ -132,15 +121,12 @@ class GetKitListServiceTest {
         var kitId = assessmentKit.getId();
         var kitIds = List.of(kitId);
         var expectedKitsPage = getExpectedKitsPage(assessmentKit, false);
-        var sampleTag = KitTagMother.createKitTag("sample tag");
 
         when(loadPublishedKitListPort.loadPrivateKits(param.getCurrentUserId(), null, param.getPage(), param.getSize()))
             .thenReturn(expectedKitsPage);
         int kitLikes = 3, assessmentCount = 15;
         when(countKitStatsPort.countKitsStats(kitIds))
             .thenReturn(List.of(new CountKitListStatsPort.Result(kitId, kitLikes, assessmentCount)));
-        when(loadKitTagListPort.loadByKitIds(kitIds)).thenReturn(
-            List.of(new LoadKitTagListPort.Result(kitId, List.of(sampleTag))));
         when(loadKitLanguagesPort.loadByKitIds(kitIds)).thenReturn(
             Map.of(kitId, List.of(KitLanguage.EN)));
         when(createFileDownloadLinkPort.createDownloadLink(any(), any()))
@@ -168,15 +154,12 @@ class GetKitListServiceTest {
         var kitId = assessmentKit.getId();
         var kitIds = List.of(kitId);
         var expectedKitsPage = getExpectedKitsPage(assessmentKit, false);
-        var sampleTag = KitTagMother.createKitTag("sample tag");
 
         when(loadPublishedKitListPort.loadPrivateAndPublicKits(param.getCurrentUserId(), null, param.getPage(), param.getSize()))
             .thenReturn(expectedKitsPage);
         int kitLikes = 3, assessmentsCount = 15;
         when(countKitStatsPort.countKitsStats(kitIds))
             .thenReturn(List.of(new CountKitListStatsPort.Result(kitId, kitLikes, assessmentsCount)));
-        when(loadKitTagListPort.loadByKitIds(kitIds)).thenReturn(
-            List.of(new LoadKitTagListPort.Result(kitId, List.of(sampleTag))));
         when(loadKitLanguagesPort.loadByKitIds(kitIds)).thenReturn(
             Map.of(kitId, List.of(KitLanguage.EN)));
         when(createFileDownloadLinkPort.createDownloadLink(any(), any()))
@@ -209,7 +192,6 @@ class GetKitListServiceTest {
         when(loadPublishedKitListPort.loadPrivateKits(param.getCurrentUserId(), Set.of(KitLanguage.EN), param.getPage(), param.getSize()))
             .thenReturn(expectedKitsPage);
         when(countKitStatsPort.countKitsStats(List.of())).thenReturn(List.of());
-        when(loadKitTagListPort.loadByKitIds(List.of())).thenReturn(List.of());
         when(loadKitLanguagesPort.loadByKitIds(List.of())).thenReturn(Map.of());
 
         var result = service.getKitList(param);

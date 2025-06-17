@@ -10,7 +10,6 @@ import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.validation.EnumValue;
-import org.flickit.assessment.kit.application.domain.KitTag;
 
 import java.util.List;
 import java.util.Set;
@@ -61,7 +60,6 @@ public interface GetKitListUseCase {
         int likes,
         int assessmentsCount,
         ExpertGroup expertGroup,
-        List<KitTag> tags,
         List<String> languages,
         boolean isFree,
         boolean hasAccess) {
