@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.core.application.domain.QuestionnaireListItem;
 import org.flickit.assessment.core.application.port.out.questionnaire.LoadQuestionnairesByAssessmentIdPort;
+import org.flickit.assessment.core.application.port.out.questionnaire.LoadQuestionnairesPort;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaRepository;
 import org.flickit.assessment.data.jpa.core.answer.QuestionnaireIdAndAnswerCountView;
 import org.flickit.assessment.data.jpa.kit.question.FirstUnansweredQuestionView;
@@ -16,13 +17,16 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component(value = "coreQuestionnairePersistenceJpaAdapter")
 @RequiredArgsConstructor
 public class QuestionnairePersistenceJpaAdapter implements
-    LoadQuestionnairesByAssessmentIdPort {
+    LoadQuestionnairesByAssessmentIdPort,
+    LoadQuestionnairesPort {
 
     private final QuestionnaireJpaRepository repository;
     private final SubjectJpaRepository subjectRepository;
@@ -66,5 +70,29 @@ public class QuestionnairePersistenceJpaAdapter implements
             Sort.Direction.ASC.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );
+    }
+
+    @Override
+    public List<Result> loadQuestionnaireDetails(long kitVersionId, UUID assessmentResultId) {
+        var questionnaireViews = repository.findAllWithQuestionCountByKitVersionId(kitVersionId, null);
+        var questionnaireIds = questionnaireViews.getContent().stream().map(v -> v.getQuestionnaire().getId()).toList();
+
+        var questionnairesProgress = answerRepository.getQuestionnairesProgressByAssessmentResultId(assessmentResultId, questionnaireIds)
+            .stream()
+            .collect(Collectors.toMap(QuestionnaireIdAndAnswerCountView::getQuestionnaireId, QuestionnaireIdAndAnswerCountView::getAnswerCount));
+
+        return questionnaireViews.stream()
+            .map(view -> {
+                var questionnaire = view.getQuestionnaire();
+                int answerCount = questionnairesProgress.getOrDefault(questionnaire.getId(), 0);
+                return new LoadQuestionnairesPort.Result(
+                    questionnaire.getId(),
+                    questionnaire.getIndex(),
+                    questionnaire.getTitle(),
+                    view.getQuestionCount(),
+                    answerCount
+                );
+            })
+            .toList();
     }
 }
