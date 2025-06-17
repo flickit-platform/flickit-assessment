@@ -10,9 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
@@ -29,9 +27,8 @@ public class GetAssessmentNextQuestionnaireService implements GetAssessmentNextQ
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_NEXT_QUESTIONNAIRE_ASSESSMENT_RESULT_NOT_FOUND));
 
-        var questionnaireIdToQuestionnaireDetails = loadQuestionnairesPort.loadQuestionnaireDetails(assessmentResult.getKitVersionId(), assessmentResult.getId())
-            .stream()
-            .collect(Collectors.toMap(LoadQuestionnairesPort.Result::id, Function.identity()));
+        var questionnaireIdToQuestionnaireDetails =
+            loadQuestionnairesPort.loadQuestionnaireDetails(assessmentResult.getKitVersionId(), assessmentResult.getId());
 
         var currentQuestionnaire = Optional.ofNullable(
             questionnaireIdToQuestionnaireDetails.get(param.getQuestionnaireId())

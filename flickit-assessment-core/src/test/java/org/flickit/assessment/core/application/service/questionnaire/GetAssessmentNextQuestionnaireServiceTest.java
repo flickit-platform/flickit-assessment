@@ -11,7 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -55,7 +55,7 @@ class GetAssessmentNextQuestionnaireServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
             .thenReturn(Optional.of(assessmentResult));
         when(loadQuestionnairesPort.loadQuestionnaireDetails(assessmentResult.getKitVersionId(), assessmentResult.getId()))
-            .thenReturn(List.of());
+            .thenReturn(Map.of());
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.getNextQuestionnaire(param));
 
@@ -66,12 +66,12 @@ class GetAssessmentNextQuestionnaireServiceTest {
     void getAssessmentNextQuestionnaire_whenNextUnansweredQuestionnaireDoesNotExist_thenThrowResourceNotFoundException() {
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
             .thenReturn(Optional.of(assessmentResult));
-        List<LoadQuestionnairesPort.Result> questionnaires = List.of(new LoadQuestionnairesPort.Result(1L, 2, "title1", 10, 10),
-            new LoadQuestionnairesPort.Result(2L, 1, "title2", 10, 10),
-            new LoadQuestionnairesPort.Result(3L, 3, "title3", 10, 10),
-            new LoadQuestionnairesPort.Result(4L, 4, "title4", 10, 10));
+        var resultMap = Map.of(1L, new LoadQuestionnairesPort.Result(1L, 2, "title1", 10, 10),
+            2L, new LoadQuestionnairesPort.Result(2L, 1, "title2", 10, 10),
+            3L, new LoadQuestionnairesPort.Result(3L, 3, "title3", 10, 10),
+            4L, new LoadQuestionnairesPort.Result(4L, 4, "title4", 10, 10));
         when(loadQuestionnairesPort.loadQuestionnaireDetails(assessmentResult.getKitVersionId(), assessmentResult.getId()))
-            .thenReturn(questionnaires);
+            .thenReturn(resultMap);
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.getNextQuestionnaire(param));
 
@@ -82,16 +82,15 @@ class GetAssessmentNextQuestionnaireServiceTest {
     void getAssessmentNextQuestionnaire_whenParamAreValid_thenReturnNextQuestionnaire() {
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
             .thenReturn(Optional.of(assessmentResult));
-        List<LoadQuestionnairesPort.Result> questionnaires = List.of(new LoadQuestionnairesPort.Result(1L, 2, "title1", 10, 10),
-            new LoadQuestionnairesPort.Result(2L, 1, "title2", 10, 10),
-            new LoadQuestionnairesPort.Result(3L, 3, "title3", 10, 10),
-            new LoadQuestionnairesPort.Result(4L, 4, "title4", 10, 8));
+        var resultMap = Map.of(1L, new LoadQuestionnairesPort.Result(1L, 2, "title1", 10, 10),
+            2L, new LoadQuestionnairesPort.Result(2L, 1, "title2", 10, 10),
+            3L, new LoadQuestionnairesPort.Result(3L, 3, "title3", 10, 10),
+            4L, new LoadQuestionnairesPort.Result(4L, 4, "title4", 10, 8));
         when(loadQuestionnairesPort.loadQuestionnaireDetails(assessmentResult.getKitVersionId(), assessmentResult.getId()))
-            .thenReturn(questionnaires);
-        var expectedQuestionnaire = questionnaires.get(3);
+            .thenReturn(resultMap);
+        var expectedQuestionnaire = resultMap.get(4L);
 
         var result = service.getNextQuestionnaire(param);
-
         assertEquals(expectedQuestionnaire.id(), result.id());
         assertEquals(expectedQuestionnaire.title(), result.title());
         assertEquals(expectedQuestionnaire.index(), result.index());

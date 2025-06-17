@@ -17,9 +17,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Component(value = "coreQuestionnairePersistenceJpaAdapter")
@@ -73,18 +74,19 @@ public class QuestionnairePersistenceJpaAdapter implements
     }
 
     @Override
-    public List<Result> loadQuestionnaireDetails(long kitVersionId, UUID assessmentResultId) {
+    public Map<Long, Result> loadQuestionnaireDetails(long kitVersionId, UUID assessmentResultId) {
         var questionnaireViews = repository.findAllWithQuestionCountByKitVersionId(kitVersionId, null);
-        var questionnaireIds = questionnaireViews.getContent().stream().map(v -> v.getQuestionnaire().getId()).toList();
+        var questionnaireIds = questionnaireViews.getContent().stream()
+            .map(v -> v.getQuestionnaire().getId()).toList();
 
-        var questionnairesProgress = answerRepository.getQuestionnairesProgressByAssessmentResultId(assessmentResultId, questionnaireIds)
+        var questionnaireIdToAnswerCountMap = answerRepository.getQuestionnairesProgressByAssessmentResultId(assessmentResultId, questionnaireIds)
             .stream()
             .collect(Collectors.toMap(QuestionnaireIdAndAnswerCountView::getQuestionnaireId, QuestionnaireIdAndAnswerCountView::getAnswerCount));
 
         return questionnaireViews.stream()
             .map(view -> {
                 var questionnaire = view.getQuestionnaire();
-                int answerCount = questionnairesProgress.getOrDefault(questionnaire.getId(), 0);
+                int answerCount = questionnaireIdToAnswerCountMap.getOrDefault(questionnaire.getId(), 0);
                 return new LoadQuestionnairesPort.Result(
                     questionnaire.getId(),
                     questionnaire.getIndex(),
@@ -93,6 +95,6 @@ public class QuestionnairePersistenceJpaAdapter implements
                     answerCount
                 );
             })
-            .toList();
+            .collect(Collectors.toMap(Result::id, Function.identity()));
     }
 }
