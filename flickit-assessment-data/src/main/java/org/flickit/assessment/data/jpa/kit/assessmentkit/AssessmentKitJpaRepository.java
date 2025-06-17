@@ -78,7 +78,11 @@ public interface AssessmentKitJpaRepository extends
     CountKitStatsView countKitStats(@Param(value = "kitId") long kitId);
 
     @Query("""
-            SELECT k AS kit, g AS expertGroup
+            SELECT k AS kit, g AS expertGroup,
+            EXISTS (
+                SELECT 1 FROM KitUserAccessJpaEntity kua
+                WHERE kua.kitId = k.id AND kua.userId = :userId
+            ) AS kitUserAccess
             FROM AssessmentKitJpaEntity k
             LEFT JOIN ExpertGroupJpaEntity g ON k.expertGroupId = g.id
             WHERE k.published = TRUE
@@ -93,7 +97,11 @@ public interface AssessmentKitJpaRepository extends
                                                                Pageable pageable);
 
     @Query("""
-            SELECT k AS kit, g AS expertGroup
+            SELECT k AS kit, g AS expertGroup,
+            EXISTS (
+                SELECT 1 FROM KitUserAccessJpaEntity kua
+                WHERE kua.kitId = k.id AND kua.userId = :userId
+            ) AS kitUserAccess
             FROM AssessmentKitJpaEntity k
             LEFT JOIN ExpertGroupJpaEntity g ON k.expertGroupId = g.id
             WHERE k.published = TRUE
@@ -113,7 +121,11 @@ public interface AssessmentKitJpaRepository extends
                                                                     Pageable pageable);
 
     @Query("""
-            SELECT k AS kit, g AS expertGroup
+            SELECT k AS kit, g AS expertGroup,
+            EXISTS (
+                SELECT 1 FROM KitUserAccessJpaEntity kua
+                WHERE kua.kitId = k.id AND kua.userId = :userId
+            ) AS kitUserAccess
             FROM AssessmentKitJpaEntity k
             LEFT JOIN ExpertGroupJpaEntity g ON k.expertGroupId = g.id
             WHERE k.published = TRUE

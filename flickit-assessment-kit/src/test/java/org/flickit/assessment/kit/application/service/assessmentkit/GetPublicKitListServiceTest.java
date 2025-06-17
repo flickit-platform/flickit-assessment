@@ -107,7 +107,7 @@ class GetPublicKitListServiceTest {
 
     private PaginatedResponse<LoadPublishedKitListPort.Result> getExpectedKitsPage(AssessmentKit assessmentKit) {
         return new PaginatedResponse<>(
-            List.of(new LoadPublishedKitListPort.Result(assessmentKit, expertGroup)),
+            List.of(new LoadPublishedKitListPort.Result(assessmentKit, expertGroup, null)),
             0,
             10,
             AssessmentKitJpaEntity.Fields.title,
