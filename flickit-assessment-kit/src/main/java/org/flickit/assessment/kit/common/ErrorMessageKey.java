@@ -482,7 +482,7 @@ public class ErrorMessageKey {
     public static final String VALIDATE_KIT_VERSION_SUBJECT_NOT_NULL = "validate-kit-version.subject.notNull";
     public static final String VALIDATE_KIT_VERSION_QUESTION_NOT_NULL = "validate-kit-version.question.notNull";
     public static final String VALIDATE_KIT_VERSION_QUESTIONNAIRE_NOT_NULL = "validate-kit-version.questionnaire.notNull";
-    public static final String VALIDATE_KIT_VERSION_MATURITY_LEVELS_MIN_SIZE = "validate-kit-version.maturityLevels.notNull";
+    public static final String VALIDATE_KIT_VERSION_MATURITY_LEVELS_MIN_SIZE = "validate-kit-version.maturityLevels.size.min";
     public static final String VALIDATE_KIT_VERSION_QUESTION_MEASURE_NOT_NULL = "validate-kit-version.question-measure.notNull";
 
     public static final String UPDATE_KIT_CUSTOM_KIT_CUSTOM_ID_NOT_NULL = "update-kit-custom.kitCustomId.notNull";
