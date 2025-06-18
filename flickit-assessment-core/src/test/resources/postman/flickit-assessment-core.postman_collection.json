@@ -1930,6 +1930,44 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Get Assessment Next Questionnaire",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/625e6194-b710-4ed4-90e5-d6372ee3cb96/next-questionnaire",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"625e6194-b710-4ed4-90e5-d6372ee3cb96",
+								"next-questionnaire"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},

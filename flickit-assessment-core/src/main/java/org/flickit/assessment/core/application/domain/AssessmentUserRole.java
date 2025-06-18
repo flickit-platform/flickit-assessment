@@ -149,7 +149,8 @@ public enum AssessmentUserRole {
             VIEW_GRAPHICAL_REPORT,
             VIEW_ASSESSMENT_ATTRIBUTES,
             VIEW_ASSESSMENT_MATURITY_LEVELS,
-            PREPARE_ASSESSMENT_REPORT
+            PREPARE_ASSESSMENT_REPORT,
+            VIEW_ASSESSMENT_NEXT_QUESTIONNAIRE
         ));
 
         private final Set<AssessmentPermission> permissions;
