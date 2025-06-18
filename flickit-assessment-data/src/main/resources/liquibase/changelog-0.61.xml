@@ -4,8 +4,12 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
 
-    <changeSet id="0.60-01" author="Maziyar Gerami">
-            <dropUniqueConstraint tableName="fac_assessment"
-                                  constraintName="uq_fac_assessment_spaceid_code_deletion_time"/>
+    <changeSet id="0.61-01" author="Maziyar Gerami">
+        <addColumn tableName="fak_assessment_kit">
+            <column name="price" type="bigint" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
     </changeSet>
+
 </databaseChangeLog>
