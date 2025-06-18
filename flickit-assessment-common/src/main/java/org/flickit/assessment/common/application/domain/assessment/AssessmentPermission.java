@@ -70,7 +70,8 @@ public enum AssessmentPermission {
     VIEW_ASSESSMENT_INSIGHTS("viewAssessmentInsights"),
     APPROVE_ALL_ANSWERS("approveAllAnswers"),
     VIEW_ATTRIBUTE_MEASURES("viewAttributeMeasures"),
-    REFRESH_ASSESSMENT_ADVICE("refreshAssessmentAdvice"),;
+    REFRESH_ASSESSMENT_ADVICE("refreshAssessmentAdvice"),
+    VIEW_ASSESSMENT_NEXT_QUESTIONNAIRE("viewAssessmentNextQuestionnaire"),;
 
     private final String code;
 }
