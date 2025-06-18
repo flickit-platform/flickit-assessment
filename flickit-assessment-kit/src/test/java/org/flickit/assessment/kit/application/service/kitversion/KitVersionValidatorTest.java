@@ -74,7 +74,7 @@ class KitVersionValidatorTest {
             MessageBundle.message(VALIDATE_KIT_VERSION_SUBJECT_NOT_NULL),
             MessageBundle.message(VALIDATE_KIT_VERSION_QUESTION_NOT_NULL),
             MessageBundle.message(VALIDATE_KIT_VERSION_QUESTIONNAIRE_NOT_NULL),
-            MessageBundle.message(VALIDATE_KIT_VERSION_MATURITY_LEVEL_NOT_NULL)
+            MessageBundle.message(VALIDATE_KIT_VERSION_MATURITY_LEVELS_MIN_SIZE)
         );
 
         when(loadQuestionsPort.loadQuestionsWithoutImpact(kitVersionId)).thenReturn(loadQuestionsPortResult);
@@ -82,7 +82,7 @@ class KitVersionValidatorTest {
         when(loadAnswerRangesPort.loadAnswerRangesWithNotEnoughOptions(kitVersionId)).thenReturn(listOfAnswerRanges);
         when(loadSubjectsPort.loadSubjectsWithoutAttribute(kitVersionId)).thenReturn(listOfSubjects);
         when(loadAttributesPort.loadUnimpactedAttributes(kitVersionId)).thenReturn(listOfAttributes);
-        when(countKitVersionStatsPort.countKitVersionStats(kitVersionId)).thenReturn(new CountKitVersionStatsPort.Result(0, 0, 0, 0));
+        when(countKitVersionStatsPort.countKitVersionStats(kitVersionId)).thenReturn(new CountKitVersionStatsPort.Result(0, 0, 0, 1));
         when(loadQuestionnairesPort.loadQuestionnairesWithoutQuestion(kitVersionId)).thenReturn(listOfQuestionnaire);
         when(loadQuestionsPort.loadQuestionsWithoutMeasure(kitVersionId)).thenReturn(loadQuestionsPortResult);
 
