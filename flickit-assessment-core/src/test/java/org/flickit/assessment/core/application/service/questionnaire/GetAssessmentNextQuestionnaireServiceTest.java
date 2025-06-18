@@ -1,5 +1,7 @@
 package org.flickit.assessment.core.application.service.questionnaire;
 
+import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
+import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetAssessmentNextQuestionnaireUseCase;
@@ -16,6 +18,8 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_NEXT_QUESTIONNAIRE;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.validResult;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,6 +34,9 @@ class GetAssessmentNextQuestionnaireServiceTest {
     private GetAssessmentNextQuestionnaireService service;
 
     @Mock
+    private AssessmentAccessChecker assessmentAccessChecker;
+
+    @Mock
     private LoadAssessmentResultPort loadAssessmentResultPort;
 
     @Mock
@@ -39,7 +46,18 @@ class GetAssessmentNextQuestionnaireServiceTest {
     private final AssessmentResult assessmentResult = validResult();
 
     @Test
+    void getAssessmentNextQuestionnaire_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_NEXT_QUESTIONNAIRE))
+            .thenReturn(false);
+
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.getNextQuestionnaire(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+    }
+
+    @Test
     void getAssessmentNextQuestionnaire_whenAssessmentResultNotFound_thenThrowResourceNotFoundException() {
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_NEXT_QUESTIONNAIRE))
+            .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
             .thenReturn(Optional.empty());
 
@@ -52,6 +70,8 @@ class GetAssessmentNextQuestionnaireServiceTest {
 
     @Test
     void getAssessmentNextQuestionnaire_whenQuestionnaireNotFound_thenThrowResourceNotFoundException() {
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_NEXT_QUESTIONNAIRE))
+            .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
             .thenReturn(Optional.of(assessmentResult));
         when(loadQuestionnairesPort.loadQuestionnaireDetails(assessmentResult.getKitVersionId(), assessmentResult.getId()))
@@ -64,6 +84,8 @@ class GetAssessmentNextQuestionnaireServiceTest {
 
     @Test
     void getAssessmentNextQuestionnaire_whenNextUnansweredQuestionnaireDoesNotExist_thenThrowResourceNotFoundException() {
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_NEXT_QUESTIONNAIRE))
+            .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
             .thenReturn(Optional.of(assessmentResult));
         var resultMap = Map.of(1L, new LoadQuestionnairesPort.Result(1L, 2, "title1", 10, 10),
@@ -80,6 +102,8 @@ class GetAssessmentNextQuestionnaireServiceTest {
 
     @Test
     void getAssessmentNextQuestionnaire_whenParamAreValid_thenReturnNextQuestionnaire() {
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_NEXT_QUESTIONNAIRE))
+            .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
             .thenReturn(Optional.of(assessmentResult));
         var resultMap = Map.of(1L, new LoadQuestionnairesPort.Result(1L, 2, "title1", 10, 10),
