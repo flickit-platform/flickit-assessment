@@ -15,5 +15,5 @@ public record CreateKitByDslRequestDto(String title,
                                        Long kitDslId,
                                        Long expertGroupId,
                                        List<Long> tagIds,
-                                       long price) {
+                                       Long price) {
 }
