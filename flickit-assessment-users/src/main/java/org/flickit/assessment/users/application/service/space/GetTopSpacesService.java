@@ -10,6 +10,7 @@ import org.flickit.assessment.users.application.domain.Space;
 import org.flickit.assessment.users.application.domain.SpaceStatus;
 import org.flickit.assessment.users.application.domain.SpaceUserAccess;
 import org.flickit.assessment.users.application.port.in.space.GetTopSpacesUseCase;
+import org.flickit.assessment.users.application.port.in.space.GetTopSpacesUseCase.Result.SpaceListItem;
 import org.flickit.assessment.users.application.port.out.space.CreateSpacePort;
 import org.flickit.assessment.users.application.port.out.space.LoadSpaceListPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CreateSpaceUserAccessPort;
@@ -40,12 +41,12 @@ public class GetTopSpacesService implements GetTopSpacesUseCase {
     private final CreateSpaceUserAccessPort createSpaceUserAccessPort;
 
     @Override
-    public List<SpaceListItem> getSpaceList(Param param) {
+    public Result getSpaceList(Param param) {
         var loadedSpaces = loadSpaceListPort.loadSpaceList(param.getCurrentUserId());
         var lang = KitLanguage.valueOf(LocaleContextHolder.getLocale().getLanguage().toUpperCase());
 
         if (loadedSpaces.isEmpty())
-            return List.of(createNewSpace(lang, param.getCurrentUserId()));
+            return new Result(List.of(createNewSpace(lang, param.getCurrentUserId())));
 
         final int maxBasicAssessments = appSpecProperties.getSpace().getMaxBasicSpaceAssessments();
         var availableSpaces = extractSpacesWithCapacity(loadedSpaces, maxBasicAssessments);
@@ -53,10 +54,11 @@ public class GetTopSpacesService implements GetTopSpacesUseCase {
         if (availableSpaces.isEmpty())
             throw new UpgradeRequiredException(GET_TOP_SPACES_NO_SPACE_AVAILABLE);
 
-        return Optional.of(availableSpaces)
+        var spaces = Optional.of(availableSpaces)
             .filter(items -> items.size() == 1)
             .map(items -> List.of(toSpaceListItem(items.getFirst())))
             .orElseGet(() -> getMultipleBasicsAndPremium(availableSpaces));
+        return new Result(spaces);
     }
 
     private SpaceListItem createNewSpace(KitLanguage lang, UUID currentUserId) {
