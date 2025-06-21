@@ -29,6 +29,6 @@ public class CreateKitByDslRequestDtoMother {
             .about("about kit " + index)
             .lang("en")
             .isPrivate(false)
-            .price(0);
+            .price(0L);
     }
 }

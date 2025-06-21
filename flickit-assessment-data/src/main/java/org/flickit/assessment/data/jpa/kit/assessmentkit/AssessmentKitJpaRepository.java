@@ -198,12 +198,10 @@ public interface AssessmentKitJpaRepository extends
             WHERE k.id = :kitId
               AND k.published
               AND ((k.isPrivate = false AND k.price = 0)
-                OR ((k.isPrivate = true OR k.price > 0)
-                  AND EXISTS (
+                  OR EXISTS (
                     SELECT 1
                     FROM KitUserAccessJpaEntity kua
                     WHERE kua.userId = :userId AND kua.kitId = k.id
-                  )
                 )
               )
         """)
