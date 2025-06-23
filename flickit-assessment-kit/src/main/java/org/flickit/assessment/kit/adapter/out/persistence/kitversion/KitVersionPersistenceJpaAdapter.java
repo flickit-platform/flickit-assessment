@@ -63,9 +63,11 @@ public class KitVersionPersistenceJpaAdapter implements
     @Override
     public CountKitVersionStatsPort.Result countKitVersionStats(long kitVersionId) {
         var entity = repository.countKitVersionStat(kitVersionId);
+        var attributeIndexToMeasuresCountMap = repository.countKitVersionAttributesMeasures(kitVersionId);
         return new Result(entity.getSubjectCount(),
             entity.getQuestionnaireCount(),
             entity.getQuestionCount(),
-            entity.getMaturityLevelCount());
+            entity.getMaturityLevelCount(),
+            attributeIndexToMeasuresCountMap);
     }
 }
