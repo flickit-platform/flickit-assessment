@@ -3,12 +3,15 @@ package org.flickit.assessment.kit.adapter.out.persistence.kitversion;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
+import org.flickit.assessment.data.jpa.kit.kitversion.AttributeMeasureCountView;
 import org.flickit.assessment.data.jpa.kit.kitversion.KitVersionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
 import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.port.out.kitversion.*;
 import org.springframework.stereotype.Component;
+
+import java.util.stream.Collectors;
 
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_VERSION_ID_NOT_FOUND;
@@ -63,11 +66,12 @@ public class KitVersionPersistenceJpaAdapter implements
     @Override
     public CountKitVersionStatsPort.Result countKitVersionStats(long kitVersionId) {
         var entity = repository.countKitVersionStat(kitVersionId);
-        var attributeIndexToMeasuresCountMap = repository.countKitVersionAttributesMeasures(kitVersionId);
+        var attributeTitleToMeasuresCountMap = repository.countKitVersionAttributesMeasure(kitVersionId).stream()
+            .collect(Collectors.toMap(AttributeMeasureCountView::getAttributeTitle, AttributeMeasureCountView::getMeasureCount));
         return new Result(entity.getSubjectCount(),
             entity.getQuestionnaireCount(),
             entity.getQuestionCount(),
             entity.getMaturityLevelCount(),
-            attributeIndexToMeasuresCountMap);
+            attributeTitleToMeasuresCountMap);
     }
 }
