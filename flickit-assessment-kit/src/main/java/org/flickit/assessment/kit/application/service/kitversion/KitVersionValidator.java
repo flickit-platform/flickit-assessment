@@ -44,6 +44,11 @@ public class KitVersionValidator {
         if (kitVersionCounts.questionCount() == 0)
             errors.add(MessageBundle.message(VALIDATE_KIT_VERSION_QUESTION_NOT_NULL));
 
+        errors.addAll(kitVersionCounts.attributeIndexToMeasuresCountMap().entrySet().stream()
+            .filter(e -> e.getValue() == 0)
+            .map(e -> MessageBundle.message(VALIDATE_KIT_VERSION_ATTRIBUTE_MEASURE_NOT_NULL, e.getKey()))
+            .toList());
+
         errors.addAll(loadSubjectsPort.loadSubjectsWithoutAttribute(kitVersionId)
             .stream()
             .map(e -> MessageBundle.message(VALIDATE_KIT_VERSION_SUBJECT_ATTRIBUTE_NOT_NULL, e.getTitle()))

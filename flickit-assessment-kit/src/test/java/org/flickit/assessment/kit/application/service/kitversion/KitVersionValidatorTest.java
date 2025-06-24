@@ -13,7 +13,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
@@ -58,6 +60,10 @@ class KitVersionValidatorTest {
         var listOfSubjects = List.of(subjectWithTitle("Title1"), subjectWithTitle("Title2"));
         var listOfAttributes = List.of(attributeWithTitle("Title1"), attributeWithTitle("Title2"));
         var listOfQuestionnaire = List.of(questionnaireWithTitle("Title1"), questionnaireWithTitle("Title2"));
+        var attributeTitleToMeasureCountMapWithMeasure = Map.of("Security Testing", 1L);
+        var attributeTitleToMeasureCountMapWithoutMeasure = Map.of("Threat Assessment", 0L);
+        var attributeTitleToMeasuresCountMap = new HashMap<>(attributeTitleToMeasureCountMapWithMeasure);
+        attributeTitleToMeasuresCountMap.putAll(attributeTitleToMeasureCountMapWithoutMeasure);
 
         List<String> expectedErrors = List.of(
             MessageBundle.message(VALIDATE_KIT_VERSION_QUESTION_IMPACT_NOT_NULL, loadQuestionsPortResult.getFirst().questionIndex(), loadQuestionsPortResult.getFirst().questionnaireTitle()),
@@ -74,7 +80,8 @@ class KitVersionValidatorTest {
             MessageBundle.message(VALIDATE_KIT_VERSION_SUBJECT_NOT_NULL),
             MessageBundle.message(VALIDATE_KIT_VERSION_QUESTION_NOT_NULL),
             MessageBundle.message(VALIDATE_KIT_VERSION_QUESTIONNAIRE_NOT_NULL),
-            MessageBundle.message(VALIDATE_KIT_VERSION_MATURITY_LEVEL_NOT_NULL)
+            MessageBundle.message(VALIDATE_KIT_VERSION_MATURITY_LEVEL_NOT_NULL),
+            MessageBundle.message(VALIDATE_KIT_VERSION_ATTRIBUTE_MEASURE_NOT_NULL, attributeTitleToMeasureCountMapWithoutMeasure.keySet().iterator().next())
         );
 
         when(loadQuestionsPort.loadQuestionsWithoutImpact(kitVersionId)).thenReturn(loadQuestionsPortResult);
@@ -82,12 +89,12 @@ class KitVersionValidatorTest {
         when(loadAnswerRangesPort.loadAnswerRangesWithNotEnoughOptions(kitVersionId)).thenReturn(listOfAnswerRanges);
         when(loadSubjectsPort.loadSubjectsWithoutAttribute(kitVersionId)).thenReturn(listOfSubjects);
         when(loadAttributesPort.loadUnimpactedAttributes(kitVersionId)).thenReturn(listOfAttributes);
-        when(countKitVersionStatsPort.countKitVersionStats(kitVersionId)).thenReturn(new CountKitVersionStatsPort.Result(0, 0, 0, 0));
+        when(countKitVersionStatsPort.countKitVersionStats(kitVersionId)).thenReturn(new CountKitVersionStatsPort.Result(0, 0, 0, 0, attributeTitleToMeasuresCountMap));
         when(loadQuestionnairesPort.loadQuestionnairesWithoutQuestion(kitVersionId)).thenReturn(listOfQuestionnaire);
         when(loadQuestionsPort.loadQuestionsWithoutMeasure(kitVersionId)).thenReturn(loadQuestionsPortResult);
 
         var result = validator.validate(kitVersionId);
-        assertEquals(17, result.size());
+        assertEquals(18, result.size());
         assertThat(result).containsAll(expectedErrors);
     }
 }
