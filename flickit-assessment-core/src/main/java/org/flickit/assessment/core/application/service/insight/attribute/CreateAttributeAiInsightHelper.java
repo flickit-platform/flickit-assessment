@@ -3,6 +3,7 @@ package org.flickit.assessment.core.application.service.insight.attribute;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.application.port.out.CallAiPromptPort;
 import org.flickit.assessment.common.config.AppAiProperties;
 import org.flickit.assessment.common.exception.ValidationException;
@@ -33,6 +34,7 @@ import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ATTRIBUTE_AI_INSIGHT_ALL_QUESTIONS_NOT_ANSWERED;
 import static org.flickit.assessment.core.common.MessageKey.ASSESSMENT_AI_IS_DISABLED;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -108,6 +110,7 @@ public class CreateAttributeAiInsightHelper {
             .map(entry -> {
                 var attribute = entry.getKey();
                 var aiInsight = callAiPromptPort.call(entry.getValue(), AiResponseDto.class).value();
+                log.info("Generating AI insight for attributeId=[{}] in thread=[{}]", attribute.getId(), Thread.currentThread().getName());
                 var aiInputPath = uploadInputFile(attribute, attributeIdToFile.get(attribute.getId()).stream());
                 return toAttributeInsight(param.assessmentResult().getId(), attribute.getId(), aiInsight, aiInputPath);
             })
