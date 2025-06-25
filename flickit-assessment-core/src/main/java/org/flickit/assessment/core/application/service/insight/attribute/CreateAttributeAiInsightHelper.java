@@ -94,17 +94,17 @@ public class CreateAttributeAiInsightHelper {
         var attributeValues = loadAttributeValuePort.load(param.assessmentResult().getId(), param.attributeIds());
         var assessmentTitle = getAssessmentTitle(assessment);
         var maturityLevels = loadMaturityLevelsPort.loadAllTranslated(param.assessmentResult());
-        var attributeIdToFile = attributeValues.stream()
+        var attributeIdToFile = attributeValues.parallelStream()
             .collect(toMap(av -> av.getAttribute().getId(),
                 attributeValue -> createAttributeScoresFilePort.generateFile(attributeValue, maturityLevels)));
-        var attributeToPromptMap = attributeValues.stream()
+        var attributeToPromptMap = attributeValues.parallelStream()
             .collect(toMap(AttributeValue::getAttribute, attributeValue -> createPrompt(attributeValue.getAttribute().getTitle(),
                 attributeValue.getAttribute().getDescription(),
                 assessmentTitle,
                 attributeIdToFile.get(attributeValue.getAttribute().getId()).text(),
                 param.locale().getDisplayLanguage())));
 
-        return attributeToPromptMap.entrySet().stream()
+        return attributeToPromptMap.entrySet().parallelStream()
             .map(entry -> {
                 var attribute = entry.getKey();
                 var aiInsight = callAiPromptPort.call(entry.getValue(), AiResponseDto.class).value();
