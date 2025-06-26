@@ -2,6 +2,7 @@ package org.flickit.assessment.core.application.service.insight.subject;
 
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentMode;
@@ -23,6 +24,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.SUBJECT_NOT_FOU
 import static org.flickit.assessment.core.common.MessageKey.QUICK_ASSESSMENT_SUBJECT_DEFAULT_INSIGHT;
 import static org.flickit.assessment.core.common.MessageKey.ADVANCED_ASSESSMENT_SUBJECT_DEFAULT_INSIGHT;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -60,14 +62,17 @@ public class CreateSubjectInsightsHelper {
         int maturityLevelsSize = countMaturityLevelsPort.count(param.assessmentResult().getKitVersionId());
         var assessmentMode = param.assessmentResult.getAssessment().getMode();
 
-        return subjectValues.stream()
-            .map(sv -> new SubjectInsight(param.assessmentResult().getId(),
-                sv.getSubject().getId(),
-                buildSubjectInsight(assessmentMode, sv, maturityLevelsSize, param.locale),
-                LocalDateTime.now(),
-                LocalDateTime.now(),
-                null,
-                false))
+        return subjectValues.parallelStream()
+            .map(sv -> {
+                log.info("Creating subject insight for subject [{}] of assessmentResult [{}] in thread [{}]", sv.getSubject().getId(), param.assessmentResult().getId(), Thread.currentThread().getName());
+                return new SubjectInsight(param.assessmentResult().getId(),
+                    sv.getSubject().getId(),
+                    buildSubjectInsight(assessmentMode, sv, maturityLevelsSize, param.locale),
+                    LocalDateTime.now(),
+                    LocalDateTime.now(),
+                    null,
+                    false);
+            })
             .toList();
     }
 
