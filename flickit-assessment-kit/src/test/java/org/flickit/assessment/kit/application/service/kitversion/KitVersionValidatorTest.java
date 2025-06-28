@@ -88,7 +88,7 @@ class KitVersionValidatorTest {
         when(loadAnswerRangesPort.loadAnswerRangesWithNotEnoughOptions(kitVersionId)).thenReturn(listOfAnswerRanges);
         when(loadSubjectsPort.loadSubjectsWithoutAttribute(kitVersionId)).thenReturn(listOfSubjects);
         when(loadAttributesPort.loadUnimpactedAttributes(kitVersionId)).thenReturn(listOfAttributes);
-        when(countKitVersionStatsPort.countKitVersionStats(kitVersionId)).thenReturn(new CountKitVersionStatsPort.Result(0, 0, 0, 0));
+        when(countKitVersionStatsPort.countKitVersionStats(kitVersionId)).thenReturn(new CountKitVersionStatsPort.Result(0, 0, 0, maturityLevelCount));
         when(loadQuestionnairesPort.loadQuestionnairesWithoutQuestion(kitVersionId)).thenReturn(listOfQuestionnaire);
         when(loadQuestionsPort.loadQuestionsWithoutMeasure(kitVersionId)).thenReturn(loadQuestionsPortResult);
         when(loadAttributesPort.loadWithoutMeasures(kitVersionId)).thenReturn(listOfAttributesWithoutMeasure);
