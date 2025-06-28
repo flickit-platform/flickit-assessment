@@ -79,6 +79,7 @@ class KitVersionValidatorTest {
             MessageBundle.message(VALIDATE_KIT_VERSION_SUBJECT_NOT_NULL),
             MessageBundle.message(VALIDATE_KIT_VERSION_QUESTION_NOT_NULL),
             MessageBundle.message(VALIDATE_KIT_VERSION_QUESTIONNAIRE_NOT_NULL),
+            MessageBundle.message(VALIDATE_KIT_VERSION_MATURITY_LEVELS_MIN_SIZE),
             MessageBundle.message(VALIDATE_KIT_VERSION_ATTRIBUTE_MEASURE_NOT_NULL, attributeWithoutMeasure1.getTitle()),
             MessageBundle.message(VALIDATE_KIT_VERSION_ATTRIBUTE_MEASURE_NOT_NULL, attributeWithoutMeasure2.getTitle())
         );
