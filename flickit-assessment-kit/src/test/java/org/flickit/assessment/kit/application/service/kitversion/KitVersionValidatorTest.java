@@ -7,8 +7,9 @@ import org.flickit.assessment.kit.application.port.out.kitversion.CountKitVersio
 import org.flickit.assessment.kit.application.port.out.question.LoadQuestionsPort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairesPort;
 import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectsPort;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -50,8 +51,9 @@ class KitVersionValidatorTest {
     @Mock
     private LoadQuestionnairesPort loadQuestionnairesPort;
 
-    @Test
-    void testValidate() {
+    @ParameterizedTest
+    @ValueSource(ints = {0, 1})
+    void testValidate(int maturityLevelCount) {
         var kitVersionId = 123L;
 
         var loadQuestionsPortResult = List.of(new LoadQuestionsPort.Result(1, 100L, "Q100Title"),
@@ -80,7 +82,7 @@ class KitVersionValidatorTest {
             MessageBundle.message(VALIDATE_KIT_VERSION_SUBJECT_NOT_NULL),
             MessageBundle.message(VALIDATE_KIT_VERSION_QUESTION_NOT_NULL),
             MessageBundle.message(VALIDATE_KIT_VERSION_QUESTIONNAIRE_NOT_NULL),
-            MessageBundle.message(VALIDATE_KIT_VERSION_MATURITY_LEVEL_NOT_NULL),
+            MessageBundle.message(VALIDATE_KIT_VERSION_MATURITY_LEVELS_MIN_SIZE),
             MessageBundle.message(VALIDATE_KIT_VERSION_ATTRIBUTE_MEASURE_NOT_NULL, attributeTitleToMeasureCountMapWithoutMeasure.keySet().iterator().next())
         );
 
@@ -89,7 +91,7 @@ class KitVersionValidatorTest {
         when(loadAnswerRangesPort.loadAnswerRangesWithNotEnoughOptions(kitVersionId)).thenReturn(listOfAnswerRanges);
         when(loadSubjectsPort.loadSubjectsWithoutAttribute(kitVersionId)).thenReturn(listOfSubjects);
         when(loadAttributesPort.loadUnimpactedAttributes(kitVersionId)).thenReturn(listOfAttributes);
-        when(countKitVersionStatsPort.countKitVersionStats(kitVersionId)).thenReturn(new CountKitVersionStatsPort.Result(0, 0, 0, 0, attributeTitleToMeasuresCountMap));
+        when(countKitVersionStatsPort.countKitVersionStats(kitVersionId)).thenReturn(new CountKitVersionStatsPort.Result(0, 0, 0, maturityLevelCount, attributeTitleToMeasuresCountMap));
         when(loadQuestionnairesPort.loadQuestionnairesWithoutQuestion(kitVersionId)).thenReturn(listOfQuestionnaire);
         when(loadQuestionsPort.loadQuestionsWithoutMeasure(kitVersionId)).thenReturn(loadQuestionsPortResult);
 
