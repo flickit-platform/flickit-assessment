@@ -1,0 +1,93 @@
+default:
+  image:
+    name: maven:3.9.9-eclipse-temurin-21-alpine
+    pull_policy: if-not-present
+
+  cache:
+    - key: maven-repo
+      paths:
+        - $CI_PROJECT_DIR/.m2/repository/
+      unprotect: true
+      # target folder cache should only be used in the same pipeline. So "pipeline id" is part of its key.
+    - key: maven-target-$CI_PIPELINE_ID
+      paths:
+        - "**/target/"
+      unprotect: false
+    - key: jib-base-image
+      paths:
+        - .jib/
+      unprotect: true
+
+stages:
+  - build
+  - test
+  - release
+  - deploy
+
+# DinD service is required for Testcontainers
+services:
+  - name: docker:dind
+    # explicitly disable tls to avoid docker startup interruption
+    command: [ "--tls=false" ]
+
+variables:
+  GIT_DEPTH: 1
+  MAVEN_CLI_OPTS: >-
+    -U
+    --batch-mode
+    --show-version
+    --errors
+    --fail-at-end
+    --no-transfer-progress
+    -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository
+  DEPLOY_WEBHOOK_URL: "${DEPLOY_WEBHOOK_URL}"
+  DOCKER_IMAGE_NAME: "$DOCKER_REGISTRY/fin-sale:$CI_COMMIT_SHORT_SHA"
+  JIB_OPT: >-
+    -Djib.httpTimeout=240000
+    -Dmaven.test.skip=true
+    -Djib.to.auth.username=$REGISTRY_USERNAME
+    -Djib.to.auth.password=$REGISTRY_PASSWORD
+    -Djib.allowInsecureRegistries
+    -DsendCredentialsOverHttp
+    -Djib.console=plain
+    -Djib.baseImageCache=.jib/
+    -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository
+  JIB_CMD: "install jib:build"
+  DOCKER_HOST: "tcp://docker:2375"
+  DOCKER_TLS_CERTDIR: ""
+  DOCKER_DRIVER: overlay2
+
+build:
+  stage: build
+  script:
+    - mvn $MAVEN_CLI_OPTS clean compile
+  except:
+    - tags
+
+test:
+  stage: test
+  script:
+    - mvn $MAVEN_CLI_OPTS test
+  except:
+    - tags
+
+release:
+  stage: release
+  script:
+    - mvn $JIB_OPT -Djib.to.image=$DOCKER_IMAGE_NAME $JIB_CMD
+  only:
+    - main
+
+
+deploy:
+  stage: deploy
+  image: curlimages/curl:latest
+  script:
+    - |
+      status_code=$(curl --silent --output /dev/null --write-out "%{http_code}" -X POST "${DEPLOY_WEBHOOK_URL}?tag=${CI_COMMIT_SHORT_SHA}")
+      if [ "$status_code" -ne 204 ]; then
+        echo "Unexpected status code: $status_code"
+        exit 1
+      fi
+  only:
+    - main
