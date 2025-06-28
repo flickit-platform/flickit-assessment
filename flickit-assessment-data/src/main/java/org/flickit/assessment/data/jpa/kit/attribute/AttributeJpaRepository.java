@@ -173,4 +173,16 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
     List<QuestionAnswerView> findAttributeQuestionsAndAnswers(@Param("assessmentResultId") UUID assessmentResultId,
                                                               @Param("kitVersionId") Long kitVersionId,
                                                               @Param("attributeId") long attributeId);
+
+    @Query("""
+            SELECT  a
+            FROM QuestionImpactJpaEntity qi
+            JOIN QuestionJpaEntity q on q.id = qi.questionId and q.kitVersionId = qi.kitVersionId
+            JOIN AttributeJpaEntity a on a.id = qi.attributeId and qi.kitVersionId = a.kitVersionId
+            WHERE qi.kitVersionId = :kitVersionId
+            GROUP BY a.id, a.title, a.kitVersionId, a.code, a.description, a.index, a.createdBy, a.creationTime,
+                    a.lastModifiedBy, a.lastModificationTime, a.translations, a.subjectId, a.weight
+            HAVING COUNT(q.measureId) = 0
+        """)
+    List<AttributeJpaEntity> findAllByKitVersionIdAndWithoutMeasures(@Param("kitVersionId") Long kitVersionId);
 }
