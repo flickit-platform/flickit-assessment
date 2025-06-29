@@ -54,6 +54,11 @@ public class KitVersionValidator {
             .map(e -> MessageBundle.message(VALIDATE_KIT_VERSION_ATTRIBUTE_QUESTION_IMPACT_NOT_NULL, e.getTitle()))
             .toList());
 
+        errors.addAll(loadAttributesPort.loadWithoutMeasures(kitVersionId)
+            .stream()
+            .map(e -> MessageBundle.message(VALIDATE_KIT_VERSION_ATTRIBUTE_MEASURE_NOT_NULL, e.getTitle()))
+            .toList());
+
         errors.addAll(loadAnswerRangesPort.loadAnswerRangesWithNotEnoughOptions(kitVersionId)
             .stream()
             .map(e -> MessageBundle.message(VALIDATE_KIT_VERSION_ANSWER_RANGE_LOW_OPTIONS, e.getTitle()))

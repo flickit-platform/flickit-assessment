@@ -481,6 +481,7 @@ public class ErrorMessageKey {
     public static final String VALIDATE_KIT_VERSION_QUESTIONNAIRE_QUESTION_NOT_NULL = "validate-kit-version.questionnaire-question.notNull";
     public static final String VALIDATE_KIT_VERSION_SUBJECT_NOT_NULL = "validate-kit-version.subject.notNull";
     public static final String VALIDATE_KIT_VERSION_QUESTION_NOT_NULL = "validate-kit-version.question.notNull";
+    public static final String VALIDATE_KIT_VERSION_ATTRIBUTE_MEASURE_NOT_NULL = "validate-kit-version.attribute-measure.notNull";
     public static final String VALIDATE_KIT_VERSION_QUESTIONNAIRE_NOT_NULL = "validate-kit-version.questionnaire.notNull";
     public static final String VALIDATE_KIT_VERSION_MATURITY_LEVELS_MIN_SIZE = "validate-kit-version.maturityLevels.size.min";
     public static final String VALIDATE_KIT_VERSION_QUESTION_MEASURE_NOT_NULL = "validate-kit-version.question-measure.notNull";
