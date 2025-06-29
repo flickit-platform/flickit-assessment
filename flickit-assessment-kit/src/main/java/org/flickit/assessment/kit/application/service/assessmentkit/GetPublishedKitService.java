@@ -86,7 +86,7 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
                 expertGroup.getTitle(),
                 getPictureDownloadLink(expertGroup.getPicture())),
             kit.getPrice() == 0,
-            kit.getPrice() == 0 || hasKitAccess);
+            (!kit.isPrivate() && kit.getPrice() == 0) || hasKitAccess);
     }
 
     private void checkAccess(AssessmentKit kit, boolean hasKitAccess) {
