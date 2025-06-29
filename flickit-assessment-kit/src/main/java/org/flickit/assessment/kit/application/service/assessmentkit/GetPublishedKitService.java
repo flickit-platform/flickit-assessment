@@ -50,7 +50,7 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
 
         boolean hasKitAccess = param.getCurrentUserId() != null &&
             checkKitUserAccessPort.hasAccess(param.getKitId(), param.getCurrentUserId());
-        checkAccess(kit, param, hasKitAccess);
+        checkAccess(kit, hasKitAccess);
 
         var stats = countKitStatsPort.countKitStats(param.getKitId());
 
@@ -89,9 +89,8 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
             kit.getPrice() == 0 || hasKitAccess);
     }
 
-    private void checkAccess(AssessmentKit kit, Param param, boolean hasKitAccess) {
-        if (kit.isPrivate() &&
-            (param.getCurrentUserId() == null || !hasKitAccess))
+    private void checkAccess(AssessmentKit kit, boolean hasKitAccess) {
+        if (kit.isPrivate() && !hasKitAccess)
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
     }
 
