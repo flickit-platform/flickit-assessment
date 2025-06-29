@@ -109,7 +109,7 @@ public class GetKitListService implements GetKitListUseCase {
                 .map(KitLanguage::getTitle)
                 .toList(),
             item.kit().getPrice() == 0,
-            !item.kit().isPrivate() && item.kit().getPrice() == 0 || item.hasKitAccess());
+            (!item.kit().isPrivate() && item.kit().getPrice() == 0) || item.hasKitAccess());
     }
 
     private KitListItem.ExpertGroup toExpertGroup(ExpertGroup expertGroup) {

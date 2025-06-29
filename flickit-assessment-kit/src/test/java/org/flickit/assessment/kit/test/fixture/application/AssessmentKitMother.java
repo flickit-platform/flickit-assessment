@@ -26,6 +26,14 @@ public class AssessmentKitMother {
     }
 
     public static AssessmentKit simpleKitWithPrice(long price) {
+        return kitWithIsPrivateAndPrice(false, price);
+    }
+
+    public static AssessmentKit privateKitWithPrice(long price) {
+        return kitWithIsPrivateAndPrice(true, price);
+    }
+
+    private static AssessmentKit kitWithIsPrivateAndPrice(boolean isPrivate, long price) {
         return new AssessmentKit(
             id++,
             CODE + id,
@@ -36,7 +44,7 @@ public class AssessmentKitMother {
             LocalDateTime.now(),
             LocalDateTime.now(),
             Boolean.TRUE,
-            Boolean.FALSE,
+            isPrivate,
             EXPERT_GROUP_ID,
             Map.of(KitLanguage.EN, new KitTranslation(TITLE, SUMMARY, ABOUT,
                 new MetadataTranslation(GOAL, CONTEXT))),
