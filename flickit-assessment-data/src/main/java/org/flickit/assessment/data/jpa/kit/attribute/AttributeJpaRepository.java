@@ -175,14 +175,23 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
                                                               @Param("attributeId") long attributeId);
 
     @Query("""
-            SELECT  a
-            FROM QuestionImpactJpaEntity qi
-            JOIN QuestionJpaEntity q on q.id = qi.questionId and q.kitVersionId = qi.kitVersionId
-            JOIN AttributeJpaEntity a on a.id = qi.attributeId and qi.kitVersionId = a.kitVersionId
-            WHERE qi.kitVersionId = :kitVersionId
-            GROUP BY a.id, a.title, a.kitVersionId, a.code, a.description, a.index, a.createdBy, a.creationTime,
-                    a.lastModifiedBy, a.lastModificationTime, a.translations, a.subjectId, a.weight
-            HAVING COUNT(q.measureId) = 0
+            SELECT a
+            FROM AttributeJpaEntity a
+            WHERE a.kitVersionId = :kitVersionId
+              AND EXISTS (
+                  SELECT 1
+                  FROM QuestionImpactJpaEntity qi
+                  WHERE qi.attributeId = a.id
+                    AND qi.kitVersionId = a.kitVersionId
+              )
+              AND NOT EXISTS (
+                  SELECT 1
+                  FROM QuestionImpactJpaEntity qi
+                  JOIN QuestionJpaEntity q ON q.id = qi.questionId AND q.kitVersionId = qi.kitVersionId
+                  WHERE qi.attributeId = a.id
+                    AND qi.kitVersionId = a.kitVersionId
+                    AND q.measureId IS NOT NULL
+              )
         """)
     List<AttributeJpaEntity> findAllByKitVersionIdAndWithoutMeasures(@Param("kitVersionId") Long kitVersionId);
 }
