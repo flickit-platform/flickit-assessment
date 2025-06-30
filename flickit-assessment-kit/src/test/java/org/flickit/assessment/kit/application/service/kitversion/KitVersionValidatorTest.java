@@ -59,7 +59,7 @@ class KitVersionValidatorTest {
             new LoadQuestionsPort.Result(2, 200L, "Q100Title"));
         var listOfAnswerRanges = List.of(createReusableAnswerRangeWithTwoOptions());
         var listOfSubjects = List.of(subjectWithTitle("Title1"), subjectWithTitle("Title2"));
-        var listOfAttributes = List.of(attributeWithTitle("Title1"), attributeWithTitle("Title2"));
+        var listOfAttributes = List.of(createAttributeMini(), createAttributeMini());
         var listOfQuestionnaire = List.of(questionnaireWithTitle("Title1"), questionnaireWithTitle("Title2"));
         var listOfAttributesWithoutMeasure = List.of(createAttributeMini(), createAttributeMini());
 
@@ -73,8 +73,8 @@ class KitVersionValidatorTest {
             MessageBundle.message(VALIDATE_KIT_VERSION_ANSWER_RANGE_LOW_OPTIONS, listOfAnswerRanges.getFirst().getTitle()),
             MessageBundle.message(VALIDATE_KIT_VERSION_SUBJECT_ATTRIBUTE_NOT_NULL, listOfSubjects.getFirst().getTitle()),
             MessageBundle.message(VALIDATE_KIT_VERSION_SUBJECT_ATTRIBUTE_NOT_NULL, listOfSubjects.getLast().getTitle()),
-            MessageBundle.message(VALIDATE_KIT_VERSION_QUESTIONNAIRE_QUESTION_NOT_NULL, listOfAttributes.getFirst().getTitle()),
-            MessageBundle.message(VALIDATE_KIT_VERSION_QUESTIONNAIRE_QUESTION_NOT_NULL, listOfAttributes.getLast().getTitle()),
+            MessageBundle.message(VALIDATE_KIT_VERSION_QUESTIONNAIRE_QUESTION_NOT_NULL, listOfQuestionnaire.getFirst().getTitle()),
+            MessageBundle.message(VALIDATE_KIT_VERSION_QUESTIONNAIRE_QUESTION_NOT_NULL, listOfQuestionnaire.getLast().getTitle()),
             MessageBundle.message(VALIDATE_KIT_VERSION_SUBJECT_NOT_NULL),
             MessageBundle.message(VALIDATE_KIT_VERSION_QUESTION_NOT_NULL),
             MessageBundle.message(VALIDATE_KIT_VERSION_QUESTIONNAIRE_NOT_NULL),
