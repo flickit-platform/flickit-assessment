@@ -78,11 +78,7 @@ public interface AssessmentKitJpaRepository extends
     CountKitStatsView countKitStats(@Param(value = "kitId") long kitId);
 
     @Query("""
-            SELECT k AS kit, g AS expertGroup,
-            EXISTS (
-                SELECT 1 FROM KitUserAccessJpaEntity kua
-                WHERE kua.kitId = k.id AND kua.userId = :userId
-            ) AS kitUserAccess
+            SELECT k AS kit, g AS expertGroup
             FROM AssessmentKitJpaEntity k
             LEFT JOIN ExpertGroupJpaEntity g ON k.expertGroupId = g.id
             WHERE k.published = TRUE

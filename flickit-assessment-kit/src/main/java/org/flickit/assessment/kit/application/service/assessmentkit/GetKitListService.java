@@ -76,7 +76,7 @@ public class GetKitListService implements GetKitListUseCase {
                 param.getPage(),
                 param.getSize());
         } else if (!param.getIsPrivate())
-            kitsPage = loadPublishedKitListPort.loadPublicKits(kitLanguages, param.getPage(), param.getSize());
+            kitsPage = loadPublishedKitListPort.loadPublicKits(param.getCurrentUserId(), kitLanguages, param.getPage(), param.getSize());
         else
             kitsPage = loadPublishedKitListPort.loadPrivateKits(param.getCurrentUserId(),
                 kitLanguages,
