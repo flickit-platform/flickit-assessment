@@ -79,4 +79,7 @@ public class ErrorMessageKey {
 
     public static final String TRANSLATION_ANSWER_RANGE_TITLE_SIZE_MIN = "translations-answer-range.title.size.min";
     public static final String TRANSLATION_ANSWER_RANGE_TITLE_SIZE_MAX = "translations-answer-range.title.size.max";
+
+    public static final String TRANSLATION_ATTRIBUTE_MINI_TITLE_SIZE_MIN = "translations-attribute-mini.title.size.min";
+    public static final String TRANSLATION_ATTRIBUTE_MINI_TITLE_SIZE_MAX = "translations-attribute-mini.title.size.max";
 }
