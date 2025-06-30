@@ -12,6 +12,7 @@ import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.flickit.assessment.kit.adapter.out.persistence.subject.SubjectMapper;
 import org.flickit.assessment.kit.application.domain.Attribute;
+import org.flickit.assessment.kit.application.domain.AttributeMini;
 import org.flickit.assessment.kit.application.domain.AttributeWithSubject;
 import org.flickit.assessment.kit.application.port.out.attribute.*;
 import org.springframework.data.domain.PageRequest;
@@ -111,10 +112,10 @@ public class AttributePersistenceJpaAdapter implements
     }
 
     @Override
-    public List<Attribute> loadWithoutMeasures(long kitVersionId) {
+    public List<AttributeMini> loadWithoutMeasures(long kitVersionId) {
         return repository.findAllByKitVersionIdAndWithoutMeasures(kitVersionId)
             .stream()
-            .map(AttributeMapper::mapToDomainModel)
+            .map(AttributeMapper::mapToAttributeMiniDomainModel)
             .toList();
     }
 

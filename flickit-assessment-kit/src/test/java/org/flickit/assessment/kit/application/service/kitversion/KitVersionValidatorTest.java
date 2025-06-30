@@ -1,7 +1,7 @@
 package org.flickit.assessment.kit.application.service.kitversion;
 
 import org.flickit.assessment.common.application.MessageBundle;
-import org.flickit.assessment.kit.application.domain.Attribute;
+import org.flickit.assessment.kit.application.domain.AttributeMini;
 import org.flickit.assessment.kit.application.port.out.answerrange.LoadAnswerRangesPort;
 import org.flickit.assessment.kit.application.port.out.attribute.LoadAttributesPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.CountKitVersionStatsPort;
@@ -20,6 +20,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 import static org.flickit.assessment.kit.test.fixture.application.AnswerRangeMother.createReusableAnswerRangeWithTwoOptions;
+import static org.flickit.assessment.kit.test.fixture.application.AttributeMiniMother.*;
 import static org.flickit.assessment.kit.test.fixture.application.AttributeMother.attributeWithTitle;
 import static org.flickit.assessment.kit.test.fixture.application.SubjectMother.subjectWithTitle;
 import static org.flickit.assessment.kit.test.fixture.application.QuestionnaireMother.questionnaireWithTitle;
@@ -61,7 +62,7 @@ class KitVersionValidatorTest {
         var listOfSubjects = List.of(subjectWithTitle("Title1"), subjectWithTitle("Title2"));
         var listOfAttributes = List.of(attributeWithTitle("Title1"), attributeWithTitle("Title2"));
         var listOfQuestionnaire = List.of(questionnaireWithTitle("Title1"), questionnaireWithTitle("Title2"));
-        Attribute attributeWithoutMeasure1 = attributeWithTitle("TitleWithoutMeasure1"), attributeWithoutMeasure2 = attributeWithTitle("TitleWithoutMeasure2");
+        AttributeMini attributeWithoutMeasure1 = createAttributeMini(), attributeWithoutMeasure2 = createAttributeMini();
         var listOfAttributesWithoutMeasure = List.of(attributeWithoutMeasure1, attributeWithoutMeasure2);
 
         List<String> expectedErrors = List.of(

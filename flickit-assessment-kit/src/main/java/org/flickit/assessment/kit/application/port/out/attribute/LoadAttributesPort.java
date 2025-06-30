@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.application.port.out.attribute;
 
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.kit.application.domain.Attribute;
+import org.flickit.assessment.kit.application.domain.AttributeMini;
 import org.flickit.assessment.kit.application.domain.AttributeWithSubject;
 
 import java.util.List;
@@ -14,5 +15,5 @@ public interface LoadAttributesPort {
 
     List<Attribute> loadUnimpactedAttributes(long kitVersionId);
 
-    List<Attribute> loadWithoutMeasures(long kitVersionId);
+    List<AttributeMini> loadWithoutMeasures(long kitVersionId);
 }
