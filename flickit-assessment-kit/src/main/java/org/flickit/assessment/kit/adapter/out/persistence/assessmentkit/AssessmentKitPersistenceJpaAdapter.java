@@ -217,7 +217,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
                                                                              int size) {
         var kitLanguageIds = resolveKitLanguages(kitLanguages);
         var sort = Sort.by(Sort.Order.asc(AssessmentKitJpaEntity.Fields.title));
-        var pageResult = repository.findAllPublishedAndPrivateByUserId(userId, kitLanguageIds, PageRequest.of(page, size, sort));
+        var pageResult = repository.findAllPublishedAndNotPrivateByUserId(userId, kitLanguageIds, PageRequest.of(page, size, sort));
 
         return toLoadPublishedKitsPortResult(pageResult);
     }

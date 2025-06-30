@@ -101,6 +101,26 @@ public interface AssessmentKitJpaRepository extends
             FROM AssessmentKitJpaEntity k
             LEFT JOIN ExpertGroupJpaEntity g ON k.expertGroupId = g.id
             WHERE k.published = TRUE
+                AND k.isPrivate = FALSE
+                AND EXISTS (SELECT 1 FROM KitLanguageJpaEntity kl
+                    WHERE kl.kitId = k.id
+                        AND (:languageIds IS NULL OR kl.langId IN :languageIds))
+        """)
+    Page<KitWithExpertGroupView> findAllPublishedAndNotPrivateByUserId(@Param("userId") UUID userId,
+                                                                       @Nullable
+                                                                       @Param("languageIds")
+                                                                       Collection<Integer> languageIds,
+                                                                       Pageable pageable);
+
+    @Query("""
+            SELECT k AS kit, g AS expertGroup,
+            EXISTS (
+                SELECT 1 FROM KitUserAccessJpaEntity kua
+                WHERE kua.kitId = k.id AND kua.userId = :userId
+            ) AS kitUserAccess
+            FROM AssessmentKitJpaEntity k
+            LEFT JOIN ExpertGroupJpaEntity g ON k.expertGroupId = g.id
+            WHERE k.published = TRUE
                 AND EXISTS (SELECT 1 FROM KitLanguageJpaEntity kl
                     WHERE kl.kitId = k.id
                         AND (:languageIds IS NULL OR kl.langId IN :languageIds))
