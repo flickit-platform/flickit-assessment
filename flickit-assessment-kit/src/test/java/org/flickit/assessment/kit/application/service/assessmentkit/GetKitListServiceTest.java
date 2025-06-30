@@ -60,7 +60,7 @@ class GetKitListServiceTest {
 
         var expectedKitsPage = getExpectedKitsPage(assessmentKit, true);
 
-        when(loadPublishedKitListPort.loadPublicKits(Set.of(KitLanguage.EN), param.getPage(), param.getSize()))
+        when(loadPublishedKitListPort.loadPublicKits(param.getCurrentUserId(), Set.of(KitLanguage.EN), param.getPage(), param.getSize()))
             .thenReturn(expectedKitsPage);
         int kitLikes = 3, assessmentsCount = 15;
         when(countKitStatsPort.countKitsStats(kitIds))
@@ -91,7 +91,7 @@ class GetKitListServiceTest {
 
         var expectedKitsPage = getExpectedKitsPage(assessmentKit, false);
 
-        when(loadPublishedKitListPort.loadPublicKits(Set.of(KitLanguage.EN), param.getPage(), param.getSize()))
+        when(loadPublishedKitListPort.loadPublicKits(param.getCurrentUserId(), Set.of(KitLanguage.EN), param.getPage(), param.getSize()))
             .thenReturn(expectedKitsPage);
         int kitLikes = 3, assessmentsCount = 15;
         when(countKitStatsPort.countKitsStats(kitIds))
