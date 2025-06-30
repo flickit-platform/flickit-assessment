@@ -20,7 +20,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 import static org.flickit.assessment.kit.test.fixture.application.AnswerRangeMother.createReusableAnswerRangeWithTwoOptions;
 import static org.flickit.assessment.kit.test.fixture.application.AttributeMiniMother.createAttributeMini;
-import static org.flickit.assessment.kit.test.fixture.application.AttributeMother.attributeWithTitle;
 import static org.flickit.assessment.kit.test.fixture.application.SubjectMother.subjectWithTitle;
 import static org.flickit.assessment.kit.test.fixture.application.QuestionnaireMother.questionnaireWithTitle;
 import static org.junit.jupiter.api.Assertions.assertEquals;

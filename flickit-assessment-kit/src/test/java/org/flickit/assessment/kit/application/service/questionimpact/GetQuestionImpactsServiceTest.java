@@ -2,7 +2,7 @@ package org.flickit.assessment.kit.application.service.questionimpact;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.kit.application.domain.Attribute;
+import org.flickit.assessment.kit.application.domain.AttributeMini;
 import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.domain.QuestionImpact;
 import org.flickit.assessment.kit.application.port.in.questionimpact.GetQuestionImpactsUseCase;
@@ -32,7 +32,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 import static org.flickit.assessment.kit.common.ErrorMessageKey.QUESTION_ID_NOT_FOUND;
 import static org.flickit.assessment.kit.test.fixture.application.AnswerOptionMother.createAnswerOption;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
-import static org.flickit.assessment.kit.test.fixture.application.AttributeMother.attributeWithTitle;
+import static org.flickit.assessment.kit.test.fixture.application.AttributeMiniMother.*;
 import static org.flickit.assessment.kit.test.fixture.application.MaturityLevelMother.allLevels;
 import static org.flickit.assessment.kit.test.fixture.application.QuestionImpactMother.createQuestionImpact;
 import static org.flickit.assessment.kit.test.fixture.application.QuestionMother.createQuestion;
@@ -93,8 +93,8 @@ class GetQuestionImpactsServiceTest {
 
     @Test
     void testGetQuestionImpacts_validParameters_loadQuestionImpactsSuccessfully() {
-        var attr1 = attributeWithTitle("attr1");
-        var attr2 = attributeWithTitle("attr2");
+        var attr1 = createAttributeMini();
+        var attr2 = createAttributeMini();
         var expectedAttributes = List.of(attr1, attr2);
         var maturityLevels = allLevels();
         var question = createQuestion();
@@ -136,7 +136,7 @@ class GetQuestionImpactsServiceTest {
             .sorted(Comparator.comparing(AttributeImpact::attributeId))
             .toList();
         var expectedAttributesSorted = expectedAttributes.stream()
-            .sorted(Comparator.comparing(Attribute::getId))
+            .sorted(Comparator.comparing(AttributeMini::getId))
             .toList();
         assertThat(actualAttributeImpacts)
             .zipSatisfy(expectedAttributesSorted, (actual, expected) -> {

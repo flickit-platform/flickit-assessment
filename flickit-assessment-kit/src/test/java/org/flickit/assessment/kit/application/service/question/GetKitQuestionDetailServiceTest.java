@@ -9,10 +9,7 @@ import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpert
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.kit.application.port.out.question.LoadQuestionPort;
-import org.flickit.assessment.kit.test.fixture.application.AttributeMother;
-import org.flickit.assessment.kit.test.fixture.application.ExpertGroupMother;
-import org.flickit.assessment.kit.test.fixture.application.MaturityLevelMother;
-import org.flickit.assessment.kit.test.fixture.application.QuestionMother;
+import org.flickit.assessment.kit.test.fixture.application.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -28,6 +25,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.QUESTION_ID_NOT_FOUND;
 import static org.flickit.assessment.kit.test.fixture.application.AnswerOptionMother.createAnswerOption;
+import static org.flickit.assessment.kit.test.fixture.application.AttributeMiniMother.createAttributeMini;
 import static org.flickit.assessment.kit.test.fixture.application.QuestionImpactMother.createQuestionImpact;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -61,8 +59,8 @@ class GetKitQuestionDetailServiceTest {
         long kitId = 123L;
         long kitVersionId = 456L;
         var expertGroup = ExpertGroupMother.createExpertGroup();
-        var attr1 = AttributeMother.attributeWithTitle("attr1");
-        var attr2 = AttributeMother.attributeWithTitle("attr2");
+        var attr1 = createAttributeMini();
+        var attr2 = createAttributeMini();
         var maturityLevels = MaturityLevelMother.allLevels();
         var question = QuestionMother.createQuestion();
 

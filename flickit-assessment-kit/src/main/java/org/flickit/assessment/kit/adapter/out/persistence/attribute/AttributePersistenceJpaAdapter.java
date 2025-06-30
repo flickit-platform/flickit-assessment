@@ -125,9 +125,9 @@ public class AttributePersistenceJpaAdapter implements
     }
 
     @Override
-    public List<Attribute> loadAllByIdsAndKitVersionId(List<Long> attributeIds, long kitVersionId) {
+    public List<AttributeMini> loadAllByIdsAndKitVersionId(List<Long> attributeIds, long kitVersionId) {
         return repository.findAllByIdInAndKitVersionId(attributeIds, kitVersionId).stream()
-            .map(AttributeMapper::mapToDomainModel)
+            .map(AttributeMapper::mapToAttributeMiniDomainModel)
             .toList();
     }
 
