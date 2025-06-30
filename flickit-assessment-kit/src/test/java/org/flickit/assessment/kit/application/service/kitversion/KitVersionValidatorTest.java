@@ -1,7 +1,6 @@
 package org.flickit.assessment.kit.application.service.kitversion;
 
 import org.flickit.assessment.common.application.MessageBundle;
-import org.flickit.assessment.kit.application.domain.AttributeMini;
 import org.flickit.assessment.kit.application.port.out.answerrange.LoadAnswerRangesPort;
 import org.flickit.assessment.kit.application.port.out.attribute.LoadAttributesPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.CountKitVersionStatsPort;
@@ -20,7 +19,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 import static org.flickit.assessment.kit.test.fixture.application.AnswerRangeMother.createReusableAnswerRangeWithTwoOptions;
-import static org.flickit.assessment.kit.test.fixture.application.AttributeMiniMother.*;
+import static org.flickit.assessment.kit.test.fixture.application.AttributeMiniMother.createAttributeMini;
 import static org.flickit.assessment.kit.test.fixture.application.AttributeMother.attributeWithTitle;
 import static org.flickit.assessment.kit.test.fixture.application.SubjectMother.subjectWithTitle;
 import static org.flickit.assessment.kit.test.fixture.application.QuestionnaireMother.questionnaireWithTitle;
@@ -62,8 +61,7 @@ class KitVersionValidatorTest {
         var listOfSubjects = List.of(subjectWithTitle("Title1"), subjectWithTitle("Title2"));
         var listOfAttributes = List.of(attributeWithTitle("Title1"), attributeWithTitle("Title2"));
         var listOfQuestionnaire = List.of(questionnaireWithTitle("Title1"), questionnaireWithTitle("Title2"));
-        AttributeMini attributeWithoutMeasure1 = createAttributeMini(), attributeWithoutMeasure2 = createAttributeMini();
-        var listOfAttributesWithoutMeasure = List.of(attributeWithoutMeasure1, attributeWithoutMeasure2);
+        var listOfAttributesWithoutMeasure = List.of(createAttributeMini(), createAttributeMini());
 
         List<String> expectedErrors = List.of(
             MessageBundle.message(VALIDATE_KIT_VERSION_QUESTION_IMPACT_NOT_NULL, loadQuestionsPortResult.getFirst().questionIndex(), loadQuestionsPortResult.getFirst().questionnaireTitle()),
@@ -81,8 +79,8 @@ class KitVersionValidatorTest {
             MessageBundle.message(VALIDATE_KIT_VERSION_QUESTION_NOT_NULL),
             MessageBundle.message(VALIDATE_KIT_VERSION_QUESTIONNAIRE_NOT_NULL),
             MessageBundle.message(VALIDATE_KIT_VERSION_MATURITY_LEVELS_MIN_SIZE),
-            MessageBundle.message(VALIDATE_KIT_VERSION_ATTRIBUTE_MEASURE_NOT_NULL, attributeWithoutMeasure1.getTitle()),
-            MessageBundle.message(VALIDATE_KIT_VERSION_ATTRIBUTE_MEASURE_NOT_NULL, attributeWithoutMeasure2.getTitle())
+            MessageBundle.message(VALIDATE_KIT_VERSION_ATTRIBUTE_MEASURE_NOT_NULL, listOfAttributesWithoutMeasure.getFirst().getTitle()),
+            MessageBundle.message(VALIDATE_KIT_VERSION_ATTRIBUTE_MEASURE_NOT_NULL, listOfAttributesWithoutMeasure.getLast().getTitle())
         );
 
         when(loadQuestionsPort.loadQuestionsWithoutImpact(kitVersionId)).thenReturn(loadQuestionsPortResult);
