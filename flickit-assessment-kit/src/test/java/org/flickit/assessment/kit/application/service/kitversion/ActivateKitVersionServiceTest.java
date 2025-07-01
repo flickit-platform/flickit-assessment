@@ -88,7 +88,7 @@ class ActivateKitVersionServiceTest {
     );
 
     @Test
-    void testActivateKitVersion_kitVersionIsNotInUpdatingStatus_ThrowsValidationException() {
+    void testActivateKitVersion_whenKitVersionIsNotInUpdatingStatus_thenThrowsValidationException() {
         kitVersion = KitVersionMother.createActiveKitVersion(simpleKit());
         var param = createParam(ActivateKitVersionUseCase.Param.ParamBuilder::build);
 
@@ -106,7 +106,7 @@ class ActivateKitVersionServiceTest {
     }
 
     @Test
-    void testActivateKitVersion_userHasNotAccess_ThrowsAccessDeniedException() {
+    void testActivateKitVersion_whenUserHasNotAccess_thenThrowsAccessDeniedException() {
         var param = createParam(ActivateKitVersionUseCase.Param.ParamBuilder::build);
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
@@ -124,7 +124,7 @@ class ActivateKitVersionServiceTest {
 
     @ParameterizedTest
     @EnumSource(KitLanguage.class)
-    void testActivateKitVersion_kitVersionIsNotValid_ThrowsValidationException(KitLanguage language) {
+    void testActivateKitVersion_whenKitVersionIsNotValid_thenThrowsValidationException(KitLanguage language) {
         var param = createParam(b -> b.currentUserId(ownerId));
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
@@ -145,7 +145,7 @@ class ActivateKitVersionServiceTest {
 
     @ParameterizedTest
     @EnumSource(KitLanguage.class)
-    void testActivateKitVersion_ActiveVersionExists_ArchiveOldVersion(KitLanguage language) {
+    void testActivateKitVersion_whenActiveVersionExists_thenArchiveOldVersion(KitLanguage language) {
         Param param = createParam(b -> b.currentUserId(ownerId));
 
         var option1 = AnswerOptionMother.createAnswerOption(1L, "op1", 1);
@@ -186,7 +186,7 @@ class ActivateKitVersionServiceTest {
 
     @ParameterizedTest
     @EnumSource(KitLanguage.class)
-    void testActivateKitVersion_ThereIsNoActiveVersion_ActivateNewKitVersion(KitLanguage language) {
+    void testActivateKitVersion_whenThereIsNoActiveVersion_thenActivateNewKitVersion(KitLanguage language) {
         var kit = kitWithKitVersionId(null);
         kitVersion = createKitVersion(kit);
         var param = createParam(b -> b.currentUserId(ownerId));
