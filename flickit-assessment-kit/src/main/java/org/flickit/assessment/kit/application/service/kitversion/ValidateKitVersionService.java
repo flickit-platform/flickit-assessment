@@ -1,12 +1,10 @@
 package org.flickit.assessment.kit.application.service.kitversion;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.port.in.kitversion.ValidateKitVersionUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,8 +26,7 @@ public class ValidateKitVersionService implements ValidateKitVersionUseCase {
         if (!ownerId.equals(param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        var kitLanguage = KitLanguage.valueOf(LocaleContextHolder.getLocale().getLanguage().toUpperCase());
-        List<String> errors = kitVersionValidator.validate(param.getKitVersionId(), kitLanguage);
+        List<String> errors = kitVersionValidator.validate(param.getKitVersionId());
         return new Result(errors.isEmpty(), errors);
     }
 }

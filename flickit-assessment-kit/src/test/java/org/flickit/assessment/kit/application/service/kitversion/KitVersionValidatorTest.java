@@ -15,8 +15,10 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -64,6 +66,7 @@ class KitVersionValidatorTest {
         var listOfAttributes = List.of(createAttributeMini(), createAttributeMini());
         var listOfQuestionnaire = List.of(questionnaireWithTitle("Title1"), questionnaireWithTitle("Title2"));
         var listOfAttributesWithoutMeasure = List.of(createAttributeMini(), createAttributeMini());
+        LocaleContextHolder.setLocale(Locale.of(language.getCode()));
 
         List<String> expectedErrors = List.of(
             MessageBundle.message(VALIDATE_KIT_VERSION_QUESTION_IMPACT_NOT_NULL, loadQuestionsPortResult.getFirst().questionIndex(), loadQuestionsPortResult.getFirst().questionnaireTitle()),
@@ -95,7 +98,7 @@ class KitVersionValidatorTest {
         when(loadQuestionsPort.loadQuestionsWithoutMeasure(kitVersionId)).thenReturn(loadQuestionsPortResult);
         when(loadAttributesPort.loadWithoutMeasures(kitVersionId, language)).thenReturn(listOfAttributesWithoutMeasure);
 
-        var result = validator.validate(kitVersionId, language);
+        var result = validator.validate(kitVersionId);
         assertEquals(19, result.size());
         assertThat(result).containsAll(expectedErrors);
     }

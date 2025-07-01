@@ -10,6 +10,7 @@ import org.flickit.assessment.kit.application.port.out.kitversion.CountKitVersio
 import org.flickit.assessment.kit.application.port.out.question.LoadQuestionsPort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairesPort;
 import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectsPort;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
@@ -29,8 +30,9 @@ public class KitVersionValidator {
     private final CountKitVersionStatsPort countKitVersionStatsPort;
     private final LoadQuestionnairesPort loadQuestionnairesPort;
 
-    public List<String> validate(long kitVersionId, KitLanguage language) {
+    public List<String> validate(long kitVersionId) {
         List<String> errors = new LinkedList<>();
+        var language = KitLanguage.valueOf(LocaleContextHolder.getLocale().getLanguage().toUpperCase());
 
         var kitVersionCounts = countKitVersionStatsPort.countKitVersionStats(kitVersionId);
         if (kitVersionCounts.maturityLevelCount() < 2)

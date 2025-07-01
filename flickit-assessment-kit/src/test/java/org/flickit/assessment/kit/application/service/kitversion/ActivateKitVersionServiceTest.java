@@ -76,9 +76,6 @@ class ActivateKitVersionServiceTest {
     @Captor
     private ArgumentCaptor<Map<Long, Set<Long>>> qnnIdToSubjIdsCaptor;
 
-    @Captor
-    private ArgumentCaptor<KitLanguage> languageArgumentCaptor;
-
     private final UUID ownerId = UUID.randomUUID();
     private KitVersion kitVersion = createKitVersion(simpleKit());
     List<SubjectQuestionnaire> subjectQuestionnaireList = List.of(
@@ -122,20 +119,16 @@ class ActivateKitVersionServiceTest {
             kitVersionValidator);
     }
 
-    @ParameterizedTest
-    @EnumSource(KitLanguage.class)
-    void testActivateKitVersion_whenKitVersionIsNotValid_thenThrowsValidationException(KitLanguage language) {
+    @Test
+    void testActivateKitVersion_whenKitVersionIsNotValid_thenThrowsValidationException() {
         var param = createParam(b -> b.currentUserId(ownerId));
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
-        when(kitVersionValidator.validate(eq(param.getKitVersionId()), languageArgumentCaptor.capture()))
-            .thenReturn(List.of("Invalid question"));
+        when(kitVersionValidator.validate(param.getKitVersionId())).thenReturn(List.of("Invalid question"));
 
-        LocaleContextHolder.setLocale(Locale.of(language.getCode()));
         var exception = assertThrows(ValidationException.class, () -> service.activateKitVersion(param));
         assertEquals(ACTIVATE_KIT_VERSION_INVALID, exception.getMessageKey());
-        assertEquals(language, languageArgumentCaptor.getValue());
 
         verifyNoInteractions(updateKitVersionStatusPort,
             updateKitActiveVersionPort,
@@ -143,9 +136,8 @@ class ActivateKitVersionServiceTest {
             createSubjectQuestionnairePort);
     }
 
-    @ParameterizedTest
-    @EnumSource(KitLanguage.class)
-    void testActivateKitVersion_whenActiveVersionExists_thenArchiveOldVersion(KitLanguage language) {
+    @Test
+    void testActivateKitVersion_whenActiveVersionExists_thenArchiveOldVersion() {
         Param param = createParam(b -> b.currentUserId(ownerId));
 
         var option1 = AnswerOptionMother.createAnswerOption(1L, "op1", 1);
@@ -164,17 +156,15 @@ class ActivateKitVersionServiceTest {
         when(loadKitVersionPort.load(kitVersionId)).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
         doNothing().when(updateKitVersionStatusPort).updateStatus(kitVersion.getKit().getActiveVersionId(), KitVersionStatus.ARCHIVE);
-        when(kitVersionValidator.validate(eq(param.getKitVersionId()), languageArgumentCaptor.capture())).thenReturn(List.of());
+        when(kitVersionValidator.validate(param.getKitVersionId())).thenReturn(List.of());
         doNothing().when(updateKitVersionStatusPort).updateStatus(kitVersionId, KitVersionStatus.ACTIVE);
         doNothing().when(updateKitActiveVersionPort).updateActiveVersion(kitVersion.getKit().getId(), kitVersionId);
         doNothing().when(updateKitLastMajorModificationTimePort).updateLastMajorModificationTime(eq(kitVersion.getKit().getId()), notNull(LocalDateTime.class));
         when(loadSubjectQuestionnairePort.extractPairs(kitVersionId)).thenReturn(subjectQuestionnaireList);
 
-        LocaleContextHolder.setLocale(Locale.of(language.getCode()));
         service.activateKitVersion(param);
 
         verify(createSubjectQuestionnairePort).persistAll(qnnIdToSubjIdsCaptor.capture(), eq(kitVersionId));
-        assertEquals(language, languageArgumentCaptor.getValue());
         assertEquals(2, qnnIdToSubjIdsCaptor.getValue().size());
         assertNotNull(qnnIdToSubjIdsCaptor.getValue().get(123L));
         assertEquals(2, qnnIdToSubjIdsCaptor.getValue().get(123L).size());
@@ -184,9 +174,8 @@ class ActivateKitVersionServiceTest {
         assertEquals(Set.of(31L), qnnIdToSubjIdsCaptor.getValue().get(456L));
     }
 
-    @ParameterizedTest
-    @EnumSource(KitLanguage.class)
-    void testActivateKitVersion_whenThereIsNoActiveVersion_thenActivateNewKitVersion(KitLanguage language) {
+    @Test
+    void testActivateKitVersion_whenThereIsNoActiveVersion_thenActivateNewKitVersion() {
         var kit = kitWithKitVersionId(null);
         kitVersion = createKitVersion(kit);
         var param = createParam(b -> b.currentUserId(ownerId));
@@ -207,17 +196,15 @@ class ActivateKitVersionServiceTest {
         Long kitVersionId = param.getKitVersionId();
         when(loadKitVersionPort.load(kitVersionId)).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kit.getExpertGroupId())).thenReturn(ownerId);
-        when(kitVersionValidator.validate(eq(param.getKitVersionId()), languageArgumentCaptor.capture())).thenReturn(List.of());
+        when(kitVersionValidator.validate(param.getKitVersionId())).thenReturn(List.of());
         doNothing().when(updateKitVersionStatusPort).updateStatus(kitVersionId, KitVersionStatus.ACTIVE);
         doNothing().when(updateKitActiveVersionPort).updateActiveVersion(kit.getId(), kitVersionId);
         doNothing().when(updateKitLastMajorModificationTimePort).updateLastMajorModificationTime(eq(kitVersion.getKit().getId()), notNull(LocalDateTime.class));
         when(loadSubjectQuestionnairePort.extractPairs(kitVersionId)).thenReturn(subjectQuestionnaireList);
 
-        LocaleContextHolder.setLocale(Locale.of(language.getCode()));
         service.activateKitVersion(param);
 
         verify(createSubjectQuestionnairePort).persistAll(qnnIdToSubjIdsCaptor.capture(), eq(kitVersionId));
-        assertEquals(language, languageArgumentCaptor.getValue());
         assertEquals(2, qnnIdToSubjIdsCaptor.getValue().size());
         assertNotNull(qnnIdToSubjIdsCaptor.getValue().get(123L));
         assertEquals(2, qnnIdToSubjIdsCaptor.getValue().get(123L).size());
