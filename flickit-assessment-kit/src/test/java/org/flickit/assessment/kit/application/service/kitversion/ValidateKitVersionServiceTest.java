@@ -1,6 +1,5 @@
 package org.flickit.assessment.kit.application.service.kitversion;
 
-import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.port.in.kitversion.ValidateKitVersionUseCase;
