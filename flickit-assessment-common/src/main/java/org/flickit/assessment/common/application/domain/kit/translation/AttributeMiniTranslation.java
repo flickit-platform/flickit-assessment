@@ -8,12 +8,11 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.TRANSLATION_AT
 import static org.flickit.assessment.common.error.ErrorMessageKey.TRANSLATION_ATTRIBUTE_MINI_TITLE_SIZE_MIN;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class AttributeMiniTranslation {
-
-    @Size(min = 3, message = TRANSLATION_ATTRIBUTE_MINI_TITLE_SIZE_MIN)
-    @Size(max = 100, message = TRANSLATION_ATTRIBUTE_MINI_TITLE_SIZE_MAX)
-    String title;
-
+public record AttributeMiniTranslation(
+        @Size(min = 3, message = TRANSLATION_ATTRIBUTE_MINI_TITLE_SIZE_MIN)
+        @Size(max = 100, message = TRANSLATION_ATTRIBUTE_MINI_TITLE_SIZE_MAX)
+        String title
+) {
     public String titleOrDefault(String defaultTitle) {
         return isBlank(title) ? defaultTitle : title;
     }

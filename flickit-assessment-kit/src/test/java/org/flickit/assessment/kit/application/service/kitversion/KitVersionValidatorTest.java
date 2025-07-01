@@ -1,6 +1,7 @@
 package org.flickit.assessment.kit.application.service.kitversion;
 
 import org.flickit.assessment.common.application.MessageBundle;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.kit.application.port.out.answerrange.LoadAnswerRangesPort;
 import org.flickit.assessment.kit.application.port.out.attribute.LoadAttributesPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.CountKitVersionStatsPort;
@@ -9,12 +10,16 @@ import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestio
 import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectsPort;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
@@ -50,8 +55,8 @@ class KitVersionValidatorTest {
     private LoadQuestionnairesPort loadQuestionnairesPort;
 
     @ParameterizedTest
-    @ValueSource(ints = {0, 1})
-    void testValidate(int maturityLevelCount) {
+    @MethodSource("maturityLevelCountAndKitLanguageProvider")
+    void testValidate(int maturityLevelCount, KitLanguage language) {
         var kitVersionId = 123L;
 
         var loadQuestionsPortResult = List.of(new LoadQuestionsPort.Result(1, 100L, "Q100Title"),
@@ -86,14 +91,22 @@ class KitVersionValidatorTest {
         when(loadQuestionsPort.loadQuestionsWithoutAnswerRange(kitVersionId)).thenReturn(loadQuestionsPortResult);
         when(loadAnswerRangesPort.loadAnswerRangesWithNotEnoughOptions(kitVersionId)).thenReturn(listOfAnswerRanges);
         when(loadSubjectsPort.loadSubjectsWithoutAttribute(kitVersionId)).thenReturn(listOfSubjects);
-        when(loadAttributesPort.loadUnimpactedAttributes(kitVersionId)).thenReturn(listOfAttributes);
+        when(loadAttributesPort.loadUnimpactedAttributes(kitVersionId, language)).thenReturn(listOfAttributes);
         when(countKitVersionStatsPort.countKitVersionStats(kitVersionId)).thenReturn(new CountKitVersionStatsPort.Result(0, 0, 0, maturityLevelCount));
         when(loadQuestionnairesPort.loadQuestionnairesWithoutQuestion(kitVersionId)).thenReturn(listOfQuestionnaire);
         when(loadQuestionsPort.loadQuestionsWithoutMeasure(kitVersionId)).thenReturn(loadQuestionsPortResult);
-        when(loadAttributesPort.loadWithoutMeasures(kitVersionId)).thenReturn(listOfAttributesWithoutMeasure);
+        when(loadAttributesPort.loadWithoutMeasures(kitVersionId, language)).thenReturn(listOfAttributesWithoutMeasure);
 
-        var result = validator.validate(kitVersionId);
+        var result = validator.validate(kitVersionId, language);
         assertEquals(19, result.size());
         assertThat(result).containsAll(expectedErrors);
+    }
+
+    static Stream<Arguments> maturityLevelCountAndKitLanguageProvider() {
+        List<Integer> counts = List.of(0, 1);
+        List<KitLanguage> langs = List.of(KitLanguage.EN, KitLanguage.FA);
+
+        return counts.stream()
+            .flatMap(c -> langs.stream().map(l -> Arguments.of(c, l)));
     }
 }

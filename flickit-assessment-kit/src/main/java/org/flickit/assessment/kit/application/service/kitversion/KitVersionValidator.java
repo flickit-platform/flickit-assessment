@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.application.service.kitversion;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.MessageBundle;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.kit.application.port.out.answerrange.LoadAnswerRangesPort;
 import org.flickit.assessment.kit.application.port.out.attribute.LoadAttributesPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.CountKitVersionStatsPort;
@@ -28,7 +29,7 @@ public class KitVersionValidator {
     private final CountKitVersionStatsPort countKitVersionStatsPort;
     private final LoadQuestionnairesPort loadQuestionnairesPort;
 
-    public List<String> validate(long kitVersionId) {
+    public List<String> validate(long kitVersionId, KitLanguage language) {
         List<String> errors = new LinkedList<>();
 
         var kitVersionCounts = countKitVersionStatsPort.countKitVersionStats(kitVersionId);
@@ -49,12 +50,12 @@ public class KitVersionValidator {
             .map(e -> MessageBundle.message(VALIDATE_KIT_VERSION_SUBJECT_ATTRIBUTE_NOT_NULL, e.getTitle()))
             .toList());
 
-        errors.addAll(loadAttributesPort.loadUnimpactedAttributes(kitVersionId)
+        errors.addAll(loadAttributesPort.loadUnimpactedAttributes(kitVersionId, language)
             .stream()
             .map(e -> MessageBundle.message(VALIDATE_KIT_VERSION_ATTRIBUTE_QUESTION_IMPACT_NOT_NULL, e.getTitle()))
             .toList());
 
-        errors.addAll(loadAttributesPort.loadWithoutMeasures(kitVersionId)
+        errors.addAll(loadAttributesPort.loadWithoutMeasures(kitVersionId, language)
             .stream()
             .map(e -> MessageBundle.message(VALIDATE_KIT_VERSION_ATTRIBUTE_MEASURE_NOT_NULL, e.getTitle()))
             .toList());

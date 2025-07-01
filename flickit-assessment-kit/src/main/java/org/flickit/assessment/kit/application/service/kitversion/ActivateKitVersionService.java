@@ -1,6 +1,7 @@
 package org.flickit.assessment.kit.application.service.kitversion;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.kit.application.domain.*;
@@ -12,6 +13,7 @@ import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersion
 import org.flickit.assessment.kit.application.port.out.kitversion.UpdateKitVersionStatusPort;
 import org.flickit.assessment.kit.application.port.out.subjectquestionnaire.CreateSubjectQuestionnairePort;
 import org.flickit.assessment.kit.application.port.out.subjectquestionnaire.LoadSubjectQuestionnairePort;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,7 +50,8 @@ public class ActivateKitVersionService implements ActivateKitVersionUseCase {
         if (!ownerId.equals(param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        if (!kitVersionValidator.validate(kitVersionId).isEmpty())
+        var language = KitLanguage.valueOf(LocaleContextHolder.getLocale().getLanguage().toUpperCase());
+        if (!kitVersionValidator.validate(kitVersionId, language).isEmpty())
             throw new ValidationException(ACTIVATE_KIT_VERSION_INVALID);
 
         if (kit.getActiveVersionId() != null)

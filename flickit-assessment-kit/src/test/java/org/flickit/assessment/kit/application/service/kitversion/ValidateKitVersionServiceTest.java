@@ -1,5 +1,6 @@
 package org.flickit.assessment.kit.application.service.kitversion;
 
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.port.in.kitversion.ValidateKitVersionUseCase;
@@ -7,11 +8,15 @@ import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGro
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -54,29 +59,33 @@ class ValidateKitVersionServiceTest {
         verifyNoInteractions(kitVersionValidator);
     }
 
-    @Test
-    void testValidateKitVersion_whenKitVersionIsValid_ShouldReturnIsValid() {
+    @ParameterizedTest
+    @EnumSource(KitLanguage.class)
+    void testValidateKitVersion_whenKitVersionIsValid_ShouldReturnIsValid(KitLanguage language) {
         var param = createParam(b -> b.currentUserId(ownerId));
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
-        when(kitVersionValidator.validate(param.getKitVersionId())).thenReturn(List.of());
+        when(kitVersionValidator.validate(param.getKitVersionId(), language)).thenReturn(List.of());
 
+        LocaleContextHolder.setLocale(Locale.of(language.getCode()));
         var result = service.validate(param);
         assertTrue(result.isValid());
         assertTrue(result.errors().isEmpty());
     }
 
-    @Test
-    void testValidateKitVersion_whenKitVersionIsInvalid_ShouldReturnIsInvalid() {
+    @ParameterizedTest
+    @EnumSource(KitLanguage.class)
+    void testValidateKitVersion_whenKitVersionIsInvalid_ShouldReturnIsInvalid(KitLanguage language) {
         var param = createParam(b -> b.currentUserId(ownerId));
 
         var expectedErrors = List.of("invalid question", "invalid range");
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
-        when(kitVersionValidator.validate(kitVersion.getId())).thenReturn(expectedErrors);
+        when(kitVersionValidator.validate(kitVersion.getId(), language)).thenReturn(expectedErrors);
 
+        LocaleContextHolder.setLocale(Locale.of(language.getCode()));
         var result = service.validate(param);
 
         assertFalse(result.isValid());

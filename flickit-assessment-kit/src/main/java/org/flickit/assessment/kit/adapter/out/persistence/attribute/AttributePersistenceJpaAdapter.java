@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.adapter.out.persistence.attribute;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.util.JsonUtils;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
@@ -23,8 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static org.flickit.assessment.kit.adapter.out.persistence.attribute.AttributeMapper.mapToDomainModel;
-import static org.flickit.assessment.kit.adapter.out.persistence.attribute.AttributeMapper.mapToJpaEntity;
+import static org.flickit.assessment.kit.adapter.out.persistence.attribute.AttributeMapper.*;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 @Component
@@ -104,18 +104,18 @@ public class AttributePersistenceJpaAdapter implements
     }
 
     @Override
-    public List<AttributeMini> loadUnimpactedAttributes(long kitVersionId) {
+    public List<AttributeMini> loadUnimpactedAttributes(long kitVersionId, KitLanguage language) {
         return repository.findAllByKitVersionIdAndWithoutImpact(kitVersionId)
             .stream()
-            .map(AttributeMapper::mapToAttributeMiniDomainModel)
+            .map(e -> mapToAttributeMiniDomainModel(e, language))
             .toList();
     }
 
     @Override
-    public List<AttributeMini> loadWithoutMeasures(long kitVersionId) {
+    public List<AttributeMini> loadWithoutMeasures(long kitVersionId, KitLanguage language) {
         return repository.findAllByKitVersionIdAndWithoutMeasures(kitVersionId)
             .stream()
-            .map(AttributeMapper::mapToAttributeMiniDomainModel)
+            .map(e -> mapToAttributeMiniDomainModel(e, language))
             .toList();
     }
 
@@ -125,9 +125,9 @@ public class AttributePersistenceJpaAdapter implements
     }
 
     @Override
-    public List<AttributeMini> loadAllByIdsAndKitVersionId(List<Long> attributeIds, long kitVersionId) {
+    public List<AttributeMini> loadAllByIdsAndKitVersionId(List<Long> attributeIds, long kitVersionId, KitLanguage language) {
         return repository.findAllByIdInAndKitVersionId(attributeIds, kitVersionId).stream()
-            .map(AttributeMapper::mapToAttributeMiniDomainModel)
+            .map(e -> mapToAttributeMiniDomainModel(e, language))
             .toList();
     }
 
