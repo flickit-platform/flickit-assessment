@@ -1,7 +1,6 @@
 package org.flickit.assessment.kit.application.service.question;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.*;
 import org.flickit.assessment.kit.application.port.in.questionimpact.GetQuestionImpactsUseCase;
@@ -10,7 +9,6 @@ import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckEx
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.kit.application.port.out.question.LoadQuestionPort;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,8 +57,7 @@ public class GetQuestionImpactsService implements GetQuestionImpactsUseCase {
 
         var attributeIds = attributeIdToImpacts.keySet().stream().toList();
 
-        var language = KitLanguage.valueOf(LocaleContextHolder.getLocale().getLanguage().toUpperCase());
-        var attributeIdToTitleMap = loadAttributesPort.loadAllByIdsAndKitVersionId(attributeIds, kitVersionId, language).stream()
+        var attributeIdToTitleMap = loadAttributesPort.loadAllByIdsAndKitVersionId(attributeIds, kitVersionId).stream()
             .collect(toMap(AttributeMini::getId, AttributeMini::getTitle));
         return attributeIds.stream()
             .map(attributeId -> toAttributeImpact(

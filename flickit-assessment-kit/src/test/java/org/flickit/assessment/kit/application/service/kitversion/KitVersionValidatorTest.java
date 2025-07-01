@@ -92,11 +92,11 @@ class KitVersionValidatorTest {
         when(loadQuestionsPort.loadQuestionsWithoutAnswerRange(kitVersionId)).thenReturn(loadQuestionsPortResult);
         when(loadAnswerRangesPort.loadAnswerRangesWithNotEnoughOptions(kitVersionId)).thenReturn(listOfAnswerRanges);
         when(loadSubjectsPort.loadSubjectsWithoutAttribute(kitVersionId)).thenReturn(listOfSubjects);
-        when(loadAttributesPort.loadUnimpactedAttributes(kitVersionId, language)).thenReturn(listOfAttributes);
+        when(loadAttributesPort.loadUnimpactedAttributes(kitVersionId)).thenReturn(listOfAttributes);
         when(countKitVersionStatsPort.countKitVersionStats(kitVersionId)).thenReturn(new CountKitVersionStatsPort.Result(0, 0, 0, maturityLevelCount));
         when(loadQuestionnairesPort.loadQuestionnairesWithoutQuestion(kitVersionId)).thenReturn(listOfQuestionnaire);
         when(loadQuestionsPort.loadQuestionsWithoutMeasure(kitVersionId)).thenReturn(loadQuestionsPortResult);
-        when(loadAttributesPort.loadWithoutMeasures(kitVersionId, language)).thenReturn(listOfAttributesWithoutMeasure);
+        when(loadAttributesPort.loadWithoutMeasures(kitVersionId)).thenReturn(listOfAttributesWithoutMeasure);
 
         var result = validator.validate(kitVersionId);
         assertEquals(19, result.size());

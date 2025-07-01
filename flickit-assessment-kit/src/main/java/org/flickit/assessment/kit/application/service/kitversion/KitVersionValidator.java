@@ -3,14 +3,12 @@ package org.flickit.assessment.kit.application.service.kitversion;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.MessageBundle;
-import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.kit.application.port.out.answerrange.LoadAnswerRangesPort;
 import org.flickit.assessment.kit.application.port.out.attribute.LoadAttributesPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.CountKitVersionStatsPort;
 import org.flickit.assessment.kit.application.port.out.question.LoadQuestionsPort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairesPort;
 import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectsPort;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
@@ -32,7 +30,6 @@ public class KitVersionValidator {
 
     public List<String> validate(long kitVersionId) {
         List<String> errors = new LinkedList<>();
-        var language = KitLanguage.valueOf(LocaleContextHolder.getLocale().getLanguage().toUpperCase());
 
         var kitVersionCounts = countKitVersionStatsPort.countKitVersionStats(kitVersionId);
         if (kitVersionCounts.maturityLevelCount() < 2)
@@ -52,12 +49,12 @@ public class KitVersionValidator {
             .map(e -> MessageBundle.message(VALIDATE_KIT_VERSION_SUBJECT_ATTRIBUTE_NOT_NULL, e.getTitle()))
             .toList());
 
-        errors.addAll(loadAttributesPort.loadUnimpactedAttributes(kitVersionId, language)
+        errors.addAll(loadAttributesPort.loadUnimpactedAttributes(kitVersionId)
             .stream()
             .map(e -> MessageBundle.message(VALIDATE_KIT_VERSION_ATTRIBUTE_QUESTION_IMPACT_NOT_NULL, e.getTitle()))
             .toList());
 
-        errors.addAll(loadAttributesPort.loadWithoutMeasures(kitVersionId, language)
+        errors.addAll(loadAttributesPort.loadWithoutMeasures(kitVersionId)
             .stream()
             .map(e -> MessageBundle.message(VALIDATE_KIT_VERSION_ATTRIBUTE_MEASURE_NOT_NULL, e.getTitle()))
             .toList());

@@ -123,14 +123,14 @@ class GetQuestionImpactsServiceTest {
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(checkExpertGroupAccessPort.checkIsMember(kitVersion.getKit().getExpertGroupId(), param.getCurrentUserId())).thenReturn(true);
         when(loadQuestionPort.load(param.getQuestionId(), param.getKitVersionId())).thenReturn(question);
-        when(loadAttributesPort.loadAllByIdsAndKitVersionId(anyList(), anyLong(), any(KitLanguage.class))).thenReturn(expectedAttributes);
+        when(loadAttributesPort.loadAllByIdsAndKitVersionId(anyList(), anyLong())).thenReturn(expectedAttributes);
         when(loadMaturityLevelsPort.loadAllByKitVersionId(param.getKitVersionId())).thenReturn(maturityLevels);
 
         LocaleContextHolder.setLocale(Locale.of(language.getCode()));
         var result = service.getQuestionImpacts(param);
         var attributeIdsArgument = ArgumentCaptor.forClass(List.class);
         var languageArgument = ArgumentCaptor.forClass(KitLanguage.class);
-        verify(loadAttributesPort, times(1)).loadAllByIdsAndKitVersionId(attributeIdsArgument.capture(), eq(param.getKitVersionId()), languageArgument.capture());
+        verify(loadAttributesPort, times(1)).loadAllByIdsAndKitVersionId(attributeIdsArgument.capture(), eq(param.getKitVersionId()));
 
         assertTrue(attributeIdsArgument.getValue().containsAll(List.of(attr1.getId(), attr2.getId())));
 

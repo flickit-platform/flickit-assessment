@@ -94,7 +94,7 @@ class GetKitQuestionDetailServiceTest {
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
         when(loadQuestionPort.load(question.getId(), kitVersionId)).thenReturn(question);
-        when(loadAttributesPort.loadAllByIdsAndKitVersionId(anyList(), anyLong(), any(KitLanguage.class))).thenReturn(List.of(attr1, attr2));
+        when(loadAttributesPort.loadAllByIdsAndKitVersionId(anyList(), anyLong())).thenReturn(List.of(attr1, attr2));
         when(loadMaturityLevelsPort.loadAllByKitVersionId(kitVersionId)).thenReturn(maturityLevels);
         when(loadActiveKitVersionIdPort.loadKitVersionId(kitId)).thenReturn(kitVersionId);
 
@@ -105,7 +105,7 @@ class GetKitQuestionDetailServiceTest {
         ArgumentCaptor<Long> kitVersionIdCaptor = ArgumentCaptor.forClass(Long.class);
         ArgumentCaptor<KitLanguage> kitLanguageCaptor = ArgumentCaptor.forClass(KitLanguage.class);
 
-        verify(loadAttributesPort).loadAllByIdsAndKitVersionId(idListCaptor.capture(), kitVersionIdCaptor.capture(), kitLanguageCaptor.capture());
+        verify(loadAttributesPort).loadAllByIdsAndKitVersionId(idListCaptor.capture(), kitVersionIdCaptor.capture());
 
         assertThat(idListCaptor.getValue()).containsExactlyInAnyOrderElementsOf(List.of(attr1.getId(), attr2.getId()));
 

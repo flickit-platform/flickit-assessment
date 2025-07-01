@@ -16,6 +16,7 @@ import org.flickit.assessment.kit.application.domain.Attribute;
 import org.flickit.assessment.kit.application.domain.AttributeMini;
 import org.flickit.assessment.kit.application.domain.AttributeWithSubject;
 import org.flickit.assessment.kit.application.port.out.attribute.*;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
@@ -104,7 +105,8 @@ public class AttributePersistenceJpaAdapter implements
     }
 
     @Override
-    public List<AttributeMini> loadUnimpactedAttributes(long kitVersionId, KitLanguage language) {
+    public List<AttributeMini> loadUnimpactedAttributes(long kitVersionId) {
+        var language = KitLanguage.valueOf(LocaleContextHolder.getLocale().getLanguage().toUpperCase());
         return repository.findAllByKitVersionIdAndWithoutImpact(kitVersionId)
             .stream()
             .map(e -> mapToAttributeMiniDomainModel(e, language))
@@ -112,7 +114,8 @@ public class AttributePersistenceJpaAdapter implements
     }
 
     @Override
-    public List<AttributeMini> loadWithoutMeasures(long kitVersionId, KitLanguage language) {
+    public List<AttributeMini> loadWithoutMeasures(long kitVersionId) {
+        var language = KitLanguage.valueOf(LocaleContextHolder.getLocale().getLanguage().toUpperCase());
         return repository.findAllByKitVersionIdAndWithoutMeasures(kitVersionId)
             .stream()
             .map(e -> mapToAttributeMiniDomainModel(e, language))
@@ -125,7 +128,8 @@ public class AttributePersistenceJpaAdapter implements
     }
 
     @Override
-    public List<AttributeMini> loadAllByIdsAndKitVersionId(List<Long> attributeIds, long kitVersionId, KitLanguage language) {
+    public List<AttributeMini> loadAllByIdsAndKitVersionId(List<Long> attributeIds, long kitVersionId) {
+        var language = KitLanguage.valueOf(LocaleContextHolder.getLocale().getLanguage().toUpperCase());
         return repository.findAllByIdInAndKitVersionId(attributeIds, kitVersionId).stream()
             .map(e -> mapToAttributeMiniDomainModel(e, language))
             .toList();
