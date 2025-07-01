@@ -12,4 +12,12 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id = "0.61-02" author="Maziyar Gerami">
+        <addColumn tableName="fau_space">
+            <column name="is_default" type="boolean" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
