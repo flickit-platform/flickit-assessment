@@ -66,7 +66,7 @@ class GetQuestionImpactsServiceTest {
     private final KitVersion kitVersion = KitVersionMother.createKitVersion(simpleKit());
 
     @Test
-    void testGetQuestionImpacts_currentUserIsNotExpertGroupMember_throwsAccessDeniedException() {
+    void testGetQuestionImpacts_whenCurrentUserIsNotExpertGroupMember_thenThrowsAccessDeniedException() {
         var param = createParam(GetQuestionImpactsUseCase.Param.ParamBuilder::build);
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
@@ -79,7 +79,7 @@ class GetQuestionImpactsServiceTest {
     }
 
     @Test
-    void testGetQuestionImpacts_questionIdNotExist_throwsAccessDeniedException() {
+    void testGetQuestionImpacts_whenQuestionIdNotExist_thenThrowsAccessDeniedException() {
         var param = createParam(GetQuestionImpactsUseCase.Param.ParamBuilder::build);
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
@@ -94,7 +94,7 @@ class GetQuestionImpactsServiceTest {
 
     @ParameterizedTest
     @EnumSource(KitLanguage.class)
-    void testGetQuestionImpacts_validParameters_loadQuestionImpactsSuccessfully(KitLanguage language) {
+    void testGetQuestionImpacts_whenParametersAreValid_thenLoadQuestionImpactsSuccessfully(KitLanguage language) {
         var attr1 = createAttributeMini();
         var attr2 = createAttributeMini();
         var expectedAttributes = List.of(attr1, attr2);
@@ -165,7 +165,7 @@ class GetQuestionImpactsServiceTest {
     }
 
     @Test
-    void testGetQuestionImpacts_WhenQuestionNoImpacts_ThenReturnEmptyResult() {
+    void testGetQuestionImpacts_whenQuestionNoImpacts_thenReturnEmptyResult() {
         var param = createParam(GetQuestionImpactsUseCase.Param.ParamBuilder::build);
 
         var question = createQuestion();
