@@ -129,7 +129,8 @@ class ActivateKitVersionServiceTest {
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
-        when(kitVersionValidator.validate(eq(param.getKitVersionId()), languageArgumentCaptor.capture())).thenReturn(List.of("Invalid question"));
+        when(kitVersionValidator.validate(eq(param.getKitVersionId()), languageArgumentCaptor.capture()))
+            .thenReturn(List.of("Invalid question"));
 
         LocaleContextHolder.setLocale(Locale.of(language.getCode()));
         var exception = assertThrows(ValidationException.class, () -> service.activateKitVersion(param));
