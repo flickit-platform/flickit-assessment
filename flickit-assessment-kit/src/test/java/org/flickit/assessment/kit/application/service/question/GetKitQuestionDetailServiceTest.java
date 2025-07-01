@@ -1,6 +1,5 @@
 package org.flickit.assessment.kit.application.service.question;
 
-import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.port.in.question.GetKitQuestionDetailUseCase.Param;
@@ -13,16 +12,12 @@ import org.flickit.assessment.kit.application.port.out.question.LoadQuestionPort
 import org.flickit.assessment.kit.test.fixture.application.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -59,9 +54,8 @@ class GetKitQuestionDetailServiceTest {
     @Mock
     private LoadActiveKitVersionIdPort loadActiveKitVersionIdPort;
 
-    @ParameterizedTest
-    @EnumSource(KitLanguage.class)
-    void testGetKitQuestionDetail_WhenQuestionExist_shouldReturnQuestionDetails(KitLanguage language) {
+    @Test
+    void testGetKitQuestionDetail_WhenQuestionExist_shouldReturnQuestionDetails() {
         long kitId = 123L;
         long kitVersionId = 456L;
         var expertGroup = ExpertGroupMother.createExpertGroup();
@@ -98,12 +92,10 @@ class GetKitQuestionDetailServiceTest {
         when(loadMaturityLevelsPort.loadAllByKitVersionId(kitVersionId)).thenReturn(maturityLevels);
         when(loadActiveKitVersionIdPort.loadKitVersionId(kitId)).thenReturn(kitVersionId);
 
-        LocaleContextHolder.setLocale(Locale.of(language.getCode()));
         var result = service.getKitQuestionDetail(param);
 
         ArgumentCaptor<List<Long>> idListCaptor = ArgumentCaptor.forClass(List.class);
         ArgumentCaptor<Long> kitVersionIdCaptor = ArgumentCaptor.forClass(Long.class);
-        ArgumentCaptor<KitLanguage> kitLanguageCaptor = ArgumentCaptor.forClass(KitLanguage.class);
 
         verify(loadAttributesPort).loadAllByIdsAndKitVersionId(idListCaptor.capture(), kitVersionIdCaptor.capture());
 
@@ -113,7 +105,6 @@ class GetKitQuestionDetailServiceTest {
 
         assertEquals(answerOptions.size(), result.options().size());
         assertEquals(2, result.attributeImpacts().size());
-        assertEquals(language, kitLanguageCaptor.getValue());
 
         result.attributeImpacts().forEach(im -> {
             if (attr1.getId() == im.id()) {

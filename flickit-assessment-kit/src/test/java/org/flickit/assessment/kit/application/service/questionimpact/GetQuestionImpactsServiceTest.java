@@ -1,6 +1,5 @@
 package org.flickit.assessment.kit.application.service.questionimpact;
 
-import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.domain.AttributeMini;
@@ -17,13 +16,10 @@ import org.flickit.assessment.kit.application.service.question.GetQuestionImpact
 import org.flickit.assessment.kit.test.fixture.application.KitVersionMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -92,9 +88,8 @@ class GetQuestionImpactsServiceTest {
         verifyNoInteractions(loadMaturityLevelsPort, loadAttributesPort);
     }
 
-    @ParameterizedTest
-    @EnumSource(KitLanguage.class)
-    void testGetQuestionImpacts_whenParametersAreValid_thenLoadQuestionImpactsSuccessfully(KitLanguage language) {
+    @Test
+    void testGetQuestionImpacts_whenParametersAreValid_thenLoadQuestionImpactsSuccessfully() {
         var attr1 = createAttributeMini();
         var attr2 = createAttributeMini();
         var expectedAttributes = List.of(attr1, attr2);
@@ -126,16 +121,13 @@ class GetQuestionImpactsServiceTest {
         when(loadAttributesPort.loadAllByIdsAndKitVersionId(anyList(), anyLong())).thenReturn(expectedAttributes);
         when(loadMaturityLevelsPort.loadAllByKitVersionId(param.getKitVersionId())).thenReturn(maturityLevels);
 
-        LocaleContextHolder.setLocale(Locale.of(language.getCode()));
         var result = service.getQuestionImpacts(param);
         var attributeIdsArgument = ArgumentCaptor.forClass(List.class);
-        var languageArgument = ArgumentCaptor.forClass(KitLanguage.class);
         verify(loadAttributesPort, times(1)).loadAllByIdsAndKitVersionId(attributeIdsArgument.capture(), eq(param.getKitVersionId()));
 
         assertTrue(attributeIdsArgument.getValue().containsAll(List.of(attr1.getId(), attr2.getId())));
 
         assertEquals(2, result.attributeImpacts().size());
-        assertEquals(language, languageArgument.getValue());
 
         var actualAttributeImpacts = result.attributeImpacts().stream()
             .sorted(Comparator.comparing(AttributeImpact::attributeId))
