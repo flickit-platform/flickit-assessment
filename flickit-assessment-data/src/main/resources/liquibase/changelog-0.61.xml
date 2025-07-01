@@ -20,4 +20,26 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="0.61-03" author="Maziyar Gerami">
+        <sql>
+            INSERT INTO fau_space (id, code, title, type, owner_id, status, subscription_expiry, is_default,
+                                   creation_time, last_modification_time, created_by, last_modified_by, deleted, deletion_time)
+            SELECT
+                nextval('fau_space_id_seq'),
+                CASE
+                    WHEN EXISTS (
+                        SELECT 1 FROM fau_space s2
+                        WHERE s2.owner_id = u.id AND s2.code = 'default-space'
+                    )
+                        THEN 'default-space-' || u.id::text
+                    ELSE 'default-space'
+                    END,
+                'Default Space', 0, u.id, 0, null, true, now(), now(), u.id, u.id, false, 0
+            FROM fau_user u
+            WHERE NOT EXISTS (
+                SELECT 1 FROM fau_space s WHERE s.owner_id = u.id AND s.is_default = true
+            );
+    </sql>
+    </changeSet>
+
 </databaseChangeLog>
