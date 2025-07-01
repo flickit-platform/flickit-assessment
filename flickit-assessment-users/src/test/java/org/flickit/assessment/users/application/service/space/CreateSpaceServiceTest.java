@@ -90,6 +90,7 @@ class CreateSpaceServiceTest {
         assertEquals(param.getCurrentUserId(), capturedSpace.getLastModifiedBy());
         assertNotNull(capturedSpace.getCreationTime());
         assertNotNull(capturedSpace.getLastModificationTime());
+        assertFalse(capturedSpace.isDefault());
 
         verify(createSpaceUserAccessPort).persist(userAccessCaptor.capture());
         var capturedAccess = userAccessCaptor.getValue();
@@ -121,6 +122,7 @@ class CreateSpaceServiceTest {
         assertEquals(param.getCurrentUserId(), capturedSpace.getLastModifiedBy());
         assertNotNull(capturedSpace.getCreationTime());
         assertNotNull(capturedSpace.getLastModificationTime());
+        assertFalse(capturedSpace.isDefault());
 
         verify(createSpaceUserAccessPort).persist(userAccessCaptor.capture());
         var capturedAccess = userAccessCaptor.getValue();
