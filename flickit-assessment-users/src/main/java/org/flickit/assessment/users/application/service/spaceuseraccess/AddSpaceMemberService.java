@@ -6,6 +6,7 @@ import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.users.application.domain.SpaceUserAccess;
 import org.flickit.assessment.users.application.port.in.spaceuseraccess.AddSpaceMemberUseCase;
+import org.flickit.assessment.users.application.port.out.space.CheckDefaultSpacePort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CreateSpaceUserAccessPort;
 import org.flickit.assessment.users.application.port.out.user.LoadUserPort;
@@ -16,8 +17,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.users.common.ErrorMessageKey.ADD_SPACE_MEMBER_SPACE_USER_DUPLICATE;
-import static org.flickit.assessment.users.common.ErrorMessageKey.USER_BY_EMAIL_NOT_FOUND;
+import static org.flickit.assessment.users.common.ErrorMessageKey.*;
 
 @Service
 @Transactional
@@ -25,6 +25,7 @@ import static org.flickit.assessment.users.common.ErrorMessageKey.USER_BY_EMAIL_
 public class AddSpaceMemberService implements AddSpaceMemberUseCase {
 
     private final CheckSpaceAccessPort checkSpaceAccessPort;
+    private final CheckDefaultSpacePort checkDefaultSpacePort;
     private final LoadUserPort loadUserPort;
     private final CreateSpaceUserAccessPort createSpaceUserAccessPort;
 
@@ -33,9 +34,7 @@ public class AddSpaceMemberService implements AddSpaceMemberUseCase {
         UUID currentUserId = param.getCurrentUserId();
         long spaceId = param.getSpaceId();
 
-        boolean inviterHasAccess = checkSpaceAccessPort.checkIsMember(spaceId, currentUserId);
-        if (!inviterHasAccess)
-            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
+        checkSpace(spaceId, currentUserId);
 
         UUID userId = loadUserPort.loadUserIdByEmail(param.getEmail())
             .orElseThrow(() -> new ResourceNotFoundException(USER_BY_EMAIL_NOT_FOUND));
@@ -46,5 +45,14 @@ public class AddSpaceMemberService implements AddSpaceMemberUseCase {
 
         var access = new SpaceUserAccess(spaceId, userId, currentUserId, LocalDateTime.now());
         createSpaceUserAccessPort.persist(access);
+    }
+
+    private void checkSpace(long spaceId, UUID currentUserId) {
+        boolean inviterHasAccess = checkSpaceAccessPort.checkIsMember(spaceId, currentUserId);
+        if (!inviterHasAccess)
+            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
+
+        if (checkDefaultSpacePort.checkIsDefault(spaceId))
+            throw new AccessDeniedException(ADD_SPACE_MEMBER_SPACE_DEFAULT_SPACE);
     }
 }
