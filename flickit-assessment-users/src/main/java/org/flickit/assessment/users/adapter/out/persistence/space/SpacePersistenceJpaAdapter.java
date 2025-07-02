@@ -124,6 +124,6 @@ public class SpacePersistenceJpaAdapter implements
 
     @Override
     public boolean checkIsDefault(long spaceId) {
-        return false;
+        return repository.existsByIdAndDeletedFalseAndIsDefaultTrue(spaceId);
     }
 }
