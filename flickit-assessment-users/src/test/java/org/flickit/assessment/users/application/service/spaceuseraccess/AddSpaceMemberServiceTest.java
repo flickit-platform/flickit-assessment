@@ -3,6 +3,7 @@ package org.flickit.assessment.users.application.service.spaceuseraccess;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.users.application.domain.SpaceUserAccess;
 import org.flickit.assessment.users.application.port.in.spaceuseraccess.AddSpaceMemberUseCase;
 import org.flickit.assessment.users.application.port.out.space.CheckDefaultSpacePort;
@@ -81,8 +82,8 @@ class AddSpaceMemberServiceTest {
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
         when(checkDefaultSpacePort.checkIsDefault(param.getSpaceId())).thenReturn(true);
 
-        var throwable = assertThrows(AccessDeniedException.class, () -> service.addMember(param));
-        assertEquals(ADD_SPACE_MEMBER_SPACE_DEFAULT_SPACE, throwable.getMessage());
+        var throwable = assertThrows(ValidationException.class, () -> service.addMember(param));
+        assertEquals(ADD_SPACE_MEMBER_SPACE_DEFAULT_SPACE, throwable.getMessageKey());
 
         verifyNoInteractions(loadUserPort, createSpaceUserAccessPort);
     }

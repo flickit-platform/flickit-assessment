@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.users.application.domain.SpaceUserAccess;
 import org.flickit.assessment.users.application.port.in.spaceuseraccess.AddSpaceMemberUseCase;
 import org.flickit.assessment.users.application.port.out.space.CheckDefaultSpacePort;
@@ -53,6 +54,6 @@ public class AddSpaceMemberService implements AddSpaceMemberUseCase {
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         if (checkDefaultSpacePort.checkIsDefault(spaceId))
-            throw new AccessDeniedException(ADD_SPACE_MEMBER_SPACE_DEFAULT_SPACE);
+            throw new ValidationException(ADD_SPACE_MEMBER_SPACE_DEFAULT_SPACE);
     }
 }
