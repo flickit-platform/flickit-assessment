@@ -8,15 +8,16 @@ import org.flickit.assessment.users.application.port.in.spaceuseraccess.AddSpace
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CreateSpaceUserAccessPort;
 import org.flickit.assessment.users.application.port.out.user.LoadUserPort;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.users.common.ErrorMessageKey.ADD_SPACE_MEMBER_SPACE_USER_DUPLICATE;
@@ -39,82 +40,78 @@ class AddSpaceMemberServiceTest {
     @Mock
     private CreateSpaceUserAccessPort createSpaceUserAccessPort;
 
+    private final AddSpaceMemberUseCase.Param param = createParam(AddSpaceMemberUseCase.Param.ParamBuilder::build);
+    private final UUID userId = UUID.randomUUID();
+
     @Test
-    @DisplayName("Adding a valid member to a valid space should cause a successful addition")
-    void testAddSpaceMember_validParameters_successful() {
-        long spaceId = 0;
-        String email = "admin@asta.org";
-        UUID currentUserId = UUID.randomUUID();
-        UUID userId = UUID.randomUUID();
-        var param = new AddSpaceMemberUseCase.Param(spaceId, email, currentUserId);
+    void testAddSpaceMember_whenParametersAreValid_thenSuccessfulAddMember() {
+        when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
+        when(loadUserPort.loadUserIdByEmail(param.getEmail())).thenReturn(Optional.of(userId));
+        when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), userId)).thenReturn(false);
+        var spaceUserAccessCaptor = ArgumentCaptor.forClass(SpaceUserAccess.class);
 
-        when(checkSpaceAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(true);
-        when(loadUserPort.loadUserIdByEmail(email)).thenReturn(Optional.of(userId));
-        when(checkSpaceAccessPort.checkIsMember(spaceId, userId)).thenReturn(false);
-        doNothing().when(createSpaceUserAccessPort).persist(isA(SpaceUserAccess.class));
+        service.addMember(param);
+        verify(createSpaceUserAccessPort).persist(spaceUserAccessCaptor.capture());
+        var capturedUserAccess = spaceUserAccessCaptor.getValue();
 
-        assertDoesNotThrow(() -> service.addMember(param));
+        assertEquals(param.getSpaceId(), capturedUserAccess.getSpaceId());
+        assertEquals(userId, capturedUserAccess.getUserId());
+        assertEquals(param.getCurrentUserId(), capturedUserAccess.getCreatedBy());
+        assertNotNull(capturedUserAccess.getCreationTime());
 
         verify(checkSpaceAccessPort, times(2)).checkIsMember(anyLong(), any(UUID.class));
-        verify(loadUserPort).loadUserIdByEmail(email);
+        verify(loadUserPort).loadUserIdByEmail(param.getEmail());
         verify(createSpaceUserAccessPort).persist(any(SpaceUserAccess.class));
     }
 
     @Test
-    @DisplayName("Adding a member to a valid space should be done by a member; otherwise causes AccessDeniedException")
-    void testAddSpaceMember_inviterIsNotSpaceMember_AccessDeniedExceptionException() {
-        long spaceId = 0;
-        String email = "admin@asta.org";
-        UUID currentUserId = UUID.randomUUID();
-        var param = new AddSpaceMemberUseCase.Param(spaceId, email, currentUserId);
-
-        when(checkSpaceAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(false);
+    void testAddSpaceMember_whenCurrentUserIsNotSpaceMember_thenThrowAccessDeniedException() {
+        when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.addMember(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
-        verify(checkSpaceAccessPort).checkIsMember(spaceId, currentUserId);
-        verifyNoInteractions(loadUserPort);
-        verifyNoInteractions(createSpaceUserAccessPort);
+        verify(checkSpaceAccessPort).checkIsMember(param.getSpaceId(), param.getCurrentUserId());
+        verifyNoInteractions(loadUserPort, createSpaceUserAccessPort);
     }
 
     @Test
-    @DisplayName("Adding a non-flickit user to a space should cause ResourceNotFoundException")
-    void testAddSpaceMember_inviteeIsNotFlickitUser_ResourceNotFoundException() {
-        long spaceId = 0;
-        String email = "admin@asta.org";
-        UUID currentUserId = UUID.randomUUID();
-        var param = new AddSpaceMemberUseCase.Param(spaceId, email, currentUserId);
-
-        when(checkSpaceAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(true);
-        when(loadUserPort.loadUserIdByEmail(email)).thenReturn(Optional.empty());
+    void testAddSpaceMember_whenInviteeIsNotPlatformMember_thenThrowResourceNotFoundException() {
+        when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
+        when(loadUserPort.loadUserIdByEmail(param.getEmail())).thenReturn(Optional.empty());
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.addMember(param));
         assertEquals(USER_BY_EMAIL_NOT_FOUND, throwable.getMessage());
 
-        verify(checkSpaceAccessPort).checkIsMember(spaceId, currentUserId);
-        verify(loadUserPort).loadUserIdByEmail(email);
+        verify(checkSpaceAccessPort).checkIsMember(param.getSpaceId(), param.getCurrentUserId());
+        verify(loadUserPort).loadUserIdByEmail(param.getEmail());
         verifyNoInteractions(createSpaceUserAccessPort);
     }
 
     @Test
-    @DisplayName("Adding an already-member user to a space should cause ResourceAlreadyExistsException")
-    void testAddSpaceMember_inviteeIsMember_ResourceAlreadyExistsException() {
-        long spaceId = 0;
-        String email = "admin@asta.org";
-        UUID currentUserId = UUID.randomUUID();
-        UUID userId = UUID.randomUUID();
-        var param = new AddSpaceMemberUseCase.Param(spaceId, email, currentUserId);
-
-        when(checkSpaceAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(true);
-        when(loadUserPort.loadUserIdByEmail(email)).thenReturn(Optional.of(userId));
-        when(checkSpaceAccessPort.checkIsMember(spaceId, userId)).thenReturn(true);
+    void testAddSpaceMember_whenInviteeIsAlreadyMember_thenThrowResourceAlreadyExistsException() {
+        when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
+        when(loadUserPort.loadUserIdByEmail(param.getEmail())).thenReturn(Optional.of(userId));
+        when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), userId)).thenReturn(true);
 
         var throwable = assertThrows(ResourceAlreadyExistsException.class, () -> service.addMember(param));
         assertEquals(ADD_SPACE_MEMBER_SPACE_USER_DUPLICATE, throwable.getMessage());
 
         verify(checkSpaceAccessPort, times(2)).checkIsMember(anyLong(), any(UUID.class));
-        verify(loadUserPort).loadUserIdByEmail(email);
+        verify(loadUserPort).loadUserIdByEmail(param.getEmail());
         verifyNoInteractions(createSpaceUserAccessPort);
+    }
+
+    private AddSpaceMemberUseCase.Param createParam(Consumer<AddSpaceMemberUseCase.Param.ParamBuilder> changer) {
+        var paramBuilder = paramBuilder();
+        changer.accept(paramBuilder);
+        return paramBuilder.build();
+    }
+
+    private AddSpaceMemberUseCase.Param.ParamBuilder paramBuilder() {
+        return AddSpaceMemberUseCase.Param.builder()
+            .spaceId(0L)
+            .email("admin@flickit.org")
+            .currentUserId(UUID.randomUUID());
     }
 }
