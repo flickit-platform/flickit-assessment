@@ -13,8 +13,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
 import static org.flickit.assessment.users.common.ErrorMessageKey.SPACE_ID_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -31,14 +33,11 @@ class UpdateSpaceServiceTest {
     @Mock
     private UpdateSpacePort updateSpacePort;
 
+    private final UpdateSpaceUseCase.Param param = createParam(UpdateSpaceUseCase.Param.ParamBuilder::build);
+
     @Test
     void testUpdateSpace_whenSpaceDoesNotExist_thenResourceNotFound() {
-        long spaceId = 0L;
-        String title = "Test";
-        UUID currentUserId = UUID.randomUUID();
-        UpdateSpaceUseCase.Param param = new UpdateSpaceUseCase.Param(spaceId, title, currentUserId);
-
-        when(loadSpaceOwnerPort.loadOwnerId(spaceId)).thenThrow(new ResourceNotFoundException(SPACE_ID_NOT_FOUND));
+        when(loadSpaceOwnerPort.loadOwnerId(param.getId())).thenThrow(new ResourceNotFoundException(SPACE_ID_NOT_FOUND));
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.updateSpace(param));
         assertEquals(SPACE_ID_NOT_FOUND, throwable.getMessage());
 
@@ -48,12 +47,7 @@ class UpdateSpaceServiceTest {
 
     @Test
     void testUpdateSpace_whenUserIsNotOwner_thenThrowAccessDeniedException() {
-        long spaceId = 0L;
-        String title = "Test";
-        UUID currentUserId = UUID.randomUUID();
-        UpdateSpaceUseCase.Param param = new UpdateSpaceUseCase.Param(spaceId, title, currentUserId);
-
-        when(loadSpaceOwnerPort.loadOwnerId(spaceId)).thenReturn(UUID.randomUUID());
+        when(loadSpaceOwnerPort.loadOwnerId(param.getId())).thenReturn(UUID.randomUUID());
         var throwable = assertThrows(AccessDeniedException.class, () -> service.updateSpace(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
@@ -63,22 +57,30 @@ class UpdateSpaceServiceTest {
 
     @Test
     void testUpdateSpace_whenParametersAreValid_thenSuccessfulUpdate() {
-        long spaceId = 0L;
-        String title = "Test";
-        UUID currentUserId = UUID.randomUUID();
-        UpdateSpaceUseCase.Param param = new UpdateSpaceUseCase.Param(spaceId, title, currentUserId);
-
-        when(loadSpaceOwnerPort.loadOwnerId(spaceId)).thenReturn(currentUserId);
+        when(loadSpaceOwnerPort.loadOwnerId(param.getId())).thenReturn(param.getCurrentUserId());
         doNothing().when(updateSpacePort).updateSpace(any(UpdateSpacePort.Param.class));
 
         assertDoesNotThrow(() -> service.updateSpace(param));
 
         ArgumentCaptor<UpdateSpacePort.Param> captor = ArgumentCaptor.forClass(UpdateSpacePort.Param.class);
         verify(updateSpacePort).updateSpace(captor.capture());
-        assertEquals(spaceId, captor.getValue().id());
-        assertEquals("test", captor.getValue().code());
-        assertEquals(title, captor.getValue().title());
-        assertEquals(currentUserId, captor.getValue().lastModifiedBy());
+        assertEquals(param.getId(), captor.getValue().id());
+        assertEquals(generateSlugCode(param.getTitle()), captor.getValue().code());
+        assertEquals(param.getTitle(), captor.getValue().title());
+        assertEquals(param.getCurrentUserId(), captor.getValue().lastModifiedBy());
         assertNotNull(captor.getValue().lastModificationTime());
+    }
+
+    private UpdateSpaceUseCase.Param createParam(Consumer<UpdateSpaceUseCase.Param.ParamBuilder> changer) {
+        var paramBuilder = paramBuilder();
+        changer.accept(paramBuilder);
+        return paramBuilder.build();
+    }
+
+    private UpdateSpaceUseCase.Param.ParamBuilder paramBuilder() {
+        return UpdateSpaceUseCase.Param.builder()
+            .id(0L)
+            .title("title")
+            .currentUserId(UUID.randomUUID());
     }
 }
