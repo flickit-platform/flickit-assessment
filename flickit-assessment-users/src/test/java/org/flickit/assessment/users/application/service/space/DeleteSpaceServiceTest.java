@@ -1,6 +1,5 @@
 package org.flickit.assessment.users.application.service.space;
 
-import org.assertj.core.api.Assertions;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.users.application.port.in.space.DeleteSpaceUseCase;
@@ -14,64 +13,70 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.users.common.ErrorMessageKey.DELETE_SPACE_ASSESSMENT_EXIST;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class DeleteSpaceServiceTest {
 
     @InjectMocks
-    DeleteSpaceService service;
+    private DeleteSpaceService service;
 
     @Mock
-    LoadSpaceOwnerPort loadSpaceOwnerPort;
+    private LoadSpaceOwnerPort loadSpaceOwnerPort;
 
     @Mock
-    CountSpaceAssessmentPort countSpaceAssessmentPort;
+    private CountSpaceAssessmentPort countSpaceAssessmentPort;
 
     @Mock
-    DeleteSpacePort deleteSpacePort;
+    private DeleteSpacePort deleteSpacePort;
+
+    private final DeleteSpaceUseCase.Param param = createParam(DeleteSpaceUseCase.Param.ParamBuilder::build);
 
     @Test
     void testDeleteSpase_whenCurrentUserIsNotOwner_thenThrowAccessDeniedException() {
-        long spaceId = 0L;
-        UUID currentUserId = UUID.randomUUID();
-        DeleteSpaceUseCase.Param param = new DeleteSpaceUseCase.Param(spaceId, currentUserId);
-
-        when(loadSpaceOwnerPort.loadOwnerId(spaceId)).thenReturn(UUID.randomUUID());
+        when(loadSpaceOwnerPort.loadOwnerId(param.getId())).thenReturn(UUID.randomUUID());
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.deleteSpace(param));
-        Assertions.assertThat(throwable).hasMessage(COMMON_CURRENT_USER_NOT_ALLOWED);
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+
+        verifyNoInteractions(countSpaceAssessmentPort, deleteSpacePort);
     }
 
     @Test
     void testDeleteSpase_whenAssessmentsCountIsNotZero_thenThrowResourceNotFound() {
-        long spaceId = 0L;
-        UUID currentUserId = UUID.randomUUID();
-        DeleteSpaceUseCase.Param param = new DeleteSpaceUseCase.Param(spaceId, currentUserId);
-
-        when(loadSpaceOwnerPort.loadOwnerId(spaceId)).thenReturn(currentUserId);
-        when(countSpaceAssessmentPort.countAssessments(spaceId)).thenReturn(1);
+        when(loadSpaceOwnerPort.loadOwnerId(param.getId())).thenReturn(param.getCurrentUserId());
+        when(countSpaceAssessmentPort.countAssessments(param.getId())).thenReturn(1);
 
         var throwable = assertThrows(ValidationException.class, () -> service.deleteSpace(param));
         assertEquals(DELETE_SPACE_ASSESSMENT_EXIST, throwable.getMessageKey());
+
+        verifyNoInteractions(deleteSpacePort);
     }
 
     @Test
     void testDeleteSpase_whenParametersAreValid_thenSuccessfulDelete() {
-        long spaceId = 0L;
-        UUID currentUserId = UUID.randomUUID();
-        DeleteSpaceUseCase.Param param = new DeleteSpaceUseCase.Param(spaceId, currentUserId);
+        when(loadSpaceOwnerPort.loadOwnerId(param.getId())).thenReturn(param.getCurrentUserId());
+        when(countSpaceAssessmentPort.countAssessments(param.getId())).thenReturn(0);
 
-        when(loadSpaceOwnerPort.loadOwnerId(spaceId)).thenReturn(currentUserId);
-        when(countSpaceAssessmentPort.countAssessments(spaceId)).thenReturn(0);
-        doNothing().when(deleteSpacePort).deleteById(anyLong(), anyLong());
+        service.deleteSpace(param);
+        verify(deleteSpacePort).deleteById(eq(param.getId()), anyLong());
+    }
 
-        assertDoesNotThrow(() -> service.deleteSpace(param));
+    private DeleteSpaceUseCase.Param createParam(Consumer<DeleteSpaceUseCase.Param.ParamBuilder> changer) {
+        var paramBuilder = paramBuilder();
+        changer.accept(paramBuilder);
+        return paramBuilder.build();
+    }
+
+    private DeleteSpaceUseCase.Param.ParamBuilder paramBuilder() {
+        return DeleteSpaceUseCase.Param.builder()
+            .id(0L)
+            .currentUserId(UUID.randomUUID());
     }
 }
