@@ -5,7 +5,6 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.users.application.port.in.space.UpdateSpaceUseCase;
 import org.flickit.assessment.users.application.port.out.space.LoadSpaceOwnerPort;
 import org.flickit.assessment.users.application.port.out.space.UpdateSpacePort;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -24,17 +23,16 @@ import static org.mockito.Mockito.*;
 class UpdateSpaceServiceTest {
 
     @InjectMocks
-    UpdateSpaceService service;
+    private UpdateSpaceService service;
 
     @Mock
-    LoadSpaceOwnerPort loadSpaceOwnerPort;
+    private LoadSpaceOwnerPort loadSpaceOwnerPort;
 
     @Mock
-    UpdateSpacePort updateSpacePort;
+    private UpdateSpacePort updateSpacePort;
 
     @Test
-    @DisplayName("If the space does not exist, updating space should return ResourceNotFound")
-    void testUpdateSpace_spaceNotExist_resourceNotFound() {
+    void testUpdateSpace_whenSpaceDoesNotExist_thenResourceNotFound() {
         long spaceId = 0L;
         String title = "Test";
         UUID currentUserId = UUID.randomUUID();
@@ -49,15 +47,14 @@ class UpdateSpaceServiceTest {
     }
 
     @Test
-    @DisplayName("Updating a space should be done only by the owner of the space")
-    void testUpdateSpace_requesterIsNotOwner_AccessDeniedException(){
+    void testUpdateSpace_whenUserIsNotOwner_thenThrowAccessDeniedException() {
         long spaceId = 0L;
         String title = "Test";
         UUID currentUserId = UUID.randomUUID();
         UpdateSpaceUseCase.Param param = new UpdateSpaceUseCase.Param(spaceId, title, currentUserId);
 
         when(loadSpaceOwnerPort.loadOwnerId(spaceId)).thenReturn(UUID.randomUUID());
-        var throwable = assertThrows(AccessDeniedException.class, ()-> service.updateSpace(param));
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.updateSpace(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
         verify(loadSpaceOwnerPort).loadOwnerId(anyLong());
@@ -65,8 +62,7 @@ class UpdateSpaceServiceTest {
     }
 
     @Test
-    @DisplayName("Updating a space with valid parameters should be successful")
-    void testUpdateSpace_validParameters_successful(){
+    void testUpdateSpace_whenParametersAreValid_thenSuccessfulUpdate() {
         long spaceId = 0L;
         String title = "Test";
         UUID currentUserId = UUID.randomUUID();
@@ -75,7 +71,7 @@ class UpdateSpaceServiceTest {
         when(loadSpaceOwnerPort.loadOwnerId(spaceId)).thenReturn(currentUserId);
         doNothing().when(updateSpacePort).updateSpace(any(UpdateSpacePort.Param.class));
 
-        assertDoesNotThrow(()-> service.updateSpace(param));
+        assertDoesNotThrow(() -> service.updateSpace(param));
 
         ArgumentCaptor<UpdateSpacePort.Param> captor = ArgumentCaptor.forClass(UpdateSpacePort.Param.class);
         verify(updateSpacePort).updateSpace(captor.capture());
