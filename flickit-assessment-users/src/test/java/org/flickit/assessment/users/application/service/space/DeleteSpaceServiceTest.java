@@ -3,6 +3,7 @@ package org.flickit.assessment.users.application.service.space;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.users.application.port.in.space.DeleteSpaceUseCase;
+import org.flickit.assessment.users.application.port.out.space.CheckDefaultSpacePort;
 import org.flickit.assessment.users.application.port.out.space.CountSpaceAssessmentPort;
 import org.flickit.assessment.users.application.port.out.space.DeleteSpacePort;
 import org.flickit.assessment.users.application.port.out.space.LoadSpaceOwnerPort;
@@ -17,6 +18,7 @@ import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.users.common.ErrorMessageKey.DELETE_SPACE_ASSESSMENT_EXIST;
+import static org.flickit.assessment.users.common.ErrorMessageKey.DELETE_SPACE_SPACE_DEFAULT_SPACE;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
@@ -29,6 +31,9 @@ class DeleteSpaceServiceTest {
 
     @Mock
     private LoadSpaceOwnerPort loadSpaceOwnerPort;
+
+    @Mock
+    private CheckDefaultSpacePort checkDefaultSpacePort;
 
     @Mock
     private CountSpaceAssessmentPort countSpaceAssessmentPort;
@@ -45,12 +50,24 @@ class DeleteSpaceServiceTest {
         var throwable = assertThrows(AccessDeniedException.class, () -> service.deleteSpace(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
+        verifyNoInteractions(checkDefaultSpacePort, countSpaceAssessmentPort, deleteSpacePort);
+    }
+
+    @Test
+    void testDeleteSpase_whenSpaceIsDefault_thenThrowValidationException() {
+        when(loadSpaceOwnerPort.loadOwnerId(param.getId())).thenReturn(param.getCurrentUserId());
+        when(checkDefaultSpacePort.checkIsDefault(param.getId())).thenReturn(true);
+
+        var throwable = assertThrows(ValidationException.class, ()-> service.deleteSpace(param));
+        assertEquals(DELETE_SPACE_SPACE_DEFAULT_SPACE, throwable.getMessageKey());
+
         verifyNoInteractions(countSpaceAssessmentPort, deleteSpacePort);
     }
 
     @Test
     void testDeleteSpase_whenAssessmentsCountIsNotZero_thenThrowResourceNotFound() {
         when(loadSpaceOwnerPort.loadOwnerId(param.getId())).thenReturn(param.getCurrentUserId());
+        when(checkDefaultSpacePort.checkIsDefault(param.getId())).thenReturn(false);
         when(countSpaceAssessmentPort.countAssessments(param.getId())).thenReturn(1);
 
         var throwable = assertThrows(ValidationException.class, () -> service.deleteSpace(param));
@@ -62,6 +79,8 @@ class DeleteSpaceServiceTest {
     @Test
     void testDeleteSpase_whenParametersAreValid_thenSuccessfulDelete() {
         when(loadSpaceOwnerPort.loadOwnerId(param.getId())).thenReturn(param.getCurrentUserId());
+        when(countSpaceAssessmentPort.countAssessments(param.getId())).thenReturn(0);
+        when(checkDefaultSpacePort.checkIsDefault(param.getId())).thenReturn(false);
         when(countSpaceAssessmentPort.countAssessments(param.getId())).thenReturn(0);
 
         service.deleteSpace(param);

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.users.application.port.in.space.DeleteSpaceUseCase;
+import org.flickit.assessment.users.application.port.out.space.CheckDefaultSpacePort;
 import org.flickit.assessment.users.application.port.out.space.CountSpaceAssessmentPort;
 import org.flickit.assessment.users.application.port.out.space.DeleteSpacePort;
 import org.flickit.assessment.users.application.port.out.space.LoadSpaceOwnerPort;
@@ -15,6 +16,7 @@ import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.users.common.ErrorMessageKey.DELETE_SPACE_ASSESSMENT_EXIST;
+import static org.flickit.assessment.users.common.ErrorMessageKey.DELETE_SPACE_SPACE_DEFAULT_SPACE;
 
 @Service
 @Transactional
@@ -22,6 +24,7 @@ import static org.flickit.assessment.users.common.ErrorMessageKey.DELETE_SPACE_A
 public class DeleteSpaceService implements DeleteSpaceUseCase {
 
     private final LoadSpaceOwnerPort loadSpaceOwnerPort;
+    private final CheckDefaultSpacePort checkDefaultSpacePort;
     private final CountSpaceAssessmentPort countSpaceAssessmentPort;
     private final DeleteSpacePort deleteSpacePort;
 
@@ -29,8 +32,7 @@ public class DeleteSpaceService implements DeleteSpaceUseCase {
     public void deleteSpace(Param param) {
         validateCurrentUser(param.getId(), param.getCurrentUserId());
 
-        if (countSpaceAssessmentPort.countAssessments(param.getId()) > 0)
-            throw new ValidationException(DELETE_SPACE_ASSESSMENT_EXIST);
+        validateSpace(param);
 
         deleteSpacePort.deleteById(param.getId(), System.currentTimeMillis());
     }
@@ -39,5 +41,13 @@ public class DeleteSpaceService implements DeleteSpaceUseCase {
         UUID spaceOwnerId = loadSpaceOwnerPort.loadOwnerId(spaceId);
         if (!Objects.equals(spaceOwnerId, currentUserId))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
+    }
+
+    private void validateSpace(Param param) {
+        if (checkDefaultSpacePort.checkIsDefault(param.getId()))
+            throw new ValidationException(DELETE_SPACE_SPACE_DEFAULT_SPACE);
+
+        if (countSpaceAssessmentPort.countAssessments(param.getId()) > 0)
+            throw new ValidationException(DELETE_SPACE_ASSESSMENT_EXIST);
     }
 }
