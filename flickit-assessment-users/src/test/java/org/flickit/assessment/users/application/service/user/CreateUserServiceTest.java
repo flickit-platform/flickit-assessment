@@ -9,10 +9,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -25,18 +24,26 @@ class CreateUserServiceTest {
     private CreateUserPort createUserPort;
 
     @Test
-    void testCreateUserService_ValidInput_ValidResult() {
-        UUID userId = UUID.randomUUID();
-        String email = "admin@flickit.org";
-        String displayName = "Flickit Admin";
-        CreateUserUseCase.Param param = new CreateUserUseCase.Param(userId,
-            email,
-            displayName);
-        when(createUserPort.persist(any(UUID.class), any(), any())).thenReturn(userId);
+    void testCreateUserService_whenParametersAreValid_thenReturnValidResult() {
+        var param = createParam(CreateUserUseCase.Param.ParamBuilder::build);
+        var userId = UUID.randomUUID();
 
-        CreateUserUseCase.Result result = service.createUser(param);
+        when(createUserPort.persist(param.getUserId(), param.getDisplayName(), param.getEmail())).thenReturn(userId);
 
-        assertNotNull(result);
+        var result = service.createUser(param);
         assertEquals(userId, result.userId());
+    }
+
+    private CreateUserUseCase.Param createParam(Consumer<CreateUserUseCase.Param.ParamBuilder> changer) {
+        var paramBuilder = paramBuilder();
+        changer.accept(paramBuilder);
+        return paramBuilder.build();
+    }
+
+    private CreateUserUseCase.Param.ParamBuilder paramBuilder() {
+        return CreateUserUseCase.Param.builder()
+            .userId(UUID.randomUUID())
+            .email("admin@flickit.com")
+            .displayName("Display Name");
     }
 }
