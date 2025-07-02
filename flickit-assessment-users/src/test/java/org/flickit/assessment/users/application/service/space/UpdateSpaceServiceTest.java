@@ -2,6 +2,7 @@ package org.flickit.assessment.users.application.service.space;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.users.application.port.in.space.UpdateSpaceUseCase;
 import org.flickit.assessment.users.application.port.out.space.CheckDefaultSpacePort;
 import org.flickit.assessment.users.application.port.out.space.LoadSpaceOwnerPort;
@@ -65,8 +66,8 @@ class UpdateSpaceServiceTest {
         when(loadSpaceOwnerPort.loadOwnerId(param.getId())).thenReturn(param.getCurrentUserId());
         when(checkDefaultSpacePort.checkIsDefault(param.getId())).thenReturn(true);
 
-        var throwable = assertThrows(AccessDeniedException.class, () -> service.updateSpace(param));
-        assertEquals(UPDATE_SPACE_SPACE_DEFAULT_SPACE, throwable.getMessage());
+        var throwable = assertThrows(ValidationException.class, () -> service.updateSpace(param));
+        assertEquals(UPDATE_SPACE_SPACE_DEFAULT_SPACE, throwable.getMessageKey());
 
         verifyNoInteractions(updateSpacePort);
     }
