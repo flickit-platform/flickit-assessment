@@ -2,6 +2,7 @@ package org.flickit.assessment.users.application.service.space;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.users.application.port.in.space.UpdateSpaceUseCase;
 import org.flickit.assessment.users.application.port.out.space.CheckDefaultSpacePort;
 import org.flickit.assessment.users.application.port.out.space.LoadSpaceOwnerPort;
@@ -31,7 +32,7 @@ public class UpdateSpaceService implements UpdateSpaceUseCase {
         validateCurrentUser(param.getId(), param.getCurrentUserId());
 
         if (checkDefaultSpacePort.checkIsDefault(param.getId()))
-            throw new AccessDeniedException(UPDATE_SPACE_SPACE_DEFAULT_SPACE);
+            throw new ValidationException(UPDATE_SPACE_SPACE_DEFAULT_SPACE);
 
         var updateParam = new UpdateSpacePort.Param(param.getId(),
             param.getTitle(),
