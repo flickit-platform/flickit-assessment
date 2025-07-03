@@ -3,6 +3,7 @@ package org.flickit.assessment.users.application.port.in.space;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
@@ -32,6 +33,7 @@ public interface UpdateSpaceUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
+        @Builder
         public Param(Long id, String title, UUID currentUserId) {
             this.id = id;
             this.title = title != null ? title.strip() : null;
