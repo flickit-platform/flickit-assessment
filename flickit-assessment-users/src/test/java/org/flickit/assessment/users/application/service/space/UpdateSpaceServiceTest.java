@@ -52,7 +52,7 @@ class UpdateSpaceServiceTest {
     }
 
     @Test
-    void testUpdateSpace_whenUserIsNotOwner_thenThrowAccessDeniedException() {
+    void testUpdateSpace_whenUserIsNotOwner_thenThrowsAccessDeniedException() {
         when(loadSpaceOwnerPort.loadOwnerId(param.getId())).thenReturn(UUID.randomUUID());
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.updateSpace(param));
@@ -62,7 +62,7 @@ class UpdateSpaceServiceTest {
     }
 
     @Test
-    void testUpdateSpace_whenSpaceIsDefault_thenThrowAccessDeniedException() {
+    void testUpdateSpace_whenSpaceIsDefault_thenThrowsValidationException() {
         when(loadSpaceOwnerPort.loadOwnerId(param.getId())).thenReturn(param.getCurrentUserId());
         when(checkDefaultSpacePort.checkIsDefault(param.getId())).thenReturn(true);
 
