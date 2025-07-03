@@ -68,7 +68,7 @@ class AddSpaceMemberServiceTest {
     }
 
     @Test
-    void testAddSpaceMember_whenCurrentUserIsNotSpaceMember_thenThrowAccessDeniedException() {
+    void testAddSpaceMember_whenCurrentUserIsNotSpaceMember_thenThrowsAccessDeniedException() {
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.addMember(param));
@@ -78,7 +78,7 @@ class AddSpaceMemberServiceTest {
     }
 
     @Test
-    void testAddSpaceMember_whenSpaceIsDefault_thenThrowAccessDeniedException() {
+    void testAddSpaceMember_whenSpaceIsDefault_thenThrowsValidationException() {
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
         when(checkDefaultSpacePort.checkIsDefault(param.getSpaceId())).thenReturn(true);
 
@@ -89,7 +89,7 @@ class AddSpaceMemberServiceTest {
     }
 
     @Test
-    void testAddSpaceMember_whenInviteeIsNotPlatformMember_thenThrowResourceNotFoundException() {
+    void testAddSpaceMember_whenInviteeIsNotPlatformMember_thenThrowsResourceNotFoundException() {
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
         when(checkDefaultSpacePort.checkIsDefault(param.getSpaceId())).thenReturn(false);
         when(loadUserPort.loadUserIdByEmail(param.getEmail())).thenReturn(Optional.empty());
@@ -101,7 +101,7 @@ class AddSpaceMemberServiceTest {
     }
 
     @Test
-    void testAddSpaceMember_whenInviteeIsAlreadyMember_thenThrowResourceAlreadyExistsException() {
+    void testAddSpaceMember_whenInviteeIsAlreadyMember_thenThrowsResourceAlreadyExistsException() {
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
         when(loadUserPort.loadUserIdByEmail(param.getEmail())).thenReturn(Optional.of(userId));
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), userId)).thenReturn(true);
