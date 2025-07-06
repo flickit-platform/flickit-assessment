@@ -1,6 +1,7 @@
 package org.flickit.assessment.scenario.test.core.assessment;
 
 import io.restassured.response.Response;
+import org.flickit.assessment.common.application.domain.space.SpaceType;
 import org.flickit.assessment.common.config.AppSpecProperties;
 import org.flickit.assessment.common.exception.api.ErrorResponseDto;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
@@ -60,7 +61,7 @@ class CreateAssessmentErrorScenarioTest extends AbstractScenarioTest {
 
         // Change currentUser which is not an owner of the expert group
         context.getNextCurrentUser();
-        var kitId = createKit(false);
+        var kitId = createKit(false, 0L);
         kitHelper.publishKit(context, kitId);
 
         final int countBefore = jpaTemplate.count(AssessmentJpaEntity.class);
@@ -86,7 +87,7 @@ class CreateAssessmentErrorScenarioTest extends AbstractScenarioTest {
         var spaceId = createBasicSpace();
 
         // Create a private kit
-        var kitId = createKit(true);
+        var kitId = createKit(true, 0L);
         kitHelper.publishKit(context, kitId);
 
         // Create a user intended for addition to the space
@@ -125,7 +126,7 @@ class CreateAssessmentErrorScenarioTest extends AbstractScenarioTest {
         var limit = appSpecProperties.getSpace().getMaxBasicSpaceAssessments();
         var spaceId = createBasicSpace();
 
-        var kitId = createKit(false);
+        var kitId = createKit(false, 0);
         kitHelper.publishKit(context, kitId);
         // #assessments = limit
         createAssessments(spaceId, kitId, limit);
@@ -146,10 +147,10 @@ class CreateAssessmentErrorScenarioTest extends AbstractScenarioTest {
     }
 
     @Test
-    void createAssessment_privateKitAndBasicSpace() {
+    void createAssessment_privateFreeKitWithAccessAndBasicSpace() {
         var spaceId = createBasicSpace();
 
-        var kitId = createKit(true);
+        var kitId = createKit(true, 0);
         kitHelper.publishKit(context, kitId);
 
         final int countBefore = jpaTemplate.count(AssessmentJpaEntity.class);
@@ -160,6 +161,75 @@ class CreateAssessmentErrorScenarioTest extends AbstractScenarioTest {
             .extract().as(ErrorResponseDto.class);
 
         assertEquals(UPGRADE_REQUIRED, error.code());
+        assertNotNull(error.message());
+
+        final int countAfter = jpaTemplate.count(AssessmentJpaEntity.class);
+        assertEquals(countBefore, countAfter);
+    }
+
+    @Test
+    void createAssessment_privatePaidKitWithoutAccessAndPremiumSpace() {
+        var spaceId = createPremiumSpace();
+        // Create a private paid kit
+        var kitId = createKit(true, 1000);
+        kitHelper.publishKit(context, kitId);
+        // Change to a user without access
+        context.getNextCurrentUser();
+
+        var error = createAssessment(spaceId, kitId)
+            .then()
+            .statusCode(403)
+            .extract().as(ErrorResponseDto.class);
+
+        assertEquals(ACCESS_DENIED, error.code());
+        assertNotNull(error.message());
+
+        final int countBefore = jpaTemplate.count(AssessmentJpaEntity.class);
+
+        final int countAfter = jpaTemplate.count(AssessmentJpaEntity.class);
+        assertEquals(countBefore, countAfter);
+    }
+
+    @Test
+    void createAssessment_publicPaidKitWithoutAccess() {
+        var spaceId = createBasicSpace();
+        // Create a public paid kit
+        var kitId = createKit(false, 1000);
+        kitHelper.publishKit(context, kitId);
+        // Change to a user without access
+        context.getNextCurrentUser();
+
+        final int countBefore = jpaTemplate.count(AssessmentJpaEntity.class);
+
+        var error = createAssessment(spaceId, kitId)
+            .then()
+            .statusCode(403)
+            .extract().as(ErrorResponseDto.class);
+
+        assertEquals(ACCESS_DENIED, error.code());
+        assertNotNull(error.message());
+
+        final int countAfter = jpaTemplate.count(AssessmentJpaEntity.class);
+        assertEquals(countBefore, countAfter);
+    }
+
+    @Test
+    void createAssessment_privateFreeKitWithoutAccessAndPremiumSpace() {
+        var spaceId = createPremiumSpace();
+
+        var kitId = createKit(true, 0);
+        kitHelper.publishKit(context, kitId);
+        // Change to a user without access
+        context.getNextCurrentUser();
+
+        final int countBefore = jpaTemplate.count(AssessmentJpaEntity.class);
+
+        var error = createAssessment(spaceId, kitId)
+            .then()
+            .statusCode(403)
+            .extract().as(ErrorResponseDto.class);
+
+        assertEquals(ACCESS_DENIED, error.code());
         assertNotNull(error.message());
 
         final int countAfter = jpaTemplate.count(AssessmentJpaEntity.class);
@@ -184,7 +254,13 @@ class CreateAssessmentErrorScenarioTest extends AbstractScenarioTest {
         return id.longValue();
     }
 
-    private Long createKit(boolean isPrivate) {
+    private Long createPremiumSpace() {
+        var response = spaceHelper.create(context, createSpaceRequestDto(s -> s.type(SpaceType.PREMIUM.getCode())));
+        Number id = response.path("id");
+        return id.longValue();
+    }
+
+    private Long createKit(boolean isPrivate, long price) {
         Long expertGroupId = createExpertGroup();
         Long kitDslId = uploadDsl(expertGroupId);
         Long kitTagId = kitTagHelper.createKitTag();
@@ -194,6 +270,7 @@ class CreateAssessmentErrorScenarioTest extends AbstractScenarioTest {
             .kitDslId(kitDslId)
             .tagIds(List.of(kitTagId))
             .isPrivate(isPrivate)
+            .price(price)
         );
 
         var response = kitHelper.create(context, request);
