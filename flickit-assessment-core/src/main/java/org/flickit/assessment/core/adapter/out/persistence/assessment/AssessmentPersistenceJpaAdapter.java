@@ -261,6 +261,11 @@ public class AssessmentPersistenceJpaAdapter implements
     }
 
     @Override
+    public void updateAssessmentSpace(UUID assessmentId, long spaceId) {
+        repository.updateSpaceId(assessmentId, spaceId);
+    }
+
+    @Override
     public boolean isAssessmentSpaceMember(UUID assessmentId, UUID userId) {
         return repository.checkIsAssessmentSpaceMember(assessmentId, userId).isPresent();
     }
