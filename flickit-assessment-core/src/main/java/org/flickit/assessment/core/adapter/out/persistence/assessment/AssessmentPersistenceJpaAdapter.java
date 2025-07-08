@@ -54,7 +54,8 @@ public class AssessmentPersistenceJpaAdapter implements
     DeleteAssessmentPort,
     CheckAssessmentSpaceMembershipPort,
     CountAssessmentsPort,
-    LoadAssessmentQuestionsPort {
+    LoadAssessmentQuestionsPort,
+    MoveAssessmentPort {
 
     private final AssessmentJpaRepository repository;
     private final AssessmentResultJpaRepository resultRepository;
@@ -261,11 +262,6 @@ public class AssessmentPersistenceJpaAdapter implements
     }
 
     @Override
-    public void updateAssessmentSpace(UUID assessmentId, long spaceId) {
-        repository.updateSpaceId(assessmentId, spaceId);
-    }
-
-    @Override
     public boolean isAssessmentSpaceMember(UUID assessmentId, UUID userId) {
         return repository.checkIsAssessmentSpaceMember(assessmentId, userId).isPresent();
     }
@@ -307,5 +303,10 @@ public class AssessmentPersistenceJpaAdapter implements
         return Objects.equals(assessmentResultLangId, kitLangId)
             ? null
             : KitLanguage.valueOfById(assessmentResultLangId);
+    }
+
+    @Override
+    public void moveAssessment(UUID assessmentId, long spaceId) {
+        repository.updateSpaceId(assessmentId, spaceId);
     }
 }
