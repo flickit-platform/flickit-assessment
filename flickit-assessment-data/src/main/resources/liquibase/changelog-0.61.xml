@@ -12,4 +12,19 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id = "0.61-02" author="Maziyar Gerami">
+        <addColumn tableName="fau_space">
+            <column name="is_default" type="boolean" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.61-03" author="Maziyar Gerami">
+        <sql>
+            CREATE UNIQUE INDEX uq_fau_space_owner_default_true
+                ON fau_space (owner_id) WHERE is_default = true;
+        </sql>
+    </changeSet>
+
 </databaseChangeLog>
