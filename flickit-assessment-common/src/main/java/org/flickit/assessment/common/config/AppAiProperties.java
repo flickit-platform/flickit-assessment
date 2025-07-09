@@ -47,31 +47,27 @@ public class AppAiProperties {
 
         @NotBlank
         private String adviceNarrationAndAdviceItems = """
-            Provide ALL output strictly in {language} language.
-            For an assessment, titled {assessmentTitle}, an assessment platform has evaluated a software product by analyzing responses to various questions, each influencing specific quality attributes.
-            The user has set maturity level targets for each attribute, and the platform has provided actionable advice items, highlighting which questions should be improved to achieve these targets.
-            The advice includes the current status (selected option) and the goal status for each relevant question.
-            Task: Based on the provided Advice Recommendations, generate up to 10 Advice Items including only as many points as there are distinct pieces of actionable advice. Each Advice Recommendation includes the following details:
-                title: Generate a concise, action-driven title (max 100 characters) that starts with a strong verb and clearly conveys the intended action.
-                description: Provide a detailed recommendations paragraph (max 1000 characters) explaining relevant technologies, methods, and tools. Discuss the best approach and viable alternatives, carefully analyzing their advantages, trade-offs, and potential challenges.
-                    Justify why a particular option is recommended over others, considering factors such as scalability, maintainability, performance, security, and industry best practices.
-                    Additionally, outline the expected benefits and risks of implementation, including potential impacts on development time, resource allocation, and long-term sustainability.
-                    Where applicable, provide real-world examples or case studies to strengthen the recommendation.
-                cost: between 0 to 2 where 0 LOW, 1 MEDIUM, 2 HIGH; This represents the estimated effort, time, and resources required to transition from the current state to the target goal, considering factors such as implementation complexity, required skill sets, tooling, and potential disruptions.
-                    The larger the gap between the current status and the goal, the higher the cost.
-                priority: between 0 to 2 where 0 LOW, 1 MEDIUM, 2 HIGH; This represents the urgency and significance of implementing this improvement in the context of software engineering best practices.
-                    Factors influencing priority include the impact on software quality (e.g., security, performance, scalability, maintainability), business goals, regulatory compliance, and technical debt.
-                    Higher priority items are those that, if left unaddressed, could lead to significant risks, inefficiencies, or long-term challenges.
-                impact: between 0 to 2 where 0 LOW, 1 MEDIUM, 2 HIGH; This reflects the potential effect of implementing the change on the overall system. Impact takes into account how the change will influence key system attributes such as performance, scalability, security, maintainability, user experience, and business outcomes.
-                    A higher impact indicates a more significant and transformative effect, such as major improvements in system efficiency or the resolution of critical issues, while a lower impact suggests incremental or localized changes.
-            Additionally, provide a comprehensive paragraph discussing the significance of the suggested improvements and their expected outcomes. Explain how addressing these recommendations will enhance the targeted attributes, contributing to overall software quality.
-            Emphasize the benefits of implementing these changes, such as improved scalability, security, maintainability, or performance. Also, highlight the potential consequences of neglecting these improvements. Ensure the paragraph clearly connects the recommended actions to their intended impact on the assessment goals.
-            Ensure that the paragraph is fully connected to the advice items but remains clear and meaningful even when read independently, without direct reference to the individual items. It should provide a complete overview of why these improvements matter and how they align with the assessment’s goals.
-            Also, always use the name of the assessment as it is, without translating it, and enclose it in double quotations.
-            Wrap this paragraph in an HTML <p> tag without any class attributes and include the title of the assessment. Ensure the response is concise but still fully translated into {language} language.
-            Ensure that the advice is polite, constructive, and focused on actionable improvements while being tailored for an expert software assessor.
-            Avoid referring to individual scores or negative phrasing. Keep the tone professional and supportive.
-            Make sure the overall response size, including HTML tags, remains under 1000 characters and excludes any markdown.
+            Provide all output strictly in {language}.
+            For an assessment titled "{assessmentTitle}", a software product has been evaluated by analyzing responses to various questions, each influencing specific quality attributes.
+            The user has set maturity level targets for each attribute, and the platform has generated actionable advice items indicating which questions need improvement to meet these targets. Each advice item includes the current status (selected option) and the goal status.
+            Task: Based on the provided Advice Recommendations, generate up to 10 concise Advice Items. Include only as many points as there are distinct actionable advices. For each Advice Item, provide the following:
+            - title: A concise, action-driven title (max 100 characters) starting with a strong verb clearly conveying the intended action.
+            - description: A detailed recommendation paragraph (max 1000 characters) covering relevant technologies, methods, and tools. Discuss the best approach and viable alternatives, analyzing advantages, trade-offs, and challenges. Justify why the recommended option is preferred, considering scalability, maintainability, performance, security, and industry best practices. Outline expected benefits and risks, including impacts on development time, resources, and long-term sustainability. Include real-world examples or case studies where appropriate.
+            - cost: Integer 0 (LOW), 1 (MEDIUM), or 2 (HIGH), estimating effort, time, and resources needed to move from current to target state. Larger gaps imply higher cost.
+            - priority: Integer 0 (LOW), 1 (MEDIUM), or 2 (HIGH), indicating urgency and significance based on software quality, business goals, compliance, and technical debt. Higher priority means unaddressed issues could cause major risks or inefficiencies.
+            - impact: Integer 0 (LOW), 1 (MEDIUM), or 2 (HIGH), reflecting the potential positive effect on system attributes like performance, scalability, security, maintainability, user experience, and business outcomes. Higher impact means transformative improvements; lower impact means incremental changes.
+            Please normalize the priority, impact, and cost values across the advice items so they are distributed proportionally rather than mostly high values.
+            Additionally, provide a comprehensive, standalone paragraph wrapped in an HTML `<p>` tag (no class attributes), clearly referencing the assessment titled "{assessmentTitle}" (keep the name in English and in double quotes). This paragraph should:
+            - Explain the overall significance of the suggested improvements and their expected outcomes.
+            - Highlight how addressing these recommendations will enhance the targeted attributes and overall software quality.
+            - Emphasize benefits like improved scalability, security, maintainability, or performance.
+            - Warn about potential consequences of neglecting these improvements.
+            - Connect clearly to the advice items but remain meaningful if read independently.
+            - Be concise and fully translated into {language}.
+
+            Ensure the advice is polite, constructive, actionable, and tailored for an expert software assessor.
+            Avoid referring to individual scores or negative phrasing. Maintain a professional and supportive tone.
+            Keep the total response length under 1000 characters, including the HTML paragraph tags, and exclude any markdown formatting.
             Attribute Targets: {attributeTargets}
             Advice Recommendations: {adviceRecommendations}
             """;
