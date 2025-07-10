@@ -3,6 +3,7 @@ package org.flickit.assessment.advice.application.service.advicenarration;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.advice.application.domain.AssessmentResult;
+import org.flickit.assessment.advice.application.domain.Attribute;
 import org.flickit.assessment.advice.application.domain.AttributeLevelTarget;
 import org.flickit.assessment.advice.application.domain.MaturityLevel;
 import org.flickit.assessment.advice.application.port.in.advicenarration.RefreshAssessmentAdviceUseCase;
@@ -10,6 +11,7 @@ import org.flickit.assessment.advice.application.port.out.adviceitem.DeleteAdvic
 import org.flickit.assessment.advice.application.port.out.adviceitem.LoadAdviceItemPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.LoadAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadAssessmentResultPort;
+import org.flickit.assessment.advice.application.port.out.atribute.LoadAttributesPort;
 import org.flickit.assessment.advice.application.port.out.attributevalue.LoadAttributeValuesPort;
 import org.flickit.assessment.advice.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.advice.application.service.advice.CreateAdviceHelper;
@@ -19,8 +21,11 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.toMap;
@@ -43,6 +48,7 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
     private final DeleteAdviceItemPort deleteAdviceItemPort;
     private final LoadAdviceItemPort loadAdviceItemPort;
     private final LoadAdviceNarrationPort loadAdviceNarrationPort;
+    private final LoadAttributesPort loadAttributesPort;
 
     @Override
     public void refreshAssessmentAdvice(Param param) {
@@ -69,12 +75,54 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
     private List<AttributeLevelTarget> prepareAttributeLevelTargets(AssessmentResult result) {
         var attributeValues = loadAttributeValuesPort.loadAll(result.getId());
         var maturityLevels = loadMaturityLevelsPort.loadAll(result.getAssessmentId());
+        List<Long> attributeIds = attributeValues.stream().map(LoadAttributeValuesPort.Result::attributeId).toList();
+        var attributes = loadAttributesPort.loadByIdsAndAssessmentId(attributeIds, result.getAssessmentId());
 
-        return buildTargets(attributeValues, maturityLevels);
+        return buildTargets(attributeValues, maturityLevels, attributes);
     }
 
     private List<AttributeLevelTarget> buildTargets(List<LoadAttributeValuesPort.Result> attributeValues,
-                                                    List<MaturityLevel> maturityLevels) {
+                                                    List<MaturityLevel> maturityLevels, List<Attribute> attributes) {
+        int maturityLevelsMaxIndex = maturityLevels.stream()
+            .max(comparingInt(MaturityLevel::getIndex))
+            .orElseThrow(() ->new ResourceNotFoundException("No maturity levels found"))
+            .getIndex();
+
+        // Create a map of maturity level IDs to their indices
+        var maturityLevelIdToIndexMap = maturityLevels.stream()
+            .collect(toMap(MaturityLevel::getId, MaturityLevel::getIndex));
+
+        var attributeIdToWeightMap = attributes.stream()
+            .collect(toMap(Attribute::getId, Attribute::getWeight));
+
+        // Create a map of attribute IDs to their complementary maturity level values
+        var attributeToWeightedComplementMap = attributeValues.stream()
+            .collect(Collectors.toMap(
+                LoadAttributeValuesPort.Result::attributeId,
+                value -> {
+                    int currentIndex = maturityLevelIdToIndexMap.get(value.maturityLevelId());
+                    int weight = attributeIdToWeightMap.get(value.attributeId());
+                    return weight * (maturityLevelsMaxIndex - currentIndex);
+                }
+            ));
+
+        var x = attributeToWeightedComplementMap
+            .entrySet()
+            .stream()
+            .sorted(Map.Entry.<Long, Integer>comparingByValue().reversed())
+            .limit(2)
+            .toList();
+
+        // Extract attributeIds from x
+        var attributeIdsToInclude = x.stream()
+            .map(entry -> entry.getKey())
+            .toList();
+
+        // Filter attributeValues to only include those with attributeId in x
+        var filteredAttributeValues = attributeValues.stream()
+            .filter(value -> attributeIdsToInclude.contains(value.attributeId()))
+            .toList();
+
         var maturityIndexMap = maturityLevels.stream()
             .collect(toMap(MaturityLevel::getId, MaturityLevel::getIndex));
 
@@ -82,7 +130,9 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
             .sorted(comparingInt(MaturityLevel::getIndex))
             .toList();
 
-        return attributeValues.stream()
+        // Create AttributeLevelTarget objects for each filtered attribute value
+        // For each attribute, we want to target the next maturity level
+        return filteredAttributeValues.stream()
             .flatMap(value -> toTarget(value, maturityIndexMap.get(value.maturityLevelId()), sortedLevels).stream())
             .toList();
     }
