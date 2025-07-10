@@ -28,11 +28,11 @@ public class MaturityLevelMother {
         return new MaturityLevel(LEVEL_THREE_ID, "three", 3);
     }
 
-    public static MaturityLevel levelFour() {
-        return new MaturityLevel(LEVEL_FOUR_ID, "four", 4);
-    }
-
     public static MaturityLevel levelFive() {
         return new MaturityLevel(LEVEL_FIVE_ID, "five", 5);
+    }
+
+    public static MaturityLevel levelFour() {
+        return new MaturityLevel(LEVEL_FOUR_ID, "four", 4);
     }
 }
