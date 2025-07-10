@@ -223,11 +223,13 @@ class RefreshAssessmentAdviceServiceTest {
 
     @Test
     void testRefreshAssessmentAdvice_whenForceRegenerateIsFalseAndAdviceItemExistsAndAdviceNarrationDoesNotExists_thenRegenerateAdvice() {
+        var attribute4 = createWithWeight(7);
         param = createParam(b -> b.forceRegenerate(false));
         assessmentResult = createAssessmentResultWithAssessmentId(param.getAssessmentId());
         var attributeValues = List.of(new LoadAttributeValuesPort.Result(attribute1.getId(), levelTwo().getId()),
             new LoadAttributeValuesPort.Result(attribute2.getId(), levelThree().getId()),
-            new LoadAttributeValuesPort.Result(attribute3.getId(), levelOne().getId()));
+            new LoadAttributeValuesPort.Result(attribute3.getId(), levelOne().getId()),
+            new LoadAttributeValuesPort.Result(attribute4.getId(), levelOne().getId()));
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), REFRESH_ASSESSMENT_ADVICE)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
@@ -235,7 +237,7 @@ class RefreshAssessmentAdviceServiceTest {
         when(loadAttributeValuesPort.loadAll(assessmentResult.getId())).thenReturn(attributeValues);
         when(loadAdviceItemPort.existsByAssessmentResultId(assessmentResult.getId())).thenReturn(true);
         when(loadAdviceNarrationPort.existsByAssessmentResultId(assessmentResult.getId())).thenReturn(false);
-        when(loadAttributesPort.loadByIdsAndAssessmentId(anyList(), eq(param.getAssessmentId()))).thenReturn(List.of(attribute1, attribute2, attribute3));
+        when(loadAttributesPort.loadByIdsAndAssessmentId(anyList(), eq(param.getAssessmentId()))).thenReturn(List.of(attribute1, attribute2, attribute3, attribute4));
         @SuppressWarnings("unchecked")
         ArgumentCaptor<List<AttributeLevelTarget>> targetCaptor = ArgumentCaptor.forClass(List.class);
         when(createAdviceHelper.createAdvice(eq(param.getAssessmentId()), anyList())).thenReturn(adviceListItems);
@@ -251,15 +253,17 @@ class RefreshAssessmentAdviceServiceTest {
         );
         List<AttributeLevelTarget> capturedTargets = targetCaptor.getValue();
         assertEquals(2, capturedTargets.size());
-        assertTrue(capturedTargets.stream().anyMatch(t -> t.getAttributeId() == (attribute2.getId())));
-        assertTrue(capturedTargets.stream().anyMatch(t -> t.getAttributeId() == (attribute3.getId())));
         assertFalse(capturedTargets.stream().anyMatch(t -> t.getAttributeId() == (attribute1.getId())));
+        assertFalse(capturedTargets.stream().anyMatch(t -> t.getAttributeId() == (attribute2.getId())));
+        assertTrue(capturedTargets.stream().anyMatch(t -> t.getAttributeId() == (attribute3.getId())));
+        assertTrue(capturedTargets.stream().anyMatch(t -> t.getAttributeId() == (attribute4.getId())));
 
         List<AttributeLevelTarget> narratedTargets = narrationCaptor.getValue();
         assertEquals(2, narratedTargets.size());
-        assertTrue(narratedTargets.stream().anyMatch(t -> t.getAttributeId() == (attribute2.getId())));
-        assertTrue(narratedTargets.stream().anyMatch(t -> t.getAttributeId() == (attribute3.getId())));
         assertFalse(narratedTargets.stream().anyMatch(t -> t.getAttributeId() == (attribute1.getId())));
+        assertFalse(narratedTargets.stream().anyMatch(t -> t.getAttributeId() == (attribute2.getId())));
+        assertTrue(narratedTargets.stream().anyMatch(t -> t.getAttributeId() == (attribute3.getId())));
+        assertTrue(narratedTargets.stream().anyMatch(t -> t.getAttributeId() == (attribute4.getId())));
 
         verify(deleteAdviceItemPort).deleteAllAiGenerated(assessmentResult.getId());
     }
