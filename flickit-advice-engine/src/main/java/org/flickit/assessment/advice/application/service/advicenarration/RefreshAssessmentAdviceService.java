@@ -21,11 +21,9 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.toMap;
@@ -49,6 +47,8 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
     private final LoadAdviceItemPort loadAdviceItemPort;
     private final LoadAdviceNarrationPort loadAdviceNarrationPort;
     private final LoadAttributesPort loadAttributesPort;
+
+    private static final int MAX_TARGETS = 2;
 
     @Override
     public void refreshAssessmentAdvice(Param param) {
@@ -82,58 +82,49 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
     }
 
     private List<AttributeLevelTarget> buildTargets(List<LoadAttributeValuesPort.Result> attributeValues,
-                                                    List<MaturityLevel> maturityLevels, List<Attribute> attributes) {
-        var maturityLevelMax = maturityLevels.stream()
-            .max(comparingInt(MaturityLevel::getIndex))
-            .orElseThrow(() ->new ResourceNotFoundException("No maturity levels found"));
-
-        // Create a map of maturity level IDs to their indices
-        var maturityLevelIdToIndexMap = maturityLevels.stream()
-            .collect(toMap(MaturityLevel::getId, MaturityLevel::getIndex));
-
-        var attributeIdToWeightMap = attributes.stream()
-            .collect(toMap(Attribute::getId, Attribute::getWeight));
-
-        // Create a map of attribute IDs to their complementary maturity level values
-        var attributeToWeightedComplementMap = attributeValues.stream()
-            .filter(e -> e.maturityLevelId() != maturityLevelMax.getId())
-            .collect(Collectors.toMap(
-                LoadAttributeValuesPort.Result::attributeId,
-                value -> {
-                    int currentIndex = maturityLevelIdToIndexMap.get(value.maturityLevelId());
-                    int weight = attributeIdToWeightMap.get(value.attributeId());
-                    return weight * (maturityLevelMax.getIndex() - currentIndex);
-                }
-            ));
-
-        var x = attributeToWeightedComplementMap
-            .entrySet()
-            .stream()
-            .sorted(Map.Entry.<Long, Integer>comparingByValue().reversed())
-            .limit(2)
-            .toList();
-
-        // Extract attributeIds from x
-        var attributeIdsToInclude = x.stream()
-            .map(entry -> entry.getKey())
-            .toList();
-
-        // Filter attributeValues to only include those with attributeId in x
-        var filteredAttributeValues = attributeValues.stream()
-            .filter(value -> attributeIdsToInclude.contains(value.attributeId()))
-            .toList();
-
-        var maturityIndexMap = maturityLevels.stream()
-            .collect(toMap(MaturityLevel::getId, MaturityLevel::getIndex));
-
-        var sortedLevels = maturityLevels.stream()
+                                                    List<MaturityLevel> maturityLevels,
+                                                    List<Attribute> attributes) {
+        List<MaturityLevel> sortedLevels = maturityLevels.stream()
             .sorted(comparingInt(MaturityLevel::getIndex))
             .toList();
 
-        // Create AttributeLevelTarget objects for each filtered attribute value
-        // For each attribute, we want to target the next maturity level
-        return filteredAttributeValues.stream()
-            .flatMap(value -> toTarget(value, maturityIndexMap.get(value.maturityLevelId()), sortedLevels).stream())
+        MaturityLevel maxLevel = sortedLevels.getLast();
+        int maxIndex = maxLevel.getIndex();
+
+        Map<Long, Integer> maturityLevelIdToIndexMap = maturityLevels.stream()
+            .collect(toMap(MaturityLevel::getId, MaturityLevel::getIndex));
+
+        Map<Long, Integer> attributeIdToWeightmap = attributes.stream()
+            .collect(toMap(Attribute::getId, Attribute::getWeight));
+
+        Map<Long, Integer> attributeIdToWeightedComplementerLevelMap = attributeValues.stream()
+            .filter(v -> v.maturityLevelId() != (maxLevel.getId()))
+            .collect(toMap(
+                LoadAttributeValuesPort.Result::attributeId,
+                v -> {
+                    int index = maturityLevelIdToIndexMap.get(v.maturityLevelId());
+                    int weight = attributeIdToWeightmap.getOrDefault(v.attributeId(), 1);
+                    return weight * (maxIndex - index);
+                }
+            ));
+
+        List<Long> topAttributeIds = attributeIdToWeightedComplementerLevelMap.entrySet().stream()
+            .sorted(Map.Entry.<Long, Integer>comparingByValue().reversed())
+            .limit(MAX_TARGETS)
+            .map(Map.Entry::getKey)
+            .toList();
+
+        List<LoadAttributeValuesPort.Result> selectedAttributeValues = attributeValues.stream()
+            .filter(v -> topAttributeIds.contains(v.attributeId()))
+            .toList();
+
+        return selectedAttributeValues.stream()
+            .flatMap(value -> toTarget(
+                    value,
+                    maturityLevelIdToIndexMap.get(value.maturityLevelId()),
+                    sortedLevels
+                ).stream()
+            )
             .toList();
     }
 
