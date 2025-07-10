@@ -83,10 +83,9 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
 
     private List<AttributeLevelTarget> buildTargets(List<LoadAttributeValuesPort.Result> attributeValues,
                                                     List<MaturityLevel> maturityLevels, List<Attribute> attributes) {
-        int maturityLevelsMaxIndex = maturityLevels.stream()
+        var maturityLevelMax = maturityLevels.stream()
             .max(comparingInt(MaturityLevel::getIndex))
-            .orElseThrow(() ->new ResourceNotFoundException("No maturity levels found"))
-            .getIndex();
+            .orElseThrow(() ->new ResourceNotFoundException("No maturity levels found"));
 
         // Create a map of maturity level IDs to their indices
         var maturityLevelIdToIndexMap = maturityLevels.stream()
@@ -97,12 +96,13 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
 
         // Create a map of attribute IDs to their complementary maturity level values
         var attributeToWeightedComplementMap = attributeValues.stream()
+            .filter(e -> e.maturityLevelId() != maturityLevelMax.getId())
             .collect(Collectors.toMap(
                 LoadAttributeValuesPort.Result::attributeId,
                 value -> {
                     int currentIndex = maturityLevelIdToIndexMap.get(value.maturityLevelId());
                     int weight = attributeIdToWeightMap.get(value.attributeId());
-                    return weight * (maturityLevelsMaxIndex - currentIndex);
+                    return weight * (maturityLevelMax.getIndex() - currentIndex);
                 }
             ));
 
