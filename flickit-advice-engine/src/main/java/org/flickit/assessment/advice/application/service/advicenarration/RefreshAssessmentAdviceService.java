@@ -85,7 +85,6 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
     private List<AttributeLevelTarget> buildTargets(List<LoadAttributeValuesPort.Result> attributeValues,
                                                     List<MaturityLevel> maturityLevels,
                                                     List<Attribute> attributes) {
-
         Map<Long, Integer> maturityLevelIdToIndexMap = maturityLevels.stream()
             .collect(toMap(MaturityLevel::getId, MaturityLevel::getIndex));
 
