@@ -81,15 +81,10 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
         return buildTargets(attributeValues, maturityLevels, attributes);
     }
 
+    // Selects top attributes furthest from max maturity level, weighted by attribute importance, and upgrades them by one level
     private List<AttributeLevelTarget> buildTargets(List<LoadAttributeValuesPort.Result> attributeValues,
                                                     List<MaturityLevel> maturityLevels,
                                                     List<Attribute> attributes) {
-        List<MaturityLevel> sortedLevels = maturityLevels.stream()
-            .sorted(comparingInt(MaturityLevel::getIndex))
-            .toList();
-
-        MaturityLevel maxLevel = sortedLevels.getLast();
-        int maxIndex = maxLevel.getIndex();
 
         Map<Long, Integer> maturityLevelIdToIndexMap = maturityLevels.stream()
             .collect(toMap(MaturityLevel::getId, MaturityLevel::getIndex));
@@ -98,6 +93,11 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
         Map<Long, Integer> attributeIdToWeightmap = attributes.stream()
             .collect(toMap(Attribute::getId, Attribute::getWeight));
 
+        List<MaturityLevel> sortedLevels = maturityLevels.stream()
+            .sorted(comparingInt(MaturityLevel::getIndex))
+            .toList();
+
+        MaturityLevel maxLevel = sortedLevels.getLast();
         Map<Long, Integer> attributeIdToWeightedComplementerLevelMap = attributeValues.stream()
             .filter(v -> v.maturityLevelId() != (maxLevel.getId()))
             .collect(toMap(
@@ -105,7 +105,7 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
                 v -> {
                     int index = maturityLevelIdToIndexMap.get(v.maturityLevelId());
                     int weight = attributeIdToWeightmap.getOrDefault(v.attributeId(), 1);
-                    return weight * (maxIndex - index);
+                    return weight * (maxLevel.getIndex() - index);
                 }
             ));
 
