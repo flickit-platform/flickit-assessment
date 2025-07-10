@@ -17,8 +17,7 @@ public class AttributeMapper {
         var translation = getTranslation(entity, language);
         return new Attribute(
             entity.getId(),
-            translation.titleOrDefault(entity.getTitle()),
-            null);
+            translation.titleOrDefault(entity.getTitle()));
     }
 
     public static AdviceAttribute toAdviceItem(AttributeJpaEntity entity, @Nullable KitLanguage language) {
