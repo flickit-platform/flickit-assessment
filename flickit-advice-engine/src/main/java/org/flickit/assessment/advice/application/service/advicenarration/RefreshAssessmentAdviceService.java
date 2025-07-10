@@ -94,6 +94,7 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
         Map<Long, Integer> maturityLevelIdToIndexMap = maturityLevels.stream()
             .collect(toMap(MaturityLevel::getId, MaturityLevel::getIndex));
 
+        @SuppressWarnings("ConstantConditions")
         Map<Long, Integer> attributeIdToWeightmap = attributes.stream()
             .collect(toMap(Attribute::getId, Attribute::getWeight));
 
@@ -114,11 +115,8 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
             .map(Map.Entry::getKey)
             .toList();
 
-        List<LoadAttributeValuesPort.Result> selectedAttributeValues = attributeValues.stream()
+        return attributeValues.stream()
             .filter(v -> topAttributeIds.contains(v.attributeId()))
-            .toList();
-
-        return selectedAttributeValues.stream()
             .flatMap(value -> toTarget(
                     value,
                     maturityLevelIdToIndexMap.get(value.maturityLevelId()),
