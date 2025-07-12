@@ -11,5 +11,5 @@ public class Attribute {
 
     private final String title;
 
-    private final Integer weight;
+    private final int weight;
 }

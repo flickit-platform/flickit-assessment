@@ -48,7 +48,7 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
     private final LoadAdviceNarrationPort loadAdviceNarrationPort;
     private final LoadAttributesPort loadAttributesPort;
 
-    private static final int MAX_TARGETS = 2;
+    private static final int MAX_TARGETS_LIMIT = 2;
 
     @Override
     public void refreshAssessmentAdvice(Param param) {
@@ -88,8 +88,7 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
         Map<Long, Integer> maturityLevelIdToIndexMap = maturityLevels.stream()
             .collect(toMap(MaturityLevel::getId, MaturityLevel::getIndex));
 
-        @SuppressWarnings("ConstantConditions")
-        Map<Long, Integer> attributeIdToWeightmap = attributes.stream()
+        Map<Long, Integer> attributeIdToWeightMap = attributes.stream()
             .collect(toMap(Attribute::getId, Attribute::getWeight));
 
         List<MaturityLevel> sortedLevels = maturityLevels.stream()
@@ -103,14 +102,14 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
                 LoadAttributeValuesPort.Result::attributeId,
                 v -> {
                     int index = maturityLevelIdToIndexMap.get(v.maturityLevelId());
-                    int weight = attributeIdToWeightmap.getOrDefault(v.attributeId(), 1);
+                    int weight = attributeIdToWeightMap.getOrDefault(v.attributeId(), 1);
                     return weight * (maxLevel.getIndex() - index);
                 }
             ));
 
         List<Long> topAttributeIds = attributeIdToWeightedComplementerLevelMap.entrySet().stream()
             .sorted(Map.Entry.<Long, Integer>comparingByValue().reversed())
-            .limit(MAX_TARGETS)
+            .limit(MAX_TARGETS_LIMIT)
             .map(Map.Entry::getKey)
             .toList();
 
