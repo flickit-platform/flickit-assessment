@@ -368,7 +368,6 @@ public class ErrorMessageKey {
     public static final String MOVE_ASSESSMENT_ASSESSMENT_ID_NOT_NULL = "move-assessment.assessmentId.notNull";
     public static final String MOVE_ASSESSMENT_TARGET_SPACE_ID_NOT_NULL = "move-assessment.targetSpaceId.notNull";
     public static final String MOVE_ASSESSMENT_TARGET_SPACE_NOT_FOUND = "move-assessment.targetSpace.notFound";
-    public static final String MOVE_ASSESSMENT_USER_NOT_ALLOWED = "move-assessment.user.notAllowed";
     public static final String MOVE_ASSESSMENT_TARGET_SPACE_INVALID = "move-assessment.targetSpace.invalid";
     public static final String MOVE_ASSESSMENT_TARGET_SPACE_ASSESSMENTS_MAX = "move-assessment.targetSpaceAssessments.max"; // حس
 }
