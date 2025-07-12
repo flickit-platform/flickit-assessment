@@ -116,7 +116,7 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
         return attributeValues.stream()
             .filter(v -> topAttributeIds.contains(v.attributeId()))
             .flatMap(value -> toTarget(
-                    value,
+                    value.attributeId(),
                     maturityLevelIdToIndexMap.get(value.maturityLevelId()),
                     sortedLevels
                 ).stream()
@@ -124,13 +124,13 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
             .toList();
     }
 
-    private Optional<AttributeLevelTarget> toTarget(LoadAttributeValuesPort.Result value,
+    private Optional<AttributeLevelTarget> toTarget(long attributeId,
                                                     int currentLevelIndex,
                                                     List<MaturityLevel> sortedLevels) {
         return sortedLevels.stream()
             .dropWhile(level -> level.getIndex() <= currentLevelIndex)
             .findFirst()
-            .map(nextLevel -> new AttributeLevelTarget(value.attributeId(), nextLevel.getId()));
+            .map(nextLevel -> new AttributeLevelTarget(attributeId, nextLevel.getId()));
     }
 
     private void generateAdvice(AssessmentResult result, List<AttributeLevelTarget> targets) {
