@@ -54,7 +54,7 @@ class UpdateAssessmentSpaceServiceTest {
     private AppSpecProperties appSpecProperties = appSpecProperties();
 
     private MoveAssessmentUseCase.Param param = createParam(MoveAssessmentUseCase.Param.ParamBuilder::build);
-    private final Space currentSpace = createBasicSpaceWithOwnerId(param.getCurrentUserId());
+    private Space currentSpace = createBasicSpaceWithOwnerId(param.getCurrentUserId());
     private Space targetSpace = createBasicSpaceWithOwnerId(param.getCurrentUserId());
 
     @Test
@@ -87,15 +87,17 @@ class UpdateAssessmentSpaceServiceTest {
     }
 
     @Test
-    void testUpdateAssessmentSpace_whenTargetSpaceDoesNotExist_thenThrowResourceNotFoundException() {
+    void testUpdateAssessmentSpace_whenUserIsNotAssessmentSpaceOwner_thenThrowAccessDeniedException() {
+        currentSpace = createBasicSpaceWithOwnerId(UUID.randomUUID());
+
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MOVE_ASSESSMENT))
             .thenReturn(true);
         when(loadSpacePort.loadAssessmentSpace(param.getAssessmentId())).thenReturn(Optional.of(currentSpace));
-        when(loadSpacePort.loadSpace(param.getTargetSpaceId())).thenReturn(Optional.empty());
 
-        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.moveAssessment(param));
-        assertEquals(MOVE_ASSESSMENT_TARGET_SPACE_NOT_FOUND, throwable.getMessage());
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.moveAssessment(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
+        verify(loadSpacePort, never()).loadSpace(anyLong());
         verifyNoInteractions(appSpecProperties,
             countAssessmentsPort,
             moveAssessmentPort);
@@ -103,7 +105,7 @@ class UpdateAssessmentSpaceServiceTest {
 
     @Test
     void testUpdateAssessmentSpace_whenCurrentSpaceAndTargetSpaceAreTheSame_thenThrowValidationException() {
-        param = createParam(b -> b.targetSpaceId(currentSpace.getId()));
+        param = createParam(b -> b.targetSpaceId(currentSpace.getId()).currentUserId(currentSpace.getOwnerId()));
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MOVE_ASSESSMENT))
             .thenReturn(true);
@@ -119,6 +121,21 @@ class UpdateAssessmentSpaceServiceTest {
     }
 
     @Test
+    void testUpdateAssessmentSpace_whenTargetSpaceDoesNotExist_thenThrowResourceNotFoundException() {
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MOVE_ASSESSMENT))
+            .thenReturn(true);
+        when(loadSpacePort.loadAssessmentSpace(param.getAssessmentId())).thenReturn(Optional.of(currentSpace));
+        when(loadSpacePort.loadSpace(param.getTargetSpaceId())).thenReturn(Optional.empty());
+
+        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.moveAssessment(param));
+        assertEquals(MOVE_ASSESSMENT_TARGET_SPACE_NOT_FOUND, throwable.getMessage());
+
+        verifyNoInteractions(appSpecProperties,
+            countAssessmentsPort,
+            moveAssessmentPort);
+    }
+
+    @Test
     void testUpdateAssessmentSpace_whenUserIsNotTargetSpaceOwner_thenThrowAccessDeniedException() {
         targetSpace = createBasicSpaceWithOwnerId(UUID.randomUUID());
 
@@ -128,24 +145,7 @@ class UpdateAssessmentSpaceServiceTest {
         when(loadSpacePort.loadSpace(param.getTargetSpaceId())).thenReturn(Optional.ofNullable(targetSpace));
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.moveAssessment(param));
-        assertEquals(MOVE_ASSESSMENT_USER_NOT_ALLOWED, throwable.getMessage());
-
-        verifyNoInteractions(appSpecProperties,
-            countAssessmentsPort,
-            moveAssessmentPort);
-    }
-
-    @Test
-    void testUpdateAssessmentSpace_whenUserIsNotAssessmentSpaceOwner_thenThrowAccessDeniedException() {
-        targetSpace = createBasicSpaceWithOwnerId(UUID.randomUUID());
-
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MOVE_ASSESSMENT))
-            .thenReturn(true);
-        when(loadSpacePort.loadAssessmentSpace(param.getAssessmentId())).thenReturn(Optional.of(currentSpace));
-        when(loadSpacePort.loadSpace(param.getTargetSpaceId())).thenReturn(Optional.ofNullable(targetSpace));
-
-        var throwable = assertThrows(AccessDeniedException.class, () -> service.moveAssessment(param));
-        assertEquals(MOVE_ASSESSMENT_USER_NOT_ALLOWED, throwable.getMessage());
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
         verifyNoInteractions(appSpecProperties,
             countAssessmentsPort,
@@ -157,12 +157,14 @@ class UpdateAssessmentSpaceServiceTest {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MOVE_ASSESSMENT))
             .thenReturn(true);
         when(loadSpacePort.loadAssessmentSpace(param.getAssessmentId())).thenReturn(Optional.of(currentSpace));
-        when(loadSpacePort.loadSpace(param.getTargetSpaceId())).thenReturn(Optional.ofNullable(targetSpace));
-        when(countAssessmentsPort.countSpaceAssessments(anyLong())).thenReturn(appSpecProperties().getSpace().getMaxBasicSpaceAssessments());
+        when(loadSpacePort.loadSpace(param.getTargetSpaceId())).thenReturn(Optional.of(targetSpace));
+        when(countAssessmentsPort.countSpaceAssessments(targetSpace.getId()))
+            .thenReturn(appSpecProperties().getSpace().getMaxBasicSpaceAssessments());
 
         var throwable = assertThrows(UpgradeRequiredException.class, () -> service.moveAssessment(param));
         assertEquals(MOVE_ASSESSMENT_TARGET_SPACE_ASSESSMENTS_MAX, throwable.getMessage());
 
+        verify(appSpecProperties).getSpace();
         verifyNoInteractions(moveAssessmentPort);
     }
 
@@ -171,10 +173,12 @@ class UpdateAssessmentSpaceServiceTest {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MOVE_ASSESSMENT))
             .thenReturn(true);
         when(loadSpacePort.loadAssessmentSpace(param.getAssessmentId())).thenReturn(Optional.of(currentSpace));
-        when(loadSpacePort.loadSpace(param.getTargetSpaceId())).thenReturn(Optional.ofNullable(targetSpace));
+        when(loadSpacePort.loadSpace(param.getTargetSpaceId())).thenReturn(Optional.of(targetSpace));
         when(countAssessmentsPort.countSpaceAssessments(anyLong())).thenReturn(0);
 
         service.moveAssessment(param);
+
+        verify(appSpecProperties).getSpace();
         verify(moveAssessmentPort).moveAssessment(param.getAssessmentId(), param.getTargetSpaceId());
     }
 
@@ -185,12 +189,13 @@ class UpdateAssessmentSpaceServiceTest {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MOVE_ASSESSMENT))
             .thenReturn(true);
         when(loadSpacePort.loadAssessmentSpace(param.getAssessmentId())).thenReturn(Optional.of(currentSpace));
-        when(loadSpacePort.loadSpace(param.getTargetSpaceId())).thenReturn(Optional.ofNullable(targetSpace));
+        when(loadSpacePort.loadSpace(param.getTargetSpaceId())).thenReturn(Optional.of(targetSpace));
 
         service.moveAssessment(param);
         verify(moveAssessmentPort).moveAssessment(param.getAssessmentId(), param.getTargetSpaceId());
 
-        verifyNoInteractions(countAssessmentsPort);
+        verifyNoInteractions(countAssessmentsPort,
+            appSpecProperties);
     }
 
     AppSpecProperties appSpecProperties() {

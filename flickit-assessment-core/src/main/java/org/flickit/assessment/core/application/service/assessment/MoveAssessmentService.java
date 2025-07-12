@@ -38,32 +38,27 @@ public class MoveAssessmentService implements MoveAssessmentUseCase {
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MOVE_ASSESSMENT))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        validateSpace(param);
-        moveAssessmentPort.moveAssessment(param.getAssessmentId(), param.getTargetSpaceId());
-    }
-
-    private void validateSpace(Param param) {
-        UUID currentUserId = param.getCurrentUserId();
-        Long targetSpaceId = param.getTargetSpaceId();
-
         var currentSpace = loadSpacePort.loadAssessmentSpace(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_SPACE_ID_NOT_FOUND));
 
+        if (!param.getCurrentUserId().equals(currentSpace.getOwnerId()))
+            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
+
+        var targetSpaceId = param.getTargetSpaceId();
         if (targetSpaceId.equals(currentSpace.getId()))
             throw new ValidationException(MOVE_ASSESSMENT_TARGET_SPACE_INVALID);
 
         var targetSpace = loadSpacePort.loadSpace(targetSpaceId)
             .orElseThrow(() -> new ResourceNotFoundException(MOVE_ASSESSMENT_TARGET_SPACE_NOT_FOUND));
 
-        if (!targetSpace.getOwnerId().equals(param.getCurrentUserId()))
-            throw new AccessDeniedException(MOVE_ASSESSMENT_USER_NOT_ALLOWED);
-
-        validateTargetSpace(targetSpace);
-        if (!currentUserId.equals(currentSpace.getOwnerId()) || !currentUserId.equals(targetSpace.getOwnerId()))
-            throw new AccessDeniedException(COMMON_CURRENT_USER_ID_NOT_NULL);
+        validateTargetSpace(targetSpace, param.getCurrentUserId());
+        moveAssessmentPort.moveAssessment(param.getAssessmentId(), targetSpaceId);
     }
 
-    private void validateTargetSpace(Space targetSpace) {
+    private void validateTargetSpace(Space targetSpace, UUID currentUserId) {
+        if (!targetSpace.getOwnerId().equals(currentUserId))
+            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
+
         if (targetSpace.getType().equals(SpaceType.BASIC) &&
             countAssessmentsPort.countSpaceAssessments(targetSpace.getId()) >= appSpecProperties.getSpace().getMaxBasicSpaceAssessments())
             throw new UpgradeRequiredException(MOVE_ASSESSMENT_TARGET_SPACE_ASSESSMENTS_MAX);
