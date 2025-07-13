@@ -32,8 +32,8 @@ public class KitVersionValidator {
         List<String> errors = new LinkedList<>();
 
         var kitVersionCounts = countKitVersionStatsPort.countKitVersionStats(kitVersionId);
-        if (kitVersionCounts.maturityLevelCount() == 0)
-            errors.add(MessageBundle.message(VALIDATE_KIT_VERSION_MATURITY_LEVEL_NOT_NULL));
+        if (kitVersionCounts.maturityLevelCount() < 2)
+            errors.add(MessageBundle.message(VALIDATE_KIT_VERSION_MATURITY_LEVELS_MIN_SIZE));
 
         if (kitVersionCounts.subjectCount() == 0)
             errors.add(MessageBundle.message(VALIDATE_KIT_VERSION_SUBJECT_NOT_NULL));
@@ -52,6 +52,11 @@ public class KitVersionValidator {
         errors.addAll(loadAttributesPort.loadUnimpactedAttributes(kitVersionId)
             .stream()
             .map(e -> MessageBundle.message(VALIDATE_KIT_VERSION_ATTRIBUTE_QUESTION_IMPACT_NOT_NULL, e.getTitle()))
+            .toList());
+
+        errors.addAll(loadAttributesPort.loadWithoutMeasures(kitVersionId)
+            .stream()
+            .map(e -> MessageBundle.message(VALIDATE_KIT_VERSION_ATTRIBUTE_MEASURE_NOT_NULL, e.getTitle()))
             .toList());
 
         errors.addAll(loadAnswerRangesPort.loadAnswerRangesWithNotEnoughOptions(kitVersionId)

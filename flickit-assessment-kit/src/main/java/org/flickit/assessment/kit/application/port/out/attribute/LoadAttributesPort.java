@@ -13,4 +13,6 @@ public interface LoadAttributesPort {
     List<Attribute> loadAllByIdsAndKitVersionId(List<Long> attributeIds, long kitVersionId);
 
     List<Attribute> loadUnimpactedAttributes(long kitVersionId);
+
+    List<Attribute> loadWithoutMeasures(long kitVersionId);
 }
