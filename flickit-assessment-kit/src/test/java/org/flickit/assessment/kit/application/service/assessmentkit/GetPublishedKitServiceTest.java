@@ -21,6 +21,8 @@ import org.flickit.assessment.kit.test.fixture.application.ExpertGroupMother;
 import org.flickit.assessment.kit.test.fixture.application.SubjectMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -32,6 +34,9 @@ import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
+import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.privateKitWithPrice;
+import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKitWithPrice;
+import static org.flickit.assessment.kit.test.fixture.application.ExpertGroupMother.createExpertGroupWithPicture;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -105,10 +110,13 @@ class GetPublishedKitServiceTest {
             createFileDownloadLinkPort);
     }
 
-    @Test
-    void testGetPublishedKit_whenKitIsPrivateAndUserHasNotAccess_thenThrowsAccessDeniedException() {
+    @ParameterizedTest
+    @ValueSource(longs = {0, 1000})
+    void testGetPublishedKit_whenKitIsPrivateAndUserHasNotAccess_thenThrowsAccessDeniedException(long price) {
+        var kit = privateKitWithPrice(price);
+
         when(loadAssessmentKitPort.loadTranslated(param.getKitId()))
-            .thenReturn(AssessmentKitMother.privateKit());
+            .thenReturn(kit);
         when(checkKitUserAccessPort.hasAccess(param.getKitId(), param.getCurrentUserId()))
             .thenReturn(false);
 
@@ -121,9 +129,10 @@ class GetPublishedKitServiceTest {
             createFileDownloadLinkPort);
     }
 
-    @Test
-    void testGetPublishedKit_whenKitIsPrivateAndUserHasAccess_thenReturnValidResult() {
-        var kit = AssessmentKitMother.privateKit();
+    @ParameterizedTest
+    @ValueSource(longs = {0, 1000})
+    void testGetPublishedKit_whenKitIsPrivateAndUserHasAccess_thenReturnValidResult(long price) {
+        var kit = privateKitWithPrice(price);
         var languages = List.of(KitLanguage.EN, KitLanguage.FA);
 
         when(loadAssessmentKitPort.loadTranslated(param.getKitId())).thenReturn(kit);
@@ -147,7 +156,8 @@ class GetPublishedKitServiceTest {
         assertEquals(kit.getCreationTime(), result.creationTime());
         assertEquals(kit.getLastModificationTime(), result.lastModificationTime());
         assertEquals(kit.getExpertGroupId(), result.expertGroupId());
-        assertTrue(result.isFree());
+        assertEquals(kit.getPrice() == 0, result.isFree());
+        assertTrue(result.hasAccess());
 
         assertEquals(counts.likes(), result.like().count());
         assertFalse(result.like().liked());
@@ -168,12 +178,14 @@ class GetPublishedKitServiceTest {
         verify(createFileDownloadLinkPort).createDownloadLink(expertGroup.getPicture(), EXPIRY_DURATION);
     }
 
-    @Test
-    void testGetPublishedKit_whenKitIsPublishedAndPublic_thenReturnValidResult() {
-        var kit = AssessmentKitMother.simpleKitWithPrice(1000);
-        expertGroup = ExpertGroupMother.createExpertGroupWithPicture(null);
+    @ParameterizedTest
+    @ValueSource(longs = {0, 1000})
+    void testGetPublishedKit_whenKitIsPublicWithAccess_thenReturnValidResult(long price) {
+        var kit = simpleKitWithPrice(price);
+        expertGroup = createExpertGroupWithPicture(null);
 
         when(loadAssessmentKitPort.loadTranslated(param.getKitId())).thenReturn(kit);
+        when(checkKitUserAccessPort.hasAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(true);
         when(countKitStatsPort.countKitStats(param.getKitId())).thenReturn(counts);
         when(loadSubjectsPort.loadAllTranslated(kit.getActiveVersionId())).thenReturn(List.of(subject));
         when(checkKitLikeExistencePort.exist(param.getKitId(), param.getCurrentUserId())).thenReturn(true);
@@ -190,7 +202,8 @@ class GetPublishedKitServiceTest {
         assertEquals(kit.getCreationTime(), result.creationTime());
         assertEquals(kit.getLastModificationTime(), result.lastModificationTime());
         assertEquals(kit.getExpertGroupId(), result.expertGroupId());
-        assertFalse(result.isFree());
+        assertEquals(kit.getPrice() == 0, result.isFree());
+        assertTrue(result.hasAccess());
 
         assertEquals(counts.likes(), result.like().count());
         assertTrue(result.like().liked());
@@ -202,13 +215,51 @@ class GetPublishedKitServiceTest {
         assertEquals(expertGroup.getTitle(), result.expertGroup().title());
         assertNull(result.expertGroup().pictureLink());
 
-        verifyNoInteractions(checkKitUserAccessPort, createFileDownloadLinkPort);
+        verifyNoInteractions(createFileDownloadLinkPort);
     }
 
     @Test
-    void testGetPublishedKit_whenKitIsPublishedAndPublicAndCurrentUserIdIsNull_thenReturnValidResult() {
+    void testGetPublishedKit_whenKitIsPublicAndPaidWithoutAccess_thenReturnValidResult() {
+        var kit = simpleKitWithPrice(1000);
+        expertGroup = createExpertGroupWithPicture(null);
+
+        when(loadAssessmentKitPort.loadTranslated(param.getKitId())).thenReturn(kit);
+        when(checkKitUserAccessPort.hasAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(false);
+        when(countKitStatsPort.countKitStats(param.getKitId())).thenReturn(counts);
+        when(loadSubjectsPort.loadAllTranslated(kit.getActiveVersionId())).thenReturn(List.of(subject));
+        when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
+
+        var result = service.getPublishedKit(param);
+
+        assertEquals(kit.getId(), result.id());
+        assertEquals(kit.getTitle(), result.title());
+        assertEquals(kit.getSummary(), result.summary());
+        assertEquals(kit.getAbout(), result.about());
+        assertEquals(kit.isPublished(), result.published());
+        assertEquals(kit.isPrivate(), result.isPrivate());
+        assertEquals(kit.getCreationTime(), result.creationTime());
+        assertEquals(kit.getLastModificationTime(), result.lastModificationTime());
+        assertEquals(kit.getExpertGroupId(), result.expertGroupId());
+        assertFalse(result.isFree());
+        assertFalse(result.hasAccess());
+
+        assertEquals(counts.likes(), result.like().count());
+        assertFalse(result.like().liked());
+
+        assertEquals(1, result.subjects().size());
+        assertEquals(subject.getId(), result.subjects().getFirst().id());
+
+        assertEquals(expertGroup.getId(), result.expertGroup().id());
+        assertEquals(expertGroup.getTitle(), result.expertGroup().title());
+        assertNull(result.expertGroup().pictureLink());
+
+        verifyNoInteractions(createFileDownloadLinkPort);
+    }
+
+    @Test
+    void testGetPublishedKit_whenKitIsPublicAndFreeAndCurrentUserIdIsNull_thenReturnValidResult() {
         param = createParam(b -> b.currentUserId(null));
-        var kit = AssessmentKitMother.simpleKitWithPrice(0);
+        var kit = simpleKitWithPrice(0);
 
         when(loadAssessmentKitPort.loadTranslated(param.getKitId())).thenReturn(kit);
         when(countKitStatsPort.countKitStats(param.getKitId())).thenReturn(counts);
@@ -230,6 +281,48 @@ class GetPublishedKitServiceTest {
         assertEquals(kit.getLastModificationTime(), result.lastModificationTime());
         assertEquals(kit.getExpertGroupId(), result.expertGroupId());
         assertTrue(result.isFree());
+        assertTrue(result.hasAccess());
+
+        assertEquals(counts.likes(), result.like().count());
+        assertTrue(result.like().liked());
+
+        assertEquals(1, result.subjects().size());
+        assertEquals(subject.getId(), result.subjects().getFirst().id());
+
+        assertEquals(expertGroup.getId(), result.expertGroup().id());
+        assertEquals(expertGroup.getTitle(), result.expertGroup().title());
+        assertEquals(pictureLink, result.expertGroup().pictureLink());
+
+        verify(createFileDownloadLinkPort).createDownloadLink(expertGroup.getPicture(), EXPIRY_DURATION);
+        verifyNoInteractions(checkKitUserAccessPort);
+    }
+
+    @Test
+    void testGetPublishedKit_whenKitIsPublicAndPaidAndCurrentUserIdIsNull_thenReturnValidResult() {
+        param = createParam(b -> b.currentUserId(null));
+        var kit = simpleKitWithPrice(1000);
+
+        when(loadAssessmentKitPort.loadTranslated(param.getKitId())).thenReturn(kit);
+        when(countKitStatsPort.countKitStats(param.getKitId())).thenReturn(counts);
+        when(loadSubjectsPort.loadAllTranslated(kit.getActiveVersionId())).thenReturn(List.of(subject));
+        when(checkKitLikeExistencePort.exist(param.getKitId(), param.getCurrentUserId())).thenReturn(true);
+        when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
+        when(createFileDownloadLinkPort.createDownloadLink(any(String.class), any(Duration.class)))
+            .thenReturn(pictureLink);
+
+        var result = service.getPublishedKit(param);
+
+        assertEquals(kit.getId(), result.id());
+        assertEquals(kit.getTitle(), result.title());
+        assertEquals(kit.getSummary(), result.summary());
+        assertEquals(kit.getAbout(), result.about());
+        assertEquals(kit.isPublished(), result.published());
+        assertEquals(kit.isPrivate(), result.isPrivate());
+        assertEquals(kit.getCreationTime(), result.creationTime());
+        assertEquals(kit.getLastModificationTime(), result.lastModificationTime());
+        assertEquals(kit.getExpertGroupId(), result.expertGroupId());
+        assertFalse(result.isFree());
+        assertFalse(result.hasAccess());
 
         assertEquals(counts.likes(), result.like().count());
         assertTrue(result.like().liked());

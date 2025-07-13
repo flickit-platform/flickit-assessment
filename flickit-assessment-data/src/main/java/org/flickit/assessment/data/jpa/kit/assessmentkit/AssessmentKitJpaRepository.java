@@ -78,6 +78,21 @@ public interface AssessmentKitJpaRepository extends
     CountKitStatsView countKitStats(@Param(value = "kitId") long kitId);
 
     @Query("""
+            SELECT k AS kit, g AS expertGroup
+            FROM AssessmentKitJpaEntity k
+            LEFT JOIN ExpertGroupJpaEntity g ON k.expertGroupId = g.id
+            WHERE k.published = TRUE
+                AND k.isPrivate = FALSE
+                AND EXISTS (SELECT 1 FROM KitLanguageJpaEntity kl
+                    WHERE kl.kitId = k.id
+                        AND (:languageIds IS NULL OR kl.langId IN :languageIds))
+        """)
+    Page<KitWithExpertGroupView> findAllPublishedAndNotPrivate(@Nullable
+                                                               @Param("languageIds")
+                                                               Collection<Integer> languageIds,
+                                                               Pageable pageable);
+
+    @Query("""
             SELECT k AS kit, g AS expertGroup,
             EXISTS (
                 SELECT 1 FROM KitUserAccessJpaEntity kua
@@ -91,10 +106,11 @@ public interface AssessmentKitJpaRepository extends
                     WHERE kl.kitId = k.id
                         AND (:languageIds IS NULL OR kl.langId IN :languageIds))
         """)
-    Page<KitWithExpertGroupView> findAllPublishedAndNotPrivate(@Nullable
-                                                               @Param("languageIds")
-                                                               Collection<Integer> languageIds,
-                                                               Pageable pageable);
+    Page<KitWithExpertGroupView> findAllPublishedAndNotPrivateByUserId(@Param("userId") UUID userId,
+                                                                       @Nullable
+                                                                       @Param("languageIds")
+                                                                       Collection<Integer> languageIds,
+                                                                       Pageable pageable);
 
     @Query("""
             SELECT k AS kit, g AS expertGroup,

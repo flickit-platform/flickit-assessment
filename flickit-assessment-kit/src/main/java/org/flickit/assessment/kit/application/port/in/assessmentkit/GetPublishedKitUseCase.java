@@ -48,7 +48,8 @@ public interface GetPublishedKitUseCase {
                   Metadata metadata,
                   List<Language> languages,
                   ExpertGroup expertGroup,
-                  boolean isFree) {
+                  boolean isFree,
+                  boolean hasAccess) {
         public record Language(String code,
                                String title) {
         }
