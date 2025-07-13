@@ -81,6 +81,8 @@ class CreateAssessmentScenarioTest extends AbstractScenarioTest {
         var request = CreateAssessmentRequestDtoMother.createAssessmentRequestDto(a -> a
             .spaceId(spaceId)
             .assessmentKitId(kitId));
+
+        // Since the currentUser is the creator of the kit, they have access to private or non-free kits, and there is no error in assessment creation.
         var response = assessmentHelper.create(context, request);
         response.then()
             .statusCode(201)
