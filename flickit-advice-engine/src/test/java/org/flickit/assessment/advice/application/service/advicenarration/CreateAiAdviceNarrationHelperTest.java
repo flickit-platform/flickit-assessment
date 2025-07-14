@@ -93,7 +93,7 @@ class CreateAiAdviceNarrationHelperTest {
         new AdviceDto.AdviceItemDto("title1", "description1", 2, 0, 1)
     );
     private final AdviceDto aiAdvice = new AdviceDto(aiNarration, adviceItems);
-    private final List<Attribute> attributes = List.of(new Attribute(attributeLevelTargets.getFirst().getAttributeId(), "Reliability"));
+    private final List<Attribute> attributes = List.of(new Attribute(attributeLevelTargets.getFirst().getAttributeId(), "Reliability", 1));
     private final List<MaturityLevel> maturityLevels = List.of(new MaturityLevel(attributeLevelTargets.getFirst().getMaturityLevelId(), "Great", 0));
 
     @Test
