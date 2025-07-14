@@ -19,15 +19,15 @@ public class GetAssessmentNextQuestionnaireRestController {
     private final GetAssessmentNextQuestionnaireUseCase useCase;
     private final UserContext userContext;
 
-    @GetMapping("/assessments/{assessmentId}/next-questionnaire")
+    @GetMapping("/assessments/{assessmentId}/questionnaires/{questionnaireId}/next")
     public ResponseEntity<Result> getAssessmentNextQuestionnaire(@PathVariable("assessmentId") UUID assessmentId,
-                                                                 @RequestBody GetAssessmentNextQuestionnaireRequestDto requestDto) {
+                                                                 @PathVariable("questionnaireId") Long questionnaireId) {
         var currentUserId = userContext.getUser().id();
-        var result = useCase.getNextQuestionnaire(toParam(assessmentId, requestDto, currentUserId));
+        var result = useCase.getNextQuestionnaire(toParam(assessmentId, questionnaireId, currentUserId));
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    private Param toParam(UUID assessmentId, GetAssessmentNextQuestionnaireRequestDto requestDto, UUID currentUserId) {
-        return new Param(assessmentId, requestDto.questionnaireId(), currentUserId);
+    private Param toParam(UUID assessmentId, Long questionnaireId, UUID currentUserId) {
+        return new Param(assessmentId, questionnaireId, currentUserId);
     }
 }
