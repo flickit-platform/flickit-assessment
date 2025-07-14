@@ -48,7 +48,9 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
         if (!kit.isPublished())
             throw new ResourceNotFoundException(KIT_ID_NOT_FOUND);
 
-        checkAccess(kit, param);
+        boolean hasKitAccess = param.getCurrentUserId() != null &&
+            checkKitUserAccessPort.hasAccess(param.getKitId(), param.getCurrentUserId());
+        checkAccess(kit, hasKitAccess);
 
         var stats = countKitStatsPort.countKitStats(param.getKitId());
 
@@ -83,12 +85,12 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
             new ExpertGroup(expertGroup.getId(),
                 expertGroup.getTitle(),
                 getPictureDownloadLink(expertGroup.getPicture())),
-            kit.getPrice() == 0);
+            kit.getPrice() == 0,
+            (!kit.isPrivate() && kit.getPrice() == 0) || hasKitAccess);
     }
 
-    private void checkAccess(AssessmentKit kit, Param param) {
-        if (kit.isPrivate() &&
-            (param.getCurrentUserId() == null || !checkKitUserAccessPort.hasAccess(param.getKitId(), param.getCurrentUserId())))
+    private void checkAccess(AssessmentKit kit, boolean hasKitAccess) {
+        if (kit.isPrivate() && !hasKitAccess)
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
     }
 

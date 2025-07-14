@@ -14,6 +14,8 @@ public interface LoadPublishedKitListPort {
 
     PaginatedResponse<Result> loadPublicKits(@Nullable Collection<KitLanguage> kitLanguages, int page, int size);
 
+    PaginatedResponse<Result> loadPublicKits(UUID userId, @Nullable Collection<KitLanguage> kitLanguages, int page, int size);
+
     PaginatedResponse<Result> loadPrivateKits(UUID userId, @Nullable Collection<KitLanguage> kitLanguages, int page, int size);
 
     PaginatedResponse<Result> loadPrivateAndPublicKits(UUID currentUserId, @Nullable Set<KitLanguage> kitLanguages, int page, int size);
