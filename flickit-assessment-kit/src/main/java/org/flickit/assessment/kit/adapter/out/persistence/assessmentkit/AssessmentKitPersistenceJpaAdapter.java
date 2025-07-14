@@ -200,13 +200,24 @@ public class AssessmentKitPersistenceJpaAdapter implements
     }
 
     @Override
-    public PaginatedResponse<LoadPublishedKitListPort.Result> loadPublicKits(@Nullable
-                                                                             Collection<KitLanguage> kitLanguages,
+    public PaginatedResponse<LoadPublishedKitListPort.Result> loadPublicKits(@Nullable Collection<KitLanguage> kitLanguages,
                                                                              int page,
                                                                              int size) {
         var kitLanguageIds = resolveKitLanguages(kitLanguages);
         var sort = Sort.by(Sort.Order.asc(AssessmentKitJpaEntity.Fields.title));
         var pageResult = repository.findAllPublishedAndNotPrivate(kitLanguageIds, PageRequest.of(page, size, sort));
+
+        return toLoadPublishedKitsPortResult(pageResult);
+    }
+
+    @Override
+    public PaginatedResponse<LoadPublishedKitListPort.Result> loadPublicKits(UUID userId,
+                                                                             @Nullable Collection<KitLanguage> kitLanguages,
+                                                                             int page,
+                                                                             int size) {
+        var kitLanguageIds = resolveKitLanguages(kitLanguages);
+        var sort = Sort.by(Sort.Order.asc(AssessmentKitJpaEntity.Fields.title));
+        var pageResult = repository.findAllPublishedAndNotPrivateByUserId(userId, kitLanguageIds, PageRequest.of(page, size, sort));
 
         return toLoadPublishedKitsPortResult(pageResult);
     }

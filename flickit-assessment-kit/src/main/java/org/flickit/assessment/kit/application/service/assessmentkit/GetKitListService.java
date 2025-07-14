@@ -76,7 +76,7 @@ public class GetKitListService implements GetKitListUseCase {
                 param.getPage(),
                 param.getSize());
         } else if (!param.getIsPrivate())
-            kitsPage = loadPublishedKitListPort.loadPublicKits(kitLanguages, param.getPage(), param.getSize());
+            kitsPage = loadPublishedKitListPort.loadPublicKits(param.getCurrentUserId(), kitLanguages, param.getPage(), param.getSize());
         else
             kitsPage = loadPublishedKitListPort.loadPrivateKits(param.getCurrentUserId(),
                 kitLanguages,
@@ -109,7 +109,7 @@ public class GetKitListService implements GetKitListUseCase {
                 .map(KitLanguage::getTitle)
                 .toList(),
             item.kit().getPrice() == 0,
-            !item.kit().isPrivate() && item.kit().getPrice() == 0 || item.hasKitAccess());
+            (!item.kit().isPrivate() && item.kit().getPrice() == 0) || Boolean.TRUE.equals(item.hasKitAccess()));
     }
 
     private KitListItem.ExpertGroup toExpertGroup(ExpertGroup expertGroup) {
