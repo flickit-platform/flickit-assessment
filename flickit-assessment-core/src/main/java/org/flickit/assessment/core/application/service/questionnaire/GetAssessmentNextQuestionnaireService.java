@@ -15,9 +15,10 @@ import java.util.Comparator;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.*;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_NEXT_QUESTIONNAIRE;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.core.common.ErrorMessageKey.*;
+import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_NEXT_QUESTIONNAIRE_ASSESSMENT_RESULT_NOT_FOUND;
+import static org.flickit.assessment.core.common.ErrorMessageKey.QUESTIONNAIRE_ID_NOT_FOUND;
 
 @Service
 @Transactional(readOnly = true)
@@ -36,17 +37,17 @@ public class GetAssessmentNextQuestionnaireService implements GetAssessmentNextQ
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_NEXT_QUESTIONNAIRE_ASSESSMENT_RESULT_NOT_FOUND));
 
-        var questionnaireIdToQuestionnaireDetailsMap =
+        var questionnaireIdToDetailMap =
             loadQuestionnairesPort.loadQuestionnaireDetails(assessmentResult.getKitVersionId(), assessmentResult.getId());
 
-        Optional.ofNullable(questionnaireIdToQuestionnaireDetailsMap.get(param.getQuestionnaireId()))
+        Optional.ofNullable(questionnaireIdToDetailMap.get(param.getQuestionnaireId()))
             .orElseThrow(() -> new ResourceNotFoundException(QUESTIONNAIRE_ID_NOT_FOUND));
 
-        var allQuestionnaireDetails = new ArrayList<>(questionnaireIdToQuestionnaireDetailsMap.values());
+        var allQuestionnaireDetails = new ArrayList<>(questionnaireIdToDetailMap.values());
 
         Predicate<LoadQuestionnairesPort.Result> isUnanswered = q -> q.answerCount() < q.questionCount();
 
-        int currentIndex = questionnaireIdToQuestionnaireDetailsMap.get(param.getQuestionnaireId()).index();
+        int currentIndex = questionnaireIdToDetailMap.get(param.getQuestionnaireId()).index();
         Optional<Result> after = allQuestionnaireDetails.stream()
             .filter(q -> q.index() > currentIndex && isUnanswered.test(q))
             .min(Comparator.comparingInt(LoadQuestionnairesPort.Result::index))

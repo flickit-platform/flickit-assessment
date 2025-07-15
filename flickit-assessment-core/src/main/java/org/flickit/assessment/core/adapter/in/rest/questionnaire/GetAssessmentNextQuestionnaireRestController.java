@@ -21,7 +21,7 @@ public class GetAssessmentNextQuestionnaireRestController {
     private final UserContext userContext;
 
     @GetMapping("/assessments/{assessmentId}/questionnaires/{questionnaireId}/next")
-    public ResponseEntity<GetAssessmentNextQuestionnaireResponseDto> getAssessmentNextQuestionnaire(@PathVariable("assessmentId") UUID assessmentId,
+    public ResponseEntity<GetAssessmentNextQuestionnaireResponseDto> getNextQuestionnaire(@PathVariable("assessmentId") UUID assessmentId,
                                                                  @PathVariable("questionnaireId") Long questionnaireId) {
         var currentUserId = userContext.getUser().id();
         var result = useCase.getNextQuestionnaire(toParam(assessmentId, questionnaireId, currentUserId));
