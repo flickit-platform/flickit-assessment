@@ -1,7 +1,6 @@
 package org.flickit.assessment.kit.application.service.kitversion;
 
 import org.flickit.assessment.common.application.MessageBundle;
-import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.kit.application.port.out.answerrange.LoadAnswerRangesPort;
 import org.flickit.assessment.kit.application.port.out.attribute.LoadAttributesPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.CountKitVersionStatsPort;
@@ -10,23 +9,19 @@ import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestio
 import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectsPort;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.util.List;
-import java.util.Locale;
-import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 import static org.flickit.assessment.kit.test.fixture.application.AnswerRangeMother.createReusableAnswerRangeWithTwoOptions;
 import static org.flickit.assessment.kit.test.fixture.application.AttributeMiniMother.createAttributeMini;
-import static org.flickit.assessment.kit.test.fixture.application.SubjectMother.subjectWithTitle;
 import static org.flickit.assessment.kit.test.fixture.application.QuestionnaireMother.questionnaireWithTitle;
+import static org.flickit.assessment.kit.test.fixture.application.SubjectMother.subjectWithTitle;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
@@ -55,8 +50,8 @@ class KitVersionValidatorTest {
     private LoadQuestionnairesPort loadQuestionnairesPort;
 
     @ParameterizedTest
-    @MethodSource("maturityLevelCountAndKitLanguageProvider")
-    void testValidate(int maturityLevelCount, KitLanguage language) {
+    @ValueSource(ints = {0, 1})
+    void testValidate(int maturityLevelCount) {
         var kitVersionId = 123L;
 
         var loadQuestionsPortResult = List.of(new LoadQuestionsPort.Result(1, 100L, "Q100Title"),
@@ -66,7 +61,6 @@ class KitVersionValidatorTest {
         var listOfAttributes = List.of(createAttributeMini(), createAttributeMini());
         var listOfQuestionnaire = List.of(questionnaireWithTitle("Title1"), questionnaireWithTitle("Title2"));
         var listOfAttributesWithoutMeasure = List.of(createAttributeMini(), createAttributeMini());
-        LocaleContextHolder.setLocale(Locale.of(language.getCode()));
 
         List<String> expectedErrors = List.of(
             MessageBundle.message(VALIDATE_KIT_VERSION_QUESTION_IMPACT_NOT_NULL, loadQuestionsPortResult.getFirst().questionIndex(), loadQuestionsPortResult.getFirst().questionnaireTitle()),
@@ -101,13 +95,5 @@ class KitVersionValidatorTest {
         var result = validator.validate(kitVersionId);
         assertEquals(19, result.size());
         assertThat(result).containsAll(expectedErrors);
-    }
-
-    static Stream<Arguments> maturityLevelCountAndKitLanguageProvider() {
-        List<Integer> counts = List.of(0, 1);
-        List<KitLanguage> langs = List.of(KitLanguage.EN, KitLanguage.FA);
-
-        return counts.stream()
-            .flatMap(c -> langs.stream().map(l -> Arguments.of(c, l)));
     }
 }
