@@ -113,7 +113,8 @@ public enum AssessmentUserRole {
             GENERATE_ALL_ASSESSMENT_INSIGHTS,
             RESOLVE_ALL_COMMENTS,
             APPROVE_ALL_ANSWERS,
-            MANAGE_ASSESSMENT_REPORT_VISIBILITY)),
+            MANAGE_ASSESSMENT_REPORT_VISIBILITY,
+            VIEW_ASSESSMENT_NEXT_QUESTIONNAIRE)),
         MANAGER_PERMISSIONS(Set.of(
             CREATE_ASSESSMENT,
             DELETE_ASSESSMENT,
@@ -141,7 +142,8 @@ public enum AssessmentUserRole {
             VIEW_QUESTIONNAIRE_QUESTIONS,
             ANSWER_QUESTION,
             VIEW_EVIDENCE,
-            RESOLVE_OWN_COMMENT)),
+            RESOLVE_OWN_COMMENT,
+            VIEW_ASSESSMENT_NEXT_QUESTIONNAIRE)),
         REPORT_VIEWER_PERMISSIONS(Set.of(
             VIEW_ASSESSMENT,
             REFRESH_ASSESSMENT_ADVICE,
@@ -149,8 +151,7 @@ public enum AssessmentUserRole {
             VIEW_GRAPHICAL_REPORT,
             VIEW_ASSESSMENT_ATTRIBUTES,
             VIEW_ASSESSMENT_MATURITY_LEVELS,
-            PREPARE_ASSESSMENT_REPORT,
-            VIEW_ASSESSMENT_NEXT_QUESTIONNAIRE
+            PREPARE_ASSESSMENT_REPORT
         ));
 
         private final Set<AssessmentPermission> permissions;

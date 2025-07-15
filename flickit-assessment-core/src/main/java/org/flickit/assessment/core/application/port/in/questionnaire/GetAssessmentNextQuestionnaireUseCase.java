@@ -38,8 +38,14 @@ public interface GetAssessmentNextQuestionnaireUseCase {
         }
     }
 
-    record Result(long id,
-                  long index,
-                  String title) {
+    sealed interface Result permits Result.Found, Result.NotFound {
+
+        record Found(long id, long index, String title) implements Result {
+        }
+
+        record NotFound() implements Result {
+
+            public static final NotFound INSTANCE = new NotFound();
+        }
     }
 }
