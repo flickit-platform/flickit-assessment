@@ -64,19 +64,13 @@ public enum AssessmentUserRole {
     enum PermissionGroup {
 
         VIEWER_PERMISSIONS(Set.of(
-            VIEW_ASSESSMENT_REPORT,
-            CALCULATE_ASSESSMENT,
-            MIGRATE_KIT_VERSION,
-            CALCULATE_CONFIDENCE,
             VIEW_ASSESSMENT_LIST,
             VIEW_ASSESSMENT_PROGRESS,
             VIEW_SUBJECT_PROGRESS,
             VIEW_SUBJECT_REPORT,
             VIEW_ASSESSMENT_QUESTIONNAIRE_LIST,
             VIEW_EVIDENCE_ATTACHMENT,
-            EXPORT_ASSESSMENT_REPORT,
-            VIEW_ASSESSMENT_INSIGHTS,
-            VIEW_ATTRIBUTE_MEASURES)),
+            VIEW_ASSESSMENT_INSIGHTS)),
         COMMENTER_PERMISSIONS(Set.of(
             ADD_EVIDENCE,
             DELETE_EVIDENCE,
@@ -149,7 +143,12 @@ public enum AssessmentUserRole {
             VIEW_GRAPHICAL_REPORT,
             VIEW_ASSESSMENT_ATTRIBUTES,
             VIEW_ASSESSMENT_MATURITY_LEVELS,
-            PREPARE_ASSESSMENT_REPORT
+            PREPARE_ASSESSMENT_REPORT,
+            CALCULATE_ASSESSMENT,
+            CALCULATE_CONFIDENCE,
+            VIEW_ASSESSMENT_REPORT,
+            MIGRATE_KIT_VERSION,
+            VIEW_ATTRIBUTE_MEASURES
         ));
 
         private final Set<AssessmentPermission> permissions;
