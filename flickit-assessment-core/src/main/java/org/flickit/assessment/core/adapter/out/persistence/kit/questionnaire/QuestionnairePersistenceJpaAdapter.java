@@ -3,7 +3,6 @@ package org.flickit.assessment.core.adapter.out.persistence.kit.questionnaire;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.core.application.domain.QuestionnaireListItem;
-import org.flickit.assessment.core.application.port.out.questionnaire.LoadQuestionnairesByAssessmentIdPort;
 import org.flickit.assessment.core.application.port.out.questionnaire.LoadQuestionnairesPort;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaRepository;
 import org.flickit.assessment.data.jpa.core.answer.QuestionnaireIdAndAnswerCountView;
@@ -26,7 +25,6 @@ import java.util.stream.Collectors;
 @Component(value = "coreQuestionnairePersistenceJpaAdapter")
 @RequiredArgsConstructor
 public class QuestionnairePersistenceJpaAdapter implements
-    LoadQuestionnairesByAssessmentIdPort,
     LoadQuestionnairesPort {
 
     private final QuestionnaireJpaRepository repository;
@@ -35,7 +33,7 @@ public class QuestionnairePersistenceJpaAdapter implements
     private final QuestionJpaRepository questionRepository;
 
     @Override
-    public PaginatedResponse<QuestionnaireListItem> loadAllByAssessmentId(LoadQuestionnairesByAssessmentIdPort.Param param) {
+    public PaginatedResponse<QuestionnaireListItem> loadAllByAssessmentId(LoadQuestionnairesPort.Param param) {
         var assessmentResult = param.assessmentResult();
         var language = Objects.equals(assessmentResult.getLanguage(), assessmentResult.getAssessment().getAssessmentKit().getLanguage())
             ? null
