@@ -1955,15 +1955,17 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessments/625e6194-b710-4ed4-90e5-d6372ee3cb96/next-questionnaire",
+							"raw": "{{base_url}}/{{api_path}}/assessments/1ee443be-dc8e-4557-8124-86fcc6c8e8b8/questionnaires/2487/next",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"{{api_path}}",
 								"assessments",
-								"625e6194-b710-4ed4-90e5-d6372ee3cb96",
-								"next-questionnaire"
+								"1ee443be-dc8e-4557-8124-86fcc6c8e8b8",
+								"questionnaires",
+								"2487",
+								"next"
 							]
 						}
 					},
