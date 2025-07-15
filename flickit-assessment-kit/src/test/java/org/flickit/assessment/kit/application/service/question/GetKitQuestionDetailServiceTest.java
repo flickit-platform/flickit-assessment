@@ -9,7 +9,9 @@ import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpert
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.kit.application.port.out.question.LoadQuestionPort;
-import org.flickit.assessment.kit.test.fixture.application.*;
+import org.flickit.assessment.kit.test.fixture.application.ExpertGroupMother;
+import org.flickit.assessment.kit.test.fixture.application.MaturityLevelMother;
+import org.flickit.assessment.kit.test.fixture.application.QuestionMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -55,7 +57,7 @@ class GetKitQuestionDetailServiceTest {
     private LoadActiveKitVersionIdPort loadActiveKitVersionIdPort;
 
     @Test
-    void testGetKitQuestionDetail_WhenQuestionExist_shouldReturnQuestionDetails() {
+    void testGetKitQuestionDetail_whenQuestionExists_thenReturnQuestionDetails() {
         long kitId = 123L;
         long kitVersionId = 456L;
         var expertGroup = ExpertGroupMother.createExpertGroup();
@@ -128,7 +130,7 @@ class GetKitQuestionDetailServiceTest {
     }
 
     @Test
-    void testGetKitQuestionDetail_WhenKitDoesNotExist_ThrowsException() {
+    void testGetKitQuestionDetail_whenKitDoesNotExist_thenThrowResourceNotFoundException() {
         var param = new Param(2000L, 2L, UUID.randomUUID());
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId()))
@@ -144,7 +146,7 @@ class GetKitQuestionDetailServiceTest {
     }
 
     @Test
-    void testGetKitQuestionDetail_WhenQuestionDoesNotExist_ThrowsException() {
+    void testGetKitQuestionDetail_whenQuestionDoesNotExist_thenThrowResourceNotFoundException() {
         long kitId = 123L;
         long kitVersionId = 153L;
         long questionId = 2L;
@@ -164,7 +166,7 @@ class GetKitQuestionDetailServiceTest {
     }
 
     @Test
-    void testGetKitQuestionDetail_WhenUserIsNotMember_ThrowsException() {
+    void testGetKitQuestionDetail_whenUserIsNotMember_thenThrowAccessDeniedException() {
         var param = new Param(2000L, 2L, UUID.randomUUID());
         var expertGroup = ExpertGroupMother.createExpertGroup();
 

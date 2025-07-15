@@ -21,7 +21,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,7 +32,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 import static org.flickit.assessment.kit.common.ErrorMessageKey.QUESTION_ID_NOT_FOUND;
 import static org.flickit.assessment.kit.test.fixture.application.AnswerOptionMother.createAnswerOption;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
-import static org.flickit.assessment.kit.test.fixture.application.AttributeMiniMother.*;
+import static org.flickit.assessment.kit.test.fixture.application.AttributeMiniMother.createAttributeMini;
 import static org.flickit.assessment.kit.test.fixture.application.MaturityLevelMother.allLevels;
 import static org.flickit.assessment.kit.test.fixture.application.QuestionImpactMother.createQuestionImpact;
 import static org.flickit.assessment.kit.test.fixture.application.QuestionMother.createQuestion;
@@ -62,7 +65,7 @@ class GetQuestionImpactsServiceTest {
     private final KitVersion kitVersion = KitVersionMother.createKitVersion(simpleKit());
 
     @Test
-    void testGetQuestionImpacts_whenCurrentUserIsNotExpertGroupMember_thenThrowsAccessDeniedException() {
+    void testGetQuestionImpacts_whenCurrentUserIsNotExpertGroupMember_thenThrowAccessDeniedException() {
         var param = createParam(GetQuestionImpactsUseCase.Param.ParamBuilder::build);
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
@@ -75,7 +78,7 @@ class GetQuestionImpactsServiceTest {
     }
 
     @Test
-    void testGetQuestionImpacts_whenQuestionIdNotExist_thenThrowsAccessDeniedException() {
+    void testGetQuestionImpacts_whenQuestionIdNotExist_thenThrowAccessDeniedException() {
         var param = createParam(GetQuestionImpactsUseCase.Param.ParamBuilder::build);
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
