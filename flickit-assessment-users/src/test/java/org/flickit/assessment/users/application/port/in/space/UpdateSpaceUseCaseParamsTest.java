@@ -5,6 +5,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
@@ -14,40 +15,44 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class UpdateSpaceUseCaseParamsTest {
 
     @Test
-    void testUpdateSpaceParam_IdIsNull_ErrorMessage() {
-        String title = "test";
-        UUID currentUserId = UUID.randomUUID();
+    void testUpdateSpaceParam_idParamIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateSpaceUseCase.Param(null, title, currentUserId));
+            () -> createParam(b -> b.id(null)));
         assertThat(throwable).hasMessage("id: " + UPDATE_SPACE_SPACE_ID_NOT_NULL);
     }
 
     @Test
-    void testUpdateSpaceParam_TitleLengthIsLessThanMin_ErrorMessage() {
-        long spaceId = 0L;
-        UUID currentUserId = UUID.randomUUID();
-        String title = RandomStringUtils.random(2, true, true);
+    void testUpdateSpaceUseCaseParam_titleParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateSpaceUseCase.Param(spaceId, title, currentUserId));
-        assertThat(throwable).hasMessage("title: " + UPDATE_SPACE_TITLE_SIZE_MIN);
-    }
+            () -> createParam(b -> b.title(null)));
+        assertThat(throwable).hasMessage("title: " + UPDATE_SPACE_TITLE_NOT_BLANK);
 
-    @Test
-    void testUpdateSpaceParam_TitleLengthIsMoreThanMax_ErrorMessage() {
-        long spaceId = 0L;
-        UUID currentUserId = UUID.randomUUID();
-        String title = RandomStringUtils.random(101, true, true);
-        var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateSpaceUseCase.Param(spaceId, title, currentUserId));
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.title(RandomStringUtils.random(2, true, true))));
+        assertThat(throwable).hasMessage("title: " + UPDATE_SPACE_TITLE_SIZE_MIN);
+
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.title(RandomStringUtils.random(101, true, true))));
         assertThat(throwable).hasMessage("title: " + UPDATE_SPACE_TITLE_SIZE_MAX);
     }
 
     @Test
-    void testUpdateSpaceParam_currentUserIdIsNull_ErrorMessage() {
-        long spaceId = 0L;
-        String title = RandomStringUtils.random(10, true, true);
+    void testUpdateSpaceUseCaseParam_currentUserIdParamIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateSpaceUseCase.Param(spaceId, title, null));
+            () -> createParam(b -> b.currentUserId(null)));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
+    }
+
+    private void createParam(Consumer<UpdateSpaceUseCase.Param.ParamBuilder> changer) {
+        var paramBuilder = paramBuilder();
+        changer.accept(paramBuilder);
+        paramBuilder.build();
+    }
+
+    private UpdateSpaceUseCase.Param.ParamBuilder paramBuilder() {
+        return UpdateSpaceUseCase.Param.builder()
+            .id(0L)
+            .title("title")
+            .currentUserId(UUID.randomUUID());
     }
 }
