@@ -68,7 +68,7 @@ public class GetKitQuestionDetailService implements GetKitQuestionDetailUseCase 
         var attributeIds = attributeIdToImpacts.keySet().stream().toList();
 
         var attributeIdToTitleMap = loadAttributesPort.loadAllByIdsAndKitVersionId(attributeIds, kitVersionId).stream()
-            .collect(toMap(Attribute::getId, Attribute::getTitle));
+            .collect(toMap(AttributeMini::getId, AttributeMini::getTitle));
         return attributeIds.stream()
             .map(attributeId -> toAttributeImpact(
                 attributeId,

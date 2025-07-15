@@ -93,7 +93,31 @@ public interface AssessmentKitJpaRepository extends
                                                                Pageable pageable);
 
     @Query("""
-            SELECT k AS kit, g AS expertGroup
+            SELECT k AS kit, g AS expertGroup,
+            EXISTS (
+                SELECT 1 FROM KitUserAccessJpaEntity kua
+                WHERE kua.kitId = k.id AND kua.userId = :userId
+            ) AS kitUserAccess
+            FROM AssessmentKitJpaEntity k
+            LEFT JOIN ExpertGroupJpaEntity g ON k.expertGroupId = g.id
+            WHERE k.published = TRUE
+                AND k.isPrivate = FALSE
+                AND EXISTS (SELECT 1 FROM KitLanguageJpaEntity kl
+                    WHERE kl.kitId = k.id
+                        AND (:languageIds IS NULL OR kl.langId IN :languageIds))
+        """)
+    Page<KitWithExpertGroupView> findAllPublishedAndNotPrivateByUserId(@Param("userId") UUID userId,
+                                                                       @Nullable
+                                                                       @Param("languageIds")
+                                                                       Collection<Integer> languageIds,
+                                                                       Pageable pageable);
+
+    @Query("""
+            SELECT k AS kit, g AS expertGroup,
+            EXISTS (
+                SELECT 1 FROM KitUserAccessJpaEntity kua
+                WHERE kua.kitId = k.id AND kua.userId = :userId
+            ) AS kitUserAccess
             FROM AssessmentKitJpaEntity k
             LEFT JOIN ExpertGroupJpaEntity g ON k.expertGroupId = g.id
             WHERE k.published = TRUE
@@ -113,7 +137,11 @@ public interface AssessmentKitJpaRepository extends
                                                                     Pageable pageable);
 
     @Query("""
-            SELECT k AS kit, g AS expertGroup
+            SELECT k AS kit, g AS expertGroup,
+            EXISTS (
+                SELECT 1 FROM KitUserAccessJpaEntity kua
+                WHERE kua.kitId = k.id AND kua.userId = :userId
+            ) AS kitUserAccess
             FROM AssessmentKitJpaEntity k
             LEFT JOIN ExpertGroupJpaEntity g ON k.expertGroupId = g.id
             WHERE k.published = TRUE
@@ -183,9 +211,15 @@ public interface AssessmentKitJpaRepository extends
     @Query("""
             SELECT k.id
             FROM AssessmentKitJpaEntity k
-            WHERE k.id = :kitId and k.published AND (k.isPrivate = FALSE
-                OR (k.isPrivate = TRUE
-                AND (k.id IN (SELECT kua.kitId FROM KitUserAccessJpaEntity kua WHERE kua.userId  = :userId))))
+            WHERE k.id = :kitId
+              AND k.published
+              AND ((k.isPrivate = false AND k.price = 0)
+                  OR EXISTS (
+                    SELECT 1
+                    FROM KitUserAccessJpaEntity kua
+                    WHERE kua.userId = :userId AND kua.kitId = k.id
+                )
+              )
         """)
     Optional<Long> existsByUserId(@Param("kitId") long kitId, @Param("userId") UUID userId);
 }

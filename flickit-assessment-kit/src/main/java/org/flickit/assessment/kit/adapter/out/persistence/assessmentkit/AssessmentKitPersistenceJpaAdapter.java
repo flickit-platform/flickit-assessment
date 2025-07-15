@@ -200,13 +200,24 @@ public class AssessmentKitPersistenceJpaAdapter implements
     }
 
     @Override
-    public PaginatedResponse<LoadPublishedKitListPort.Result> loadPublicKits(@Nullable
-                                                                             Collection<KitLanguage> kitLanguages,
+    public PaginatedResponse<LoadPublishedKitListPort.Result> loadPublicKits(@Nullable Collection<KitLanguage> kitLanguages,
                                                                              int page,
                                                                              int size) {
         var kitLanguageIds = resolveKitLanguages(kitLanguages);
         var sort = Sort.by(Sort.Order.asc(AssessmentKitJpaEntity.Fields.title));
         var pageResult = repository.findAllPublishedAndNotPrivate(kitLanguageIds, PageRequest.of(page, size, sort));
+
+        return toLoadPublishedKitsPortResult(pageResult);
+    }
+
+    @Override
+    public PaginatedResponse<LoadPublishedKitListPort.Result> loadPublicKits(UUID userId,
+                                                                             @Nullable Collection<KitLanguage> kitLanguages,
+                                                                             int page,
+                                                                             int size) {
+        var kitLanguageIds = resolveKitLanguages(kitLanguages);
+        var sort = Sort.by(Sort.Order.asc(AssessmentKitJpaEntity.Fields.title));
+        var pageResult = repository.findAllPublishedAndNotPrivateByUserId(userId, kitLanguageIds, PageRequest.of(page, size, sort));
 
         return toLoadPublishedKitsPortResult(pageResult);
     }
@@ -253,7 +264,8 @@ public class AssessmentKitPersistenceJpaAdapter implements
         var items = pageResult.getContent().stream()
             .map(v -> new LoadPublishedKitListPort.Result(
                 mapToDomainModel(v.getKit(), language),
-                ExpertGroupMapper.mapToDomainModel(v.getExpertGroup())))
+                ExpertGroupMapper.mapToDomainModel(v.getExpertGroup()),
+                v.getKitUserAccess()))
             .toList();
 
         return new PaginatedResponse<>(

@@ -14,7 +14,7 @@ import org.flickit.assessment.core.application.port.out.answer.CountAnswersPort;
 import org.flickit.assessment.core.application.port.out.answer.CountLowConfidenceAnswersPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.evidence.CountEvidencesPort;
-import org.flickit.assessment.core.application.port.out.questionnaire.LoadQuestionnairesByAssessmentIdPort;
+import org.flickit.assessment.core.application.port.out.questionnaire.LoadQuestionnairesPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,7 +31,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_
 @RequiredArgsConstructor
 public class GetAssessmentQuestionnaireListService implements GetAssessmentQuestionnaireListUseCase {
 
-    private final LoadQuestionnairesByAssessmentIdPort loadQuestionnairesByAssessmentIdPort;
+    private final LoadQuestionnairesPort loadQuestionnairesPort;
     private final AssessmentAccessChecker assessmentAccessChecker;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final CountLowConfidenceAnswersPort lowConfidenceAnswersPort;
@@ -46,12 +46,12 @@ public class GetAssessmentQuestionnaireListService implements GetAssessmentQuest
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_QUESTIONNAIRE_LIST_ASSESSMENT_RESULT_ID_NOT_FOUND));
 
-        var questionnaires = loadQuestionnairesByAssessmentIdPort.loadAllByAssessmentId(toPortParam(assessmentResult, param));
+        var questionnaires = loadQuestionnairesPort.loadAllByAssessmentId(toPortParam(assessmentResult, param));
         return buildResultWithIssues(assessmentResult, questionnaires);
     }
 
-    private LoadQuestionnairesByAssessmentIdPort.Param toPortParam(AssessmentResult assessmentResult, Param param) {
-        return new LoadQuestionnairesByAssessmentIdPort.Param(
+    private LoadQuestionnairesPort.Param toPortParam(AssessmentResult assessmentResult, Param param) {
+        return new LoadQuestionnairesPort.Param(
             assessmentResult,
             param.getSize(),
             param.getPage());

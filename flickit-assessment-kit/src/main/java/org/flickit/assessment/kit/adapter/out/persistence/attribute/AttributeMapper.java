@@ -10,6 +10,7 @@ import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJoinAttributeView;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.kit.application.domain.Attribute;
+import org.flickit.assessment.kit.application.domain.AttributeMini;
 import org.flickit.assessment.kit.application.domain.dsl.AttributeDslModel;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -63,6 +64,14 @@ public class AttributeMapper {
             attribute.getCreatedBy(),
             attribute.getLastModifiedBy(),
             subjectJpaEntity.getId());
+    }
+
+    public static AttributeMini mapToAttributeMiniDomainModel(AttributeJpaEntity entity, KitLanguage language) {
+        var translation = getTranslation(entity, language);
+        return new AttributeMini(
+            entity.getId(),
+            translation.titleOrDefault(entity.getTitle())
+        );
     }
 
     public static AttributeDslModel mapToDslModel(SubjectJoinAttributeView view) {
