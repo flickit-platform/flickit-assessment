@@ -81,7 +81,7 @@ class ActivateKitVersionServiceTest {
     );
 
     @Test
-    void testActivateKitVersion_whenKitVersionIsNotInUpdatingStatus_thenThrowsValidationException() {
+    void testActivateKitVersion_whenKitVersionIsNotInUpdatingStatus_thenThrowValidationException() {
         kitVersion = KitVersionMother.createActiveKitVersion(simpleKit());
         var param = createParam(ActivateKitVersionUseCase.Param.ParamBuilder::build);
 
@@ -99,7 +99,7 @@ class ActivateKitVersionServiceTest {
     }
 
     @Test
-    void testActivateKitVersion_whenUserHasNotAccess_thenThrowsAccessDeniedException() {
+    void testActivateKitVersion_whenUserHasNotAccess_thenThrowAccessDeniedException() {
         var param = createParam(ActivateKitVersionUseCase.Param.ParamBuilder::build);
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
@@ -116,7 +116,7 @@ class ActivateKitVersionServiceTest {
     }
 
     @Test
-    void testActivateKitVersion_whenKitVersionIsNotValid_thenThrowsValidationException() {
+    void testActivateKitVersion_whenKitVersionIsNotValid_thenThrowValidationException() {
         var param = createParam(b -> b.currentUserId(ownerId));
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
