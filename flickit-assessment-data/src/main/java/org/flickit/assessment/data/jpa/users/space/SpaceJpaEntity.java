@@ -40,6 +40,9 @@ public class SpaceJpaEntity {
     @Column(name = "subscription_expiry")
     private LocalDateTime subscriptionExpiry;
 
+    @Column(name = "is_default")
+    private boolean isDefault;
+
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
 

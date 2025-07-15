@@ -7,4 +7,5 @@ import lombok.NoArgsConstructor;
 public class SpaceConstants {
 
     public static final long NOT_DELETED_DELETION_TIME = 0L;
+    public static final String DEFAULT_SPACE_TITLE = "Default Space";
 }

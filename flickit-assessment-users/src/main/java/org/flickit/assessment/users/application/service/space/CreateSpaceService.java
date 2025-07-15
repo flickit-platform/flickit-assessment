@@ -68,6 +68,7 @@ public class CreateSpaceService implements CreateSpaceUseCase {
             param.getCurrentUserId(),
             SpaceStatus.ACTIVE,
             null,
+            false,
             creationTime,
             creationTime,
             param.getCurrentUserId(),
