@@ -64,7 +64,7 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
         var items = response.items();
         assertFalse(items.isEmpty());
         assertEquals(1, items.size());
-        GetTopSpacesResponseDto.SpaceListItem space = items.getFirst();
+        GetTopSpacesResponseDto.SpaceListItemDto space = items.getFirst();
         assertEquals(MessageBundle.message(SPACE_DRAFT_TITLE, Locale.ENGLISH), space.title());
         assertEquals(SpaceType.BASIC.getCode(), space.type().code());
         assertEquals(SpaceType.BASIC.getTitle(), space.type().title());
@@ -251,7 +251,7 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
         var items = response.items();
         assertFalse(items.isEmpty());
         assertEquals(10, items.size());
-        var defaultSpace = items.stream().filter(GetTopSpacesResponseDto.SpaceListItem::isDefault).toList().getFirst();
+        var defaultSpace = items.stream().filter(GetTopSpacesResponseDto.SpaceListItemDto::isDefault).toList().getFirst();
         assertTrue(defaultSpace.isDefault());
         assertEquals(SpaceType.PREMIUM.getCode(), defaultSpace.type().code());
         assertThat(items.stream().filter(e -> e.type().code().equals(SpaceType.BASIC.getCode()))).hasSize(1);
@@ -274,7 +274,7 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
         var items = response.items();
         assertFalse(items.isEmpty());
         assertEquals(3, items.size());
-        var defaultSpace = items.stream().filter(GetTopSpacesResponseDto.SpaceListItem::isDefault).toList().getFirst();
+        var defaultSpace = items.stream().filter(GetTopSpacesResponseDto.SpaceListItemDto::isDefault).toList().getFirst();
         assertTrue(defaultSpace.isDefault());
         assertEquals(SpaceType.PREMIUM.getCode(), defaultSpace.type().code());
         assertThat(items.stream().filter(e -> e.type().code().equals(SpaceType.PREMIUM.getCode()))).hasSize(3);
@@ -296,9 +296,9 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
         var items = response.items();
         assertFalse(items.isEmpty());
         assertEquals(appSpecProperties.getSpace().getMaxBasicSpaceAssessments(), items.size());
-        var defaultSpace = items.stream().filter(GetTopSpacesResponseDto.SpaceListItem::isDefault).toList().getFirst();
+        var defaultSpace = items.stream().filter(GetTopSpacesResponseDto.SpaceListItemDto::isDefault).toList().getFirst();
         assertEquals(SpaceType.BASIC.getCode(), defaultSpace.type().code());
-        assertThat(items.stream().filter(GetTopSpacesResponseDto.SpaceListItem::isDefault)).hasSize(1);
+        assertThat(items.stream().filter(GetTopSpacesResponseDto.SpaceListItemDto::isDefault)).hasSize(1);
         assertEquals(countBefore, countAfter);
     }
 

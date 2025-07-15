@@ -6,6 +6,7 @@ import org.flickit.assessment.users.application.port.in.space.GetTopSpacesUseCas
 import org.flickit.assessment.users.application.port.in.space.GetTopSpacesUseCase.*;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.flickit.assessment.users.adapter.in.rest.space.GetTopSpacesResponseDto.SpaceListItemDto;
 
 import java.util.List;
 import java.util.UUID;
@@ -26,9 +27,9 @@ public class GetTopSpacesRestController {
 
     private GetTopSpacesResponseDto toResponseDto(List<Result.SpaceListItem> items) {
         var result = items.stream()
-            .map(r -> new GetTopSpacesResponseDto.SpaceListItem(r.id(),
+            .map(r -> new SpaceListItemDto(r.id(),
                 r.title(),
-                GetTopSpacesResponseDto.SpaceListItem.Type.of(r.type()),
+                SpaceListItemDto.TypeDto.of(r.type()),
                 r.isDefault()))
             .toList();
 
