@@ -109,8 +109,8 @@ public class CreateAttributeAiInsightHelper {
         return attributeToPromptMap.entrySet().parallelStream()
             .map(entry -> {
                 var attribute = entry.getKey();
+                log.debug("Generating AI insight for attributeId=[{}]", attribute.getId());
                 var aiInsight = callAiPromptPort.call(entry.getValue(), AiResponseDto.class).value();
-                log.info("Generating AI insight for attributeId=[{}] in thread=[{}]", attribute.getId(), Thread.currentThread().getName());
                 var aiInputPath = uploadInputFile(attribute, attributeIdToFile.get(attribute.getId()).stream());
                 return toAttributeInsight(param.assessmentResult().getId(), attribute.getId(), aiInsight, aiInputPath);
             })
