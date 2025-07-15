@@ -9,6 +9,8 @@ import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAss
 import org.flickit.assessment.core.application.port.out.questionnaire.LoadQuestionnairesPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -22,8 +24,7 @@ import static org.flickit.assessment.common.application.domain.assessment.Assess
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.validResult;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
@@ -42,7 +43,7 @@ class GetAssessmentNextQuestionnaireServiceTest {
     @Mock
     private LoadQuestionnairesPort loadQuestionnairesPort;
 
-    private final GetAssessmentNextQuestionnaireUseCase.Param param = createParam(GetAssessmentNextQuestionnaireUseCase.Param.ParamBuilder::build);
+    private GetAssessmentNextQuestionnaireUseCase.Param param = createParam(GetAssessmentNextQuestionnaireUseCase.Param.ParamBuilder::build);
     private final AssessmentResult assessmentResult = validResult();
 
     @Test
@@ -79,11 +80,11 @@ class GetAssessmentNextQuestionnaireServiceTest {
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.getNextQuestionnaire(param));
 
-        assertEquals(GET_ASSESSMENT_NEXT_QUESTIONNAIRE_QUESTIONNAIRE_NOT_FOUND, throwable.getMessage());
+        assertEquals(QUESTIONNAIRE_ID_NOT_FOUND, throwable.getMessage());
     }
 
     @Test
-    void getAssessmentNextQuestionnaire_whenNextUnansweredQuestionnaireDoesNotExist_thenThrowResourceNotFoundException() {
+    void getAssessmentNextQuestionnaire_whenNextUnansweredQuestionnaireDoesNotExist_thenReturnNotFoundResult() {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_NEXT_QUESTIONNAIRE))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
@@ -95,29 +96,85 @@ class GetAssessmentNextQuestionnaireServiceTest {
         when(loadQuestionnairesPort.loadQuestionnaireDetails(assessmentResult.getKitVersionId(), assessmentResult.getId()))
             .thenReturn(resultMap);
 
-        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.getNextQuestionnaire(param));
+        var result = service.getNextQuestionnaire(param);
 
-        assertEquals(GET_ASSESSMENT_NEXT_QUESTIONNAIRE_NEXT_QUESTIONNAIRE_NOT_FOUND, throwable.getMessage());
+        assertEquals(GetAssessmentNextQuestionnaireUseCase.Result.NotFound.INSTANCE, result);
     }
 
-    @Test
-    void getAssessmentNextQuestionnaire_whenParamAreValid_thenReturnNextQuestionnaire() {
+    @ParameterizedTest
+    @ValueSource(longs = {1L, 2L, 3L, 4L})
+    void getAssessmentNextQuestionnaire_whenParamsAreValid_thenReturnNextQuestionnaire(long currentQuestionnaireId) {
+        param = paramBuilder().questionnaireId(currentQuestionnaireId).build();
+        var resultMap = Map.of(1L, new LoadQuestionnairesPort.Result(1L, 2, "title1", 10, 10),
+            2L, new LoadQuestionnairesPort.Result(2L, 1, "title2", 10, 10),
+            3L, new LoadQuestionnairesPort.Result(3L, 3, "title3", 10, 8),
+            4L, new LoadQuestionnairesPort.Result(4L, 4, "title4", 10, 10));
+
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_NEXT_QUESTIONNAIRE))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
             .thenReturn(Optional.of(assessmentResult));
-        var resultMap = Map.of(1L, new LoadQuestionnairesPort.Result(1L, 2, "title1", 10, 10),
-            2L, new LoadQuestionnairesPort.Result(2L, 1, "title2", 10, 10),
-            3L, new LoadQuestionnairesPort.Result(3L, 3, "title3", 10, 10),
-            4L, new LoadQuestionnairesPort.Result(4L, 4, "title4", 10, 8));
         when(loadQuestionnairesPort.loadQuestionnaireDetails(assessmentResult.getKitVersionId(), assessmentResult.getId()))
             .thenReturn(resultMap);
-        var expectedQuestionnaire = resultMap.get(4L);
+        var expectedQuestionnaire = resultMap.get(3L);
 
-        var result = service.getNextQuestionnaire(param);
+        var result = (GetAssessmentNextQuestionnaireUseCase.Result.Found) service.getNextQuestionnaire(param);
+        assertNotNull(result);
         assertEquals(expectedQuestionnaire.id(), result.id());
-        assertEquals(expectedQuestionnaire.title(), result.title());
         assertEquals(expectedQuestionnaire.index(), result.index());
+        assertEquals(expectedQuestionnaire.title(), result.title());
+    }
+
+    @ParameterizedTest
+    @ValueSource(longs = {1L, 2L, 3L, 4L})
+    void getAssessmentNextQuestionnaire_whenThereAreTwoUnansweredQuestionnaires_thenReturnNextQuestionnaire(long currentQuestionnaireId) {
+        param = paramBuilder().questionnaireId(currentQuestionnaireId).build();
+        var resultMap = Map.of(1L, new LoadQuestionnairesPort.Result(1L, 1, "title1", 10, 10),
+            2L, new LoadQuestionnairesPort.Result(2L, 2, "title2", 10, 9),
+            3L, new LoadQuestionnairesPort.Result(3L, 3, "title3", 10, 8),
+            4L, new LoadQuestionnairesPort.Result(4L, 4, "title4", 10, 10));
+        Map<Long, Long> expectedQuestionnaireIdToNextQuestionnaireIdMap = Map.of(1L, 2L, 2L, 3L, 3L, 2L, 4L, 2L);
+
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_NEXT_QUESTIONNAIRE))
+            .thenReturn(true);
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
+            .thenReturn(Optional.of(assessmentResult));
+        when(loadQuestionnairesPort.loadQuestionnaireDetails(assessmentResult.getKitVersionId(), assessmentResult.getId()))
+            .thenReturn(resultMap);
+        var expectedQuestionnaireQuestionnaireId = expectedQuestionnaireIdToNextQuestionnaireIdMap.get(currentQuestionnaireId);
+        var expectedQuestionnaire = resultMap.get(expectedQuestionnaireQuestionnaireId);
+
+        var result = (GetAssessmentNextQuestionnaireUseCase.Result.Found) service.getNextQuestionnaire(param);
+        assertNotNull(result);
+        assertEquals(expectedQuestionnaire.id(), result.id());
+        assertEquals(expectedQuestionnaire.index(), result.index());
+        assertEquals(expectedQuestionnaire.title(), result.title());
+    }
+
+    @ParameterizedTest
+    @ValueSource(longs = {1L, 2L, 3L, 4L})
+    void getAssessmentNextQuestionnaire_whenAllQuestionnairesAreAnswered_thenReturnNextQuestionnaire(long currentQuestionnaireId) {
+        param = paramBuilder().questionnaireId(currentQuestionnaireId).build();
+        Map<Long, Long> expectedQuestionnaireIdToNextQuestionnaireIdMap = Map.of(1L, 2L, 2L, 3L, 3L, 4L, 4L, 1L);
+        var resultMap = Map.of(1L, new LoadQuestionnairesPort.Result(1L, 1, "title1", 10, 1),
+            2L, new LoadQuestionnairesPort.Result(2L, 2, "title2", 10, 9),
+            3L, new LoadQuestionnairesPort.Result(3L, 3, "title3", 10, 8),
+            4L, new LoadQuestionnairesPort.Result(4L, 4, "title4", 10, 7));
+
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_NEXT_QUESTIONNAIRE))
+            .thenReturn(true);
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
+            .thenReturn(Optional.of(assessmentResult));
+        when(loadQuestionnairesPort.loadQuestionnaireDetails(assessmentResult.getKitVersionId(), assessmentResult.getId()))
+            .thenReturn(resultMap);
+        var expectedQuestionnaireQuestionnaireId = expectedQuestionnaireIdToNextQuestionnaireIdMap.get(currentQuestionnaireId);
+        var expectedQuestionnaire = resultMap.get(expectedQuestionnaireQuestionnaireId);
+
+        var result = (GetAssessmentNextQuestionnaireUseCase.Result.Found) service.getNextQuestionnaire(param);
+        assertNotNull(result);
+        assertEquals(expectedQuestionnaire.id(), result.id());
+        assertEquals(expectedQuestionnaire.index(), result.index());
+        assertEquals(expectedQuestionnaire.title(), result.title());
     }
 
     private GetAssessmentNextQuestionnaireUseCase.Param createParam(Consumer<GetAssessmentNextQuestionnaireUseCase.Param.ParamBuilder> changer) {

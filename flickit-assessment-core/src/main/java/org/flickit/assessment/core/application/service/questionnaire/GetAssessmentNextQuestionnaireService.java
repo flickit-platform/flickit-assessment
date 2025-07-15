@@ -10,6 +10,7 @@ import org.flickit.assessment.core.application.port.out.questionnaire.LoadQuesti
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -35,19 +36,26 @@ public class GetAssessmentNextQuestionnaireService implements GetAssessmentNextQ
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_NEXT_QUESTIONNAIRE_ASSESSMENT_RESULT_NOT_FOUND));
 
-        var questionnaireIdToQuestionnaireDetails =
+        var questionnaireIdToQuestionnaireDetailsMap =
             loadQuestionnairesPort.loadQuestionnaireDetails(assessmentResult.getKitVersionId(), assessmentResult.getId());
 
-        var currentQuestionnaire = Optional.ofNullable(
-            questionnaireIdToQuestionnaireDetails.get(param.getQuestionnaireId())
-        ).orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_NEXT_QUESTIONNAIRE_QUESTIONNAIRE_NOT_FOUND));
-        int currentIndex = currentQuestionnaire.index();
+        Optional.ofNullable(questionnaireIdToQuestionnaireDetailsMap.get(param.getQuestionnaireId()))
+            .orElseThrow(() -> new ResourceNotFoundException(QUESTIONNAIRE_ID_NOT_FOUND));
 
-        Predicate<LoadQuestionnairesPort.Result> isUnansweredAndAfter = q -> q.index() > currentIndex && q.answerCount() < q.questionCount();
-        return questionnaireIdToQuestionnaireDetails.values().stream()
-            .filter(isUnansweredAndAfter)
+        var allQuestionnaireDetails = new ArrayList<>(questionnaireIdToQuestionnaireDetailsMap.values());
+
+        Predicate<LoadQuestionnairesPort.Result> isUnanswered = q -> q.answerCount() < q.questionCount();
+
+        int currentIndex = questionnaireIdToQuestionnaireDetailsMap.get(param.getQuestionnaireId()).index();
+        Optional<Result> after = allQuestionnaireDetails.stream()
+            .filter(q -> q.index() > currentIndex && isUnanswered.test(q))
             .min(Comparator.comparingInt(LoadQuestionnairesPort.Result::index))
-            .map(e -> new Result(e.id(), e.index(), e.title()))
-            .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_NEXT_QUESTIONNAIRE_NEXT_QUESTIONNAIRE_NOT_FOUND));
+            .map(q -> new Result.Found(q.id(), q.index(), q.title()));
+
+        return after.orElseGet(() -> allQuestionnaireDetails.stream()
+            .filter(q -> q.index() <= currentIndex && isUnanswered.test(q))
+            .min(Comparator.comparingInt(LoadQuestionnairesPort.Result::index))
+            .<Result>map(q -> new Result.Found(q.id(), q.index(), q.title()))
+            .orElse(Result.NotFound.INSTANCE));
     }
 }
