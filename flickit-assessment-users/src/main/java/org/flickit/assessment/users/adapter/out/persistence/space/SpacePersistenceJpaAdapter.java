@@ -33,7 +33,8 @@ public class SpacePersistenceJpaAdapter implements
     CountSpaceAssessmentPort,
     DeleteSpacePort,
     UpdateSpacePort,
-    CountSpacesPort {
+    CountSpacesPort,
+    CheckDefaultSpacePort {
 
     private final SpaceJpaRepository repository;
 
@@ -118,6 +119,11 @@ public class SpacePersistenceJpaAdapter implements
 
     @Override
     public int countBasicSpaces(UUID ownerId) {
-        return repository.countByOwnerIdAndTypeAndDeletedFalse(ownerId, SpaceType.BASIC.getId());
+        return repository.countByOwnerIdAndTypeAndDeletedFalseAndIsDefaultFalse(ownerId, SpaceType.BASIC.getId());
+    }
+
+    @Override
+    public boolean checkIsDefault(long spaceId) {
+        return repository.existsByIdAndDeletedFalseAndIsDefaultTrue(spaceId);
     }
 }
