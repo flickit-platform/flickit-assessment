@@ -12,6 +12,8 @@ import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAss
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
 @Service
@@ -33,7 +35,11 @@ public class GetAssessmentReportMetadataService implements GetAssessmentReportMe
     }
 
     private Result toResult(AssessmentReport assessmentReport) {
-        return new Result(toMetadata(assessmentReport.getMetadata()), assessmentReport.isPublished());
+        var metadata = Optional.ofNullable(assessmentReport.getMetadata())
+            .map(this::toMetadata)
+            .orElse(new Metadata(null, null, null, null));
+
+        return new Result(metadata, assessmentReport.isPublished());
     }
 
     private Metadata toMetadata(AssessmentReportMetadata metadata) {

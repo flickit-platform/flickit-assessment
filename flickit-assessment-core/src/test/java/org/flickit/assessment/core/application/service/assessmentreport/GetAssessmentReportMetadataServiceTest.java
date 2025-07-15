@@ -81,6 +81,23 @@ class GetAssessmentReportMetadataServiceTest {
         assertEquals(assessmentReport.isPublished(), result.published());
     }
 
+    @Test
+    void testAssessmentReportMetadata_whenAssessmentReportExistsAndMetadataIsNull_thenReturnMetadata() {
+        var param = createParam(GetAssessmentReportMetadataUseCase.Param.ParamBuilder::build);
+        var assessmentReport = AssessmentReportMother.reportWithMetadata(null);
+
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MANAGE_REPORT_METADATA))
+            .thenReturn(true);
+        when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.of(assessmentReport));
+
+        var result = service.getAssessmentReportMetadata(param);
+        assertNull(result.metadata().intro());
+        assertNull(result.metadata().prosAndCons());
+        assertNull(result.metadata().steps());
+        assertNull(result.metadata().participants());
+        assertEquals(assessmentReport.isPublished(), result.published());
+    }
+
     private GetAssessmentReportMetadataUseCase.Param createParam(Consumer<GetAssessmentReportMetadataUseCase.Param.ParamBuilder> changer) {
         var paramBuilder = paramBuilder();
         changer.accept(paramBuilder);
