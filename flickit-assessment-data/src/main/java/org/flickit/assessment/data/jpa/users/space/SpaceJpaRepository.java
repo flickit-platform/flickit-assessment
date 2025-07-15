@@ -16,9 +16,11 @@ public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> 
 
     boolean existsByIdAndDeletedFalse(long id);
 
-    int countByOwnerIdAndTypeAndDeletedFalse(UUID ownerId, Integer type);
+    int countByOwnerIdAndTypeAndDeletedFalseAndIsDefaultFalse(UUID ownerId, Integer type);
 
     Optional<SpaceJpaEntity> findByIdAndDeletedFalse(long spaceId);
+
+    boolean existsByIdAndDeletedFalseAndIsDefaultTrue(long spaceId);
 
     @Query("""
             SELECT s.ownerId
@@ -127,4 +129,12 @@ public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> 
                 @Param("code") String code,
                 @Param("lastModificationTime") LocalDateTime lastModificationTime,
                 @Param("lastModifiedBy") UUID lastModifiedBy);
+
+    @Query("""
+            SELECT s
+            FROM SpaceJpaEntity s
+            JOIN AssessmentJpaEntity a ON a.spaceId = s.id
+            WHERE a.id = :assessmentId AND s.deleted = FALSE and a.deleted = false
+        """)
+    Optional<SpaceJpaEntity> findSpaceByAssessmentId(@Param("assessmentId") UUID assessmentId);
 }

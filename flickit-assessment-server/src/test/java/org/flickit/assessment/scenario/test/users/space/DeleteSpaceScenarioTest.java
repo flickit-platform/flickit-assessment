@@ -6,11 +6,13 @@ import org.flickit.assessment.scenario.test.AbstractScenarioTest;
 import org.flickit.assessment.scenario.test.users.spaceuseraccess.SpaceUserAccessTestHelper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.exception.api.ErrorCodes.ACCESS_DENIED;
+import static org.flickit.assessment.common.exception.api.ErrorCodes.INVALID_INPUT;
 import static org.flickit.assessment.scenario.fixture.request.AddSpaceMemberRequestDtoMother.addSpaceMemberRequestDto;
 import static org.flickit.assessment.scenario.fixture.request.CreateSpaceRequestDtoMother.createSpaceRequestDto;
 import static org.flickit.assessment.scenario.fixture.request.CreateUserRequestDtoMother.createUserRequestDto;
@@ -24,6 +26,9 @@ class DeleteSpaceScenarioTest extends AbstractScenarioTest {
 
     @Autowired
     SpaceUserAccessTestHelper spaceUserAccessHelper;
+
+    @Autowired
+    JdbcTemplate jdbcTemplate;
 
     @Test
     void deleteSpace() {
@@ -78,6 +83,28 @@ class DeleteSpaceScenarioTest extends AbstractScenarioTest {
         SpaceJpaEntity space = jpaTemplate.load(spaceId, SpaceJpaEntity.class);
         assertFalse(space.isDeleted());
         assertEquals(0, space.getDeletionTime());
+    }
+
+    @Test
+    void deleteSpace_defaultSpace() {
+        Number spaceId = createBasicSpace();
+
+        // Update space to set as isDefault
+        jdbcTemplate.update("UPDATE fau_space SET is_default = TRUE WHERE id = ?", spaceId);
+
+        // Delete space
+        var response = spaceHelper.delete(context, spaceId);
+
+        var error = response.then()
+            .statusCode(400)
+            .extract().as(ErrorResponseDto.class);
+
+        assertEquals(INVALID_INPUT, error.code());
+        assertNotNull(error.message());
+
+        SpaceJpaEntity loadedSpace = jpaTemplate.load(spaceId, SpaceJpaEntity.class);
+        assertFalse(loadedSpace.isDeleted());
+        assertEquals(0, loadedSpace.getDeletionTime());
     }
 
     private Long createBasicSpace() {

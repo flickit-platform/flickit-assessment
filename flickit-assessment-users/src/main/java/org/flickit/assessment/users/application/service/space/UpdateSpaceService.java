@@ -2,7 +2,9 @@ package org.flickit.assessment.users.application.service.space;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.users.application.port.in.space.UpdateSpaceUseCase;
+import org.flickit.assessment.users.application.port.out.space.CheckDefaultSpacePort;
 import org.flickit.assessment.users.application.port.out.space.LoadSpaceOwnerPort;
 import org.flickit.assessment.users.application.port.out.space.UpdateSpacePort;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,7 @@ import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
+import static org.flickit.assessment.users.common.ErrorMessageKey.UPDATE_SPACE_SPACE_DEFAULT_SPACE;
 
 @Service
 @Transactional
@@ -21,11 +24,15 @@ import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
 public class UpdateSpaceService implements UpdateSpaceUseCase {
 
     private final LoadSpaceOwnerPort loadSpaceOwnerPort;
+    private final CheckDefaultSpacePort checkDefaultSpacePort;
     private final UpdateSpacePort updateSpacePort;
 
     @Override
     public void updateSpace(Param param) {
         validateCurrentUser(param.getId(), param.getCurrentUserId());
+
+        if (checkDefaultSpacePort.checkIsDefault(param.getId()))
+            throw new ValidationException(UPDATE_SPACE_SPACE_DEFAULT_SPACE);
 
         var updateParam = new UpdateSpacePort.Param(param.getId(),
             param.getTitle(),
