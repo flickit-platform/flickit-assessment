@@ -2,10 +2,7 @@ package org.flickit.assessment.kit.application.service.question;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.kit.application.domain.Attribute;
-import org.flickit.assessment.kit.application.domain.MaturityLevel;
-import org.flickit.assessment.kit.application.domain.Question;
-import org.flickit.assessment.kit.application.domain.QuestionImpact;
+import org.flickit.assessment.kit.application.domain.*;
 import org.flickit.assessment.kit.application.port.in.questionimpact.GetQuestionImpactsUseCase;
 import org.flickit.assessment.kit.application.port.out.attribute.LoadAttributesPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
@@ -61,7 +58,7 @@ public class GetQuestionImpactsService implements GetQuestionImpactsUseCase {
         var attributeIds = attributeIdToImpacts.keySet().stream().toList();
 
         var attributeIdToTitleMap = loadAttributesPort.loadAllByIdsAndKitVersionId(attributeIds, kitVersionId).stream()
-            .collect(toMap(Attribute::getId, Attribute::getTitle));
+            .collect(toMap(AttributeMini::getId, AttributeMini::getTitle));
         return attributeIds.stream()
             .map(attributeId -> toAttributeImpact(
                 attributeId,
