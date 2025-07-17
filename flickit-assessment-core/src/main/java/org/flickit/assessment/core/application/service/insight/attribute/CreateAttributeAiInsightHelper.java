@@ -3,6 +3,7 @@ package org.flickit.assessment.core.application.service.insight.attribute;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.application.port.out.CallAiPromptPort;
 import org.flickit.assessment.common.config.AppAiProperties;
 import org.flickit.assessment.common.exception.ValidationException;
@@ -33,6 +34,7 @@ import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ATTRIBUTE_AI_INSIGHT_ALL_QUESTIONS_NOT_ANSWERED;
 import static org.flickit.assessment.core.common.MessageKey.ASSESSMENT_AI_IS_DISABLED;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -94,19 +96,20 @@ public class CreateAttributeAiInsightHelper {
         var attributeValues = loadAttributeValuePort.load(param.assessmentResult().getId(), param.attributeIds());
         var assessmentTitle = getAssessmentTitle(assessment);
         var maturityLevels = loadMaturityLevelsPort.loadAllTranslated(param.assessmentResult());
-        var attributeIdToFile = attributeValues.stream()
+        var attributeIdToFile = attributeValues.parallelStream()
             .collect(toMap(av -> av.getAttribute().getId(),
                 attributeValue -> createAttributeScoresFilePort.generateFile(attributeValue, maturityLevels)));
-        var attributeToPromptMap = attributeValues.stream()
+        var attributeToPromptMap = attributeValues.parallelStream()
             .collect(toMap(AttributeValue::getAttribute, attributeValue -> createPrompt(attributeValue.getAttribute().getTitle(),
                 attributeValue.getAttribute().getDescription(),
                 assessmentTitle,
                 attributeIdToFile.get(attributeValue.getAttribute().getId()).text(),
                 param.locale().getDisplayLanguage())));
 
-        return attributeToPromptMap.entrySet().stream()
+        return attributeToPromptMap.entrySet().parallelStream()
             .map(entry -> {
                 var attribute = entry.getKey();
+                log.debug("Generating AI insight for attributeId=[{}]", attribute.getId());
                 var aiInsight = callAiPromptPort.call(entry.getValue(), AiResponseDto.class).value();
                 var aiInputPath = uploadInputFile(attribute, attributeIdToFile.get(attribute.getId()).stream());
                 return toAttributeInsight(param.assessmentResult().getId(), attribute.getId(), aiInsight, aiInputPath);
