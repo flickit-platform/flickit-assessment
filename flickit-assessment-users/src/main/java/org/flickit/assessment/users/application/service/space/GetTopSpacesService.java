@@ -85,6 +85,7 @@ public class GetTopSpacesService implements GetTopSpacesUseCase {
             currentUserId,
             SpaceStatus.ACTIVE,
             null,
+            true,
             LocalDateTime.now(),
             LocalDateTime.now(),
             currentUserId,
