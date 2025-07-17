@@ -5,6 +5,7 @@ import org.flickit.assessment.common.application.domain.space.SpaceType;
 import org.flickit.assessment.common.config.AppSpecProperties;
 import org.flickit.assessment.common.exception.api.ErrorResponseDto;
 import org.flickit.assessment.data.jpa.users.space.SpaceJpaEntity;
+import org.flickit.assessment.data.jpa.users.spaceuseraccess.SpaceUserAccessJpaEntity;
 import org.flickit.assessment.scenario.fixture.request.CreateAssessmentRequestDtoMother;
 import org.flickit.assessment.scenario.test.AbstractScenarioTest;
 import org.flickit.assessment.scenario.test.core.assessment.AssessmentTestHelper;
@@ -28,7 +29,7 @@ import static org.flickit.assessment.scenario.fixture.request.CreateSpaceRequest
 import static org.flickit.assessment.users.common.MessageKey.SPACE_DRAFT_TITLE;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
+class GetTopSpacesScenarioTest extends AbstractScenarioTest {
 
     @Autowired
     SpaceTestHelper spaceHelper;
@@ -52,7 +53,7 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
     AppSpecProperties appSpecProperties;
 
     @Test
-    void topSpaces_whenNoSpaceExistedLangIsEN() {
+    void topSpaces_whenNoSpaceExists_thenCreateSpaceWithEnglishTitleAndReturnIt() {
         final int countBefore = jpaTemplate.count(SpaceJpaEntity.class);
 
         var response = spaceHelper.getTopSpaces(context, Locale.ENGLISH.toString())
@@ -77,7 +78,7 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
     }
 
     @Test
-    void topSpaces_whenNoSpaceExistedLangIsFA() {
+    void topSpaces_whenNoSpaceExists_thenCreateSpaceWithFarsiTitleAndReturnIt() {
         final int countBefore = jpaTemplate.count(SpaceJpaEntity.class);
 
         var response = spaceHelper.getTopSpaces(context, "FA")
@@ -98,10 +99,11 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
         assertEquals(SpaceType.BASIC.getCode(), space.type().code());
         assertTrue(space.isDefault());
         assertEquals(countBefore + 1, countAfter);
+        assertTrue(jpaTemplate.existById(new SpaceUserAccessJpaEntity.EntityId(space.id(), getCurrentUserId()), SpaceUserAccessJpaEntity.class));
     }
 
     @Test
-    void topSpaces_whenOneBasicSpaceWithCapacityExists() {
+    void topSpaces_whenOneBasicSpaceWithCapacityExists_thenReturnIt() {
         var spaceTitle = "Space Title";
         var spaceId = createBasicSpace(spaceTitle);
         final int countBefore = jpaTemplate.count(SpaceJpaEntity.class);
@@ -114,16 +116,18 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
         var items = response.items();
         assertFalse(items.isEmpty());
         assertEquals(1, items.size());
+
         var space = items.getFirst();
         assertEquals(spaceId, space.id());
         assertEquals(spaceTitle, space.title());
         assertEquals(SpaceType.BASIC.getCode(), space.type().code());
         assertTrue(space.isDefault());
+
         assertEquals(countBefore, countAfter);
     }
 
     @Test
-    void topSpaces_whenOnlyOneBasicSpaceExistsAndIsFull() {
+    void topSpaces_whenOnlyOneBasicSpaceExistsAndItIsFull_failure() {
         var spaceTitle = "Space Title";
         var spaceId = createBasicSpace(spaceTitle);
         createAssessments(spaceId, appSpecProperties.getSpace().getMaxBasicSpaces());
@@ -157,16 +161,18 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
         var items = response.items();
         assertFalse(items.isEmpty());
         assertEquals(1, items.size());
+
         var space = items.getFirst();
         assertEquals(spaceId, space.id());
         assertEquals(spaceTitle, space.title());
         assertEquals(SpaceType.PREMIUM.getCode(), space.type().code());
         assertTrue(space.isDefault());
+
         assertEquals(countBefore, countAfter);
     }
 
     @Test
-    void topSpaces_whenBasicSpaceIsFullAndPremiumSpaceExists() {
+    void topSpaces_whenBasicSpaceIsFullAndPremiumSpaceExists_thenOnlyReturnPremiumSpace() {
         var basicSpaceTitle = "Basic Space Title";
         var basicSpaceId = createBasicSpace(basicSpaceTitle);
         createAssessments(basicSpaceId, appSpecProperties.getSpace().getMaxBasicSpaces());
@@ -183,16 +189,18 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
         var items = response.items();
         assertFalse(items.isEmpty());
         assertEquals(1, items.size());
+
         var space = items.getFirst();
         assertEquals(premiumSpaceId, space.id());
         assertEquals(premiumSpaceTitle, space.title());
         assertEquals(SpaceType.PREMIUM.getCode(), space.type().code());
         assertTrue(space.isDefault());
+
         assertEquals(countBefore, countAfter);
     }
 
     @Test
-    void topSpaces_whenOnePremiumAndOneBasicSpaceWithCapacityExist() {
+    void topSpaces_whenOnePremiumAndOneBasicSpaceWithCapacityExist_thenReturnPremiumAsDefault() {
         var basicSpaceTitle = "Basic Space Title";
         var basicSpaceId = createBasicSpace(basicSpaceTitle);
         var premiumSpaceTitle = "Premium Space Title";
@@ -211,14 +219,16 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
         var premiumSpace = items.stream().filter(e -> e.type().code().equals(SpaceType.PREMIUM.getCode())).toList().getFirst();
         assertTrue(premiumSpace.isDefault());
         assertEquals(premiumSpaceId, premiumSpace.id());
+
         var basicSpace = items.stream().filter(e -> e.type().code().equals(SpaceType.BASIC.getCode())).toList().getFirst();
         assertEquals(basicSpaceId, basicSpace.id());
         assertFalse(basicSpace.isDefault());
+
         assertEquals(countBefore, countAfter);
     }
 
     @Test
-    void topSpaces_whenTwoBasicSpacesOneFullOneWithCapacityExist() {
+    void topSpaces_whenTwoBasicSpacesOneFullOneWithCapacityExist_thenOnlyReturnTheOneWithCapacity() {
         var basicSpaceTitle1 = "Basic Space 1";
         var basicSpaceId1 = createBasicSpace(basicSpaceTitle1);
         var basicSpaceTitle2 = "Basic Space 2";
@@ -235,16 +245,18 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
         var items = response.items();
         assertFalse(items.isEmpty());
         assertEquals(1, items.size());
+
         var space = items.getFirst();
         assertEquals(basicSpaceId1, space.id());
         assertEquals(basicSpaceTitle1, space.title());
         assertEquals(SpaceType.BASIC.getCode(), space.type().code());
         assertTrue(space.isDefault());
+
         assertEquals(countBefore, countAfter);
     }
 
     @Test
-    void topSpaces_whenMultipleSpacesWithCapacityExist() {
+    void topSpaces_whenMultipleSpacesWithCapacityExist_thenReturnAllAndOneOfPremiumsAsDefault() {
         var basicSpaceTitle = "Basic Space Title";
         IntStream.range(0, 2).forEach(i -> createBasicSpace(basicSpaceTitle + i));
         var premiumSpaceTitle = "Premium Space Title";
@@ -265,11 +277,12 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
         assertEquals(SpaceType.PREMIUM.getCode(), defaultSpace.type().code());
         assertThat(items.stream().filter(e -> e.type().code().equals(SpaceType.BASIC.getCode()))).hasSize(1);
         assertThat(items.stream().filter(e -> e.type().code().equals(SpaceType.PREMIUM.getCode()))).hasSize(9);
+
         assertEquals(countBefore, countAfter);
     }
 
     @Test
-    void topSpaces_whenMultiplePremiumSpacesExist() {
+    void topSpaces_whenMultiplePremiumSpacesExist_thenReturnAllAndOneOfThemAsDefault() {
         var premiumSpaceTitle = "Premium Space Title";
         IntStream.range(0, 3).forEach(i -> createPremiumSpace(premiumSpaceTitle + i));
 
@@ -283,15 +296,17 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
         var items = response.items();
         assertFalse(items.isEmpty());
         assertEquals(3, items.size());
+
         var defaultSpace = items.stream().filter(GetTopSpacesResponseDto.SpaceListItemDto::isDefault).toList().getFirst();
         assertTrue(defaultSpace.isDefault());
         assertEquals(SpaceType.PREMIUM.getCode(), defaultSpace.type().code());
         assertThat(items.stream().filter(e -> e.type().code().equals(SpaceType.PREMIUM.getCode()))).hasSize(3);
+
         assertEquals(countBefore, countAfter);
     }
 
     @Test
-    void topSpaces_whenMultipleBasicSpacesExist() {
+    void topSpaces_whenMultipleBasicSpacesExist_thenReturnAllAndOneOfThemAsDefault() {
         var basicSpaceTitle = "Basic Space Title";
         IntStream.range(0, appSpecProperties.getSpace().getMaxBasicSpaceAssessments()).forEach(i -> createBasicSpace(basicSpaceTitle + i));
 
@@ -305,9 +320,11 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
         var items = response.items();
         assertFalse(items.isEmpty());
         assertEquals(appSpecProperties.getSpace().getMaxBasicSpaceAssessments(), items.size());
+
         var defaultSpace = items.stream().filter(GetTopSpacesResponseDto.SpaceListItemDto::isDefault).toList().getFirst();
         assertEquals(SpaceType.BASIC.getCode(), defaultSpace.type().code());
         assertThat(items.stream().filter(GetTopSpacesResponseDto.SpaceListItemDto::isDefault)).hasSize(1);
+
         assertEquals(countBefore, countAfter);
     }
 
