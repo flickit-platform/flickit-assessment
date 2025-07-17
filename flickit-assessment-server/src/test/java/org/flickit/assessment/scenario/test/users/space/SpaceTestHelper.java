@@ -80,4 +80,8 @@ public class SpaceTestHelper {
             .extract()
             .response();
     }
+
+    public Response getTopSpaces(ScenarioContext context) {
+        return getTopSpaces(context, "en"); // default language
+    }
 }

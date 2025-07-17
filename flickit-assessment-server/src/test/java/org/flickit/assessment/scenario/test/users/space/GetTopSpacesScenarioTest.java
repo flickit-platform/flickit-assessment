@@ -1,7 +1,6 @@
 package org.flickit.assessment.scenario.test.users.space;
 
 import org.flickit.assessment.common.application.MessageBundle;
-import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.application.domain.space.SpaceType;
 import org.flickit.assessment.common.config.AppSpecProperties;
 import org.flickit.assessment.common.exception.api.ErrorResponseDto;
@@ -56,7 +55,12 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
     void topSpaces_whenNoSpaceExistedLangIsEN() {
         final int countBefore = jpaTemplate.count(SpaceJpaEntity.class);
 
-        var response = getTopSpacesResponse(KitLanguage.EN.getCode());
+        var response = spaceHelper.getTopSpaces(context, Locale.ENGLISH.toString())
+            .then()
+            .statusCode(200)
+            .extract()
+            .body()
+            .as(GetTopSpacesResponseDto.class);
 
         final int countAfter = jpaTemplate.count(SpaceJpaEntity.class);
 
@@ -64,7 +68,7 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
         var items = response.items();
         assertFalse(items.isEmpty());
         assertEquals(1, items.size());
-        GetTopSpacesResponseDto.SpaceListItemDto space = items.getFirst();
+        var space = items.getFirst();
         assertEquals(MessageBundle.message(SPACE_DRAFT_TITLE, Locale.ENGLISH), space.title());
         assertEquals(SpaceType.BASIC.getCode(), space.type().code());
         assertEquals(SpaceType.BASIC.getTitle(), space.type().title());
@@ -76,7 +80,12 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
     void topSpaces_whenNoSpaceExistedLangIsFA() {
         final int countBefore = jpaTemplate.count(SpaceJpaEntity.class);
 
-        var response = getTopSpacesResponse(KitLanguage.FA.getCode());
+        var response = spaceHelper.getTopSpaces(context, "FA")
+            .then()
+            .statusCode(200)
+            .extract()
+            .body()
+            .as(GetTopSpacesResponseDto.class);
 
         final int countAfter = jpaTemplate.count(SpaceJpaEntity.class);
 
@@ -85,7 +94,7 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
         assertFalse(items.isEmpty());
         assertEquals(1, items.size());
         var space = items.getFirst();
-        assertEquals(MessageBundle.message(SPACE_DRAFT_TITLE, Locale.of(KitLanguage.FA.getCode())), space.title());
+        assertEquals(MessageBundle.message(SPACE_DRAFT_TITLE, Locale.of("FA")), space.title());
         assertEquals(SpaceType.BASIC.getCode(), space.type().code());
         assertTrue(space.isDefault());
         assertEquals(countBefore + 1, countAfter);
@@ -97,7 +106,7 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
         var spaceId = createBasicSpace(spaceTitle);
         final int countBefore = jpaTemplate.count(SpaceJpaEntity.class);
 
-        var response = getTopSpacesResponse(KitLanguage.EN.getCode());
+        var response = getTopSpacesResponse();
 
         final int countAfter = jpaTemplate.count(SpaceJpaEntity.class);
 
@@ -121,7 +130,7 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
 
         final int countBefore = jpaTemplate.count(SpaceJpaEntity.class);
 
-        var response = spaceHelper.getTopSpaces(context, Locale.ENGLISH.getLanguage())
+        var response = spaceHelper.getTopSpaces(context)
             .then()
             .statusCode(403)
             .extract().as(ErrorResponseDto.class);
@@ -140,7 +149,7 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
 
         final int countBefore = jpaTemplate.count(SpaceJpaEntity.class);
 
-        var response = getTopSpacesResponse(Locale.ENGLISH.getLanguage());
+        var response = getTopSpacesResponse();
 
         final int countAfter = jpaTemplate.count(SpaceJpaEntity.class);
 
@@ -166,7 +175,7 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
 
         final int countBefore = jpaTemplate.count(SpaceJpaEntity.class);
 
-        var response = getTopSpacesResponse(Locale.ENGLISH.getLanguage());
+        var response = getTopSpacesResponse();
 
         final int countAfter = jpaTemplate.count(SpaceJpaEntity.class);
 
@@ -191,7 +200,7 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
 
         final int countBefore = jpaTemplate.count(SpaceJpaEntity.class);
 
-        var response = getTopSpacesResponse(Locale.ENGLISH.getLanguage());
+        var response = getTopSpacesResponse();
 
         final int countAfter = jpaTemplate.count(SpaceJpaEntity.class);
 
@@ -218,7 +227,7 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
 
         final int countBefore = jpaTemplate.count(SpaceJpaEntity.class);
 
-        var response = getTopSpacesResponse(Locale.ENGLISH.getLanguage());
+        var response = getTopSpacesResponse();
 
         final int countAfter = jpaTemplate.count(SpaceJpaEntity.class);
 
@@ -243,7 +252,7 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
 
         final int countBefore = jpaTemplate.count(SpaceJpaEntity.class);
 
-        var response = getTopSpacesResponse(Locale.ENGLISH.getLanguage());
+        var response = getTopSpacesResponse();
 
         final int countAfter = jpaTemplate.count(SpaceJpaEntity.class);
 
@@ -266,7 +275,7 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
 
         final int countBefore = jpaTemplate.count(SpaceJpaEntity.class);
 
-        var response = getTopSpacesResponse(Locale.ENGLISH.getLanguage());
+        var response = getTopSpacesResponse();
 
         final int countAfter = jpaTemplate.count(SpaceJpaEntity.class);
 
@@ -288,7 +297,7 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
 
         final int countBefore = jpaTemplate.count(SpaceJpaEntity.class);
 
-        var response = getTopSpacesResponse(Locale.ENGLISH.getLanguage());
+        var response = getTopSpacesResponse();
 
         final int countAfter = jpaTemplate.count(SpaceJpaEntity.class);
 
@@ -314,8 +323,8 @@ public class GetTopSpacesScenarioTest extends AbstractScenarioTest {
         return id.longValue();
     }
 
-    private GetTopSpacesResponseDto getTopSpacesResponse(String EN) {
-        return spaceHelper.getTopSpaces(context, EN)
+    private GetTopSpacesResponseDto getTopSpacesResponse() {
+        return spaceHelper.getTopSpaces(context)
             .then()
             .statusCode(200)
             .extract()
