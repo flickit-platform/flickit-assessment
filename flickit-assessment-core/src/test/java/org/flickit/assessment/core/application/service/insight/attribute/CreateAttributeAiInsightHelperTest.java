@@ -15,6 +15,7 @@ import org.flickit.assessment.core.application.service.insight.attribute.CreateA
 import org.flickit.assessment.core.application.service.insight.attribute.CreateAttributeAiInsightHelper.AttributeInsightsParam;
 import org.flickit.assessment.core.test.fixture.application.AttributeValueMother;
 import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
@@ -24,6 +25,7 @@ import org.springframework.ai.chat.prompt.Prompt;
 import java.io.ByteArrayInputStream;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ATTRIBUTE_AI_INSIGHT_ALL_QUESTIONS_NOT_ANSWERED;
@@ -67,6 +69,21 @@ class CreateAttributeAiInsightHelperTest {
 
     @Captor
     private ArgumentCaptor<Prompt> promptArgumentCaptor;
+
+    @BeforeEach
+    void setUp() {
+        Executor executor = Runnable::run;
+        helper = new CreateAttributeAiInsightHelper(
+            loadAttributeValuePort,
+            loadMaturityLevelsPort,
+            getAssessmentProgressPort,
+            appAiProperties,
+            createAttributeScoresFilePort,
+            uploadAttributeScoresFilePort,
+            callAiPromptPort,
+            executor
+        );
+    }
 
     private final AssessmentResult assessmentResult = validResult();
     private final GetAssessmentProgressPort.Result completeProgress = new GetAssessmentProgressPort.Result(assessmentResult.getId(), 10, 10);
