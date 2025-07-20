@@ -15,17 +15,18 @@ import org.flickit.assessment.core.application.service.insight.attribute.CreateA
 import org.flickit.assessment.core.application.service.insight.attribute.CreateAttributeAiInsightHelper.AttributeInsightsParam;
 import org.flickit.assessment.core.test.fixture.application.AttributeValueMother;
 import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.io.ByteArrayInputStream;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ATTRIBUTE_AI_INSIGHT_ALL_QUESTIONS_NOT_ANSWERED;
@@ -64,6 +65,9 @@ class CreateAttributeAiInsightHelperTest {
     @Mock
     private CallAiPromptPort callAiPromptPort;
 
+    @Spy
+    private ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+
     @Captor
     private ArgumentCaptor<Class<CreateAttributeAiInsightHelper.AiResponseDto>> classCaptor;
 
@@ -72,17 +76,12 @@ class CreateAttributeAiInsightHelperTest {
 
     @BeforeEach
     void setUp() {
-        Executor executor = Runnable::run;
-        helper = new CreateAttributeAiInsightHelper(
-            loadAttributeValuePort,
-            loadMaturityLevelsPort,
-            getAssessmentProgressPort,
-            appAiProperties,
-            createAttributeScoresFilePort,
-            uploadAttributeScoresFilePort,
-            callAiPromptPort,
-            executor
-        );
+        executor.initialize();
+    }
+
+    @AfterEach
+    void clear() {
+        executor.shutdown();
     }
 
     private final AssessmentResult assessmentResult = validResult();
