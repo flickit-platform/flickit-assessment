@@ -50,6 +50,8 @@ public class AppAiProperties {
             Provide ALL output strictly in {language} language.
             For an assessment, titled {assessmentTitle}, an assessment platform has evaluated a software product by analyzing responses to various questions, each influencing specific quality attributes.
             The user has set maturity level targets for each attribute, and the platform has provided actionable advice items, highlighting which questions should be improved to achieve these targets.
+            Additionally, include an attribute-level target title corresponding to each attribute specified in the provided attribute targets.
+            These titles should introduce the focus on improving the respective attributes, must be integrated into the final summary paragraph (not within the individual advice items).
             The advice includes the current status (selected option) and the goal status for each relevant question.
             Task: Based on the provided Advice Recommendations, generate up to 10 Advice Items including only as many points as there are distinct pieces of actionable advice. Each Advice Recommendation includes the following details:
                 title: Generate a concise, action-driven title (max 100 characters) that starts with a strong verb and clearly conveys the intended action.
