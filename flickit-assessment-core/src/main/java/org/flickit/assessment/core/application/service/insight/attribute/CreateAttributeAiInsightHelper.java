@@ -6,7 +6,6 @@ import lombok.SneakyThrows;
 import org.flickit.assessment.common.application.port.out.CallAiPromptPort;
 import org.flickit.assessment.common.config.AppAiProperties;
 import org.flickit.assessment.common.exception.ValidationException;
-import org.flickit.assessment.core.application.domain.Assessment;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.Attribute;
 import org.flickit.assessment.core.application.domain.AttributeValue;
@@ -61,12 +60,10 @@ public class CreateAttributeAiInsightHelper {
         if (!appAiProperties.isEnabled())
             throw new UnsupportedOperationException(ASSESSMENT_AI_IS_DISABLED);
 
-        var assessmentTitle = getAssessmentTitle(assessment);
         var maturityLevels = loadMaturityLevelsPort.loadAllTranslated(param.assessmentResult());
         var file = createAttributeScoresFilePort.generateFile(attributeValue, maturityLevels);
         var prompt = createPrompt(attribute.getTitle(),
             attribute.getDescription(),
-            assessmentTitle,
             file.text(),
             param.locale().getDisplayLanguage());
         var aiInsight = callAiPromptPort.call(prompt, AiResponseDto.class).value();
@@ -92,7 +89,6 @@ public class CreateAttributeAiInsightHelper {
             throw new UnsupportedOperationException(ASSESSMENT_AI_IS_DISABLED);
 
         var attributeValues = loadAttributeValuePort.load(param.assessmentResult().getId(), param.attributeIds());
-        var assessmentTitle = getAssessmentTitle(assessment);
         var maturityLevels = loadMaturityLevelsPort.loadAllTranslated(param.assessmentResult());
         var attributeIdToFile = attributeValues.stream()
             .collect(toMap(av -> av.getAttribute().getId(),
@@ -100,7 +96,6 @@ public class CreateAttributeAiInsightHelper {
         var attributeToPromptMap = attributeValues.stream()
             .collect(toMap(AttributeValue::getAttribute, attributeValue -> createPrompt(attributeValue.getAttribute().getTitle(),
                 attributeValue.getAttribute().getDescription(),
-                assessmentTitle,
                 attributeIdToFile.get(attributeValue.getAttribute().getId()).text(),
                 param.locale().getDisplayLanguage())));
 
@@ -120,21 +115,13 @@ public class CreateAttributeAiInsightHelper {
                                          Locale locale) {
     }
 
-    private String getAssessmentTitle(Assessment assessment) {
-        return assessment.getShortTitle() != null
-            ? assessment.getShortTitle()
-            : assessment.getTitle();
-    }
-
     private Prompt createPrompt(String attributeTitle,
                                 String attributeDescription,
-                                String assessmentTitle,
                                 String fileContent,
                                 String language) {
         return new PromptTemplate(appAiProperties.getPrompt().getAttributeInsight(),
             Map.of("attributeTitle", attributeTitle,
                 "attributeDescription", attributeDescription,
-                "assessmentTitle", assessmentTitle,
                 "fileContent", fileContent,
                 "language", language))
             .create();
