@@ -6,7 +6,6 @@ import org.flickit.assessment.advice.application.port.out.adviceitem.CreateAdvic
 import org.flickit.assessment.advice.application.port.out.advicenarration.CreateAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.LoadAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.UpdateAdviceNarrationPort;
-import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentPort;
 import org.flickit.assessment.advice.application.port.out.atribute.LoadAttributesPort;
 import org.flickit.assessment.advice.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.advice.application.service.advicenarration.CreateAiAdviceNarrationHelper.AdviceDto;
@@ -40,9 +39,6 @@ class CreateAiAdviceNarrationHelperTest {
 
     @InjectMocks
     private CreateAiAdviceNarrationHelper helper;
-
-    @Mock
-    private LoadAssessmentPort loadAssessmentPort;
 
     @Mock
     private LoadMaturityLevelsPort loadMaturityLevelsPort;
@@ -108,7 +104,6 @@ class CreateAiAdviceNarrationHelperTest {
             loadAdviceNarrationPort,
             createAdviceNarrationPort,
             loadAttributesPort,
-            loadAssessmentPort,
             loadMaturityLevelsPort,
             createAdviceItemPort);
     }
@@ -118,15 +113,13 @@ class CreateAiAdviceNarrationHelperTest {
         var assessment = assessmentWithShortTitle("ShortTitle");
 
         var expectedPrompt = new PromptTemplate(appAiProperties.getPrompt().getAdviceNarrationAndAdviceItems(),
-            Map.of("assessmentTitle", assessment.getShortTitle(),
-                "attributeTargets", "TargetAttribute[attribute=Reliability, targetMaturityLevel=Great]",
+            Map.of("attributeTargets", "TargetAttribute[attribute=Reliability, targetMaturityLevel=Great]",
                 "adviceRecommendations", "AdviceRecommendation[question=title, currentOption=answeredOption, recommendedOption=recommendedOption]",
                 "language", assessmentResult.getLanguage().getTitle())).create();
 
         when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.empty());
         when(loadMaturityLevelsPort.loadAll(assessmentResult.getAssessmentId())).thenReturn(maturityLevels);
         when(loadAttributesPort.loadByIdsAndAssessmentId(List.of(attributeLevelTargets.getFirst().getAttributeId()), assessmentResult.getAssessmentId())).thenReturn(attributes);
-        when(loadAssessmentPort.loadById(assessmentResult.getAssessmentId())).thenReturn(assessment);
         when(callAiPromptPort.call(promptArgumentCaptor.capture(), classCaptor.capture())).thenReturn(aiAdvice);
 
         helper.createAiAdviceNarration(assessmentResult, adviceListItems, attributeLevelTargets);
@@ -157,15 +150,13 @@ class CreateAiAdviceNarrationHelperTest {
 
         var adviceNarration = new AdviceNarration(UUID.randomUUID(), assessmentResult.getId(), aiNarration, null, LocalDateTime.now(), null, UUID.randomUUID());
         var expectedPrompt = new PromptTemplate(appAiProperties.getPrompt().getAdviceNarrationAndAdviceItems(),
-            Map.of("assessmentTitle", assessment.getTitle(),
-                "attributeTargets", "TargetAttribute[attribute=Reliability, targetMaturityLevel=Great]",
+            Map.of("attributeTargets", "TargetAttribute[attribute=Reliability, targetMaturityLevel=Great]",
                 "adviceRecommendations", "AdviceRecommendation[question=title, currentOption=answeredOption, recommendedOption=recommendedOption]",
                 "language", assessmentResult.getLanguage().getTitle())).create();
 
         when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(adviceNarration));
         when(loadMaturityLevelsPort.loadAll(assessmentResult.getAssessmentId())).thenReturn(maturityLevels);
         when(loadAttributesPort.loadByIdsAndAssessmentId(List.of(attributeLevelTargets.getFirst().getAttributeId()), assessmentResult.getAssessmentId())).thenReturn(attributes);
-        when(loadAssessmentPort.loadById(assessmentResult.getAssessmentId())).thenReturn(assessment);
         when(callAiPromptPort.call(promptArgumentCaptor.capture(), classCaptor.capture())).thenReturn(aiAdvice);
 
         helper.createAiAdviceNarration(assessmentResult, adviceListItems, attributeLevelTargets);
@@ -192,15 +183,13 @@ class CreateAiAdviceNarrationHelperTest {
 
         var adviceNarration = new AdviceNarration(UUID.randomUUID(), assessmentResult.getId(), aiNarration, null, LocalDateTime.now(), null, UUID.randomUUID());
         var expectedPrompt = new PromptTemplate(appAiProperties.getPrompt().getAdviceNarrationAndAdviceItems(),
-            Map.of("assessmentTitle", assessment.getShortTitle(),
-                "attributeTargets", "TargetAttribute[attribute=Reliability, targetMaturityLevel=Great]",
+            Map.of("attributeTargets", "TargetAttribute[attribute=Reliability, targetMaturityLevel=Great]",
                 "adviceRecommendations", "AdviceRecommendation[question=title, currentOption=answeredOption, recommendedOption=recommendedOption]",
                 "language", assessmentResult.getLanguage().getTitle())).create();
 
         when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(adviceNarration));
         when(loadMaturityLevelsPort.loadAll(assessmentResult.getAssessmentId())).thenReturn(maturityLevels);
         when(loadAttributesPort.loadByIdsAndAssessmentId(List.of(attributeLevelTargets.getFirst().getAttributeId()), assessmentResult.getAssessmentId())).thenReturn(attributes);
-        when(loadAssessmentPort.loadById(assessmentResult.getAssessmentId())).thenReturn(assessment);
         when(callAiPromptPort.call(promptArgumentCaptor.capture(), classCaptor.capture())).thenReturn(aiAdvice);
 
         helper.createAiAdviceNarration(assessmentResult, adviceListItems, attributeLevelTargets);
@@ -244,9 +233,8 @@ class CreateAiAdviceNarrationHelperTest {
         properties.setEnabled(true);
         properties.setPrompt(new AppAiProperties.Prompt());
         properties.setSaveAiInputFileEnabled(true);
-        properties.getPrompt().setAdviceNarrationAndAdviceItems("The assessment \"{assessmentTitle}\" " +
-            "with attribute targets {attributeTargets} and recommendations {adviceRecommendations} has been evaluated. " +
-            "Provide the result in the {language} language");
+        properties.getPrompt().setAdviceNarrationAndAdviceItems("The assessment with attribute targets {attributeTargets}" +
+            "and recommendations {adviceRecommendations} has been evaluated. Provide the result in the {language} language");
         return properties;
     }
 }

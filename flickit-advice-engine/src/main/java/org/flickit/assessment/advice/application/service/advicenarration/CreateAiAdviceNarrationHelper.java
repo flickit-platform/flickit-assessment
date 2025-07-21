@@ -7,7 +7,6 @@ import org.flickit.assessment.advice.application.port.out.adviceitem.CreateAdvic
 import org.flickit.assessment.advice.application.port.out.advicenarration.CreateAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.LoadAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.UpdateAdviceNarrationPort;
-import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentPort;
 import org.flickit.assessment.advice.application.port.out.atribute.LoadAttributesPort;
 import org.flickit.assessment.advice.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.common.application.MessageBundle;
@@ -37,7 +36,6 @@ public class CreateAiAdviceNarrationHelper {
     private final LoadMaturityLevelsPort loadMaturityLevelsPort;
     private final LoadAttributesPort loadAttributesPort;
     private final LoadAdviceNarrationPort loadAdviceNarrationPort;
-    private final LoadAssessmentPort loadAssessmentPort;
     private final CreateAdviceNarrationPort createAdviceNarrationPort;
     private final CallAiPromptPort callAiPromptPort;
     private final CreateAdviceItemPort createAdviceItemPort;
@@ -72,9 +70,6 @@ public class CreateAiAdviceNarrationHelper {
     }
 
     private Prompt createPrompt(List<AdviceListItem> adviceItems, List<AttributeLevelTarget> targets, AssessmentResult assessmentResult) {
-        var assessment = loadAssessmentPort.loadById(assessmentResult.getAssessmentId());
-        var assessmentTitle = assessment.getShortTitle() != null ? assessment.getShortTitle() : assessment.getTitle();
-
         var maturityLevelsMap = loadMaturityLevelsPort.loadAll(assessmentResult.getAssessmentId()).stream()
             .collect(Collectors.toMap(MaturityLevel::getId, MaturityLevel::getTitle));
 
@@ -97,8 +92,7 @@ public class CreateAiAdviceNarrationHelper {
             .toList();
 
         return new PromptTemplate(appAiProperties.getPrompt().getAdviceNarrationAndAdviceItems(),
-            Map.of("assessmentTitle", assessmentTitle,
-                "attributeTargets", targetAttributes,
+            Map.of("attributeTargets", targetAttributes,
                 "adviceRecommendations", adviceRecommendations,
                 "language", assessmentResult.getLanguage().getTitle()))
             .create();
