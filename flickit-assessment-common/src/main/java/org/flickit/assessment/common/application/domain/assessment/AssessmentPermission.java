@@ -16,7 +16,6 @@ public enum AssessmentPermission {
     VIEW_ASSESSMENT_LIST("viewAssessmentList"),
     VIEW_ASSESSMENT_PROGRESS("viewAssessmentProgress"),
     VIEW_ASSESSMENT_REPORT("viewAssessmentReport"),
-    EXPORT_ASSESSMENT_REPORT("exportAssessmentReport"),
     CREATE_ATTRIBUTE_INSIGHT("createAttributeInsight"),
     CALCULATE_ASSESSMENT("calculateAssessment"),
     MIGRATE_KIT_VERSION("migrateKitVersion"),
@@ -70,7 +69,8 @@ public enum AssessmentPermission {
     VIEW_ASSESSMENT_INSIGHTS("viewAssessmentInsights"),
     APPROVE_ALL_ANSWERS("approveAllAnswers"),
     VIEW_ATTRIBUTE_MEASURES("viewAttributeMeasures"),
-    REFRESH_ASSESSMENT_ADVICE("refreshAssessmentAdvice"),;
+    REFRESH_ASSESSMENT_ADVICE("refreshAssessmentAdvice"),
+    VIEW_ASSESSMENT_NEXT_QUESTIONNAIRE("viewAssessmentNextQuestionnaire"),;
 
     private final String code;
 }
