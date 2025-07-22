@@ -36,7 +36,7 @@ public class AppAiProperties {
             Each question's weight reflects its importance and effectiveness, while the score—ranging between 0 and 1—indicates the strength of that question on the {attributeTitle} attribute.
             Both the weight and score contribute to reflecting the significance of each question within the assessment, indicating its impact on the overall maturity evaluation.
             Please generate an executive summary highlighting the main strengths and weaknesses in less than 100 words, presented as a single paragraph without extra line breaks.
-            Start directly with specific strengths and weaknesses, avoiding introductory sentences. Consider discussing strengths and weaknesses.
+            Start directly with specific strengths and weaknesses, avoiding introductory sentences.
             Use polite and considerate language, avoiding any derogatory terms, and do not mention the scores of individual questions.
             Please keep your summary descriptive and avoid prescribing actions or solutions. Do not include generic conclusions such as "Overall, the {attributeTitle} maturity level is deemed acceptable."
             Please provide the result in the {language} language. It is necessary that the result be an exact translation of the summary;
