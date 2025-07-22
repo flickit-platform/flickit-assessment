@@ -13,6 +13,7 @@ import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.domain.adviceitem.CostLevel;
 import org.flickit.assessment.common.application.domain.adviceitem.ImpactLevel;
 import org.flickit.assessment.common.application.domain.adviceitem.PriorityLevel;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.application.port.out.CallAiPromptPort;
 import org.flickit.assessment.common.config.AppAiProperties;
 import org.springframework.ai.chat.prompt.Prompt;
@@ -50,7 +51,7 @@ public class CreateAiAdviceNarrationHelper {
 
         var adviceNarration = loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId());
 
-        var prompt = createPrompt(adviceListItems, attributeLevelTargets, assessmentResult);
+        var prompt = createPrompt(adviceListItems, attributeLevelTargets, assessmentResult.getAssessmentId(), assessmentResult.getLanguage());
         AdviceDto aiAdvice = callAiPromptPort.call(prompt, AdviceDto.class);
 
         var adviceItems = aiAdvice.adviceItems().stream()
@@ -69,14 +70,14 @@ public class CreateAiAdviceNarrationHelper {
         return aiAdvice.narration();
     }
 
-    private Prompt createPrompt(List<AdviceListItem> adviceItems, List<AttributeLevelTarget> targets, AssessmentResult assessmentResult) {
-        var maturityLevelsMap = loadMaturityLevelsPort.loadAll(assessmentResult.getAssessmentId()).stream()
+    private Prompt createPrompt(List<AdviceListItem> adviceItems, List<AttributeLevelTarget> targets, UUID assessmentId, KitLanguage kitLanguage) {
+        var maturityLevelsMap = loadMaturityLevelsPort.loadAll(assessmentId).stream()
             .collect(Collectors.toMap(MaturityLevel::getId, MaturityLevel::getTitle));
 
         List<Long> targetAttributeIds = targets.stream()
             .map(AttributeLevelTarget::getAttributeId)
             .toList();
-        var attributesMap = loadAttributesPort.loadByIdsAndAssessmentId(targetAttributeIds, assessmentResult.getAssessmentId()).stream()
+        var attributesMap = loadAttributesPort.loadByIdsAndAssessmentId(targetAttributeIds, assessmentId).stream()
             .collect(Collectors.toMap(Attribute::getId, Attribute::getTitle));
 
         var adviceRecommendations = adviceItems.stream()
@@ -94,7 +95,7 @@ public class CreateAiAdviceNarrationHelper {
         return new PromptTemplate(appAiProperties.getPrompt().getAdviceNarrationAndAdviceItems(),
             Map.of("attributeTargets", targetAttributes,
                 "adviceRecommendations", adviceRecommendations,
-                "language", assessmentResult.getLanguage().getTitle()))
+                "language", kitLanguage.getTitle()))
             .create();
     }
 
