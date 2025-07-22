@@ -70,7 +70,7 @@ public class AppAiProperties {
             Also, always use the name of the assessment as it is, without translating it, and enclose it in double quotations.
             Wrap this paragraph in an HTML <p> tag without any class attributes. Ensure the response is concise but still fully translated into {language} language.
             Ensure that the advice is polite, constructive, and focused on actionable improvements while being tailored for an expert software assessor.
-            Avoid referring to individual scores or negative phrasing. Keep the tone professional and supportive;
+            Avoid referring to individual scores or negative phrasing. Keep the tone professional and supportive.
             Make sure the overall response size, including HTML tags, remains under 1000 characters and excludes any markdown.
             Attribute Targets: {attributeTargets}
             Advice Recommendations: {adviceRecommendations}
