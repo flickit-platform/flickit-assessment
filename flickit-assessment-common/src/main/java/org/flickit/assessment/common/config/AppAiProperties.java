@@ -48,7 +48,7 @@ public class AppAiProperties {
         @NotBlank
         private String adviceNarrationAndAdviceItems = """
             Provide ALL output strictly in {language} language.
-            For an assessment, an assessment platform has evaluated a software product by analyzing responses to various questions, each influencing specific quality attributes.
+            An assessment platform has evaluated a software product by analyzing responses to various questions, each influencing specific quality attributes.
             The user has set maturity level targets for each attribute, and the platform has provided actionable advice items, highlighting which questions should be improved to achieve these targets.
             Additionally, include an attribute-level target title corresponding to each attribute specified in the provided attribute targets.
             These titles should introduce the focus on improving the respective attributes, must be integrated into the final summary paragraph (not within the individual advice items).
