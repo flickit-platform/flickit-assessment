@@ -20,8 +20,18 @@ public class AppAiProperties {
 
     private boolean saveAiInputFileEnabled = false;
 
+    private Executors executors = new Executors();
+
     @Valid
     private Prompt prompt = new Prompt();
+
+    @Getter
+    @Setter
+    @ToString
+    public static class Executors {
+
+        private TaskExecutorProps attributeInsight = new TaskExecutorProps();
+    }
 
     @Setter
     @Getter
