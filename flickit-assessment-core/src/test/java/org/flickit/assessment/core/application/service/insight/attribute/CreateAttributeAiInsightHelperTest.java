@@ -110,9 +110,9 @@ class CreateAttributeAiInsightHelperTest {
 
     @Test
     void testCreateAttributeAiInsightHelper_whenAiEnabledAndSaveFileEnabled_thenGenerateAndUploadFile() {
-        var expectedPrompt = "The attribute " + attributeValue.getAttribute().getTitle() + " with this description " + attributeValue.getAttribute().getDescription() +
-            " for " + attributeInsightParam.assessmentResult().getAssessment().getShortTitle() + " was reviewed in " + fileContent + ". " +
-            "Provide the result in " + attributeInsightParam.assessmentResult().getAssessment().getAssessmentKit().getLanguage().getTitle() + ".";
+        var expectedPrompt = "The attribute " + attributeValue.getAttribute().getTitle() + " with this description " +
+            attributeValue.getAttribute().getDescription() + " was reviewed in " + fileContent + ". Provide the result in " +
+            attributeInsightParam.assessmentResult().getAssessment().getAssessmentKit().getLanguage().getTitle() + ".";
         var fileReportPath = "path/to/file";
 
         when(getAssessmentProgressPort.getProgress(assessmentResult.getAssessment().getId())).thenReturn(completeProgress);
@@ -139,8 +139,7 @@ class CreateAttributeAiInsightHelperTest {
     @Test
     void testCreateAttributeAiInsightHelper_whenAiEnabledAndSaveFilesDisabled_thenGenerateAndNotSaveFileAndPersistInsight() {
         String expectedPrompt = "The attribute " + attributeValue.getAttribute().getTitle() + " with this description " +
-            attributeValue.getAttribute().getDescription() + " for " + attributeInsightParam.assessmentResult().getAssessment().getShortTitle() +
-            " was reviewed in " + fileContent + ". " + "Provide the result in " +
+            attributeValue.getAttribute().getDescription() + " was reviewed in " + fileContent + ". Provide the result in " +
             attributeInsightParam.assessmentResult().getAssessment().getAssessmentKit().getLanguage().getTitle() + ".";
 
         when(getAssessmentProgressPort.getProgress(assessmentResult.getAssessment().getId())).thenReturn(completeProgress);
@@ -199,9 +198,9 @@ class CreateAttributeAiInsightHelperTest {
 
     @Test
     void testCreateAttributeAiInsightsHelper_whenAiEnabledAndSaveFileEnabled_thenGenerateAndUploadFile() {
-        var expectedPrompt = "The attribute " + attributeValue.getAttribute().getTitle() + " with this description " + attributeValue.getAttribute().getDescription() +
-            " for " + attributeInsightParam.assessmentResult().getAssessment().getShortTitle() + " was reviewed in " + fileContent + ". " +
-            "Provide the result in " + attributeInsightParam.assessmentResult().getAssessment().getAssessmentKit().getLanguage().getTitle() + ".";
+        var expectedPrompt = "The attribute " + attributeValue.getAttribute().getTitle() + " with this description " +
+            attributeValue.getAttribute().getDescription() + " was reviewed in " + fileContent + ". Provide the result in " +
+            attributeInsightParam.assessmentResult().getAssessment().getAssessmentKit().getLanguage().getTitle() + ".";
         var fileReportPath = "path/to/file";
 
         when(getAssessmentProgressPort.getProgress(assessmentResult.getAssessment().getId())).thenReturn(completeProgress);
@@ -229,8 +228,7 @@ class CreateAttributeAiInsightHelperTest {
     @Test
     void testCreateAttributeAiInsightsHelper_whenAiEnabledAndSaveFilesDisabled_thenGenerateAndNotSaveFileAndPersistInsight() {
         String expectedPrompt = "The attribute " + attributeValue.getAttribute().getTitle() + " with this description " +
-            attributeValue.getAttribute().getDescription() + " for " + attributeInsightParam.assessmentResult().getAssessment().getShortTitle() +
-            " was reviewed in " + fileContent + ". " + "Provide the result in " +
+            attributeValue.getAttribute().getDescription() + " was reviewed in " + fileContent + ". Provide the result in " +
             attributeInsightParam.assessmentResult().getAssessment().getAssessmentKit().getLanguage().getTitle() + ".";
 
         when(getAssessmentProgressPort.getProgress(assessmentResult.getAssessment().getId())).thenReturn(completeProgress);
@@ -263,8 +261,7 @@ class CreateAttributeAiInsightHelperTest {
         properties.setPrompt(new AppAiProperties.Prompt());
         properties.setSaveAiInputFileEnabled(true);
         properties.getPrompt().setAttributeInsight("The attribute {attributeTitle} with this description " +
-            "{attributeDescription} for {assessmentTitle} was reviewed in {fileContent}. " +
-            "Provide the result in {language}.");
+            "{attributeDescription} was reviewed in {fileContent}. Provide the result in {language}.");
         return properties;
     }
 
