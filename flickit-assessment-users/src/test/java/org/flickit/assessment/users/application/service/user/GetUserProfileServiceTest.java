@@ -39,6 +39,7 @@ class GetUserProfileServiceTest {
 
     private final UUID currentUserId = UUID.randomUUID();
     private GetUserProfileUseCase.Param param = createParam(b -> b.currentUserId(currentUserId));
+    private static final Duration EXPIRY_DURATION = Duration.ofDays(1);
 
     @Test
     void testGetUserProfile_whenParametersAreValid_thenReturnValidResult() {
@@ -46,7 +47,7 @@ class GetUserProfileServiceTest {
         String pictureLink = "cdn.flickit.org" + expectedUser.getPicturePath();
 
         when(loadUserPort.loadUser(currentUserId)).thenReturn(expectedUser);
-        when(createFileDownloadLinkPort.createDownloadLink(anyString(), any(Duration.class))).thenReturn(pictureLink);
+        when(createFileDownloadLinkPort.createDownloadLink(expectedUser.getPicturePath(), EXPIRY_DURATION)).thenReturn(pictureLink);
 
         GetUserProfileUseCase.UserProfile actualUser = service.getUserProfile(param);
 
