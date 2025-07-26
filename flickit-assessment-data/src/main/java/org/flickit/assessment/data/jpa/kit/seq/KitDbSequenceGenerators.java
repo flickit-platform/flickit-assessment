@@ -73,4 +73,8 @@ public class KitDbSequenceGenerators {
     public Long generateKitCustomId() {
         return sequenceGenerator.generate("fak_kit_custom_id_seq");
     }
+
+    public Long generateUserSurveyId() {
+        return sequenceGenerator.generate("fak_user_survey_id_seq");
+    }
 }
