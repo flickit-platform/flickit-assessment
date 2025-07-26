@@ -35,7 +35,7 @@ class GetUserProfileServiceTest {
     private CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
     @Test
-    void testGetUserProfile_ValidInputs_ValidResult() {
+    void testGetUserProfile_whenParametersAreValid_thenReturnValidResult() {
         UUID currentUserId = UUID.randomUUID();
         GetUserProfileUseCase.Param param = new GetUserProfileUseCase.Param(currentUserId);
         User expectedUser = createUser(currentUserId, "path/to/picture");
@@ -56,7 +56,7 @@ class GetUserProfileServiceTest {
     }
 
     @Test
-    void testGetUserProfile_NullPicture_ValidResult() {
+    void testGetUserProfile_whenParametersAreValidAnPictureIsNull_thenReturnValidResultWithoutPictureLink() {
         UUID currentUserId = UUID.randomUUID();
         GetUserProfileUseCase.Param param = new GetUserProfileUseCase.Param(currentUserId);
         User expectedUser = createUser(currentUserId, null);
@@ -75,7 +75,7 @@ class GetUserProfileServiceTest {
     }
 
     @Test
-    void testGetUserProfile_BlankPicture_ValidResult() {
+    void testGetUserProfile_whenParametersAreValidAndPictureIsBlank_thenReturnValidResultWithoutPictureLink() {
         UUID currentUserId = UUID.randomUUID();
         GetUserProfileUseCase.Param param = new GetUserProfileUseCase.Param(currentUserId);
         User expectedUser = createUser(currentUserId, "");
@@ -94,7 +94,7 @@ class GetUserProfileServiceTest {
     }
 
     @Test
-    void testGetUserProfile_ValidInput_UserNotFound() {
+    void testGetUserProfile_whenUserDoesNotExist_thenThrowResourceNotFoundException() {
         UUID currentUserId = UUID.randomUUID();
         GetUserProfileUseCase.Param param = new GetUserProfileUseCase.Param(currentUserId);
 
