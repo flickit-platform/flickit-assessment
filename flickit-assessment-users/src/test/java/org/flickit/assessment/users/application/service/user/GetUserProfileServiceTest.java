@@ -42,6 +42,18 @@ class GetUserProfileServiceTest {
     private static final Duration EXPIRY_DURATION = Duration.ofDays(1);
 
     @Test
+    void testGetUserProfile_whenUserDoesNotExist_thenThrowResourceNotFoundException() {
+        param = createParam(b -> b.currentUserId(UUID.randomUUID()));
+
+        when(loadUserPort.loadUser(param.getCurrentUserId())).thenThrow(new ResourceNotFoundException(USER_ID_NOT_FOUND));
+
+        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.getUserProfile(param));
+        assertThat(throwable).hasMessage(USER_ID_NOT_FOUND);
+
+        verifyNoInteractions(createFileDownloadLinkPort);
+    }
+
+    @Test
     void testGetUserProfile_whenParametersAreValid_thenReturnValidResult() {
         User expectedUser = createUser(currentUserId, "path/to/picture");
         String pictureLink = "cdn.flickit.org" + expectedUser.getPicturePath();
@@ -94,19 +106,6 @@ class GetUserProfileServiceTest {
         assertEquals(expectedUser.getBio(), actualUser.bio());
         assertEquals(expectedUser.getLinkedin(), actualUser.linkedin());
         assertNull(actualUser.pictureLink());
-
-        verifyNoInteractions(createFileDownloadLinkPort);
-    }
-
-    @Test
-    void testGetUserProfile_whenUserDoesNotExist_thenThrowResourceNotFoundException() {
-        param = createParam(b -> b.currentUserId(UUID.randomUUID()));
-
-        when(loadUserPort.loadUser(param.getCurrentUserId())).thenThrow(new ResourceNotFoundException(USER_ID_NOT_FOUND));
-
-        var throwable = assertThrows(ResourceNotFoundException.class,
-            () -> service.getUserProfile(param));
-        assertThat(throwable).hasMessage(USER_ID_NOT_FOUND);
 
         verifyNoInteractions(createFileDownloadLinkPort);
     }
