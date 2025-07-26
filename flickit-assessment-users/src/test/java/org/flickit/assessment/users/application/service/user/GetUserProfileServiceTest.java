@@ -5,6 +5,7 @@ import org.flickit.assessment.users.application.domain.User;
 import org.flickit.assessment.users.application.port.in.user.GetUserProfileUseCase;
 import org.flickit.assessment.users.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.flickit.assessment.users.application.port.out.user.LoadUserPort;
+import org.flickit.assessment.users.application.port.out.usersurvey.LoadUserSurveyPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -13,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Duration;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.users.common.ErrorMessageKey.USER_ID_NOT_FOUND;
@@ -20,6 +22,7 @@ import static org.flickit.assessment.users.test.fixture.application.UserMother.c
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -34,10 +37,11 @@ class GetUserProfileServiceTest {
     @Mock
     private CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
+    private final UUID currentUserId = UUID.randomUUID();
+    private GetUserProfileUseCase.Param param = createParam(b -> b.currentUserId(currentUserId));
+
     @Test
     void testGetUserProfile_whenParametersAreValid_thenReturnValidResult() {
-        UUID currentUserId = UUID.randomUUID();
-        GetUserProfileUseCase.Param param = new GetUserProfileUseCase.Param(currentUserId);
         User expectedUser = createUser(currentUserId, "path/to/picture");
         String pictureLink = "cdn.flickit.org" + expectedUser.getPicturePath();
 
@@ -57,8 +61,6 @@ class GetUserProfileServiceTest {
 
     @Test
     void testGetUserProfile_whenParametersAreValidAnPictureIsNull_thenReturnValidResultWithoutPictureLink() {
-        UUID currentUserId = UUID.randomUUID();
-        GetUserProfileUseCase.Param param = new GetUserProfileUseCase.Param(currentUserId);
         User expectedUser = createUser(currentUserId, null);
 
         when(loadUserPort.loadUser(currentUserId)).thenReturn(expectedUser);
@@ -72,12 +74,12 @@ class GetUserProfileServiceTest {
         assertEquals(expectedUser.getBio(), actualUser.bio());
         assertEquals(expectedUser.getLinkedin(), actualUser.linkedin());
         assertNull(actualUser.pictureLink());
+
+        verifyNoInteractions(createFileDownloadLinkPort);
     }
 
     @Test
     void testGetUserProfile_whenParametersAreValidAndPictureIsBlank_thenReturnValidResultWithoutPictureLink() {
-        UUID currentUserId = UUID.randomUUID();
-        GetUserProfileUseCase.Param param = new GetUserProfileUseCase.Param(currentUserId);
         User expectedUser = createUser(currentUserId, "");
 
         when(loadUserPort.loadUser(currentUserId)).thenReturn(expectedUser);
@@ -91,17 +93,31 @@ class GetUserProfileServiceTest {
         assertEquals(expectedUser.getBio(), actualUser.bio());
         assertEquals(expectedUser.getLinkedin(), actualUser.linkedin());
         assertNull(actualUser.pictureLink());
+
+        verifyNoInteractions(createFileDownloadLinkPort);
     }
 
     @Test
     void testGetUserProfile_whenUserDoesNotExist_thenThrowResourceNotFoundException() {
-        UUID currentUserId = UUID.randomUUID();
-        GetUserProfileUseCase.Param param = new GetUserProfileUseCase.Param(currentUserId);
+        param = createParam(b -> b.currentUserId(UUID.randomUUID()));
 
-        when(loadUserPort.loadUser(currentUserId)).thenThrow(new ResourceNotFoundException(USER_ID_NOT_FOUND));
+        when(loadUserPort.loadUser(param.getCurrentUserId())).thenThrow(new ResourceNotFoundException(USER_ID_NOT_FOUND));
 
         var throwable = assertThrows(ResourceNotFoundException.class,
             () -> service.getUserProfile(param));
         assertThat(throwable).hasMessage(USER_ID_NOT_FOUND);
+
+        verifyNoInteractions(createFileDownloadLinkPort);
+    }
+
+    private GetUserProfileUseCase.Param createParam(Consumer<GetUserProfileUseCase.Param.ParamBuilder> changer) {
+        var paramBuilder = paramBuilder();
+        changer.accept(paramBuilder);
+        return paramBuilder.build();
+    }
+
+    private GetUserProfileUseCase.Param.ParamBuilder paramBuilder() {
+        return GetUserProfileUseCase.Param.builder()
+            .currentUserId(UUID.randomUUID());
     }
 }
