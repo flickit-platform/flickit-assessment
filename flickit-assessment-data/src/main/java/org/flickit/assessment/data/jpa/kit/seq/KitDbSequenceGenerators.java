@@ -75,6 +75,6 @@ public class KitDbSequenceGenerators {
     }
 
     public Long generateUserSurveyId() {
-        return sequenceGenerator.generate("fak_user_survey_id_seq");
+        return sequenceGenerator.generate("fau_user_survey_id_seq");
     }
 }

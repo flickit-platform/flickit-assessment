@@ -49,7 +49,7 @@
     </changeSet>
 
     <changeSet id="0.63-04" author="Maziyar Gerami">
-        <createSequence sequenceName="fak_user_survey_id_seq"
+        <createSequence sequenceName="fau_user_survey_id_seq"
                         dataType="bigint"
                         startValue="1"/>
     </changeSet>
