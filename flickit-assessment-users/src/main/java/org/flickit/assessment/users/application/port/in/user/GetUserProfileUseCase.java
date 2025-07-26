@@ -21,13 +21,13 @@ public interface GetUserProfileUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
+        @Builder
         public Param(UUID currentUserId) {
             this.currentUserId = currentUserId;
             validateSelf();
         }
     }
 
-    @Builder
     record UserProfile(UUID id,
                        String email,
                        String displayName,
