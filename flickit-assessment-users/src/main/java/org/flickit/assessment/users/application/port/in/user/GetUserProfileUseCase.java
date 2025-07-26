@@ -1,6 +1,7 @@
 package org.flickit.assessment.users.application.port.in.user;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
@@ -26,6 +27,7 @@ public interface GetUserProfileUseCase {
         }
     }
 
+    @Builder
     record UserProfile(UUID id,
                        String email,
                        String displayName,
