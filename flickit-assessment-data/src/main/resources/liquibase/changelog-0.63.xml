@@ -44,8 +44,7 @@
     <changeSet id="0.63-03" author="Maziyar Gerami">
         <addUniqueConstraint columnNames="user_id"
                              constraintName="uq_fau_user_survey_userId"
-                             tableName="fau_user_survey"
-                             initiallyDeferred="true"/>
+                             tableName="fau_user_survey"/>
     </changeSet>
 
     <changeSet id="0.63-04" author="Maziyar Gerami">
