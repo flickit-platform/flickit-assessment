@@ -4,11 +4,18 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
 
-    <changeSet id="0.61-01" author="Maziyar Gerami">
-        <addColumn tableName="fak_assessment_kit">
-            <column name="price" type="bigint" defaultValue="0">
+    <changeSet id = "0.63-01" author="Maziyar Gerami">
+        <addColumn tableName="fau_space">
+            <column name="is_default" type="boolean" defaultValue="false">
                 <constraints nullable="false"/>
             </column>
         </addColumn>
+    </changeSet>
+
+    <changeSet id="0.63-02" author="Maziyar Gerami">
+        <sql>
+            CREATE UNIQUE INDEX uq_fau_space_owner_default_true
+                ON fau_space (owner_id) WHERE is_default = true;
+        </sql>
     </changeSet>
 </databaseChangeLog>
