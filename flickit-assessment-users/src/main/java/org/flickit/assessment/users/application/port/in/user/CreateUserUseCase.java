@@ -3,6 +3,7 @@ package org.flickit.assessment.users.application.port.in.user;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
@@ -32,6 +33,7 @@ public interface CreateUserUseCase {
         @Size(max = 50, message = CREATE_USER_DISPLAY_NAME_SIZE_MAX)
         String displayName;
 
+        @Builder
         public Param(UUID userId, String email, String displayName) {
             this.userId = userId;
             this.email = (email == null || email.isBlank()) ? null : email.strip().toLowerCase();
