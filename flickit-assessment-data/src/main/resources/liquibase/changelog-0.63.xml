@@ -15,7 +15,7 @@
             <column name="assessment_id" type="uuid">
                 <constraints nullable="false"/>
             </column>
-            <column name="has_answered" type="boolean">
+            <column name="answered" type="boolean">
                 <constraints nullable="false"/>
             </column>
             <column name="dont_show_again" type="boolean">

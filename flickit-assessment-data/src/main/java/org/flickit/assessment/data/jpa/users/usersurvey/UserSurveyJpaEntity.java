@@ -28,8 +28,8 @@ public class UserSurveyJpaEntity {
     @Column(name = "assessment_id", updatable = false, nullable = false)
     private UUID assessmentId;
 
-    @Column(name = "has_answered", nullable = false)
-    private boolean hasAnswered;
+    @Column(name = "answered", nullable = false)
+    private boolean answered;
 
     @Column(name = "dont_show_again", nullable = false)
     private boolean dontShowAgain;
