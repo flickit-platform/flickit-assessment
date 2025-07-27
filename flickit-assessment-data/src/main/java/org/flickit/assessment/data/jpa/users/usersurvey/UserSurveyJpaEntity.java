@@ -28,11 +28,11 @@ public class UserSurveyJpaEntity {
     @Column(name = "assessment_id", updatable = false, nullable = false)
     private UUID assessmentId;
 
-    @Column(name = "has_answered")
-    private Boolean hasAnswered;
+    @Column(name = "has_answered", nullable = false)
+    private boolean hasAnswered;
 
     @Column(name = "dont_show_again", nullable = false)
-    private Boolean dontShowAgain;
+    private boolean dontShowAgain;
 
     @Column(name = "answered_time")
     private LocalDateTime answeredTime;

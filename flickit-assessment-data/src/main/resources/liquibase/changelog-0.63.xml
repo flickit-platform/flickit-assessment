@@ -16,7 +16,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="has_answered" type="boolean">
-                <constraints nullable="true"/>
+                <constraints nullable="false"/>
             </column>
             <column name="dont_show_again" type="boolean">
                 <constraints nullable="false"/>
