@@ -10,7 +10,7 @@ public class UserSurveyMapper {
 
     public static UserSurvey mapToDomain(UserSurveyJpaEntity entity) {
         return new UserSurvey(entity.getId(),
-            entity.isAnswered(),
+            entity.isCompleted(),
             entity.isDontShowAgain());
     }
 }

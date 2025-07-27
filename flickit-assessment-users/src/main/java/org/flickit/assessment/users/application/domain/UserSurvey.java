@@ -8,6 +8,6 @@ import lombok.Getter;
 public class UserSurvey {
 
     Long id;
-    boolean answered;
+    boolean completed;
     boolean dontShowAgain;
 }
