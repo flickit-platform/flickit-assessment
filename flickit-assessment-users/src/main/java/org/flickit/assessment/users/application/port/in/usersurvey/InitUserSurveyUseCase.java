@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
+import org.flickit.assessment.users.application.domain.UserSurvey;
 
 import java.util.UUID;
 
@@ -34,5 +35,8 @@ public interface InitUserSurveyUseCase {
     }
 
     record Result(long userSurveyId, String redirectUrl) {
+        public static Result of(UserSurvey userSurvey) {
+            return new Result(userSurvey.getId(), "");
+        }
     }
 }
