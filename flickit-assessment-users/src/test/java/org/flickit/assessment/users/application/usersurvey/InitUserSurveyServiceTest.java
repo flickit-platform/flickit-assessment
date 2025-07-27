@@ -1,15 +1,13 @@
 package org.flickit.assessment.users.application.usersurvey;
 
+import org.flickit.assessment.common.config.SurveyProperties;
 import org.flickit.assessment.users.application.port.in.usersurvey.InitUserSurveyUseCase;
 import org.flickit.assessment.users.application.port.out.usersurvey.CreateUserSurveyPort;
 import org.flickit.assessment.users.application.port.out.usersurvey.LoadUserSurveyPort;
 import org.flickit.assessment.users.test.fixture.application.UserSurveyMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
@@ -18,8 +16,7 @@ import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class InitUserSurveyServiceTest {
@@ -32,6 +29,9 @@ class InitUserSurveyServiceTest {
 
     @Mock
     private CreateUserSurveyPort createUserSurveyPort;
+
+    @Spy
+    private SurveyProperties surveyProperties = surveyProperties();
 
     @Captor
     private ArgumentCaptor<CreateUserSurveyPort.Param> paramCaptor;
@@ -47,7 +47,7 @@ class InitUserSurveyServiceTest {
         var result = service.initUserSurvey(param);
 
         assertEquals(survey.getId(), result.userSurveyId());
-        assertEquals("", result.redirectUrl());
+        assertEquals(surveyProperties.getBaseUrl(), result.redirectUrl());
 
         verifyNoInteractions(createUserSurveyPort);
     }
@@ -67,7 +67,13 @@ class InitUserSurveyServiceTest {
         assertNotNull(createParam.currentDateTime());
 
         assertEquals(surveyId, result.userSurveyId());
-        assertEquals("", result.redirectUrl());
+        assertEquals(surveyProperties.getBaseUrl(), result.redirectUrl());
+    }
+
+    private SurveyProperties surveyProperties() {
+        var properties = new SurveyProperties();
+        properties.setBaseUrl("http://sample:9999");
+        return properties;
     }
 
     private InitUserSurveyUseCase.Param createParam(Consumer<InitUserSurveyUseCase.Param.ParamBuilder> changer) {
