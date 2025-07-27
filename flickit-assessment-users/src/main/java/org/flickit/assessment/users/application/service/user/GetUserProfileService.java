@@ -51,7 +51,7 @@ public class GetUserProfileService implements GetUserProfileUseCase {
 
     private boolean shouldShowSurvey(Optional<UserSurvey> userSurvey) {
         return userSurvey
-            .map(s -> !(Boolean.TRUE.equals(s.getHasAnswered()) || s.isDontShowAgain()))
+            .map(s -> !(s.isAnswered() || s.isDontShowAgain()))
             .orElse(true);
     }
 }
