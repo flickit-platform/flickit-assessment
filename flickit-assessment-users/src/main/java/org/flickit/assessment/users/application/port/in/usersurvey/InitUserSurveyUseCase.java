@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
-import org.flickit.assessment.users.application.port.in.user.GetUserByEmailUseCase;
 
 import java.util.UUID;
 
