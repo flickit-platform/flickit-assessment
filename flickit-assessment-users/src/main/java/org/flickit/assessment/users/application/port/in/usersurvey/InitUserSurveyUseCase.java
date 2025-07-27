@@ -30,6 +30,7 @@ public interface InitUserSurveyUseCase {
         public Param(UUID assessmentId, UUID currentUserId) {
             this.assessmentId = assessmentId;
             this.currentUserId = currentUserId;
+            this.validateSelf();
         }
     }
 
