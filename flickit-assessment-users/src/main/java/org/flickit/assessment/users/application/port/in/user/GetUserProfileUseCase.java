@@ -33,6 +33,7 @@ public interface GetUserProfileUseCase {
                        String displayName,
                        String bio,
                        String linkedin,
-                       String pictureLink) {
+                       String pictureLink,
+                       boolean showSurvey) {
     }
 }
