@@ -6,11 +6,11 @@ public class UserSurveyMother {
 
     private static long id = 152L;
 
-    public static UserSurvey createWithHasAnsweredAndDontShowAgain(Boolean hasAnswered, boolean dontShowAgain) {
+    public static UserSurvey createWithCompletedAndDontShowAgain(boolean completed, boolean dontShowAgain) {
 
         return new UserSurvey(id++,
-            hasAnswered,
-            dontShowAgain
+                completed,
+                dontShowAgain
         );
     }
 }

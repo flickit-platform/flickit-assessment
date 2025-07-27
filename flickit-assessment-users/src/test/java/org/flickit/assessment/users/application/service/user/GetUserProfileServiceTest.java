@@ -20,7 +20,7 @@ import java.util.function.Consumer;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.users.common.ErrorMessageKey.USER_ID_NOT_FOUND;
 import static org.flickit.assessment.users.test.fixture.application.UserMother.createUser;
-import static org.flickit.assessment.users.test.fixture.application.UserSurveyMother.createWithHasAnsweredAndDontShowAgain;
+import static org.flickit.assessment.users.test.fixture.application.UserSurveyMother.createWithCompletedAndDontShowAgain;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -79,9 +79,9 @@ class GetUserProfileServiceTest {
     }
 
     @Test
-    void testGetUserProfile_whenParametersAreValidAnPictureIsNull_thenReturnValidResultWithoutPictureLink() {
+    void testGetUserProfile_whenParametersAreValidAndPictureIsNull_thenReturnValidResultWithoutPictureLink() {
         User expectedUser = createUser(currentUserId, null);
-        var userSurvey = createWithHasAnsweredAndDontShowAgain(true, false);
+        var userSurvey = createWithCompletedAndDontShowAgain(true, false);
 
         when(loadUserPort.loadUser(currentUserId)).thenReturn(expectedUser);
         when(loadUserSurveyPort.loadByUserId(currentUserId)).thenReturn(Optional.of(userSurvey));
@@ -103,7 +103,7 @@ class GetUserProfileServiceTest {
     @Test
     void testGetUserProfile_whenParametersAreValidAndPictureIsBlank_thenReturnValidResultWithoutPictureLink() {
         User expectedUser = createUser(currentUserId, "");
-        var userSurvey = createWithHasAnsweredAndDontShowAgain(false, true);
+        var userSurvey = createWithCompletedAndDontShowAgain(false, true);
 
         when(loadUserPort.loadUser(currentUserId)).thenReturn(expectedUser);
         when(loadUserSurveyPort.loadByUserId(currentUserId)).thenReturn(Optional.of(userSurvey));
@@ -123,9 +123,9 @@ class GetUserProfileServiceTest {
     }
 
     @Test
-    void testGetUserProfile_whenParametersAreValidAndSurveyHasNotAnsweredAndDontShowAgainIsFalse_thenReturnValidResult() {
+    void testGetUserProfile_whenParametersAreValidAndSurveyIsNotCompletedAndDontShowAgainIsFalse_thenReturnValidResult() {
         User expectedUser = createUser(currentUserId, "");
-        var userSurvey = createWithHasAnsweredAndDontShowAgain(false, false);
+        var userSurvey = createWithCompletedAndDontShowAgain(false, false);
 
         when(loadUserPort.loadUser(currentUserId)).thenReturn(expectedUser);
         when(loadUserSurveyPort.loadByUserId(currentUserId)).thenReturn(Optional.of(userSurvey));
