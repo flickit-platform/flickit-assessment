@@ -49,7 +49,7 @@
 
     <changeSet id="0.63-04" author="Maziyar Gerami">
         <addUniqueConstraint columnNames="user_id"
-                             constraintName="uq_fau_user_survey_userid"
+                             constraintName="uq_fau_usersurvey_userid"
                              tableName="fau_user_survey"/>
     </changeSet>
 
