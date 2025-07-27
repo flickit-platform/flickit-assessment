@@ -21,13 +21,13 @@
             <column name="assessment_id" type="uuid">
                 <constraints nullable="false"/>
             </column>
-            <column name="answered" type="boolean">
+            <column name="completed" type="boolean">
                 <constraints nullable="false"/>
             </column>
             <column name="dont_show_again" type="boolean">
                 <constraints nullable="false"/>
             </column>
-            <column name="answer_time" type="${datetime_with_time_zone_type}">
+            <column name="completion_time" type="${datetime_with_time_zone_type}">
                 <constraints nullable="true"/>
             </column>
             <column name="creation_time" type="${datetime_with_time_zone_type}">
