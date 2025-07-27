@@ -13,11 +13,11 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserSurveyPersistenceJpaAdapter implements LoadUserSurveyPort {
 
-    private final UserSurveyJpaRepository userSurveyRepository;
+    private final UserSurveyJpaRepository repository;
 
     @Override
     public Optional<UserSurvey> loadByUserId(UUID userId) {
-        return userSurveyRepository.findByUserId(userId)
+        return repository.findByUserId(userId)
             .map(UserSurveyMapper::mapToDomain);
     }
 }
