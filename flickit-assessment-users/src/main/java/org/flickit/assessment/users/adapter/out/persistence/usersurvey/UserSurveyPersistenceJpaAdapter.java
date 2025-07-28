@@ -7,6 +7,7 @@ import org.flickit.assessment.data.jpa.users.usersurvey.UserSurveyJpaRepository;
 import org.flickit.assessment.users.application.domain.UserSurvey;
 import org.flickit.assessment.users.application.port.out.usersurvey.CreateUserSurveyPort;
 import org.flickit.assessment.users.application.port.out.usersurvey.LoadUserSurveyPort;
+import org.flickit.assessment.users.application.port.out.usersurvey.UpdateUserSurveyPort;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -18,7 +19,8 @@ import static org.flickit.assessment.users.common.ErrorMessageKey.INIT_USER_SURV
 @RequiredArgsConstructor
 public class UserSurveyPersistenceJpaAdapter implements
     LoadUserSurveyPort,
-    CreateUserSurveyPort {
+    CreateUserSurveyPort,
+    UpdateUserSurveyPort {
 
     private final UserSurveyJpaRepository repository;
     private final AssessmentJpaRepository assessmentRepository;
@@ -36,5 +38,10 @@ public class UserSurveyPersistenceJpaAdapter implements
 
         var savedEntity = repository.save(UserSurveyMapper.mapCreateParamToJpaEntity(param));
         return savedEntity.getId();
+    }
+
+    @Override
+    public void updateDontShowAgain(UUID userId, boolean dontShowAgain) {
+        repository.updateDontShowAgainByUserId(userId, dontShowAgain);
     }
 }
