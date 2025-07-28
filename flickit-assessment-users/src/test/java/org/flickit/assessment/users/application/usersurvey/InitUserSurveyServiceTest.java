@@ -41,13 +41,14 @@ class InitUserSurveyServiceTest {
     @Test
     void testInitUserSurvey_whenUserSurveyExists_thenReturnUserSurvey() {
         var survey = UserSurveyMother.simpleUserSurvey();
+        String expectedRedirectUrl = surveyProperties.getBaseUrl() + "?uniqueId=" + survey.getId();
 
         when(loadUserSurveyPort.loadByUserId(param.getCurrentUserId())).thenReturn(Optional.of(survey));
 
         var result = service.initUserSurvey(param);
 
         assertEquals(survey.getId(), result.userSurveyId());
-        assertEquals(surveyProperties.getBaseUrl(), result.redirectUrl());
+        assertEquals(expectedRedirectUrl, result.redirectUrl());
 
         verifyNoInteractions(createUserSurveyPort);
     }
@@ -55,6 +56,7 @@ class InitUserSurveyServiceTest {
     @Test
     void testInitUserSurvey_whenUserSurveyDoesNotExist_thenCreateUserSurvey() {
         long surveyId = 123L;
+        String expectedRedirectUrl = surveyProperties.getBaseUrl() + "?uniqueId=" + surveyId;
 
         when(loadUserSurveyPort.loadByUserId(param.getCurrentUserId())).thenReturn(Optional.empty());
         when(createUserSurveyPort.persist(paramCaptor.capture())).thenReturn(surveyId);
@@ -67,12 +69,12 @@ class InitUserSurveyServiceTest {
         assertNotNull(createParam.currentDateTime());
 
         assertEquals(surveyId, result.userSurveyId());
-        assertEquals(surveyProperties.getBaseUrl(), result.redirectUrl());
+        assertEquals(expectedRedirectUrl, result.redirectUrl());
     }
 
     private SurveyProperties surveyProperties() {
         var properties = new SurveyProperties();
-        properties.setBaseUrl("http://sample:9999");
+        properties.setBaseUrl("http://sample.com");
         return properties;
     }
 

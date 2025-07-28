@@ -7,6 +7,7 @@ import org.flickit.assessment.users.application.port.in.usersurvey.InitUserSurve
 import org.flickit.assessment.users.application.port.out.usersurvey.CreateUserSurveyPort;
 import org.flickit.assessment.users.application.port.out.usersurvey.LoadUserSurveyPort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -20,23 +21,31 @@ public class InitUserSurveyService implements InitUserSurveyUseCase {
     private final SurveyProperties surveyProperties;
     private final CreateUserSurveyPort createUserSurveyPort;
 
+    private final static String UNIQUE_ID = "uniqueId";
+
     @Override
     public Result initUserSurvey(Param param) {
         String baseUrl = surveyProperties.getBaseUrl();
         return loadUserSurveyPort.loadByUserId(param.getCurrentUserId())
-            .map(userSurvey -> new Result(userSurvey.getId(), baseUrl))
-            .orElseGet(() -> {
-                var surveyId = createUserSurveyPort.persist(
-                    toParam(param.getCurrentUserId(), param.getAssessmentId())
-                );
-                return new Result(surveyId, baseUrl);
-            });
+                .map(userSurvey -> new Result(userSurvey.getId(), buildRedirectUrl(baseUrl, userSurvey.getId())))
+                .orElseGet(() -> {
+                    var surveyId = createUserSurveyPort.persist(
+                            toParam(param.getCurrentUserId(), param.getAssessmentId())
+                    );
+                    return new Result(surveyId, buildRedirectUrl(baseUrl, surveyId));
+                });
+    }
+
+    private String buildRedirectUrl(String baseUrl, long surveyId) {
+        return UriComponentsBuilder.fromHttpUrl(baseUrl)
+                .queryParam(UNIQUE_ID, surveyId)
+                .toUriString();
     }
 
     private CreateUserSurveyPort.Param toParam(UUID userId, UUID assessmentId) {
         return new CreateUserSurveyPort.Param(
-            userId,
-            assessmentId,
-            LocalDateTime.now());
+                userId,
+                assessmentId,
+                LocalDateTime.now());
     }
 }
