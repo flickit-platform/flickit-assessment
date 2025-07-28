@@ -10,10 +10,18 @@ import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
+import static org.flickit.assessment.users.common.ErrorMessageKey.SET_USER_SURVEY_DONT_SHOW_AGAIN_ASSESSMENT_ID_NOT_NULL;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class SetUserSurveyDoNotShowAgainUseCaseParamTest {
+
+    @Test
+    void testSetUserSurveyDoNotShowAgainUseCaseParam_assessmentIdParamViolatesConstraint_ErrorMessage() {
+        var throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.assessmentId(null)));
+        assertThat(throwable).hasMessage("assessmentId: " + SET_USER_SURVEY_DONT_SHOW_AGAIN_ASSESSMENT_ID_NOT_NULL);
+    }
 
     @Test
     void testSetUserSurveyDoNotShowAgainUseCaseParam_currentUserIdParamViolatesConstraint_ErrorMessage() {
@@ -30,6 +38,7 @@ class SetUserSurveyDoNotShowAgainUseCaseParamTest {
 
     private SetUserSurveyDoNotShowAgainUseCase.Param.ParamBuilder paramBuilder() {
         return SetUserSurveyDoNotShowAgainUseCase.Param.builder()
+            .assessmentId(UUID.randomUUID())
             .currentUserId(UUID.randomUUID());
     }
 }
