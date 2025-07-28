@@ -4,10 +4,10 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.SurveyProperties;
 import org.flickit.assessment.users.application.port.in.usersurvey.InitUserSurveyUseCase;
+import org.flickit.assessment.users.application.port.out.usersurvey.CreateRedirectUrlLinkPort;
 import org.flickit.assessment.users.application.port.out.usersurvey.CreateUserSurveyPort;
 import org.flickit.assessment.users.application.port.out.usersurvey.LoadUserSurveyPort;
 import org.springframework.stereotype.Service;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -17,11 +17,10 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class InitUserSurveyService implements InitUserSurveyUseCase {
 
-    private final LoadUserSurveyPort loadUserSurveyPort;
     private final SurveyProperties surveyProperties;
+    private final CreateRedirectUrlLinkPort createRedirectUrlLinkPort;
+    private final LoadUserSurveyPort loadUserSurveyPort;
     private final CreateUserSurveyPort createUserSurveyPort;
-
-    private final static String UNIQUE_ID = "uniqueId";
 
     @Override
     public Result initUserSurvey(Param param) {
@@ -37,9 +36,7 @@ public class InitUserSurveyService implements InitUserSurveyUseCase {
     }
 
     private String buildRedirectUrl(String baseUrl, long surveyId) {
-        return UriComponentsBuilder.fromHttpUrl(baseUrl)
-                .queryParam(UNIQUE_ID, surveyId)
-                .toUriString();
+        return createRedirectUrlLinkPort.createRedirectUrlLink(baseUrl, surveyId);
     }
 
     private CreateUserSurveyPort.Param toParam(UUID userId, UUID assessmentId) {

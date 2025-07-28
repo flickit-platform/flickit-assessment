@@ -2,6 +2,7 @@ package org.flickit.assessment.users.application.usersurvey;
 
 import org.flickit.assessment.common.config.SurveyProperties;
 import org.flickit.assessment.users.application.port.in.usersurvey.InitUserSurveyUseCase;
+import org.flickit.assessment.users.application.port.out.usersurvey.CreateRedirectUrlLinkPort;
 import org.flickit.assessment.users.application.port.out.usersurvey.CreateUserSurveyPort;
 import org.flickit.assessment.users.application.port.out.usersurvey.LoadUserSurveyPort;
 import org.flickit.assessment.users.test.fixture.application.UserSurveyMother;
@@ -30,6 +31,9 @@ class InitUserSurveyServiceTest {
     @Mock
     private CreateUserSurveyPort createUserSurveyPort;
 
+    @Mock
+    private CreateRedirectUrlLinkPort createRedirectUrlLinkPort;
+
     @Spy
     private SurveyProperties surveyProperties = surveyProperties();
 
@@ -41,14 +45,15 @@ class InitUserSurveyServiceTest {
     @Test
     void testInitUserSurvey_whenUserSurveyExists_thenReturnUserSurvey() {
         var survey = UserSurveyMother.simpleUserSurvey();
-        String expectedRedirectUrl = surveyProperties.getBaseUrl() + "?uniqueId=" + survey.getId();
+        String redirectUrl = surveyProperties.getBaseUrl() + "?uniqueId=" + survey.getId();
 
         when(loadUserSurveyPort.loadByUserId(param.getCurrentUserId())).thenReturn(Optional.of(survey));
+        when(createRedirectUrlLinkPort.createRedirectUrlLink(surveyProperties().getBaseUrl(), survey.getId())).thenReturn(redirectUrl);
 
         var result = service.initUserSurvey(param);
 
         assertEquals(survey.getId(), result.userSurveyId());
-        assertEquals(expectedRedirectUrl, result.redirectUrl());
+        assertEquals(redirectUrl, result.redirectUrl());
 
         verifyNoInteractions(createUserSurveyPort);
     }
@@ -56,10 +61,11 @@ class InitUserSurveyServiceTest {
     @Test
     void testInitUserSurvey_whenUserSurveyDoesNotExist_thenCreateUserSurvey() {
         long surveyId = 123L;
-        String expectedRedirectUrl = surveyProperties.getBaseUrl() + "?uniqueId=" + surveyId;
+        String redirectUrl = surveyProperties.getBaseUrl() + "?uniqueId=" + surveyId;
 
         when(loadUserSurveyPort.loadByUserId(param.getCurrentUserId())).thenReturn(Optional.empty());
         when(createUserSurveyPort.persist(paramCaptor.capture())).thenReturn(surveyId);
+        when(createRedirectUrlLinkPort.createRedirectUrlLink(surveyProperties().getBaseUrl(), surveyId)).thenReturn(redirectUrl);
 
         var result = service.initUserSurvey(param);
 
@@ -69,7 +75,7 @@ class InitUserSurveyServiceTest {
         assertNotNull(createParam.currentDateTime());
 
         assertEquals(surveyId, result.userSurveyId());
-        assertEquals(expectedRedirectUrl, result.redirectUrl());
+        assertEquals(redirectUrl, result.redirectUrl());
     }
 
     private SurveyProperties surveyProperties() {
