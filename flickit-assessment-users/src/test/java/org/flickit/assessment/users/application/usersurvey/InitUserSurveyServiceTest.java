@@ -44,7 +44,7 @@ class InitUserSurveyServiceTest {
 
     @Test
     void testInitUserSurvey_whenUserSurveyExists_thenReturnUserSurvey() {
-        var survey = UserSurveyMother.simpleUserSurvey();
+        var survey = UserSurveyMother.createSimpleUserSurvey();
         String redirectUrl = surveyProperties.getBaseUrl() + "?uniqueId=" + survey.getId();
 
         when(loadUserSurveyPort.loadByUserId(param.getCurrentUserId())).thenReturn(Optional.of(survey));

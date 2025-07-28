@@ -26,12 +26,12 @@ public class InitUserSurveyService implements InitUserSurveyUseCase {
     public Result initUserSurvey(Param param) {
         String baseUrl = surveyProperties.getBaseUrl();
         return loadUserSurveyPort.loadByUserId(param.getCurrentUserId())
-                .map(userSurvey -> new Result(userSurvey.getId(), buildRedirectUrl(baseUrl, userSurvey.getId())))
+                .map(userSurvey -> Result.of(userSurvey.getId(), buildRedirectUrl(baseUrl, userSurvey.getId())))
                 .orElseGet(() -> {
                     var surveyId = createUserSurveyPort.persist(
                             toParam(param.getCurrentUserId(), param.getAssessmentId())
                     );
-                    return new Result(surveyId, buildRedirectUrl(baseUrl, surveyId));
+                    return Result.of(surveyId, buildRedirectUrl(baseUrl, surveyId));
                 });
     }
 
