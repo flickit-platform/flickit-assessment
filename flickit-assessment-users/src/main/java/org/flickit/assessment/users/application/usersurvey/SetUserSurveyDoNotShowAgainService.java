@@ -23,11 +23,17 @@ public class SetUserSurveyDoNotShowAgainService implements SetUserSurveyDoNotSho
     @Override
     public void setDontShowAgain(Param param) {
         loadUserSurveyPort.loadByUserId(param.getCurrentUserId())
-            .ifPresentOrElse(userSurvey -> updateUserSurveyPort.updateDontShowAgain(param.getCurrentUserId(), true),
-                () -> createUserSurveyPort.persist(toParam(param.getCurrentUserId(), param.getAssessmentId())));
+            .ifPresentOrElse(userSurvey -> updateUserSurveyPort.updateDontShowAgain(toUpdateParam(param.getCurrentUserId())),
+                () -> createUserSurveyPort.persist(toCreateParam(param.getCurrentUserId(), param.getAssessmentId())));
     }
 
-    private CreateUserSurveyPort.Param toParam(UUID userId, UUID assessmentId) {
+    private UpdateUserSurveyPort.Param toUpdateParam(UUID userId) {
+        return new UpdateUserSurveyPort.Param(userId,
+            true,
+            LocalDateTime.now());
+    }
+
+    private CreateUserSurveyPort.Param toCreateParam(UUID userId, UUID assessmentId) {
         return new CreateUserSurveyPort.Param(userId,
             assessmentId,
             true,
