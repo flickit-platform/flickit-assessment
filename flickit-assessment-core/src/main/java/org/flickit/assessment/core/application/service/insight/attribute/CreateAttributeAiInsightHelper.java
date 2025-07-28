@@ -3,12 +3,11 @@ package org.flickit.assessment.core.application.service.insight.attribute;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.application.port.out.CallAiPromptPort;
 import org.flickit.assessment.common.config.AppAiProperties;
 import org.flickit.assessment.common.exception.ValidationException;
-import org.flickit.assessment.core.application.domain.AssessmentResult;
-import org.flickit.assessment.core.application.domain.Attribute;
-import org.flickit.assessment.core.application.domain.AttributeValue;
+import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.domain.insight.AttributeInsight;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentProgressPort;
 import org.flickit.assessment.core.application.port.out.attribute.CreateAttributeScoresFilePort;
@@ -27,11 +26,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.*;
 
-import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ATTRIBUTE_AI_INSIGHT_ALL_QUESTIONS_NOT_ANSWERED;
 import static org.flickit.assessment.core.common.MessageKey.ASSESSMENT_AI_IS_DISABLED;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -46,6 +46,7 @@ public class CreateAttributeAiInsightHelper {
     private final CreateAttributeScoresFilePort createAttributeScoresFilePort;
     private final UploadAttributeScoresFilePort uploadAttributeScoresFilePort;
     private final CallAiPromptPort callAiPromptPort;
+    private final Executor attributeInsightExecutor;
 
     @SneakyThrows
     public AttributeInsight createAttributeAiInsight(AttributeInsightParam param) {
@@ -90,22 +91,38 @@ public class CreateAttributeAiInsightHelper {
 
         var attributeValues = loadAttributeValuePort.load(param.assessmentResult().getId(), param.attributeIds());
         var maturityLevels = loadMaturityLevelsPort.loadAllTranslated(param.assessmentResult());
-        var attributeIdToFile = attributeValues.stream()
-            .collect(toMap(av -> av.getAttribute().getId(),
-                attributeValue -> createAttributeScoresFilePort.generateFile(attributeValue, maturityLevels)));
-        var attributeToPromptMap = attributeValues.stream()
-            .collect(toMap(AttributeValue::getAttribute, attributeValue -> createPrompt(attributeValue.getAttribute().getTitle(),
-                attributeValue.getAttribute().getDescription(),
-                attributeIdToFile.get(attributeValue.getAttribute().getId()).text(),
-                param.locale().getDisplayLanguage())));
 
-        return attributeToPromptMap.entrySet().stream()
-            .map(entry -> {
-                var attribute = entry.getKey();
-                var aiInsight = callAiPromptPort.call(entry.getValue(), AiResponseDto.class).value();
-                var aiInputPath = uploadInputFile(attribute, attributeIdToFile.get(attribute.getId()).stream());
-                return toAttributeInsight(param.assessmentResult().getId(), attribute.getId(), aiInsight, aiInputPath);
-            })
+        return generateInsightsInParallel(param, attributeValues, maturityLevels);
+    }
+
+    @SneakyThrows
+    private List<AttributeInsight> generateInsightsInParallel(AttributeInsightsParam param,
+                                                              List<AttributeValue> attributeValues,
+                                                              List<MaturityLevel> maturityLevels) {
+        List<CompletableFuture<AttributeInsight>> futures = attributeValues.stream()
+            .map(av -> CompletableFuture.supplyAsync(() -> {
+                var attribute = av.getAttribute();
+                var file = createAttributeScoresFilePort.generateFile(av, maturityLevels);
+                var prompt = createPrompt(
+                    attribute.getTitle(),
+                    attribute.getDescription(),
+                    file.text(),
+                    param.locale().getDisplayLanguage()
+                );
+                log.debug("Generating AI insight for attributeId=[{}]", attribute.getId());
+                var aiInsight = callAiPromptPort.call(prompt, AiResponseDto.class).value();
+                var aiInputPath = uploadInputFile(attribute, file.stream());
+                return toAttributeInsight(
+                    param.assessmentResult().getId(),
+                    attribute.getId(),
+                    aiInsight,
+                    aiInputPath
+                );
+            }, attributeInsightExecutor))
+            .toList();
+
+        return futures.stream()
+            .map(CompletableFuture::join)
             .toList();
     }
 
