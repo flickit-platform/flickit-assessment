@@ -31,6 +31,7 @@ public class GetUserProfileRestController {
             userProfile.displayName(),
             userProfile.bio(),
             userProfile.linkedin(),
-            userProfile.pictureLink());
+            userProfile.pictureLink(),
+            userProfile.showSurvey());
     }
 }
