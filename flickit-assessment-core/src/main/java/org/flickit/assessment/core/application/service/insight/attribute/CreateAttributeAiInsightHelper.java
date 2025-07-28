@@ -61,12 +61,10 @@ public class CreateAttributeAiInsightHelper {
         if (!appAiProperties.isEnabled())
             throw new UnsupportedOperationException(ASSESSMENT_AI_IS_DISABLED);
 
-        var assessmentTitle = getAssessmentTitle(assessment);
         var maturityLevels = loadMaturityLevelsPort.loadAllTranslated(param.assessmentResult());
         var file = createAttributeScoresFilePort.generateFile(attributeValue, maturityLevels);
         var prompt = createPrompt(attribute.getTitle(),
             attribute.getDescription(),
-            assessmentTitle,
             file.text(),
             param.locale().getDisplayLanguage());
         var aiInsight = callAiPromptPort.call(prompt, AiResponseDto.class).value();
@@ -92,16 +90,14 @@ public class CreateAttributeAiInsightHelper {
             throw new UnsupportedOperationException(ASSESSMENT_AI_IS_DISABLED);
 
         var attributeValues = loadAttributeValuePort.load(param.assessmentResult().getId(), param.attributeIds());
-        var assessmentTitle = getAssessmentTitle(assessment);
         var maturityLevels = loadMaturityLevelsPort.loadAllTranslated(param.assessmentResult());
 
-        return generateInsightsInParallel(param, attributeValues, assessmentTitle, maturityLevels);
+        return generateInsightsInParallel(param, attributeValues, maturityLevels);
     }
 
     @SneakyThrows
     private List<AttributeInsight> generateInsightsInParallel(AttributeInsightsParam param,
                                                               List<AttributeValue> attributeValues,
-                                                              String assessmentTitle,
                                                               List<MaturityLevel> maturityLevels) {
         List<CompletableFuture<AttributeInsight>> futures = attributeValues.stream()
             .map(av -> CompletableFuture.supplyAsync(() -> {
@@ -110,7 +106,6 @@ public class CreateAttributeAiInsightHelper {
                 var prompt = createPrompt(
                     attribute.getTitle(),
                     attribute.getDescription(),
-                    assessmentTitle,
                     file.text(),
                     param.locale().getDisplayLanguage()
                 );
@@ -137,21 +132,13 @@ public class CreateAttributeAiInsightHelper {
                                          Locale locale) {
     }
 
-    private String getAssessmentTitle(Assessment assessment) {
-        return assessment.getShortTitle() != null
-            ? assessment.getShortTitle()
-            : assessment.getTitle();
-    }
-
     private Prompt createPrompt(String attributeTitle,
                                 String attributeDescription,
-                                String assessmentTitle,
                                 String fileContent,
                                 String language) {
         return new PromptTemplate(appAiProperties.getPrompt().getAttributeInsight(),
             Map.of("attributeTitle", attributeTitle,
                 "attributeDescription", attributeDescription,
-                "assessmentTitle", assessmentTitle,
                 "fileContent", fileContent,
                 "language", language))
             .create();
