@@ -9,6 +9,7 @@ public interface CreateUserSurveyPort {
 
     record Param(UUID userId,
                  UUID assessmentId,
+                 boolean dontShowAgain,
                  LocalDateTime currentDateTime) {
     }
 }

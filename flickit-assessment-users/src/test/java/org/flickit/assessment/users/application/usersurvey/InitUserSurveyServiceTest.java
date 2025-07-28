@@ -15,8 +15,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -73,6 +72,7 @@ class InitUserSurveyServiceTest {
         assertEquals(param.getAssessmentId(), createParam.assessmentId());
         assertEquals(param.getCurrentUserId(), createParam.userId());
         assertNotNull(createParam.currentDateTime());
+        assertFalse(createParam.dontShowAgain());
 
         assertEquals(surveyId, result.userSurveyId());
         assertEquals(redirectUrl, result.redirectUrl());

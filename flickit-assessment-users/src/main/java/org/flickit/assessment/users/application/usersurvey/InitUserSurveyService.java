@@ -43,6 +43,7 @@ public class InitUserSurveyService implements InitUserSurveyUseCase {
         return new CreateUserSurveyPort.Param(
                 userId,
                 assessmentId,
+                false,
                 LocalDateTime.now());
     }
 }
