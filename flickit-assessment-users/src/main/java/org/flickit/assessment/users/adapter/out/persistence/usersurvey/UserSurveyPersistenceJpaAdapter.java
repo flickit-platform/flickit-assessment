@@ -41,7 +41,7 @@ public class UserSurveyPersistenceJpaAdapter implements
     }
 
     @Override
-    public void updateDontShowAgain(UUID userId, boolean dontShowAgain) {
-        repository.updateDontShowAgainByUserId(userId, dontShowAgain);
+    public void updateDontShowAgain(UpdateUserSurveyPort.Param param) {
+        repository.updateDontShowAgainByUserId(param.userId(), param.dontShowAgain(), param.lastModificationTime());
     }
 }
