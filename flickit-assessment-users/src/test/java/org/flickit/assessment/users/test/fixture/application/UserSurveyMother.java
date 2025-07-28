@@ -9,8 +9,16 @@ public class UserSurveyMother {
     public static UserSurvey createWithCompletedAndDontShowAgain(boolean completed, boolean dontShowAgain) {
 
         return new UserSurvey(id++,
-                completed,
-                dontShowAgain
+            completed,
+            dontShowAgain
+        );
+    }
+
+    public static UserSurvey createSimpleUserSurvey() {
+
+        return new UserSurvey(id++,
+            false,
+            false
         );
     }
 }
