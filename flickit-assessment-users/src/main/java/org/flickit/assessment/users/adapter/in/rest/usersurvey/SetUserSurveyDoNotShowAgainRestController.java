@@ -20,10 +20,10 @@ public class SetUserSurveyDoNotShowAgainRestController {
     private final UserContext userContext;
 
     @PostMapping("/user-surveys/dont-show-again")
-    public ResponseEntity<Void> setUserSurveyDoNotShowAgain(@RequestBody SetUserSurveyDoNotShowAgainRequestDto requestDto) {
+    public ResponseEntity<Void> setDoNotShowAgain(@RequestBody SetUserSurveyDoNotShowAgainRequestDto requestDto) {
         UUID currentUserId = userContext.getUser().id();
         useCase.setDontShowAgain(toParam(requestDto, currentUserId));
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     private Param toParam(SetUserSurveyDoNotShowAgainRequestDto requestDto, UUID currentUserId) {

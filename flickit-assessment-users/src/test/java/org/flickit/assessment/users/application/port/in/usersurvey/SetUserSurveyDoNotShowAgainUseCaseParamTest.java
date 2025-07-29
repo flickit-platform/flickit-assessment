@@ -17,14 +17,14 @@ import static org.junit.jupiter.api.Assertions.*;
 class SetUserSurveyDoNotShowAgainUseCaseParamTest {
 
     @Test
-    void testSetUserSurveyDoNotShowAgainUseCaseParam_assessmentIdParamViolatesConstraint_ErrorMessage() {
+    void testSetDoNotShowAgainUseCaseParam_assessmentIdParamViolatesConstraint_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.assessmentId(null)));
         assertThat(throwable).hasMessage("assessmentId: " + SET_USER_SURVEY_DONT_SHOW_AGAIN_ASSESSMENT_ID_NOT_NULL);
     }
 
     @Test
-    void testSetUserSurveyDoNotShowAgainUseCaseParam_currentUserIdParamViolatesConstraint_ErrorMessage() {
+    void testSetDoNotShowAgainUseCaseParam_currentUserIdParamViolatesConstraint_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.currentUserId(null)));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);

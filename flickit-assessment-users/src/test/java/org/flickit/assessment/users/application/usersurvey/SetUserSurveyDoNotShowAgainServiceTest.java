@@ -37,7 +37,7 @@ class SetUserSurveyDoNotShowAgainServiceTest {
     private final SetUserSurveyDoNotShowAgainUseCase.Param param = createParam(SetUserSurveyDoNotShowAgainUseCase.Param.ParamBuilder::build);
 
     @Test
-    void testSetUserSurveyDoNotShowAgain_whenUserSurveyDoesNotExist_thenCreateUserSurveyAndSetAsDontShowAgain() {
+    void testSetDoNotShowAgain_whenUserSurveyDoesNotExist_thenCreateUserSurveyAndSetAsDontShowAgain() {
         when(loadUserSurveyPort.loadByUserId(param.getCurrentUserId())).thenReturn(Optional.empty());
 
         service.setDontShowAgain(param);
@@ -54,7 +54,7 @@ class SetUserSurveyDoNotShowAgainServiceTest {
     }
 
     @Test
-    void testSetUserSurveyDoNotShowAgain_whenUserSurveyExists_thenSetAsDontShowAgain() {
+    void testSetDoNotShowAgain_whenUserSurveyExists_thenSetAsDontShowAgain() {
         var userSurvey = simpleUserSurvey();
         when(loadUserSurveyPort.loadByUserId(param.getCurrentUserId())).thenReturn(Optional.of(userSurvey));
 
