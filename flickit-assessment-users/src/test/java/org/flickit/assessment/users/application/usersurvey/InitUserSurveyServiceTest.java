@@ -17,7 +17,8 @@ import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class InitUserSurveyServiceTest {
@@ -44,7 +45,7 @@ class InitUserSurveyServiceTest {
 
     @Test
     void testInitUserSurvey_whenUserSurveyExists_thenReturnUserSurvey() {
-        var survey = UserSurveyMother.createSimpleUserSurvey();
+        var survey = UserSurveyMother.simpleUserSurvey();
         String redirectUrl = surveyProperties.getBaseUrl() + "?uniqueId=" + survey.getId();
 
         when(loadUserSurveyPort.loadByUserId(param.getCurrentUserId())).thenReturn(Optional.of(survey));
