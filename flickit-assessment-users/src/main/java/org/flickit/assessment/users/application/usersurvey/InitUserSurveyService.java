@@ -25,14 +25,10 @@ public class InitUserSurveyService implements InitUserSurveyUseCase {
     @Override
     public Result initUserSurvey(Param param) {
         String baseUrl = surveyProperties.getBaseUrl();
-        return loadUserSurveyPort.loadByUserId(param.getCurrentUserId())
-                .map(userSurvey -> Result.of(userSurvey.getId(), buildRedirectUrl(baseUrl, userSurvey.getId())))
-                .orElseGet(() -> {
-                    var surveyId = createUserSurveyPort.persist(
-                            toParam(param.getCurrentUserId(), param.getAssessmentId())
-                    );
-                    return Result.of(surveyId, buildRedirectUrl(baseUrl, surveyId));
-                });
+        long surveyId = loadUserSurveyPort.loadIdByUserId(param.getCurrentUserId())
+                .orElseGet(() -> createUserSurveyPort.persist(toParam(param.getCurrentUserId(), param.getAssessmentId())));
+
+        return Result.of(surveyId, buildRedirectUrl(baseUrl, surveyId));
     }
 
     private String buildRedirectUrl(String baseUrl, long surveyId) {

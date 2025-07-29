@@ -48,7 +48,7 @@ class InitUserSurveyServiceTest {
         var survey = UserSurveyMother.simpleUserSurvey();
         String redirectUrl = surveyProperties.getBaseUrl() + "?uniqueId=" + survey.getId();
 
-        when(loadUserSurveyPort.loadByUserId(param.getCurrentUserId())).thenReturn(Optional.of(survey));
+        when(loadUserSurveyPort.loadIdByUserId(param.getCurrentUserId())).thenReturn(Optional.of(survey.getId()));
         when(createRedirectUrlLinkPort.createRedirectUrlLink(surveyProperties().getBaseUrl(), survey.getId())).thenReturn(redirectUrl);
 
         var result = service.initUserSurvey(param);
@@ -64,7 +64,7 @@ class InitUserSurveyServiceTest {
         long surveyId = 123L;
         String redirectUrl = surveyProperties.getBaseUrl() + "?uniqueId=" + surveyId;
 
-        when(loadUserSurveyPort.loadByUserId(param.getCurrentUserId())).thenReturn(Optional.empty());
+        when(loadUserSurveyPort.loadIdByUserId(param.getCurrentUserId())).thenReturn(Optional.empty());
         when(createUserSurveyPort.persist(paramCaptor.capture())).thenReturn(surveyId);
         when(createRedirectUrlLinkPort.createRedirectUrlLink(surveyProperties().getBaseUrl(), surveyId)).thenReturn(redirectUrl);
 
