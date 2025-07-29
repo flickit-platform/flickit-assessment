@@ -6,6 +6,6 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ComponentScan("org.flickit.assessment.common")
-@EnableConfigurationProperties({AppSpecProperties.class, FileProperties.class, AppAiProperties.class, SurveyProperties.class})
+@EnableConfigurationProperties({AppSpecProperties.class, FileProperties.class, SurveyProperties.class})
 public class AssessmentCommonAutoConfig {
 }

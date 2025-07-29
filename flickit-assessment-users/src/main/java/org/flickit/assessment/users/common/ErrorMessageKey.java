@@ -156,6 +156,8 @@ public class ErrorMessageKey {
 
     public static final String GET_TOP_SPACES_NO_SPACE_AVAILABLE = "get-top-spaces.noSpace.available";
 
+    public static final String SET_USER_SURVEY_DONT_SHOW_AGAIN_ASSESSMENT_ID_NOT_NULL = "set-user-survey-dont-show-again.assessmentId.notNull";
+
     public static final String INIT_USER_SURVEY_ASSESSMENT_ID_NOT_NULL = "init-user-survey.assessmentId.notNull";
     public static final String INIT_USER_SURVEY_ASSESSMENT_ID_NOT_FOUND = "init-user-survey.assessmentId.notFound";
 }

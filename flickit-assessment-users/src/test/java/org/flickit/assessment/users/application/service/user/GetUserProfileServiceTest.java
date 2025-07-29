@@ -40,14 +40,11 @@ class GetUserProfileServiceTest {
     @Mock
     private LoadUserSurveyPort loadUserSurveyPort;
 
-    private final UUID currentUserId = UUID.randomUUID();
-    private GetUserProfileUseCase.Param param = createParam(b -> b.currentUserId(currentUserId));
+    private final GetUserProfileUseCase.Param param = createParam(GetUserProfileUseCase.Param.ParamBuilder::build);
     private static final Duration EXPIRY_DURATION = Duration.ofDays(1);
 
     @Test
     void testGetUserProfile_whenUserDoesNotExist_thenThrowResourceNotFoundException() {
-        param = createParam(b -> b.currentUserId(UUID.randomUUID()));
-
         when(loadUserPort.loadUser(param.getCurrentUserId())).thenThrow(new ResourceNotFoundException(USER_ID_NOT_FOUND));
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.getUserProfile(param));
@@ -59,12 +56,12 @@ class GetUserProfileServiceTest {
 
     @Test
     void testGetUserProfile_whenParametersAreValid_thenReturnValidResult() {
-        User expectedUser = createUser(currentUserId, "path/to/picture");
+        User expectedUser = createUser(param.getCurrentUserId(), "path/to/picture");
         String pictureLink = "cdn.flickit.org" + expectedUser.getPicturePath();
 
-        when(loadUserPort.loadUser(currentUserId)).thenReturn(expectedUser);
+        when(loadUserPort.loadUser(param.getCurrentUserId())).thenReturn(expectedUser);
         when(createFileDownloadLinkPort.createDownloadLink(expectedUser.getPicturePath(), EXPIRY_DURATION)).thenReturn(pictureLink);
-        when(loadUserSurveyPort.loadByUserId(currentUserId)).thenReturn(Optional.empty());
+        when(loadUserSurveyPort.loadByUserId(param.getCurrentUserId())).thenReturn(Optional.empty());
 
         GetUserProfileUseCase.UserProfile actualUser = service.getUserProfile(param);
 
@@ -80,11 +77,11 @@ class GetUserProfileServiceTest {
 
     @Test
     void testGetUserProfile_whenParametersAreValidAndPictureIsNull_thenReturnValidResultWithoutPictureLink() {
-        User expectedUser = createUser(currentUserId, null);
+        User expectedUser = createUser(param.getCurrentUserId(), null);
         var userSurvey = createWithCompletedAndDontShowAgain(true, false);
 
-        when(loadUserPort.loadUser(currentUserId)).thenReturn(expectedUser);
-        when(loadUserSurveyPort.loadByUserId(currentUserId)).thenReturn(Optional.of(userSurvey));
+        when(loadUserPort.loadUser(param.getCurrentUserId())).thenReturn(expectedUser);
+        when(loadUserSurveyPort.loadByUserId(param.getCurrentUserId())).thenReturn(Optional.of(userSurvey));
 
         GetUserProfileUseCase.UserProfile actualUser = service.getUserProfile(param);
 
@@ -102,11 +99,11 @@ class GetUserProfileServiceTest {
 
     @Test
     void testGetUserProfile_whenParametersAreValidAndPictureIsBlank_thenReturnValidResultWithoutPictureLink() {
-        User expectedUser = createUser(currentUserId, "");
+        User expectedUser = createUser(param.getCurrentUserId(), "");
         var userSurvey = createWithCompletedAndDontShowAgain(false, true);
 
-        when(loadUserPort.loadUser(currentUserId)).thenReturn(expectedUser);
-        when(loadUserSurveyPort.loadByUserId(currentUserId)).thenReturn(Optional.of(userSurvey));
+        when(loadUserPort.loadUser(param.getCurrentUserId())).thenReturn(expectedUser);
+        when(loadUserSurveyPort.loadByUserId(param.getCurrentUserId())).thenReturn(Optional.of(userSurvey));
 
         GetUserProfileUseCase.UserProfile actualUser = service.getUserProfile(param);
 
@@ -124,11 +121,11 @@ class GetUserProfileServiceTest {
 
     @Test
     void testGetUserProfile_whenParametersAreValidAndSurveyIsNotCompletedAndDontShowAgainIsFalse_thenReturnValidResult() {
-        User expectedUser = createUser(currentUserId, "");
+        User expectedUser = createUser(param.getCurrentUserId(), "");
         var userSurvey = createWithCompletedAndDontShowAgain(false, false);
 
-        when(loadUserPort.loadUser(currentUserId)).thenReturn(expectedUser);
-        when(loadUserSurveyPort.loadByUserId(currentUserId)).thenReturn(Optional.of(userSurvey));
+        when(loadUserPort.loadUser(param.getCurrentUserId())).thenReturn(expectedUser);
+        when(loadUserSurveyPort.loadByUserId(param.getCurrentUserId())).thenReturn(Optional.of(userSurvey));
 
         GetUserProfileUseCase.UserProfile actualUser = service.getUserProfile(param);
 

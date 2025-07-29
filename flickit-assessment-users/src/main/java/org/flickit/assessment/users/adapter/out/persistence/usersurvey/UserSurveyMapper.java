@@ -20,7 +20,7 @@ public class UserSurveyMapper {
                 param.userId(),
                 param.assessmentId(),
                 false,
-                false,
+                param.dontShowAgain(),
                 null,
                 param.currentDateTime(),
                 param.currentDateTime());

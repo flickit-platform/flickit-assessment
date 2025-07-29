@@ -14,7 +14,7 @@ public class UserSurveyMother {
         );
     }
 
-    public static UserSurvey createSimpleUserSurvey() {
+    public static UserSurvey simpleUserSurvey() {
 
         return new UserSurvey(id++,
             false,
