@@ -15,7 +15,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-import static org.flickit.assessment.users.test.fixture.application.UserSurveyMother.createSimpleUserSurvey;
+import static org.flickit.assessment.users.test.fixture.application.UserSurveyMother.simpleUserSurvey;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -55,7 +55,7 @@ class SetUserSurveyDoNotShowAgainServiceTest {
 
     @Test
     void testSetUserSurveyDoNotShowAgain_whenUserSurveyExists_thenSetAsDontShowAgain() {
-        var userSurvey = createSimpleUserSurvey();
+        var userSurvey = simpleUserSurvey();
         when(loadUserSurveyPort.loadByUserId(param.getCurrentUserId())).thenReturn(Optional.of(userSurvey));
 
         service.setDontShowAgain(param);
