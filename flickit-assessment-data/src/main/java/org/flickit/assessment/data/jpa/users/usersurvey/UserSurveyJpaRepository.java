@@ -18,7 +18,7 @@ public interface UserSurveyJpaRepository extends JpaRepository<UserSurveyJpaEnti
     @Query("""
             SELECT s.id
             FROM UserSurveyJpaEntity s
-            WHERE s.userId = :userid
+            WHERE s.userId = :userId
         """)
     Optional<Long> findIdByUserId(UUID userId);
 
