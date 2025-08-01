@@ -16,7 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Function;
@@ -72,7 +72,7 @@ public class QuestionnairePersistenceJpaAdapter implements
     }
 
     @Override
-    public Map<Long, Result> loadQuestionnaireDetails(long kitVersionId, UUID assessmentResultId) {
+    public List<Result> loadQuestionnaireDetails(long kitVersionId, UUID assessmentResultId) {
         var questionnaireViews = repository.findAllWithQuestionCountByKitVersionId(kitVersionId, null);
         var questionnaireIds = questionnaireViews.getContent().stream()
             .map(v -> v.getQuestionnaire().getId())
@@ -94,6 +94,6 @@ public class QuestionnairePersistenceJpaAdapter implements
                     answerCount
                 );
             })
-            .collect(Collectors.toMap(Result::id, Function.identity()));
+            .toList();
     }
 }
