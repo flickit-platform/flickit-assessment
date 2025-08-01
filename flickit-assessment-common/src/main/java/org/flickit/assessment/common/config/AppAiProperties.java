@@ -50,7 +50,6 @@ public class AppAiProperties {
             Use polite and considerate language, avoiding any derogatory terms, and do not mention the scores of individual questions.
             Please keep your summary descriptive and avoid prescribing actions or solutions. Do not include generic conclusions such as "Overall, the {attributeTitle} maturity level is deemed acceptable."
             Please provide the result in the {language} language. It is necessary that the result be an exact translation of the summary;
-            Also, always use the name of the assessment and put the name of assessment in double quotations.
             Keep specialized computer science words in English, or if you are sure about their translation, include them with the English term in parentheses. Be aware of the word count limit.
             Here is the file content: {fileContent}.
             """;
@@ -79,7 +78,6 @@ public class AppAiProperties {
             Additionally, provide a comprehensive paragraph discussing the significance of the suggested improvements and their expected outcomes. Explain how addressing these recommendations will enhance the targeted attributes, contributing to overall software quality.
             Emphasize the benefits of implementing these changes, such as improved scalability, security, maintainability, or performance. Also, highlight the potential consequences of neglecting these improvements. Ensure the paragraph clearly connects the recommended actions to their intended impact on the assessment goals.
             Ensure that the paragraph is fully connected to the advice items but remains clear and meaningful even when read independently, without direct reference to the individual items. It should provide a complete overview of why these improvements matter and how they align with the assessment’s goals.
-            Also, always use the name of the assessment as it is, without translating it, and enclose it in double quotations.
             Wrap this paragraph in an HTML <p> tag without any class attributes. Ensure the response is concise but still fully translated into {language} language.
             Ensure that the advice is polite, constructive, and focused on actionable improvements while being tailored for an expert software assessor.
             Avoid referring to individual scores or negative phrasing. Keep the tone professional and supportive.
