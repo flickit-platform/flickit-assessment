@@ -10,10 +10,10 @@ import org.flickit.assessment.core.application.port.out.questionnaire.LoadQuesti
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Optional;
-import java.util.function.Predicate;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_NEXT_QUESTIONNAIRE;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -37,26 +37,28 @@ public class GetAssessmentNextQuestionnaireService implements GetAssessmentNextQ
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_NEXT_QUESTIONNAIRE_ASSESSMENT_RESULT_NOT_FOUND));
 
-        var questionnaireIdToDetailMap =
+        var allQuestionnaireDetails =
             loadQuestionnairesPort.loadQuestionnaireDetails(assessmentResult.getKitVersionId(), assessmentResult.getId());
+        int currentQuestionnaireIndex = allQuestionnaireDetails.stream()
+            .collect(Collectors.toMap(LoadQuestionnairesPort.Result::id, Function.identity()))
+            .computeIfAbsent(param.getQuestionnaireId(), id -> {
+                throw new ResourceNotFoundException(QUESTIONNAIRE_ID_NOT_FOUND);
+            })
+            .index();
 
-        Optional.ofNullable(questionnaireIdToDetailMap.get(param.getQuestionnaireId()))
-            .orElseThrow(() -> new ResourceNotFoundException(QUESTIONNAIRE_ID_NOT_FOUND));
+        var unansweredQuestionnaire = allQuestionnaireDetails.stream()
+            .filter(q -> q.nextQuestionIndex() != null)
+            .toList();
 
-        var allQuestionnaireDetails = new ArrayList<>(questionnaireIdToDetailMap.values());
-
-        Predicate<LoadQuestionnairesPort.Result> isUnanswered = q -> q.answerCount() < q.questionCount();
-
-        int currentIndex = questionnaireIdToDetailMap.get(param.getQuestionnaireId()).index();
-        Optional<Result> after = allQuestionnaireDetails.stream()
-            .filter(q -> q.index() > currentIndex && isUnanswered.test(q))
+        Optional<Result> after = unansweredQuestionnaire.stream()
+            .filter(q -> q.index() > currentQuestionnaireIndex)
             .min(Comparator.comparingInt(LoadQuestionnairesPort.Result::index))
-            .map(q -> new Result.Found(q.id(), q.index(), q.title()));
+            .map(q -> new Result.Found(q.id(), q.index(), q.title(), q.nextQuestionIndex()));
 
-        return after.orElseGet(() -> allQuestionnaireDetails.stream()
-            .filter(q -> q.index() <= currentIndex && isUnanswered.test(q))
+        return after.orElseGet(() -> unansweredQuestionnaire.stream()
+            .filter(q -> q.index() <= currentQuestionnaireIndex)
             .min(Comparator.comparingInt(LoadQuestionnairesPort.Result::index))
-            .<Result>map(q -> new Result.Found(q.id(), q.index(), q.title()))
+            .<Result>map(q -> new Result.Found(q.id(), q.index(), q.title(), q.nextQuestionIndex()))
             .orElse(Result.NotFound.INSTANCE));
     }
 }
