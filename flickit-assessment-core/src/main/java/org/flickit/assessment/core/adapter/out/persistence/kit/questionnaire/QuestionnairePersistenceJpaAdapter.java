@@ -6,6 +6,7 @@ import org.flickit.assessment.core.application.domain.QuestionnaireListItem;
 import org.flickit.assessment.core.application.port.out.questionnaire.LoadQuestionnairesPort;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaRepository;
 import org.flickit.assessment.data.jpa.core.answer.QuestionnaireIdAndAnswerCountView;
+import org.flickit.assessment.data.jpa.core.answer.QuestionnaireIdQuestionIndexView;
 import org.flickit.assessment.data.jpa.kit.question.FirstUnansweredQuestionView;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaEntity;
@@ -19,7 +20,6 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Component(value = "coreQuestionnairePersistenceJpaAdapter")
@@ -82,16 +82,19 @@ public class QuestionnairePersistenceJpaAdapter implements
             .stream()
             .collect(Collectors.toMap(QuestionnaireIdAndAnswerCountView::getQuestionnaireId, QuestionnaireIdAndAnswerCountView::getAnswerCount));
 
+        var questionnaireIdToNextQuestionIndexMap = answerRepository.findUnansweredQuestionIndex(assessmentResultId, questionnaireIds)
+            .stream().collect(Collectors.toMap(QuestionnaireIdQuestionIndexView::getQuestionnaireId, QuestionnaireIdQuestionIndexView::getFirstUnansweredQuestionIndex));
+
         return questionnaireViews.stream()
             .map(view -> {
                 var questionnaire = view.getQuestionnaire();
-                int answerCount = questionnaireIdToAnswerCountMap.getOrDefault(questionnaire.getId(), 0);
                 return new LoadQuestionnairesPort.Result(
                     questionnaire.getId(),
                     questionnaire.getIndex(),
                     questionnaire.getTitle(),
+                    questionnaireIdToNextQuestionIndexMap.get(questionnaire.getId()),
                     view.getQuestionCount(),
-                    answerCount
+                    questionnaireIdToAnswerCountMap.getOrDefault(questionnaire.getId(), 0)
                 );
             })
             .toList();
