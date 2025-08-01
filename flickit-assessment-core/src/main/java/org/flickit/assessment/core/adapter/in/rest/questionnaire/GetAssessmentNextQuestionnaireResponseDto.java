@@ -31,13 +31,14 @@ public record GetAssessmentNextQuestionnaireResponseDto(ResultStatus status, Dat
         }
 
         @Builder
-        record Found(long id, int index, String title) implements Data {
+        record Found(long id, int index, String title, int nextQuestionIndex) implements Data {
 
             public static Found of(GetAssessmentNextQuestionnaireUseCase.Result.Found data) {
                 return Found.builder()
                     .id(data.id())
                     .index(data.index())
                     .title(data.title())
+                    .nextQuestionIndex(data.nextQuestionIndex())
                     .build();
             }
         }
