@@ -16,6 +16,6 @@ public interface LoadQuestionnairesPort {
 
     List<Result> loadQuestionnaireDetails(long kitVersionId, UUID assessmentResultId);
 
-    record Result(long id, int index, String title, Integer nextQuestionIndex,int questionCount, int answerCount) {
+    record Result(long id, int index, String title, Integer questionIndex,int questionCount, int answerCount) {
     }
 }

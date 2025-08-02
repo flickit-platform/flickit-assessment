@@ -47,18 +47,18 @@ public class GetAssessmentNextQuestionnaireService implements GetAssessmentNextQ
             .index();
 
         var unansweredQuestionnaire = allQuestionnaireDetails.stream()
-            .filter(q -> q.nextQuestionIndex() != null)
+            .filter(q -> q.questionIndex() != null)
             .toList();
 
         Optional<Result> after = unansweredQuestionnaire.stream()
             .filter(q -> q.index() > currentQuestionnaireIndex)
             .min(Comparator.comparingInt(LoadQuestionnairesPort.Result::index))
-            .map(q -> new Result.Found(q.id(), q.index(), q.title(), q.nextQuestionIndex()));
+            .map(q -> new Result.Found(q.id(), q.index(), q.title(), q.questionIndex()));
 
         return after.orElseGet(() -> unansweredQuestionnaire.stream()
             .filter(q -> q.index() <= currentQuestionnaireIndex)
             .min(Comparator.comparingInt(LoadQuestionnairesPort.Result::index))
-            .<Result>map(q -> new Result.Found(q.id(), q.index(), q.title(), q.nextQuestionIndex()))
+            .<Result>map(q -> new Result.Found(q.id(), q.index(), q.title(), q.questionIndex()))
             .orElse(Result.NotFound.INSTANCE));
     }
 }

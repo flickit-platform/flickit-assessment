@@ -125,7 +125,7 @@ class GetAssessmentNextQuestionnaireServiceTest {
         assertEquals(expectedQuestionnaire.id(), result.id());
         assertEquals(expectedQuestionnaire.index(), result.index());
         assertEquals(expectedQuestionnaire.title(), result.title());
-        assertEquals(expectedQuestionnaire.nextQuestionIndex(), result.nextQuestionIndex());
+        assertEquals(expectedQuestionnaire.questionIndex(), result.questionIndex());
     }
 
     @ParameterizedTest
@@ -155,7 +155,7 @@ class GetAssessmentNextQuestionnaireServiceTest {
         assertEquals(expectedQuestionnaire.id(), result.id());
         assertEquals(expectedQuestionnaire.index(), result.index());
         assertEquals(expectedQuestionnaire.title(), result.title());
-        assertEquals(expectedQuestionnaire.nextQuestionIndex(), result.nextQuestionIndex());
+        assertEquals(expectedQuestionnaire.questionIndex(), result.questionIndex());
     }
 
     @ParameterizedTest
@@ -184,7 +184,7 @@ class GetAssessmentNextQuestionnaireServiceTest {
         assertEquals(expectedQuestionnaire.id(), result.id());
         assertEquals(expectedQuestionnaire.index(), result.index());
         assertEquals(expectedQuestionnaire.title(), result.title());
-        assertEquals(expectedQuestionnaire.nextQuestionIndex(), result.nextQuestionIndex());
+        assertEquals(expectedQuestionnaire.questionIndex(), result.questionIndex());
     }
 
     private GetAssessmentNextQuestionnaireUseCase.Param createParam(Consumer<GetAssessmentNextQuestionnaireUseCase.Param.ParamBuilder> changer) {
