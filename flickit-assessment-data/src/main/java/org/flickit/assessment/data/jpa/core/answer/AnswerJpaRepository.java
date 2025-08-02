@@ -145,4 +145,18 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
         """)
     List<AnswerJpaEntity> findAnswersByAssessmentResultIdAndStatus(@Param("assessmentResultId") UUID assessmentResultId,
                                                                    @Param("status") Integer status);
+
+    @Query("""
+            SELECT q.questionnaireId as questionnaireId,
+                   MIN(q.index) as firstUnansweredQuestionIndex
+            FROM QuestionJpaEntity q
+            JOIN AssessmentResultJpaEntity r ON q.kitVersionId = r.kitVersionId
+            LEFT JOIN AnswerJpaEntity a ON a.questionId = q.id AND a.assessmentResult.id = r.id
+            WHERE r.id = :assessmentResultId
+              AND q.questionnaireId IN :questionnaireIds
+              AND (a.id IS NULL OR(a.answerOptionId IS NULL AND a.isNotApplicable = false))
+            GROUP BY q.questionnaireId
+        """)
+    List<QuestionnaireIdQuestionIndexView> findUnansweredQuestionIndex(@Param("assessmentResultId") UUID assessmentResultId,
+                                                                       @Param("questionnaireIds") List<Long> questionnaireIds);
 }
