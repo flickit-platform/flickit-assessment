@@ -49,8 +49,7 @@ import static org.flickit.assessment.core.test.fixture.application.AnswerOptionM
 import static org.flickit.assessment.core.test.fixture.application.AnswerOptionMother.optionOne;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentReportMetadataMother.fullMetadata;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentReportMother.publishedReportWithMetadata;
-import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.levelThree;
-import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.levelTwo;
+import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.*;
 import static org.flickit.assessment.core.test.fixture.application.MeasureMother.createMeasure;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -148,10 +147,14 @@ class GetAssessmentReportServiceTest {
         var param = createParam(GetAssessmentReportUseCase.Param.ParamBuilder::build);
 
         var assessmentReport = createAssessmentReportItem(param);
-        var attributeReportItem = new AttributeReportItem(15L, "Agility", "agility of team",
+        var attributeReportItem1 = new AttributeReportItem(15L, "Agility", "agility of team",
             "in very good state", 1, 3, 63.0, levelThree());
+        var attributeReportItem2 = new AttributeReportItem(15L, "Agility", "agility of team",
+            "in very good state", 1, 3, 63.0, levelFive());
         var subjects = List.of(new AssessmentSubjectReportItem(2L, "team", 2,
-            "subject Insight", 58.6, levelTwo(), List.of(attributeReportItem)));
+            "subject Insight", 58.6, levelTwo(), List.of(attributeReportItem1)),
+            new AssessmentSubjectReportItem(3L, "team", 3,
+                "subject Insight", 58.6, levelFive(), List.of(attributeReportItem2)));
         var assessmentReportInfo = new LoadAssessmentReportInfoPort.Result(assessmentReport, subjects);
         var adviceNarration = "assessor narration";
         var adviceItems = List.of(adviceItem(), adviceItem());
@@ -178,12 +181,18 @@ class GetAssessmentReportServiceTest {
 
         assertAssessmentReport(assessmentReport, result, AssessmentReportMother.empty());
         assertEquals(subjects.size(), result.subjects().size());
-        var expectedSubjectItem = subjects.getFirst();
-        var actualSubjectItem = result.subjects().getFirst();
-        assertSubjectItem(expectedSubjectItem, actualSubjectItem);
-        var expectedAttributeItem = expectedSubjectItem.attributes().getFirst();
-        var actualAttributeItem = actualSubjectItem.attributes().getFirst();
-        assertAttributeItem(expectedAttributeItem, actualAttributeItem);
+        var expectedSubjectItem1 = subjects.getFirst();
+        var expectedSubjectItem2 = subjects.getLast();
+        var actualSubjectItem1 = result.subjects().getFirst();
+        var actualSubjectItem2 = result.subjects().getLast();
+        assertSubjectItem(expectedSubjectItem1, actualSubjectItem1);
+        assertSubjectItem(expectedSubjectItem2, actualSubjectItem2);
+        var expectedAttributeItem1 = expectedSubjectItem1.attributes().getFirst();
+        var expectedAttributeItem2 = expectedSubjectItem2.attributes().getFirst();
+        var actualAttributeItem1 = actualSubjectItem1.attributes().getFirst();
+        var actualAttributeItem2 = actualSubjectItem2.attributes().getFirst();
+        assertAttributeItem(expectedAttributeItem1, actualAttributeItem1);
+        assertAttributeItem(expectedAttributeItem2, actualAttributeItem2);
         assertEquals(adviceNarration, result.advice().narration());
         assertEquals(adviceItems.size(), result.advice().adviceItems().size());
         assertAdviceItem(adviceItems, result.advice().adviceItems(), assessmentReport.language());
@@ -192,6 +201,7 @@ class GetAssessmentReportServiceTest {
         assertFalse(result.permissions().canManageVisibility());
         assertEquals(VisibilityType.RESTRICTED.name(), result.visibility());
         assertNull(result.linkHash());
+        assertTrue(result.advisable());
 
         verify(assessmentAccessChecker, times(3))
             .isAuthorized(eq(param.getAssessmentId()), eq(param.getCurrentUserId()), any(AssessmentPermission.class));
@@ -208,7 +218,7 @@ class GetAssessmentReportServiceTest {
 
         var teamLevel = levelTwo();
         var attributeReportItem = new AttributeReportItem(15L, "Agility", "agility of team",
-            "in very good state", 1, 3, 63.0, levelThree());
+            "in very good state", 1, 3, 63.0, levelFive());
         var subjects = List.of(new AssessmentSubjectReportItem(2L, "team", 2,
             "subject Insight", 58.6, teamLevel, List.of(attributeReportItem)));
         var assessmentReportInfo = new LoadAssessmentReportInfoPort.Result(assessmentReport, subjects);
@@ -253,6 +263,7 @@ class GetAssessmentReportServiceTest {
         assertTrue(result.permissions().canManageVisibility());
         assertEquals(report.getVisibility().name(), result.visibility());
         assertEquals(report.getLinkHash(), result.linkHash());
+        assertFalse(result.advisable());
     }
 
     private AssessmentReportItem createAssessmentReportItem(GetAssessmentReportUseCase.Param param) {

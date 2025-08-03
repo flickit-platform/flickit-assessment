@@ -42,7 +42,8 @@ public interface GetAssessmentReportUseCase {
                   Permissions permissions,
                   Language lang,
                   String visibility,
-                  String linkHash) {
+                  String linkHash,
+                  boolean advisable) {
     }
 
     record Assessment(String title,
