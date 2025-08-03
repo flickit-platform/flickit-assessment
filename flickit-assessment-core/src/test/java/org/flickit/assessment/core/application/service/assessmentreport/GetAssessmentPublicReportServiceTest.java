@@ -48,8 +48,7 @@ import static org.flickit.assessment.core.test.fixture.application.AnswerOptionM
 import static org.flickit.assessment.core.test.fixture.application.AnswerOptionMother.optionOne;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentReportMetadataMother.fullMetadata;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentReportMother.publishedReportWithMetadata;
-import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.levelThree;
-import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.levelTwo;
+import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.*;
 import static org.flickit.assessment.core.test.fixture.application.MeasureMother.createMeasure;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -163,6 +162,7 @@ class GetAssessmentPublicReportServiceTest {
         assertEquals(adviceNarration, result.advice().narration());
         assertEquals(adviceItems.size(), result.advice().adviceItems().size());
         assertAdviceItem(adviceItems, result.advice().adviceItems(), assessmentReport.language());
+        assertTrue(result.advisable());
 
         assertFalse(result.permissions().canViewDashboard());
         assertFalse(result.permissions().canManageVisibility());
@@ -225,6 +225,7 @@ class GetAssessmentPublicReportServiceTest {
         assertFalse(result.permissions().canViewDashboard());
         assertFalse(result.permissions().canManageVisibility());
         assertFalse(result.permissions().canShareReport());
+        assertTrue(result.advisable());
     }
 
     @Test
@@ -237,10 +238,12 @@ class GetAssessmentPublicReportServiceTest {
         var assessmentReport = createAssessmentReportItem(assessmentId);
 
         var teamLevel = levelTwo();
-        var attributeReportItem = new AttributeReportItem(15L, "Agility", "agility of team",
-            "in very good state", 1, 3, 63.0, levelThree());
+        var attributeReportItem1 = new AttributeReportItem(15L, "Agility", "agility of team", "in very good state", 1, 3, 63.0, levelThree());
+        var attributeReportItem2 = new AttributeReportItem(15L, "Security Policies and Standards", "Create and verify a set of policies and standards for software security", "in very good state", 1, 3, 70, levelFive());
         var subjects = List.of(new AssessmentSubjectReportItem(2L, "team", 2,
-            "subject Insight", 58.6, teamLevel, List.of(attributeReportItem)));
+            "subject Insight", 58.6, teamLevel, List.of(attributeReportItem1)),
+            new AssessmentSubjectReportItem(3L, "Security", 3,
+                "subject Insight", 58.6, teamLevel, List.of(attributeReportItem2)));
         var assessmentReportInfo = new LoadAssessmentReportInfoPort.Result(assessmentReport, subjects);
 
         var report = publishedReportWithMetadata(fullMetadata());
@@ -284,6 +287,7 @@ class GetAssessmentPublicReportServiceTest {
         assertTrue(result.permissions().canViewDashboard());
         assertFalse(result.permissions().canShareReport());
         assertTrue(result.permissions().canManageVisibility());
+        assertTrue(result.advisable());
     }
 
     @Test
@@ -299,14 +303,12 @@ class GetAssessmentPublicReportServiceTest {
 
         var teamLevel = levelTwo();
         var attributeReportItem = new AttributeReportItem(15L, "Agility", "agility of team",
-            "in very good state", 1, 3, 63.0, levelThree());
+            "in very good state", 1, 3, 63.0, levelFive());
         var subjects = List.of(new AssessmentSubjectReportItem(2L, "team", 2,
             "subject Insight", 58.6, teamLevel, List.of(attributeReportItem)));
         var assessmentReportInfo = new LoadAssessmentReportInfoPort.Result(assessmentReport, subjects);
 
         var report = publishedReportWithMetadata(fullMetadata());
-        var adviceNarration = "assessor narration";
-        var adviceItems = List.of(adviceItem(), adviceItem());
 
         var measure1 = assessmentReport.assessmentKit().measures().getFirst();
         var measure2 = assessmentReport.assessmentKit().measures().getLast();
@@ -315,8 +317,6 @@ class GetAssessmentPublicReportServiceTest {
             new LoadAssessmentQuestionsPort.Result(QuestionMother.withMeasure(measure2), answer(optionFour())));
 
         when(loadAssessmentReportInfoPort.load(assessmentId)).thenReturn(assessmentReportInfo);
-        when(loadAdviceNarrationPort.load(assessmentReport.assessmentResultId())).thenReturn(adviceNarration);
-        when(loadAdviceItemsPort.loadAll(assessmentReport.assessmentResultId())).thenReturn(adviceItems);
         when(assessmentAccessChecker.isAuthorized(assessmentId, paramWithUserId.getCurrentUserId(), VIEW_DASHBOARD))
             .thenReturn(true);
         when(assessmentAccessChecker.isAuthorized(assessmentId, paramWithUserId.getCurrentUserId(), GRANT_ACCESS_TO_REPORT))
@@ -336,12 +336,13 @@ class GetAssessmentPublicReportServiceTest {
         var expectedAttributeItem = expectedSubjectItem.attributes().getFirst();
         var actualAttributeItem = actualSubjectItem.attributes().getFirst();
         assertAttributeItem(expectedAttributeItem, actualAttributeItem);
-        assertEquals(adviceNarration, result.advice().narration());
-        assertEquals(adviceItems.size(), result.advice().adviceItems().size());
-        assertAdviceItem(adviceItems, result.advice().adviceItems(), assessmentReport.language());
+        assertNull(result.advice());
         assertTrue(result.permissions().canViewDashboard());
         assertTrue(result.permissions().canShareReport());
         assertFalse(result.permissions().canManageVisibility());
+        assertFalse(result.advisable());
+
+        verifyNoInteractions(loadAdviceNarrationPort, loadAdviceItemsPort);
     }
 
     @Test

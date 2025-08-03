@@ -29,6 +29,7 @@ import static java.util.stream.Collectors.*;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.ASSESSMENT_REPORT_LINK_HASH_NOT_FOUND;
+import static org.flickit.assessment.core.common.ErrorMessageKey.MATURITY_LEVEL_ID_NOT_FOUND;
 
 @Service
 @Transactional(readOnly = true)
@@ -96,12 +97,24 @@ public class GetAssessmentPublicReportService implements GetAssessmentPublicRepo
         var maturityLevelMap = maturityLevels.stream()
             .collect(toMap(MaturityLevel::id, Function.identity()));
 
+        var maxMaturityLevel = maturityLevels.stream()
+            .max(Comparator.comparingInt(MaturityLevel::index))
+            .orElseThrow(()-> new ResourceNotFoundException(MATURITY_LEVEL_ID_NOT_FOUND));
+
+        List<Subject> subjects = toSubjects(assessmentReportInfo.subjects(), maturityLevelMap, attributeMeasuresMap);
+        boolean allAttributesMatured = subjects.stream()
+            .flatMap(s -> s.attributes().stream())
+            .allMatch(a -> a.maturityLevel().id() == maxMaturityLevel.id());
+
+        var advice = allAttributesMatured ? null : toAdvice(assessment.assessmentResultId(), Locale.of(assessment.language().name()));
+
         return new Result(toAssessment(assessment, assessmentKitItem, metadata, maturityLevels, attributesCount, maturityLevelMap),
-            toSubjects(assessmentReportInfo.subjects(), maturityLevelMap, attributeMeasuresMap),
-            toAdvice(assessment.assessmentResultId(), Locale.of(assessment.language().name())),
+            subjects,
+            advice,
             toAssessmentProcess(metadata),
             permissions,
-            toLanguage(assessment.language()));
+            toLanguage(assessment.language()),
+            !allAttributesMatured);
     }
 
     private List<MaturityLevel> toMaturityLevels(AssessmentKitItem assessmentKitItem) {
