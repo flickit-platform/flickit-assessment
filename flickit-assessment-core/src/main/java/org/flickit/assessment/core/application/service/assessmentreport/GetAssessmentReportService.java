@@ -98,14 +98,16 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
             .max(Comparator.comparingInt(MaturityLevel::index))
             .orElseThrow(()-> new ResourceNotFoundException(MATURITY_LEVEL_ID_NOT_FOUND));
 
-        List<Subject> subjects = toSubjects(assessmentReportInfo.subjects(), maturityLevelMap, attributeMeasuresMap);
+        var subjects = toSubjects(assessmentReportInfo.subjects(), maturityLevelMap, attributeMeasuresMap);
         boolean allAttributesMatured = subjects.stream()
             .flatMap(s -> s.attributes().stream())
             .allMatch(a -> a.maturityLevel().id() == maxMaturityLevel.id());
 
+        var advice = allAttributesMatured ? null : toAdvice(assessment.assessmentResultId(), Locale.of(assessment.language().name()));
+
         return new Result(toAssessment(assessment, assessmentKitItem, reportMetadata, maturityLevels, attributesCount, maturityLevelMap),
             subjects,
-            toAdvice(assessment.assessmentResultId(), Locale.of(assessment.language().name())),
+            advice,
             toAssessmentProcess(reportMetadata),
             toPermissions(param.getAssessmentId(), published, param.getCurrentUserId()),
             toLanguage(assessment.language()),

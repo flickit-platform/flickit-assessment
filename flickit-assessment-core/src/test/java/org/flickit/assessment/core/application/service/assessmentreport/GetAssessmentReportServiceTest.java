@@ -223,8 +223,6 @@ class GetAssessmentReportServiceTest {
             "subject Insight", 58.6, teamLevel, List.of(attributeReportItem)));
         var assessmentReportInfo = new LoadAssessmentReportInfoPort.Result(assessmentReport, subjects);
         AssessmentReport report = publishedReportWithMetadata(fullMetadata());
-        var adviceNarration = "assessor narration";
-        var adviceItems = List.of(adviceItem(), adviceItem());
 
         var measure1 = assessmentReport.assessmentKit().measures().getFirst();
         var measure2 = assessmentReport.assessmentKit().measures().getLast();
@@ -234,8 +232,6 @@ class GetAssessmentReportServiceTest {
 
         when(loadAssessmentReportInfoPort.load(param.getAssessmentId())).thenReturn(assessmentReportInfo);
         when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.of(report));
-        when(loadAdviceNarrationPort.load(assessmentReport.assessmentResultId())).thenReturn(adviceNarration);
-        when(loadAdviceItemsPort.loadAll(assessmentReport.assessmentResultId())).thenReturn(adviceItems);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_DASHBOARD))
             .thenReturn(false);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_ACCESS_TO_REPORT))
@@ -255,15 +251,16 @@ class GetAssessmentReportServiceTest {
         var expectedAttributeItem = expectedSubjectItem.attributes().getFirst();
         var actualAttributeItem = actualSubjectItem.attributes().getFirst();
         assertAttributeItem(expectedAttributeItem, actualAttributeItem);
-        assertEquals(adviceNarration, result.advice().narration());
-        assertEquals(adviceItems.size(), result.advice().adviceItems().size());
-        assertAdviceItem(adviceItems, result.advice().adviceItems(), assessmentReport.language());
+        assertNull(result.advice());
         assertFalse(result.permissions().canViewDashboard());
         assertFalse(result.permissions().canShareReport());
         assertTrue(result.permissions().canManageVisibility());
         assertEquals(report.getVisibility().name(), result.visibility());
         assertEquals(report.getLinkHash(), result.linkHash());
         assertFalse(result.advisable());
+
+        verifyNoInteractions(loadAdviceItemsPort,
+            loadAdviceNarrationPort);
     }
 
     private AssessmentReportItem createAssessmentReportItem(GetAssessmentReportUseCase.Param param) {
