@@ -22,6 +22,8 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toMap;
+
 @Component(value = "coreQuestionnairePersistenceJpaAdapter")
 @RequiredArgsConstructor
 public class QuestionnairePersistenceJpaAdapter implements
@@ -48,10 +50,10 @@ public class QuestionnairePersistenceJpaAdapter implements
 
         var questionnairesProgress = answerRepository.getQuestionnairesProgressByAssessmentResultId(assessmentResult.getId(), ids)
             .stream()
-            .collect(Collectors.toMap(QuestionnaireIdAndAnswerCountView::getQuestionnaireId, QuestionnaireIdAndAnswerCountView::getAnswerCount));
+            .collect(toMap(QuestionnaireIdAndAnswerCountView::getQuestionnaireId, QuestionnaireIdAndAnswerCountView::getAnswerCount));
 
         var questionnaireToNextQuestionMap = questionRepository.findQuestionnairesFirstUnansweredQuestion(assessmentResult.getId()).stream()
-            .collect(Collectors.toMap(FirstUnansweredQuestionView::getQuestionnaireId, FirstUnansweredQuestionView::getIndex));
+            .collect(toMap(FirstUnansweredQuestionView::getQuestionnaireId, FirstUnansweredQuestionView::getIndex));
 
         var items = pageResult.getContent().stream()
             .map(q -> QuestionnaireMapper.mapToListItem(q,
@@ -78,12 +80,11 @@ public class QuestionnairePersistenceJpaAdapter implements
             .map(v -> v.getQuestionnaire().getId())
             .toList();
 
-        var questionnaireIdToAnswerCountMap = answerRepository.getQuestionnairesProgressByAssessmentResultId(assessmentResultId, questionnaireIds)
-            .stream()
-            .collect(Collectors.toMap(QuestionnaireIdAndAnswerCountView::getQuestionnaireId, QuestionnaireIdAndAnswerCountView::getAnswerCount));
+        var questionnaireIdToAnswerCountMap = answerRepository.getQuestionnairesProgressByAssessmentResultId(assessmentResultId, questionnaireIds).stream()
+            .collect(toMap(QuestionnaireIdAndAnswerCountView::getQuestionnaireId, QuestionnaireIdAndAnswerCountView::getAnswerCount));
 
-        var questionnaireIdToNextQuestionIndexMap = answerRepository.findUnansweredQuestionIndex(assessmentResultId, questionnaireIds)
-            .stream().collect(Collectors.toMap(QuestionnaireIdQuestionIndexView::getQuestionnaireId, QuestionnaireIdQuestionIndexView::getFirstUnansweredQuestionIndex));
+        var questionnaireIdToNextQuestionIndexMap = answerRepository.findUnansweredQuestionIndex(assessmentResultId, questionnaireIds).stream()
+            .collect(toMap(QuestionnaireIdQuestionIndexView::getQuestionnaireId, QuestionnaireIdQuestionIndexView::getFirstUnansweredQuestionIndex));
 
         return questionnaireViews.stream()
             .map(view -> {
