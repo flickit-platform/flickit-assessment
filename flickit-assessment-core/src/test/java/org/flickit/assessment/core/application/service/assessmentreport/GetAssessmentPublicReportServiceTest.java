@@ -162,7 +162,7 @@ class GetAssessmentPublicReportServiceTest {
         assertEquals(adviceNarration, result.advice().narration());
         assertEquals(adviceItems.size(), result.advice().adviceItems().size());
         assertAdviceItem(adviceItems, result.advice().adviceItems(), assessmentReport.language());
-        assertTrue(result.advisable());
+        assertTrue(result.isAdvisable());
 
         assertFalse(result.permissions().canViewDashboard());
         assertFalse(result.permissions().canManageVisibility());
@@ -225,7 +225,7 @@ class GetAssessmentPublicReportServiceTest {
         assertFalse(result.permissions().canViewDashboard());
         assertFalse(result.permissions().canManageVisibility());
         assertFalse(result.permissions().canShareReport());
-        assertTrue(result.advisable());
+        assertTrue(result.isAdvisable());
     }
 
     @Test
@@ -287,7 +287,7 @@ class GetAssessmentPublicReportServiceTest {
         assertTrue(result.permissions().canViewDashboard());
         assertFalse(result.permissions().canShareReport());
         assertTrue(result.permissions().canManageVisibility());
-        assertTrue(result.advisable());
+        assertTrue(result.isAdvisable());
     }
 
     @Test
@@ -340,7 +340,7 @@ class GetAssessmentPublicReportServiceTest {
         assertTrue(result.permissions().canViewDashboard());
         assertTrue(result.permissions().canShareReport());
         assertFalse(result.permissions().canManageVisibility());
-        assertFalse(result.advisable());
+        assertFalse(result.isAdvisable());
 
         verifyNoInteractions(loadAdviceNarrationPort, loadAdviceItemsPort);
     }

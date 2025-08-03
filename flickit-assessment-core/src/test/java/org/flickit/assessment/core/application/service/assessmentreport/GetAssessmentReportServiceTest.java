@@ -201,7 +201,7 @@ class GetAssessmentReportServiceTest {
         assertFalse(result.permissions().canManageVisibility());
         assertEquals(VisibilityType.RESTRICTED.name(), result.visibility());
         assertNull(result.linkHash());
-        assertTrue(result.advisable());
+        assertTrue(result.isAdvisable());
 
         verify(assessmentAccessChecker, times(3))
             .isAuthorized(eq(param.getAssessmentId()), eq(param.getCurrentUserId()), any(AssessmentPermission.class));
@@ -257,7 +257,7 @@ class GetAssessmentReportServiceTest {
         assertTrue(result.permissions().canManageVisibility());
         assertEquals(report.getVisibility().name(), result.visibility());
         assertEquals(report.getLinkHash(), result.linkHash());
-        assertFalse(result.advisable());
+        assertFalse(result.isAdvisable());
 
         verifyNoInteractions(loadAdviceItemsPort,
             loadAdviceNarrationPort);

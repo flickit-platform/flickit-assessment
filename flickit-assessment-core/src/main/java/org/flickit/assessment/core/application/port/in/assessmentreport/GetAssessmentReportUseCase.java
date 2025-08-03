@@ -43,7 +43,7 @@ public interface GetAssessmentReportUseCase {
                   Language lang,
                   String visibility,
                   String linkHash,
-                  boolean advisable) {
+                  boolean isAdvisable) {
     }
 
     record Assessment(String title,
