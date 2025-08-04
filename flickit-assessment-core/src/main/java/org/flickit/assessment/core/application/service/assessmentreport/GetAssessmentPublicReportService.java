@@ -1,5 +1,6 @@
 package org.flickit.assessment.core.application.service.assessmentreport;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
@@ -19,6 +20,7 @@ import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmen
 import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
+import org.flickit.assessment.core.application.service.assessment.AssessmentResultHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,13 +32,15 @@ import static org.flickit.assessment.common.application.domain.assessment.Assess
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.ASSESSMENT_REPORT_LINK_HASH_NOT_FOUND;
 
+@Slf4j
 @Service
-@Transactional(readOnly = true)
+@Transactional
 @RequiredArgsConstructor
 public class GetAssessmentPublicReportService implements GetAssessmentPublicReportUseCase {
 
     private final LoadAssessmentReportPort loadAssessmentReportPort;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
+    private final AssessmentResultHelper assessmentResultHelper;
     private final LoadAssessmentReportInfoPort loadAssessmentReportInfoPort;
     private final LoadAssessmentQuestionsPort loadAssessmentQuestionsPort;
     private final AssessmentAccessChecker assessmentAccessChecker;
@@ -51,6 +55,8 @@ public class GetAssessmentPublicReportService implements GetAssessmentPublicRepo
 
         if (!isReportPublic(report) && !userHasAccess(param.getCurrentUserId(), assessmentResult.getAssessment().getId()))
             throw new ResourceNotFoundException(ASSESSMENT_REPORT_LINK_HASH_NOT_FOUND);
+
+        assessmentResultHelper.recalculateAssessmentResultIfRequired(assessmentResult);
 
         return buildReport(report, assessmentResult, param.getCurrentUserId());
     }

@@ -22,6 +22,7 @@ import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmen
 import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
+import org.flickit.assessment.core.application.service.assessment.AssessmentResultHelper;
 import org.flickit.assessment.core.test.fixture.application.AssessmentReportMother;
 import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
@@ -41,6 +42,7 @@ import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.*;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.ASSESSMENT_REPORT_LINK_HASH_NOT_FOUND;
 import static org.flickit.assessment.core.test.fixture.application.AdviceItemMother.adviceItem;
 import static org.flickit.assessment.core.test.fixture.application.AnswerMother.answer;
@@ -81,21 +83,43 @@ class GetAssessmentPublicReportServiceTest {
     @Mock
     private LoadAssessmentResultPort loadAssessmentResultPort;
 
-    private final AssessmentResult assessmentResult = AssessmentResultMother.validResult();
+    @Mock
+    private AssessmentResultHelper assessmentResultHelper;
+
+    private Param param = createParam(Param.ParamBuilder::build);
+    private final AssessmentResult assessmentResult = AssessmentResultMother.validResultWithKitCustomId(null);
     private final AssessmentReport restrictedReport = AssessmentReportMother.restrictedAndPublishedReport();
     private final AssessmentReport notPublishedReport = AssessmentReportMother.publicAndNotPublishedReport();
     private final AssessmentReport publicReport = AssessmentReportMother.publicAndPublishedReport();
-    private final Param paramWithUserId = createParam(Param.ParamBuilder::build);
+
+    @Test
+    void testGetAssessmentPublicReport_whenAssessmentResultDoesNotFound_thenThrowResourceNotFoundException() {
+        when(loadAssessmentReportPort.loadByLinkHash(param.getLinkHash())).thenReturn(restrictedReport);
+        when(loadAssessmentResultPort.load(restrictedReport.getAssessmentResultId())).thenReturn(Optional.empty());
+
+        var exception = assertThrows(ResourceNotFoundException.class, () -> service.getAssessmentPublicReport(param));
+
+        assertEquals(COMMON_ASSESSMENT_RESULT_NOT_FOUND, exception.getMessage());
+        verifyNoInteractions(assessmentAccessChecker,
+            loadAssessmentReportInfoPort,
+            loadAssessmentQuestionsPort,
+            loadAdviceNarrationPort,
+            loadAdviceItemsPort);
+
+        verifyNoInteractions(assessmentResultHelper);
+    }
 
     @Test
     void testGetAssessmentPublicReport_whenReportIsRestrictedAndUserIsNotLoggedIn_thenThrowResourceNotFoundException() {
-        Param param = createParam(p -> p.currentUserId(null));
+        param = createParam(p -> p.currentUserId(null));
         when(loadAssessmentReportPort.loadByLinkHash(param.getLinkHash())).thenReturn(restrictedReport);
         when(loadAssessmentResultPort.load(restrictedReport.getAssessmentResultId())).thenReturn(Optional.of(assessmentResult));
+
         var exception = assertThrows(ResourceNotFoundException.class, () -> service.getAssessmentPublicReport(param));
 
         assertEquals(ASSESSMENT_REPORT_LINK_HASH_NOT_FOUND, exception.getMessage());
         verifyNoInteractions(assessmentAccessChecker,
+            assessmentResultHelper,
             loadAssessmentReportInfoPort,
             loadAssessmentQuestionsPort,
             loadAdviceNarrationPort,
@@ -104,13 +128,16 @@ class GetAssessmentPublicReportServiceTest {
 
     @Test
     void testGetAssessmentPublicReport_whenReportIsUnpublishedAndUserIsNotLoggedIn_thenThrowResourceNotFoundException() {
-        Param param = createParam(p -> p.currentUserId(null));
+        param = createParam(p -> p.currentUserId(null));
+
         when(loadAssessmentReportPort.loadByLinkHash(param.getLinkHash())).thenReturn(notPublishedReport);
         when(loadAssessmentResultPort.load(notPublishedReport.getAssessmentResultId())).thenReturn(Optional.of(assessmentResult));
+
         var exception = assertThrows(ResourceNotFoundException.class, () -> service.getAssessmentPublicReport(param));
 
         assertEquals(ASSESSMENT_REPORT_LINK_HASH_NOT_FOUND, exception.getMessage());
         verifyNoInteractions(assessmentAccessChecker,
+            assessmentResultHelper,
             loadAssessmentReportInfoPort,
             loadAssessmentQuestionsPort,
             loadAdviceNarrationPort,
@@ -119,7 +146,7 @@ class GetAssessmentPublicReportServiceTest {
 
     @Test
     void testGetAssessmentPublicReport_whenReportIsPublicAndUserIsNotLoggedIn_thenReturnReportWithoutPermissions() {
-        var param = createParam(p -> p.currentUserId(null));
+        param = createParam(p -> p.currentUserId(null));
         var assessmentId = assessmentResult.getAssessment().getId();
 
         when(loadAssessmentReportPort.loadByLinkHash(param.getLinkHash())).thenReturn(publicReport);
@@ -167,6 +194,7 @@ class GetAssessmentPublicReportServiceTest {
         assertFalse(result.permissions().canViewDashboard());
         assertFalse(result.permissions().canManageVisibility());
         assertFalse(result.permissions().canShareReport());
+        verify(assessmentResultHelper).recalculateAssessmentResultIfRequired(assessmentResult);
         verifyNoInteractions(assessmentAccessChecker);
     }
 
@@ -174,7 +202,7 @@ class GetAssessmentPublicReportServiceTest {
     void testGetAssessmentPublicReport_whenReportIsPublicAndLoggedInUserLacksViewGraphicalReportPermission_thenReturnReportWithoutPermissions() {
         var assessmentId = assessmentResult.getAssessment().getId();
 
-        when(loadAssessmentReportPort.loadByLinkHash(paramWithUserId.getLinkHash())).thenReturn(publicReport);
+        when(loadAssessmentReportPort.loadByLinkHash(param.getLinkHash())).thenReturn(publicReport);
         when(loadAssessmentResultPort.load(publicReport.getAssessmentResultId())).thenReturn(Optional.of(assessmentResult));
 
         var assessmentReport = createAssessmentReportItem(assessmentId);
@@ -201,14 +229,14 @@ class GetAssessmentPublicReportServiceTest {
         when(loadAdviceItemsPort.loadAll(assessmentReport.assessmentResultId())).thenReturn(adviceItems);
         when(loadAssessmentQuestionsPort.loadApplicableQuestions(assessmentId))
             .thenReturn(questionAnswers);
-        when(assessmentAccessChecker.isAuthorized(assessmentId, paramWithUserId.getCurrentUserId(), VIEW_DASHBOARD))
+        when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), VIEW_DASHBOARD))
             .thenReturn(false);
-        when(assessmentAccessChecker.isAuthorized(assessmentId, paramWithUserId.getCurrentUserId(), GRANT_ACCESS_TO_REPORT))
+        when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), GRANT_ACCESS_TO_REPORT))
             .thenReturn(false);
-        when(assessmentAccessChecker.isAuthorized(assessmentId, paramWithUserId.getCurrentUserId(), MANAGE_ASSESSMENT_REPORT_VISIBILITY))
+        when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), MANAGE_ASSESSMENT_REPORT_VISIBILITY))
             .thenReturn(false);
 
-        var result = service.getAssessmentPublicReport(paramWithUserId);
+        var result = service.getAssessmentPublicReport(param);
 
         assertAssessmentReport(assessmentReport, result, report);
         assertEquals(subjects.size(), result.subjects().size());
@@ -225,13 +253,15 @@ class GetAssessmentPublicReportServiceTest {
         assertFalse(result.permissions().canViewDashboard());
         assertFalse(result.permissions().canManageVisibility());
         assertFalse(result.permissions().canShareReport());
+
+        verify(assessmentResultHelper).recalculateAssessmentResultIfRequired(assessmentResult);
     }
 
     @Test
     void testGetAssessmentPublicReport_whenReportIsPublicAndUserIsLoggedIn_thenReturnReportWithPermissions() {
         var assessmentId = assessmentResult.getAssessment().getId();
 
-        when(loadAssessmentReportPort.loadByLinkHash(paramWithUserId.getLinkHash())).thenReturn(publicReport);
+        when(loadAssessmentReportPort.loadByLinkHash(param.getLinkHash())).thenReturn(publicReport);
         when(loadAssessmentResultPort.load(publicReport.getAssessmentResultId())).thenReturn(Optional.of(assessmentResult));
 
         var assessmentReport = createAssessmentReportItem(assessmentId);
@@ -256,19 +286,19 @@ class GetAssessmentPublicReportServiceTest {
         when(loadAssessmentReportInfoPort.load(assessmentId)).thenReturn(assessmentReportInfo);
         when(loadAdviceNarrationPort.load(assessmentReport.assessmentResultId())).thenReturn(adviceNarration);
         when(loadAdviceItemsPort.loadAll(assessmentReport.assessmentResultId())).thenReturn(adviceItems);
-        when(assessmentAccessChecker.isAuthorized(assessmentId, paramWithUserId.getCurrentUserId(), VIEW_DASHBOARD))
+        when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), VIEW_DASHBOARD))
             .thenReturn(true);
-        when(assessmentAccessChecker.isAuthorized(assessmentId, paramWithUserId.getCurrentUserId(), GRANT_ACCESS_TO_REPORT))
+        when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), GRANT_ACCESS_TO_REPORT))
             .thenReturn(false);
-        when(assessmentAccessChecker.isAuthorized(assessmentId, paramWithUserId.getCurrentUserId(), MANAGE_ASSESSMENT_REPORT_VISIBILITY))
+        when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), MANAGE_ASSESSMENT_REPORT_VISIBILITY))
             .thenReturn(true);
 
         when(loadAssessmentQuestionsPort.loadApplicableQuestions(assessmentId))
             .thenReturn(questionAnswers);
 
-        var result = service.getAssessmentPublicReport(paramWithUserId);
+        var result = service.getAssessmentPublicReport(param);
 
-        verify(assessmentAccessChecker, never()).isAuthorized(assessmentId, paramWithUserId.getCurrentUserId(), VIEW_GRAPHICAL_REPORT);
+        verify(assessmentAccessChecker, never()).isAuthorized(assessmentId, param.getCurrentUserId(), VIEW_GRAPHICAL_REPORT);
 
         assertAssessmentReport(assessmentReport, result, report);
         assertEquals(subjects.size(), result.subjects().size());
@@ -284,15 +314,19 @@ class GetAssessmentPublicReportServiceTest {
         assertTrue(result.permissions().canViewDashboard());
         assertFalse(result.permissions().canShareReport());
         assertTrue(result.permissions().canManageVisibility());
+
+        verify(assessmentResultHelper).recalculateAssessmentResultIfRequired(assessmentResult);
     }
 
     @Test
     void testGetAssessmentPublicReport_whenReportIsRestrictedAndLoggedInUserHasViewGraphicalReportPermission_thenReturnReportWithPermissions() {
         var assessmentId = assessmentResult.getAssessment().getId();
+        assessmentResult.setIsCalculateValid(true);
+        assessmentResult.setIsConfidenceValid(true);
 
-        when(loadAssessmentReportPort.loadByLinkHash(paramWithUserId.getLinkHash())).thenReturn(restrictedReport);
+        when(loadAssessmentReportPort.loadByLinkHash(param.getLinkHash())).thenReturn(restrictedReport);
         when(loadAssessmentResultPort.load(restrictedReport.getAssessmentResultId())).thenReturn(Optional.of(assessmentResult));
-        when(assessmentAccessChecker.isAuthorized(assessmentId, paramWithUserId.getCurrentUserId(), VIEW_GRAPHICAL_REPORT))
+        when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), VIEW_GRAPHICAL_REPORT))
             .thenReturn(true);
 
         var assessmentReport = createAssessmentReportItem(assessmentId);
@@ -317,16 +351,16 @@ class GetAssessmentPublicReportServiceTest {
         when(loadAssessmentReportInfoPort.load(assessmentId)).thenReturn(assessmentReportInfo);
         when(loadAdviceNarrationPort.load(assessmentReport.assessmentResultId())).thenReturn(adviceNarration);
         when(loadAdviceItemsPort.loadAll(assessmentReport.assessmentResultId())).thenReturn(adviceItems);
-        when(assessmentAccessChecker.isAuthorized(assessmentId, paramWithUserId.getCurrentUserId(), VIEW_DASHBOARD))
+        when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), VIEW_DASHBOARD))
             .thenReturn(true);
-        when(assessmentAccessChecker.isAuthorized(assessmentId, paramWithUserId.getCurrentUserId(), GRANT_ACCESS_TO_REPORT))
+        when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), GRANT_ACCESS_TO_REPORT))
             .thenReturn(true);
-        when(assessmentAccessChecker.isAuthorized(assessmentId, paramWithUserId.getCurrentUserId(), MANAGE_ASSESSMENT_REPORT_VISIBILITY))
+        when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), MANAGE_ASSESSMENT_REPORT_VISIBILITY))
             .thenReturn(false);
         when(loadAssessmentQuestionsPort.loadApplicableQuestions(assessmentId))
             .thenReturn(questionAnswers);
 
-        var result = service.getAssessmentPublicReport(paramWithUserId);
+        var result = service.getAssessmentPublicReport(param);
 
         assertAssessmentReport(assessmentReport, result, report);
         assertEquals(subjects.size(), result.subjects().size());
@@ -342,19 +376,23 @@ class GetAssessmentPublicReportServiceTest {
         assertTrue(result.permissions().canViewDashboard());
         assertTrue(result.permissions().canShareReport());
         assertFalse(result.permissions().canManageVisibility());
+
+        verify(assessmentResultHelper).recalculateAssessmentResultIfRequired(assessmentResult);
     }
 
     @Test
     void testGetAssessmentPublicReport_whenReportIsRestrictedAndLoggedInUserLacksViewGraphicalReportPermission_thenThrowResourceNotFoundException() {
-        when(loadAssessmentReportPort.loadByLinkHash(paramWithUserId.getLinkHash())).thenReturn(notPublishedReport);
+        when(loadAssessmentReportPort.loadByLinkHash(param.getLinkHash())).thenReturn(notPublishedReport);
         when(loadAssessmentResultPort.load(notPublishedReport.getAssessmentResultId())).thenReturn(Optional.of(assessmentResult));
-        when(assessmentAccessChecker.isAuthorized(assessmentResult.getAssessment().getId(), paramWithUserId.getCurrentUserId(), VIEW_GRAPHICAL_REPORT))
+        when(assessmentAccessChecker.isAuthorized(assessmentResult.getAssessment().getId(), param.getCurrentUserId(), VIEW_GRAPHICAL_REPORT))
             .thenReturn(false);
-        var exception = assertThrows(ResourceNotFoundException.class, () -> service.getAssessmentPublicReport(paramWithUserId));
+
+        var exception = assertThrows(ResourceNotFoundException.class, () -> service.getAssessmentPublicReport(param));
 
         assertEquals(ASSESSMENT_REPORT_LINK_HASH_NOT_FOUND, exception.getMessage());
 
         verifyNoInteractions(loadAssessmentReportInfoPort,
+            assessmentResultHelper,
             loadAssessmentQuestionsPort,
             loadAdviceNarrationPort,
             loadAdviceItemsPort);
