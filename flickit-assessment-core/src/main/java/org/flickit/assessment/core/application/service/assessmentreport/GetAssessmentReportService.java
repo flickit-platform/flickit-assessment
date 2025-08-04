@@ -6,6 +6,7 @@ import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.InvalidStateException;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.util.MathUtils;
 import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.domain.report.AssessmentReportItem;
@@ -31,6 +32,7 @@ import static org.flickit.assessment.common.application.domain.assessment.Assess
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.common.exception.api.ErrorCodes.REPORT_UNPUBLISHED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_REPORT_REPORT_NOT_PUBLISHED;
+import static org.flickit.assessment.core.common.ErrorMessageKey.MATURITY_LEVEL_ID_NOT_FOUND;
 
 @Service
 @Transactional(readOnly = true)
@@ -92,14 +94,26 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
         var linkHash = optionalReport.map(AssessmentReport::getLinkHash)
             .orElse(null);
 
+        var maxMaturityLevel = maturityLevels.stream()
+            .max(Comparator.comparingInt(MaturityLevel::index))
+            .orElseThrow(()-> new ResourceNotFoundException(MATURITY_LEVEL_ID_NOT_FOUND));
+
+        var subjects = toSubjects(assessmentReportInfo.subjects(), maturityLevelMap, attributeMeasuresMap);
+        boolean allAttributesMatured = subjects.stream()
+            .flatMap(s -> s.attributes().stream())
+            .allMatch(a -> a.maturityLevel().id() == maxMaturityLevel.id());
+
+        var advice = allAttributesMatured ? null : toAdvice(assessment.assessmentResultId(), Locale.of(assessment.language().name()));
+
         return new Result(toAssessment(assessment, assessmentKitItem, reportMetadata, maturityLevels, attributesCount, maturityLevelMap),
-            toSubjects(assessmentReportInfo.subjects(), maturityLevelMap, attributeMeasuresMap),
-            toAdvice(assessment.assessmentResultId(), Locale.of(assessment.language().name())),
+            subjects,
+            advice,
             toAssessmentProcess(reportMetadata),
             toPermissions(param.getAssessmentId(), published, param.getCurrentUserId()),
             toLanguage(assessment.language()),
             reportVisibility.name(),
-            linkHash);
+            linkHash,
+            !allAttributesMatured);
     }
 
     private List<MaturityLevel> toMaturityLevels(AssessmentKitItem assessmentKitItem) {
