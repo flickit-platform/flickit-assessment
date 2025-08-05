@@ -38,7 +38,8 @@ public interface GetAssessmentPublicReportUseCase {
                   Advice advice,
                   AssessmentProcess assessmentProcess,
                   Permissions permissions,
-                  Language lang) {
+                  Language lang,
+                  boolean isAdvisable) {
     }
 
     record Assessment(String title,
