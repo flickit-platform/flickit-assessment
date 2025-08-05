@@ -40,7 +40,7 @@ public interface GetAssessmentNextQuestionnaireUseCase {
 
     sealed interface Result permits Result.Found, Result.NotFound {
 
-        record Found(long id, int index, String title, Integer questionIndex) implements Result {
+        record Found(long id, int index, String title, int questionIndex) implements Result {
         }
 
         record NotFound() implements Result {
