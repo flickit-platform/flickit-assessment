@@ -14,8 +14,8 @@ public interface LoadQuestionnairesPort {
     record Param(AssessmentResult assessmentResult, int size, int page) {
     }
 
-    List<Result> loadQuestionnaireDetails(long kitVersionId, UUID assessmentResultId);
+    List<Result> loadQuestionnairesProgress(long kitVersionId, UUID assessmentResultId);
 
-    record Result(long id, int index, String title, Integer questionIndex,int questionCount, int answerCount) {
+    record Result(long id, int index, String title, int questionCount, int answerCount) {
     }
 }
