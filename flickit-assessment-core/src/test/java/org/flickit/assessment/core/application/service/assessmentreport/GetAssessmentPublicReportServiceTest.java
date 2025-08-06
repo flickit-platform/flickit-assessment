@@ -335,7 +335,8 @@ class GetAssessmentPublicReportServiceTest {
         var expectedAttributeItem = expectedSubjectItem.attributes().getFirst();
         var actualAttributeItem = actualSubjectItem.attributes().getFirst();
         assertAttributeItem(expectedAttributeItem, actualAttributeItem);
-        assertNull(result.advice());
+        assertNull(result.advice().narration());
+        assertTrue(result.advice().adviceItems().isEmpty());
         assertTrue(result.permissions().canViewDashboard());
         assertTrue(result.permissions().canShareReport());
         assertFalse(result.permissions().canManageVisibility());

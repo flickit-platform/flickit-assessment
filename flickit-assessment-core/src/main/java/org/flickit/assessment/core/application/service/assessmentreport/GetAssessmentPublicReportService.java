@@ -106,7 +106,7 @@ public class GetAssessmentPublicReportService implements GetAssessmentPublicRepo
             .flatMap(s -> s.attributes().stream())
             .anyMatch(a -> a.maturityLevel().id() != maxMaturityLevel.id());
 
-        var advice = toAdvice(assessment.assessmentResultId(), isAdvisable, Locale.of(assessment.language().name()));
+        var advice = toAdvice(assessment.assessmentResultId(), Locale.of(assessment.language().name()));
         return new Result(toAssessment(assessment, assessmentKitItem, metadata, maturityLevels, attributesCount, maturityLevelMap),
             subjects,
             advice,
@@ -213,13 +213,11 @@ public class GetAssessmentPublicReportService implements GetAssessmentPublicRepo
             sortedMeasures);
     }
 
-    private Advice toAdvice(UUID assessmentResultId, boolean isAdvisable, Locale locale) {
+    private Advice toAdvice(UUID assessmentResultId, Locale locale) {
         var narration = loadAdviceNarrationPort.load(assessmentResultId);
         var adviceItems = loadAdviceItemsPort.loadAll(assessmentResultId);
 
-        return Optional.of(Advice.of(narration, toAdviceItems(adviceItems, locale)))
-            .filter(advice -> isAdvisable || narration != null || !adviceItems.isEmpty())
-            .orElse(null);
+        return Advice.of(narration, toAdviceItems(adviceItems, locale));
     }
 
     private List<AdviceItem> toAdviceItems(List<org.flickit.assessment.core.application.domain.AdviceItem> adviceItems, Locale locale) {
