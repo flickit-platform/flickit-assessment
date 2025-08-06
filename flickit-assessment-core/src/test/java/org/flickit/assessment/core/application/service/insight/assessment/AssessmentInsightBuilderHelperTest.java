@@ -20,19 +20,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class AssessmentInsightBuilderHelperTest {
 
     @ParameterizedTest
-    @MethodSource("buildAdvancedAssessmentParams")
+    @MethodSource("buildAssessmentParams")
     void testBuildInsight_whenAssessmentModeIsAdvanced(AssessmentMode mode, int subjectCount, int questionCount, int answerCount, Locale locale) {
-        var param = new AssessmentInsightBuilderHelper.Param("Maturity", questionCount, answerCount, 85, mode, subjectCount, locale);
-
-        String result = buildAssessmentInsight(param);
-        String expected = buildExpectedMessage(param);
-
-        assertEquals(expected, result);
-    }
-
-    @ParameterizedTest
-    @MethodSource("buildQuickAssessmentParams")
-    void testBuildInsight_whenAssessmentModeIsQuick(AssessmentMode mode, int subjectCount, int questionCount, int answerCount, Locale locale) {
         var param = new AssessmentInsightBuilderHelper.Param("Maturity", questionCount, answerCount, 85, mode, subjectCount, locale);
 
         String result = buildAssessmentInsight(param);
@@ -65,21 +54,7 @@ class AssessmentInsightBuilderHelperTest {
         return String.join(".", assessmentMode, subjectDescriptor, completionStatus);
     }
 
-    private static Stream<Arguments> buildAdvancedAssessmentParams() {
-        Locale persianLocale = Locale.of(KitLanguage.FA.getCode());
-        return Stream.of(
-            Arguments.of(AssessmentMode.ADVANCED, 1, 10, 10, Locale.ENGLISH),
-            Arguments.of(AssessmentMode.ADVANCED, 1, 10, 9, Locale.ENGLISH),
-            Arguments.of(AssessmentMode.ADVANCED, 2, 10, 10, Locale.ENGLISH),
-            Arguments.of(AssessmentMode.ADVANCED, 2, 10, 9, Locale.ENGLISH),
-            Arguments.of(AssessmentMode.ADVANCED, 1, 10, 10, persianLocale),
-            Arguments.of(AssessmentMode.ADVANCED, 1, 10, 9, persianLocale),
-            Arguments.of(AssessmentMode.ADVANCED, 2, 10, 10, persianLocale),
-            Arguments.of(AssessmentMode.ADVANCED, 2, 10, 9, persianLocale)
-        );
-    }
-
-    private static Stream<Arguments> buildQuickAssessmentParams() {
+    private static Stream<Arguments> buildAssessmentParams() {
         Locale persianLocale = Locale.of(KitLanguage.FA.getCode());
         return Stream.of(
             Arguments.of(AssessmentMode.QUICK, 1, 10, 10, Locale.ENGLISH),
@@ -89,7 +64,16 @@ class AssessmentInsightBuilderHelperTest {
             Arguments.of(AssessmentMode.QUICK, 1, 10, 10, persianLocale),
             Arguments.of(AssessmentMode.QUICK, 1, 10, 9, persianLocale),
             Arguments.of(AssessmentMode.QUICK, 2, 10, 10, persianLocale),
-            Arguments.of(AssessmentMode.QUICK, 2, 10, 9, persianLocale)
+            Arguments.of(AssessmentMode.QUICK, 2, 10, 9, persianLocale),
+
+            Arguments.of(AssessmentMode.ADVANCED, 1, 10, 10, Locale.ENGLISH),
+            Arguments.of(AssessmentMode.ADVANCED, 1, 10, 9, Locale.ENGLISH),
+            Arguments.of(AssessmentMode.ADVANCED, 2, 10, 10, Locale.ENGLISH),
+            Arguments.of(AssessmentMode.ADVANCED, 2, 10, 9, Locale.ENGLISH),
+            Arguments.of(AssessmentMode.ADVANCED, 1, 10, 10, persianLocale),
+            Arguments.of(AssessmentMode.ADVANCED, 1, 10, 9, persianLocale),
+            Arguments.of(AssessmentMode.ADVANCED, 2, 10, 10, persianLocale),
+            Arguments.of(AssessmentMode.ADVANCED, 2, 10, 9, persianLocale)
         );
     }
 }
