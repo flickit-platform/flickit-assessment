@@ -365,7 +365,7 @@ class GetAssessmentReportServiceTest {
         var actualSubjectItem = result.subjects().getFirst();
         assertSubjectItem(expectedSubjectItem, actualSubjectItem);
         assertNull(result.advice().narration());
-        assertEquals(0, result.advice().adviceItems().size());
+        assertTrue(result.advice().adviceItems().isEmpty());
         var expectedAttributeItem = expectedSubjectItem.attributes().getFirst();
         var actualAttributeItem = actualSubjectItem.attributes().getFirst();
         assertAttributeItem(expectedAttributeItem, actualAttributeItem);
