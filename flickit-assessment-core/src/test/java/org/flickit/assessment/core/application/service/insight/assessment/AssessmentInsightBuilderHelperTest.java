@@ -7,6 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.junit.jupiter.params.provider.Arguments;
 
 import java.util.Locale;
 import java.util.stream.Stream;
@@ -64,31 +65,31 @@ class AssessmentInsightBuilderHelperTest {
         return String.join(".", assessmentMode, subjectDescriptor, completionStatus);
     }
 
-    private static Stream<org.junit.jupiter.params.provider.Arguments> buildAdvancedAssessmentParams() {
+    private static Stream<Arguments> buildAdvancedAssessmentParams() {
         Locale persianLocale = Locale.of(KitLanguage.FA.getCode());
         return Stream.of(
-            org.junit.jupiter.params.provider.Arguments.of(AssessmentMode.ADVANCED, 1, 10, 10, Locale.ENGLISH),
-            org.junit.jupiter.params.provider.Arguments.of(AssessmentMode.ADVANCED, 1, 10, 9, Locale.ENGLISH),
-            org.junit.jupiter.params.provider.Arguments.of(AssessmentMode.ADVANCED, 2, 10, 10, Locale.ENGLISH),
-            org.junit.jupiter.params.provider.Arguments.of(AssessmentMode.ADVANCED, 2, 10, 9, Locale.ENGLISH),
-            org.junit.jupiter.params.provider.Arguments.of(AssessmentMode.ADVANCED, 1, 10, 10, persianLocale),
-            org.junit.jupiter.params.provider.Arguments.of(AssessmentMode.ADVANCED, 1, 10, 9, persianLocale),
-            org.junit.jupiter.params.provider.Arguments.of(AssessmentMode.ADVANCED, 2, 10, 10, persianLocale),
-            org.junit.jupiter.params.provider.Arguments.of(AssessmentMode.ADVANCED, 2, 10, 9, persianLocale)
+            Arguments.of(AssessmentMode.ADVANCED, 1, 10, 10, Locale.ENGLISH),
+            Arguments.of(AssessmentMode.ADVANCED, 1, 10, 9, Locale.ENGLISH),
+            Arguments.of(AssessmentMode.ADVANCED, 2, 10, 10, Locale.ENGLISH),
+            Arguments.of(AssessmentMode.ADVANCED, 2, 10, 9, Locale.ENGLISH),
+            Arguments.of(AssessmentMode.ADVANCED, 1, 10, 10, persianLocale),
+            Arguments.of(AssessmentMode.ADVANCED, 1, 10, 9, persianLocale),
+            Arguments.of(AssessmentMode.ADVANCED, 2, 10, 10, persianLocale),
+            Arguments.of(AssessmentMode.ADVANCED, 2, 10, 9, persianLocale)
         );
     }
 
-    private static Stream<org.junit.jupiter.params.provider.Arguments> buildQuickAssessmentParams() {
+    private static Stream<Arguments> buildQuickAssessmentParams() {
         Locale persianLocale = Locale.of(KitLanguage.FA.getCode());
         return Stream.of(
-            org.junit.jupiter.params.provider.Arguments.of(AssessmentMode.QUICK, 1, 10, 10, Locale.ENGLISH),
-            org.junit.jupiter.params.provider.Arguments.of(AssessmentMode.QUICK, 1, 10, 9, Locale.ENGLISH),
-            org.junit.jupiter.params.provider.Arguments.of(AssessmentMode.QUICK, 2, 10, 10, Locale.ENGLISH),
-            org.junit.jupiter.params.provider.Arguments.of(AssessmentMode.QUICK, 2, 10, 9, Locale.ENGLISH),
-            org.junit.jupiter.params.provider.Arguments.of(AssessmentMode.QUICK, 1, 10, 10, persianLocale),
-            org.junit.jupiter.params.provider.Arguments.of(AssessmentMode.QUICK, 1, 10, 9, persianLocale),
-            org.junit.jupiter.params.provider.Arguments.of(AssessmentMode.QUICK, 2, 10, 10, persianLocale),
-            org.junit.jupiter.params.provider.Arguments.of(AssessmentMode.QUICK, 2, 10, 9, persianLocale)
+            Arguments.of(AssessmentMode.QUICK, 1, 10, 10, Locale.ENGLISH),
+            Arguments.of(AssessmentMode.QUICK, 1, 10, 9, Locale.ENGLISH),
+            Arguments.of(AssessmentMode.QUICK, 2, 10, 10, Locale.ENGLISH),
+            Arguments.of(AssessmentMode.QUICK, 2, 10, 9, Locale.ENGLISH),
+            Arguments.of(AssessmentMode.QUICK, 1, 10, 10, persianLocale),
+            Arguments.of(AssessmentMode.QUICK, 1, 10, 9, persianLocale),
+            Arguments.of(AssessmentMode.QUICK, 2, 10, 10, persianLocale),
+            Arguments.of(AssessmentMode.QUICK, 2, 10, 9, persianLocale)
         );
     }
 }
