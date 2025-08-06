@@ -1,5 +1,6 @@
 package org.flickit.assessment.core.application.service.insight.assessment;
 
+import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.core.application.domain.AssessmentMode;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,8 +12,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Locale;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 @ExtendWith(MockitoExtension.class)
 class AssessmentInsightBuilderHelperTest {
@@ -20,68 +21,51 @@ class AssessmentInsightBuilderHelperTest {
     @InjectMocks
     private AssessmentInsightBuilderHelper helper;
 
+
     @ParameterizedTest
     @MethodSource("buildAdvancedAssessmentParams")
-    void testBuildInsight_whenAssessmentModeIsAdvancedAndLanguageIsEnglishAndAssessmentIsIncomplete_oneSubject(AssessmentMode mode, int subjectCount, int questionCount, int answerCount) {
-        Locale locale = Locale.ENGLISH;
-        var param = new AssessmentInsightBuilderHelper.Param("Maturity",  questionCount, answerCount, 85, mode, subjectCount, locale);
+    void testBuildInsight_whenAssessmentModeIsAdvanced(AssessmentMode mode, int subjectCount, int questionCount, int answerCount, Locale locale) {
+        var param = new AssessmentInsightBuilderHelper.Param("Maturity", questionCount, answerCount, 85, mode, subjectCount, locale);
 
         String result = helper.build(param);
+        String expected = buildExpectedMessage(param);
 
-        assertResult(locale, param, result);
+        assertEquals(expected, result);
     }
 
     @ParameterizedTest
     @MethodSource("buildQuickAssessmentParams")
-    void testBuildInsight_whenAssessmentModeIsQuick(AssessmentMode mode, int subjectCount, int questionCount, int answerCount) {
-        Locale locale = Locale.ENGLISH;
+    void testBuildInsight_whenAssessmentModeIsQuick(AssessmentMode mode, int subjectCount, int questionCount, int answerCount, Locale locale) {
         var param = new AssessmentInsightBuilderHelper.Param("Maturity", questionCount, answerCount, 85, mode, subjectCount, locale);
 
         String result = helper.build(param);
+        String expected = buildExpectedMessage(param);
 
-        assertResult(locale, param, result);
+        assertEquals(expected, result);
     }
 
-    private void assertResult(Locale locale, AssessmentInsightBuilderHelper.Param param, String result) {
-        if (Locale.ENGLISH.equals(locale)) {
-            assertEnglishResult(param, result);
-            assertSubjectsEnglish(param, result);
-        } else {
-            assertPersianResult(result);
-            assertSubjectsPersian(param, result);
-        }
+    private String buildExpectedMessage(AssessmentInsightBuilderHelper.Param param) {
+        boolean isCompleted = param.answersCount() == param.questionsCount();
+
+        String messageKey = generateInsightMessageKey(param.mode(), param.subjectCount(), isCompleted);
+
+        return isCompleted
+            ? param.mode() == AssessmentMode.ADVANCED
+            ? MessageBundle.message(messageKey, param.locale(), param.maturityLevelTitle(), param.questionsCount(), param.confidenceValue())
+            : MessageBundle.message(messageKey, param.locale(), param.maturityLevelTitle(), param.questionsCount())
+            : param.mode() == AssessmentMode.ADVANCED
+            ? MessageBundle.message(messageKey, param.locale(), param.maturityLevelTitle(), param.answersCount(), param.questionsCount(), param.confidenceValue())
+            : MessageBundle.message(messageKey, param.locale(), param.maturityLevelTitle(), param.answersCount(), param.questionsCount());
     }
 
-    private void assertEnglishResult(AssessmentInsightBuilderHelper.Param param, String result) {
-        assertTrue(result.contains("Maturity"));
-        assertTrue(result.contains("all"));
-        if (AssessmentMode.ADVANCED.equals(param.mode())) {
-            assertTrue(result.contains("10"));
-            assertTrue(result.contains("85"));
-        } else {
-            assertFalse(result.contains("85"));
-        }
-    }
+    private String generateInsightMessageKey(AssessmentMode mode, int subjectCount, boolean isCompleted) {
+        String assessmentMode = mode == AssessmentMode.ADVANCED
+            ? "advanced-assessment-default-insight"
+            : "quick-assessment-default-insight";
+        String subjectDescriptor = subjectCount > 1 ? "multiple-subjects" : "one-subject";
+        String completionStatus = isCompleted ? "completed" : "incomplete";
 
-    private void assertPersianResult(String result) {
-        assertTrue(result.contains("سطح اطمینان"));
-        assertTrue(result.contains("۱۰"));
-        assertTrue(result.contains("۸۵"));
-    }
-
-    private void assertSubjectsEnglish(AssessmentInsightBuilderHelper.Param param, String result) {
-        if (param.subjectCount() > 1)
-            assertTrue(result.contains("weighted average"));
-        else
-            assertFalse(result.contains("weighted average"));
-
-    }
-
-    private void assertSubjectsPersian(AssessmentInsightBuilderHelper.Param param, String result) {
-        if (param.subjectCount() > 1)
-            assertTrue(result.contains("میانگین وزنی"));
-        else
-            assertFalse(result.contains("میانگین وزنی"));
+        return String.join(".", assessmentMode, subjectDescriptor, completionStatus);
     }
 
     private static Stream<org.junit.jupiter.params.provider.Arguments> buildAdvancedAssessmentParams() {
