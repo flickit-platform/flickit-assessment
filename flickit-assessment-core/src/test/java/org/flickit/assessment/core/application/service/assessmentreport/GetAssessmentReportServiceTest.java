@@ -311,7 +311,8 @@ class GetAssessmentReportServiceTest {
         var expectedAttributeItem = expectedSubjectItem.attributes().getFirst();
         var actualAttributeItem = actualSubjectItem.attributes().getFirst();
         assertAttributeItem(expectedAttributeItem, actualAttributeItem);
-        assertNull(result.advice());
+        assertNull(result.advice().narration());
+        assertEquals(0, result.advice().adviceItems().size());
         assertFalse(result.permissions().canViewDashboard());
         assertFalse(result.permissions().canShareReport());
         assertTrue(result.permissions().canManageVisibility());
