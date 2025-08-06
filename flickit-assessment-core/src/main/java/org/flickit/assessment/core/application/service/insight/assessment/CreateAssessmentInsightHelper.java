@@ -14,6 +14,8 @@ import java.time.LocalDateTime;
 import java.util.Locale;
 import java.util.UUID;
 
+import static org.flickit.assessment.core.application.service.insight.assessment.AssessmentInsightBuilderHelper.buildAssessmentInsight;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -22,7 +24,6 @@ public class CreateAssessmentInsightHelper {
     private final GetAssessmentProgressPort getAssessmentProgressPort;
     private final LoadMaturityLevelPort loadMaturityLevelPort;
     private final CountSubjectsPort countSubjectsPort;
-    private final AssessmentInsightBuilderHelper assessmentInsightBuilderHelper;
 
     public AssessmentInsight createAssessmentInsight(AssessmentResult assessmentResult, Locale locale) {
         var progress = getAssessmentProgressPort.getProgress(assessmentResult.getAssessment().getId());
@@ -42,7 +43,7 @@ public class CreateAssessmentInsightHelper {
             locale);
 
         var subjectCount = countSubjectsPort.countSubjects(assessmentResult.getKitVersionId());
-        String insight = assessmentInsightBuilderHelper.build(toAssessmentInsightBulderParam(assessmentInsightParam, subjectCount, locale));
+        String insight = buildAssessmentInsight(toAssessmentInsightBulderParam(assessmentInsightParam, subjectCount, locale));
         return toAssessmentInsight(assessmentResult.getId(), insight);
     }
 

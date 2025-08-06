@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Locale;
 
+import static org.flickit.assessment.core.application.service.insight.assessment.AssessmentInsightBuilderHelper.buildAssessmentInsight;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -34,9 +35,6 @@ class CreateAssessmentInsightHelperTest {
     @Mock
     private CountSubjectsPort countSubjectsPort;
 
-    @Mock
-    private AssessmentInsightBuilderHelper assessmentInsightBuilderHelper;
-
     @Captor
     private ArgumentCaptor<AssessmentInsightBuilderHelper.Param> paramCaptor;
 
@@ -52,7 +50,7 @@ class CreateAssessmentInsightHelperTest {
         when(loadMaturityLevelPort.load(assessmentResult.getMaturityLevel().getId(), assessmentResult.getAssessment().getId()))
             .thenReturn(assessmentResult.getMaturityLevel());
         when(countSubjectsPort.countSubjects(assessmentResult.getKitVersionId())).thenReturn(subjectsCount);
-        when(assessmentInsightBuilderHelper.build(paramCaptor.capture())).thenReturn(expectedDefaultInsight);
+        when(buildAssessmentInsight(paramCaptor.capture())).thenReturn(expectedDefaultInsight);
 
         var result = helper.createAssessmentInsight(assessmentResult, locale);
 
@@ -87,7 +85,7 @@ class CreateAssessmentInsightHelperTest {
         when(loadMaturityLevelPort.load(assessmentResult.getMaturityLevel().getId(), assessmentResult.getAssessment().getId()))
             .thenReturn(assessmentResult.getMaturityLevel());
         when(countSubjectsPort.countSubjects(assessmentResult.getKitVersionId())).thenReturn(subjectsCount);
-        when(assessmentInsightBuilderHelper.build(paramCaptor.capture())).thenReturn(expectedDefaultInsight);
+        when(buildAssessmentInsight(paramCaptor.capture())).thenReturn(expectedDefaultInsight);
 
         var result = helper.createAssessmentInsight(assessmentResult, locale);
 

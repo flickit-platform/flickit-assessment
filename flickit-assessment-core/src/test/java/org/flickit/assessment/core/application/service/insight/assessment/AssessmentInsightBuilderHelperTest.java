@@ -6,28 +6,24 @@ import org.flickit.assessment.core.application.domain.AssessmentMode;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Locale;
 import java.util.stream.Stream;
 
+import static org.flickit.assessment.core.application.service.insight.assessment.AssessmentInsightBuilderHelper.buildAssessmentInsight;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 @ExtendWith(MockitoExtension.class)
 class AssessmentInsightBuilderHelperTest {
 
-    @InjectMocks
-    private AssessmentInsightBuilderHelper helper;
-
-
     @ParameterizedTest
     @MethodSource("buildAdvancedAssessmentParams")
     void testBuildInsight_whenAssessmentModeIsAdvanced(AssessmentMode mode, int subjectCount, int questionCount, int answerCount, Locale locale) {
         var param = new AssessmentInsightBuilderHelper.Param("Maturity", questionCount, answerCount, 85, mode, subjectCount, locale);
 
-        String result = helper.build(param);
+        String result = buildAssessmentInsight(param);
         String expected = buildExpectedMessage(param);
 
         assertEquals(expected, result);
@@ -38,7 +34,7 @@ class AssessmentInsightBuilderHelperTest {
     void testBuildInsight_whenAssessmentModeIsQuick(AssessmentMode mode, int subjectCount, int questionCount, int answerCount, Locale locale) {
         var param = new AssessmentInsightBuilderHelper.Param("Maturity", questionCount, answerCount, 85, mode, subjectCount, locale);
 
-        String result = helper.build(param);
+        String result = buildAssessmentInsight(param);
         String expected = buildExpectedMessage(param);
 
         assertEquals(expected, result);

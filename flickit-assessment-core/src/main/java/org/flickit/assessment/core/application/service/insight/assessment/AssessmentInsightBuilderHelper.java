@@ -1,14 +1,10 @@
 package org.flickit.assessment.core.application.service.insight.assessment;
 
-import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.core.application.domain.AssessmentMode;
-import org.springframework.stereotype.Service;
 
 import java.util.Locale;
 
-@Service
-@RequiredArgsConstructor
 public class AssessmentInsightBuilderHelper {
 
     private static final String ADVANCED_ASSESSMENT_DEFAULT_INSIGHT = "advanced-assessment-default-insight";
@@ -18,7 +14,7 @@ public class AssessmentInsightBuilderHelper {
     private static final String COMPLETED = "completed";
     private static final String INCOMPLETE = "incomplete";
 
-    public String build(Param param) {
+    public static String buildAssessmentInsight(Param param) {
         boolean isCompleted = param.answersCount == param.questionsCount;
         var insightMessageKey = generateInsightMessageMainPart(param.mode, param.subjectCount, isCompleted);
         return isCompleted
