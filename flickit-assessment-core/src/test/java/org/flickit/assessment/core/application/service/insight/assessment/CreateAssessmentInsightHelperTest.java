@@ -50,6 +50,7 @@ class CreateAssessmentInsightHelperTest {
         assertEquals(assessmentResult.getId(), result.getAssessmentResultId());
         assertNotNull(result.getInsightTime());
         assertNotNull(result.getLastModificationTime());
+        assertNotNull(result.getInsight());
         assertNull(result.getInsightBy());
         assertFalse(result.isApproved());
     }
@@ -73,6 +74,7 @@ class CreateAssessmentInsightHelperTest {
         assertEquals(assessmentResult.getId(), result.getAssessmentResultId());
         assertNotNull(result.getInsightTime());
         assertNotNull(result.getLastModificationTime());
+        assertNotNull(result.getInsight());
         assertNull(result.getInsightBy());
         assertFalse(result.isApproved());
     }
