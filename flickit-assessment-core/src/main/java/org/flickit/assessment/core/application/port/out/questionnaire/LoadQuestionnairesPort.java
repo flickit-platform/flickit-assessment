@@ -4,7 +4,7 @@ import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.QuestionnaireListItem;
 
-import java.util.Map;
+import java.util.List;
 import java.util.UUID;
 
 public interface LoadQuestionnairesPort {
@@ -14,7 +14,7 @@ public interface LoadQuestionnairesPort {
     record Param(AssessmentResult assessmentResult, int size, int page) {
     }
 
-    Map<Long, Result> loadQuestionnaireDetails(long kitVersionId, UUID assessmentResultId);
+    List<Result> loadQuestionnairesProgress(long kitVersionId, UUID assessmentResultId);
 
     record Result(long id, int index, String title, int questionCount, int answerCount) {
     }

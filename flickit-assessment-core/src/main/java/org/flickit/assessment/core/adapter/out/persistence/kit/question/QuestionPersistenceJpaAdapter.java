@@ -114,6 +114,11 @@ public class QuestionPersistenceJpaAdapter implements
         return QuestionMapper.mapToDomainWithQuestionnaire(questionEntity.get(), questionnaire);
     }
 
+    @Override
+    public int loadNextUnansweredQuestionIndex(long questionnaireId, UUID assessmentResultId) {
+        return repository.findQuestionnairesFirstUnansweredQuestion(questionnaireId, assessmentResultId);
+    }
+
     private @Nullable KitLanguage resolveLanguage(AssessmentResultJpaEntity assessmentResult) {
         var assessmentKit = assessmentKitRepository.findByKitVersionId(assessmentResult.getKitVersionId())
             .orElseThrow(() -> new ResourceNotFoundException(ErrorMessageKey.COMMON_ASSESSMENT_KIT_NOT_FOUND));
