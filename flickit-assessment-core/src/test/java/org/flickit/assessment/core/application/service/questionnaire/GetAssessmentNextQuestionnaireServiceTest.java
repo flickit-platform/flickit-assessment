@@ -16,7 +16,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_NEXT_QUESTIONNAIRE;
@@ -129,7 +132,7 @@ class GetAssessmentNextQuestionnaireServiceTest {
             .thenReturn(Optional.of(assessmentResult));
         when(loadQuestionnairesPort.loadQuestionnairesProgress(assessmentResult.getKitVersionId(), assessmentResult.getId()))
             .thenReturn(resultMap);
-        when(loadQuestionPort.loadNextUnansweredQuestionIndex(expectedQuestionnaire.id(), assessmentResult.getId()))
+        when(loadQuestionPort.loadFirstUnansweredQuestionIndex(expectedQuestionnaire.id(), assessmentResult.getId()))
             .thenReturn(nextQuestionIndex);
 
         var result = (GetAssessmentNextQuestionnaireUseCase.Result.Found) service.getNextQuestionnaire(param);
@@ -139,7 +142,7 @@ class GetAssessmentNextQuestionnaireServiceTest {
         assertEquals(expectedQuestionnaire.title(), result.title());
         assertEquals(nextQuestionIndex, result.questionIndex());
 
-        verify(loadQuestionPort, atMostOnce()).loadNextUnansweredQuestionIndex(anyLong(), any(UUID.class));
+        verify(loadQuestionPort, atMostOnce()).loadFirstUnansweredQuestionIndex(anyLong(), any(UUID.class));
     }
 
     @ParameterizedTest
@@ -164,7 +167,7 @@ class GetAssessmentNextQuestionnaireServiceTest {
             .thenReturn(Optional.of(assessmentResult));
         when(loadQuestionnairesPort.loadQuestionnairesProgress(assessmentResult.getKitVersionId(), assessmentResult.getId()))
             .thenReturn(resultMap);
-        when(loadQuestionPort.loadNextUnansweredQuestionIndex(expectedQuestionnaireId, assessmentResult.getId()))
+        when(loadQuestionPort.loadFirstUnansweredQuestionIndex(expectedQuestionnaireId, assessmentResult.getId()))
             .thenReturn(expectedQuestionnaireIdToNextQuestinIndex.get(expectedQuestionnaireId));
 
         var result = (GetAssessmentNextQuestionnaireUseCase.Result.Found) service.getNextQuestionnaire(param);
@@ -174,7 +177,7 @@ class GetAssessmentNextQuestionnaireServiceTest {
         assertEquals(expectedQuestionnaire.title(), result.title());
         assertEquals(expectedQuestionnaireIdToNextQuestinIndex.get(expectedQuestionnaireId), result.questionIndex());
 
-        verify(loadQuestionPort, atMostOnce()).loadNextUnansweredQuestionIndex(anyLong(), any(UUID.class));
+        verify(loadQuestionPort, atMostOnce()).loadFirstUnansweredQuestionIndex(anyLong(), any(UUID.class));
     }
 
     @ParameterizedTest
@@ -199,7 +202,7 @@ class GetAssessmentNextQuestionnaireServiceTest {
             .thenReturn(Optional.of(assessmentResult));
         when(loadQuestionnairesPort.loadQuestionnairesProgress(assessmentResult.getKitVersionId(), assessmentResult.getId()))
             .thenReturn(resultMap);
-        when(loadQuestionPort.loadNextUnansweredQuestionIndex(expectedQuestionnaireId, assessmentResult.getId()))
+        when(loadQuestionPort.loadFirstUnansweredQuestionIndex(expectedQuestionnaireId, assessmentResult.getId()))
             .thenReturn(expectedQuestionnaireIdToNextQuestinIndex.get(expectedQuestionnaireId));
 
         var result = (GetAssessmentNextQuestionnaireUseCase.Result.Found) service.getNextQuestionnaire(param);
@@ -209,7 +212,7 @@ class GetAssessmentNextQuestionnaireServiceTest {
         assertEquals(expectedQuestionnaire.title(), result.title());
         assertEquals(expectedQuestionnaireIdToNextQuestinIndex.get(expectedQuestionnaireId), result.questionIndex());
 
-        verify(loadQuestionPort, atMostOnce()).loadNextUnansweredQuestionIndex(anyLong(), any(UUID.class));
+        verify(loadQuestionPort, atMostOnce()).loadFirstUnansweredQuestionIndex(anyLong(), any(UUID.class));
     }
 
     private GetAssessmentNextQuestionnaireUseCase.Param createParam(Consumer<GetAssessmentNextQuestionnaireUseCase.Param.ParamBuilder> changer) {

@@ -8,5 +8,5 @@ public interface LoadQuestionPort {
 
     Question loadByIdAndKitVersionId(Long id, Long kitVersionId);
 
-    int loadNextUnansweredQuestionIndex(long questionnaireId, UUID assessmentResultId);
+    int loadFirstUnansweredQuestionIndex(long questionnaireId, UUID assessmentResultId);
 }
