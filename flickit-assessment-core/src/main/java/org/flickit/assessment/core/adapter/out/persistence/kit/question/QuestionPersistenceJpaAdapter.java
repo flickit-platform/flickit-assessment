@@ -115,8 +115,8 @@ public class QuestionPersistenceJpaAdapter implements
     }
 
     @Override
-    public int loadNextUnansweredQuestionIndex(long questionnaireId, UUID assessmentResultId) {
-        return repository.findQuestionnairesFirstUnansweredQuestion(questionnaireId, assessmentResultId);
+    public int loadFirstUnansweredQuestionIndex(long questionnaireId, UUID assessmentResultId) {
+        return repository.findQuestionnaireFirstUnansweredQuestion(questionnaireId, assessmentResultId);
     }
 
     private @Nullable KitLanguage resolveLanguage(AssessmentResultJpaEntity assessmentResult) {

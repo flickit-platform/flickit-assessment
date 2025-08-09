@@ -178,8 +178,8 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
                         AND qsn.kitVersionId = ans.assessmentResult.kitVersionId)
                         AND qn.id = :questionnaireId
         """)
-    Integer findQuestionnairesFirstUnansweredQuestion(@Param("questionnaireId") Long questionnaireId,
-                                                      @Param("assessmentResultId") UUID assessmentResultId);
+    Integer findQuestionnaireFirstUnansweredQuestion(@Param("questionnaireId") Long questionnaireId,
+                                                     @Param("assessmentResultId") UUID assessmentResultId);
 
     @Query("""
             SELECT

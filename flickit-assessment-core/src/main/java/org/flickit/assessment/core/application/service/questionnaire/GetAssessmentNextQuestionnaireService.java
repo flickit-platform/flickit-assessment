@@ -39,34 +39,34 @@ public class GetAssessmentNextQuestionnaireService implements GetAssessmentNextQ
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_NEXT_QUESTIONNAIRE_ASSESSMENT_RESULT_NOT_FOUND));
 
-        var allQuestionnaireDetails =
+        var questionnairesProgress =
             loadQuestionnairesPort.loadQuestionnairesProgress(assessmentResult.getKitVersionId(), assessmentResult.getId());
-        int currentQuestionnaireIndex = allQuestionnaireDetails.stream()
+        int currentQuestionnaireIndex = questionnairesProgress.stream()
             .collect(Collectors.toMap(LoadQuestionnairesPort.Result::id, Function.identity()))
             .computeIfAbsent(param.getQuestionnaireId(), id -> {
                 throw new ResourceNotFoundException(QUESTIONNAIRE_ID_NOT_FOUND);
             })
             .index();
 
-        var unansweredQuestionnaire = allQuestionnaireDetails.stream()
+        var unansweredQuestionnaires = questionnairesProgress.stream()
             .filter(q -> q.answerCount() < q.questionCount())
             .toList();
 
-        Optional<Result> after = unansweredQuestionnaire.stream()
+        Optional<Result> after = unansweredQuestionnaires.stream()
             .filter(q -> q.index() > currentQuestionnaireIndex)
             .min(Comparator.comparingInt(LoadQuestionnairesPort.Result::index))
             .map(q -> new Result.Found(q.id(),
                 q.index(),
                 q.title(),
-                loadQuestionPort.loadNextUnansweredQuestionIndex(q.id(), assessmentResult.getId())));
+                loadQuestionPort.loadFirstUnansweredQuestionIndex(q.id(), assessmentResult.getId())));
 
-        return after.orElseGet(() -> unansweredQuestionnaire.stream()
+        return after.orElseGet(() -> unansweredQuestionnaires.stream()
             .filter(q -> q.index() <= currentQuestionnaireIndex)
             .min(Comparator.comparingInt(LoadQuestionnairesPort.Result::index))
             .<Result>map(q -> new Result.Found(q.id(),
                 q.index(),
                 q.title(),
-                loadQuestionPort.loadNextUnansweredQuestionIndex(q.id(), assessmentResult.getId())))
+                loadQuestionPort.loadFirstUnansweredQuestionIndex(q.id(), assessmentResult.getId())))
             .orElse(Result.NotFound.INSTANCE));
     }
 }
