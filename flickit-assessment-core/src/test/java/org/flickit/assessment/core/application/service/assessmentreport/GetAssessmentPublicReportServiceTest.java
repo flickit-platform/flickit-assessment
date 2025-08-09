@@ -134,8 +134,6 @@ class GetAssessmentPublicReportServiceTest {
         var assessmentReportInfo = new LoadAssessmentReportInfoPort.Result(assessmentReport, subjects);
 
         var report = publishedReportWithMetadata(fullMetadata());
-        var adviceNarration = "assessor narration";
-        var adviceItems = List.of(adviceItem(), adviceItem());
 
         var measure1 = assessmentReport.assessmentKit().measures().getFirst();
         var measure2 = assessmentReport.assessmentKit().measures().getLast();
@@ -144,8 +142,8 @@ class GetAssessmentPublicReportServiceTest {
             new LoadAssessmentQuestionsPort.Result(QuestionMother.withMeasure(measure2), answer(optionFour())));
 
         when(loadAssessmentReportInfoPort.load(assessmentId)).thenReturn(assessmentReportInfo);
-        when(loadAdviceNarrationPort.load(assessmentReport.assessmentResultId())).thenReturn(adviceNarration);
-        when(loadAdviceItemsPort.loadAll(assessmentReport.assessmentResultId())).thenReturn(adviceItems);
+        when(loadAdviceNarrationPort.load(assessmentReport.assessmentResultId())).thenReturn(null);
+        when(loadAdviceItemsPort.loadAll(assessmentReport.assessmentResultId())).thenReturn(List.of());
         when(loadAssessmentQuestionsPort.loadApplicableQuestions(assessmentId))
             .thenReturn(questionAnswers);
 
@@ -159,9 +157,8 @@ class GetAssessmentPublicReportServiceTest {
         var expectedAttributeItem = expectedSubjectItem.attributes().getFirst();
         var actualAttributeItem = actualSubjectItem.attributes().getFirst();
         assertAttributeItem(expectedAttributeItem, actualAttributeItem);
-        assertEquals(adviceNarration, result.advice().narration());
-        assertEquals(adviceItems.size(), result.advice().adviceItems().size());
-        assertAdviceItem(adviceItems, result.advice().adviceItems(), assessmentReport.language());
+        assertNull(result.advice().narration());
+        assertTrue(result.advice().adviceItems().isEmpty());
         assertTrue(result.isAdvisable());
 
         assertFalse(result.permissions().canViewDashboard());
@@ -181,7 +178,7 @@ class GetAssessmentPublicReportServiceTest {
 
         var teamLevel = levelTwo();
         var attributeReportItem = new AttributeReportItem(15L, "Agility", "agility of team",
-            "in very good state", 1, 3, 63.0, levelThree());
+            "in very good state", 1, 3, 63.0, levelFive());
         var subjects = List.of(new AssessmentSubjectReportItem(2L, "team", 2,
             "subject Insight", 58.6, teamLevel, List.of(attributeReportItem)));
         var assessmentReportInfo = new LoadAssessmentReportInfoPort.Result(assessmentReport, subjects);
@@ -225,7 +222,7 @@ class GetAssessmentPublicReportServiceTest {
         assertFalse(result.permissions().canViewDashboard());
         assertFalse(result.permissions().canManageVisibility());
         assertFalse(result.permissions().canShareReport());
-        assertTrue(result.isAdvisable());
+        assertFalse(result.isAdvisable());
     }
 
     @Test
@@ -325,6 +322,8 @@ class GetAssessmentPublicReportServiceTest {
             .thenReturn(false);
         when(loadAssessmentQuestionsPort.loadApplicableQuestions(assessmentId))
             .thenReturn(questionAnswers);
+        when(loadAdviceItemsPort.loadAll(assessmentReport.assessmentResultId())).thenReturn(List.of());
+        when(loadAdviceNarrationPort.load(assessmentReport.assessmentResultId())).thenReturn(null);
 
         var result = service.getAssessmentPublicReport(paramWithUserId);
 
@@ -336,13 +335,12 @@ class GetAssessmentPublicReportServiceTest {
         var expectedAttributeItem = expectedSubjectItem.attributes().getFirst();
         var actualAttributeItem = actualSubjectItem.attributes().getFirst();
         assertAttributeItem(expectedAttributeItem, actualAttributeItem);
-        assertNull(result.advice());
+        assertNull(result.advice().narration());
+        assertTrue(result.advice().adviceItems().isEmpty());
         assertTrue(result.permissions().canViewDashboard());
         assertTrue(result.permissions().canShareReport());
         assertFalse(result.permissions().canManageVisibility());
         assertFalse(result.isAdvisable());
-
-        verifyNoInteractions(loadAdviceNarrationPort, loadAdviceItemsPort);
     }
 
     @Test

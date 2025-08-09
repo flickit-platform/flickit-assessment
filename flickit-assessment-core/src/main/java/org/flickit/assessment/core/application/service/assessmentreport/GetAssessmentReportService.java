@@ -99,12 +99,11 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
             .orElseThrow(()-> new ResourceNotFoundException(MATURITY_LEVEL_ID_NOT_FOUND));
 
         var subjects = toSubjects(assessmentReportInfo.subjects(), maturityLevelMap, attributeMeasuresMap);
-        boolean allAttributesMatured = subjects.stream()
+        boolean isAdvisable = subjects.stream()
             .flatMap(s -> s.attributes().stream())
-            .allMatch(a -> a.maturityLevel().id() == maxMaturityLevel.id());
+            .anyMatch(a -> a.maturityLevel().id() != maxMaturityLevel.id());
 
-        var advice = allAttributesMatured ? null : toAdvice(assessment.assessmentResultId(), Locale.of(assessment.language().name()));
-
+        var advice = toAdvice(assessment.assessmentResultId(), Locale.of(assessment.language().name()));
         return new Result(toAssessment(assessment, assessmentKitItem, reportMetadata, maturityLevels, attributesCount, maturityLevelMap),
             subjects,
             advice,
@@ -113,7 +112,7 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
             toLanguage(assessment.language()),
             reportVisibility.name(),
             linkHash,
-            !allAttributesMatured);
+            isAdvisable);
     }
 
     private List<MaturityLevel> toMaturityLevels(AssessmentKitItem assessmentKitItem) {
@@ -216,7 +215,8 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
     private Advice toAdvice(UUID assessmentResultId, Locale locale) {
         var narration = loadAdviceNarrationPort.load(assessmentResultId);
         var adviceItems = loadAdviceItemsPort.loadAll(assessmentResultId);
-        return new Advice(narration, toAdviceItems(adviceItems, locale));
+
+        return Advice.of(narration, toAdviceItems(adviceItems, locale));
     }
 
     private List<AdviceItem> toAdviceItems(List<org.flickit.assessment.core.application.domain.AdviceItem> adviceItems, Locale locale) {
