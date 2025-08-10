@@ -43,11 +43,11 @@ public class CreateAssessmentInsightHelper {
             locale);
 
         var subjectCount = countSubjectsPort.countSubjects(assessmentResult.getKitVersionId());
-        String insight = buildAssessmentInsight(toAssessmentInsightBulderParam(assessmentInsightParam, subjectCount, locale));
+        String insight = buildAssessmentInsight(toAssessmentInsightBuilderParam(assessmentInsightParam, subjectCount, locale));
         return toAssessmentInsight(assessmentResult.getId(), insight);
     }
 
-    private static AssessmentInsightBuilderHelper.Param toAssessmentInsightBulderParam(AssessmentInsightParam param, int subjectCount, Locale locale) {
+    private static AssessmentInsightBuilderHelper.Param toAssessmentInsightBuilderParam(AssessmentInsightParam param, int subjectCount, Locale locale) {
         return new AssessmentInsightBuilderHelper.Param(param.maturityLevelTitle,
             param.questionsCount,
             param.answersCount,

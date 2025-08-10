@@ -23,7 +23,6 @@ public class AssessmentInsightBuilderHelper {
     }
 
     private static String generateCompletedInsightMessage(Param param, String insightMessageKey) {
-
         return (AssessmentMode.ADVANCED.equals(param.mode()))
             ? MessageBundle.message(insightMessageKey, param.locale, param.maturityLevelTitle, param.questionsCount, param.confidenceValue)
             : MessageBundle.message(insightMessageKey, param.locale, param.maturityLevelTitle, param.questionsCount);
