@@ -7,12 +7,12 @@ public class AssessmentMother {
 
     private static int counter = 341;
 
-    public static Assessment assessmentWithShortTitle(String shortTitle) {
+    public static Assessment simpleAssessment() {
         counter++;
         return new Assessment(
             UUID.randomUUID(),
             "My Assessment " + counter,
-            shortTitle
+            "ShortTitle"
         );
     }
 }

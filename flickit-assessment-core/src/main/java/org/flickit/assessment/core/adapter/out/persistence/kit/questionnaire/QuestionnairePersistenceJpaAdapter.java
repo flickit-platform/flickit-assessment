@@ -16,11 +16,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toMap;
 
 @Component(value = "coreQuestionnairePersistenceJpaAdapter")
 @RequiredArgsConstructor
@@ -48,10 +49,10 @@ public class QuestionnairePersistenceJpaAdapter implements
 
         var questionnairesProgress = answerRepository.getQuestionnairesProgressByAssessmentResultId(assessmentResult.getId(), ids)
             .stream()
-            .collect(Collectors.toMap(QuestionnaireIdAndAnswerCountView::getQuestionnaireId, QuestionnaireIdAndAnswerCountView::getAnswerCount));
+            .collect(toMap(QuestionnaireIdAndAnswerCountView::getQuestionnaireId, QuestionnaireIdAndAnswerCountView::getAnswerCount));
 
         var questionnaireToNextQuestionMap = questionRepository.findQuestionnairesFirstUnansweredQuestion(assessmentResult.getId()).stream()
-            .collect(Collectors.toMap(FirstUnansweredQuestionView::getQuestionnaireId, FirstUnansweredQuestionView::getIndex));
+            .collect(toMap(FirstUnansweredQuestionView::getQuestionnaireId, FirstUnansweredQuestionView::getIndex));
 
         var items = pageResult.getContent().stream()
             .map(q -> QuestionnaireMapper.mapToListItem(q,
@@ -72,28 +73,26 @@ public class QuestionnairePersistenceJpaAdapter implements
     }
 
     @Override
-    public Map<Long, Result> loadQuestionnaireDetails(long kitVersionId, UUID assessmentResultId) {
+    public List<Result> loadQuestionnairesProgress(long kitVersionId, UUID assessmentResultId) {
         var questionnaireViews = repository.findAllWithQuestionCountByKitVersionId(kitVersionId, null);
         var questionnaireIds = questionnaireViews.getContent().stream()
             .map(v -> v.getQuestionnaire().getId())
             .toList();
 
-        var questionnaireIdToAnswerCountMap = answerRepository.getQuestionnairesProgressByAssessmentResultId(assessmentResultId, questionnaireIds)
-            .stream()
-            .collect(Collectors.toMap(QuestionnaireIdAndAnswerCountView::getQuestionnaireId, QuestionnaireIdAndAnswerCountView::getAnswerCount));
+        var questionnaireIdToAnswerCountMap = answerRepository.getQuestionnairesProgressByAssessmentResultId(assessmentResultId, questionnaireIds).stream()
+            .collect(toMap(QuestionnaireIdAndAnswerCountView::getQuestionnaireId, QuestionnaireIdAndAnswerCountView::getAnswerCount));
 
         return questionnaireViews.stream()
             .map(view -> {
                 var questionnaire = view.getQuestionnaire();
-                int answerCount = questionnaireIdToAnswerCountMap.getOrDefault(questionnaire.getId(), 0);
                 return new LoadQuestionnairesPort.Result(
                     questionnaire.getId(),
                     questionnaire.getIndex(),
                     questionnaire.getTitle(),
                     view.getQuestionCount(),
-                    answerCount
+                    questionnaireIdToAnswerCountMap.getOrDefault(questionnaire.getId(), 0)
                 );
             })
-            .collect(Collectors.toMap(Result::id, Function.identity()));
+            .toList();
     }
 }
