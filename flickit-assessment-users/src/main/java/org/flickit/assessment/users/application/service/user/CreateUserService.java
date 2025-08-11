@@ -2,7 +2,6 @@ package org.flickit.assessment.users.application.service.user;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.space.SpaceType;
-import org.flickit.assessment.users.application.domain.Space;
 import org.flickit.assessment.users.application.domain.SpaceStatus;
 import org.flickit.assessment.users.application.port.in.user.CreateUserUseCase;
 import org.flickit.assessment.users.application.port.out.space.CreateSpacePort;
@@ -27,25 +26,21 @@ public class CreateUserService implements CreateUserUseCase {
     @Override
     public Result createUser(Param param) {
         UUID userId = createUserPort.persist(param.getUserId(), param.getDisplayName(), param.getEmail());
-        createSpacePort.persist(buildDefaultSpace(userId));
+        createSpacePort.persist(toParam(userId));
 
         return new Result(userId);
     }
 
-    private Space buildDefaultSpace(UUID ownerId) {
+    private CreateSpacePort.Param toParam(UUID userId) {
         LocalDateTime creationTime = LocalDateTime.now();
-        return new Space(null,
+        return new CreateSpacePort.Param(
             generateSlugCode(DEFAULT_SPACE_TITLE),
             DEFAULT_SPACE_TITLE,
             SpaceType.BASIC,
-            ownerId,
             SpaceStatus.ACTIVE,
             null,
             true,
-            creationTime,
-            creationTime,
-            ownerId,
-            ownerId
-        );
+            userId,
+            creationTime);
     }
 }

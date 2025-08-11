@@ -2,7 +2,6 @@ package org.flickit.assessment.users.application.service.space;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.MessageBundle;
-import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.application.domain.space.SpaceType;
 import org.flickit.assessment.common.config.AppSpecProperties;
 import org.flickit.assessment.common.exception.UpgradeRequiredException;
@@ -65,32 +64,28 @@ public class GetTopSpacesService implements GetTopSpacesUseCase {
 
     private SpaceListItem createNewSpace(UUID currentUserId) {
         var title = MessageBundle.message(SPACE_DRAFT_TITLE, LocaleContextHolder.getLocale());
-        var newSpace = toSpace(title, currentUserId);
-        var spaceId = createSpacePort.persist(newSpace);
+        var createSpaceParam = toCreateSpaceParam(title, currentUserId);
+        var spaceId = createSpacePort.persist(createSpaceParam);
 
         var spaceUserAccess = new SpaceUserAccess(spaceId, currentUserId, currentUserId, LocalDateTime.now());
         createSpaceUserAccessPort.persist(spaceUserAccess);
 
         return new SpaceListItem(spaceId,
-            newSpace.getTitle(),
-            SpaceListItem.Type.of(newSpace.getType()),
+            createSpaceParam.title(),
+            SpaceListItem.Type.of(createSpaceParam.type()),
             Boolean.TRUE);
     }
 
-    private static Space toSpace(String title, UUID currentUserId) {
-        return new Space(null,
+    private static CreateSpacePort.Param toCreateSpaceParam(String title, UUID currentUserId) {
+        return new CreateSpacePort.Param(
             generateSlugCode(title),
             title,
             SpaceType.BASIC,
-            currentUserId,
             SpaceStatus.ACTIVE,
             null,
             true,
-            LocalDateTime.now(),
-            LocalDateTime.now(),
             currentUserId,
-            currentUserId
-        );
+            LocalDateTime.now());
     }
 
     private List<LoadSpaceListPort.SpaceWithAssessmentCount> extractSpacesWithCapacity(List<LoadSpaceListPort.SpaceWithAssessmentCount> items, int maxBasicAssessments) {

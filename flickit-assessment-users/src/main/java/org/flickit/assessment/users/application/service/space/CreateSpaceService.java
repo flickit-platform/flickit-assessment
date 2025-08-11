@@ -5,7 +5,6 @@ import org.flickit.assessment.common.application.domain.notification.SendNotific
 import org.flickit.assessment.common.application.domain.space.SpaceType;
 import org.flickit.assessment.common.config.AppSpecProperties;
 import org.flickit.assessment.common.exception.UpgradeRequiredException;
-import org.flickit.assessment.users.application.domain.Space;
 import org.flickit.assessment.users.application.domain.SpaceStatus;
 import org.flickit.assessment.users.application.domain.SpaceUserAccess;
 import org.flickit.assessment.users.application.domain.notification.CreatePremiumSpaceNotificationCmd;
@@ -38,14 +37,17 @@ public class CreateSpaceService implements CreateSpaceUseCase {
         if (SpaceType.BASIC == SpaceType.valueOf(param.getType()))
             checkBasicLimit(param.getCurrentUserId());
 
-        var space = mapToDomain(param);
-
-        long id = createSpacePort.persist(space);
+        var createSpaceParam = toCreateParam(param);
+        long id = createSpacePort.persist(createSpaceParam);
         createOwnerAccessToSpace(id, param.getCurrentUserId(), param.getCurrentUserId());
 
         if (SpaceType.PREMIUM == SpaceType.valueOf(param.getType())) {
             String adminEmail = appSpecProperties.getEmail().getAdminEmail();
-            return new CreatePremium(id, new CreatePremiumSpaceNotificationCmd(adminEmail, space));
+            return new CreatePremium(id,
+                new CreatePremiumSpaceNotificationCmd(adminEmail,
+                    createSpaceParam.title(),
+                    createSpaceParam.createdBy(),
+                    createSpaceParam.creationTime()));
         }
 
         return new CreateBasic(id);
@@ -59,21 +61,16 @@ public class CreateSpaceService implements CreateSpaceUseCase {
             throw new UpgradeRequiredException(CREATE_SPACE_BASIC_SPACE_MAX);
     }
 
-    private Space mapToDomain(Param param) {
+    private CreateSpacePort.Param toCreateParam(Param param) {
         LocalDateTime creationTime = LocalDateTime.now();
-        return new Space(null,
-            generateSlugCode(param.getTitle()),
+        return new CreateSpacePort.Param(generateSlugCode(param.getTitle()),
             param.getTitle(),
             SpaceType.valueOf(param.getType()),
-            param.getCurrentUserId(),
             SpaceStatus.ACTIVE,
             null,
             false,
-            creationTime,
-            creationTime,
             param.getCurrentUserId(),
-            param.getCurrentUserId()
-        );
+            creationTime);
     }
 
     private void createOwnerAccessToSpace(long id, UUID invitee, UUID inviter) {
