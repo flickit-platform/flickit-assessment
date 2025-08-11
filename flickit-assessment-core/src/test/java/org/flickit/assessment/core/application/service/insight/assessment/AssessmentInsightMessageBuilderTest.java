@@ -12,25 +12,25 @@ import org.junit.jupiter.params.provider.Arguments;
 import java.util.Locale;
 import java.util.stream.Stream;
 
-import static org.flickit.assessment.core.application.service.insight.assessment.AssessmentInsightBuilderHelper.buildAssessmentInsight;
+import static org.flickit.assessment.core.application.service.insight.assessment.AssessmentInsightMessageBuilder.buildInsightMessage;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 @ExtendWith(MockitoExtension.class)
-class AssessmentInsightBuilderHelperTest {
+class AssessmentInsightMessageBuilderTest {
 
     @ParameterizedTest
     @MethodSource("buildAssessmentParams")
     void testBuildInsight_whenAssessmentModeIsAdvanced(AssessmentMode mode, int subjectCount, int questionCount, int answerCount, Locale locale) {
-        var param = new AssessmentInsightBuilderHelper.Param("Maturity", questionCount, answerCount, 85, mode, subjectCount, locale);
+        var param = new AssessmentInsightMessageBuilder.Param("Maturity", questionCount, answerCount, 85, mode, subjectCount, locale);
 
-        String result = buildAssessmentInsight(param);
+        String result = buildInsightMessage(param);
         String expected = buildExpectedMessage(param);
 
         assertEquals(expected, result);
     }
 
-    private String buildExpectedMessage(AssessmentInsightBuilderHelper.Param param) {
+    private String buildExpectedMessage(AssessmentInsightMessageBuilder.Param param) {
         boolean isCompleted = param.answersCount() == param.questionsCount();
 
         String messageKey = generateInsightMessageKey(param.mode(), param.subjectCount(), isCompleted);

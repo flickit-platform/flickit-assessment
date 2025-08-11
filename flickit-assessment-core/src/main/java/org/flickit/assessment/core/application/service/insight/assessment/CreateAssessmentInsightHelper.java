@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 import java.util.Locale;
 import java.util.UUID;
 
-import static org.flickit.assessment.core.application.service.insight.assessment.AssessmentInsightBuilderHelper.buildAssessmentInsight;
+import static org.flickit.assessment.core.application.service.insight.assessment.AssessmentInsightMessageBuilder.buildInsightMessage;
 
 @Service
 @Transactional(readOnly = true)
@@ -43,12 +43,12 @@ public class CreateAssessmentInsightHelper {
             locale);
 
         var subjectCount = countSubjectsPort.countSubjects(assessmentResult.getKitVersionId());
-        String insight = buildAssessmentInsight(toAssessmentInsightBuilderParam(assessmentInsightParam, subjectCount, locale));
+        String insight = buildInsightMessage(toAssessmentInsightBuilderParam(assessmentInsightParam, subjectCount, locale));
         return toAssessmentInsight(assessmentResult.getId(), insight);
     }
 
-    private static AssessmentInsightBuilderHelper.Param toAssessmentInsightBuilderParam(AssessmentInsightParam param, int subjectCount, Locale locale) {
-        return new AssessmentInsightBuilderHelper.Param(param.maturityLevelTitle,
+    private static AssessmentInsightMessageBuilder.Param toAssessmentInsightBuilderParam(AssessmentInsightParam param, int subjectCount, Locale locale) {
+        return new AssessmentInsightMessageBuilder.Param(param.maturityLevelTitle,
             param.questionsCount,
             param.answersCount,
             param.confidenceValue,
