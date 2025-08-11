@@ -229,7 +229,7 @@ jobs:
     steps:
       - name: Deploy service on Webhook
         run: |
-          status_code=$(curl --silent --output /dev/null --write-out "%{http_code}" -X POST "${{ secrets.DEPLOY_WEBHOOK_URL_PRODUCTION }}?tag=${PROJECT_VERSION}")
+          status_code=$(curl --silent --output /dev/null --write-out "%{http_code}" -X POST "${{ secrets.ASSESSMENT_VERSION }}?ASSESSMENT_VERSION=${PROJECT_VERSION}")
           if [ "$status_code" -ne 204 ]; then
             echo "Unexpected status code: $status_code"
             exit 1
