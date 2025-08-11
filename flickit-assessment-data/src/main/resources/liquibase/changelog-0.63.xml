@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+    <changeSet id="0.63-01" author="Maziyar Gerami">
+        <createSequence sequenceName="fau_user_survey_id_seq"
+                        dataType="bigint"
+                        startValue="1"/>
+    </changeSet>
+
+    <changeSet id="0.63-02" author="Maziyar Gerami">
+        <createTable tableName="fau_user_survey">
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_fau_user_survey"/>
+            </column>
+            <column name="user_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="assessment_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="completed" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="dont_show_again" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="completion_time" type="${datetime_with_time_zone_type}">
+                <constraints nullable="true"/>
+            </column>
+            <column name="creation_time" type="${datetime_with_time_zone_type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modification_time" type="${datetime_with_time_zone_type}">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.63-03" author="Maziyar Gerami">
+        <addForeignKeyConstraint baseTableName="fau_user_survey"
+                                 baseColumnNames="user_id"
+                                 referencedTableName="fau_user"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fau_usersurvey_user"/>
+    </changeSet>
+
+    <changeSet id="0.63-04" author="Maziyar Gerami">
+        <addUniqueConstraint columnNames="user_id"
+                             constraintName="uq_fau_usersurvey_userid"
+                             tableName="fau_user_survey"/>
+    </changeSet>
+
+</databaseChangeLog>

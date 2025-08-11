@@ -42,7 +42,8 @@ public interface GetAssessmentReportUseCase {
                   Permissions permissions,
                   Language lang,
                   String visibility,
-                  String linkHash) {
+                  String linkHash,
+                  boolean isAdvisable) {
     }
 
     record Assessment(String title,
@@ -103,6 +104,9 @@ public interface GetAssessmentReportUseCase {
     }
 
     record Advice(String narration, List<AdviceItem> adviceItems) {
+        public static Advice of(String narration, List<AdviceItem> adviceItems) {
+            return new Advice(narration, adviceItems);
+        }
     }
 
     record Questionnaire(long id,

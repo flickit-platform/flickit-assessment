@@ -43,10 +43,12 @@ public class GetTopSpacesService implements GetTopSpacesUseCase {
     @Override
     public Result getSpaceList(Param param) {
         var loadedSpaces = loadSpaceListPort.loadSpaceList(param.getCurrentUserId());
-        var lang = KitLanguage.valueOf(LocaleContextHolder.getLocale().getLanguage().toUpperCase());
 
-        if (loadedSpaces.isEmpty())
-            return new Result(List.of(createNewSpace(lang, param.getCurrentUserId())));
+        if (loadedSpaces.isEmpty()) {
+            var newSpace = createNewSpace(param.getCurrentUserId());
+            var items = List.of(newSpace);
+            return new Result(items);
+        }
 
         final int maxBasicAssessments = appSpecProperties.getSpace().getMaxBasicSpaceAssessments();
         var availableSpaces = extractSpacesWithCapacity(loadedSpaces, maxBasicAssessments);
@@ -56,13 +58,13 @@ public class GetTopSpacesService implements GetTopSpacesUseCase {
 
         var spaces = Optional.of(availableSpaces)
             .filter(items -> items.size() == 1)
-            .map(items -> List.of(toSpaceListItem(items.getFirst())))
+            .map(items -> List.of(toSpaceListItem(items.getFirst().space())))
             .orElseGet(() -> getMultipleBasicsAndPremium(availableSpaces));
         return new Result(spaces);
     }
 
-    private SpaceListItem createNewSpace(KitLanguage lang, UUID currentUserId) {
-        var title = MessageBundle.message(SPACE_DRAFT_TITLE, lang);
+    private SpaceListItem createNewSpace(UUID currentUserId) {
+        var title = MessageBundle.message(SPACE_DRAFT_TITLE, LocaleContextHolder.getLocale());
         var newSpace = toSpace(title, currentUserId);
         var spaceId = createSpacePort.persist(newSpace);
 
@@ -129,11 +131,11 @@ public class GetTopSpacesService implements GetTopSpacesUseCase {
             .toList();
     }
 
-    private SpaceListItem toSpaceListItem(LoadSpaceListPort.SpaceWithAssessmentCount item) {
+    private SpaceListItem toSpaceListItem(Space spaceItem) {
         return new SpaceListItem(
-            item.space().getId(),
-            item.space().getTitle(),
-            SpaceListItem.Type.of(item.space().getType()),
+            spaceItem.getId(),
+            spaceItem.getTitle(),
+            SpaceListItem.Type.of(spaceItem.getType()),
             Boolean.TRUE);
     }
 }
