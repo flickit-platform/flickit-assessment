@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+    <changeSet id = "0.65-01" author="Maziyar Gerami">
+        <addColumn tableName="fau_space">
+            <column name="is_default" type="boolean" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.65-02" author="Maziyar Gerami">
+        <sql>
+            CREATE UNIQUE INDEX uq_fau_space_owner_default_true
+            ON fau_space (owner_id) WHERE is_default = true;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
