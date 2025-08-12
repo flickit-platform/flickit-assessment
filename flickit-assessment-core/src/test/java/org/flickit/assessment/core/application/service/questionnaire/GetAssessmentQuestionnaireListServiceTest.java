@@ -11,7 +11,7 @@ import org.flickit.assessment.core.application.port.out.answer.CountAnswersPort;
 import org.flickit.assessment.core.application.port.out.answer.CountLowConfidenceAnswersPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.evidence.CountEvidencesPort;
-import org.flickit.assessment.core.application.port.out.questionnaire.LoadQuestionnairesByAssessmentIdPort;
+import org.flickit.assessment.core.application.port.out.questionnaire.LoadQuestionnairesPort;
 import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -40,7 +40,7 @@ class GetAssessmentQuestionnaireListServiceTest {
     private AssessmentAccessChecker assessmentAccessChecker;
 
     @Mock
-    private LoadQuestionnairesByAssessmentIdPort loadQuestionnairesByAssessmentIdPort;
+    private LoadQuestionnairesPort loadQuestionnairesPort;
 
     @Mock
     private LoadAssessmentResultPort loadAssessmentResultPort;
@@ -63,7 +63,7 @@ class GetAssessmentQuestionnaireListServiceTest {
         var throwable = assertThrows(AccessDeniedException.class, () -> service.getAssessmentQuestionnaireList(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
-        verifyNoInteractions(loadQuestionnairesByAssessmentIdPort,
+        verifyNoInteractions(loadQuestionnairesPort,
             loadAssessmentResultPort,
             countEvidencesPort,
             countLowConfidenceAnswersPort,
@@ -80,7 +80,7 @@ class GetAssessmentQuestionnaireListServiceTest {
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.getAssessmentQuestionnaireList(param));
         assertEquals(GET_ASSESSMENT_QUESTIONNAIRE_LIST_ASSESSMENT_RESULT_ID_NOT_FOUND, throwable.getMessage());
 
-        verifyNoInteractions(loadQuestionnairesByAssessmentIdPort,
+        verifyNoInteractions(loadQuestionnairesPort,
             countEvidencesPort,
             countLowConfidenceAnswersPort,
             countAnswersPort);
@@ -90,7 +90,7 @@ class GetAssessmentQuestionnaireListServiceTest {
     void testGetQuestionnaireList_whenParamIsValid_thenReturnListSuccessfully() {
         var param = createParam(Param.ParamBuilder::build);
         var assessmentResult = AssessmentResultMother.validResult();
-        var portParam = new LoadQuestionnairesByAssessmentIdPort.Param(assessmentResult, param.getSize(), param.getPage());
+        var portParam = new LoadQuestionnairesPort.Param(assessmentResult, param.getSize(), param.getPage());
         var questionnaireOne = createQuestionnaireListItem(10, 10);
         var questionnaireTwo = createQuestionnaireListItem(10, 5);
         var questionnaires = List.of(questionnaireOne, questionnaireTwo);
@@ -112,7 +112,7 @@ class GetAssessmentQuestionnaireListServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_QUESTIONNAIRE_LIST))
             .thenReturn(true);
-        when(loadQuestionnairesByAssessmentIdPort.loadAllByAssessmentId(portParam))
+        when(loadQuestionnairesPort.loadAllByAssessmentId(portParam))
             .thenReturn(loadPortResult);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(countLowConfidenceAnswersPort.countWithConfidenceLessThan(assessmentResult.getId(), questionnaireIds, ConfidenceLevel.SOMEWHAT_UNSURE))

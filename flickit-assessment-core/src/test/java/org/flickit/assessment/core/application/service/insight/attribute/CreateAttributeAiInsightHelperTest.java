@@ -15,11 +15,14 @@ import org.flickit.assessment.core.application.service.insight.attribute.CreateA
 import org.flickit.assessment.core.application.service.insight.attribute.CreateAttributeAiInsightHelper.AttributeInsightsParam;
 import org.flickit.assessment.core.test.fixture.application.AttributeValueMother;
 import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.io.ByteArrayInputStream;
 import java.util.List;
@@ -62,11 +65,24 @@ class CreateAttributeAiInsightHelperTest {
     @Mock
     private CallAiPromptPort callAiPromptPort;
 
+    @Spy
+    private ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+
     @Captor
     private ArgumentCaptor<Class<CreateAttributeAiInsightHelper.AiResponseDto>> classCaptor;
 
     @Captor
     private ArgumentCaptor<Prompt> promptArgumentCaptor;
+
+    @BeforeEach
+    void setUp() {
+        executor.initialize();
+    }
+
+    @AfterEach
+    void clear() {
+        executor.shutdown();
+    }
 
     private final AssessmentResult assessmentResult = validResult();
     private final GetAssessmentProgressPort.Result completeProgress = new GetAssessmentProgressPort.Result(assessmentResult.getId(), 10, 10);
@@ -110,9 +126,9 @@ class CreateAttributeAiInsightHelperTest {
 
     @Test
     void testCreateAttributeAiInsightHelper_whenAiEnabledAndSaveFileEnabled_thenGenerateAndUploadFile() {
-        var expectedPrompt = "The attribute " + attributeValue.getAttribute().getTitle() + " with this description " + attributeValue.getAttribute().getDescription() +
-            " for " + attributeInsightParam.assessmentResult().getAssessment().getShortTitle() + " was reviewed in " + fileContent + ". " +
-            "Provide the result in " + attributeInsightParam.assessmentResult().getAssessment().getAssessmentKit().getLanguage().getTitle() + ".";
+        var expectedPrompt = "The attribute " + attributeValue.getAttribute().getTitle() + " with this description " +
+            attributeValue.getAttribute().getDescription() + " was reviewed in " + fileContent + ". Provide the result in " +
+            attributeInsightParam.assessmentResult().getAssessment().getAssessmentKit().getLanguage().getTitle() + ".";
         var fileReportPath = "path/to/file";
 
         when(getAssessmentProgressPort.getProgress(assessmentResult.getAssessment().getId())).thenReturn(completeProgress);
@@ -139,8 +155,7 @@ class CreateAttributeAiInsightHelperTest {
     @Test
     void testCreateAttributeAiInsightHelper_whenAiEnabledAndSaveFilesDisabled_thenGenerateAndNotSaveFileAndPersistInsight() {
         String expectedPrompt = "The attribute " + attributeValue.getAttribute().getTitle() + " with this description " +
-            attributeValue.getAttribute().getDescription() + " for " + attributeInsightParam.assessmentResult().getAssessment().getShortTitle() +
-            " was reviewed in " + fileContent + ". " + "Provide the result in " +
+            attributeValue.getAttribute().getDescription() + " was reviewed in " + fileContent + ". Provide the result in " +
             attributeInsightParam.assessmentResult().getAssessment().getAssessmentKit().getLanguage().getTitle() + ".";
 
         when(getAssessmentProgressPort.getProgress(assessmentResult.getAssessment().getId())).thenReturn(completeProgress);
@@ -199,9 +214,9 @@ class CreateAttributeAiInsightHelperTest {
 
     @Test
     void testCreateAttributeAiInsightsHelper_whenAiEnabledAndSaveFileEnabled_thenGenerateAndUploadFile() {
-        var expectedPrompt = "The attribute " + attributeValue.getAttribute().getTitle() + " with this description " + attributeValue.getAttribute().getDescription() +
-            " for " + attributeInsightParam.assessmentResult().getAssessment().getShortTitle() + " was reviewed in " + fileContent + ". " +
-            "Provide the result in " + attributeInsightParam.assessmentResult().getAssessment().getAssessmentKit().getLanguage().getTitle() + ".";
+        var expectedPrompt = "The attribute " + attributeValue.getAttribute().getTitle() + " with this description " +
+            attributeValue.getAttribute().getDescription() + " was reviewed in " + fileContent + ". Provide the result in " +
+            attributeInsightParam.assessmentResult().getAssessment().getAssessmentKit().getLanguage().getTitle() + ".";
         var fileReportPath = "path/to/file";
 
         when(getAssessmentProgressPort.getProgress(assessmentResult.getAssessment().getId())).thenReturn(completeProgress);
@@ -229,8 +244,7 @@ class CreateAttributeAiInsightHelperTest {
     @Test
     void testCreateAttributeAiInsightsHelper_whenAiEnabledAndSaveFilesDisabled_thenGenerateAndNotSaveFileAndPersistInsight() {
         String expectedPrompt = "The attribute " + attributeValue.getAttribute().getTitle() + " with this description " +
-            attributeValue.getAttribute().getDescription() + " for " + attributeInsightParam.assessmentResult().getAssessment().getShortTitle() +
-            " was reviewed in " + fileContent + ". " + "Provide the result in " +
+            attributeValue.getAttribute().getDescription() + " was reviewed in " + fileContent + ". Provide the result in " +
             attributeInsightParam.assessmentResult().getAssessment().getAssessmentKit().getLanguage().getTitle() + ".";
 
         when(getAssessmentProgressPort.getProgress(assessmentResult.getAssessment().getId())).thenReturn(completeProgress);
@@ -263,8 +277,7 @@ class CreateAttributeAiInsightHelperTest {
         properties.setPrompt(new AppAiProperties.Prompt());
         properties.setSaveAiInputFileEnabled(true);
         properties.getPrompt().setAttributeInsight("The attribute {attributeTitle} with this description " +
-            "{attributeDescription} for {assessmentTitle} was reviewed in {fileContent}. " +
-            "Provide the result in {language}.");
+            "{attributeDescription} was reviewed in {fileContent}. Provide the result in {language}.");
         return properties;
     }
 

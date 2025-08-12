@@ -364,4 +364,8 @@ public class ErrorMessageKey {
     public static final String UPDATE_ASSESSMENT_MODE_MODE_INVALID = "update-assessment-mode.mode.invalid";
 
     public static final String PREPARE_REPORT_ASSESSMENT_ID_NOT_NULL = "prepare-report.assessmentId.notNull";
+
+    public static final String GET_ASSESSMENT_NEXT_QUESTIONNAIRE_ASSESSMENT_ID_NOT_NULL = "get-assessment-next-questionnaire.assessmentId.notNull";
+    public static final String GET_ASSESSMENT_NEXT_QUESTIONNAIRE_QUESTIONNAIRE_ID_NOT_NULL = "get-assessment-next-questionnaire.questionnaireId.notNull";
+    public static final String GET_ASSESSMENT_NEXT_QUESTIONNAIRE_ASSESSMENT_RESULT_NOT_FOUND = "get-assessment-next-questionnaire.assessmentResult.notFound";
 }

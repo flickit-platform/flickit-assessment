@@ -110,6 +110,33 @@ class CreateAssessmentReportMetadataServiceTest {
     }
 
     @Test
+    void testCreateAssessmentReportMetadata_whenAssessmentReportMetadataIsNull_thenPersistAssessmentReport() {
+        var param = createParam(ParamBuilder::build);
+
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MANAGE_REPORT_METADATA))
+            .thenReturn(true);
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(null);
+
+        service.createReportMetadata(param);
+
+        ArgumentCaptor<CreateAssessmentReportPort.Param> assessmentReportParam = ArgumentCaptor.forClass(CreateAssessmentReportPort.Param.class);
+        verify(createAssessmentReportPort, times(1)).persist(assessmentReportParam.capture());
+
+        assertEquals(assessmentResult.getId(), assessmentReportParam.getValue().assessmentResultId());
+        var actualMetadata = assessmentReportParam.getValue().metadata();
+        assertNotNull(actualMetadata);
+        assertEquals(param.getMetadata().getIntro(), actualMetadata.intro());
+        assertNull(actualMetadata.prosAndCons());
+        assertNull(param.getMetadata().getSteps(), actualMetadata.steps());
+        assertNull(param.getMetadata().getParticipants(), actualMetadata.participants());
+        assertNotNull(assessmentReportParam.getValue().creationTime());
+        assertEquals(param.getCurrentUserId(), assessmentReportParam.getValue().createdBy());
+
+        verifyNoInteractions(updateAssessmentReportPort);
+    }
+
+    @Test
     void testCreateAssessmentReportMetadata_whenAssessmentReportExists_thenUpdateAssessmentReport() {
         var param = createParam(ParamBuilder::build);
         var oldMetadata = new AssessmentReportMetadata(null, "pros and cons", null, null);

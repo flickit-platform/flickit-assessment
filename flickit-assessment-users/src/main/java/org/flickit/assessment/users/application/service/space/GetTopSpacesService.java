@@ -1,21 +1,31 @@
 package org.flickit.assessment.users.application.service.space;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.domain.space.SpaceType;
 import org.flickit.assessment.common.config.AppSpecProperties;
 import org.flickit.assessment.common.exception.UpgradeRequiredException;
 import org.flickit.assessment.users.application.domain.Space;
+import org.flickit.assessment.users.application.domain.SpaceStatus;
+import org.flickit.assessment.users.application.domain.SpaceUserAccess;
 import org.flickit.assessment.users.application.port.in.space.GetTopSpacesUseCase;
 import org.flickit.assessment.users.application.port.in.space.GetTopSpacesUseCase.Result.SpaceListItem;
+import org.flickit.assessment.users.application.port.out.space.CreateSpacePort;
 import org.flickit.assessment.users.application.port.out.space.LoadSpaceListPort;
+import org.flickit.assessment.users.application.port.out.spaceuseraccess.CreateSpaceUserAccessPort;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
 import static org.flickit.assessment.users.common.ErrorMessageKey.GET_TOP_SPACES_NO_SPACE_AVAILABLE;
+import static org.flickit.assessment.users.common.MessageKey.SPACE_DRAFT_TITLE;
 
 @Service
 @Transactional
@@ -26,10 +36,18 @@ public class GetTopSpacesService implements GetTopSpacesUseCase {
 
     private final LoadSpaceListPort loadSpaceListPort;
     private final AppSpecProperties appSpecProperties;
+    private final CreateSpacePort createSpacePort;
+    private final CreateSpaceUserAccessPort createSpaceUserAccessPort;
 
     @Override
     public Result getSpaceList(Param param) {
         var loadedSpaces = loadSpaceListPort.loadSpaceList(param.getCurrentUserId());
+
+        if (loadedSpaces.isEmpty()) {
+            var newSpace = createNewSpace(param.getCurrentUserId());
+            var items = List.of(newSpace);
+            return new Result(items);
+        }
 
         final int maxBasicAssessments = appSpecProperties.getSpace().getMaxBasicSpaceAssessments();
         var availableSpaces = extractSpacesWithCapacity(loadedSpaces, maxBasicAssessments);
@@ -39,9 +57,35 @@ public class GetTopSpacesService implements GetTopSpacesUseCase {
 
         var spaces = Optional.of(availableSpaces)
             .filter(items -> items.size() == 1)
-            .map(items -> List.of(toSpaceListItem(items.getFirst())))
+            .map(items -> List.of(toSpaceListItem(items.getFirst().space())))
             .orElseGet(() -> getMultipleBasicsAndPremium(availableSpaces));
         return new Result(spaces);
+    }
+
+    private SpaceListItem createNewSpace(UUID currentUserId) {
+        var title = MessageBundle.message(SPACE_DRAFT_TITLE, LocaleContextHolder.getLocale());
+        var createSpaceParam = toCreateSpaceParam(title, currentUserId);
+        var spaceId = createSpacePort.persist(createSpaceParam);
+
+        var spaceUserAccess = new SpaceUserAccess(spaceId, currentUserId, currentUserId, LocalDateTime.now());
+        createSpaceUserAccessPort.persist(spaceUserAccess);
+
+        return new SpaceListItem(spaceId,
+            createSpaceParam.title(),
+            SpaceListItem.Type.of(createSpaceParam.type()),
+            Boolean.TRUE);
+    }
+
+    private static CreateSpacePort.Param toCreateSpaceParam(String title, UUID currentUserId) {
+        return new CreateSpacePort.Param(
+            generateSlugCode(title),
+            title,
+            SpaceType.BASIC,
+            SpaceStatus.ACTIVE,
+            null,
+            true,
+            currentUserId,
+            LocalDateTime.now());
     }
 
     private List<LoadSpaceListPort.SpaceWithAssessmentCount> extractSpacesWithCapacity(List<LoadSpaceListPort.SpaceWithAssessmentCount> items, int maxBasicAssessments) {
@@ -82,11 +126,11 @@ public class GetTopSpacesService implements GetTopSpacesUseCase {
             .toList();
     }
 
-    private SpaceListItem toSpaceListItem(LoadSpaceListPort.SpaceWithAssessmentCount item) {
+    private SpaceListItem toSpaceListItem(Space spaceItem) {
         return new SpaceListItem(
-            item.space().getId(),
-            item.space().getTitle(),
-            SpaceListItem.Type.of(item.space().getType()),
+            spaceItem.getId(),
+            spaceItem.getTitle(),
+            SpaceListItem.Type.of(spaceItem.getType()),
             Boolean.TRUE);
     }
 }
