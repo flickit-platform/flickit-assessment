@@ -15,10 +15,7 @@ import org.flickit.assessment.users.application.port.out.spaceuseraccess.CreateS
 import org.flickit.assessment.users.test.fixture.application.SpaceMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Spy;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.i18n.LocaleContextHolder;
 
@@ -51,6 +48,9 @@ class GetTopSpacesServiceTest {
     @Mock
     private CreateSpaceUserAccessPort createSpaceUserAccessPort;
 
+    @Captor
+    private ArgumentCaptor<CreateSpacePort.Param> createSpaceCaptor;
+
     @Spy
     private final AppSpecProperties appSpecProperties = appSpecProperties();
 
@@ -59,7 +59,6 @@ class GetTopSpacesServiceTest {
 
     private final Space premiumSpace = SpaceMother.premiumSpace(param.getCurrentUserId());
     private final Space basicSpace = SpaceMother.basicSpace(param.getCurrentUserId());
-    private final long spaceId = 123L;
 
     @Test
     void testGetTopSpaces_whenNoSpacesExistAndLanguageIsEN_thenCreateNewSpace() {
@@ -67,20 +66,19 @@ class GetTopSpacesServiceTest {
         LocaleContextHolder.setLocale(Locale.ENGLISH);
 
         when(loadSpaceListPort.loadSpaceList(param.getCurrentUserId())).thenReturn(List.of());
-        when(createSpacePort.persist(any(Space.class))).thenReturn(spaceId);
 
         var result = service.getSpaceList(param);
+
         var items = result.items();
         assertEquals(1, items.size());
-        assertEquals(spaceId, items.getFirst().id());
         assertEquals(expectedTitle, items.getFirst().title());
         assertEquals(SpaceType.BASIC.getCode(), items.getFirst().type().code());
         assertEquals(SpaceType.BASIC.getTitle(), items.getFirst().type().title());
         assertTrue(items.getFirst().isDefault());
 
-        var spaceCaptor = ArgumentCaptor.forClass(Space.class);
-        verify(createSpacePort).persist(spaceCaptor.capture());
-        assertSpace(spaceCaptor.getValue(), expectedTitle);
+        verify(createSpacePort).persist(createSpaceCaptor.capture());
+        var capturedSpace = createSpaceCaptor.getValue();
+        assertSpace(expectedTitle, capturedSpace);
 
         var userAccessCaptor = ArgumentCaptor.forClass(SpaceUserAccess.class);
         verify(createSpaceUserAccessPort).persist(userAccessCaptor.capture());
@@ -95,20 +93,18 @@ class GetTopSpacesServiceTest {
         LocaleContextHolder.setLocale(Locale.of("FA"));
 
         when(loadSpaceListPort.loadSpaceList(param.getCurrentUserId())).thenReturn(List.of());
-        when(createSpacePort.persist(any(Space.class))).thenReturn(spaceId);
 
         var result = service.getSpaceList(param);
         var items = result.items();
         assertEquals(1, items.size());
-        assertEquals(spaceId, items.getFirst().id());
         assertEquals(expectedTitle, items.getFirst().title());
         assertEquals(SpaceType.BASIC.getCode(), items.getFirst().type().code());
         assertEquals(SpaceType.BASIC.getTitle(), items.getFirst().type().title());
         assertTrue(items.getFirst().isDefault());
 
-        var spaceCaptor = ArgumentCaptor.forClass(Space.class);
-        verify(createSpacePort).persist(spaceCaptor.capture());
-        assertSpace(spaceCaptor.getValue(), expectedTitle);
+        verify(createSpacePort).persist(createSpaceCaptor.capture());
+        var capturedSpace = createSpaceCaptor.getValue();
+        assertSpace(expectedTitle, capturedSpace);
 
         var userAccessCaptor = ArgumentCaptor.forClass(SpaceUserAccess.class);
         verify(createSpaceUserAccessPort).persist(userAccessCaptor.capture());
@@ -337,23 +333,19 @@ class GetTopSpacesServiceTest {
     }
 
     private void assertSpaceUserAccess(ArgumentCaptor<SpaceUserAccess> userAccessCaptor) {
-        assertEquals(spaceId, userAccessCaptor.getValue().getSpaceId());
         assertEquals(param.getCurrentUserId(), userAccessCaptor.getValue().getCreatedBy());
         assertEquals(param.getCurrentUserId(), userAccessCaptor.getValue().getUserId());
         assertNotNull(userAccessCaptor.getValue().getCreationTime());
     }
 
-    private void assertSpace(Space capturedSpace, String expectedTitle) {
-        assertEquals(generateSlugCode(expectedTitle), capturedSpace.getCode());
-        assertEquals(expectedTitle, capturedSpace.getTitle());
-        assertEquals(SpaceType.BASIC, capturedSpace.getType());
-        assertEquals(param.getCurrentUserId(), capturedSpace.getOwnerId());
-        assertEquals(SpaceStatus.ACTIVE, capturedSpace.getStatus());
-        assertNotNull(capturedSpace.getCreationTime());
-        assertNotNull(capturedSpace.getLastModificationTime());
-        assertEquals(param.getCurrentUserId(), capturedSpace.getCreatedBy());
-        assertEquals(param.getCurrentUserId(), capturedSpace.getLastModifiedBy());
-        assertNull(capturedSpace.getSubscriptionExpiry());
+    private void assertSpace(String expectedTitle, CreateSpacePort.Param capturedSpace) {
+        assertEquals(generateSlugCode(expectedTitle), capturedSpace.code());
+        assertEquals(expectedTitle, capturedSpace.title());
+        assertEquals(SpaceType.BASIC, capturedSpace.type());
+        assertEquals(param.getCurrentUserId(), capturedSpace.createdBy());
+        assertEquals(SpaceStatus.ACTIVE, capturedSpace.status());
+        assertNotNull(capturedSpace.creationTime());
+        assertNull(capturedSpace.subscriptionExpiry());
     }
 
     private AppSpecProperties appSpecProperties() {
