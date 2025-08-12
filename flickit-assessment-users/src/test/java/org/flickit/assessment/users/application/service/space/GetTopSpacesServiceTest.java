@@ -2,7 +2,7 @@ package org.flickit.assessment.users.application.service.space;
 
 import org.flickit.assessment.common.application.domain.space.SpaceType;
 import org.flickit.assessment.common.config.AppSpecProperties;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.exception.InvalidStateException;
 import org.flickit.assessment.common.exception.UpgradeRequiredException;
 import org.flickit.assessment.users.application.domain.Space;
 import org.flickit.assessment.users.application.port.in.space.GetTopSpacesUseCase;
@@ -24,7 +24,7 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.flickit.assessment.users.common.ErrorMessageKey.GET_TOP_SPACES_NO_SPACE_AVAILABLE;
-import static org.flickit.assessment.users.common.ErrorMessageKey.GET_TOP_SPACES_SPACE_NOT_FOUND;
+import static org.flickit.assessment.users.common.ErrorMessageKey.GET_TOP_SPACES_NO_SPACE_FOUND;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -50,8 +50,8 @@ class GetTopSpacesServiceTest {
     void testGetTopSpaces_whenSpaceDoesNotExist_thenThrowResourceNotFoundException() {
         when(loadSpaceListPort.loadSpaceList(param.getCurrentUserId())).thenReturn(List.of());
 
-        var exception = assertThrows(ResourceNotFoundException.class, () -> service.getSpaceList(param));
-        assertEquals(GET_TOP_SPACES_SPACE_NOT_FOUND, exception.getMessage());
+        var exception = assertThrows(InvalidStateException.class, () -> service.getSpaceList(param));
+        assertEquals(GET_TOP_SPACES_NO_SPACE_FOUND, exception.getMessage());
 
         verifyNoInteractions(appSpecProperties);
     }

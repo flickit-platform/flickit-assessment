@@ -3,7 +3,7 @@ package org.flickit.assessment.users.application.service.space;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.space.SpaceType;
 import org.flickit.assessment.common.config.AppSpecProperties;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.exception.InvalidStateException;
 import org.flickit.assessment.common.exception.UpgradeRequiredException;
 import org.flickit.assessment.users.application.domain.Space;
 import org.flickit.assessment.users.application.port.in.space.GetTopSpacesUseCase;
@@ -17,7 +17,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.users.common.ErrorMessageKey.GET_TOP_SPACES_NO_SPACE_AVAILABLE;
-import static org.flickit.assessment.users.common.ErrorMessageKey.GET_TOP_SPACES_SPACE_NOT_FOUND;
+import static org.flickit.assessment.users.common.ErrorMessageKey.GET_TOP_SPACES_NO_SPACE_FOUND;
 
 @Service
 @Transactional
@@ -31,9 +31,10 @@ public class GetTopSpacesService implements GetTopSpacesUseCase {
 
     @Override
     public Result getSpaceList(Param param) {
-        var loadedSpaces = Optional.of(loadSpaceListPort.loadSpaceList(param.getCurrentUserId()))
-            .filter(list -> !list.isEmpty())
-            .orElseThrow(() -> new ResourceNotFoundException(GET_TOP_SPACES_SPACE_NOT_FOUND));
+        var loadedSpaces = loadSpaceListPort.loadSpaceList(param.getCurrentUserId());
+
+        if (loadedSpaces.isEmpty())
+            throw new InvalidStateException(GET_TOP_SPACES_NO_SPACE_FOUND); // Can't happen
 
         final int maxBasicAssessments = appSpecProperties.getSpace().getMaxBasicSpaceAssessments();
         var spaces = Optional.ofNullable(extractSpacesWithCapacity(loadedSpaces, maxBasicAssessments))
