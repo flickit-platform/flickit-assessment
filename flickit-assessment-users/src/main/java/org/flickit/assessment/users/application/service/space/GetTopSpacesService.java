@@ -3,6 +3,7 @@ package org.flickit.assessment.users.application.service.space;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.space.SpaceType;
 import org.flickit.assessment.common.config.AppSpecProperties;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.exception.UpgradeRequiredException;
 import org.flickit.assessment.users.application.domain.Space;
 import org.flickit.assessment.users.application.port.in.space.GetTopSpacesUseCase;
@@ -16,6 +17,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.users.common.ErrorMessageKey.GET_TOP_SPACES_NO_SPACE_AVAILABLE;
+import static org.flickit.assessment.users.common.ErrorMessageKey.GET_TOP_SPACES_SPACE_NOT_FOUND;
 
 @Service
 @Transactional
@@ -29,18 +31,18 @@ public class GetTopSpacesService implements GetTopSpacesUseCase {
 
     @Override
     public Result getSpaceList(Param param) {
-        var loadedSpaces = loadSpaceListPort.loadSpaceList(param.getCurrentUserId());
+        var loadedSpaces = Optional.of(loadSpaceListPort.loadSpaceList(param.getCurrentUserId()))
+            .filter(list -> !list.isEmpty())
+            .orElseThrow(() -> new ResourceNotFoundException(GET_TOP_SPACES_SPACE_NOT_FOUND));
 
         final int maxBasicAssessments = appSpecProperties.getSpace().getMaxBasicSpaceAssessments();
-        var availableSpaces = extractSpacesWithCapacity(loadedSpaces, maxBasicAssessments);
+        var spaces = Optional.ofNullable(extractSpacesWithCapacity(loadedSpaces, maxBasicAssessments))
+            .filter(list -> !list.isEmpty())
+            .map(list -> list.size() == 1
+                ? List.of(toSpaceListItem(list.getFirst()))
+                : getMultipleBasicsAndPremium(list))
+            .orElseThrow(() -> new UpgradeRequiredException(GET_TOP_SPACES_NO_SPACE_AVAILABLE));
 
-        if (availableSpaces.isEmpty())
-            throw new UpgradeRequiredException(GET_TOP_SPACES_NO_SPACE_AVAILABLE);
-
-        var spaces = Optional.of(availableSpaces)
-            .filter(items -> items.size() == 1)
-            .map(items -> List.of(toSpaceListItem(items.getFirst())))
-            .orElseGet(() -> getMultipleBasicsAndPremium(availableSpaces));
         return new Result(spaces);
     }
 
