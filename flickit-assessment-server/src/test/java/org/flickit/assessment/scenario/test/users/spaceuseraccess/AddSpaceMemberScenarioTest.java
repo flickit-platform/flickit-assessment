@@ -67,9 +67,9 @@ class AddSpaceMemberScenarioTest extends AbstractScenarioTest {
         createInviteeUserResponse.then()
             .statusCode(201);
 
-        final int countBefore = jpaTemplate.count(SpaceUserAccessJpaEntity.class);
         // Change currentUser which is not a member of the space
         context.getNextCurrentUser();
+        final int countBefore = jpaTemplate.count(SpaceUserAccessJpaEntity.class);
 
         // Add the created user to the space (by the new currentUser)
         var request = addSpaceMemberRequestDto(b -> b.email(createInviteeUserRequest.email()));

@@ -1,14 +1,16 @@
 package org.flickit.assessment.users.application.service.user;
 
 import org.flickit.assessment.common.application.domain.space.SpaceType;
-import org.flickit.assessment.users.application.domain.Space;
 import org.flickit.assessment.users.application.domain.SpaceStatus;
+import org.flickit.assessment.users.application.domain.SpaceUserAccess;
 import org.flickit.assessment.users.application.port.in.user.CreateUserUseCase;
 import org.flickit.assessment.users.application.port.out.space.CreateSpacePort;
+import org.flickit.assessment.users.application.port.out.spaceuseraccess.CreateSpaceUserAccessPort;
 import org.flickit.assessment.users.application.port.out.user.CreateUserPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -34,31 +36,42 @@ class CreateUserServiceTest {
     @Mock
     private CreateSpacePort createSpacePort;
 
+    @Mock
+    private CreateSpaceUserAccessPort createSpaceUserAccessPort;
+
+    @Captor
+    private ArgumentCaptor<CreateSpacePort.Param> createSpaceCaptor;
+
+    @Captor
+    private ArgumentCaptor<SpaceUserAccess> createSpaceUserAccessCaptor;
+
     @Test
     void testCreateUserService_whenParametersAreValid_thenReturnValidResult() {
         var param = createParam(CreateUserUseCase.Param.ParamBuilder::build);
         var userId = UUID.randomUUID();
 
         when(createUserPort.persist(param.getUserId(), param.getDisplayName(), param.getEmail())).thenReturn(userId);
-        var spaceArgumentCaptor = ArgumentCaptor.forClass(Space.class);
 
         var result = service.createUser(param);
-        verify(createSpacePort).persist(spaceArgumentCaptor.capture());
-        var capturedSpace = spaceArgumentCaptor.getValue();
 
         assertEquals(userId, result.userId());
-        assertNull(capturedSpace.getId());
-        assertEquals(generateSlugCode(DEFAULT_SPACE_TITLE), capturedSpace.getCode());
-        assertEquals(DEFAULT_SPACE_TITLE, capturedSpace.getTitle());
-        assertEquals(SpaceType.BASIC, capturedSpace.getType());
-        assertEquals(userId, capturedSpace.getOwnerId());
-        assertEquals(SpaceStatus.ACTIVE, capturedSpace.getStatus());
-        assertNull(capturedSpace.getSubscriptionExpiry());
+
+        verify(createSpacePort).persist(createSpaceCaptor.capture());
+        var capturedSpace = createSpaceCaptor.getValue();
+
+        assertEquals(generateSlugCode(DEFAULT_SPACE_TITLE), capturedSpace.code());
+        assertEquals(DEFAULT_SPACE_TITLE, capturedSpace.title());
+        assertEquals(SpaceType.BASIC, capturedSpace.type());
+        assertEquals(userId, capturedSpace.createdBy());
+        assertEquals(SpaceStatus.ACTIVE, capturedSpace.status());
+        assertNull(capturedSpace.subscriptionExpiry());
         assertTrue(capturedSpace.isDefault());
-        assertNotNull(capturedSpace.getCreationTime());
-        assertNotNull(capturedSpace.getLastModificationTime());
-        assertEquals(userId, capturedSpace.getCreatedBy());
-        assertEquals(userId, capturedSpace.getLastModifiedBy());
+        assertNotNull(capturedSpace.creationTime());
+
+        verify(createSpaceUserAccessPort).persist(createSpaceUserAccessCaptor.capture());
+        assertEquals(userId, createSpaceUserAccessCaptor.getValue().getCreatedBy());
+        assertEquals(userId, createSpaceUserAccessCaptor.getValue().getUserId());
+        assertNotNull(createSpaceUserAccessCaptor.getValue().getCreationTime());
     }
 
     private CreateUserUseCase.Param createParam(Consumer<CreateUserUseCase.Param.ParamBuilder> changer) {
