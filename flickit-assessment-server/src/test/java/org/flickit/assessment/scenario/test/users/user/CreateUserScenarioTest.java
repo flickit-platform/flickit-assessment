@@ -1,9 +1,13 @@
 package org.flickit.assessment.scenario.test.users.user;
 
 import org.flickit.assessment.common.exception.api.ErrorResponseDto;
+import org.flickit.assessment.data.jpa.users.space.SpaceJpaEntity;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 import org.flickit.assessment.scenario.test.AbstractScenarioTest;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
+import java.util.UUID;
 
 import static org.flickit.assessment.common.exception.api.ErrorCodes.INVALID_INPUT;
 import static org.flickit.assessment.scenario.fixture.request.CreateUserRequestDtoMother.createUserRequestDto;
@@ -37,6 +41,11 @@ class CreateUserScenarioTest extends AbstractScenarioTest {
         assertNull(loadedUser.getPicture());
         assertNull(loadedUser.getLastLogin());
         assertNotNull(loadedUser.getPassword());
+
+        List<SpaceJpaEntity> loadedSpaces = loadSpaceByOwnerId(request.id());
+        assertEquals(1, loadedSpaces.size());
+        var space = loadedSpaces.getFirst();
+        assertTrue(space.isDefault());
     }
 
     @Test
@@ -62,5 +71,10 @@ class CreateUserScenarioTest extends AbstractScenarioTest {
 
         int countAfter = jpaTemplate.count(UserJpaEntity.class);
         assertEquals(countBefore, countAfter);
+    }
+
+    private List<SpaceJpaEntity> loadSpaceByOwnerId(UUID ownerId) {
+        return jpaTemplate.search(SpaceJpaEntity.class,
+            (root, query, cb) -> cb.equal(root.get("ownerId"), ownerId));
     }
 }
