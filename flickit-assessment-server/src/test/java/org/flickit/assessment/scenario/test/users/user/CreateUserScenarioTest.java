@@ -2,6 +2,7 @@ package org.flickit.assessment.scenario.test.users.user;
 
 import org.flickit.assessment.common.exception.api.ErrorResponseDto;
 import org.flickit.assessment.data.jpa.users.space.SpaceJpaEntity;
+import org.flickit.assessment.data.jpa.users.spaceuseraccess.SpaceUserAccessJpaEntity;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 import org.flickit.assessment.scenario.test.AbstractScenarioTest;
 import org.junit.jupiter.api.Test;
@@ -42,10 +43,15 @@ class CreateUserScenarioTest extends AbstractScenarioTest {
         assertNull(loadedUser.getLastLogin());
         assertNotNull(loadedUser.getPassword());
 
-        List<SpaceJpaEntity> loadedSpaces = loadSpaceByOwnerId(request.id());
+        List<SpaceJpaEntity> loadedSpaces = loadSpaceByOwnerId(loadedUser.getId());
         assertEquals(1, loadedSpaces.size());
         var space = loadedSpaces.getFirst();
         assertTrue(space.isDefault());
+
+        boolean userAccessExists = jpaTemplate.existById(
+            new SpaceUserAccessJpaEntity.EntityId(space.getId(), loadedUser.getId()),
+            SpaceUserAccessJpaEntity.class);
+        assertTrue(userAccessExists);
     }
 
     @Test

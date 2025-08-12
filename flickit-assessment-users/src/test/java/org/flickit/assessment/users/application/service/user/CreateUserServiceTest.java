@@ -2,8 +2,10 @@ package org.flickit.assessment.users.application.service.user;
 
 import org.flickit.assessment.common.application.domain.space.SpaceType;
 import org.flickit.assessment.users.application.domain.SpaceStatus;
+import org.flickit.assessment.users.application.domain.SpaceUserAccess;
 import org.flickit.assessment.users.application.port.in.user.CreateUserUseCase;
 import org.flickit.assessment.users.application.port.out.space.CreateSpacePort;
+import org.flickit.assessment.users.application.port.out.spaceuseraccess.CreateSpaceUserAccessPort;
 import org.flickit.assessment.users.application.port.out.user.CreateUserPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,8 +36,14 @@ class CreateUserServiceTest {
     @Mock
     private CreateSpacePort createSpacePort;
 
+    @Mock
+    private CreateSpaceUserAccessPort createSpaceUserAccessPort;
+
     @Captor
     private ArgumentCaptor<CreateSpacePort.Param> createSpaceCaptor;
+
+    @Captor
+    private ArgumentCaptor<SpaceUserAccess> createSpaceUserAccessCaptor;
 
     @Test
     void testCreateUserService_whenParametersAreValid_thenReturnValidResult() {
@@ -59,6 +67,11 @@ class CreateUserServiceTest {
         assertNull(capturedSpace.subscriptionExpiry());
         assertTrue(capturedSpace.isDefault());
         assertNotNull(capturedSpace.creationTime());
+
+        verify(createSpaceUserAccessPort).persist(createSpaceUserAccessCaptor.capture());
+        assertEquals(userId, createSpaceUserAccessCaptor.getValue().getCreatedBy());
+        assertEquals(userId, createSpaceUserAccessCaptor.getValue().getUserId());
+        assertNotNull(createSpaceUserAccessCaptor.getValue().getCreationTime());
     }
 
     private CreateUserUseCase.Param createParam(Consumer<CreateUserUseCase.Param.ParamBuilder> changer) {
