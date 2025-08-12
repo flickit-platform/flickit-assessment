@@ -1,5 +1,6 @@
 package org.flickit.assessment.scenario.test.core.assessment;
 
+import org.flickit.assessment.common.application.domain.space.SpaceType;
 import org.flickit.assessment.core.adapter.in.rest.assessment.CreateAssessmentRequestDto;
 import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
@@ -19,11 +20,14 @@ import org.flickit.assessment.scenario.test.kit.tag.KitTagTestHelper;
 import org.flickit.assessment.scenario.test.users.expertgroup.ExpertGroupTestHelper;
 import org.flickit.assessment.scenario.test.users.space.SpaceTestHelper;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import static java.util.Comparator.comparingLong;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -67,16 +71,18 @@ class CreateAssessmentScenarioTest extends AbstractScenarioTest {
         assessmentUserRolesCountBefore = jpaTemplate.count(AssessmentUserRoleJpaEntity.class);
     }
 
-    @Test
-    void createAssessment() {
-        var spaceId = createSpace();
-        var kitId = createKit();
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("assessmentCreationProvider")
+    void createAssessment(String name, boolean isPremiumSpace, boolean isPrivateKit, int kitPrice) {
+        Long spaceId = isPremiumSpace ? createPremiumSpace() : createBasicSpace();
+        Long kitId = createKit(isPrivateKit, kitPrice);
         kitHelper.publishKit(context, kitId);
 
         var request = CreateAssessmentRequestDtoMother.createAssessmentRequestDto(a -> a
             .spaceId(spaceId)
             .assessmentKitId(kitId));
 
+        // Since the currentUser is the creator of the kit, they have access to private or non-free kits, and there is no error in assessment creation.
         var response = assessmentHelper.create(context, request);
         response.then()
             .statusCode(201)
@@ -89,13 +95,29 @@ class CreateAssessmentScenarioTest extends AbstractScenarioTest {
         assertAssessmentUserRoles(assessmentId);
     }
 
-    private Long createSpace() {
+    private static Stream<Arguments> assessmentCreationProvider() {
+        return Stream.of(
+            Arguments.of("Public free kit in Premium space", true, false, 0),
+            Arguments.of("Private free kit in Premium space", true, true, 0),
+            Arguments.of("Private paid kit with access in Premium space", true, true, 1000),
+            Arguments.of("Public free kit in Basic space", false, false, 0),
+            Arguments.of("Public paid kit with access in Basic space", false, false, 1000)
+        );
+    }
+
+    private Long createBasicSpace() {
         var response = spaceHelper.create(context, createSpaceRequestDto());
         Number id = response.path("id");
         return id.longValue();
     }
 
-    private Long createKit() {
+    private Long createPremiumSpace() {
+        var response = spaceHelper.create(context, createSpaceRequestDto(s -> s.type(SpaceType.PREMIUM.getCode())));
+        Number id = response.path("id");
+        return id.longValue();
+    }
+
+    private Long createKit(boolean isPrivate, long price) {
         Long expertGroupId = createExpertGroup();
         Long kitDslId = uploadDsl(expertGroupId);
         Long kitTagId = kitTagHelper.createKitTag();
@@ -104,6 +126,8 @@ class CreateAssessmentScenarioTest extends AbstractScenarioTest {
             .expertGroupId(expertGroupId)
             .kitDslId(kitDslId)
             .tagIds(List.of(kitTagId))
+            .isPrivate(isPrivate)
+            .price(price)
         );
 
         var response = kitHelper.create(context, request);

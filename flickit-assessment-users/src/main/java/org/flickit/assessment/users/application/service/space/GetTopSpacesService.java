@@ -1,10 +1,14 @@
 package org.flickit.assessment.users.application.service.space;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.MessageBundle;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.application.domain.space.SpaceType;
 import org.flickit.assessment.common.config.AppSpecProperties;
 import org.flickit.assessment.common.exception.UpgradeRequiredException;
 import org.flickit.assessment.users.application.domain.Space;
+import org.flickit.assessment.users.application.domain.SpaceStatus;
+import org.flickit.assessment.users.application.domain.SpaceUserAccess;
 import org.flickit.assessment.users.application.port.in.space.GetTopSpacesUseCase;
 import org.flickit.assessment.users.application.port.in.space.GetTopSpacesUseCase.Result.SpaceListItem;
 import org.flickit.assessment.users.application.port.out.space.LoadSpaceListPort;
