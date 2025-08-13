@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.application.domain.space.SpaceType;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.data.jpa.users.space.SpaceJpaEntity;
 import org.flickit.assessment.data.jpa.users.space.SpaceJpaRepository;
 import org.flickit.assessment.data.jpa.users.spaceuseraccess.SpaceUserAccessJpaEntity;
-import org.flickit.assessment.users.application.domain.Space;
 import org.flickit.assessment.users.application.domain.SpaceStatus;
 import org.flickit.assessment.users.application.port.out.space.*;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.UpdateSpaceLastSeenPort;
@@ -20,6 +20,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.assessment.users.adapter.out.persistence.space.SpaceMapper.mapToDomain;
+import static org.flickit.assessment.users.application.service.constant.SpaceConstants.NOT_DELETED_DELETION_TIME;
 import static org.flickit.assessment.users.common.ErrorMessageKey.SPACE_ID_NOT_FOUND;
 
 @Component
@@ -27,14 +28,12 @@ import static org.flickit.assessment.users.common.ErrorMessageKey.SPACE_ID_NOT_F
 public class SpacePersistenceJpaAdapter implements
     CreateSpacePort,
     LoadSpaceListPort,
-    LoadSpaceOwnerPort,
-    LoadSpaceDetailsPort,
+    LoadSpacePort,
     UpdateSpaceLastSeenPort,
     CountSpaceAssessmentPort,
     DeleteSpacePort,
     UpdateSpacePort,
-    CountSpacesPort,
-    CheckDefaultSpacePort {
+    CountSpacesPort {
 
     private final SpaceJpaRepository repository;
 
@@ -73,8 +72,22 @@ public class SpacePersistenceJpaAdapter implements
     }
 
     @Override
-    public long persist(Space space) {
-        var unsavedEntity = SpaceMapper.mapToJpaEntity(space);
+    public long persist(CreateSpacePort.Param param) {
+        var unsavedEntity = new SpaceJpaEntity(
+            null,
+            param.code(),
+            param.title(),
+            param.type().getId(),
+            param.createdBy(),
+            param.status().getId(),
+            param.subscriptionExpiry(),
+            param.isDefault(),
+            param.creationTime(),
+            param.creationTime(),
+            param.createdBy(),
+            param.createdBy(),
+            false,
+            NOT_DELETED_DELETION_TIME);
         var savedEntity = repository.save(unsavedEntity);
         return savedEntity.getId();
     }
@@ -86,10 +99,10 @@ public class SpacePersistenceJpaAdapter implements
     }
 
     @Override
-    public LoadSpaceDetailsPort.Result loadSpace(long spaceId) {
+    public LoadSpacePort.Result loadById(long spaceId) {
         var entity = repository.loadSpaceDetails(spaceId)
             .orElseThrow(() -> new ResourceNotFoundException(SPACE_ID_NOT_FOUND));
-        return new LoadSpaceDetailsPort.Result(
+        return new LoadSpacePort.Result(
             mapToDomain(entity.getSpace()),
             entity.getMembersCount(),
             entity.getAssessmentsCount());
@@ -113,7 +126,7 @@ public class SpacePersistenceJpaAdapter implements
     }
 
     @Override
-    public void updateSpace(Param param) {
+    public void updateSpace(UpdateSpacePort.Param param) {
         repository.update(param.id(), param.title(), param.code(), param.lastModificationTime(), param.lastModifiedBy());
     }
 

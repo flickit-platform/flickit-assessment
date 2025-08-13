@@ -7,7 +7,7 @@ import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.users.application.port.in.space.DeleteSpaceUseCase;
 import org.flickit.assessment.users.application.port.out.space.CountSpaceAssessmentPort;
 import org.flickit.assessment.users.application.port.out.space.DeleteSpacePort;
-import org.flickit.assessment.users.application.port.out.space.LoadSpaceOwnerPort;
+import org.flickit.assessment.users.application.port.out.space.LoadSpacePort;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,7 +32,7 @@ class DeleteSpaceServiceTest {
     DeleteSpaceService service;
 
     @Mock
-    LoadSpaceOwnerPort loadSpaceOwnerPort;
+    LoadSpacePort loadSpacePort;
 
     @Mock
     CountSpaceAssessmentPort countSpaceAssessmentPort;
@@ -47,7 +47,7 @@ class DeleteSpaceServiceTest {
         UUID currentUserId = UUID.randomUUID();
         DeleteSpaceUseCase.Param param = new DeleteSpaceUseCase.Param(spaceId, currentUserId);
 
-        when(loadSpaceOwnerPort.loadOwnerId(spaceId)).thenThrow(new ResourceNotFoundException(SPACE_ID_NOT_FOUND));
+        when(loadSpacePort.loadOwnerId(spaceId)).thenThrow(new ResourceNotFoundException(SPACE_ID_NOT_FOUND));
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.deleteSpace(param));
         Assertions.assertThat(throwable).hasMessage(SPACE_ID_NOT_FOUND);
@@ -60,7 +60,7 @@ class DeleteSpaceServiceTest {
         UUID currentUserId = UUID.randomUUID();
         DeleteSpaceUseCase.Param param = new DeleteSpaceUseCase.Param(spaceId, currentUserId);
 
-        when(loadSpaceOwnerPort.loadOwnerId(spaceId)).thenReturn(UUID.randomUUID());
+        when(loadSpacePort.loadOwnerId(spaceId)).thenReturn(UUID.randomUUID());
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.deleteSpace(param));
         Assertions.assertThat(throwable).hasMessage(COMMON_CURRENT_USER_NOT_ALLOWED);
@@ -73,7 +73,7 @@ class DeleteSpaceServiceTest {
         UUID currentUserId = UUID.randomUUID();
         DeleteSpaceUseCase.Param param = new DeleteSpaceUseCase.Param(spaceId, currentUserId);
 
-        when(loadSpaceOwnerPort.loadOwnerId(spaceId)).thenReturn(currentUserId);
+        when(loadSpacePort.loadOwnerId(spaceId)).thenReturn(currentUserId);
         when(countSpaceAssessmentPort.countAssessments(spaceId)).thenReturn(1);
 
         var throwable = assertThrows(ValidationException.class, () -> service.deleteSpace(param));
@@ -87,7 +87,7 @@ class DeleteSpaceServiceTest {
         UUID currentUserId = UUID.randomUUID();
         DeleteSpaceUseCase.Param param = new DeleteSpaceUseCase.Param(spaceId, currentUserId);
 
-        when(loadSpaceOwnerPort.loadOwnerId(spaceId)).thenReturn(currentUserId);
+        when(loadSpacePort.loadOwnerId(spaceId)).thenReturn(currentUserId);
         when(countSpaceAssessmentPort.countAssessments(spaceId)).thenReturn(0);
         doNothing().when(deleteSpacePort).deleteById(anyLong(), anyLong());
 

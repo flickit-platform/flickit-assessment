@@ -4,8 +4,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.users.application.port.in.space.UpdateSpaceUseCase;
-import org.flickit.assessment.users.application.port.out.space.CheckDefaultSpacePort;
-import org.flickit.assessment.users.application.port.out.space.LoadSpaceOwnerPort;
+import org.flickit.assessment.users.application.port.out.space.LoadSpacePort;
 import org.flickit.assessment.users.application.port.out.space.UpdateSpacePort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,40 +30,37 @@ class UpdateSpaceServiceTest {
     private UpdateSpaceService service;
 
     @Mock
-    private LoadSpaceOwnerPort loadSpaceOwnerPort;
+    private LoadSpacePort loadSpacePort;
 
     @Mock
     private UpdateSpacePort updateSpacePort;
 
-    @Mock
-    private CheckDefaultSpacePort checkDefaultSpacePort;
-
     private final UpdateSpaceUseCase.Param param = createParam(UpdateSpaceUseCase.Param.ParamBuilder::build);
 
     @Test
-    void testUpdateSpace_whenSpaceDoesNotExist_thenResourceNotFound() {
-        when(loadSpaceOwnerPort.loadOwnerId(param.getId())).thenThrow(new ResourceNotFoundException(SPACE_ID_NOT_FOUND));
+    void testUpdateSpace_whenSpaceDoesNotExist_thenThrowResourceNotFound() {
+        when(loadSpacePort.loadOwnerId(param.getId())).thenThrow(new ResourceNotFoundException(SPACE_ID_NOT_FOUND));
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.updateSpace(param));
         assertEquals(SPACE_ID_NOT_FOUND, throwable.getMessage());
 
-        verifyNoInteractions(checkDefaultSpacePort, updateSpacePort);
+        verifyNoInteractions(updateSpacePort);
     }
 
     @Test
-    void testUpdateSpace_whenUserIsNotOwner_thenThrowsAccessDeniedException() {
-        when(loadSpaceOwnerPort.loadOwnerId(param.getId())).thenReturn(UUID.randomUUID());
+    void testUpdateSpace_whenUserIsNotOwner_thenThrowAccessDeniedException() {
+        when(loadSpacePort.loadOwnerId(param.getId())).thenReturn(UUID.randomUUID());
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.updateSpace(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
-        verifyNoInteractions(checkDefaultSpacePort, updateSpacePort);
+        verifyNoInteractions(updateSpacePort);
     }
 
     @Test
-    void testUpdateSpace_whenSpaceIsDefault_thenThrowsValidationException() {
-        when(loadSpaceOwnerPort.loadOwnerId(param.getId())).thenReturn(param.getCurrentUserId());
-        when(checkDefaultSpacePort.checkIsDefault(param.getId())).thenReturn(true);
+    void testUpdateSpace_whenSpaceIsDefault_thenThrowValidationException() {
+        when(loadSpacePort.loadOwnerId(param.getId())).thenReturn(param.getCurrentUserId());
+        when(loadSpacePort.checkIsDefault(param.getId())).thenReturn(true);
 
         var throwable = assertThrows(ValidationException.class, () -> service.updateSpace(param));
         assertEquals(UPDATE_SPACE_SPACE_DEFAULT_SPACE, throwable.getMessageKey());
@@ -74,8 +70,8 @@ class UpdateSpaceServiceTest {
 
     @Test
     void testUpdateSpace_whenParametersAreValid_thenSuccessfulUpdate() {
-        when(loadSpaceOwnerPort.loadOwnerId(param.getId())).thenReturn(param.getCurrentUserId());
-        when(checkDefaultSpacePort.checkIsDefault(param.getId())).thenReturn(false);
+        when(loadSpacePort.loadOwnerId(param.getId())).thenReturn(param.getCurrentUserId());
+        when(loadSpacePort.checkIsDefault(param.getId())).thenReturn(false);
 
         service.updateSpace(param);
 

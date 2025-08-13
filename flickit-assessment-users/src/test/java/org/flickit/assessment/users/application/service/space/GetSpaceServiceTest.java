@@ -4,7 +4,7 @@ import org.flickit.assessment.common.config.AppSpecProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.users.application.port.in.space.GetSpaceUseCase;
-import org.flickit.assessment.users.application.port.out.space.LoadSpaceDetailsPort;
+import org.flickit.assessment.users.application.port.out.space.LoadSpacePort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,7 +34,7 @@ class GetSpaceServiceTest {
     private CheckSpaceAccessPort checkSpaceAccessPort;
 
     @Mock
-    private LoadSpaceDetailsPort loadSpaceDetailsPort;
+    private LoadSpacePort loadSpacePort;
 
     @Spy
     private AppSpecProperties appSpecProperties = appSpecProperties();
@@ -49,13 +49,13 @@ class GetSpaceServiceTest {
         var throwable = assertThrows(AccessDeniedException.class, () -> service.getSpace(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
-        verifyNoInteractions(loadSpaceDetailsPort, appSpecProperties);
+        verifyNoInteractions(loadSpacePort, appSpecProperties);
     }
 
     @Test
     void testGetSpace_whenSpaceDoesNotExist_thenThrowResourceNotFoundException() {
         when(checkSpaceAccessPort.checkIsMember(param.getId(), param.getCurrentUserId())).thenReturn(true);
-        when(loadSpaceDetailsPort.loadSpace(param.getId()))
+        when(loadSpacePort.loadById(param.getId()))
             .thenThrow(new ResourceNotFoundException(SPACE_ID_NOT_FOUND));
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.getSpace(param));
@@ -67,10 +67,10 @@ class GetSpaceServiceTest {
     @Test
     void testGetSpace_whenCurrentUserIsSpaceOwner_thenReturnSpaceWithEditableTrue() {
         var space = basicSpace(param.getCurrentUserId());
-        var portResult = new LoadSpaceDetailsPort.Result(space, 1, maxBasicAssessments - 1);
+        var portResult = new LoadSpacePort.Result(space, 1, maxBasicAssessments - 1);
 
         when(checkSpaceAccessPort.checkIsMember(param.getId(), param.getCurrentUserId())).thenReturn(true);
-        when(loadSpaceDetailsPort.loadSpace(param.getId())).thenReturn(portResult);
+        when(loadSpacePort.loadById(param.getId())).thenReturn(portResult);
 
         var result = service.getSpace(param);
 
@@ -89,10 +89,10 @@ class GetSpaceServiceTest {
     @Test
     void testGetSpace_whenCurrentUserIsNotSpaceOwner_thenReturnSpaceWithEditableFalse() {
         var space = basicSpace(UUID.randomUUID());
-        var portResult = new LoadSpaceDetailsPort.Result(space, 1, maxBasicAssessments - 1);
+        var portResult = new LoadSpacePort.Result(space, 1, maxBasicAssessments - 1);
 
         when(checkSpaceAccessPort.checkIsMember(param.getId(), param.getCurrentUserId())).thenReturn(true);
-        when(loadSpaceDetailsPort.loadSpace(param.getId())).thenReturn(portResult);
+        when(loadSpacePort.loadById(param.getId())).thenReturn(portResult);
 
         var result = service.getSpace(param);
 
@@ -111,10 +111,10 @@ class GetSpaceServiceTest {
     @Test
     void testGetSpace_whenSpaceIsPremium_thenReturnCanCreateAssessmentTrue() {
         var space = premiumSpace(UUID.randomUUID());
-        var portResult = new LoadSpaceDetailsPort.Result(space, 1, maxBasicAssessments);
+        var portResult = new LoadSpacePort.Result(space, 1, maxBasicAssessments);
 
         when(checkSpaceAccessPort.checkIsMember(param.getId(), param.getCurrentUserId())).thenReturn(true);
-        when(loadSpaceDetailsPort.loadSpace(param.getId())).thenReturn(portResult);
+        when(loadSpacePort.loadById(param.getId())).thenReturn(portResult);
 
         var result = service.getSpace(param);
 
@@ -124,10 +124,10 @@ class GetSpaceServiceTest {
     @Test
     void testGetSpace_whenSpaceIsBasicAndMaxAssessmentIsCreated_thenReturnCanCreateAssessmentFalse() {
         var space = basicSpace(UUID.randomUUID());
-        var portResult = new LoadSpaceDetailsPort.Result(space, 1, maxBasicAssessments);
+        var portResult = new LoadSpacePort.Result(space, 1, maxBasicAssessments);
 
         when(checkSpaceAccessPort.checkIsMember(param.getId(), param.getCurrentUserId())).thenReturn(true);
-        when(loadSpaceDetailsPort.loadSpace(param.getId())).thenReturn(portResult);
+        when(loadSpacePort.loadById(param.getId())).thenReturn(portResult);
 
         var result = service.getSpace(param);
 

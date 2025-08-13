@@ -2,7 +2,7 @@ package org.flickit.assessment.users.application.service.space;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.AppSpecProperties;
-import org.flickit.assessment.users.application.port.out.space.CheckCreateSpaceUseCase;
+import org.flickit.assessment.users.application.port.in.space.CheckCreateSpaceUseCase;
 import org.flickit.assessment.users.application.port.out.space.CountSpacesPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
