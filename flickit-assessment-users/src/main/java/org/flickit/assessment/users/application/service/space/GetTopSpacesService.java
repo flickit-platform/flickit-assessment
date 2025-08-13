@@ -55,18 +55,16 @@ public class GetTopSpacesService implements GetTopSpacesUseCase {
             .toList();
     }
 
+    private SpaceListItem toSpaceListItem(Space space) {
+        return new SpaceListItem(
+            space.getId(),
+            space.getTitle(),
+            SpaceListItem.Type.of(space.getType()),
+            Boolean.TRUE);
+    }
+
     private static List<SpaceListItem> getMultipleBasicsAndPremium(List<LoadSpaceListPort.SpaceWithAssessmentCount> availableSpaces) {
-        var selectedSpaceId = availableSpaces.stream()
-            .map(LoadSpaceListPort.SpaceWithAssessmentCount::space)
-            .collect(Collectors.collectingAndThen(
-                Collectors.toList(),
-                spaces -> spaces.stream()
-                    .filter(space -> space.getType().equals(SpaceType.PREMIUM))
-                    .findFirst()
-                    .or(() -> spaces.stream().findFirst())
-                    .map(Space::getId)
-                    .orElseThrow(() -> new UpgradeRequiredException(GET_TOP_SPACES_NO_SPACE_AVAILABLE)) // can't happen
-            ));
+        var selectedSpaceId = selectTargetSpace(availableSpaces);
 
         return availableSpaces.stream()
             .map(item -> {
@@ -85,11 +83,17 @@ public class GetTopSpacesService implements GetTopSpacesUseCase {
             .toList();
     }
 
-    private SpaceListItem toSpaceListItem(LoadSpaceListPort.SpaceWithAssessmentCount item) {
-        return new SpaceListItem(
-            item.space().getId(),
-            item.space().getTitle(),
-            SpaceListItem.Type.of(item.space().getType()),
-            Boolean.TRUE);
+    private static Long selectTargetSpace(List<LoadSpaceListPort.SpaceWithAssessmentCount> availableSpaces) {
+        return availableSpaces.stream()
+            .map(LoadSpaceListPort.SpaceWithAssessmentCount::space)
+            .collect(Collectors.collectingAndThen(
+                Collectors.toList(),
+                spaces -> spaces.stream()
+                    .filter(space -> space.getType().equals(SpaceType.PREMIUM))
+                    .findFirst()
+                    .or(() -> spaces.stream().findFirst())
+                    .map(Space::getId)
+                    .orElseThrow(() -> new UpgradeRequiredException(GET_TOP_SPACES_NO_SPACE_AVAILABLE)) // can't happen
+            ));
     }
 }
