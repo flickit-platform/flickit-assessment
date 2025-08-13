@@ -61,4 +61,21 @@ public class SpaceMother {
             UUID.randomUUID()
         );
     }
+
+    public static Space defaultSpace(UUID ownerId) {
+        return new Space(
+            id++,
+            "Code" + id,
+            "Title",
+            SpaceType.BASIC,
+            ownerId,
+            SpaceStatus.ACTIVE,
+            null,
+            true,
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            UUID.randomUUID(),
+            UUID.randomUUID()
+        );
+    }
 }

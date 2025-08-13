@@ -62,6 +62,7 @@ class GetTopSpacesScenarioTest extends AbstractScenarioTest {
         var space = items.getFirst();
         assertEquals(SpaceType.BASIC.getCode(), space.type().code());
         assertTrue(space.isDefault());
+        assertTrue(space.selected());
     }
 
     @Test
@@ -98,11 +99,12 @@ class GetTopSpacesScenarioTest extends AbstractScenarioTest {
         assertEquals(premiumSpaceId, space.id());
         assertEquals(premiumSpaceTitle, space.title());
         assertEquals(SpaceType.PREMIUM.getCode(), space.type().code());
-        assertTrue(space.isDefault());
+        assertTrue(space.selected());
+        assertFalse(space.isDefault());
     }
 
     @Test
-    void topSpaces_whenOnePremiumAndOneBasicSpaceWithCapacityExist_thenReturnPremiumAsDefault() {
+    void topSpaces_whenOnePremiumAndOneBasicSpaceWithCapacityExist_thenReturnPremiumAsSelected() {
         // A basic space (default space) created upon user creation
         var defaultSpaceId = loadSpaceByOwnerId(context.getCurrentUser().getUserId()).getFirst().getId();
         var premiumSpaceTitle = "Premium Space Title";
@@ -115,13 +117,15 @@ class GetTopSpacesScenarioTest extends AbstractScenarioTest {
         assertFalse(items.isEmpty());
         assertEquals(2, items.size());
         var premiumSpace = items.stream().filter(e -> e.type().code().equals(SpaceType.PREMIUM.getCode())).toList().getFirst();
-        assertTrue(premiumSpace.isDefault());
+        assertTrue(premiumSpace.selected());
+        assertFalse(premiumSpace.isDefault());
         assertEquals(premiumSpaceId, premiumSpace.id());
         assertThat(items.stream().filter(GetTopSpacesResponseDto.SpaceListItemDto::isDefault)).hasSize(1);
 
         var basicSpace = items.stream().filter(e -> e.type().code().equals(SpaceType.BASIC.getCode())).toList().getFirst();
         assertEquals(defaultSpaceId, basicSpace.id());
-        assertFalse(basicSpace.isDefault());
+        assertFalse(basicSpace.selected());
+        assertTrue(basicSpace.isDefault());
     }
 
     @Test
@@ -143,11 +147,12 @@ class GetTopSpacesScenarioTest extends AbstractScenarioTest {
         assertEquals(defaultSpace.getId(), space.id());
         assertEquals(defaultSpace.getTitle(), space.title());
         assertEquals(SpaceType.BASIC.getCode(), space.type().code());
+        assertTrue(space.selected());
         assertTrue(space.isDefault());
     }
 
     @Test
-    void topSpaces_whenMultipleSpacesWithCapacityExist_thenReturnAllAndOneOfPremiumsAsDefault() {
+    void topSpaces_whenMultipleSpacesWithCapacityExist_thenReturnAllAndOneOfPremiumsAsSelected() {
         // A basic space (default space) created upon user creation
         var basicSpaceTitle = "Basic Space Title";
        createBasicSpace(basicSpaceTitle);
@@ -161,16 +166,17 @@ class GetTopSpacesScenarioTest extends AbstractScenarioTest {
         assertFalse(items.isEmpty());
         // Total spaces: 12 (1 basic + 9 premium + 1 default (basic)), but limited to 10
         assertEquals(10, items.size());
-        var defaultSpace = items.stream().filter(GetTopSpacesResponseDto.SpaceListItemDto::isDefault).toList().getFirst();
-        assertTrue(defaultSpace.isDefault());
-        assertEquals(SpaceType.PREMIUM.getCode(), defaultSpace.type().code());
+        var selectedSpace = items.stream().filter(GetTopSpacesResponseDto.SpaceListItemDto::selected).toList().getFirst();
+        assertTrue(selectedSpace.selected());
+        assertFalse(selectedSpace.isDefault());
+        assertEquals(SpaceType.PREMIUM.getCode(), selectedSpace.type().code());
         assertThat(items.stream().filter(e -> e.type().code().equals(SpaceType.BASIC.getCode()))).hasSize(1);
         assertThat(items.stream().filter(e -> e.type().code().equals(SpaceType.PREMIUM.getCode()))).hasSize(9);
-        assertThat(items.stream().filter(GetTopSpacesResponseDto.SpaceListItemDto::isDefault)).hasSize(1);
+        assertThat(items.stream().filter(GetTopSpacesResponseDto.SpaceListItemDto::selected)).hasSize(1);
     }
 
     @Test
-    void topSpaces_whenMultipleBasicSpacesExist_thenReturnAllAndOneOfThemAsDefault() {
+    void topSpaces_whenMultipleBasicSpacesExist_thenReturnAllAndOneOfThemAsSelected() {
         // A basic space (default space) created upon user creation
         var basicSpaceTitle = "Basic Space Title";
         IntStream.range(0, appSpecProperties.getSpace().getMaxBasicSpaces() - 1).forEach(i -> createBasicSpace(basicSpaceTitle + i));
@@ -180,12 +186,12 @@ class GetTopSpacesScenarioTest extends AbstractScenarioTest {
         assertNotNull(response);
         var items = response.items();
         assertFalse(items.isEmpty());
-        // One for the default Space
+        // One for the basic Space
         assertEquals(appSpecProperties.getSpace().getMaxBasicSpaces(), items.size());
 
-        var defaultSpace = items.stream().filter(GetTopSpacesResponseDto.SpaceListItemDto::isDefault).toList().getFirst();
-        assertEquals(SpaceType.BASIC.getCode(), defaultSpace.type().code());
-        assertThat(items.stream().filter(GetTopSpacesResponseDto.SpaceListItemDto::isDefault)).hasSize(1);
+        var selectedSpace = items.stream().filter(GetTopSpacesResponseDto.SpaceListItemDto::selected).toList().getFirst();
+        assertEquals(SpaceType.BASIC.getCode(), selectedSpace.type().code());
+        assertThat(items.stream().filter(GetTopSpacesResponseDto.SpaceListItemDto::selected)).hasSize(1);
     }
 
     private Long createBasicSpace(String title) {

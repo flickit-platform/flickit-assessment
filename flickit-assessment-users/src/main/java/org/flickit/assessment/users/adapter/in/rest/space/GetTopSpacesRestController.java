@@ -31,6 +31,7 @@ public class GetTopSpacesRestController {
             .map(r -> new SpaceListItemDto(r.id(),
                 r.title(),
                 SpaceListItemDto.TypeDto.of(r.type()),
+                r.selected(),
                 r.isDefault()))
             .toList();
 

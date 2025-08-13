@@ -3,7 +3,7 @@ package org.flickit.assessment.users.application.service.space;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.space.SpaceType;
 import org.flickit.assessment.common.config.AppSpecProperties;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.exception.InvalidStateException;
 import org.flickit.assessment.common.exception.UpgradeRequiredException;
 import org.flickit.assessment.users.application.domain.Space;
 import org.flickit.assessment.users.application.port.in.space.GetTopSpacesUseCase;
@@ -17,7 +17,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.users.common.ErrorMessageKey.GET_TOP_SPACES_NO_SPACE_AVAILABLE;
-import static org.flickit.assessment.users.common.ErrorMessageKey.GET_TOP_SPACES_SPACE_NOT_FOUND;
+import static org.flickit.assessment.users.common.ErrorMessageKey.GET_TOP_SPACES_NO_SPACE_FOUND;
 
 @Service
 @Transactional
@@ -31,15 +31,16 @@ public class GetTopSpacesService implements GetTopSpacesUseCase {
 
     @Override
     public Result getSpaceList(Param param) {
-        var loadedSpaces = Optional.of(loadSpaceListPort.loadSpaceList(param.getCurrentUserId()))
-            .filter(list -> !list.isEmpty())
-            .orElseThrow(() -> new ResourceNotFoundException(GET_TOP_SPACES_SPACE_NOT_FOUND));
+        var loadedSpaces = loadSpaceListPort.loadSpaceList(param.getCurrentUserId());
+
+        if (loadedSpaces.isEmpty())
+            throw new InvalidStateException(GET_TOP_SPACES_NO_SPACE_FOUND); // Can't happen
 
         final int maxBasicAssessments = appSpecProperties.getSpace().getMaxBasicSpaceAssessments();
         var spaces = Optional.ofNullable(extractSpacesWithCapacity(loadedSpaces, maxBasicAssessments))
             .filter(list -> !list.isEmpty())
             .map(list -> list.size() == 1
-                ? List.of(toSpaceListItem(list.getFirst()))
+                ? List.of(toSpaceListItem(list.getFirst().space()))
                 : getMultipleBasicsAndPremium(list))
             .orElseThrow(() -> new UpgradeRequiredException(GET_TOP_SPACES_NO_SPACE_AVAILABLE));
 
@@ -54,8 +55,38 @@ public class GetTopSpacesService implements GetTopSpacesUseCase {
             .toList();
     }
 
+    private SpaceListItem toSpaceListItem(Space space) {
+        return new SpaceListItem(
+            space.getId(),
+            space.getTitle(),
+            SpaceListItem.Type.of(space.getType()),
+            true,
+            space.isDefault());
+    }
+
     private static List<SpaceListItem> getMultipleBasicsAndPremium(List<LoadSpaceListPort.SpaceWithAssessmentCount> availableSpaces) {
-        var selectedSpaceId = availableSpaces.stream()
+        var selectedSpaceId = selectTargetSpace(availableSpaces);
+
+        return availableSpaces.stream()
+            .map(item -> {
+                var space = item.space();
+                boolean selected = space.getId().equals(selectedSpaceId);
+                return new SpaceListItem(
+                    space.getId(),
+                    space.getTitle(),
+                    new SpaceListItem.Type(
+                        space.getType().getCode(),
+                        space.getType().getTitle()
+                    ),
+                    selected,
+                    space.isDefault()
+                );
+            })
+            .toList();
+    }
+
+    private static Long selectTargetSpace(List<LoadSpaceListPort.SpaceWithAssessmentCount> availableSpaces) {
+        return availableSpaces.stream()
             .map(LoadSpaceListPort.SpaceWithAssessmentCount::space)
             .collect(Collectors.collectingAndThen(
                 Collectors.toList(),
@@ -66,29 +97,5 @@ public class GetTopSpacesService implements GetTopSpacesUseCase {
                     .map(Space::getId)
                     .orElseThrow(() -> new UpgradeRequiredException(GET_TOP_SPACES_NO_SPACE_AVAILABLE)) // can't happen
             ));
-
-        return availableSpaces.stream()
-            .map(item -> {
-                var space = item.space();
-                boolean isDefault = space.getId().equals(selectedSpaceId);
-                return new SpaceListItem(
-                    space.getId(),
-                    space.getTitle(),
-                    new SpaceListItem.Type(
-                        space.getType().getCode(),
-                        space.getType().getTitle()
-                    ),
-                    isDefault
-                );
-            })
-            .toList();
-    }
-
-    private SpaceListItem toSpaceListItem(LoadSpaceListPort.SpaceWithAssessmentCount item) {
-        return new SpaceListItem(
-            item.space().getId(),
-            item.space().getTitle(),
-            SpaceListItem.Type.of(item.space().getType()),
-            Boolean.TRUE);
     }
 }
