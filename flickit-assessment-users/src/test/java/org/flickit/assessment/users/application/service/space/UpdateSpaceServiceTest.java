@@ -38,7 +38,7 @@ class UpdateSpaceServiceTest {
     private final UpdateSpaceUseCase.Param param = createParam(UpdateSpaceUseCase.Param.ParamBuilder::build);
 
     @Test
-    void testUpdateSpace_whenSpaceDoesNotExist_thenResourceNotFound() {
+    void testUpdateSpace_whenSpaceDoesNotExist_thenThrowResourceNotFound() {
         when(loadSpacePort.loadOwnerId(param.getId())).thenThrow(new ResourceNotFoundException(SPACE_ID_NOT_FOUND));
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.updateSpace(param));
@@ -48,7 +48,7 @@ class UpdateSpaceServiceTest {
     }
 
     @Test
-    void testUpdateSpace_whenUserIsNotOwner_thenThrowsAccessDeniedException() {
+    void testUpdateSpace_whenUserIsNotOwner_thenThrowAccessDeniedException() {
         when(loadSpacePort.loadOwnerId(param.getId())).thenReturn(UUID.randomUUID());
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.updateSpace(param));
@@ -58,7 +58,7 @@ class UpdateSpaceServiceTest {
     }
 
     @Test
-    void testUpdateSpace_whenSpaceIsDefault_thenThrowsValidationException() {
+    void testUpdateSpace_whenSpaceIsDefault_thenThrowValidationException() {
         when(loadSpacePort.loadOwnerId(param.getId())).thenReturn(param.getCurrentUserId());
         when(loadSpacePort.checkIsDefault(param.getId())).thenReturn(true);
 
