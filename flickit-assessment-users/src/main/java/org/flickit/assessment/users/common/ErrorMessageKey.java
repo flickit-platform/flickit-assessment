@@ -65,6 +65,7 @@ public class ErrorMessageKey {
     public static final String ADD_SPACE_MEMBER_SPACE_ID_NOT_NULL = "add-space-member.spaceId.notNull";
     public static final String ADD_SPACE_MEMBER_EMAIL_NOT_NULL = "add-space-member.email.notNull";
     public static final String ADD_SPACE_MEMBER_SPACE_USER_DUPLICATE = "add-space-member.spaceId.userId.duplicate";
+    public static final String ADD_SPACE_MEMBER_SPACE_DEFAULT_SPACE = "add-space-member.space.defaultSpace";
 
     public static final String INVITE_SPACE_MEMBER_SPACE_ID_NOT_NULL = "invite-space-member.spaceId.notNull";
     public static final String INVITE_SPACE_MEMBER_EMAIL_NOT_NULL = "invite-space-member.email.notNull";
@@ -100,6 +101,7 @@ public class ErrorMessageKey {
 
     public static final String DELETE_SPACE_ASSESSMENT_EXIST = "delete-space.assessments.exist";
     public static final String DELETE_SPACE_SPACE_ID_NOT_NULL = "delete-space.spaceId.notNull";
+    public static final String DELETE_SPACE_SPACE_DEFAULT_SPACE = "delete-space.space.defaultSpace";
 
     public static final String GET_SPACE_INVITEES_SPACE_ID_NOT_NULL = "get-space-invitees.spaceId.notNull";
     public static final String GET_SPACE_INVITEES_SIZE_MIN = "get-space-invitees.size.min";

@@ -7,10 +7,12 @@ import org.flickit.assessment.scenario.test.users.spaceuseraccess.SpaceUserAcces
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.exception.api.ErrorCodes.ACCESS_DENIED;
+import static org.flickit.assessment.common.exception.api.ErrorCodes.INVALID_INPUT;
 import static org.flickit.assessment.scenario.fixture.request.AddSpaceMemberRequestDtoMother.addSpaceMemberRequestDto;
 import static org.flickit.assessment.scenario.fixture.request.CreateSpaceRequestDtoMother.createSpaceRequestDto;
 import static org.flickit.assessment.scenario.fixture.request.CreateUserRequestDtoMother.createUserRequestDto;
@@ -80,6 +82,26 @@ class DeleteSpaceScenarioTest extends AbstractScenarioTest {
         assertEquals(0, space.getDeletionTime());
     }
 
+    @Test
+    void deleteSpace_defaultSpace() {
+        // Get the user's default space identifier
+        var defaultSpaceId = loadSpaceByOwnerId(context.getCurrentUser().getUserId()).getFirst().getId();
+
+        // Delete space
+        var response = spaceHelper.delete(context, defaultSpaceId);
+
+        var error = response.then()
+            .statusCode(400)
+            .extract().as(ErrorResponseDto.class);
+
+        assertEquals(INVALID_INPUT, error.code());
+        assertNotNull(error.message());
+
+        SpaceJpaEntity loadedSpace = jpaTemplate.load(defaultSpaceId, SpaceJpaEntity.class);
+        assertFalse(loadedSpace.isDeleted());
+        assertEquals(0, loadedSpace.getDeletionTime());
+    }
+
     private Long createBasicSpace() {
         var response = spaceHelper.create(context, createSpaceRequestDto());
         Number id = response.path("id");
@@ -96,5 +118,10 @@ class DeleteSpaceScenarioTest extends AbstractScenarioTest {
         spaceUserAccessHelper.create(context, spaceId, request);
 
         return UUID.fromString(createUserResponse.path("userId"));
+    }
+
+    private List<SpaceJpaEntity> loadSpaceByOwnerId(UUID ownerId) {
+        return jpaTemplate.search(SpaceJpaEntity.class,
+            (root, query, cb) -> cb.equal(root.get("ownerId"), ownerId));
     }
 }
