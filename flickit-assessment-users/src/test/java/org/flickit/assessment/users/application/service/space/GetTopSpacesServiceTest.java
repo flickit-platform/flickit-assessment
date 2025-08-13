@@ -70,7 +70,7 @@ class GetTopSpacesServiceTest {
         assertEquals(basicSpace.getTitle(), returnedItem.title());
         assertEquals(SpaceType.BASIC.getTitle(), returnedItem.type().title());
         assertEquals(SpaceType.BASIC.getCode(), returnedItem.type().code());
-        assertTrue(returnedItem.isDefault());
+        assertTrue(returnedItem.selected());
 
         verify(appSpecProperties, times(1)).getSpace();
     }
@@ -96,7 +96,7 @@ class GetTopSpacesServiceTest {
         var items = result.items();
         assertEquals(1, items.size());
         assertEquals(premiumSpace.getId(), items.getFirst().id());
-        assertTrue(items.getFirst().isDefault());
+        assertTrue(items.getFirst().selected());
 
         verify(appSpecProperties, times(1)).getSpace();
     }
@@ -117,7 +117,7 @@ class GetTopSpacesServiceTest {
         assertEquals(SpaceType.PREMIUM.getCode(), returnedItem.type().code());
         assertEquals(SpaceType.PREMIUM.getTitle(), returnedItem.type().title());
         assertEquals(premiumSpace.getTitle(), returnedItem.title());
-        assertTrue(returnedItem.isDefault());
+        assertTrue(returnedItem.selected());
 
         verify(appSpecProperties, times(1)).getSpace();
     }
@@ -135,13 +135,13 @@ class GetTopSpacesServiceTest {
         var items = result.items();
         assertEquals(2, items.size());
         var defaultItem = items.stream()
-            .filter(Result.SpaceListItem::isDefault)
+            .filter(Result.SpaceListItem::selected)
             .findFirst()
             .orElseThrow();
         assertEquals(premiumSpace.getId(), defaultItem.id());
         assertEquals(SpaceType.PREMIUM.getCode(), defaultItem.type().code());
         assertEquals(SpaceType.PREMIUM.getTitle(), defaultItem.type().title());
-        assertTrue(defaultItem.isDefault());
+        assertTrue(defaultItem.selected());
         assertThat(items)
             .zipSatisfy(portResult, (expected, actual) -> {
                 assertEquals(expected.id(), actual.space().getId());
@@ -149,7 +149,7 @@ class GetTopSpacesServiceTest {
                 assertEquals(expected.type().code(), actual.space().getType().getCode());
                 assertEquals(expected.type().title(), actual.space().getType().getTitle());
             });
-        assertThat(items).filteredOn(Result.SpaceListItem::isDefault).hasSize(1);
+        assertThat(items).filteredOn(Result.SpaceListItem::selected).hasSize(1);
 
         verify(appSpecProperties, times(1)).getSpace();
     }
@@ -170,7 +170,7 @@ class GetTopSpacesServiceTest {
         assertEquals(basicSpaceWithCapacity.getId(), returnedItem.id());
         assertEquals(SpaceType.BASIC.getCode(), returnedItem.type().code());
         assertEquals(SpaceType.BASIC.getTitle(), returnedItem.type().title());
-        assertTrue(returnedItem.isDefault());
+        assertTrue(returnedItem.selected());
 
         verify(appSpecProperties, times(1)).getSpace();
     }
@@ -201,11 +201,11 @@ class GetTopSpacesServiceTest {
                 assertEquals(expected.type().code(), actual.space().getType().getCode());
                 assertEquals(expected.type().title(), actual.space().getType().getTitle());
             });
-        assertThat(items).filteredOn(Result.SpaceListItem::isDefault).hasSize(1);
+        assertThat(items).filteredOn(Result.SpaceListItem::selected).hasSize(1);
         assertThat(items).filteredOn(i -> i.type().code().equals(SpaceType.BASIC.getCode())).hasSize(6);
         assertThat(items).filteredOn(i -> i.type().code().equals(SpaceType.PREMIUM.getCode())).hasSize(4);
         var defaultItem = items.stream()
-            .filter(Result.SpaceListItem::isDefault)
+            .filter(Result.SpaceListItem::selected)
             .findFirst()
             .orElseThrow();
         assertEquals(SpaceType.PREMIUM.getCode(), defaultItem.type().code());
@@ -227,8 +227,8 @@ class GetTopSpacesServiceTest {
         var result = service.getSpaceList(param);
         var items = result.items();
         assertEquals(3, items.size());
-        assertThat(items).filteredOn(Result.SpaceListItem::isDefault).hasSize(1);
-        assertTrue(items.getFirst().isDefault());
+        assertThat(items).filteredOn(Result.SpaceListItem::selected).hasSize(1);
+        assertTrue(items.getFirst().selected());
         assertThat(items)
             .zipSatisfy(portResult, (expected, actual) -> {
                 assertEquals(expected.id(), actual.space().getId());
@@ -254,8 +254,8 @@ class GetTopSpacesServiceTest {
         var result = service.getSpaceList(param);
         var items = result.items();
         assertEquals(3, items.size());
-        assertThat(items).filteredOn(Result.SpaceListItem::isDefault).hasSize(1);
-        assertTrue(items.getFirst().isDefault());
+        assertThat(items).filteredOn(Result.SpaceListItem::selected).hasSize(1);
+        assertTrue(items.getFirst().selected());
         assertThat(items)
             .zipSatisfy(portResult, (expected, actual) -> {
                 assertEquals(expected.id(), actual.space().getId());

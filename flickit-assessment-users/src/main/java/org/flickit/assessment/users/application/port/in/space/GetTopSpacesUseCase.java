@@ -32,7 +32,7 @@ public interface GetTopSpacesUseCase {
 
     record Result(List<SpaceListItem> items) {
 
-        public record SpaceListItem(long id, String title, Type type, boolean isDefault) {
+        public record SpaceListItem(long id, String title, Type type, boolean selected) {
 
             public record Type(String code, String title) {
 

@@ -40,7 +40,7 @@ public class GetTopSpacesService implements GetTopSpacesUseCase {
         var spaces = Optional.ofNullable(extractSpacesWithCapacity(loadedSpaces, maxBasicAssessments))
             .filter(list -> !list.isEmpty())
             .map(list -> list.size() == 1
-                ? List.of(toSpaceListItem(list.getFirst()))
+                ? List.of(toSpaceListItem(list.getFirst().space()))
                 : getMultipleBasicsAndPremium(list))
             .orElseThrow(() -> new UpgradeRequiredException(GET_TOP_SPACES_NO_SPACE_AVAILABLE));
 
