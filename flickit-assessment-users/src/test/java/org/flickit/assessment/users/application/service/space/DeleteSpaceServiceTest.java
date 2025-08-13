@@ -46,7 +46,7 @@ class DeleteSpaceServiceTest {
         var throwable = assertThrows(AccessDeniedException.class, () -> service.deleteSpace(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
-        verifyNoInteractions(loadSpacePort, countSpaceAssessmentPort, deleteSpacePort);
+        verifyNoInteractions(countSpaceAssessmentPort, deleteSpacePort);
     }
 
     @Test
