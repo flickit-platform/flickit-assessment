@@ -4,10 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.users.application.port.in.space.DeleteSpaceUseCase;
-import org.flickit.assessment.users.application.port.out.space.CheckDefaultSpacePort;
 import org.flickit.assessment.users.application.port.out.space.CountSpaceAssessmentPort;
 import org.flickit.assessment.users.application.port.out.space.DeleteSpacePort;
-import org.flickit.assessment.users.application.port.out.space.LoadSpaceOwnerPort;
+import org.flickit.assessment.users.application.port.out.space.LoadSpacePort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,8 +22,7 @@ import static org.flickit.assessment.users.common.ErrorMessageKey.DELETE_SPACE_S
 @RequiredArgsConstructor
 public class DeleteSpaceService implements DeleteSpaceUseCase {
 
-    private final LoadSpaceOwnerPort loadSpaceOwnerPort;
-    private final CheckDefaultSpacePort checkDefaultSpacePort;
+    private final LoadSpacePort loadSpacePort;
     private final CountSpaceAssessmentPort countSpaceAssessmentPort;
     private final DeleteSpacePort deleteSpacePort;
 
@@ -38,13 +36,13 @@ public class DeleteSpaceService implements DeleteSpaceUseCase {
     }
 
     private void validateCurrentUser(Long spaceId, UUID currentUserId) {
-        UUID spaceOwnerId = loadSpaceOwnerPort.loadOwnerId(spaceId);
+        UUID spaceOwnerId = loadSpacePort.loadOwnerId(spaceId);
         if (!Objects.equals(spaceOwnerId, currentUserId))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
     }
 
     private void validateSpace(Param param) {
-        if (checkDefaultSpacePort.checkIsDefault(param.getId()))
+        if (loadSpacePort.checkIsDefault(param.getId()))
             throw new ValidationException(DELETE_SPACE_SPACE_DEFAULT_SPACE);
 
         if (countSpaceAssessmentPort.countAssessments(param.getId()) > 0)

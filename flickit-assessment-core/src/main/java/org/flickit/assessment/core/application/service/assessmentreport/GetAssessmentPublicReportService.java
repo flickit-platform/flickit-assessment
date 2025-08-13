@@ -29,6 +29,7 @@ import static java.util.stream.Collectors.*;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.ASSESSMENT_REPORT_LINK_HASH_NOT_FOUND;
+import static org.flickit.assessment.core.common.ErrorMessageKey.MATURITY_LEVEL_ID_NOT_FOUND;
 
 @Service
 @Transactional(readOnly = true)
@@ -96,12 +97,23 @@ public class GetAssessmentPublicReportService implements GetAssessmentPublicRepo
         var maturityLevelMap = maturityLevels.stream()
             .collect(toMap(MaturityLevel::id, Function.identity()));
 
+        var maxMaturityLevel = maturityLevels.stream()
+            .max(Comparator.comparingInt(MaturityLevel::index))
+            .orElseThrow(()-> new ResourceNotFoundException(MATURITY_LEVEL_ID_NOT_FOUND));
+
+        List<Subject> subjects = toSubjects(assessmentReportInfo.subjects(), maturityLevelMap, attributeMeasuresMap);
+        boolean isAdvisable = subjects.stream()
+            .flatMap(s -> s.attributes().stream())
+            .anyMatch(a -> a.maturityLevel().id() != maxMaturityLevel.id());
+
+        var advice = toAdvice(assessment.assessmentResultId(), Locale.of(assessment.language().name()));
         return new Result(toAssessment(assessment, assessmentKitItem, metadata, maturityLevels, attributesCount, maturityLevelMap),
-            toSubjects(assessmentReportInfo.subjects(), maturityLevelMap, attributeMeasuresMap),
-            toAdvice(assessment.assessmentResultId(), Locale.of(assessment.language().name())),
+            subjects,
+            advice,
             toAssessmentProcess(metadata),
             permissions,
-            toLanguage(assessment.language()));
+            toLanguage(assessment.language()),
+            isAdvisable);
     }
 
     private List<MaturityLevel> toMaturityLevels(AssessmentKitItem assessmentKitItem) {
@@ -204,7 +216,8 @@ public class GetAssessmentPublicReportService implements GetAssessmentPublicRepo
     private Advice toAdvice(UUID assessmentResultId, Locale locale) {
         var narration = loadAdviceNarrationPort.load(assessmentResultId);
         var adviceItems = loadAdviceItemsPort.loadAll(assessmentResultId);
-        return new Advice(narration, toAdviceItems(adviceItems, locale));
+
+        return Advice.of(narration, toAdviceItems(adviceItems, locale));
     }
 
     private List<AdviceItem> toAdviceItems(List<org.flickit.assessment.core.application.domain.AdviceItem> adviceItems, Locale locale) {
