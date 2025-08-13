@@ -35,7 +35,12 @@ public class AddSpaceMemberService implements AddSpaceMemberUseCase {
         UUID currentUserId = param.getCurrentUserId();
         long spaceId = param.getSpaceId();
 
-        validateSpace(spaceId, currentUserId);
+        boolean inviterHasAccess = checkSpaceAccessPort.checkIsMember(spaceId, currentUserId);
+        if (!inviterHasAccess)
+            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
+
+        if (loadSpacePort.checkIsDefault(spaceId))
+            throw new ValidationException(ADD_SPACE_MEMBER_SPACE_DEFAULT_SPACE);
 
         UUID userId = loadUserPort.loadUserIdByEmail(param.getEmail())
             .orElseThrow(() -> new ResourceNotFoundException(USER_BY_EMAIL_NOT_FOUND));
@@ -46,14 +51,5 @@ public class AddSpaceMemberService implements AddSpaceMemberUseCase {
 
         var access = new SpaceUserAccess(spaceId, userId, currentUserId, LocalDateTime.now());
         createSpaceUserAccessPort.persist(access);
-    }
-
-    private void validateSpace(long spaceId, UUID currentUserId) {
-        boolean inviterHasAccess = checkSpaceAccessPort.checkIsMember(spaceId, currentUserId);
-        if (!inviterHasAccess)
-            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
-
-        if (loadSpacePort.checkIsDefault(spaceId))
-            throw new ValidationException(ADD_SPACE_MEMBER_SPACE_DEFAULT_SPACE);
     }
 }
