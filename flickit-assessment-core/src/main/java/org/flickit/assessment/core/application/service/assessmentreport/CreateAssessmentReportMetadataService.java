@@ -80,10 +80,10 @@ public class CreateAssessmentReportMetadataService implements CreateAssessmentRe
 
     private AssessmentReportMetadata buildNewMetadata(AssessmentReportMetadata existedMetadata, MetadataParam metadataParam) {
         return new AssessmentReportMetadata(
-            resolveField(existedMetadata.intro(), metadataParam.getIntro()),
-            resolveField(existedMetadata.prosAndCons(), metadataParam.getProsAndCons()),
-            resolveField(existedMetadata.steps(), metadataParam.getSteps()),
-            resolveField(existedMetadata.participants(), metadataParam.getParticipants())
+            resolveField(existedMetadata != null ? existedMetadata.intro() : null, metadataParam.getIntro()),
+            resolveField(existedMetadata != null ? existedMetadata.prosAndCons() : null, metadataParam.getProsAndCons()),
+            resolveField(existedMetadata != null ? existedMetadata.steps() : null, metadataParam.getSteps()),
+            resolveField(existedMetadata != null ? existedMetadata.participants() : null, metadataParam.getParticipants())
         );
     }
 
