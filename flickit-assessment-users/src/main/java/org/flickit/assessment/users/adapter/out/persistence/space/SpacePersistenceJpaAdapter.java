@@ -99,6 +99,11 @@ public class SpacePersistenceJpaAdapter implements
     }
 
     @Override
+    public long loadDefaultSpaceId(UUID userId) {
+        return repository.loadDefaultSpaceIdByUserId(userId);
+    }
+
+    @Override
     public LoadSpacePort.Result loadById(long spaceId) {
         var entity = repository.loadSpaceDetails(spaceId)
             .orElseThrow(() -> new ResourceNotFoundException(SPACE_ID_NOT_FOUND));
