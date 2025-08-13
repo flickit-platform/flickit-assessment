@@ -129,4 +129,11 @@ public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> 
                 @Param("code") String code,
                 @Param("lastModificationTime") LocalDateTime lastModificationTime,
                 @Param("lastModifiedBy") UUID lastModifiedBy);
+
+    @Query("""
+            SELECT s.id
+            FROM SpaceJpaEntity s
+            WHERE s.ownerId = :userId AND s.isDefault = TRUE AND s.deleted = FALSE
+        """)
+    long loadDefaultSpaceIdByUserId(@Param("userId") UUID userId);
 }
