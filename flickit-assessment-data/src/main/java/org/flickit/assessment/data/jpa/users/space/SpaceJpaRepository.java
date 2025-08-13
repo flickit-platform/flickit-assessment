@@ -20,6 +20,8 @@ public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> 
 
     Optional<SpaceJpaEntity> findByIdAndDeletedFalse(long spaceId);
 
+    boolean existsByIdAndDeletedFalseAndIsDefaultTrue(long spaceId);
+
     @Query("""
             SELECT s.ownerId
             FROM SpaceJpaEntity as s

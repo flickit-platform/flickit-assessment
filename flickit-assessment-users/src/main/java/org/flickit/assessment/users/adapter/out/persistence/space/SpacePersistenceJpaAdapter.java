@@ -28,8 +28,7 @@ import static org.flickit.assessment.users.common.ErrorMessageKey.SPACE_ID_NOT_F
 public class SpacePersistenceJpaAdapter implements
     CreateSpacePort,
     LoadSpaceListPort,
-    LoadSpaceOwnerPort,
-    LoadSpaceDetailsPort,
+    LoadSpacePort,
     UpdateSpaceLastSeenPort,
     CountSpaceAssessmentPort,
     DeleteSpacePort,
@@ -100,10 +99,10 @@ public class SpacePersistenceJpaAdapter implements
     }
 
     @Override
-    public LoadSpaceDetailsPort.Result loadSpace(long spaceId) {
+    public LoadSpacePort.Result loadById(long spaceId) {
         var entity = repository.loadSpaceDetails(spaceId)
             .orElseThrow(() -> new ResourceNotFoundException(SPACE_ID_NOT_FOUND));
-        return new LoadSpaceDetailsPort.Result(
+        return new LoadSpacePort.Result(
             mapToDomain(entity.getSpace()),
             entity.getMembersCount(),
             entity.getAssessmentsCount());
@@ -134,5 +133,10 @@ public class SpacePersistenceJpaAdapter implements
     @Override
     public int countBasicSpaces(UUID ownerId) {
         return repository.countByOwnerIdAndTypeAndDeletedFalseAndIsDefaultFalse(ownerId, SpaceType.BASIC.getId());
+    }
+
+    @Override
+    public boolean checkIsDefault(long spaceId) {
+        return repository.existsByIdAndDeletedFalseAndIsDefaultTrue(spaceId);
     }
 }
