@@ -6,7 +6,7 @@ import java.util.List;
 
 public record GetTopSpacesResponseDto(List<SpaceListItemDto> items) {
 
-    public record SpaceListItemDto(long id, String title, TypeDto type, boolean isDefault) {
+    public record SpaceListItemDto(long id, String title, TypeDto type, boolean selected, boolean isDefault) {
 
         public record TypeDto(String code, String title) {
 
