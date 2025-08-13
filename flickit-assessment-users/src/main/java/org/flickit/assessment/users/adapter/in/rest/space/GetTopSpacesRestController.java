@@ -32,7 +32,7 @@ public class GetTopSpacesRestController {
                 r.title(),
                 SpaceListItemDto.TypeDto.of(r.type()),
                 r.selected(),
-                r.selected()))
+                r.isDefault()))
             .toList();
 
         return new GetTopSpacesResponseDto(itemDtos);

@@ -60,7 +60,8 @@ public class GetTopSpacesService implements GetTopSpacesUseCase {
             space.getId(),
             space.getTitle(),
             SpaceListItem.Type.of(space.getType()),
-            Boolean.TRUE);
+            true,
+            space.isDefault());
     }
 
     private static List<SpaceListItem> getMultipleBasicsAndPremium(List<LoadSpaceListPort.SpaceWithAssessmentCount> availableSpaces) {
@@ -69,7 +70,7 @@ public class GetTopSpacesService implements GetTopSpacesUseCase {
         return availableSpaces.stream()
             .map(item -> {
                 var space = item.space();
-                boolean isDefault = space.getId().equals(selectedSpaceId);
+                boolean selected = space.getId().equals(selectedSpaceId);
                 return new SpaceListItem(
                     space.getId(),
                     space.getTitle(),
@@ -77,7 +78,8 @@ public class GetTopSpacesService implements GetTopSpacesUseCase {
                         space.getType().getCode(),
                         space.getType().getTitle()
                     ),
-                    isDefault
+                    selected,
+                    space.isDefault()
                 );
             })
             .toList();
