@@ -48,7 +48,7 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
     private final LoadAdviceNarrationPort loadAdviceNarrationPort;
     private final LoadAttributesPort loadAttributesPort;
 
-    private final static int MIN_TARGET_ATTRIBUTES = 2;
+    private static final int MIN_TARGET_ATTRIBUTES = 2;
     private static final int MAX_TARGETS_LIMIT = 2;
 
     @Override
