@@ -21,6 +21,7 @@ import org.flickit.assessment.core.application.port.out.advicenarration.LoadAdvi
 import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentQuestionsPort;
 import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
+import org.flickit.assessment.core.application.port.out.space.LoadSpacePort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,6 +47,7 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
     private final LoadAssessmentQuestionsPort loadAssessmentQuestionsPort;
     private final LoadAdviceNarrationPort loadAdviceNarrationPort;
     private final LoadAdviceItemsPort loadAdviceItemsPort;
+    private final LoadSpacePort loadSpacePort;
 
     @Override
     public Result getAssessmentReport(Param param) {
@@ -104,6 +106,7 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
             .anyMatch(a -> a.maturityLevel().id() != maxMaturityLevel.id());
 
         var advice = toAdvice(assessment.assessmentResultId(), Locale.of(assessment.language().name()));
+        var space =
         return new Result(toAssessment(assessment, assessmentKitItem, reportMetadata, maturityLevels, attributesCount, maturityLevelMap),
             subjects,
             advice,

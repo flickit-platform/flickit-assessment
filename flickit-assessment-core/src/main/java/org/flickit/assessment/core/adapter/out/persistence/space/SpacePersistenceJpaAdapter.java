@@ -40,4 +40,10 @@ public class SpacePersistenceJpaAdapter implements
         return repository.findByIdAndDeletedFalse(spaceId)
             .map(SpaceMapper::mapToDomain);
     }
+
+    @Override
+    public Optional<Space> loadSpace(UUID assessmentId) {
+        return repository.findByAssessmentIdAndDeletedFalse(spaceId)
+            .map(SpaceMapper::mapToDomain);
+    }
 }
