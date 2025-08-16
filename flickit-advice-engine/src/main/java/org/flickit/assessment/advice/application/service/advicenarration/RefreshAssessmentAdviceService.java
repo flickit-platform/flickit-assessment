@@ -48,6 +48,7 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
     private final LoadAdviceNarrationPort loadAdviceNarrationPort;
     private final LoadAttributesPort loadAttributesPort;
 
+    private final static int MIN_TARGET_ATTRIBUTES = 2;
     private static final int MAX_TARGETS_LIMIT = 2;
 
     @Override
@@ -104,10 +105,10 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
             .collect(Collectors.toSet());
 
         Set<Long> finalWeakAttributeIds =
-            (weakAttributeIds.size() < 2)
+            (weakAttributeIds.size() < MIN_TARGET_ATTRIBUTES)
                 ? Stream.concat(
                 weakAttributeIds.stream(),
-                selectFurthestAttributes(attributeValues, maturityLevels, attributes).stream()
+                selectFurthestAttributeIds(attributeValues, maturityLevels, attributes).stream()
             ).collect(Collectors.toSet())
                 : Set.copyOf(weakAttributeIds);
 
@@ -122,9 +123,9 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
             .toList();
     }
 
-    private Set<Long> selectFurthestAttributes(List<LoadAttributeValuesPort.Result> attributeValues,
-                                               List<MaturityLevel> maturityLevels,
-                                               List<Attribute> attributes) {
+    private Set<Long> selectFurthestAttributeIds(List<LoadAttributeValuesPort.Result> attributeValues,
+                                                 List<MaturityLevel> maturityLevels,
+                                                 List<Attribute> attributes) {
         Map<Long, Integer> maturityLevelIdToIndexMap = maturityLevels.stream()
             .collect(toMap(MaturityLevel::getId, MaturityLevel::getIndex));
 
