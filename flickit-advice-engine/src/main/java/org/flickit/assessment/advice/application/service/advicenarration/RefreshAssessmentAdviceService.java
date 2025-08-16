@@ -85,15 +85,11 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
     private List<AttributeLevelTarget> buildTargets(List<LoadAttributeValuesPort.Result> attributeValues,
                                                     List<MaturityLevel> maturityLevels,
                                                     List<Attribute> attributes) {
-        Map<Long, Integer> maturityLevelIdToIndexMap = maturityLevels.stream()
-            .collect(toMap(MaturityLevel::getId, MaturityLevel::getIndex));
-
         List<MaturityLevel> sortedLevels = maturityLevels.stream()
             .sorted(comparingInt(MaturityLevel::getIndex))
             .toList();
 
         MaturityLevel maxLevel = Collections.max(maturityLevels, comparingInt(MaturityLevel::getIndex));
-
         var weakLevelIds = sortedLevels.stream()
             .filter(e -> e.getIndex() <= maxLevel.getIndex() / 2)
             .map(MaturityLevel::getId)
@@ -104,11 +100,14 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
             .map(LoadAttributeValuesPort.Result::attributeId)
             .collect(Collectors.toSet());
 
+        Map<Long, Integer> maturityLevelIdToIndexMap = maturityLevels.stream()
+            .collect(toMap(MaturityLevel::getId, MaturityLevel::getIndex));
+
         Set<Long> finalWeakAttributeIds =
             (weakAttributeIds.size() < MIN_TARGET_ATTRIBUTES)
                 ? Stream.concat(
                 weakAttributeIds.stream(),
-                selectFurthestAttributeIds(attributeValues, maturityLevels, maxLevel, attributes).stream()
+                selectFurthestAttributeIds(maturityLevelIdToIndexMap, attributes, attributeValues, maxLevel).stream()
             ).collect(Collectors.toSet())
                 : Set.copyOf(weakAttributeIds);
 
@@ -123,13 +122,10 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
             .toList();
     }
 
-    private Set<Long> selectFurthestAttributeIds(List<LoadAttributeValuesPort.Result> attributeValues,
-                                                 List<MaturityLevel> maturityLevels,
-                                                 MaturityLevel maxLevel,
-                                                 List<Attribute> attributes) {
-        Map<Long, Integer> maturityLevelIdToIndexMap = maturityLevels.stream()
-            .collect(toMap(MaturityLevel::getId, MaturityLevel::getIndex));
-
+    private Set<Long> selectFurthestAttributeIds(Map<Long, Integer> maturityLevelIdToIndexMap,
+                                                 List<Attribute> attributes,
+                                                 List<LoadAttributeValuesPort.Result> attributeValues,
+                                                 MaturityLevel maxLevel) {
         Map<Long, Integer> attributeIdToWeightMap = attributes.stream()
             .collect(toMap(Attribute::getId, Attribute::getWeight));
 
