@@ -108,7 +108,7 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
             (weakAttributeIds.size() < MIN_TARGET_ATTRIBUTES)
                 ? Stream.concat(
                 weakAttributeIds.stream(),
-                selectFurthestAttributeIds(attributeValues, maturityLevels, attributes).stream()
+                selectFurthestAttributeIds(attributeValues, maturityLevels, maxLevel, attributes).stream()
             ).collect(Collectors.toSet())
                 : Set.copyOf(weakAttributeIds);
 
@@ -125,14 +125,13 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
 
     private Set<Long> selectFurthestAttributeIds(List<LoadAttributeValuesPort.Result> attributeValues,
                                                  List<MaturityLevel> maturityLevels,
+                                                 MaturityLevel maxLevel,
                                                  List<Attribute> attributes) {
         Map<Long, Integer> maturityLevelIdToIndexMap = maturityLevels.stream()
             .collect(toMap(MaturityLevel::getId, MaturityLevel::getIndex));
 
         Map<Long, Integer> attributeIdToWeightMap = attributes.stream()
             .collect(toMap(Attribute::getId, Attribute::getWeight));
-
-        MaturityLevel maxLevel = Collections.max(maturityLevels, comparingInt(MaturityLevel::getIndex));
 
         return attributeValues.stream()
             .filter(v -> v.maturityLevelId() != maxLevel.getId())
