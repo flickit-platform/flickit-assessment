@@ -131,12 +131,13 @@ public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> 
                 @Param("lastModifiedBy") UUID lastModifiedBy);
 
     @Query("""
-            SELECT CASE WHEN COUNT(s) > 0 THEN TRUE ELSE FALSE END
-            FROM SpaceJpaEntity s
-            JOIN AssessmentJpaEntity a ON a.spaceId = s.id
-            WHERE a.id = :assessmentId
-              AND s.isDefault = TRUE
-              AND s.deleted = FALSE
+            SELECT CASE WHEN EXISTS (
+                SELECT 1
+                FROM SpaceJpaEntity s
+                JOIN AssessmentJpaEntity a ON a.spaceId = s.id
+                WHERE a.id = :assessmentId
+                  AND s.isDefault = TRUE
+                  AND s.deleted = FALSE) THEN TRUE ELSE FALSE END
         """)
-boolean existsByAssessmentIdSpaceIsDefault(@Param("assessmentId") UUID assessmentId);
+    boolean existsByAssessmentIdSpaceIsDefault(@Param("assessmentId") UUID assessmentId);
 }
