@@ -25,6 +25,7 @@ import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.flickit.assessment.data.jpa.users.space.SpaceJpaEntity;
+import org.flickit.assessment.data.jpa.users.space.SpaceJpaRepository;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -54,7 +55,8 @@ public class AssessmentPersistenceJpaAdapter implements
     DeleteAssessmentPort,
     CheckAssessmentSpaceMembershipPort,
     CountAssessmentsPort,
-    LoadAssessmentQuestionsPort {
+    LoadAssessmentQuestionsPort,
+    CheckAssessmentInDefaultSpacePort {
 
     private final AssessmentJpaRepository repository;
     private final AssessmentResultJpaRepository resultRepository;
@@ -63,6 +65,7 @@ public class AssessmentPersistenceJpaAdapter implements
     private final AssessmentKitJpaRepository kitRepository;
     private final MaturityLevelJpaRepository maturityLevelRepository;
     private final KitCustomJpaRepository kitCustomRepository;
+    private final SpaceJpaRepository spaceRepository;
 
     @Override
     public UUID persist(CreateAssessmentPort.Param param) {
@@ -302,5 +305,10 @@ public class AssessmentPersistenceJpaAdapter implements
         return Objects.equals(assessmentResultLangId, kitLangId)
             ? null
             : KitLanguage.valueOfById(assessmentResultLangId);
+    }
+
+    @Override
+    public boolean isAssessmentInDefaultSpace(UUID assessmentId) {
+        return spaceRepository.existsByAssessmentIdSpaceIsDefault(assessmentId);
     }
 }
