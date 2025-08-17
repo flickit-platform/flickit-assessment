@@ -135,5 +135,5 @@ public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> 
             FROM SpaceJpaEntity s
             WHERE s.ownerId = :userId AND s.isDefault = TRUE AND s.deleted = FALSE
         """)
-    long loadDefaultSpaceIdByUserId(@Param("userId") UUID userId);
+    Optional<Long> loadDefaultSpaceIdByUserId(@Param("userId") UUID userId);
 }
