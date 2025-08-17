@@ -131,6 +131,13 @@ public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> 
                 @Param("lastModifiedBy") UUID lastModifiedBy);
 
     @Query("""
+            SELECT s.id
+            FROM SpaceJpaEntity s
+            WHERE s.ownerId = :userId AND s.isDefault = TRUE AND s.deleted = FALSE
+        """)
+    Optional<Long> loadDefaultSpaceIdByUserId(@Param("userId") UUID userId);
+
+    @Query("""
         SELECT EXISTS (
             SELECT 1
             FROM SpaceJpaEntity s
