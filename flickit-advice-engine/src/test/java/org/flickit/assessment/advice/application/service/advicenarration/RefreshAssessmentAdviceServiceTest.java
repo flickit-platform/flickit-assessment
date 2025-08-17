@@ -163,15 +163,22 @@ class RefreshAssessmentAdviceServiceTest {
         );
         List<AttributeLevelTarget> capturedTargets = targetCaptor.getValue();
         assertEquals(2, capturedTargets.size());
+        assertTrue(capturedTargets.stream().anyMatch(t -> t.getAttributeId() == (attribute1.getId())));
         assertFalse(capturedTargets.stream().anyMatch(t -> t.getAttributeId() == (attribute2.getId())));
         assertTrue(capturedTargets.stream().anyMatch(t -> t.getAttributeId() == (attribute3.getId())));
-        assertTrue(capturedTargets.stream().anyMatch(t -> t.getAttributeId() == (attribute1.getId())));
+
+        AttributeLevelTarget attribute1LevelTarget = capturedTargets.stream()
+            .filter(t -> t.getAttributeId() == attribute1.getId()).findFirst().orElseThrow();
+        assertEquals(levelThree().getId(), attribute1LevelTarget.getMaturityLevelId());
+        AttributeLevelTarget attribute3LevelTarget = capturedTargets.stream()
+            .filter(t -> t.getAttributeId() == attribute3.getId()).findFirst().orElseThrow();
+        assertEquals(levelThree().getId(), attribute3LevelTarget.getMaturityLevelId());
 
         List<AttributeLevelTarget> narratedTargets = narrationCaptor.getValue();
         assertEquals(2, narratedTargets.size());
+        assertTrue(narratedTargets.stream().anyMatch(t -> t.getAttributeId() == (attribute1.getId())));
         assertFalse(narratedTargets.stream().anyMatch(t -> t.getAttributeId() == (attribute2.getId())));
         assertTrue(narratedTargets.stream().anyMatch(t -> t.getAttributeId() == (attribute3.getId())));
-        assertTrue(narratedTargets.stream().anyMatch(t -> t.getAttributeId() == (attribute1.getId())));
 
         verify(deleteAdviceItemPort).deleteAllAiGenerated(assessmentResult.getId());
         verifyNoInteractions(loadAdviceItemPort, loadAdviceNarrationPort);
@@ -181,8 +188,8 @@ class RefreshAssessmentAdviceServiceTest {
     void testRefreshAssessmentAdvice_whenForceRegenerateIsFalseAndAdviceItemsDoesNotExists_thenRegenerateAdvice() {
         param = createParam(b -> b.forceRegenerate(false));
         assessmentResult = createAssessmentResultWithAssessmentId(param.getAssessmentId());
-        var attributeValues = List.of(new LoadAttributeValuesPort.Result(attribute1.getId(), levelTwo().getId()),
-            new LoadAttributeValuesPort.Result(attribute2.getId(), levelThree().getId()),
+        var attributeValues = List.of(new LoadAttributeValuesPort.Result(attribute1.getId(), levelFive().getId()),
+            new LoadAttributeValuesPort.Result(attribute2.getId(), levelFour().getId()),
             new LoadAttributeValuesPort.Result(attribute3.getId(), levelOne().getId()));
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), REFRESH_ASSESSMENT_ADVICE)).thenReturn(true);
@@ -206,16 +213,22 @@ class RefreshAssessmentAdviceServiceTest {
         );
         List<AttributeLevelTarget> capturedTargets = targetCaptor.getValue();
         assertEquals(2, capturedTargets.size());
-        assertFalse(capturedTargets.stream().anyMatch(t -> t.getAttributeId() == (attribute2.getId())));
+        assertFalse(capturedTargets.stream().anyMatch(t -> t.getAttributeId() == (attribute1.getId())));
+        assertTrue(capturedTargets.stream().anyMatch(t -> t.getAttributeId() == (attribute2.getId())));
         assertTrue(capturedTargets.stream().anyMatch(t -> t.getAttributeId() == (attribute3.getId())));
-        assertTrue(capturedTargets.stream().anyMatch(t -> t.getAttributeId() == (attribute1.getId())));
+
+        AttributeLevelTarget attribute2LevelTarget = capturedTargets.stream()
+            .filter(t -> t.getAttributeId() == attribute2.getId()).findFirst().orElseThrow();
+        assertEquals(levelFive().getId(), attribute2LevelTarget.getMaturityLevelId());
+        AttributeLevelTarget attribute3LevelTarget = capturedTargets.stream()
+            .filter(t -> t.getAttributeId() == attribute3.getId()).findFirst().orElseThrow();
+        assertEquals(levelThree().getId(), attribute3LevelTarget.getMaturityLevelId());
 
         List<AttributeLevelTarget> narratedTargets = narrationCaptor.getValue();
         assertEquals(2, narratedTargets.size());
-        assertFalse(narratedTargets.stream().anyMatch(t -> t.getAttributeId() == (attribute2.getId())));
+        assertFalse(narratedTargets.stream().anyMatch(t -> t.getAttributeId() == (attribute1.getId())));
+        assertTrue(narratedTargets.stream().anyMatch(t -> t.getAttributeId() == (attribute2.getId())));
         assertTrue(narratedTargets.stream().anyMatch(t -> t.getAttributeId() == (attribute3.getId())));
-        assertTrue(narratedTargets.stream().anyMatch(t -> t.getAttributeId() == (attribute1.getId())));
-
 
         verify(deleteAdviceItemPort).deleteAllAiGenerated(assessmentResult.getId());
         verifyNoInteractions(loadAdviceNarrationPort);
@@ -226,10 +239,10 @@ class RefreshAssessmentAdviceServiceTest {
         Attribute attribute4 = createWithWeight(7), attribute5 = createWithWeight(8);
         param = createParam(b -> b.forceRegenerate(false));
         assessmentResult = createAssessmentResultWithAssessmentId(param.getAssessmentId());
-        var attributeValues = List.of(new LoadAttributeValuesPort.Result(attribute1.getId(), levelTwo().getId()),
+        var attributeValues = List.of(new LoadAttributeValuesPort.Result(attribute1.getId(), levelThree().getId()),
             new LoadAttributeValuesPort.Result(attribute2.getId(), levelThree().getId()),
             new LoadAttributeValuesPort.Result(attribute3.getId(), levelFive().getId()),
-            new LoadAttributeValuesPort.Result(attribute4.getId(), levelFour().getId()),
+            new LoadAttributeValuesPort.Result(attribute4.getId(), levelOne().getId()),
             new LoadAttributeValuesPort.Result(attribute5.getId(), levelFour().getId()));
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), REFRESH_ASSESSMENT_ADVICE)).thenReturn(true);
@@ -254,17 +267,24 @@ class RefreshAssessmentAdviceServiceTest {
         );
         List<AttributeLevelTarget> capturedTargets = targetCaptor.getValue();
         assertEquals(3, capturedTargets.size());
-        assertFalse(capturedTargets.stream().anyMatch(t -> t.getAttributeId() == (attribute2.getId())));
+        assertFalse(capturedTargets.stream().anyMatch(t -> t.getAttributeId() == (attribute1.getId())));
+        assertTrue(capturedTargets.stream().anyMatch(t -> t.getAttributeId() == (attribute2.getId())));
         assertFalse(capturedTargets.stream().anyMatch(t -> t.getAttributeId() == (attribute3.getId())));
-        assertTrue(capturedTargets.stream().anyMatch(t -> t.getAttributeId() == (attribute1.getId())));
         assertTrue(capturedTargets.stream().anyMatch(t -> t.getAttributeId() == (attribute4.getId())));
         assertTrue(capturedTargets.stream().anyMatch(t -> t.getAttributeId() == (attribute5.getId())));
 
+        AttributeLevelTarget attribute2LevelTarget = capturedTargets.stream()
+            .filter(t -> t.getAttributeId() == attribute2.getId()).findFirst().orElseThrow();
+        assertEquals(levelFour().getId(), attribute2LevelTarget.getMaturityLevelId());
+        AttributeLevelTarget attribute4LevelTarget = capturedTargets.stream()
+            .filter(t -> t.getAttributeId() == attribute4.getId()).findFirst().orElseThrow();
+        assertEquals(levelThree().getId(), attribute4LevelTarget.getMaturityLevelId());
+
         List<AttributeLevelTarget> narratedTargets = narrationCaptor.getValue();
         assertEquals(3, narratedTargets.size());
-        assertFalse(narratedTargets.stream().anyMatch(t -> t.getAttributeId() == (attribute2.getId())));
+        assertFalse(narratedTargets.stream().anyMatch(t -> t.getAttributeId() == (attribute1.getId())));
+        assertTrue(narratedTargets.stream().anyMatch(t -> t.getAttributeId() == (attribute2.getId())));
         assertFalse(narratedTargets.stream().anyMatch(t -> t.getAttributeId() == (attribute3.getId())));
-        assertTrue(narratedTargets.stream().anyMatch(t -> t.getAttributeId() == (attribute1.getId())));
         assertTrue(narratedTargets.stream().anyMatch(t -> t.getAttributeId() == (attribute4.getId())));
         assertTrue(narratedTargets.stream().anyMatch(t -> t.getAttributeId() == (attribute5.getId())));
 

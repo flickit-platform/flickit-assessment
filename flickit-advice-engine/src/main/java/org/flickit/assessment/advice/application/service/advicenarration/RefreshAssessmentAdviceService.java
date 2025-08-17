@@ -103,26 +103,21 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
             .map(LoadAttributeValuesPort.Result::attributeId)
             .collect(Collectors.toSet());
 
-        Map<Long, Integer> maturityLevelIdToIndexMap = maturityLevels.stream()
-            .collect(toMap(MaturityLevel::getId, MaturityLevel::getIndex));
-
-        Set<Long> finalWeakAttributeIds =
-            (weakAttributeIds.size() < MIN_REQUIRED_TARGET_ATTRIBUTES_COUNT)
-                ? Stream.concat(
-                weakAttributeIds.stream(),
-                selectFurthestAttributeIds(maturityLevelIdToIndexMap, attributes, attributeValues, maxLevel).stream()
-            ).collect(Collectors.toSet())
-                : Set.copyOf(weakAttributeIds);
-
-        return attributeValues.stream()
-            .filter(v -> finalWeakAttributeIds.contains(v.attributeId()))
-            .flatMap(value -> toTarget(
-                    value.attributeId(),
-                    maturityLevelIdToIndexMap.get(value.maturityLevelId()),
-                    sortedLevels
-                ).stream()
-            )
+        var nonMaxMaturityLevels = attributeValues.stream()
+            .filter(v -> v.maturityLevelId() != maxLevel.getId())
             .toList();
+
+        var belowMedianTargets = buildBelowMedianLevelTargets(nonMaxMaturityLevels, weakAttributeIds, midLevel);
+        var otherAttributeValues = nonMaxMaturityLevels.stream()
+            .filter(v -> !weakAttributeIds.contains(v.attributeId()))
+            .toList();
+
+        return Stream.concat(
+            belowMedianTargets.stream(),
+            belowMedianTargets.size() < MIN_REQUIRED_TARGET_ATTRIBUTES_COUNT
+                ? buildFurthestTargets(attributes, sortedLevels, otherAttributeValues, maxLevel).stream()
+                : Stream.empty()
+        ).toList();
     }
 
     private MaturityLevel extractMidLevel(List<MaturityLevel> maturityLevels) {
@@ -134,14 +129,25 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
                 new ResourceNotFoundException(REFRESH_ASSESSMENT_ADVICE_MEDIAN_MATURITY_LEVEL_NOT_FOUND)); // Can't happen
     }
 
-    private Set<Long> selectFurthestAttributeIds(Map<Long, Integer> maturityLevelIdToIndexMap,
-                                                 List<Attribute> attributes,
-                                                 List<LoadAttributeValuesPort.Result> attributeValues,
-                                                 MaturityLevel maxLevel) {
+    List<AttributeLevelTarget> buildBelowMedianLevelTargets(List<LoadAttributeValuesPort.Result> attributeValues,
+                                                            Set<Long> weakAttributeIds,
+                                                            MaturityLevel midLevel) {
+        return attributeValues.stream()
+            .filter(v -> weakAttributeIds.contains(v.attributeId()))
+            .map(value -> new AttributeLevelTarget(value.attributeId(), midLevel.getId()))
+            .toList();
+    }
+
+    private List<AttributeLevelTarget> buildFurthestTargets(List<Attribute> attributes,
+                                                            List<MaturityLevel> maturityLevels,
+                                                            List<LoadAttributeValuesPort.Result> attributeValues,
+                                                            MaturityLevel maxLevel) {
         Map<Long, Integer> attributeIdToWeightMap = attributes.stream()
             .collect(toMap(Attribute::getId, Attribute::getWeight));
+        Map<Long, Integer> maturityLevelIdToIndexMap = maturityLevels.stream()
+            .collect(toMap(MaturityLevel::getId, MaturityLevel::getIndex));
 
-        return attributeValues.stream()
+        var weakAttributeIds = attributeValues.stream()
             .filter(v -> v.maturityLevelId() != maxLevel.getId())
             .map(v -> Map.entry(
                 v.attributeId(),
@@ -152,6 +158,16 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
             .limit(MAX_ADDITIONAL_TARGET_ATTRIBUTES_COUNT)
             .map(Map.Entry::getKey)
             .collect(Collectors.toSet());
+
+        return attributeValues.stream()
+            .filter(v -> weakAttributeIds.contains(v.attributeId()))
+            .flatMap(value -> toTarget(
+                    value.attributeId(),
+                    maturityLevelIdToIndexMap.get(value.maturityLevelId()),
+                    maturityLevels
+                ).stream()
+            )
+            .toList();
     }
 
     private Optional<AttributeLevelTarget> toTarget(long attributeId,
