@@ -32,8 +32,7 @@ import static org.flickit.assessment.common.application.domain.assessment.Assess
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_GRAPHICAL_REPORT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.application.domain.AssessmentUserRole.REPORT_VIEWER;
-import static org.flickit.assessment.core.common.ErrorMessageKey.GRANT_ACCESS_TO_REPORT_NOT_ALLOWED_CONTACT_ASSESSMENT_MANAGER;
-import static org.flickit.assessment.core.common.ErrorMessageKey.GRANT_ACCESS_TO_REPORT_USER_ALREADY_GRANTED;
+import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 import static org.flickit.assessment.core.common.MessageKey.*;
 
 @Slf4j
@@ -62,8 +61,11 @@ public class GrantAccessToReportService implements GrantAccessToReportUseCase {
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_ACCESS_TO_REPORT))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
+        if (loadAssessmentPort.isInDefaultSpace(param.getAssessmentId()))
+            throw new ValidationException(GRANT_ACCESS_TO_REPORT_DEFAULT_SPACE_NOT_ALLOWED);
+
         var userOptional = loadUserPort.loadByEmail(param.getEmail());
-        Assessment assessment = loadAssessmentPort.getAssessmentById(param.getAssessmentId()).orElseThrow();
+        Assessment assessment = loadAssessmentPort.loadById(param.getAssessmentId()).orElseThrow();
         var creationTime = LocalDateTime.now();
 
         if (userOptional.isPresent()) {
