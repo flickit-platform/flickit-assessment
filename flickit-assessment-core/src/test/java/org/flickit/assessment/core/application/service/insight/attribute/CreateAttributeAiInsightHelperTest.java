@@ -6,7 +6,7 @@ import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.AttributeValue;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
-import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentProgressPort;
+import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentPort;
 import org.flickit.assessment.core.application.port.out.attribute.CreateAttributeScoresFilePort;
 import org.flickit.assessment.core.application.port.out.attributevalue.LoadAttributeValuePort;
 import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
@@ -51,7 +51,7 @@ class CreateAttributeAiInsightHelperTest {
     private LoadMaturityLevelsPort loadMaturityLevelsPort;
 
     @Mock
-    private GetAssessmentProgressPort getAssessmentProgressPort;
+    private LoadAssessmentPort loadAssessmentPort;
 
     @Spy
     private AppAiProperties appAiProperties = appAiProperties();
@@ -85,7 +85,7 @@ class CreateAttributeAiInsightHelperTest {
     }
 
     private final AssessmentResult assessmentResult = validResult();
-    private final GetAssessmentProgressPort.Result completeProgress = new GetAssessmentProgressPort.Result(assessmentResult.getId(), 10, 10);
+    private final LoadAssessmentPort.ProgressResult completeProgress = new LoadAssessmentPort.ProgressResult(assessmentResult.getId(), 10, 10);
     private final String fileContent = "file content";
     private final CreateAttributeAiInsightHelper.AiResponseDto aiInsight = new CreateAttributeAiInsightHelper.AiResponseDto("Insight Content");
     private final CreateAttributeScoresFilePort.Result file = new CreateAttributeScoresFilePort.Result(new ByteArrayInputStream(fileContent.getBytes()), fileContent);
@@ -96,9 +96,9 @@ class CreateAttributeAiInsightHelperTest {
 
     @Test
     void testCreateAttributeAiInsightHelper_whenAssessmentProgressIsNotCompleted_thenThrowValidationException() {
-        var incompleteProgress = new GetAssessmentProgressPort.Result(attributeInsightParam.assessmentResult().getId(), 10, 11);
+        var incompleteProgress = new LoadAssessmentPort.ProgressResult(attributeInsightParam.assessmentResult().getId(), 10, 11);
 
-        when(getAssessmentProgressPort.getProgress(assessmentResult.getAssessment().getId())).thenReturn(incompleteProgress);
+        when(loadAssessmentPort.progress(assessmentResult.getAssessment().getId())).thenReturn(incompleteProgress);
         var throwable = assertThrows(ValidationException.class, () -> helper.createAttributeAiInsight(attributeInsightParam));
         assertEquals(CREATE_ATTRIBUTE_AI_INSIGHT_ALL_QUESTIONS_NOT_ANSWERED, throwable.getMessageKey());
 
@@ -112,7 +112,7 @@ class CreateAttributeAiInsightHelperTest {
 
     @Test
     void testCreateAttributeAiInsightHelper_whenAiDisabled_thenThrowUnsupportedOperationException() {
-        when(getAssessmentProgressPort.getProgress(assessmentResult.getAssessment().getId())).thenReturn(completeProgress);
+        when(loadAssessmentPort.progress(assessmentResult.getAssessment().getId())).thenReturn(completeProgress);
         when(loadAttributeValuePort.load(attributeInsightParam.assessmentResult().getId(), attributeInsightParam.attributeId())).thenReturn(attributeValue);
         when(appAiProperties.isEnabled()).thenReturn(false);
 
@@ -131,7 +131,7 @@ class CreateAttributeAiInsightHelperTest {
             attributeInsightParam.assessmentResult().getAssessment().getAssessmentKit().getLanguage().getTitle() + ".";
         var fileReportPath = "path/to/file";
 
-        when(getAssessmentProgressPort.getProgress(assessmentResult.getAssessment().getId())).thenReturn(completeProgress);
+        when(loadAssessmentPort.progress(assessmentResult.getAssessment().getId())).thenReturn(completeProgress);
         when(loadAttributeValuePort.load(attributeInsightParam.assessmentResult().getId(), attributeInsightParam.attributeId())).thenReturn(attributeValue);
         when(loadMaturityLevelsPort.loadAllTranslated(attributeInsightsParam.assessmentResult()))
             .thenReturn(maturityLevels);
@@ -158,7 +158,7 @@ class CreateAttributeAiInsightHelperTest {
             attributeValue.getAttribute().getDescription() + " was reviewed in " + fileContent + ". Provide the result in " +
             attributeInsightParam.assessmentResult().getAssessment().getAssessmentKit().getLanguage().getTitle() + ".";
 
-        when(getAssessmentProgressPort.getProgress(assessmentResult.getAssessment().getId())).thenReturn(completeProgress);
+        when(loadAssessmentPort.progress(assessmentResult.getAssessment().getId())).thenReturn(completeProgress);
         when(loadAttributeValuePort.load(attributeInsightParam.assessmentResult().getId(), attributeInsightParam.attributeId())).thenReturn(attributeValue);
         when(appAiProperties.isSaveAiInputFileEnabled()).thenReturn(false);
         when(loadMaturityLevelsPort.loadAllTranslated(attributeInsightsParam.assessmentResult()))
@@ -183,9 +183,9 @@ class CreateAttributeAiInsightHelperTest {
 
     @Test
     void testCreateAttributeAiInsightsHelper_whenAssessmentProgressIsNotCompleted_thenThrowValidationException() {
-        var incompleteProgress = new GetAssessmentProgressPort.Result(attributeInsightParam.assessmentResult().getId(), 10, 11);
+        var incompleteProgress = new LoadAssessmentPort.ProgressResult(attributeInsightParam.assessmentResult().getId(), 10, 11);
 
-        when(getAssessmentProgressPort.getProgress(assessmentResult.getAssessment().getId())).thenReturn(incompleteProgress);
+        when(loadAssessmentPort.progress(assessmentResult.getAssessment().getId())).thenReturn(incompleteProgress);
         var throwable = assertThrows(ValidationException.class, () -> helper.createAttributeAiInsights(attributeInsightsParam));
         assertEquals(CREATE_ATTRIBUTE_AI_INSIGHT_ALL_QUESTIONS_NOT_ANSWERED, throwable.getMessageKey());
 
@@ -201,7 +201,7 @@ class CreateAttributeAiInsightHelperTest {
     void testCreateAttributeAiInsightsHelper_whenAiDisabled_thenThrowUnsupportedOperationException() {
         when(appAiProperties.isEnabled()).thenReturn(false);
 
-        when(getAssessmentProgressPort.getProgress(assessmentResult.getAssessment().getId())).thenReturn(completeProgress);
+        when(loadAssessmentPort.progress(assessmentResult.getAssessment().getId())).thenReturn(completeProgress);
         var throwable = assertThrows(UnsupportedOperationException.class, () -> helper.createAttributeAiInsights(attributeInsightsParam));
         assertEquals(ASSESSMENT_AI_IS_DISABLED, throwable.getMessage());
 
@@ -219,7 +219,7 @@ class CreateAttributeAiInsightHelperTest {
             attributeInsightParam.assessmentResult().getAssessment().getAssessmentKit().getLanguage().getTitle() + ".";
         var fileReportPath = "path/to/file";
 
-        when(getAssessmentProgressPort.getProgress(assessmentResult.getAssessment().getId())).thenReturn(completeProgress);
+        when(loadAssessmentPort.progress(assessmentResult.getAssessment().getId())).thenReturn(completeProgress);
         when(loadAttributeValuePort.load(attributeInsightParam.assessmentResult().getId(), attributeInsightsParam.attributeIds()))
             .thenReturn(List.of(attributeValue));
         when(loadMaturityLevelsPort.loadAllTranslated(attributeInsightsParam.assessmentResult()))
@@ -247,7 +247,7 @@ class CreateAttributeAiInsightHelperTest {
             attributeValue.getAttribute().getDescription() + " was reviewed in " + fileContent + ". Provide the result in " +
             attributeInsightParam.assessmentResult().getAssessment().getAssessmentKit().getLanguage().getTitle() + ".";
 
-        when(getAssessmentProgressPort.getProgress(assessmentResult.getAssessment().getId())).thenReturn(completeProgress);
+        when(loadAssessmentPort.progress(assessmentResult.getAssessment().getId())).thenReturn(completeProgress);
         when(loadAttributeValuePort.load(attributeInsightParam.assessmentResult().getId(), attributeInsightsParam.attributeIds()))
             .thenReturn(List.of(attributeValue));
         when(loadMaturityLevelsPort.loadAllTranslated(attributeInsightsParam.assessmentResult()))
