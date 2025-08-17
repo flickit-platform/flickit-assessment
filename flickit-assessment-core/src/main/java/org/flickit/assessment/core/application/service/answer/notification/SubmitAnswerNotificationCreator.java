@@ -8,7 +8,6 @@ import org.flickit.assessment.common.application.domain.notification.Notificatio
 import org.flickit.assessment.core.application.domain.Assessment;
 import org.flickit.assessment.core.application.domain.notification.SubmitAnswerNotificationCmd;
 import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentPort;
-import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentProgressPort;
 import org.flickit.assessment.core.application.port.out.user.LoadUserPort;
 import org.flickit.assessment.core.application.service.answer.notification.SubmitAnswerNotificationPayload.AssessmentModel;
 import org.flickit.assessment.core.application.service.answer.notification.SubmitAnswerNotificationPayload.UserModel;
@@ -26,7 +25,6 @@ import static org.flickit.assessment.core.common.MessageKey.NOTIFICATION_TITLE_C
 public class SubmitAnswerNotificationCreator implements
     NotificationCreator<SubmitAnswerNotificationCmd> {
 
-    private final GetAssessmentProgressPort getAssessmentProgressPort;
     private final LoadAssessmentPort loadAssessmentPort;
     private final LoadUserPort loadUserPort;
 
@@ -48,7 +46,7 @@ public class SubmitAnswerNotificationCreator implements
             return List.of();
         }
 
-        var progress = getAssessmentProgressPort.getProgress(cmd.assessmentId());
+        var progress = loadAssessmentPort.progress(cmd.assessmentId());
 
         if (isFinished(progress) && !isFinishedByCreator(cmd, assessment.get())) {
             var title = MessageBundle.message(NOTIFICATION_TITLE_COMPLETE_ASSESSMENT);
@@ -58,7 +56,7 @@ public class SubmitAnswerNotificationCreator implements
         return List.of();
     }
 
-    private boolean isFinished(GetAssessmentProgressPort.Result progress) {
+    private boolean isFinished(LoadAssessmentPort.ProgressResult progress) {
         return progress.answersCount() == progress.questionsCount();
     }
 

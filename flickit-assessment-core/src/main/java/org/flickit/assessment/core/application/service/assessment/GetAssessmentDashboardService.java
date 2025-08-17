@@ -17,7 +17,7 @@ import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentD
 import org.flickit.assessment.core.application.port.out.adviceitem.CountAdviceItemsPort;
 import org.flickit.assessment.core.application.port.out.answer.CountAnswersPort;
 import org.flickit.assessment.core.application.port.out.answer.CountLowConfidenceAnswersPort;
-import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentProgressPort;
+import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.attribute.CountAttributesPort;
@@ -51,7 +51,7 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
     private final CountEvidencesPort countEvidencesPort;
     private final CountAttributesPort countAttributesPort;
     private final CountSubjectsPort countSubjectsPort;
-    private final GetAssessmentProgressPort getAssessmentProgressPort;
+    private final LoadAssessmentPort loadAssessmentPort;
     private final CountLowConfidenceAnswersPort countLowConfidenceAnswersPort;
     private final LoadSubjectInsightsPort loadSubjectInsightsPort;
     private final LoadAssessmentInsightPort loadAssessmentInsightPort;
@@ -77,7 +77,7 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
     }
 
     private Result.Questions buildQuestionsResult(UUID assessmentId, UUID assessmentResultId) {
-        var progress = getAssessmentProgressPort.getProgress(assessmentId);
+        var progress = loadAssessmentPort.progress(assessmentId);
         var questionsCount = progress.questionsCount();
         var answersCount = progress.answersCount();
         var lowConfidenceAnswersCount = countLowConfidenceAnswersPort.countWithConfidenceLessThan(assessmentResultId, ConfidenceLevel.SOMEWHAT_UNSURE);

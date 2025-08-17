@@ -50,7 +50,6 @@ public class AssessmentPersistenceJpaAdapter implements
     CreateAssessmentPort,
     LoadAssessmentListPort,
     UpdateAssessmentPort,
-    GetAssessmentProgressPort,
     LoadAssessmentPort,
     DeleteAssessmentPort,
     CheckAssessmentSpaceMembershipPort,
@@ -222,13 +221,13 @@ public class AssessmentPersistenceJpaAdapter implements
     }
 
     @Override
-    public GetAssessmentProgressPort.Result getProgress(UUID assessmentId) {
+    public LoadAssessmentPort.ProgressResult progress(UUID assessmentId) {
         var assessmentResult = resultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_PROGRESS_ASSESSMENT_NOT_FOUND));
 
         int answersCount = answerRepository.getCountByAssessmentResultId(assessmentResult.getId());
         int questionsCount = questionRepository.countByKitVersionId(assessmentResult.getKitVersionId());
-        return new GetAssessmentProgressPort.Result(assessmentId, answersCount, questionsCount);
+        return new LoadAssessmentPort.ProgressResult(assessmentId, answersCount, questionsCount);
     }
 
     @Override

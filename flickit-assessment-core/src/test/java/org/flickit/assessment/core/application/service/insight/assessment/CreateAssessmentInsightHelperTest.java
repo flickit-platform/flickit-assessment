@@ -2,7 +2,7 @@ package org.flickit.assessment.core.application.service.insight.assessment;
 
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.core.application.domain.AssessmentMode;
-import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentProgressPort;
+import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentPort;
 import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelPort;
 import org.flickit.assessment.core.application.port.out.subject.CountSubjectsPort;
 import org.junit.jupiter.api.Test;
@@ -13,7 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Locale;
 
-import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.*;
+import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.validResultWithAssessmentMode;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
@@ -24,7 +24,7 @@ class CreateAssessmentInsightHelperTest {
     private CreateAssessmentInsightHelper helper;
 
     @Mock
-    private GetAssessmentProgressPort getAssessmentProgressPort;
+    private LoadAssessmentPort loadAssessmentPort;
 
     @Mock
     private LoadMaturityLevelPort loadMaturityLevelPort;
@@ -36,10 +36,10 @@ class CreateAssessmentInsightHelperTest {
     void testCreateAssessmentInsight_whenQuickAssessmentWithOneSubjectIsComplete_thenCreateCompleteQuickAssessmentInsight() {
         var assessmentResult = validResultWithAssessmentMode(AssessmentMode.QUICK);
         var locale = Locale.ENGLISH;
-        var progress = new GetAssessmentProgressPort.Result(assessmentResult.getId(), 10, 10);
+        var progress = new LoadAssessmentPort.ProgressResult(assessmentResult.getId(), 10, 10);
         var subjectsCount = 1;
 
-        when(getAssessmentProgressPort.getProgress(assessmentResult.getAssessment().getId())).thenReturn(progress);
+        when(loadAssessmentPort.progress(assessmentResult.getAssessment().getId())).thenReturn(progress);
         when(loadMaturityLevelPort.load(assessmentResult.getMaturityLevel().getId(), assessmentResult.getAssessment().getId()))
             .thenReturn(assessmentResult.getMaturityLevel());
         when(countSubjectsPort.countSubjects(assessmentResult.getKitVersionId())).thenReturn(subjectsCount);
@@ -60,10 +60,10 @@ class CreateAssessmentInsightHelperTest {
         var assessmentResult = validResultWithAssessmentMode(AssessmentMode.QUICK);
         assessmentResult.setConfidenceValue(null);
         var locale = Locale.of(KitLanguage.FA.getCode());
-        var progress = new GetAssessmentProgressPort.Result(assessmentResult.getId(), 9, 10);
+        var progress = new LoadAssessmentPort.ProgressResult(assessmentResult.getId(), 9, 10);
         var subjectsCount = 2;
 
-        when(getAssessmentProgressPort.getProgress(assessmentResult.getAssessment().getId())).thenReturn(progress);
+        when(loadAssessmentPort.progress(assessmentResult.getAssessment().getId())).thenReturn(progress);
         when(loadMaturityLevelPort.load(assessmentResult.getMaturityLevel().getId(), assessmentResult.getAssessment().getId()))
             .thenReturn(assessmentResult.getMaturityLevel());
         when(countSubjectsPort.countSubjects(assessmentResult.getKitVersionId())).thenReturn(subjectsCount);
