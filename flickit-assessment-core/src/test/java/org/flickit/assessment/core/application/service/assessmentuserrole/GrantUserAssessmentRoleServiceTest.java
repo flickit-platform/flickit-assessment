@@ -6,8 +6,8 @@ import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 import org.flickit.assessment.core.application.domain.notification.GrantAssessmentUserRoleNotificationCmd;
 import org.flickit.assessment.core.application.port.in.assessmentuserrole.GrantUserAssessmentRoleUseCase.Param;
-import org.flickit.assessment.core.application.port.out.assessment.CheckAssessmentInDefaultSpacePort;
 import org.flickit.assessment.core.application.port.out.assessment.CheckAssessmentSpaceMembershipPort;
+import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.GrantUserAssessmentRolePort;
 import org.flickit.assessment.core.application.port.out.spaceuseraccess.CreateAssessmentSpaceUserAccessPort;
 import org.junit.jupiter.api.Test;
@@ -44,7 +44,7 @@ class GrantUserAssessmentRoleServiceTest {
     private CreateAssessmentSpaceUserAccessPort createSpaceUserAccessPort;
 
     @Mock
-    private CheckAssessmentInDefaultSpacePort checkAssessmentInDefaultSpacePort;
+    private LoadAssessmentPort loadAssessmentPort;
 
     @Test
     void testGrantUserAssessmentRoleRole_whenCurrentUserIsNotAuthorized_thenThrowsException() {
@@ -58,7 +58,7 @@ class GrantUserAssessmentRoleServiceTest {
 
         verifyNoInteractions(checkAssessmentSpaceMembershipPort,
             grantUserAssessmentRolePort,
-            checkAssessmentInDefaultSpacePort);
+            loadAssessmentPort);
     }
 
     @Test
@@ -67,7 +67,7 @@ class GrantUserAssessmentRoleServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_USER_ASSESSMENT_ROLE))
             .thenReturn(true);
-        when(checkAssessmentInDefaultSpacePort.isAssessmentInDefaultSpace(param.getAssessmentId()))
+        when(loadAssessmentPort.isInDefaultSpace(param.getAssessmentId()))
             .thenReturn(true);
 
         var exception = assertThrows(ValidationException.class, () -> service.grantAssessmentUserRole(param));
@@ -88,7 +88,7 @@ class GrantUserAssessmentRoleServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_USER_ASSESSMENT_ROLE))
             .thenReturn(true);
-        when(checkAssessmentInDefaultSpacePort.isAssessmentInDefaultSpace(param.getAssessmentId()))
+        when(loadAssessmentPort.isInDefaultSpace(param.getAssessmentId()))
             .thenReturn(false);
         when(checkAssessmentSpaceMembershipPort.isAssessmentSpaceMember(param.getAssessmentId(), param.getUserId()))
             .thenReturn(false);
@@ -125,7 +125,7 @@ class GrantUserAssessmentRoleServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_USER_ASSESSMENT_ROLE))
             .thenReturn(true);
-        when(checkAssessmentInDefaultSpacePort.isAssessmentInDefaultSpace(param.getAssessmentId()))
+        when(loadAssessmentPort.isInDefaultSpace(param.getAssessmentId()))
             .thenReturn(false);
         when(checkAssessmentSpaceMembershipPort.isAssessmentSpaceMember(param.getAssessmentId(), param.getUserId()))
             .thenReturn(true);

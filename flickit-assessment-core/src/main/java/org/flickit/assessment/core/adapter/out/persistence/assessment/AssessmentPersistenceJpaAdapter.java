@@ -54,8 +54,7 @@ public class AssessmentPersistenceJpaAdapter implements
     DeleteAssessmentPort,
     CheckAssessmentSpaceMembershipPort,
     CountAssessmentsPort,
-    LoadAssessmentQuestionsPort,
-    CheckAssessmentInDefaultSpacePort {
+    LoadAssessmentQuestionsPort {
 
     private final AssessmentJpaRepository repository;
     private final AssessmentResultJpaRepository resultRepository;
@@ -307,7 +306,7 @@ public class AssessmentPersistenceJpaAdapter implements
     }
 
     @Override
-    public boolean isAssessmentInDefaultSpace(UUID assessmentId) {
+    public boolean isInDefaultSpace(UUID assessmentId) {
         return spaceRepository.existsByAssessmentIdSpaceIsDefault(assessmentId);
     }
 }

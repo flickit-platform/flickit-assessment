@@ -13,7 +13,6 @@ import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.domain.Assessment;
 import org.flickit.assessment.core.application.domain.notification.GrantAccessToReportNotificationCmd;
 import org.flickit.assessment.core.application.port.in.assessment.GrantAccessToReportUseCase;
-import org.flickit.assessment.core.application.port.out.assessment.CheckAssessmentInDefaultSpacePort;
 import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentinvite.CreateAssessmentInvitePort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.GrantUserAssessmentRolePort;
@@ -43,7 +42,6 @@ import static org.flickit.assessment.core.common.MessageKey.*;
 public class GrantAccessToReportService implements GrantAccessToReportUseCase {
 
     private final AssessmentAccessChecker assessmentAccessChecker;
-    private final CheckAssessmentInDefaultSpacePort checkAssessmentInDefaultSpacePort;
     private final LoadAssessmentPort loadAssessmentPort;
     private final LoadUserPort loadUserPort;
     private final GrantUserAssessmentRolePort grantUserAssessmentRolePort;
@@ -63,7 +61,7 @@ public class GrantAccessToReportService implements GrantAccessToReportUseCase {
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_ACCESS_TO_REPORT))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        if (checkAssessmentInDefaultSpacePort.isAssessmentInDefaultSpace(param.getAssessmentId()))
+        if (loadAssessmentPort.isInDefaultSpace(param.getAssessmentId()))
             throw new ValidationException(GRANT_ACCESS_TO_REPORT_DEFAULT_SPACE_NOT_ALLOWED);
 
         var userOptional = loadUserPort.loadByEmail(param.getEmail());

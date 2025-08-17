@@ -10,6 +10,8 @@ public interface LoadAssessmentPort {
 
     Optional<Assessment> loadById(UUID assessmentId);
 
+    boolean isInDefaultSpace(UUID assessmentId);
+
     /**
      * @throws ResourceNotFoundException if no assessment result found by the given id
      */
