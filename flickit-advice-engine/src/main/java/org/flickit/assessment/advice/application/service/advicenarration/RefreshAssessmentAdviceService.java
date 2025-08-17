@@ -25,8 +25,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.lang.Math.ceilDiv;
 import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.toMap;
+import static org.flickit.assessment.advice.common.ErrorMessageKey.REFRESH_ASSESSMENT_ADVICE_MEDIAN_MATURITY_LEVEL_NOT_FOUND;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.REFRESH_ASSESSMENT_ADVICE;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -89,9 +91,10 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
             .sorted(comparingInt(MaturityLevel::getIndex))
             .toList();
 
+        MaturityLevel midLevel = extractMidLevel(sortedLevels);
         MaturityLevel maxLevel = Collections.max(maturityLevels, comparingInt(MaturityLevel::getIndex));
         var weakLevelIds = sortedLevels.stream()
-            .filter(e -> e.getIndex() <= maxLevel.getIndex() / 2)
+            .filter(e -> e.getIndex() < midLevel.getIndex())
             .map(MaturityLevel::getId)
             .collect(Collectors.toSet());
 
@@ -120,6 +123,15 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
                 ).stream()
             )
             .toList();
+    }
+
+    private MaturityLevel extractMidLevel(List<MaturityLevel> maturityLevels) {
+        int midLevelIndex = ceilDiv(maturityLevels.size(), 2);
+        return maturityLevels.stream()
+            .filter(m -> m.getIndex() == midLevelIndex)
+            .findFirst()
+            .orElseThrow(() ->
+                new ResourceNotFoundException(REFRESH_ASSESSMENT_ADVICE_MEDIAN_MATURITY_LEVEL_NOT_FOUND)); // Can't happen
     }
 
     private Set<Long> selectFurthestAttributeIds(Map<Long, Integer> maturityLevelIdToIndexMap,
