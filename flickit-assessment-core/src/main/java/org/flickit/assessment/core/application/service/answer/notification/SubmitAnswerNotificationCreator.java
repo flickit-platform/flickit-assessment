@@ -35,7 +35,7 @@ public class SubmitAnswerNotificationCreator implements
         if (!cmd.hasProgressed())
             return List.of();
 
-        var assessment = loadAssessmentPort.getAssessmentById(cmd.assessmentId());
+        var assessment = loadAssessmentPort.loadById(cmd.assessmentId());
         var user = loadUserPort.loadById(cmd.assessorId());
         if (assessment.isEmpty() || user.isEmpty()) {
             log.warn("assessment or user not found");

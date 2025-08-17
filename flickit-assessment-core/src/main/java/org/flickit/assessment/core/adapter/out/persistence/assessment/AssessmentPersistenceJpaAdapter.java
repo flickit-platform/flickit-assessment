@@ -232,7 +232,7 @@ public class AssessmentPersistenceJpaAdapter implements
     }
 
     @Override
-    public Optional<Assessment> getAssessmentById(UUID assessmentId) {
+    public Optional<Assessment> loadById(UUID assessmentId) {
         Optional<AssessmentKitSpaceJoinView> entity = repository.findByIdAndDeletedFalseWithKitAndSpace(assessmentId);
         if (entity.isEmpty())
             throw new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND);

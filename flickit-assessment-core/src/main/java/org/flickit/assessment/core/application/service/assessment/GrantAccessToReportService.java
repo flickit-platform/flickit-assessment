@@ -67,7 +67,7 @@ public class GrantAccessToReportService implements GrantAccessToReportUseCase {
             throw new ValidationException(GRANT_ACCESS_TO_REPORT_DEFAULT_SPACE_NOT_ALLOWED);
 
         var userOptional = loadUserPort.loadByEmail(param.getEmail());
-        Assessment assessment = loadAssessmentPort.getAssessmentById(param.getAssessmentId()).orElseThrow();
+        Assessment assessment = loadAssessmentPort.loadById(param.getAssessmentId()).orElseThrow();
         var creationTime = LocalDateTime.now();
 
         if (userOptional.isPresent()) {

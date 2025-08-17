@@ -156,7 +156,7 @@ class GrantAccessToReportServiceTest {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_ACCESS_TO_REPORT))
             .thenReturn(true);
         when(checkAssessmentInDefaultSpacePort.isAssessmentInDefaultSpace(param.getAssessmentId())).thenReturn(false);
-        when(loadAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
+        when(loadAssessmentPort.loadById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
         when(loadUserPort.loadByEmail(param.getEmail())).thenReturn(Optional.of(accessGrantedUser));
         when(checkSpaceAccessPort.checkIsMember(assessment.getSpace().getId(), accessGrantedUser.getId())).thenReturn(true);
         when(loadUserRoleForAssessmentPort.load(param.getAssessmentId(), accessGrantedUser.getId())).thenReturn(Optional.empty());
@@ -186,7 +186,7 @@ class GrantAccessToReportServiceTest {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_ACCESS_TO_REPORT))
             .thenReturn(true);
         when(checkAssessmentInDefaultSpacePort.isAssessmentInDefaultSpace(param.getAssessmentId())).thenReturn(false);
-        when(loadAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
+        when(loadAssessmentPort.loadById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
         when(loadUserPort.loadByEmail(param.getEmail())).thenReturn(Optional.of(accessGrantedUser));
         when(checkSpaceAccessPort.checkIsMember(assessment.getSpace().getId(), accessGrantedUser.getId())).thenReturn(false);
         doNothing().when(createAssessmentSpaceUserAccessPort).persist(any(CreateAssessmentSpaceUserAccessPort.Param.class));
@@ -223,7 +223,7 @@ class GrantAccessToReportServiceTest {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_ACCESS_TO_REPORT))
             .thenReturn(true);
         when(checkAssessmentInDefaultSpacePort.isAssessmentInDefaultSpace(param.getAssessmentId())).thenReturn(false);
-        when(loadAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
+        when(loadAssessmentPort.loadById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
         when(loadUserPort.loadByEmail(param.getEmail())).thenReturn(Optional.of(accessGrantedUser));
         when(loadUserRoleForAssessmentPort.load(param.getAssessmentId(), accessGrantedUser.getId())).thenReturn(Optional.of(AssessmentUserRole.ASSESSOR));
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), accessGrantedUser.getId(), VIEW_GRAPHICAL_REPORT))
@@ -251,7 +251,7 @@ class GrantAccessToReportServiceTest {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_ACCESS_TO_REPORT))
             .thenReturn(true);
         when(checkAssessmentInDefaultSpacePort.isAssessmentInDefaultSpace(param.getAssessmentId())).thenReturn(false);
-        when(loadAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
+        when(loadAssessmentPort.loadById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
         when(loadUserPort.loadByEmail(param.getEmail())).thenReturn(Optional.of(accessGrantedUser));
         when(loadUserRoleForAssessmentPort.load(param.getAssessmentId(), accessGrantedUser.getId())).thenReturn(Optional.of(AssessmentUserRole.ASSOCIATE));
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), accessGrantedUser.getId(), VIEW_GRAPHICAL_REPORT))
@@ -290,7 +290,7 @@ class GrantAccessToReportServiceTest {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_ACCESS_TO_REPORT))
             .thenReturn(true);
         when(checkAssessmentInDefaultSpacePort.isAssessmentInDefaultSpace(param.getAssessmentId())).thenReturn(false);
-        when(loadAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
+        when(loadAssessmentPort.loadById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
         when(loadUserPort.loadByEmail(param.getEmail())).thenReturn(Optional.empty());
         doNothing().when(createSpaceInvitePort).persist(any(CreateSpaceInvitePort.Param.class));
         doNothing().when(createAssessmentInvitePort).persist(any(CreateAssessmentInvitePort.Param.class));
@@ -349,7 +349,7 @@ class GrantAccessToReportServiceTest {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_ACCESS_TO_REPORT))
             .thenReturn(true);
         when(checkAssessmentInDefaultSpacePort.isAssessmentInDefaultSpace(param.getAssessmentId())).thenReturn(false);
-        when(loadAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
+        when(loadAssessmentPort.loadById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
         when(loadUserPort.loadByEmail(param.getEmail())).thenReturn(Optional.empty());
         doNothing().when(createSpaceInvitePort).persist(any(CreateSpaceInvitePort.Param.class));
         doNothing().when(createAssessmentInvitePort).persist(any(CreateAssessmentInvitePort.Param.class));
