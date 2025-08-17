@@ -133,7 +133,6 @@ class GrantAccessToReportServiceTest {
         verifyNoInteractions(loadUserPort,
             grantUserAssessmentRolePort,
             loadUserRoleForAssessmentPort,
-            loadAssessmentPort,
             createSpaceInvitePort,
             createAssessmentInvitePort,
             appSpecProperties,

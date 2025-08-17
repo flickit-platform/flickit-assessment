@@ -8,7 +8,6 @@ import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 import org.flickit.assessment.core.application.domain.notification.GrantAssessmentUserRoleNotificationCmd;
 import org.flickit.assessment.core.application.port.in.assessmentuserrole.GrantUserAssessmentRoleUseCase;
-import org.flickit.assessment.core.application.port.out.assessment.CheckAssessmentSpaceMembershipPort;
 import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.GrantUserAssessmentRolePort;
 import org.flickit.assessment.core.application.port.out.spaceuseraccess.CreateAssessmentSpaceUserAccessPort;
@@ -28,7 +27,6 @@ public class GrantUserAssessmentRoleService implements GrantUserAssessmentRoleUs
 
     private final GrantUserAssessmentRolePort grantUserAssessmentRolePort;
     private final AssessmentAccessChecker assessmentAccessChecker;
-    private final CheckAssessmentSpaceMembershipPort checkAssessmentSpaceMembershipPort;
     private final CreateAssessmentSpaceUserAccessPort createSpaceUserAccessPort;
     private final LoadAssessmentPort loadAssessmentPort;
 
@@ -41,7 +39,7 @@ public class GrantUserAssessmentRoleService implements GrantUserAssessmentRoleUs
         if (loadAssessmentPort.isInDefaultSpace(param.getAssessmentId()))
             throw new ValidationException(GRANT_ASSESSMENT_USER_ROLE_DEFAULT_SPACE_NOT_ALLOWED);
 
-        if (!checkAssessmentSpaceMembershipPort.isAssessmentSpaceMember(param.getAssessmentId(), param.getUserId()))
+        if (!loadAssessmentPort.isAssessmentSpaceMember(param.getAssessmentId(), param.getUserId()))
             createSpaceUserAccessPort.persist(toCreateSpaceAccessPortParam(param));
 
         grantUserAssessmentRolePort.persist(param.getAssessmentId(), param.getUserId(), param.getRoleId());

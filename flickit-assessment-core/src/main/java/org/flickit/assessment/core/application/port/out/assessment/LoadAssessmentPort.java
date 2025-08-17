@@ -12,6 +12,8 @@ public interface LoadAssessmentPort {
 
     boolean isInDefaultSpace(UUID assessmentId);
 
+    boolean isAssessmentSpaceMember(UUID assessmentId, UUID userId);
+
     /**
      * @throws ResourceNotFoundException if no assessment result found by the given id
      */

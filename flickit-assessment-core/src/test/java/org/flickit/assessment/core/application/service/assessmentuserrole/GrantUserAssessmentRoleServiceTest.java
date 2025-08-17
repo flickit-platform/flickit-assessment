@@ -6,7 +6,6 @@ import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 import org.flickit.assessment.core.application.domain.notification.GrantAssessmentUserRoleNotificationCmd;
 import org.flickit.assessment.core.application.port.in.assessmentuserrole.GrantUserAssessmentRoleUseCase.Param;
-import org.flickit.assessment.core.application.port.out.assessment.CheckAssessmentSpaceMembershipPort;
 import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.GrantUserAssessmentRolePort;
 import org.flickit.assessment.core.application.port.out.spaceuseraccess.CreateAssessmentSpaceUserAccessPort;
@@ -35,9 +34,6 @@ class GrantUserAssessmentRoleServiceTest {
     private AssessmentAccessChecker assessmentAccessChecker;
 
     @Mock
-    private CheckAssessmentSpaceMembershipPort checkAssessmentSpaceMembershipPort;
-
-    @Mock
     private GrantUserAssessmentRolePort grantUserAssessmentRolePort;
 
     @Mock
@@ -56,8 +52,7 @@ class GrantUserAssessmentRoleServiceTest {
         var throwable = assertThrows(AccessDeniedException.class, () -> service.grantAssessmentUserRole(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
-        verifyNoInteractions(checkAssessmentSpaceMembershipPort,
-            grantUserAssessmentRolePort,
+        verifyNoInteractions(grantUserAssessmentRolePort,
             loadAssessmentPort);
     }
 
@@ -73,8 +68,7 @@ class GrantUserAssessmentRoleServiceTest {
         var exception = assertThrows(ValidationException.class, () -> service.grantAssessmentUserRole(param));
         assertEquals(GRANT_ASSESSMENT_USER_ROLE_DEFAULT_SPACE_NOT_ALLOWED, exception.getMessageKey());
 
-        verifyNoInteractions(checkAssessmentSpaceMembershipPort,
-            createSpaceUserAccessPort,
+        verifyNoInteractions(createSpaceUserAccessPort,
             grantUserAssessmentRolePort);
     }
 
@@ -90,7 +84,7 @@ class GrantUserAssessmentRoleServiceTest {
             .thenReturn(true);
         when(loadAssessmentPort.isInDefaultSpace(param.getAssessmentId()))
             .thenReturn(false);
-        when(checkAssessmentSpaceMembershipPort.isAssessmentSpaceMember(param.getAssessmentId(), param.getUserId()))
+        when(loadAssessmentPort.isAssessmentSpaceMember(param.getAssessmentId(), param.getUserId()))
             .thenReturn(false);
 
         doNothing().when(createSpaceUserAccessPort).persist(any());
@@ -127,7 +121,7 @@ class GrantUserAssessmentRoleServiceTest {
             .thenReturn(true);
         when(loadAssessmentPort.isInDefaultSpace(param.getAssessmentId()))
             .thenReturn(false);
-        when(checkAssessmentSpaceMembershipPort.isAssessmentSpaceMember(param.getAssessmentId(), param.getUserId()))
+        when(loadAssessmentPort.isAssessmentSpaceMember(param.getAssessmentId(), param.getUserId()))
             .thenReturn(true);
 
         doNothing().when(grantUserAssessmentRolePort)
