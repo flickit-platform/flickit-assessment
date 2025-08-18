@@ -50,8 +50,8 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
     private final LoadAdviceNarrationPort loadAdviceNarrationPort;
     private final LoadAttributesPort loadAttributesPort;
 
-    private static final int MIN_REQUIRED_TARGET_ATTRIBUTES_COUNT = 2;
-    private static final int MAX_ADDITIONAL_TARGET_ATTRIBUTES_COUNT = 2;
+    private static final int MIN_REQUIRED_TARGET_ATTRIBUTES_SIZE = 2;
+    private static final int MAX_ADDITIONAL_TARGET_ATTRIBUTES_SIZE = 2;
 
     @Override
     public void refreshAssessmentAdvice(Param param) {
@@ -114,7 +114,7 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
 
         return Stream.concat(
             belowMedianTargets.stream(),
-            belowMedianTargets.size() < MIN_REQUIRED_TARGET_ATTRIBUTES_COUNT
+            belowMedianTargets.size() < MIN_REQUIRED_TARGET_ATTRIBUTES_SIZE
                 ? buildFurthestTargets(attributes, sortedLevels, otherAttributeValues, maxLevel).stream()
                 : Stream.empty()
         ).toList();
@@ -155,7 +155,7 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
                     (maxLevel.getIndex() - maturityLevelIdToIndexMap.get(v.maturityLevelId()))
             ))
             .sorted(Map.Entry.<Long, Integer>comparingByValue().reversed())
-            .limit(MAX_ADDITIONAL_TARGET_ATTRIBUTES_COUNT)
+            .limit(MAX_ADDITIONAL_TARGET_ATTRIBUTES_SIZE)
             .map(Map.Entry::getKey)
             .collect(Collectors.toSet());
 
