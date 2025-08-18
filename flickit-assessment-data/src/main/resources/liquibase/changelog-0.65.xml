@@ -56,7 +56,6 @@
             FROM fau_space_user_access sua
             WHERE sua.space_id = s.id AND sua.user_id = s.owner_id
             );
-
         </sql>
     </changeSet>
 </databaseChangeLog>
