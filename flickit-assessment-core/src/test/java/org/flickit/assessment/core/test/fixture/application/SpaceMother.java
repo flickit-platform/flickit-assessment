@@ -15,6 +15,25 @@ public class SpaceMother {
             "title",
             UUID.randomUUID(),
             SpaceType.BASIC,
+            false,
+            LocalDateTime.now());
+    }
+
+    public static Space createPremiumSpace() {
+        return new Space(++id,
+            "title",
+            UUID.randomUUID(),
+            SpaceType.PREMIUM,
+            false,
+            LocalDateTime.now());
+    }
+
+    public static Space createDefaultSpace() {
+        return new Space(++id,
+            "title",
+            UUID.randomUUID(),
+            SpaceType.BASIC,
+            true,
             LocalDateTime.now());
     }
 
@@ -23,6 +42,7 @@ public class SpaceMother {
             "title",
             ownerId,
             SpaceType.PREMIUM,
+            false,
             LocalDateTime.MIN);
     }
 }
