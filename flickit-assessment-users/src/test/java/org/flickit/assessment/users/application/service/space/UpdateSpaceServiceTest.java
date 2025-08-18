@@ -19,7 +19,7 @@ import java.util.function.Consumer;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
 import static org.flickit.assessment.users.common.ErrorMessageKey.SPACE_ID_NOT_FOUND;
-import static org.flickit.assessment.users.common.ErrorMessageKey.UPDATE_SPACE_SPACE_DEFAULT_SPACE;
+import static org.flickit.assessment.users.common.ErrorMessageKey.UPDATE_SPACE_DEFAULT_SPACE_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -63,7 +63,7 @@ class UpdateSpaceServiceTest {
         when(loadSpacePort.checkIsDefault(param.getId())).thenReturn(true);
 
         var throwable = assertThrows(ValidationException.class, () -> service.updateSpace(param));
-        assertEquals(UPDATE_SPACE_SPACE_DEFAULT_SPACE, throwable.getMessageKey());
+        assertEquals(UPDATE_SPACE_DEFAULT_SPACE_NOT_ALLOWED, throwable.getMessageKey());
 
         verifyNoInteractions(updateSpacePort);
     }

@@ -7,9 +7,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.application.port.out.CallAiPromptPort;
 import org.flickit.assessment.common.config.AppAiProperties;
 import org.flickit.assessment.common.exception.ValidationException;
-import org.flickit.assessment.core.application.domain.*;
+import org.flickit.assessment.core.application.domain.AssessmentResult;
+import org.flickit.assessment.core.application.domain.Attribute;
+import org.flickit.assessment.core.application.domain.AttributeValue;
+import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.domain.insight.AttributeInsight;
-import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentProgressPort;
+import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentPort;
 import org.flickit.assessment.core.application.port.out.attribute.CreateAttributeScoresFilePort;
 import org.flickit.assessment.core.application.port.out.attributevalue.LoadAttributeValuePort;
 import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
@@ -26,7 +29,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ATTRIBUTE_AI_INSIGHT_ALL_QUESTIONS_NOT_ANSWERED;
 import static org.flickit.assessment.core.common.MessageKey.ASSESSMENT_AI_IS_DISABLED;
@@ -41,7 +45,7 @@ public class CreateAttributeAiInsightHelper {
 
     private final LoadAttributeValuePort loadAttributeValuePort;
     private final LoadMaturityLevelsPort loadMaturityLevelsPort;
-    private final GetAssessmentProgressPort getAssessmentProgressPort;
+    private final LoadAssessmentPort loadAssessmentPort;
     private final AppAiProperties appAiProperties;
     private final CreateAttributeScoresFilePort createAttributeScoresFilePort;
     private final UploadAttributeScoresFilePort uploadAttributeScoresFilePort;
@@ -51,7 +55,7 @@ public class CreateAttributeAiInsightHelper {
     @SneakyThrows
     public AttributeInsight createAttributeAiInsight(AttributeInsightParam param) {
         var assessment = param.assessmentResult().getAssessment();
-        var assessmentProgress = getAssessmentProgressPort.getProgress(assessment.getId());
+        var assessmentProgress = loadAssessmentPort.progress(assessment.getId());
         if (assessmentProgress.answersCount() != assessmentProgress.questionsCount())
             throw new ValidationException(CREATE_ATTRIBUTE_AI_INSIGHT_ALL_QUESTIONS_NOT_ANSWERED);
 
@@ -82,7 +86,7 @@ public class CreateAttributeAiInsightHelper {
     @SneakyThrows
     public List<AttributeInsight> createAttributeAiInsights(AttributeInsightsParam param) {
         var assessment = param.assessmentResult().getAssessment();
-        var assessmentProgress = getAssessmentProgressPort.getProgress(assessment.getId());
+        var assessmentProgress = loadAssessmentPort.progress(assessment.getId());
         if (assessmentProgress.answersCount() != assessmentProgress.questionsCount())
             throw new ValidationException(CREATE_ATTRIBUTE_AI_INSIGHT_ALL_QUESTIONS_NOT_ANSWERED);
 

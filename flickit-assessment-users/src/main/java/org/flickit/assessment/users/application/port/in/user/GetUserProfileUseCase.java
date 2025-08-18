@@ -34,6 +34,7 @@ public interface GetUserProfileUseCase {
                        String bio,
                        String linkedin,
                        String pictureLink,
+                       long defaultSpaceId,
                        boolean showSurvey) {
     }
 }

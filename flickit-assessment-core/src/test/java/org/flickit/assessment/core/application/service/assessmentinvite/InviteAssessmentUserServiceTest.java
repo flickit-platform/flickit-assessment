@@ -75,7 +75,7 @@ class InviteAssessmentUserServiceTest {
         var param = createParam(InviteAssessmentUserUseCase.Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_USER_ASSESSMENT_ROLE)).thenReturn(true);
-        when(loadAssessmentPort.getAssessmentById(param.getAssessmentId())).thenThrow(new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND));
+        when(loadAssessmentPort.loadById(param.getAssessmentId())).thenThrow(new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND));
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.inviteUser(param));
         assertEquals(ASSESSMENT_ID_NOT_FOUND, throwable.getMessage());
@@ -102,7 +102,7 @@ class InviteAssessmentUserServiceTest {
         var assessment = AssessmentMother.assessment();
         var param = createParam(b -> b.assessmentId(assessment.getId()));
 
-        when(loadAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
+        when(loadAssessmentPort.loadById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
         when(loadUserPort.loadByEmail(param.getEmail())).thenReturn(Optional.empty());
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_USER_ASSESSMENT_ROLE)).thenReturn(true);
         doNothing().when(createSpaceInvitePort).persist(any());
@@ -141,7 +141,7 @@ class InviteAssessmentUserServiceTest {
         var assessment = AssessmentMother.assessment();
         var param = createParam(b -> b.assessmentId(assessment.getId()));
 
-        when(loadAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
+        when(loadAssessmentPort.loadById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
         when(loadUserPort.loadByEmail(param.getEmail())).thenReturn(Optional.empty());
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_USER_ASSESSMENT_ROLE)).thenReturn(true);
         doNothing().when(createSpaceInvitePort).persist(any());
@@ -165,7 +165,7 @@ class InviteAssessmentUserServiceTest {
         var param = createParam(b -> b.assessmentId(assessment.getId()));
         var user = new User(UUID.randomUUID(), "Display Name", "user@mail.com");
 
-        when(loadAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
+        when(loadAssessmentPort.loadById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
         when(loadUserPort.loadByEmail(param.getEmail())).thenReturn(Optional.of(user));
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_USER_ASSESSMENT_ROLE)).thenReturn(true);
         when(checkSpaceAccessPort.checkIsMember(assessment.getSpace().getId(), user.getId())).thenReturn(true);
@@ -183,7 +183,7 @@ class InviteAssessmentUserServiceTest {
         var param = createParam(b -> b.assessmentId(assessment.getId()));
         var user = new User(UUID.randomUUID(), "Display Name", "user@mail.com");
 
-        when(loadAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
+        when(loadAssessmentPort.loadById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
         when(loadUserPort.loadByEmail(param.getEmail())).thenReturn(Optional.of(user));
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_USER_ASSESSMENT_ROLE)).thenReturn(true);
         when(checkSpaceAccessPort.checkIsMember(assessment.getSpace().getId(), user.getId())).thenReturn(false);
