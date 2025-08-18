@@ -54,6 +54,7 @@ public interface GetAssessmentReportUseCase {
                       MaturityLevel maturityLevel,
                       double confidenceValue,
                       Mode mode,
+                      SpaceDto space,
                       LocalDateTime creationTime) {
     }
 
@@ -140,5 +141,10 @@ public interface GetAssessmentReportUseCase {
     }
 
     record Mode(String code) {
+    }
+
+    record SpaceDto(long id,
+                    String title,
+                    boolean isDefault){
     }
 }

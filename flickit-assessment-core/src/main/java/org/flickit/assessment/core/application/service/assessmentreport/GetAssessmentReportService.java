@@ -31,6 +31,7 @@ import java.util.function.Function;
 import static java.util.stream.Collectors.*;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_SPACE_ID_NOT_FOUND;
 import static org.flickit.assessment.common.exception.api.ErrorCodes.REPORT_UNPUBLISHED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_REPORT_REPORT_NOT_PUBLISHED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.MATURITY_LEVEL_ID_NOT_FOUND;
@@ -106,8 +107,9 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
             .anyMatch(a -> a.maturityLevel().id() != maxMaturityLevel.id());
 
         var advice = toAdvice(assessment.assessmentResultId(), Locale.of(assessment.language().name()));
-        var space =
-        return new Result(toAssessment(assessment, assessmentKitItem, reportMetadata, maturityLevels, attributesCount, maturityLevelMap),
+        var space = loadSpacePort.loadSpace(param.getAssessmentId())
+            .orElseThrow(()-> new ResourceNotFoundException(COMMON_SPACE_ID_NOT_FOUND)); //Can't happen
+        return new Result(toAssessment(assessment, assessmentKitItem, reportMetadata, maturityLevels, attributesCount, maturityLevelMap, space),
             subjects,
             advice,
             toAssessmentProcess(reportMetadata),
@@ -140,7 +142,8 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
                                     AssessmentReportMetadata metadata,
                                     List<MaturityLevel> levels,
                                     int attributesCount,
-                                    Map<Long, MaturityLevel> maturityLevelMap) {
+                                    Map<Long, MaturityLevel> maturityLevelMap,
+                                    Space space) {
         return new Assessment(
             assessment.title(),
             metadata.intro(),
@@ -150,7 +153,14 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
             maturityLevelMap.get(assessment.maturityLevel().getId()),
             assessment.confidenceValue(),
             toMode(assessment.mode()),
+            toSpace(space),
             assessment.creationTime());
+    }
+
+    private SpaceDto toSpace(Space space) {
+        return new SpaceDto(space.getId(),
+            space.getTitle(),
+            space.isDefault());
     }
 
     private AssessmentKit toAssessmentKit(AssessmentKitItem assessmentKit,

@@ -7,10 +7,7 @@ import org.flickit.assessment.common.application.port.out.ValidateAssessmentResu
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.CalculateNotValidException;
 import org.flickit.assessment.common.exception.InvalidStateException;
-import org.flickit.assessment.core.application.domain.AdviceItem;
-import org.flickit.assessment.core.application.domain.AssessmentMode;
-import org.flickit.assessment.core.application.domain.AssessmentReport;
-import org.flickit.assessment.core.application.domain.VisibilityType;
+import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.domain.report.AssessmentReportItem;
 import org.flickit.assessment.core.application.domain.report.AssessmentSubjectReportItem;
 import org.flickit.assessment.core.application.domain.report.AttributeReportItem;
@@ -21,9 +18,11 @@ import org.flickit.assessment.core.application.port.out.advicenarration.LoadAdvi
 import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentQuestionsPort;
 import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
+import org.flickit.assessment.core.application.port.out.space.LoadSpacePort;
 import org.flickit.assessment.core.test.fixture.application.AssessmentReportMother;
 import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
 import org.flickit.assessment.core.test.fixture.application.QuestionMother;
+import org.flickit.assessment.core.test.fixture.application.SpaceMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -81,6 +80,9 @@ class GetAssessmentReportServiceTest {
     @Mock
     private LoadAdviceItemsPort loadAdviceItemsPort;
 
+    @Mock
+    private LoadSpacePort loadSpacePort;
+
     @Test
     void testGetAssessmentReport_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
         var param = createParam(GetAssessmentReportUseCase.Param.ParamBuilder::build);
@@ -96,7 +98,8 @@ class GetAssessmentReportServiceTest {
             loadAssessmentQuestionsPort,
             validateAssessmentResultPort,
             loadAdviceItemsPort,
-            loadAdviceNarrationPort);
+            loadAdviceNarrationPort,
+            loadSpacePort);
     }
 
     @Test
@@ -115,7 +118,8 @@ class GetAssessmentReportServiceTest {
             loadAssessmentReportPort,
             loadAssessmentQuestionsPort,
             loadAdviceItemsPort,
-            loadAdviceNarrationPort);
+            loadAdviceNarrationPort,
+            loadSpacePort);
     }
 
     @Test
@@ -145,6 +149,7 @@ class GetAssessmentReportServiceTest {
     @Test
     void testGetAssessmentReport_whenReportEntityNotExistsAndUserHasPreviewPermission_thenReturnEmptyReport() {
         var param = createParam(GetAssessmentReportUseCase.Param.ParamBuilder::build);
+        var space = SpaceMother.createBasicSpace();
 
         var assessmentReport = createAssessmentReportItem(param);
         var attributeReportItem1 = new AttributeReportItem(15L, "Agility", "agility of team",
@@ -176,6 +181,7 @@ class GetAssessmentReportServiceTest {
             .thenReturn(true);
         when(loadAssessmentQuestionsPort.loadApplicableQuestions(param.getAssessmentId()))
             .thenReturn(questionAnswers);
+        when(loadSpacePort.loadSpace(param.getAssessmentId())).thenReturn(Optional.of(space));
 
         var result = service.getAssessmentReport(param);
 
@@ -196,6 +202,7 @@ class GetAssessmentReportServiceTest {
         assertEquals(adviceNarration, result.advice().narration());
         assertEquals(adviceItems.size(), result.advice().adviceItems().size());
         assertAdviceItem(adviceItems, result.advice().adviceItems(), assessmentReport.language());
+        assertSpace(space, result.assessment().space());
         assertTrue(result.permissions().canViewDashboard());
         assertFalse(result.permissions().canShareReport());
         assertFalse(result.permissions().canManageVisibility());
@@ -210,6 +217,8 @@ class GetAssessmentReportServiceTest {
     @Test
     void testGetAssessmentReport_whenAssessmentCalculateIsValidAndUserHasNotViewDashboardPermission_thenReturnReport() {
         var param = createParam(GetAssessmentReportUseCase.Param.ParamBuilder::build);
+        var space = SpaceMother.createPremiumSpace();
+
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_GRAPHICAL_REPORT))
             .thenReturn(true);
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
@@ -244,6 +253,7 @@ class GetAssessmentReportServiceTest {
             .thenReturn(questionAnswers);
         when(loadAdviceItemsPort.loadAll(assessmentReport.assessmentResultId())).thenReturn(adviceItems);
         when(loadAdviceNarrationPort.load(assessmentReport.assessmentResultId())).thenReturn(adviceNarration);
+        when(loadSpacePort.loadSpace(param.getAssessmentId())).thenReturn(Optional.of(space));
 
         var result = service.getAssessmentReport(param);
 
@@ -257,6 +267,7 @@ class GetAssessmentReportServiceTest {
         assertAttributeItem(expectedAttributeItem, actualAttributeItem);
         assertEquals(adviceNarration, result.advice().narration());
         assertAdviceItem(adviceItems, result.advice().adviceItems(), assessmentReport.language());
+        assertSpace(space, result.assessment().space());
         assertFalse(result.permissions().canViewDashboard());
         assertFalse(result.permissions().canShareReport());
         assertTrue(result.permissions().canManageVisibility());
@@ -268,6 +279,8 @@ class GetAssessmentReportServiceTest {
     @Test
     void testGetAssessmentReport_whenIsNotAdvisableAndThereIsNotAdvice_thenReturnReport() {
         var param = createParam(GetAssessmentReportUseCase.Param.ParamBuilder::build);
+        var space = SpaceMother.createDefaultSpace();
+
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_GRAPHICAL_REPORT))
             .thenReturn(true);
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
@@ -300,6 +313,7 @@ class GetAssessmentReportServiceTest {
             .thenReturn(questionAnswers);
         when(loadAdviceItemsPort.loadAll(assessmentReport.assessmentResultId())).thenReturn(List.of());
         when(loadAdviceNarrationPort.load(assessmentReport.assessmentResultId())).thenReturn(null);
+        when(loadSpacePort.loadSpace(param.getAssessmentId())).thenReturn(Optional.of(space));
 
         var result = service.getAssessmentReport(param);
 
@@ -311,6 +325,7 @@ class GetAssessmentReportServiceTest {
         var expectedAttributeItem = expectedSubjectItem.attributes().getFirst();
         var actualAttributeItem = actualSubjectItem.attributes().getFirst();
         assertAttributeItem(expectedAttributeItem, actualAttributeItem);
+        assertSpace(space, result.assessment().space());
         assertNull(result.advice().narration());
         assertEquals(0, result.advice().adviceItems().size());
         assertFalse(result.permissions().canViewDashboard());
@@ -324,6 +339,8 @@ class GetAssessmentReportServiceTest {
     @Test
     void testGetAssessmentReport_whenIsAdvisableAndThereIsNotAdvice_thenReturnReport() {
         var param = createParam(GetAssessmentReportUseCase.Param.ParamBuilder::build);
+        var space = SpaceMother.createDefaultSpace();
+
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_GRAPHICAL_REPORT))
             .thenReturn(true);
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
@@ -356,6 +373,7 @@ class GetAssessmentReportServiceTest {
             .thenReturn(questionAnswers);
         when(loadAdviceItemsPort.loadAll(assessmentReport.assessmentResultId())).thenReturn(List.of());
         when(loadAdviceNarrationPort.load(assessmentReport.assessmentResultId())).thenReturn(null);
+        when(loadSpacePort.loadSpace(param.getAssessmentId())).thenReturn(Optional.of(space));
 
         var result = service.getAssessmentReport(param);
 
@@ -369,6 +387,7 @@ class GetAssessmentReportServiceTest {
         var expectedAttributeItem = expectedSubjectItem.attributes().getFirst();
         var actualAttributeItem = actualSubjectItem.attributes().getFirst();
         assertAttributeItem(expectedAttributeItem, actualAttributeItem);
+        assertSpace(space, result.assessment().space());
         assertFalse(result.permissions().canViewDashboard());
         assertFalse(result.permissions().canShareReport());
         assertTrue(result.permissions().canManageVisibility());
@@ -461,5 +480,11 @@ class GetAssessmentReportServiceTest {
                 assertEquals(expected.getImpact().getTitle(locale), actual.impact().title());
                 assertEquals(expected.getImpact().getCode(), actual.impact().code());
             });
+    }
+
+    private void assertSpace(Space space, GetAssessmentReportUseCase.SpaceDto spaceDto) {
+        assertEquals(space.getId(), spaceDto.id());
+        assertEquals(space.getTitle(), spaceDto.title());
+        assertEquals(space.isDefault(), spaceDto.isDefault());
     }
 }
