@@ -234,9 +234,22 @@ class RefreshAssessmentAdviceServiceTest {
         verifyNoInteractions(loadAdviceNarrationPort);
     }
 
+    /*
+    | Attribute   | Weight | Maturity Level | Furthest Score |      Selected        |
+    |-------------|--------|----------------|----------------|----------------------|
+    | attribute1  |   1    |       3        |       2        | no                   |
+    | attribute2  |   3    |       3        |       6        | yes (furthest)       |
+    | attribute3  |   5    |       5        |       x        | no                   |
+    | attribute4  |   7    |       1        |       x        | yes (below median)   |
+    | attribute5  |   8    |       4        |       8        | yes (furthest)       |
+    | attribute6  |   1    |       4        |       1        | no                   |
+    --------------------------------------------------------------------------------
+    |
+    |Furthest Score is calculated as: weight multiplied by (maxLevel - currentLevel)
+    */
     @Test
     void testRefreshAssessmentAdvice_whenForceRegenerateIsFalseAndAdviceItemExistsAndAdviceNarrationDoesNotExists_thenRegenerateAdvice() {
-        Attribute attribute4 = createWithWeight(7), attribute5 = createWithWeight(8);
+        Attribute attribute4 = createWithWeight(7), attribute5 = createWithWeight(8), attribute6 = createWithWeight(1);
         param = createParam(b -> b.forceRegenerate(false));
         assessmentResult = createAssessmentResultWithAssessmentId(param.getAssessmentId());
         var attributeValues = List.of(new LoadAttributeValuesPort.Result(attribute1.getId(), levelThree().getId()),
@@ -251,7 +264,7 @@ class RefreshAssessmentAdviceServiceTest {
         when(loadAttributeValuesPort.loadAll(assessmentResult.getId())).thenReturn(attributeValues);
         when(loadAdviceItemPort.existsByAssessmentResultId(assessmentResult.getId())).thenReturn(true);
         when(loadAdviceNarrationPort.existsByAssessmentResultId(assessmentResult.getId())).thenReturn(false);
-        when(loadAttributesPort.loadByIdsAndAssessmentId(anyList(), eq(param.getAssessmentId()))).thenReturn(List.of(attribute1, attribute2, attribute3, attribute4, attribute5));
+        when(loadAttributesPort.loadByIdsAndAssessmentId(anyList(), eq(param.getAssessmentId()))).thenReturn(List.of(attribute1, attribute2, attribute3, attribute4, attribute5, attribute6));
         @SuppressWarnings("unchecked")
         ArgumentCaptor<List<AttributeLevelTarget>> targetCaptor = ArgumentCaptor.forClass(List.class);
         when(createAdviceHelper.createAdvice(eq(param.getAssessmentId()), anyList())).thenReturn(adviceListItems);
@@ -272,6 +285,7 @@ class RefreshAssessmentAdviceServiceTest {
         assertFalse(capturedTargets.stream().anyMatch(t -> t.getAttributeId() == (attribute3.getId())));
         assertTrue(capturedTargets.stream().anyMatch(t -> t.getAttributeId() == (attribute4.getId())));
         assertTrue(capturedTargets.stream().anyMatch(t -> t.getAttributeId() == (attribute5.getId())));
+        assertFalse(capturedTargets.stream().anyMatch(t -> t.getAttributeId() == (attribute6.getId())));
 
         AttributeLevelTarget attribute2LevelTarget = capturedTargets.stream()
             .filter(t -> t.getAttributeId() == attribute2.getId()).findFirst().orElseThrow();
@@ -287,6 +301,7 @@ class RefreshAssessmentAdviceServiceTest {
         assertFalse(narratedTargets.stream().anyMatch(t -> t.getAttributeId() == (attribute3.getId())));
         assertTrue(narratedTargets.stream().anyMatch(t -> t.getAttributeId() == (attribute4.getId())));
         assertTrue(narratedTargets.stream().anyMatch(t -> t.getAttributeId() == (attribute5.getId())));
+        assertFalse(narratedTargets.stream().anyMatch(t -> t.getAttributeId() == (attribute6.getId())));
 
         verify(deleteAdviceItemPort).deleteAllAiGenerated(assessmentResult.getId());
     }
