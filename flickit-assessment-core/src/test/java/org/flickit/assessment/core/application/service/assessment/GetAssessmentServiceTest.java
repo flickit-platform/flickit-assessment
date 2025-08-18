@@ -91,6 +91,7 @@ class GetAssessmentServiceTest {
         assertEquals(assessment.getTitle(), result.title());
         assertEquals(assessment.getSpace().getId(), result.space().getId());
         assertEquals(assessment.getSpace().getTitle(), result.space().getTitle());
+        assertEquals(assessment.getSpace().isDefault(), result.space().isDefault());
         assertEquals(assessment.getAssessmentKit().getId(), result.kit().id());
         assertEquals(assessment.getAssessmentKit().getTitle(), result.kit().title());
         assertEquals(assessment.getCreationTime(), result.creationTime());
