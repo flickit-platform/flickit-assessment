@@ -13,7 +13,7 @@ public interface LoadSpacePort {
      * @param spaceId the unique identifier of the space to load
      * @return an Optional containing the Space if found, empty Optional otherwise
      */
-    Optional<Space> loadSpace(long spaceId);
+    Optional<Space> loadById(long spaceId);
 
     /**
      * Loads a Space by the associated assessment's UUID.
@@ -21,5 +21,5 @@ public interface LoadSpacePort {
      * @param assessmentId the UUID of the assessment associated with the space
      * @return an Optional containing the Space if found, empty Optional otherwise
      */
-    Optional<Space> loadSpace(UUID assessmentId);
+    Optional<Space> loadByAssessmentId(UUID assessmentId);
 }

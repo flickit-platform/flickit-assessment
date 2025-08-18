@@ -181,7 +181,7 @@ class GetAssessmentReportServiceTest {
             .thenReturn(true);
         when(loadAssessmentQuestionsPort.loadApplicableQuestions(param.getAssessmentId()))
             .thenReturn(questionAnswers);
-        when(loadSpacePort.loadSpace(param.getAssessmentId())).thenReturn(Optional.of(space));
+        when(loadSpacePort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(space));
 
         var result = service.getAssessmentReport(param);
 
@@ -253,7 +253,7 @@ class GetAssessmentReportServiceTest {
             .thenReturn(questionAnswers);
         when(loadAdviceItemsPort.loadAll(assessmentReport.assessmentResultId())).thenReturn(adviceItems);
         when(loadAdviceNarrationPort.load(assessmentReport.assessmentResultId())).thenReturn(adviceNarration);
-        when(loadSpacePort.loadSpace(param.getAssessmentId())).thenReturn(Optional.of(space));
+        when(loadSpacePort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(space));
 
         var result = service.getAssessmentReport(param);
 
@@ -313,7 +313,7 @@ class GetAssessmentReportServiceTest {
             .thenReturn(questionAnswers);
         when(loadAdviceItemsPort.loadAll(assessmentReport.assessmentResultId())).thenReturn(List.of());
         when(loadAdviceNarrationPort.load(assessmentReport.assessmentResultId())).thenReturn(null);
-        when(loadSpacePort.loadSpace(param.getAssessmentId())).thenReturn(Optional.of(space));
+        when(loadSpacePort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(space));
 
         var result = service.getAssessmentReport(param);
 
@@ -373,7 +373,7 @@ class GetAssessmentReportServiceTest {
             .thenReturn(questionAnswers);
         when(loadAdviceItemsPort.loadAll(assessmentReport.assessmentResultId())).thenReturn(List.of());
         when(loadAdviceNarrationPort.load(assessmentReport.assessmentResultId())).thenReturn(null);
-        when(loadSpacePort.loadSpace(param.getAssessmentId())).thenReturn(Optional.of(space));
+        when(loadSpacePort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(space));
 
         var result = service.getAssessmentReport(param);
 

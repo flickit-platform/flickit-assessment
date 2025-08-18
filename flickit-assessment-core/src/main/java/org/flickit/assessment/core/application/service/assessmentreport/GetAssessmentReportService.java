@@ -107,7 +107,7 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
             .anyMatch(a -> a.maturityLevel().id() != maxMaturityLevel.id());
 
         var advice = toAdvice(assessment.assessmentResultId(), Locale.of(assessment.language().name()));
-        var space = loadSpacePort.loadSpace(param.getAssessmentId())
+        var space = loadSpacePort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(()-> new ResourceNotFoundException(COMMON_SPACE_ID_NOT_FOUND)); //Can't happen
         return new Result(toAssessment(assessment, assessmentKitItem, reportMetadata, maturityLevels, attributesCount, maturityLevelMap, space),
             subjects,
