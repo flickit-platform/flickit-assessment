@@ -153,14 +153,8 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
             maturityLevelMap.get(assessment.maturityLevel().getId()),
             assessment.confidenceValue(),
             toMode(assessment.mode()),
-            toSpace(space),
+            SpaceResult.of(space),
             assessment.creationTime());
-    }
-
-    private SpaceDto toSpace(Space space) {
-        return new SpaceDto(space.getId(),
-            space.getTitle(),
-            space.isDefault());
     }
 
     private AssessmentKit toAssessmentKit(AssessmentKitItem assessmentKit,

@@ -482,9 +482,9 @@ class GetAssessmentReportServiceTest {
             });
     }
 
-    private void assertSpace(Space space, GetAssessmentReportUseCase.SpaceDto spaceDto) {
-        assertEquals(space.getId(), spaceDto.id());
-        assertEquals(space.getTitle(), spaceDto.title());
-        assertEquals(space.isDefault(), spaceDto.isDefault());
+    private void assertSpace(Space space, GetAssessmentReportUseCase.SpaceResult spaceResult) {
+        assertEquals(space.getId(), spaceResult.id());
+        assertEquals(space.getTitle(), spaceResult.title());
+        assertEquals(space.isDefault(), spaceResult.isDefault());
     }
 }
