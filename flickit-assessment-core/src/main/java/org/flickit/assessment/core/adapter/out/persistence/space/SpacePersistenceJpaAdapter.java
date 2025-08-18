@@ -43,7 +43,7 @@ public class SpacePersistenceJpaAdapter implements
 
     @Override
     public Optional<Space> loadSpace(UUID assessmentId) {
-        return repository.findByAssessmentIdAndDeletedFalse(spaceId)
+        return repository.findByAssessmentIdAndDeletedFalse(assessmentId)
             .map(SpaceMapper::mapToDomain);
     }
 }

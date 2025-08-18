@@ -23,12 +23,12 @@ public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> 
     boolean existsByIdAndDeletedFalseAndIsDefaultTrue(long spaceId);
 
     @Query("""
-        SELECT s
-        FROM SpaceJpaEntity as s
-        JOIN AssessmentJpaEntity as a ON a.spaceId = s.id
-        WHERE a.id = :assessmentId AND s.deleted = FALSE
+            SELECT s
+            FROM SpaceJpaEntity as s
+            JOIN AssessmentJpaEntity as a ON a.spaceId = s.id
+            WHERE a.id = :assessmentId AND s.deleted = FALSE
     """)
-    Optional<SpaceJpaEntity> findByAssessmentId(@Param("assessmentId") UUID assessmentId);
+    Optional<SpaceJpaEntity> findByAssessmentIdAndDeletedFalse(@Param("assessmentId") UUID assessmentId);
 
     @Query("""
             SELECT s.ownerId
