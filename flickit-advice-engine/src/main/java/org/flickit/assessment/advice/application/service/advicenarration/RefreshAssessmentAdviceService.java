@@ -98,17 +98,17 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
             .map(MaturityLevel::getId)
             .collect(Collectors.toSet());
 
-        Set<Long> weakAttributeIds = attributeValues.stream()
+        var weakAttributeIds = attributeValues.stream()
             .filter(e -> weakLevelIds.contains(e.maturityLevelId()))
             .map(LoadAttributeValuesPort.Result::attributeId)
             .collect(Collectors.toSet());
 
-        var nonMaxMaturityLevels = attributeValues.stream()
+        var nonMaxMaturityLevelsAttributeValues = attributeValues.stream()
             .filter(v -> v.maturityLevelId() != maxLevel.getId())
             .toList();
 
-        var belowMedianTargets = buildBelowMedianLevelTargets(nonMaxMaturityLevels, weakAttributeIds, midLevel);
-        var otherAttributeValues = nonMaxMaturityLevels.stream()
+        var belowMedianTargets = buildBelowMedianTargets(nonMaxMaturityLevelsAttributeValues, weakAttributeIds, midLevel);
+        var otherAttributeValues = nonMaxMaturityLevelsAttributeValues.stream()
             .filter(v -> !weakAttributeIds.contains(v.attributeId()))
             .toList();
 
@@ -129,9 +129,9 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
                 new ResourceNotFoundException(REFRESH_ASSESSMENT_ADVICE_MEDIAN_MATURITY_LEVEL_NOT_FOUND)); // Can't happen
     }
 
-    List<AttributeLevelTarget> buildBelowMedianLevelTargets(List<LoadAttributeValuesPort.Result> attributeValues,
-                                                            Set<Long> weakAttributeIds,
-                                                            MaturityLevel midLevel) {
+    List<AttributeLevelTarget> buildBelowMedianTargets(List<LoadAttributeValuesPort.Result> attributeValues,
+                                                       Set<Long> weakAttributeIds,
+                                                       MaturityLevel midLevel) {
         return attributeValues.stream()
             .filter(v -> weakAttributeIds.contains(v.attributeId()))
             .map(value -> new AttributeLevelTarget(value.attributeId(), midLevel.getId()))
@@ -142,9 +142,9 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
                                                             List<MaturityLevel> maturityLevels,
                                                             List<LoadAttributeValuesPort.Result> attributeValues,
                                                             MaturityLevel maxLevel) {
-        Map<Long, Integer> attributeIdToWeightMap = attributes.stream()
+        var attributeIdToWeightMap = attributes.stream()
             .collect(toMap(Attribute::getId, Attribute::getWeight));
-        Map<Long, Integer> maturityLevelIdToIndexMap = maturityLevels.stream()
+        var maturityLevelIdToIndexMap = maturityLevels.stream()
             .collect(toMap(MaturityLevel::getId, MaturityLevel::getIndex));
 
         var weakAttributeIds = attributeValues.stream()
