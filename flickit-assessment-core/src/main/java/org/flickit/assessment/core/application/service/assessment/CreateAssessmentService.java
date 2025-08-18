@@ -64,7 +64,7 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
     @Override
     @SendNotification
     public Result createAssessment(Param param) {
-        var space = loadSpacePort.loadSpace(param.getSpaceId())
+        var space = loadSpacePort.loadById(param.getSpaceId())
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_SPACE_ID_NOT_FOUND));
 
         if (!checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId()))
