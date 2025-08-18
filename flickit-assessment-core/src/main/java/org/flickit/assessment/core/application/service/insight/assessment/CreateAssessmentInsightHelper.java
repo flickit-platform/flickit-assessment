@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.core.application.domain.AssessmentMode;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.insight.AssessmentInsight;
-import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentProgressPort;
+import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentPort;
 import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelPort;
 import org.flickit.assessment.core.application.port.out.subject.CountSubjectsPort;
 import org.springframework.stereotype.Service;
@@ -21,12 +21,12 @@ import static org.flickit.assessment.core.application.service.insight.assessment
 @RequiredArgsConstructor
 public class CreateAssessmentInsightHelper {
 
-    private final GetAssessmentProgressPort getAssessmentProgressPort;
+    private final LoadAssessmentPort loadAssessmentPort;
     private final LoadMaturityLevelPort loadMaturityLevelPort;
     private final CountSubjectsPort countSubjectsPort;
 
     public AssessmentInsight createAssessmentInsight(AssessmentResult assessmentResult, Locale locale) {
-        var progress = getAssessmentProgressPort.getProgress(assessmentResult.getAssessment().getId());
+        var progress = loadAssessmentPort.progress(assessmentResult.getAssessment().getId());
         int questionsCount = progress.questionsCount();
         int answersCount = progress.answersCount();
         int confidenceValue = assessmentResult.getConfidenceValue() != null

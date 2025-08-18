@@ -10,6 +10,7 @@ public class ErrorMessageKey {
     public static final String USER_BY_EMAIL_NOT_FOUND = "user-by-email.notFound";
     public static final String SPACE_ID_NOT_FOUND = "space.id.notFound";
     public static final String USER_ID_NOT_FOUND = "user.id.notFound";
+    public static final String DEFAULT_SPACE_NOT_FOUND = "default.space.notFound";
 
     public static final String GET_USER_BY_EMAIL_EMAIL_NOT_NULL = "get-user-by-email.email.notNull";
 
@@ -111,7 +112,7 @@ public class ErrorMessageKey {
     public static final String UPDATE_SPACE_TITLE_NOT_BLANK = "update-space.title.notBlank";
     public static final String UPDATE_SPACE_TITLE_SIZE_MIN = "update-space.title.size.min";
     public static final String UPDATE_SPACE_TITLE_SIZE_MAX = "update-space.title.size.max";
-    public static final String UPDATE_SPACE_SPACE_DEFAULT_SPACE = "update-space.space.defaultSpace";
+    public static final String UPDATE_SPACE_DEFAULT_SPACE_NOT_ALLOWED = "update-space.defaultSpace.notAllowed";
 
     public static final String LEAVE_SPACE_SPACE_ID_NOT_NULL = "leave-space.spaceId.notNull";
     public static final String LEAVE_SPACE_OWNER_NOT_ALLOWED = "leave-space.owner.notAllowed";

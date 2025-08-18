@@ -3,6 +3,7 @@ package org.flickit.assessment.users.adapter.out.persistence.space;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.application.domain.space.SpaceType;
+import org.flickit.assessment.common.exception.InvalidStateException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.users.space.SpaceJpaEntity;
 import org.flickit.assessment.data.jpa.users.space.SpaceJpaRepository;
@@ -21,6 +22,7 @@ import java.util.UUID;
 
 import static org.flickit.assessment.users.adapter.out.persistence.space.SpaceMapper.mapToDomain;
 import static org.flickit.assessment.users.application.service.constant.SpaceConstants.NOT_DELETED_DELETION_TIME;
+import static org.flickit.assessment.users.common.ErrorMessageKey.DEFAULT_SPACE_NOT_FOUND;
 import static org.flickit.assessment.users.common.ErrorMessageKey.SPACE_ID_NOT_FOUND;
 
 @Component
@@ -96,6 +98,12 @@ public class SpacePersistenceJpaAdapter implements
     public UUID loadOwnerId(long spaceId) {
         return repository.loadOwnerIdById(spaceId)
             .orElseThrow(() -> new ResourceNotFoundException(SPACE_ID_NOT_FOUND));
+    }
+
+    @Override
+    public long loadDefaultSpaceId(UUID userId) {
+        return repository.loadDefaultSpaceIdByUserId(userId)
+            .orElseThrow(() -> new InvalidStateException(DEFAULT_SPACE_NOT_FOUND)); // Can't happen
     }
 
     @Override
