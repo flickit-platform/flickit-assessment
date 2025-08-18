@@ -24,7 +24,7 @@ public record GetAssessmentResponseDto(
     boolean manageable,
     boolean viewable) {
 
-    record SpaceResponseDto(long id, String title) {
+    record SpaceResponseDto(long id, String title, boolean isDefault) {
     }
 
     record KitResponseDto(long id, String title) {
