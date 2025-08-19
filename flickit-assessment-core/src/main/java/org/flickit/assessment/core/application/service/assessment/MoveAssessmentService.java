@@ -12,6 +12,7 @@ import org.flickit.assessment.core.application.domain.Space;
 import org.flickit.assessment.core.application.port.in.assessment.MoveAssessmentUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.CountAssessmentsPort;
 import org.flickit.assessment.core.application.port.out.assessment.UpdateAssessmentPort;
+import org.flickit.assessment.core.application.port.out.assessmentuserrole.LoadAssessmentUsersPort;
 import org.flickit.assessment.core.application.port.out.space.LoadSpacePort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +34,7 @@ public class MoveAssessmentService implements MoveAssessmentUseCase {
     private final UpdateAssessmentPort updateAssessmentPort;
     private final CountAssessmentsPort countAssessmentsPort;
     private final AppSpecProperties appSpecProperties;
+    private final LoadAssessmentUsersPort loadAssessmentUsersPort;
 
     @Override
     public void moveAssessment(Param param) {
@@ -52,16 +54,20 @@ public class MoveAssessmentService implements MoveAssessmentUseCase {
         var targetSpace = loadSpacePort.loadById(targetSpaceId)
             .orElseThrow(() -> new ResourceNotFoundException(MOVE_ASSESSMENT_TARGET_SPACE_NOT_FOUND));
 
-        validateTargetSpace(targetSpace, param.getCurrentUserId());
+        validateTargetSpace(targetSpace, param.getCurrentUserId(), param.getAssessmentId());
         updateAssessmentPort.updateSpace(param.getAssessmentId(), targetSpaceId);
     }
 
-    private void validateTargetSpace(Space targetSpace, UUID currentUserId) {
+    private void validateTargetSpace(Space targetSpace, UUID currentUserId, UUID assessmentId) {
         if (!targetSpace.getOwnerId().equals(currentUserId))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         if (targetSpace.getType().equals(SpaceType.BASIC) &&
             countAssessmentsPort.countSpaceAssessments(targetSpace.getId()) >= appSpecProperties.getSpace().getMaxBasicSpaceAssessments())
             throw new UpgradeRequiredException(MOVE_ASSESSMENT_TARGET_SPACE_ASSESSMENTS_MAX);
+
+        if (targetSpace.getType().equals(SpaceType.BASIC)
+            && targetSpace.isDefault() && loadAssessmentUsersPort.hasNonSpaceOwnerAccess(assessmentId))
+            throw new ValidationException(MOVE_ASSESSMENT_ASSESSMENT_NON_OWNER_ACCESS_NOT_ALLOWED);
     }
 }

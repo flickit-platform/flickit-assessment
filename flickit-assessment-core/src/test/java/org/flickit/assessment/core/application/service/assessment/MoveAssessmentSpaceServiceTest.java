@@ -10,6 +10,7 @@ import org.flickit.assessment.core.application.domain.Space;
 import org.flickit.assessment.core.application.port.in.assessment.MoveAssessmentUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.CountAssessmentsPort;
 import org.flickit.assessment.core.application.port.out.assessment.UpdateAssessmentPort;
+import org.flickit.assessment.core.application.port.out.assessmentuserrole.LoadAssessmentUsersPort;
 import org.flickit.assessment.core.application.port.out.space.LoadSpacePort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,8 +27,7 @@ import static org.flickit.assessment.common.application.domain.assessment.Assess
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_SPACE_ID_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
-import static org.flickit.assessment.core.test.fixture.application.SpaceMother.createBasicSpaceWithOwnerId;
-import static org.flickit.assessment.core.test.fixture.application.SpaceMother.createPremiumSpaceWithOwnerId;
+import static org.flickit.assessment.core.test.fixture.application.SpaceMother.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
@@ -50,6 +50,9 @@ class MoveAssessmentSpaceServiceTest {
     @Mock
     private CountAssessmentsPort countAssessmentsPort;
 
+    @Mock
+    private LoadAssessmentUsersPort loadAssessmentUsersPort;
+
     @Spy
     private AppSpecProperties appSpecProperties = appSpecProperties();
 
@@ -68,7 +71,8 @@ class MoveAssessmentSpaceServiceTest {
         verifyNoInteractions(loadSpacePort,
             appSpecProperties,
             countAssessmentsPort,
-            updateAssessmentPort);
+            updateAssessmentPort,
+            loadAssessmentUsersPort);
     }
 
     @Test
@@ -83,7 +87,8 @@ class MoveAssessmentSpaceServiceTest {
         verify(loadSpacePort, never()).loadById(anyLong());
         verifyNoInteractions(appSpecProperties,
             countAssessmentsPort,
-            updateAssessmentPort);
+            updateAssessmentPort,
+            loadAssessmentUsersPort);
     }
 
     @Test
@@ -100,7 +105,8 @@ class MoveAssessmentSpaceServiceTest {
         verify(loadSpacePort, never()).loadById(anyLong());
         verifyNoInteractions(appSpecProperties,
             countAssessmentsPort,
-            updateAssessmentPort);
+            updateAssessmentPort,
+            loadAssessmentUsersPort);
     }
 
     @Test
@@ -117,7 +123,8 @@ class MoveAssessmentSpaceServiceTest {
         verify(loadSpacePort, never()).loadById(anyLong());
         verifyNoInteractions(appSpecProperties,
             countAssessmentsPort,
-            updateAssessmentPort);
+            updateAssessmentPort,
+            loadAssessmentUsersPort);
     }
 
     @Test
@@ -132,7 +139,8 @@ class MoveAssessmentSpaceServiceTest {
 
         verifyNoInteractions(appSpecProperties,
             countAssessmentsPort,
-            updateAssessmentPort);
+            updateAssessmentPort,
+            loadAssessmentUsersPort);
     }
 
     @Test
@@ -149,7 +157,8 @@ class MoveAssessmentSpaceServiceTest {
 
         verifyNoInteractions(appSpecProperties,
             countAssessmentsPort,
-            updateAssessmentPort);
+            updateAssessmentPort,
+            loadAssessmentUsersPort);
     }
 
     @Test
@@ -163,6 +172,27 @@ class MoveAssessmentSpaceServiceTest {
 
         var throwable = assertThrows(UpgradeRequiredException.class, () -> service.moveAssessment(param));
         assertEquals(MOVE_ASSESSMENT_TARGET_SPACE_ASSESSMENTS_MAX, throwable.getMessage());
+
+        verify(appSpecProperties).getSpace();
+        verifyNoInteractions(updateAssessmentPort,
+            loadAssessmentUsersPort);
+    }
+
+    @Test
+    void testMoveAssessment_whenTargetSpaceIsDefaultAndOtherUsersHaveAssessmentAccess_thenThrowValidationDeniedException() {
+        targetSpace = createDefaultSpaceWithOwnerId(param.getCurrentUserId());
+
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MOVE_ASSESSMENT))
+            .thenReturn(true);
+        when(loadSpacePort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(currentSpace));
+        when(loadSpacePort.loadById(param.getTargetSpaceId())).thenReturn(Optional.of(targetSpace));
+        when(countAssessmentsPort.countSpaceAssessments(targetSpace.getId()))
+            .thenReturn(0);
+        when(loadAssessmentUsersPort.hasNonSpaceOwnerAccess(param.getAssessmentId()))
+            .thenReturn(true);
+
+        var throwable = assertThrows(ValidationException.class, () -> service.moveAssessment(param));
+        assertEquals(MOVE_ASSESSMENT_ASSESSMENT_NON_OWNER_ACCESS_NOT_ALLOWED, throwable.getMessageKey());
 
         verify(appSpecProperties).getSpace();
         verifyNoInteractions(updateAssessmentPort);
@@ -180,6 +210,7 @@ class MoveAssessmentSpaceServiceTest {
 
         verify(appSpecProperties).getSpace();
         verify(updateAssessmentPort).updateSpace(param.getAssessmentId(), param.getTargetSpaceId());
+        verifyNoInteractions(loadAssessmentUsersPort);
     }
 
     @Test
@@ -195,6 +226,7 @@ class MoveAssessmentSpaceServiceTest {
         verify(updateAssessmentPort).updateSpace(param.getAssessmentId(), param.getTargetSpaceId());
 
         verifyNoInteractions(countAssessmentsPort,
+            loadAssessmentUsersPort,
             appSpecProperties);
     }
 
