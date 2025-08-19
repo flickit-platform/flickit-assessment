@@ -7,7 +7,6 @@ import org.flickit.assessment.scenario.test.users.spaceuseraccess.SpaceUserAcces
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -85,7 +84,7 @@ class DeleteSpaceScenarioTest extends AbstractScenarioTest {
     @Test
     void deleteSpace_defaultSpace() {
         // Get the user's default space identifier
-        var defaultSpaceId = loadSpaceByOwnerId(context.getCurrentUser().getUserId()).getFirst().getId();
+        var defaultSpaceId = loadDefaultSpaceByOwnerId(context.getCurrentUser().getUserId()).getId();
 
         // Delete space
         var response = spaceHelper.delete(context, defaultSpaceId);
@@ -120,8 +119,12 @@ class DeleteSpaceScenarioTest extends AbstractScenarioTest {
         return UUID.fromString(createUserResponse.path("userId"));
     }
 
-    private List<SpaceJpaEntity> loadSpaceByOwnerId(UUID ownerId) {
-        return jpaTemplate.search(SpaceJpaEntity.class,
-            (root, query, cb) -> cb.equal(root.get("ownerId"), ownerId));
+    private SpaceJpaEntity loadDefaultSpaceByOwnerId(UUID ownerId) {
+        return jpaTemplate.findSingle(SpaceJpaEntity.class,
+            (root, query, cb) ->
+                cb.and(
+                    cb.equal(root.get(SpaceJpaEntity.Fields.ownerId), ownerId),
+                    cb.equal(root.get(SpaceJpaEntity.Fields.isDefault), true))
+        );
     }
 }

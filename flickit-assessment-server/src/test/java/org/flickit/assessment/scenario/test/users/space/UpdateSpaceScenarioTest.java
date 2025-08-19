@@ -6,7 +6,6 @@ import org.flickit.assessment.scenario.test.AbstractScenarioTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -139,7 +138,7 @@ class UpdateSpaceScenarioTest extends AbstractScenarioTest {
     @Test
     void updateSpace_defaultSpace_title() {
         // Get the default space of the user
-        var defaultSpace = loadSpaceByOwnerId(context.getCurrentUser().getUserId()).getFirst();
+        var defaultSpace = loadDefaultSpaceByOwnerId(context.getCurrentUser().getUserId());
 
         // Update the default space's title
         var updateRequest = updateSpaceRequestDto(b -> b.title("new title"));
@@ -162,8 +161,12 @@ class UpdateSpaceScenarioTest extends AbstractScenarioTest {
         return id.longValue();
     }
 
-    private List<SpaceJpaEntity> loadSpaceByOwnerId(UUID ownerId) {
-        return jpaTemplate.search(SpaceJpaEntity.class,
-            (root, query, cb) -> cb.equal(root.get("ownerId"), ownerId));
+    private SpaceJpaEntity loadDefaultSpaceByOwnerId(UUID ownerId) {
+        return jpaTemplate.findSingle(SpaceJpaEntity.class,
+            (root, query, cb) ->
+                cb.and(
+                    cb.equal(root.get(SpaceJpaEntity.Fields.ownerId), ownerId),
+                    cb.equal(root.get(SpaceJpaEntity.Fields.isDefault), true))
+        );
     }
 }
