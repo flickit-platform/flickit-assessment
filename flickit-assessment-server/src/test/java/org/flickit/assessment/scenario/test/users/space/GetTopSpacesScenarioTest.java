@@ -68,7 +68,7 @@ class GetTopSpacesScenarioTest extends AbstractScenarioTest {
     @Test
     void topSpaces_whenOnlyOneBasicSpaceExistsAndItIsFull_failure() {
         // A basic space (default space) created upon user creation
-        var spaceId = loadSpaceByOwnerId(context.getCurrentUser().getUserId()).getFirst().getId();
+        var spaceId = loadDefaultSpaceByOwnerId(context.getCurrentUser().getUserId()).getId();
         createAssessments(spaceId, appSpecProperties.getSpace().getMaxBasicSpaces());
 
         var response = spaceHelper.getTopSpaces(context)
@@ -83,7 +83,7 @@ class GetTopSpacesScenarioTest extends AbstractScenarioTest {
     @Test
     void topSpaces_whenBasicSpaceIsFullAndPremiumSpaceExists_thenOnlyReturnPremiumSpace() {
         // A basic space (default space) created upon user creation
-        var defaultSpaceId = loadSpaceByOwnerId(context.getCurrentUser().getUserId()).getFirst().getId();
+        var defaultSpaceId = loadDefaultSpaceByOwnerId(context.getCurrentUser().getUserId()).getId();
         createAssessments(defaultSpaceId, appSpecProperties.getSpace().getMaxBasicSpaces());
         var premiumSpaceTitle = "Premium Space Title";
         var premiumSpaceId = createPremiumSpace(premiumSpaceTitle);
@@ -106,7 +106,7 @@ class GetTopSpacesScenarioTest extends AbstractScenarioTest {
     @Test
     void topSpaces_whenOnePremiumAndOneBasicSpaceWithCapacityExist_thenReturnPremiumAsSelected() {
         // A basic space (default space) created upon user creation
-        var defaultSpaceId = loadSpaceByOwnerId(context.getCurrentUser().getUserId()).getFirst().getId();
+        var defaultSpaceId = loadDefaultSpaceByOwnerId(context.getCurrentUser().getUserId()).getId();
         var premiumSpaceTitle = "Premium Space Title";
         var premiumSpaceId = createPremiumSpace(premiumSpaceTitle);
 
@@ -131,7 +131,7 @@ class GetTopSpacesScenarioTest extends AbstractScenarioTest {
     @Test
     void topSpaces_whenTwoBasicSpacesOneFullOneWithCapacityExist_thenOnlyReturnTheOneWithCapacity() {
         // A basic space (default space) created upon user creation
-        var defaultSpace = loadSpaceByOwnerId(context.getCurrentUser().getUserId()).getFirst();
+        var defaultSpace = loadDefaultSpaceByOwnerId(context.getCurrentUser().getUserId());
         var basicSpaceTitle2 = "Basic Space 2";
         var basicSpaceId2 = createBasicSpace(basicSpaceTitle2);
         createAssessments(basicSpaceId2, appSpecProperties.getSpace().getMaxBasicSpaceAssessments());
@@ -262,8 +262,12 @@ class GetTopSpacesScenarioTest extends AbstractScenarioTest {
         return id.longValue();
     }
 
-    private List<SpaceJpaEntity> loadSpaceByOwnerId(UUID ownerId) {
-        return jpaTemplate.search(SpaceJpaEntity.class,
-                (root, query, cb) -> cb.equal(root.get("ownerId"), ownerId));
+    private SpaceJpaEntity loadDefaultSpaceByOwnerId(UUID ownerId) {
+        return jpaTemplate.findSingle(SpaceJpaEntity.class,
+            (root, query, cb) ->
+                cb.and(
+                    cb.equal(root.get(SpaceJpaEntity.Fields.ownerId), ownerId),
+                    cb.equal(root.get(SpaceJpaEntity.Fields.isDefault), true))
+        );
     }
 }

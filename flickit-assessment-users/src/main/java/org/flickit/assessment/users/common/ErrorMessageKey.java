@@ -102,6 +102,7 @@ public class ErrorMessageKey {
 
     public static final String DELETE_SPACE_ASSESSMENT_EXIST = "delete-space.assessments.exist";
     public static final String DELETE_SPACE_SPACE_ID_NOT_NULL = "delete-space.spaceId.notNull";
+    public static final String DELETE_SPACE_DEFAULT_SPACE_NOT_ALLOWED = "delete-space.defaultSpace.notAllowed";
 
     public static final String GET_SPACE_INVITEES_SPACE_ID_NOT_NULL = "get-space-invitees.spaceId.notNull";
     public static final String GET_SPACE_INVITEES_SIZE_MIN = "get-space-invitees.size.min";
