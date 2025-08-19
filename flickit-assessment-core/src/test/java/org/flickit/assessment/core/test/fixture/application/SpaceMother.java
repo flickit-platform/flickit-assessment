@@ -25,8 +25,8 @@ public class SpaceMother {
     private static Space createSpaceWithTypeAndOwnerId(SpaceType type, UUID ownerId){
         return new Space(++id,
             "title",
-            UUID.randomUUID(),
-            SpaceType.BASIC,
+            ownerId,
+            type,
             false,
             LocalDateTime.now());
     }
