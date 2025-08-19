@@ -2,7 +2,7 @@ package org.flickit.assessment.users.test.fixture.application;
 
 import org.flickit.assessment.common.application.domain.space.SpaceType;
 import org.flickit.assessment.users.application.domain.Space;
-import org.flickit.assessment.users.application.domain.SpaceStatus;
+import org.flickit.assessment.common.application.domain.space.SpaceStatus;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

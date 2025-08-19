@@ -1,7 +1,7 @@
 package org.flickit.assessment.users.application.service.user;
 
 import org.flickit.assessment.common.application.domain.space.SpaceType;
-import org.flickit.assessment.users.application.domain.SpaceStatus;
+import org.flickit.assessment.common.application.domain.space.SpaceStatus;
 import org.flickit.assessment.users.application.domain.SpaceUserAccess;
 import org.flickit.assessment.users.application.port.in.user.CreateUserUseCase;
 import org.flickit.assessment.users.application.port.out.space.CreateSpacePort;

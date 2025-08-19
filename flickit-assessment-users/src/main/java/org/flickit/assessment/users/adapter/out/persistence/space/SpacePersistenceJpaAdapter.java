@@ -8,7 +8,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.users.space.SpaceJpaEntity;
 import org.flickit.assessment.data.jpa.users.space.SpaceJpaRepository;
 import org.flickit.assessment.data.jpa.users.spaceuseraccess.SpaceUserAccessJpaEntity;
-import org.flickit.assessment.users.application.domain.SpaceStatus;
+import org.flickit.assessment.common.application.domain.space.SpaceStatus;
 import org.flickit.assessment.users.application.port.out.space.*;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.UpdateSpaceLastSeenPort;
 import org.springframework.data.domain.PageRequest;
