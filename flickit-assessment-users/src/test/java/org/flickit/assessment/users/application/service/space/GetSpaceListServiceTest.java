@@ -53,7 +53,7 @@ class GetSpaceListServiceTest {
             Sort.Direction.DESC.name().toLowerCase(),
             spacePortList.size());
 
-        when(loadSpaceListPort.loadSpaceList(param.getCurrentUserId(), paginatedResponse.getPage(), param.getSize())).thenReturn(paginatedResponse);
+        when(loadSpaceListPort.loadNonDefaultSpaceList(param.getCurrentUserId(), paginatedResponse.getPage(), param.getSize())).thenReturn(paginatedResponse);
 
         var result = service.getSpaceList(param);
 
@@ -93,7 +93,7 @@ class GetSpaceListServiceTest {
             Sort.Direction.ASC.name().toLowerCase(),
             0);
 
-        when(loadSpaceListPort.loadSpaceList(param.getCurrentUserId(), paginatedResponse.getPage(), param.getSize())).thenReturn(paginatedResponse);
+        when(loadSpaceListPort.loadNonDefaultSpaceList(param.getCurrentUserId(), paginatedResponse.getPage(), param.getSize())).thenReturn(paginatedResponse);
 
         var result = service.getSpaceList(param);
 

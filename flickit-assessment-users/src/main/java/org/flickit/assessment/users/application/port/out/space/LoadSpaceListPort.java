@@ -16,7 +16,7 @@ public interface LoadSpaceListPort {
      * @param page          The page number (0-based).
      * @return A paginated response containing space information along with metadata.
      */
-    PaginatedResponse<Result> loadSpaceList(UUID currentUserId, int size, int page);
+    PaginatedResponse<Result> loadNonDefaultSpaceList(UUID currentUserId, int size, int page);
 
     /**
      * Loads a list of spaces for the specified user.
