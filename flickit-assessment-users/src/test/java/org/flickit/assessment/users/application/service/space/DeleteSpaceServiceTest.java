@@ -17,7 +17,7 @@ import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.users.common.ErrorMessageKey.DELETE_SPACE_ASSESSMENT_EXIST;
-import static org.flickit.assessment.users.common.ErrorMessageKey.DELETE_SPACE_SPACE_DEFAULT_SPACE;
+import static org.flickit.assessment.users.common.ErrorMessageKey.DELETE_SPACE_DEFAULT_SPACE_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -47,7 +47,7 @@ class DeleteSpaceServiceTest {
         var throwable = assertThrows(AccessDeniedException.class, () -> service.deleteSpace(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
-        verifyNoInteractions(loadSpacePort, countSpaceAssessmentPort, deleteSpacePort);
+        verifyNoInteractions(countSpaceAssessmentPort, deleteSpacePort);
     }
 
     @Test
@@ -56,7 +56,7 @@ class DeleteSpaceServiceTest {
         when(loadSpacePort.checkIsDefault(param.getId())).thenReturn(true);
 
         var throwable = assertThrows(ValidationException.class, ()-> service.deleteSpace(param));
-        assertEquals(DELETE_SPACE_SPACE_DEFAULT_SPACE, throwable.getMessageKey());
+        assertEquals(DELETE_SPACE_DEFAULT_SPACE_NOT_ALLOWED, throwable.getMessageKey());
 
         verifyNoInteractions(countSpaceAssessmentPort, deleteSpacePort);
     }
