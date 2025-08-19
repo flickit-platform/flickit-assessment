@@ -373,4 +373,6 @@ public class ErrorMessageKey {
 
     public static final String GET_ASSESSMENT_MOVE_TARGETS_ASSESSMENT_ID_NOT_NULL = "get-assessment-move-targets.assessmentId.notNull";
     public static final String GET_ASSESSMENT_MOVE_TARGETS_SPACE_NOT_FOUND = "get-assessment-move-targets.space.notFound";
+    public static final String GET_ASSESSMENT_MOVE_TARGETS_NO_SPACE_AVAILABLE = "get-assessment-move-targets.noSpace.available";
+    public static final String GET_ASSESSMENT_MOVE_TARGETS_NO_SPACE_FOUND = "get-assessment-move-targets.user_has_no_space";
 }
