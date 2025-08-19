@@ -9,7 +9,7 @@ import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.domain.Space;
 import org.flickit.assessment.core.application.port.in.assessment.MoveAssessmentUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.CountAssessmentsPort;
-import org.flickit.assessment.core.application.port.out.assessment.MoveAssessmentPort;
+import org.flickit.assessment.core.application.port.out.assessment.UpdateAssessmentPort;
 import org.flickit.assessment.core.application.port.out.space.LoadSpacePort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -45,7 +45,7 @@ class UpdateAssessmentSpaceServiceTest {
     private LoadSpacePort loadSpacePort;
 
     @Mock
-    private MoveAssessmentPort moveAssessmentPort;
+    private UpdateAssessmentPort updateAssessmentPort;
 
     @Mock
     private CountAssessmentsPort countAssessmentsPort;
@@ -68,7 +68,7 @@ class UpdateAssessmentSpaceServiceTest {
         verifyNoInteractions(loadSpacePort,
             appSpecProperties,
             countAssessmentsPort,
-            moveAssessmentPort);
+            updateAssessmentPort);
     }
 
     @Test
@@ -83,7 +83,7 @@ class UpdateAssessmentSpaceServiceTest {
         verify(loadSpacePort, never()).loadById(anyLong());
         verifyNoInteractions(appSpecProperties,
             countAssessmentsPort,
-            moveAssessmentPort);
+            updateAssessmentPort);
     }
 
     @Test
@@ -100,7 +100,7 @@ class UpdateAssessmentSpaceServiceTest {
         verify(loadSpacePort, never()).loadById(anyLong());
         verifyNoInteractions(appSpecProperties,
             countAssessmentsPort,
-            moveAssessmentPort);
+            updateAssessmentPort);
     }
 
     @Test
@@ -117,7 +117,7 @@ class UpdateAssessmentSpaceServiceTest {
         verify(loadSpacePort, never()).loadById(anyLong());
         verifyNoInteractions(appSpecProperties,
             countAssessmentsPort,
-            moveAssessmentPort);
+            updateAssessmentPort);
     }
 
     @Test
@@ -132,7 +132,7 @@ class UpdateAssessmentSpaceServiceTest {
 
         verifyNoInteractions(appSpecProperties,
             countAssessmentsPort,
-            moveAssessmentPort);
+            updateAssessmentPort);
     }
 
     @Test
@@ -149,7 +149,7 @@ class UpdateAssessmentSpaceServiceTest {
 
         verifyNoInteractions(appSpecProperties,
             countAssessmentsPort,
-            moveAssessmentPort);
+            updateAssessmentPort);
     }
 
     @Test
@@ -165,7 +165,7 @@ class UpdateAssessmentSpaceServiceTest {
         assertEquals(MOVE_ASSESSMENT_TARGET_SPACE_ASSESSMENTS_MAX, throwable.getMessage());
 
         verify(appSpecProperties).getSpace();
-        verifyNoInteractions(moveAssessmentPort);
+        verifyNoInteractions(updateAssessmentPort);
     }
 
     @Test
@@ -179,7 +179,7 @@ class UpdateAssessmentSpaceServiceTest {
         service.moveAssessment(param);
 
         verify(appSpecProperties).getSpace();
-        verify(moveAssessmentPort).moveAssessment(param.getAssessmentId(), param.getTargetSpaceId());
+        verify(updateAssessmentPort).updateSpace(param.getAssessmentId(), param.getTargetSpaceId());
     }
 
     @Test
@@ -192,7 +192,7 @@ class UpdateAssessmentSpaceServiceTest {
         when(loadSpacePort.loadById(param.getTargetSpaceId())).thenReturn(Optional.of(targetSpace));
 
         service.moveAssessment(param);
-        verify(moveAssessmentPort).moveAssessment(param.getAssessmentId(), param.getTargetSpaceId());
+        verify(updateAssessmentPort).updateSpace(param.getAssessmentId(), param.getTargetSpaceId());
 
         verifyNoInteractions(countAssessmentsPort,
             appSpecProperties);

@@ -53,8 +53,7 @@ public class AssessmentPersistenceJpaAdapter implements
     LoadAssessmentPort,
     DeleteAssessmentPort,
     CountAssessmentsPort,
-    LoadAssessmentQuestionsPort,
-    MoveAssessmentPort {
+    LoadAssessmentQuestionsPort {
 
     private final AssessmentJpaRepository repository;
     private final AssessmentResultJpaRepository resultRepository;
@@ -311,7 +310,7 @@ public class AssessmentPersistenceJpaAdapter implements
     }
 
     @Override
-    public void moveAssessment(UUID assessmentId, long spaceId) {
+    public void updateSpace(UUID assessmentId, long spaceId) {
         repository.updateSpaceId(assessmentId, spaceId);
     }
 }

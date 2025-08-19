@@ -11,7 +11,7 @@ import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.domain.Space;
 import org.flickit.assessment.core.application.port.in.assessment.MoveAssessmentUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.CountAssessmentsPort;
-import org.flickit.assessment.core.application.port.out.assessment.MoveAssessmentPort;
+import org.flickit.assessment.core.application.port.out.assessment.UpdateAssessmentPort;
 import org.flickit.assessment.core.application.port.out.space.LoadSpacePort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +30,7 @@ public class MoveAssessmentService implements MoveAssessmentUseCase {
 
     private final AssessmentAccessChecker assessmentAccessChecker;
     private final LoadSpacePort loadSpacePort;
-    private final MoveAssessmentPort moveAssessmentPort;
+    private final UpdateAssessmentPort updateAssessmentPort;
     private final CountAssessmentsPort countAssessmentsPort;
     private final AppSpecProperties appSpecProperties;
 
@@ -53,7 +53,7 @@ public class MoveAssessmentService implements MoveAssessmentUseCase {
             .orElseThrow(() -> new ResourceNotFoundException(MOVE_ASSESSMENT_TARGET_SPACE_NOT_FOUND));
 
         validateTargetSpace(targetSpace, param.getCurrentUserId());
-        moveAssessmentPort.moveAssessment(param.getAssessmentId(), targetSpaceId);
+        updateAssessmentPort.updateSpace(param.getAssessmentId(), targetSpaceId);
     }
 
     private void validateTargetSpace(Space targetSpace, UUID currentUserId) {
