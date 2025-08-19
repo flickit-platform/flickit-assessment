@@ -40,8 +40,8 @@ public class SpacePersistenceJpaAdapter implements
     private final SpaceJpaRepository repository;
 
     @Override
-    public PaginatedResponse<LoadSpaceListPort.Result> loadSpaceList(UUID currentUserId, int page, int size) {
-        var pageResult = repository.findByUserId(currentUserId, PageRequest.of(page, size));
+    public PaginatedResponse<LoadSpaceListPort.Result> loadNonDefaultSpaceList(UUID currentUserId, int page, int size) {
+        var pageResult = repository.findByUserIdAndIsDefaultFalse(currentUserId, PageRequest.of(page, size));
 
         List<LoadSpaceListPort.Result> items = pageResult.getContent().stream()
             .map(entity -> new LoadSpaceListPort.Result(
