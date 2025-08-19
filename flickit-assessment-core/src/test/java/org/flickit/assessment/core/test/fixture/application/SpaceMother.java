@@ -41,9 +41,13 @@ public class SpaceMother {
     }
 
     public static Space createDefaultSpace() {
+        return createDefaultSpaceWithOwnerId(UUID.randomUUID());
+    }
+
+    public static Space createDefaultSpaceWithOwnerId(UUID ownerId) {
         return new Space(++id,
             "title",
-            UUID.randomUUID(),
+            ownerId,
             SpaceType.BASIC,
             true,
             LocalDateTime.now());
