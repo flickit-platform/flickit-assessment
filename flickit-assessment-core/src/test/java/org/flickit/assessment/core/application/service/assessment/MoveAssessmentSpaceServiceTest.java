@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class UpdateAssessmentSpaceServiceTest {
+class MoveAssessmentSpaceServiceTest {
 
     @InjectMocks
     private MoveAssessmentService service;
@@ -58,7 +58,7 @@ class UpdateAssessmentSpaceServiceTest {
     private Space targetSpace = createBasicSpaceWithOwnerId(param.getCurrentUserId());
 
     @Test
-    void testUpdateAssessmentSpace_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
+    void testMoveAssessment_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MOVE_ASSESSMENT))
             .thenReturn(false);
 
@@ -72,7 +72,7 @@ class UpdateAssessmentSpaceServiceTest {
     }
 
     @Test
-    void testUpdateAssessmentSpace_whenCurrentSpaceDoesNotExist_thenThrowResourceNotFoundException() {
+    void testMoveAssessment_whenCurrentSpaceDoesNotExist_thenThrowResourceNotFoundException() {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MOVE_ASSESSMENT))
             .thenReturn(true);
         when(loadSpacePort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.empty());
@@ -87,7 +87,7 @@ class UpdateAssessmentSpaceServiceTest {
     }
 
     @Test
-    void testUpdateAssessmentSpace_whenUserIsNotAssessmentSpaceOwner_thenThrowAccessDeniedException() {
+    void testMoveAssessment_whenUserIsNotAssessmentSpaceOwner_thenThrowAccessDeniedException() {
         currentSpace = createBasicSpaceWithOwnerId(UUID.randomUUID());
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MOVE_ASSESSMENT))
@@ -104,7 +104,7 @@ class UpdateAssessmentSpaceServiceTest {
     }
 
     @Test
-    void testUpdateAssessmentSpace_whenCurrentSpaceAndTargetSpaceAreTheSame_thenThrowValidationException() {
+    void testMoveAssessment_whenCurrentSpaceAndTargetSpaceAreTheSame_thenThrowValidationException() {
         param = createParam(b -> b.targetSpaceId(currentSpace.getId()).currentUserId(currentSpace.getOwnerId()));
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MOVE_ASSESSMENT))
@@ -121,7 +121,7 @@ class UpdateAssessmentSpaceServiceTest {
     }
 
     @Test
-    void testUpdateAssessmentSpace_whenTargetSpaceDoesNotExist_thenThrowResourceNotFoundException() {
+    void testMoveAssessment_whenTargetSpaceDoesNotExist_thenThrowResourceNotFoundException() {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MOVE_ASSESSMENT))
             .thenReturn(true);
         when(loadSpacePort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(currentSpace));
@@ -136,7 +136,7 @@ class UpdateAssessmentSpaceServiceTest {
     }
 
     @Test
-    void testUpdateAssessmentSpace_whenUserIsNotTargetSpaceOwner_thenThrowAccessDeniedException() {
+    void testMoveAssessment_whenUserIsNotTargetSpaceOwner_thenThrowAccessDeniedException() {
         targetSpace = createBasicSpaceWithOwnerId(UUID.randomUUID());
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MOVE_ASSESSMENT))
@@ -153,7 +153,7 @@ class UpdateAssessmentSpaceServiceTest {
     }
 
     @Test
-    void testUpdateAssessmentSpace_whenTargetSpaceIsBasicAndFull_thenThrowValidationException() {
+    void testMoveAssessment_whenTargetSpaceIsBasicAndFull_thenThrowValidationException() {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MOVE_ASSESSMENT))
             .thenReturn(true);
         when(loadSpacePort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(currentSpace));
@@ -169,7 +169,7 @@ class UpdateAssessmentSpaceServiceTest {
     }
 
     @Test
-    void testUpdateAssessmentSpace_whenParametersAreValidAndTargetSpaceIsBasic_thenSuccessfulUpdate() {
+    void testMoveAssessment_whenParametersAreValidAndTargetSpaceIsBasic_thenSuccessfulUpdate() {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MOVE_ASSESSMENT))
             .thenReturn(true);
         when(loadSpacePort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(currentSpace));
@@ -183,7 +183,7 @@ class UpdateAssessmentSpaceServiceTest {
     }
 
     @Test
-    void testUpdateAssessmentSpace_whenParametersAreValidAndTargetSpaceIsPremium_thenSuccessfulUpdate() {
+    void testMoveAssessment_whenParametersAreValidAndTargetSpaceIsPremium_thenSuccessfulUpdate() {
         targetSpace = createPremiumSpaceWithOwnerId(param.getCurrentUserId());
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MOVE_ASSESSMENT))
