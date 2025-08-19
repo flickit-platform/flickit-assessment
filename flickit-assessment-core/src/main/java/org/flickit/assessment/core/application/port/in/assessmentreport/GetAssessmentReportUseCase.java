@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
+import org.flickit.assessment.core.application.domain.Space;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -54,6 +55,7 @@ public interface GetAssessmentReportUseCase {
                       MaturityLevel maturityLevel,
                       double confidenceValue,
                       Mode mode,
+                      SpaceResult space,
                       LocalDateTime creationTime) {
     }
 
@@ -140,5 +142,16 @@ public interface GetAssessmentReportUseCase {
     }
 
     record Mode(String code) {
+    }
+
+    record SpaceResult(long id,
+                       String title,
+                       boolean isDefault){
+
+        public static SpaceResult of(Space space) {
+            return new SpaceResult(space.getId(),
+                space.getTitle(),
+                space.isDefault());
+        }
     }
 }

@@ -23,6 +23,14 @@ public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> 
     boolean existsByIdAndDeletedFalseAndIsDefaultTrue(long spaceId);
 
     @Query("""
+            SELECT s
+            FROM SpaceJpaEntity as s
+            JOIN AssessmentJpaEntity as a ON a.spaceId = s.id
+            WHERE a.id = :assessmentId AND s.deleted = FALSE
+    """)
+    Optional<SpaceJpaEntity> findByAssessmentIdAndDeletedFalse(@Param("assessmentId") UUID assessmentId);
+
+    @Query("""
             SELECT s.ownerId
             FROM SpaceJpaEntity as s
             WHERE s.id = :id AND s.deleted = FALSE
@@ -129,4 +137,24 @@ public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> 
                 @Param("code") String code,
                 @Param("lastModificationTime") LocalDateTime lastModificationTime,
                 @Param("lastModifiedBy") UUID lastModifiedBy);
+
+    @Query("""
+            SELECT s.id
+            FROM SpaceJpaEntity s
+            WHERE s.ownerId = :userId AND s.isDefault = TRUE AND s.deleted = FALSE
+        """)
+    Optional<Long> loadDefaultSpaceIdByUserId(@Param("userId") UUID userId);
+
+    @Query("""
+        SELECT EXISTS (
+            SELECT 1
+            FROM SpaceJpaEntity s
+            JOIN AssessmentJpaEntity a ON a.spaceId = s.id
+            WHERE a.id = :assessmentId
+              AND s.isDefault = true
+              AND s.deleted = false
+        )
+        """)
+    boolean existsByAssessmentIdSpaceIsDefault(@Param("assessmentId") UUID assessmentId);
+
 }

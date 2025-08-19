@@ -40,7 +40,7 @@ public class AddSpaceMemberService implements AddSpaceMemberUseCase {
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         if (loadSpacePort.checkIsDefault(spaceId))
-            throw new ValidationException(ADD_SPACE_MEMBER_SPACE_DEFAULT_SPACE);
+            throw new ValidationException(ADD_SPACE_MEMBER_DEFAULT_SPACE_NOT_ALLOWED);
 
         UUID userId = loadUserPort.loadUserIdByEmail(param.getEmail())
             .orElseThrow(() -> new ResourceNotFoundException(USER_BY_EMAIL_NOT_FOUND));

@@ -8,7 +8,6 @@ import org.flickit.assessment.scenario.test.users.space.SpaceTestHelper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.List;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.exception.api.ErrorCodes.*;
@@ -153,7 +152,7 @@ class AddSpaceMemberScenarioTest extends AbstractScenarioTest {
     @Test
     void addSpaceMember_defaultSpace() {
         // Load the default Space identifier of the user
-        var defaultSpaceId = loadSpaceByOwnerId(context.getCurrentUser().getUserId()).getFirst().getId();
+        var defaultSpaceId = loadDefaultSpaceByOwnerId(context.getCurrentUser().getUserId()).getId();
 
         final int countBefore = jpaTemplate.count(SpaceUserAccessJpaEntity.class);
 
@@ -170,8 +169,12 @@ class AddSpaceMemberScenarioTest extends AbstractScenarioTest {
         assertEquals(countBefore, countAfter);
     }
 
-    private List<SpaceJpaEntity> loadSpaceByOwnerId(UUID ownerId) {
-        return jpaTemplate.search(SpaceJpaEntity.class,
-            (root, query, cb) -> cb.equal(root.get("ownerId"), ownerId));
+    private SpaceJpaEntity loadDefaultSpaceByOwnerId(UUID ownerId) {
+        return jpaTemplate.findSingle(SpaceJpaEntity.class,
+            (root, query, cb) ->
+                cb.and(
+                    cb.equal(root.get(SpaceJpaEntity.Fields.ownerId), ownerId),
+                    cb.equal(root.get(SpaceJpaEntity.Fields.isDefault), true))
+        );
     }
 }

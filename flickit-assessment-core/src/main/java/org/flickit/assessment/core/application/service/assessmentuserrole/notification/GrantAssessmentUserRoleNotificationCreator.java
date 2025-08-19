@@ -33,7 +33,7 @@ public class GrantAssessmentUserRoleNotificationCreator
 
     @Override
     public List<NotificationEnvelope> create(GrantAssessmentUserRoleNotificationCmd cmd) {
-        Optional<Assessment> assessment = loadAssessmentPort.getAssessmentById(cmd.assessmentId());
+        Optional<Assessment> assessment = loadAssessmentPort.loadById(cmd.assessmentId());
         Optional<User> user = loadUserPort.loadById(cmd.assignerUserId());
         var targetUser = loadUserPort.loadById(cmd.targetUserId())
             .map(x -> new NotificationEnvelope.User(x.getId(), x.getEmail()));

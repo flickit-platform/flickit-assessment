@@ -28,6 +28,7 @@ public class GetUsersMeRestController {
         return new GetUsersMeResponseDto(user.id(),
             user.displayName(),
             user.pictureLink(),
+            user.defaultSpaceId(),
             user.showSurvey());
     }
 }
