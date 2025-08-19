@@ -15,7 +15,7 @@ import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.users.common.ErrorMessageKey.DELETE_SPACE_ASSESSMENT_EXIST;
-import static org.flickit.assessment.users.common.ErrorMessageKey.DELETE_SPACE_SPACE_DEFAULT_SPACE;
+import static org.flickit.assessment.users.common.ErrorMessageKey.DELETE_SPACE_DEFAULT_SPACE_NOT_ALLOWED;
 
 @Service
 @Transactional
@@ -43,7 +43,7 @@ public class DeleteSpaceService implements DeleteSpaceUseCase {
 
     private void validateSpace(Param param) {
         if (loadSpacePort.checkIsDefault(param.getId()))
-            throw new ValidationException(DELETE_SPACE_SPACE_DEFAULT_SPACE);
+            throw new ValidationException(DELETE_SPACE_DEFAULT_SPACE_NOT_ALLOWED);
 
         if (countSpaceAssessmentPort.countAssessments(param.getId()) > 0)
             throw new ValidationException(DELETE_SPACE_ASSESSMENT_EXIST);
