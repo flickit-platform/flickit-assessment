@@ -32,7 +32,7 @@ class GetAssessmentMoveTargetsServiceTest {
 
     @Test
     void testGetAssessmentMoveTargets_whenSpaceDoesNotExist_thenThrowResourceNotFoundException() {
-        when(loadSpacePort.loadByAssessmentId(param.getCurrentUserId())).thenReturn(Optional.empty());
+        when(loadSpacePort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.empty());
 
         var exception = assertThrows(ResourceNotFoundException.class, () -> service.getSpaceList(param));
         assertEquals(GET_ASSESSMENT_MOVE_TARGETS_SPACE_NOT_FOUND, exception.getMessage());
