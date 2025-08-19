@@ -6,7 +6,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.users.application.domain.SpaceUserAccess;
 import org.flickit.assessment.users.application.port.in.spaceuseraccess.AddSpaceMemberUseCase;
-import org.flickit.assessment.users.application.port.out.space.CheckDefaultSpacePort;
+import org.flickit.assessment.users.application.port.out.space.LoadSpacePort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CreateSpaceUserAccessPort;
 import org.flickit.assessment.users.application.port.out.user.LoadUserPort;
@@ -39,7 +39,7 @@ class AddSpaceMemberServiceTest {
     private CheckSpaceAccessPort checkSpaceAccessPort;
 
     @Mock
-    private CheckDefaultSpacePort checkDefaultSpacePort;
+    private LoadSpacePort loadSpacePort;
 
     @Mock
     private CreateSpaceUserAccessPort createSpaceUserAccessPort;
@@ -52,7 +52,7 @@ class AddSpaceMemberServiceTest {
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
         when(loadUserPort.loadUserIdByEmail(param.getEmail())).thenReturn(Optional.of(userId));
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), userId)).thenReturn(false);
-        when(checkDefaultSpacePort.checkIsDefault(param.getSpaceId())).thenReturn(false);
+        when(loadSpacePort.checkIsDefault(param.getSpaceId())).thenReturn(false);
         var spaceUserAccessCaptor = ArgumentCaptor.forClass(SpaceUserAccess.class);
 
         service.addMember(param);
@@ -68,7 +68,7 @@ class AddSpaceMemberServiceTest {
     }
 
     @Test
-    void testAddSpaceMember_whenCurrentUserIsNotSpaceMember_thenThrowsAccessDeniedException() {
+    void testAddSpaceMember_whenCurrentUserIsNotSpaceMember_thenThrowAccessDeniedException() {
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.addMember(param));
@@ -78,20 +78,20 @@ class AddSpaceMemberServiceTest {
     }
 
     @Test
-    void testAddSpaceMember_whenSpaceIsDefault_thenThrowsValidationException() {
+    void testAddSpaceMember_whenSpaceIsDefault_thenThrowValidationException() {
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
-        when(checkDefaultSpacePort.checkIsDefault(param.getSpaceId())).thenReturn(true);
+        when(loadSpacePort.checkIsDefault(param.getSpaceId())).thenReturn(true);
 
         var throwable = assertThrows(ValidationException.class, () -> service.addMember(param));
-        assertEquals(ADD_SPACE_MEMBER_SPACE_DEFAULT_SPACE, throwable.getMessageKey());
+        assertEquals(ADD_SPACE_MEMBER_DEFAULT_SPACE_NOT_ALLOWED, throwable.getMessageKey());
 
         verifyNoInteractions(loadUserPort, createSpaceUserAccessPort);
     }
 
     @Test
-    void testAddSpaceMember_whenInviteeIsNotPlatformMember_thenThrowsResourceNotFoundException() {
+    void testAddSpaceMember_whenInviteeIsNotPlatformMember_thenThrowResourceNotFoundException() {
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
-        when(checkDefaultSpacePort.checkIsDefault(param.getSpaceId())).thenReturn(false);
+        when(loadSpacePort.checkIsDefault(param.getSpaceId())).thenReturn(false);
         when(loadUserPort.loadUserIdByEmail(param.getEmail())).thenReturn(Optional.empty());
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.addMember(param));
@@ -101,7 +101,7 @@ class AddSpaceMemberServiceTest {
     }
 
     @Test
-    void testAddSpaceMember_whenInviteeIsAlreadyMember_thenThrowsResourceAlreadyExistsException() {
+    void testAddSpaceMember_whenInviteeIsAlreadyMember_thenThrowResourceAlreadyExistsException() {
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
         when(loadUserPort.loadUserIdByEmail(param.getEmail())).thenReturn(Optional.of(userId));
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), userId)).thenReturn(true);

@@ -6,6 +6,7 @@ import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.InvalidStateException;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.util.MathUtils;
 import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.domain.report.AssessmentReportItem;
@@ -20,6 +21,7 @@ import org.flickit.assessment.core.application.port.out.advicenarration.LoadAdvi
 import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentQuestionsPort;
 import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
+import org.flickit.assessment.core.application.port.out.space.LoadSpacePort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,8 +31,10 @@ import java.util.function.Function;
 import static java.util.stream.Collectors.*;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_SPACE_ID_NOT_FOUND;
 import static org.flickit.assessment.common.exception.api.ErrorCodes.REPORT_UNPUBLISHED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_REPORT_REPORT_NOT_PUBLISHED;
+import static org.flickit.assessment.core.common.ErrorMessageKey.MATURITY_LEVEL_ID_NOT_FOUND;
 
 @Service
 @Transactional(readOnly = true)
@@ -44,6 +48,7 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
     private final LoadAssessmentQuestionsPort loadAssessmentQuestionsPort;
     private final LoadAdviceNarrationPort loadAdviceNarrationPort;
     private final LoadAdviceItemsPort loadAdviceItemsPort;
+    private final LoadSpacePort loadSpacePort;
 
     @Override
     public Result getAssessmentReport(Param param) {
@@ -92,14 +97,27 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
         var linkHash = optionalReport.map(AssessmentReport::getLinkHash)
             .orElse(null);
 
-        return new Result(toAssessment(assessment, assessmentKitItem, reportMetadata, maturityLevels, attributesCount, maturityLevelMap),
-            toSubjects(assessmentReportInfo.subjects(), maturityLevelMap, attributeMeasuresMap),
-            toAdvice(assessment.assessmentResultId(), Locale.of(assessment.language().name())),
+        var maxMaturityLevel = maturityLevels.stream()
+            .max(Comparator.comparingInt(MaturityLevel::index))
+            .orElseThrow(()-> new ResourceNotFoundException(MATURITY_LEVEL_ID_NOT_FOUND));
+
+        var subjects = toSubjects(assessmentReportInfo.subjects(), maturityLevelMap, attributeMeasuresMap);
+        boolean isAdvisable = subjects.stream()
+            .flatMap(s -> s.attributes().stream())
+            .anyMatch(a -> a.maturityLevel().id() != maxMaturityLevel.id());
+
+        var advice = toAdvice(assessment.assessmentResultId(), Locale.of(assessment.language().name()));
+        var space = loadSpacePort.loadByAssessmentId(param.getAssessmentId())
+            .orElseThrow(()-> new ResourceNotFoundException(COMMON_SPACE_ID_NOT_FOUND)); //Can't happen
+        return new Result(toAssessment(assessment, assessmentKitItem, reportMetadata, maturityLevels, attributesCount, maturityLevelMap, space),
+            subjects,
+            advice,
             toAssessmentProcess(reportMetadata),
             toPermissions(param.getAssessmentId(), published, param.getCurrentUserId()),
             toLanguage(assessment.language()),
             reportVisibility.name(),
-            linkHash);
+            linkHash,
+            isAdvisable);
     }
 
     private List<MaturityLevel> toMaturityLevels(AssessmentKitItem assessmentKitItem) {
@@ -124,7 +142,8 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
                                     AssessmentReportMetadata metadata,
                                     List<MaturityLevel> levels,
                                     int attributesCount,
-                                    Map<Long, MaturityLevel> maturityLevelMap) {
+                                    Map<Long, MaturityLevel> maturityLevelMap,
+                                    Space space) {
         return new Assessment(
             assessment.title(),
             metadata.intro(),
@@ -134,6 +153,7 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
             maturityLevelMap.get(assessment.maturityLevel().getId()),
             assessment.confidenceValue(),
             toMode(assessment.mode()),
+            SpaceResult.of(space),
             assessment.creationTime());
     }
 
@@ -202,7 +222,8 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
     private Advice toAdvice(UUID assessmentResultId, Locale locale) {
         var narration = loadAdviceNarrationPort.load(assessmentResultId);
         var adviceItems = loadAdviceItemsPort.loadAll(assessmentResultId);
-        return new Advice(narration, toAdviceItems(adviceItems, locale));
+
+        return Advice.of(narration, toAdviceItems(adviceItems, locale));
     }
 
     private List<AdviceItem> toAdviceItems(List<org.flickit.assessment.core.application.domain.AdviceItem> adviceItems, Locale locale) {

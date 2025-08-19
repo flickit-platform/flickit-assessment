@@ -150,6 +150,7 @@ public class ErrorMessageKey {
     public static final String GRANT_ASSESSMENT_USER_ROLE_ROLE_ID_NOT_NULL = "grant-assessment-user-role.roleId.notNull";
     public static final String GRANT_ASSESSMENT_USER_ROLE_ROLE_ID_NOT_FOUND = "grant-assessment-user-role.roleId.notFound";
     public static final String GRANT_ASSESSMENT_USER_ROLE_DUPLICATE_USER_ACCESS = "grant-assessment-user-role.duplicateUserAccess";
+    public static final String GRANT_ASSESSMENT_USER_ROLE_DEFAULT_SPACE_NOT_ALLOWED = "grant-assessment-user-role.defaultSpace.notAllowed";
 
     public static final String UPDATE_ASSESSMENT_USER_ROLE_ASSESSMENT_ID_NOT_NULL = "update-assessment-user-role.assessmentId.notNull";
     public static final String UPDATE_ASSESSMENT_USER_ROLE_USER_ID_NOT_NULL = "update-assessment-user-role.userId.notNull";
@@ -290,6 +291,7 @@ public class ErrorMessageKey {
     public static final String GRANT_ACCESS_TO_REPORT_ASSESSMENT_ID_NOT_NULL = "grant-access-to-report.assessmentId.notNull";
     public static final String GRANT_ACCESS_TO_REPORT_NOT_ALLOWED_CONTACT_ASSESSMENT_MANAGER = "grant-access-to-report.not-allowed.contact-assessment-manager";
     public static final String GRANT_ACCESS_TO_REPORT_USER_ALREADY_GRANTED = "grant-access-to-report.user-already-granted";
+    public static final String GRANT_ACCESS_TO_REPORT_DEFAULT_SPACE_NOT_ALLOWED = "grant-access-to-report.defaultSpace.notAllowed";
 
     public static final String GET_GRAPHICAL_REPORT_USERS_ASSESSMENT_ID_NOT_NULL = "get-graphical-report-users.assessmentId.notNull";
 
@@ -364,6 +366,10 @@ public class ErrorMessageKey {
     public static final String UPDATE_ASSESSMENT_MODE_MODE_INVALID = "update-assessment-mode.mode.invalid";
 
     public static final String PREPARE_REPORT_ASSESSMENT_ID_NOT_NULL = "prepare-report.assessmentId.notNull";
+
+    public static final String GET_ASSESSMENT_NEXT_QUESTIONNAIRE_ASSESSMENT_ID_NOT_NULL = "get-assessment-next-questionnaire.assessmentId.notNull";
+    public static final String GET_ASSESSMENT_NEXT_QUESTIONNAIRE_QUESTIONNAIRE_ID_NOT_NULL = "get-assessment-next-questionnaire.questionnaireId.notNull";
+    public static final String GET_ASSESSMENT_NEXT_QUESTIONNAIRE_ASSESSMENT_RESULT_NOT_FOUND = "get-assessment-next-questionnaire.assessmentResult.notFound";
 
     public static final String MOVE_ASSESSMENT_ASSESSMENT_ID_NOT_NULL = "move-assessment.assessmentId.notNull";
     public static final String MOVE_ASSESSMENT_TARGET_SPACE_ID_NOT_NULL = "move-assessment.targetSpaceId.notNull";

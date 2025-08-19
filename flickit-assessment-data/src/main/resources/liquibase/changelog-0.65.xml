@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+    <changeSet id = "0.65-01" author="Maziyar Gerami">
+        <addColumn tableName="fau_space">
+            <column name="is_default" type="boolean" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.65-02" author="Maziyar Gerami">
+        <sql>
+            CREATE UNIQUE INDEX uq_fau_space_owner_default_true
+            ON fau_space (owner_id) WHERE is_default = true;
+        </sql>
+    </changeSet>
+
+    <changeSet id="0.65-03" author="Maziyar Gerami">
+        <sql>
+            INSERT INTO fau_space (id, code, title, type, owner_id, status, subscription_expiry, is_default,
+            creation_time, last_modification_time, created_by, last_modified_by, deleted, deletion_time)
+            SELECT
+            nextval('fau_space_id_seq'),
+            CASE
+            WHEN EXISTS (
+            SELECT 1 FROM fau_space s2
+            WHERE s2.owner_id = u.id AND s2.code = 'default-space'
+            )
+            THEN 'default-space-' || u.id::text
+            ELSE 'default-space'
+            END,
+            'Default Space', 0, u.id, 0, null, true, now(), now(), u.id, u.id, false, 0
+            FROM fau_user u
+            WHERE NOT EXISTS (
+            SELECT 1 FROM fau_space s WHERE s.owner_id = u.id AND s.is_default = true
+            );
+        </sql>
+        <sql>
+            INSERT INTO fau_space_user_access (
+            space_id, user_id, created_by, creation_time, last_seen
+            )
+            SELECT
+            s.id,
+            s.owner_id,
+            s.owner_id,
+            now(),
+            now()
+            FROM fau_space s
+            WHERE s.is_default = true
+            AND NOT EXISTS (
+            SELECT 1
+            FROM fau_space_user_access sua
+            WHERE sua.space_id = s.id AND sua.user_id = s.owner_id
+            );
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

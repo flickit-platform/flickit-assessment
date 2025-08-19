@@ -10,6 +10,7 @@ public class ErrorMessageKey {
     public static final String USER_BY_EMAIL_NOT_FOUND = "user-by-email.notFound";
     public static final String SPACE_ID_NOT_FOUND = "space.id.notFound";
     public static final String USER_ID_NOT_FOUND = "user.id.notFound";
+    public static final String DEFAULT_SPACE_NOT_FOUND = "default.space.notFound";
 
     public static final String GET_USER_BY_EMAIL_EMAIL_NOT_NULL = "get-user-by-email.email.notNull";
 
@@ -65,7 +66,7 @@ public class ErrorMessageKey {
     public static final String ADD_SPACE_MEMBER_SPACE_ID_NOT_NULL = "add-space-member.spaceId.notNull";
     public static final String ADD_SPACE_MEMBER_EMAIL_NOT_NULL = "add-space-member.email.notNull";
     public static final String ADD_SPACE_MEMBER_SPACE_USER_DUPLICATE = "add-space-member.spaceId.userId.duplicate";
-    public static final String ADD_SPACE_MEMBER_SPACE_DEFAULT_SPACE = "add-space-member.space.defaultSpace";
+    public static final String ADD_SPACE_MEMBER_DEFAULT_SPACE_NOT_ALLOWED = "add-space-member.defaultSpace.notAllowed";
 
     public static final String INVITE_SPACE_MEMBER_SPACE_ID_NOT_NULL = "invite-space-member.spaceId.notNull";
     public static final String INVITE_SPACE_MEMBER_EMAIL_NOT_NULL = "invite-space-member.email.notNull";
@@ -112,7 +113,7 @@ public class ErrorMessageKey {
     public static final String UPDATE_SPACE_TITLE_NOT_BLANK = "update-space.title.notBlank";
     public static final String UPDATE_SPACE_TITLE_SIZE_MIN = "update-space.title.size.min";
     public static final String UPDATE_SPACE_TITLE_SIZE_MAX = "update-space.title.size.max";
-    public static final String UPDATE_SPACE_SPACE_DEFAULT_SPACE = "update-space.space.defaultSpace";
+    public static final String UPDATE_SPACE_DEFAULT_SPACE_NOT_ALLOWED = "update-space.defaultSpace.notAllowed";
 
     public static final String LEAVE_SPACE_SPACE_ID_NOT_NULL = "leave-space.spaceId.notNull";
     public static final String LEAVE_SPACE_OWNER_NOT_ALLOWED = "leave-space.owner.notAllowed";
@@ -158,4 +159,7 @@ public class ErrorMessageKey {
     public static final String UPDATE_USER_PROFILE_PICTURE_NOT_NULL = "update-user-profile-picture.picture.notNull";
 
     public static final String GET_TOP_SPACES_NO_SPACE_AVAILABLE = "get-top-spaces.noSpace.available";
+    public static final String GET_TOP_SPACES_NO_SPACE_FOUND = "get-top-spaces.user_has_no_space";
+
+    public static final String SET_USER_SURVEY_DONT_SHOW_AGAIN_ASSESSMENT_ID_NOT_NULL = "set-user-survey-dont-show-again.assessmentId.notNull";
 }

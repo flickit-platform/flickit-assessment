@@ -25,6 +25,10 @@ public class GetUsersMeRestController {
     }
 
     private GetUsersMeResponseDto toResponseDto(GetUserProfileUseCase.UserProfile user) {
-        return new GetUsersMeResponseDto(user.id(), user.displayName(), user.pictureLink());
+        return new GetUsersMeResponseDto(user.id(),
+            user.displayName(),
+            user.pictureLink(),
+            user.defaultSpaceId(),
+            user.showSurvey());
     }
 }

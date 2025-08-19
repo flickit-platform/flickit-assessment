@@ -7,7 +7,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.users.application.domain.SpaceUserAccess;
 import org.flickit.assessment.users.application.port.in.spaceuseraccess.AddSpaceMemberUseCase;
-import org.flickit.assessment.users.application.port.out.space.CheckDefaultSpacePort;
+import org.flickit.assessment.users.application.port.out.space.LoadSpacePort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CreateSpaceUserAccessPort;
 import org.flickit.assessment.users.application.port.out.user.LoadUserPort;
@@ -26,7 +26,7 @@ import static org.flickit.assessment.users.common.ErrorMessageKey.*;
 public class AddSpaceMemberService implements AddSpaceMemberUseCase {
 
     private final CheckSpaceAccessPort checkSpaceAccessPort;
-    private final CheckDefaultSpacePort checkDefaultSpacePort;
+    private final LoadSpacePort loadSpacePort;
     private final LoadUserPort loadUserPort;
     private final CreateSpaceUserAccessPort createSpaceUserAccessPort;
 
@@ -35,7 +35,12 @@ public class AddSpaceMemberService implements AddSpaceMemberUseCase {
         UUID currentUserId = param.getCurrentUserId();
         long spaceId = param.getSpaceId();
 
-        validateSpace(spaceId, currentUserId);
+        boolean inviterHasAccess = checkSpaceAccessPort.checkIsMember(spaceId, currentUserId);
+        if (!inviterHasAccess)
+            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
+
+        if (loadSpacePort.checkIsDefault(spaceId))
+            throw new ValidationException(ADD_SPACE_MEMBER_DEFAULT_SPACE_NOT_ALLOWED);
 
         UUID userId = loadUserPort.loadUserIdByEmail(param.getEmail())
             .orElseThrow(() -> new ResourceNotFoundException(USER_BY_EMAIL_NOT_FOUND));
@@ -46,14 +51,5 @@ public class AddSpaceMemberService implements AddSpaceMemberUseCase {
 
         var access = new SpaceUserAccess(spaceId, userId, currentUserId, LocalDateTime.now());
         createSpaceUserAccessPort.persist(access);
-    }
-
-    private void validateSpace(long spaceId, UUID currentUserId) {
-        boolean inviterHasAccess = checkSpaceAccessPort.checkIsMember(spaceId, currentUserId);
-        if (!inviterHasAccess)
-            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
-
-        if (checkDefaultSpacePort.checkIsDefault(spaceId))
-            throw new ValidationException(ADD_SPACE_MEMBER_SPACE_DEFAULT_SPACE);
     }
 }

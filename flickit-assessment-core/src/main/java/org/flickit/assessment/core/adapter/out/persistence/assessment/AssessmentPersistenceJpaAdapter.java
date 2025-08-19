@@ -25,6 +25,7 @@ import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.flickit.assessment.data.jpa.users.space.SpaceJpaEntity;
+import org.flickit.assessment.data.jpa.users.space.SpaceJpaRepository;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -49,10 +50,8 @@ public class AssessmentPersistenceJpaAdapter implements
     CreateAssessmentPort,
     LoadAssessmentListPort,
     UpdateAssessmentPort,
-    GetAssessmentProgressPort,
     LoadAssessmentPort,
     DeleteAssessmentPort,
-    CheckAssessmentSpaceMembershipPort,
     CountAssessmentsPort,
     LoadAssessmentQuestionsPort,
     MoveAssessmentPort {
@@ -64,6 +63,7 @@ public class AssessmentPersistenceJpaAdapter implements
     private final AssessmentKitJpaRepository kitRepository;
     private final MaturityLevelJpaRepository maturityLevelRepository;
     private final KitCustomJpaRepository kitCustomRepository;
+    private final SpaceJpaRepository spaceRepository;
 
     @Override
     public UUID persist(CreateAssessmentPort.Param param) {
@@ -220,17 +220,17 @@ public class AssessmentPersistenceJpaAdapter implements
     }
 
     @Override
-    public GetAssessmentProgressPort.Result getProgress(UUID assessmentId) {
+    public LoadAssessmentPort.ProgressResult progress(UUID assessmentId) {
         var assessmentResult = resultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_PROGRESS_ASSESSMENT_NOT_FOUND));
 
         int answersCount = answerRepository.getCountByAssessmentResultId(assessmentResult.getId());
         int questionsCount = questionRepository.countByKitVersionId(assessmentResult.getKitVersionId());
-        return new GetAssessmentProgressPort.Result(assessmentId, answersCount, questionsCount);
+        return new LoadAssessmentPort.ProgressResult(assessmentId, answersCount, questionsCount);
     }
 
     @Override
-    public Optional<Assessment> getAssessmentById(UUID assessmentId) {
+    public Optional<Assessment> loadById(UUID assessmentId) {
         Optional<AssessmentKitSpaceJoinView> entity = repository.findByIdAndDeletedFalseWithKitAndSpace(assessmentId);
         if (entity.isEmpty())
             throw new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND);
@@ -303,6 +303,11 @@ public class AssessmentPersistenceJpaAdapter implements
         return Objects.equals(assessmentResultLangId, kitLangId)
             ? null
             : KitLanguage.valueOfById(assessmentResultLangId);
+    }
+
+    @Override
+    public boolean isInDefaultSpace(UUID assessmentId) {
+        return spaceRepository.existsByAssessmentIdSpaceIsDefault(assessmentId);
     }
 
     @Override

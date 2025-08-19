@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.users.application.domain.User;
 import org.flickit.assessment.users.application.port.in.user.GetUserProfileUseCase;
 import org.flickit.assessment.users.application.port.out.minio.CreateFileDownloadLinkPort;
+import org.flickit.assessment.users.application.port.out.space.LoadSpacePort;
 import org.flickit.assessment.users.application.port.out.user.LoadUserPort;
+import org.flickit.assessment.users.application.port.out.usersurvey.LoadUserSurveyPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,24 +21,37 @@ public class GetUserProfileService implements GetUserProfileUseCase {
 
     private final LoadUserPort loadUserPort;
     private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
+    private final LoadSpacePort loadSpacePort;
+    private final LoadUserSurveyPort loadUserSurveyPort;
 
     @Override
     public UserProfile getUserProfile(Param param) {
         User user = loadUserPort.loadUser(param.getCurrentUserId());
 
         String pictureLink = null;
-        if (user.getPicturePath() != null && !user.getPicturePath().trim().isBlank()) {
+        if (user.getPicturePath() != null && !user.getPicturePath().trim().isBlank())
             pictureLink = createFileDownloadLinkPort.createDownloadLink(user.getPicturePath(), EXPIRY_DURATION);
-        }
-        return mapToUserProfile(user, pictureLink);
+
+        long defaultSpaceId = loadSpacePort.loadDefaultSpaceId(param.getCurrentUserId());
+
+        var showSurvey = loadUserSurveyPort.loadByUserId(param.getCurrentUserId())
+            .map(s -> !(s.isCompleted() || s.isDontShowAgain()))
+            .orElse(true);
+
+        return mapToUserProfile(user,
+            pictureLink,
+            defaultSpaceId,
+            showSurvey);
     }
 
-    private UserProfile mapToUserProfile(User user, String pictureLink) {
+    private UserProfile mapToUserProfile(User user, String pictureLink, long defaultSpaceId, boolean showSurvey) {
         return new UserProfile(user.getId(),
             user.getEmail(),
             user.getDisplayName(),
             user.getBio(),
             user.getLinkedin(),
-            pictureLink);
+            pictureLink,
+            defaultSpaceId,
+            showSurvey);
     }
 }

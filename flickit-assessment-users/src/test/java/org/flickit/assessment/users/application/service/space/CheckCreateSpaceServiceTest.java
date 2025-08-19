@@ -1,7 +1,7 @@
 package org.flickit.assessment.users.application.service.space;
 
 import org.flickit.assessment.common.config.AppSpecProperties;
-import org.flickit.assessment.users.application.port.out.space.CheckCreateSpaceUseCase;
+import org.flickit.assessment.users.application.port.in.space.CheckCreateSpaceUseCase;
 import org.flickit.assessment.users.application.port.out.space.CountSpacesPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

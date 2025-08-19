@@ -1,6 +1,7 @@
 package org.flickit.assessment.users.application.port.in.user;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
@@ -20,6 +21,7 @@ public interface GetUserProfileUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
+        @Builder
         public Param(UUID currentUserId) {
             this.currentUserId = currentUserId;
             validateSelf();
@@ -31,6 +33,8 @@ public interface GetUserProfileUseCase {
                        String displayName,
                        String bio,
                        String linkedin,
-                       String pictureLink) {
+                       String pictureLink,
+                       long defaultSpaceId,
+                       boolean showSurvey) {
     }
 }

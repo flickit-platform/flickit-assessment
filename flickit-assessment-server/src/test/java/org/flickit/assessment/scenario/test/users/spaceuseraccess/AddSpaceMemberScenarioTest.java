@@ -1,11 +1,14 @@
 package org.flickit.assessment.scenario.test.users.spaceuseraccess;
 
 import org.flickit.assessment.common.exception.api.ErrorResponseDto;
+import org.flickit.assessment.data.jpa.users.space.SpaceJpaEntity;
 import org.flickit.assessment.data.jpa.users.spaceuseraccess.SpaceUserAccessJpaEntity;
 import org.flickit.assessment.scenario.test.AbstractScenarioTest;
 import org.flickit.assessment.scenario.test.users.space.SpaceTestHelper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.UUID;
 
 import static org.flickit.assessment.common.exception.api.ErrorCodes.*;
 import static org.flickit.assessment.scenario.fixture.request.AddSpaceMemberRequestDtoMother.addSpaceMemberRequestDto;
@@ -67,9 +70,9 @@ class AddSpaceMemberScenarioTest extends AbstractScenarioTest {
         createInviteeUserResponse.then()
             .statusCode(201);
 
-        final int countBefore = jpaTemplate.count(SpaceUserAccessJpaEntity.class);
         // Change currentUser which is not a member of the space
         context.getNextCurrentUser();
+        final int countBefore = jpaTemplate.count(SpaceUserAccessJpaEntity.class);
 
         // Add the created user to the space (by the new currentUser)
         var request = addSpaceMemberRequestDto(b -> b.email(createInviteeUserRequest.email()));
@@ -144,5 +147,34 @@ class AddSpaceMemberScenarioTest extends AbstractScenarioTest {
 
         int countAfter = jpaTemplate.count(SpaceUserAccessJpaEntity.class);
         assertEquals(countBefore, countAfter);
+    }
+
+    @Test
+    void addSpaceMember_defaultSpace() {
+        // Load the default Space identifier of the user
+        var defaultSpaceId = loadDefaultSpaceByOwnerId(context.getCurrentUser().getUserId()).getId();
+
+        final int countBefore = jpaTemplate.count(SpaceUserAccessJpaEntity.class);
+
+        var request = addSpaceMemberRequestDto(); // The request contains email which does not belong to any users
+        var response = spaceUserAccessHelper.create(context, defaultSpaceId, request);
+        var error = response.then()
+            .statusCode(400)
+            .extract().as(ErrorResponseDto.class);
+
+        assertEquals(INVALID_INPUT, error.code());
+        assertNotNull(error.message());
+
+        int countAfter = jpaTemplate.count(SpaceUserAccessJpaEntity.class);
+        assertEquals(countBefore, countAfter);
+    }
+
+    private SpaceJpaEntity loadDefaultSpaceByOwnerId(UUID ownerId) {
+        return jpaTemplate.findSingle(SpaceJpaEntity.class,
+            (root, query, cb) ->
+                cb.and(
+                    cb.equal(root.get(SpaceJpaEntity.Fields.ownerId), ownerId),
+                    cb.equal(root.get(SpaceJpaEntity.Fields.isDefault), true))
+        );
     }
 }

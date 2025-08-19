@@ -101,7 +101,7 @@ class CreateAssessmentServiceTest {
 
     @Test
     void testCreateAssessment_whenSpaceNotFound_thenThrowResourceNotFoundException() {
-        when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(Optional.empty());
+        when(loadSpacePort.loadById(param.getSpaceId())).thenReturn(Optional.empty());
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.createAssessment(param));
         assertEquals(COMMON_SPACE_ID_NOT_FOUND, throwable.getMessage());
@@ -120,7 +120,7 @@ class CreateAssessmentServiceTest {
 
     @Test
     void testCreateAssessment_whenCurrentUserIsNotSpaceMember_thenThrowUpgradeRequiredException() {
-        when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(Optional.of(space));
+        when(loadSpacePort.loadById(param.getSpaceId())).thenReturn(Optional.of(space));
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.createAssessment(param));
@@ -140,7 +140,7 @@ class CreateAssessmentServiceTest {
 
     @Test
     void testCreateAssessment_whenAssessmentKitNotFound_thenThrowResourceNotFoundException() {
-        when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(Optional.of(space));
+        when(loadSpacePort.loadById(param.getSpaceId())).thenReturn(Optional.of(space));
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
         when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId(), null)).thenReturn(Optional.empty());
 
@@ -160,7 +160,7 @@ class CreateAssessmentServiceTest {
 
     @Test
     void testCreateAssessment_whenCurrentUserDoesNotHaveAccessToKit_thenThrowValidationException() {
-        when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(Optional.of(space));
+        when(loadSpacePort.loadById(param.getSpaceId())).thenReturn(Optional.of(space));
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
         when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId(), null)).thenReturn(Optional.of(publicKit));
         when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.empty());
@@ -180,7 +180,7 @@ class CreateAssessmentServiceTest {
 
     @Test
     void testCreateAssessment_whenSpaceIsBasicAndExceedsMaxAssessmentLimits_thenThrowUpgradeRequiredException() {
-        when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(Optional.of(space));
+        when(loadSpacePort.loadById(param.getSpaceId())).thenReturn(Optional.of(space));
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
         when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.of(param.getKitId()));
         when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId(), null)).thenReturn(Optional.of(publicKit));
@@ -200,7 +200,7 @@ class CreateAssessmentServiceTest {
 
     @Test
     void testCreateAssessment_whenSpaceIsBasicAndAssessmentKitIsPrivate_thenThrowUpgradeRequiredException() {
-        when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(Optional.of(space));
+        when(loadSpacePort.loadById(param.getSpaceId())).thenReturn(Optional.of(space));
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
         when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.of(param.getKitId()));
         when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId(), null)).thenReturn(Optional.of(privateKit));
@@ -224,7 +224,7 @@ class CreateAssessmentServiceTest {
     void testCreateAssessment_whenSpaceIsPremiumAndSubscriptionIsExpired_thenThrowUpgradeRequiredException() {
         var premiumExpiredSpace = createExpiredPremiumSpace(UUID.randomUUID());
 
-        when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(Optional.of(premiumExpiredSpace));
+        when(loadSpacePort.loadById(param.getSpaceId())).thenReturn(Optional.of(premiumExpiredSpace));
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
         when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.of(param.getKitId()));
         when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId(), null)).thenReturn(Optional.of(publicKit));
@@ -246,7 +246,7 @@ class CreateAssessmentServiceTest {
         param = createParam(b -> b.lang("FA"));
         publicKit.setSupportedLanguages(List.of(KitLanguage.EN));
 
-        when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(Optional.of(space));
+        when(loadSpacePort.loadById(param.getSpaceId())).thenReturn(Optional.of(space));
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
         when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.of(param.getKitId()));
         when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId(), null)).thenReturn(Optional.of(publicKit));
@@ -273,7 +273,7 @@ class CreateAssessmentServiceTest {
         when(createAssessmentPort.persist(any(CreateAssessmentPort.Param.class))).thenReturn(expectedAssessmentId);
         when(createAssessmentResultPort.persist(any(CreateAssessmentResultPort.Param.class))).thenReturn(UUID.randomUUID());
         when(loadSubjectsPort.loadByKitVersionIdWithAttributes(publicKit.getKitVersion())).thenReturn(createSubjects());
-        when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(Optional.of(space));
+        when(loadSpacePort.loadById(param.getSpaceId())).thenReturn(Optional.of(space));
         when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId(), null)).thenReturn(Optional.of(publicKit));
         when(loadMaturityLevelsPort.loadAll(publicKit.getKitVersion())).thenReturn(MaturityLevelMother.allLevels());
 
@@ -316,7 +316,7 @@ class CreateAssessmentServiceTest {
         when(createAssessmentPort.persist(any(CreateAssessmentPort.Param.class))).thenReturn(expectedAssessmentId);
         List<Subject> expectedResponse = List.of();
         when(loadSubjectsPort.loadByKitVersionIdWithAttributes(publicKit.getKitVersion())).thenReturn(expectedResponse);
-        when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(Optional.of(space));
+        when(loadSpacePort.loadById(param.getSpaceId())).thenReturn(Optional.of(space));
         when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId(), null)).thenReturn(Optional.of(publicKit));
         when(loadMaturityLevelsPort.loadAll(publicKit.getKitVersion())).thenReturn(MaturityLevelMother.allLevels());
 

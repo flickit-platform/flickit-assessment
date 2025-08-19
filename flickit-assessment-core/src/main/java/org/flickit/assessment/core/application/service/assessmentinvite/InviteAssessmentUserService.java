@@ -48,7 +48,7 @@ public class InviteAssessmentUserService implements InviteAssessmentUserUseCase 
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_USER_ASSESSMENT_ROLE))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        var assessment = loadAssessmentPort.getAssessmentById(param.getAssessmentId()).orElseThrow();
+        var assessment = loadAssessmentPort.loadById(param.getAssessmentId()).orElseThrow();
 
         var user = loadUserPort.loadByEmail(param.getEmail());
         var creationTime = LocalDateTime.now();
