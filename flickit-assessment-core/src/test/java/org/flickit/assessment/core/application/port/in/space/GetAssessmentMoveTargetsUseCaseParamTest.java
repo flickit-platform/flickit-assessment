@@ -16,7 +16,7 @@ class GetAssessmentMoveTargetsUseCaseParamTest {
     @Test
     void testGetAssessmentMoveTargetsUseCaseParam_assessmentIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.currentUserId(null)));
+            () -> createParam(b -> b.assessmentId(null)));
         assertThat(throwable).hasMessage("assessmentId: " + GET_ASSESSMENT_MOVE_TARGETS_ASSESSMENT_ID_NOT_NULL);
     }
 
