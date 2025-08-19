@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.users.application.port.in.space.DeleteSpaceUseCase;
-import org.flickit.assessment.users.application.port.out.space.CheckDefaultSpacePort;
 import org.flickit.assessment.users.application.port.out.space.CountSpaceAssessmentPort;
 import org.flickit.assessment.users.application.port.out.space.DeleteSpacePort;
 import org.flickit.assessment.users.application.port.out.space.LoadSpacePort;
@@ -43,7 +42,7 @@ public class DeleteSpaceService implements DeleteSpaceUseCase {
     }
 
     private void validateSpace(Param param) {
-        if (checkDefaultSpacePort.checkIsDefault(param.getId()))
+        if (loadSpacePort.checkIsDefault(param.getId()))
             throw new ValidationException(DELETE_SPACE_SPACE_DEFAULT_SPACE);
 
         if (countSpaceAssessmentPort.countAssessments(param.getId()) > 0)

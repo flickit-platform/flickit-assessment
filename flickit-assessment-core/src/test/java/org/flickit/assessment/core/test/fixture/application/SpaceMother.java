@@ -46,8 +46,6 @@ public class SpaceMother {
             UUID.randomUUID(),
             SpaceType.BASIC,
             true,
-            ownerId,
-            type,
             LocalDateTime.now());
     }
 

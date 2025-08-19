@@ -3,12 +3,9 @@ package org.flickit.assessment.users.application.service.space;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.users.application.port.in.space.DeleteSpaceUseCase;
-import org.flickit.assessment.users.application.port.out.space.CheckDefaultSpacePort;
 import org.flickit.assessment.users.application.port.out.space.CountSpaceAssessmentPort;
 import org.flickit.assessment.users.application.port.out.space.DeleteSpacePort;
 import org.flickit.assessment.users.application.port.out.space.LoadSpacePort;
-import org.junit.jupiter.api.DisplayName;
-import org.flickit.assessment.users.application.port.out.space.LoadSpaceOwnerPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,7 +18,8 @@ import java.util.function.Consumer;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.users.common.ErrorMessageKey.DELETE_SPACE_ASSESSMENT_EXIST;
 import static org.flickit.assessment.users.common.ErrorMessageKey.DELETE_SPACE_SPACE_DEFAULT_SPACE;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
@@ -35,7 +33,7 @@ class DeleteSpaceServiceTest {
     private LoadSpacePort loadSpacePort;
 
     @Mock
-    privateCountSpaceAssessmentPort countSpaceAssessmentPort;
+    private CountSpaceAssessmentPort countSpaceAssessmentPort;
 
     @Mock
     private DeleteSpacePort deleteSpacePort;

@@ -19,7 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.MOVE_ASSESSMENT;
-import static org.flickit.assessment.common.error.ErrorMessageKey.*;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_SPACE_ID_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 @Service
@@ -38,7 +39,7 @@ public class MoveAssessmentService implements MoveAssessmentUseCase {
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MOVE_ASSESSMENT))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        var currentSpace = loadSpacePort.loadAssessmentSpace(param.getAssessmentId())
+        var currentSpace = loadSpacePort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_SPACE_ID_NOT_FOUND));
 
         if (!param.getCurrentUserId().equals(currentSpace.getOwnerId()))
@@ -48,7 +49,7 @@ public class MoveAssessmentService implements MoveAssessmentUseCase {
         if (targetSpaceId.equals(currentSpace.getId()))
             throw new ValidationException(MOVE_ASSESSMENT_TARGET_SPACE_INVALID);
 
-        var targetSpace = loadSpacePort.loadSpace(targetSpaceId)
+        var targetSpace = loadSpacePort.loadById(targetSpaceId)
             .orElseThrow(() -> new ResourceNotFoundException(MOVE_ASSESSMENT_TARGET_SPACE_NOT_FOUND));
 
         validateTargetSpace(targetSpace, param.getCurrentUserId());
