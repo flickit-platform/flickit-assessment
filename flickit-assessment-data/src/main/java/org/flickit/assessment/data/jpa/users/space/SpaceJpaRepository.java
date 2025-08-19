@@ -156,13 +156,4 @@ public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> 
         )
         """)
     boolean existsByAssessmentIdSpaceIsDefault(@Param("assessmentId") UUID assessmentId);
-
-
-    @Query("""
-            SELECT s
-            FROM SpaceJpaEntity s
-            JOIN AssessmentJpaEntity a ON a.spaceId = s.id
-            WHERE a.id = :assessmentId AND s.deleted = FALSE and a.deleted = false
-        """)
-    Optional<SpaceJpaEntity> findSpaceByAssessmentId(@Param("assessmentId") UUID assessmentId);
 }
