@@ -119,4 +119,9 @@ public class AssessmentUserRolePersistenceJpaAdapter implements
             .map(e -> new FullUser(e.getUserId(), e.getDisplayName(), e.getEmail(), e.getPicturePath()))
             .toList();
     }
+
+    @Override
+    public boolean hasNonSpaceOwnerAccess(UUID assessmentId) {
+        return repository.existsNonSpaceOwnerAccessByAssessmentId(assessmentId);
+    }
 }

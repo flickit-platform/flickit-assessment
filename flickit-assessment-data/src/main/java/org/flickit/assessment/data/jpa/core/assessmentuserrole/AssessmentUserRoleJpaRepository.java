@@ -87,5 +87,5 @@ public interface AssessmentUserRoleJpaRepository extends JpaRepository<Assessmen
                 WHERE a.id = :assessmentId AND s.deleted = FALSE AND s.ownerId <> r.userId
             ) THEN TRUE ELSE FALSE END
         """)
-    boolean existsNonSpaceOwnerByAssessmentId(@Param("assessmentId") UUID assessmentId);
+    boolean existsNonSpaceOwnerAccessByAssessmentId(@Param("assessmentId") UUID assessmentId);
 }
