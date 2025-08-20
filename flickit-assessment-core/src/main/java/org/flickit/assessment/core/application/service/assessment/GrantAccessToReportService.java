@@ -19,7 +19,7 @@ import org.flickit.assessment.core.application.port.out.assessmentuserrole.Grant
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.LoadUserRoleForAssessmentPort;
 import org.flickit.assessment.core.application.port.out.space.CreateSpaceInvitePort;
 import org.flickit.assessment.core.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
-import org.flickit.assessment.core.application.port.out.spaceuseraccess.CreateAssessmentSpaceUserAccessPort;
+import org.flickit.assessment.core.application.port.out.spaceuseraccess.CreateSpaceUserAccessPort;
 import org.flickit.assessment.core.application.port.out.user.LoadUserPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,7 +51,7 @@ public class GrantAccessToReportService implements GrantAccessToReportUseCase {
     private final AppSpecProperties appSpecProperties;
     private final SendEmailPort sendEmailPort;
     private final CheckSpaceAccessPort checkSpaceAccessPort;
-    private final CreateAssessmentSpaceUserAccessPort createAssessmentSpaceUserAccessPort;
+    private final CreateSpaceUserAccessPort createSpaceUserAccessPort;
 
     private static final Duration EXPIRY_DURATION = Duration.ofDays(7);
 
@@ -78,9 +78,9 @@ public class GrantAccessToReportService implements GrantAccessToReportUseCase {
                     throw new ResourceAlreadyExistsException(GRANT_ACCESS_TO_REPORT_USER_ALREADY_GRANTED);
             } else {
                 if (!checkSpaceAccessPort.checkIsMember(assessment.getSpace().getId(), user.getId())) {
-                    var createSpaceAccessParam = new CreateAssessmentSpaceUserAccessPort.Param(
+                    var createSpaceAccessParam = new CreateSpaceUserAccessPort.CreateParam(
                         assessment.getId(), user.getId(), param.getCurrentUserId(), creationTime);
-                    createAssessmentSpaceUserAccessPort.persist(createSpaceAccessParam);
+                    createSpaceUserAccessPort.persistByAssessmentId(createSpaceAccessParam);
                 }
                 grantUserAssessmentRolePort.persist(param.getAssessmentId(), user.getId(), REPORT_VIEWER.getId());
             }

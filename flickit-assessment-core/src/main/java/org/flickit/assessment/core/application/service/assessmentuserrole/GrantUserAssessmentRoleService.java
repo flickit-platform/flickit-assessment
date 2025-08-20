@@ -10,7 +10,7 @@ import org.flickit.assessment.core.application.domain.notification.GrantAssessme
 import org.flickit.assessment.core.application.port.in.assessmentuserrole.GrantUserAssessmentRoleUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.GrantUserAssessmentRolePort;
-import org.flickit.assessment.core.application.port.out.spaceuseraccess.CreateAssessmentSpaceUserAccessPort;
+import org.flickit.assessment.core.application.port.out.spaceuseraccess.CreateSpaceUserAccessPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,7 +27,7 @@ public class GrantUserAssessmentRoleService implements GrantUserAssessmentRoleUs
 
     private final GrantUserAssessmentRolePort grantUserAssessmentRolePort;
     private final AssessmentAccessChecker assessmentAccessChecker;
-    private final CreateAssessmentSpaceUserAccessPort createSpaceUserAccessPort;
+    private final CreateSpaceUserAccessPort createSpaceUserAccessPort;
     private final LoadAssessmentPort loadAssessmentPort;
 
     @Override
@@ -40,7 +40,7 @@ public class GrantUserAssessmentRoleService implements GrantUserAssessmentRoleUs
             throw new ValidationException(GRANT_ASSESSMENT_USER_ROLE_DEFAULT_SPACE_NOT_ALLOWED);
 
         if (!loadAssessmentPort.isAssessmentSpaceMember(param.getAssessmentId(), param.getUserId()))
-            createSpaceUserAccessPort.persist(toCreateSpaceAccessPortParam(param));
+            createSpaceUserAccessPort.persistByAssessmentId(toCreateSpaceAccessPortParam(param));
 
         grantUserAssessmentRolePort.persist(param.getAssessmentId(), param.getUserId(), param.getRoleId());
 
@@ -52,8 +52,8 @@ public class GrantUserAssessmentRoleService implements GrantUserAssessmentRoleUs
         );
     }
 
-    private CreateAssessmentSpaceUserAccessPort.Param toCreateSpaceAccessPortParam(Param param) {
-        return new CreateAssessmentSpaceUserAccessPort.Param(param.getAssessmentId(),
+    private CreateSpaceUserAccessPort.CreateParam toCreateSpaceAccessPortParam(Param param) {
+        return new CreateSpaceUserAccessPort.CreateParam(param.getAssessmentId(),
             param.getUserId(),
             param.getCurrentUserId(),
             LocalDateTime.now());
