@@ -79,6 +79,14 @@ public interface AssessmentUserRoleJpaRepository extends JpaRepository<Assessmen
                                               @Param("roleIds") List<Integer> roleIds);
 
     @Query("""
+            SELECT
+                u.userId
+            FROM AssessmentUserRoleJpaEntity u
+            WHERE u.assessmentId = :assessmentId
+        """)
+    List<UUID> findAllUserIds(@Param("assessmentId") UUID assessmentId);
+
+    @Query("""
             SELECT CASE WHEN EXISTS (
                 SELECT 1
                 FROM SpaceJpaEntity s
