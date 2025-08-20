@@ -7,6 +7,7 @@ import org.flickit.assessment.common.exception.UpgradeRequiredException;
 import org.flickit.assessment.core.application.domain.Space;
 import org.flickit.assessment.core.application.port.in.space.GetAssessmentMoveTargetsUseCase;
 import org.flickit.assessment.core.application.port.in.space.GetAssessmentMoveTargetsUseCase.Param;
+import org.flickit.assessment.core.application.port.out.assessmentuserrole.LoadAssessmentUsersPort;
 import org.flickit.assessment.core.application.port.out.space.LoadSpaceListPort;
 import org.flickit.assessment.core.application.port.out.space.LoadSpacePort;
 import org.flickit.assessment.core.test.fixture.application.SpaceMother;
@@ -28,6 +29,7 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.flickit.assessment.core.application.port.in.space.GetAssessmentMoveTargetsUseCase.*;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_MOVE_TARGETS_NO_SPACE_AVAILABLE;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_MOVE_TARGETS_SPACE_NOT_FOUND;
+import static org.flickit.assessment.core.test.fixture.application.SpaceMother.createDefaultSpaceWithOwnerId;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -43,15 +45,18 @@ class GetAssessmentMoveTargetsServiceTest {
     @Mock
     private LoadSpaceListPort loadSpaceListPort;
 
+    @Mock
+    private LoadAssessmentUsersPort loadAssessmentUsersPort;
+
     @Spy
     private final AppSpecProperties appSpecProperties = appSpecProperties();
 
     private final Param param = createParam(GetAssessmentMoveTargetsUseCase.Param.ParamBuilder::build);
     private final int maxBasicAssessments = 1;
 
-    private final Space currentSpace = SpaceMother.createDefaultSpaceWithOwner(param.getCurrentUserId());
-    private final Space premiumSpace = SpaceMother.createPremiumSpaceWithOwner(param.getCurrentUserId());
-    private final Space basicSpace = SpaceMother.createBasicSpaceWithOwner(param.getCurrentUserId());
+    private final Space currentSpace = createDefaultSpaceWithOwnerId(param.getCurrentUserId());
+    private final Space premiumSpace = SpaceMother.createPremiumSpaceWithOwnerId(param.getCurrentUserId());
+    private final Space basicSpace = SpaceMother.createBasicSpaceWithOwnerId(param.getCurrentUserId());
 
     @Test
     void testGetAssessmentMoveTargets_whenSpaceDoesNotExist_thenThrowResourceNotFoundException() {
@@ -61,16 +66,18 @@ class GetAssessmentMoveTargetsServiceTest {
         assertEquals(GET_ASSESSMENT_MOVE_TARGETS_SPACE_NOT_FOUND, exception.getMessage());
 
         verifyNoInteractions(appSpecProperties,
-            loadSpaceListPort);
+            loadSpaceListPort,
+            loadAssessmentUsersPort);
     }
 
     @Test
     void testGetAssessmentMoveTargets_whenOneAndDefaultSpaceWithCapacityExists_thenReturnDefaultSpace() {
-        Space defaultSpace = SpaceMother.createDefaultSpaceWithOwner(param.getCurrentUserId());
+        Space defaultSpace = createDefaultSpaceWithOwnerId(param.getCurrentUserId());
         var resultItem = new LoadSpaceListPort.SpaceWithAssessmentCount(defaultSpace, 0);
 
         when(loadSpacePort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(currentSpace));
         when(loadSpaceListPort.loadSpaceList(param.getCurrentUserId())).thenReturn(List.of(resultItem));
+        when(loadAssessmentUsersPort.hasNonSpaceOwnerAccess(param.getAssessmentId())).thenReturn(false);
 
         var result = service.getSpaceList(param);
 
@@ -107,6 +114,8 @@ class GetAssessmentMoveTargetsServiceTest {
         assertFalse(returnedItem.isDefault());
 
         verify(appSpecProperties, times(1)).getSpace();
+
+        verifyNoInteractions(loadAssessmentUsersPort);
     }
 
     @Test
@@ -120,6 +129,8 @@ class GetAssessmentMoveTargetsServiceTest {
         assertEquals(GET_ASSESSMENT_MOVE_TARGETS_NO_SPACE_AVAILABLE, throwable.getMessage());
 
         verify(appSpecProperties, times(1)).getSpace();
+
+        verifyNoInteractions(loadAssessmentUsersPort);
     }
 
     @Test
@@ -137,6 +148,8 @@ class GetAssessmentMoveTargetsServiceTest {
         assertFalse(items.getFirst().isDefault());
 
         verify(appSpecProperties, times(1)).getSpace();
+
+        verifyNoInteractions(loadAssessmentUsersPort);
     }
 
     @Test
@@ -160,17 +173,24 @@ class GetAssessmentMoveTargetsServiceTest {
         assertFalse(returnedItem.isDefault());
 
         verify(appSpecProperties, times(1)).getSpace();
+        verifyNoInteractions(loadAssessmentUsersPort);
     }
 
     @Test
     void testGetAssessmentMoveTargets_whenOnePremiumAndOneBasicSpaceWithCapacityExist_thenReturnBothAndPremiumSpaceIsSelected() {
+        var defaulthSpace = createDefaultSpaceWithOwnerId(param.getCurrentUserId());
+
         var basicSpaceItem = new LoadSpaceListPort.SpaceWithAssessmentCount(basicSpace, 0);
+        var defaultSpaceItem = new LoadSpaceListPort.SpaceWithAssessmentCount(defaulthSpace, 0);
         var premiumSpaceItem = new LoadSpaceListPort.SpaceWithAssessmentCount(premiumSpace, 0);
-        var portResult = List.of(basicSpaceItem, premiumSpaceItem);
+        var notOwnerBasicSpaceItem = new LoadSpaceListPort.SpaceWithAssessmentCount(SpaceMother.createBasicSpaceWithOwnerId(UUID.randomUUID()), 0);
+        var portResult = List.of(basicSpaceItem, premiumSpaceItem, defaultSpaceItem, notOwnerBasicSpaceItem);
+        var expectedItems = List.of(basicSpaceItem, premiumSpaceItem);
 
         when(loadSpacePort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(currentSpace));
         when(loadSpaceListPort.loadSpaceList(param.getCurrentUserId()))
             .thenReturn(portResult);
+        when(loadAssessmentUsersPort.hasNonSpaceOwnerAccess(param.getAssessmentId())).thenReturn(true);
 
         var result = service.getSpaceList(param);
         var items = result.items();
@@ -185,7 +205,7 @@ class GetAssessmentMoveTargetsServiceTest {
         assertTrue(selectedItem.selected());
         assertFalse(selectedItem.isDefault());
         assertThat(items)
-            .zipSatisfy(portResult, (expected, actual) -> {
+            .zipSatisfy(expectedItems, (expected, actual) -> {
                 assertEquals(expected.id(), actual.space().getId());
                 assertEquals(expected.title(), actual.space().getTitle());
                 assertEquals(expected.type().code(), actual.space().getType().getCode());
@@ -194,11 +214,12 @@ class GetAssessmentMoveTargetsServiceTest {
         assertThat(items).filteredOn(Result.SpaceListItem::selected).hasSize(1);
 
         verify(appSpecProperties, times(1)).getSpace();
+        verify(loadAssessmentUsersPort, times(1)).hasNonSpaceOwnerAccess(any());
     }
 
     @Test
     void testGetAssessmentMoveTargets_whenTwoBasicSpacesOneFullOneWithCapacityExist_thenReturnSpaceWithCapacity() {
-        var basicSpaceWithCapacity = SpaceMother.createBasicSpaceWithOwner(param.getCurrentUserId());
+        var basicSpaceWithCapacity = SpaceMother.createBasicSpaceWithOwnerId(param.getCurrentUserId());
         var basicWithCapacity = new LoadSpaceListPort.SpaceWithAssessmentCount(basicSpaceWithCapacity, 0);
         var fullBasicSpace = new LoadSpaceListPort.SpaceWithAssessmentCount(basicSpace, maxBasicAssessments);
 
@@ -217,6 +238,7 @@ class GetAssessmentMoveTargetsServiceTest {
         assertFalse(returnedItem.isDefault());
 
         verify(appSpecProperties, times(1)).getSpace();
+        verifyNoInteractions(loadAssessmentUsersPort);
     }
 
     @Test
@@ -224,11 +246,11 @@ class GetAssessmentMoveTargetsServiceTest {
         var limit = 10;
         var basicSpaces = IntStream.range(0, 6)
             .mapToObj(i -> new LoadSpaceListPort.SpaceWithAssessmentCount(
-                SpaceMother.createBasicSpaceWithOwner(param.getCurrentUserId()), 0))
+                SpaceMother.createBasicSpaceWithOwnerId(param.getCurrentUserId()), 0))
             .toList();
         var premiumSpaces = IntStream.range(0, 5)
             .mapToObj(i -> new LoadSpaceListPort.SpaceWithAssessmentCount(
-                SpaceMother.createPremiumSpaceWithOwner(param.getCurrentUserId()), 0))
+                SpaceMother.createPremiumSpaceWithOwnerId(param.getCurrentUserId()), 0))
             .toList();
         var portResult = Stream.concat(basicSpaces.stream(), premiumSpaces.stream()).toList();
 
@@ -261,9 +283,9 @@ class GetAssessmentMoveTargetsServiceTest {
     @Test
     void testGetAssessmentMoveTargets_whenMultiplePremiumSpacesExist_thenReturnAllAndOneSelected() {
         var premiumSpaceItem1 = new LoadSpaceListPort.SpaceWithAssessmentCount(premiumSpace, 0);
-        var anotherPremiumSpace = SpaceMother.createPremiumSpaceWithOwner(param.getCurrentUserId());
+        var anotherPremiumSpace = SpaceMother.createPremiumSpaceWithOwnerId(param.getCurrentUserId());
         var premiumSpaceItem2 = new LoadSpaceListPort.SpaceWithAssessmentCount(anotherPremiumSpace, 0);
-        var otherPremiumSpace = SpaceMother.createPremiumSpaceWithOwner(param.getCurrentUserId());
+        var otherPremiumSpace = SpaceMother.createPremiumSpaceWithOwnerId(param.getCurrentUserId());
         var premiumSpaceItem3 = new LoadSpaceListPort.SpaceWithAssessmentCount(otherPremiumSpace, 0);
         var portResult = List.of(premiumSpaceItem1, premiumSpaceItem2, premiumSpaceItem3);
         var expectedItems = List.of(premiumSpaceItem2, premiumSpaceItem3);
@@ -291,9 +313,9 @@ class GetAssessmentMoveTargetsServiceTest {
     @Test
     void testGetAssessmentMoveTargets_whenMultipleBasicSpacesExist_thenReturnAllAndOneSelected() {
         var basicSpaceItem1 = new LoadSpaceListPort.SpaceWithAssessmentCount(basicSpace, 0);
-        var anotherBasicSpace = SpaceMother.createBasicSpaceWithOwner(param.getCurrentUserId());
+        var anotherBasicSpace = SpaceMother.createBasicSpaceWithOwnerId(param.getCurrentUserId());
         var basicSpaceItem2 = new LoadSpaceListPort.SpaceWithAssessmentCount(anotherBasicSpace, 0);
-        var otherBasicSpace = SpaceMother.createBasicSpaceWithOwner(param.getCurrentUserId());
+        var otherBasicSpace = SpaceMother.createBasicSpaceWithOwnerId(param.getCurrentUserId());
         var basicSpaceItem3 = new LoadSpaceListPort.SpaceWithAssessmentCount(otherBasicSpace, 0);
         var portResult = List.of(basicSpaceItem1, basicSpaceItem2, basicSpaceItem3);
 

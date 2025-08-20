@@ -121,12 +121,12 @@ public class AssessmentUserRolePersistenceJpaAdapter implements
     }
 
     @Override
-    public List<UUID> loadAllUserIds(UUID assessmentId) {
-        return repository.findAllUserIds(assessmentId);
+    public boolean hasNonSpaceOwnerAccess(UUID assessmentId) {
+        return repository.existsNonSpaceOwnerAccessByAssessmentId(assessmentId);
     }
 
     @Override
-    public boolean hasNonSpaceOwnerAccess(UUID assessmentId) {
-        return repository.existsNonSpaceOwnerAccessByAssessmentId(assessmentId);
+    public List<UUID> loadAllUserIds(UUID assessmentId) {
+        return repository.findAllUserIds(assessmentId);
     }
 }

@@ -9,6 +9,7 @@ import org.flickit.assessment.common.exception.UpgradeRequiredException;
 import org.flickit.assessment.core.application.domain.Space;
 import org.flickit.assessment.core.application.port.in.space.GetAssessmentMoveTargetsUseCase;
 import org.flickit.assessment.core.application.port.in.space.GetAssessmentMoveTargetsUseCase.Result.SpaceListItem;
+import org.flickit.assessment.core.application.port.out.assessmentuserrole.LoadAssessmentUsersPort;
 import org.flickit.assessment.core.application.port.out.space.LoadSpaceListPort;
 import org.flickit.assessment.core.application.port.out.space.LoadSpaceListPort.SpaceWithAssessmentCount;
 import org.flickit.assessment.core.application.port.out.space.LoadSpacePort;
@@ -31,6 +32,7 @@ public class GetAssessmentMoveTargetsService implements GetAssessmentMoveTargets
     private final LoadSpacePort loadSpacePort;
     private final LoadSpaceListPort loadSpaceListPort;
     private final AppSpecProperties appSpecProperties;
+    private final LoadAssessmentUsersPort loadAssessmentUsersPort;
 
     @Override
     public Result getSpaceList(Param param) {
@@ -41,8 +43,7 @@ public class GetAssessmentMoveTargetsService implements GetAssessmentMoveTargets
         if (loadedSpaces.isEmpty())
             throw new InvalidStateException(GET_ASSESSMENT_MOVE_TARGETS_NO_SPACE_FOUND); // Can't happen
 
-        final int maxBasicAssessments = appSpecProperties.getSpace().getMaxBasicSpaceAssessments();
-        var spaces = Optional.of(extractSpacesWithCapacity(loadedSpaces, space.getId(), maxBasicAssessments))
+        var spaces = Optional.of(extractSpacesWithCapacity(loadedSpaces, space.getId(), param))
             .filter(list -> !list.isEmpty())
             .map(list -> list.size() == 1
                 ? List.of(toSpaceListItem(list.getFirst().space()))
@@ -52,11 +53,19 @@ public class GetAssessmentMoveTargetsService implements GetAssessmentMoveTargets
         return new Result(spaces);
     }
 
-    private List<SpaceWithAssessmentCount> extractSpacesWithCapacity(List<SpaceWithAssessmentCount> items, long currentSpaceId, int maxBasicAssessments) {
+    private List<SpaceWithAssessmentCount> extractSpacesWithCapacity(List<SpaceWithAssessmentCount> items, long currentSpaceId, Param param) {
+        final int maxBasicAssessments = appSpecProperties.getSpace().getMaxBasicSpaceAssessments();
         return items.stream()
-            .filter(item -> item.space().getId() != currentSpaceId
-                && (item.space().getType() == SpaceType.PREMIUM
-                || (item.space().getType() == SpaceType.BASIC && item.assessmentCount() < maxBasicAssessments)))
+            .filter(item -> {
+                boolean isEligibleBasicSpace = !item.space().isDefault()
+                    && (item.space().getType() == SpaceType.BASIC && item.assessmentCount() < maxBasicAssessments);
+                boolean isEligibleDefaultSpace = item.space().isDefault() && item.space().getType() == SpaceType.BASIC
+                    && !loadAssessmentUsersPort.hasNonSpaceOwnerAccess(param.getAssessmentId());
+
+                return (item.space().getOwnerId().equals(param.getCurrentUserId()) && item.space().getId() != currentSpaceId)
+                    && (item.space().getType() == SpaceType.PREMIUM
+                    || isEligibleDefaultSpace || isEligibleBasicSpace);
+            })
             .limit(SPACES_LIMIT)
             .toList();
     }
