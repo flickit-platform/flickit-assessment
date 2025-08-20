@@ -376,5 +376,5 @@ public class ErrorMessageKey {
     public static final String MOVE_ASSESSMENT_TARGET_SPACE_NOT_FOUND = "move-assessment.targetSpace.notFound";
     public static final String MOVE_ASSESSMENT_TARGET_SPACE_INVALID = "move-assessment.targetSpace.invalid";
     public static final String MOVE_ASSESSMENT_TARGET_SPACE_ASSESSMENTS_MAX = "move-assessment.targetSpaceAssessments.max";
-    public static final String MOVE_ASSESSMENT_ASSESSMENT_NON_OWNER_ACCESS_NOT_ALLOWED = "move-assessment.assessmentNonOwnerAccess.notAllowed";
+    public static final String MOVE_ASSESSMENT_ASSESSMENT_NON_OWNER_ACCESS_NOT_ALLOWED = "move-assessment.assessmentAccessibleByOthers.notAllowed";
 }
