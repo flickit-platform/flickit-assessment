@@ -10,6 +10,7 @@ import org.flickit.assessment.core.application.domain.Space;
 import org.flickit.assessment.core.application.port.in.space.GetAssessmentMoveTargetsUseCase;
 import org.flickit.assessment.core.application.port.in.space.GetAssessmentMoveTargetsUseCase.Result.SpaceListItem;
 import org.flickit.assessment.core.application.port.out.space.LoadSpaceListPort;
+import org.flickit.assessment.core.application.port.out.space.LoadSpaceListPort.SpaceWithAssessmentCount;
 import org.flickit.assessment.core.application.port.out.space.LoadSpacePort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +26,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 @RequiredArgsConstructor
 public class GetAssessmentMoveTargetsService implements GetAssessmentMoveTargetsUseCase {
 
-    private static final int TOP_SPACES_LIMIT = 10;
+    private static final int SPACES_LIMIT = 10;
 
     private final LoadSpacePort loadSpacePort;
     private final LoadSpaceListPort loadSpaceListPort;
@@ -51,12 +52,12 @@ public class GetAssessmentMoveTargetsService implements GetAssessmentMoveTargets
         return new Result(spaces);
     }
 
-    private List<LoadSpaceListPort.SpaceWithAssessmentCount> extractSpacesWithCapacity(List<LoadSpaceListPort.SpaceWithAssessmentCount> items, long currentSpaceId, int maxBasicAssessments) {
+    private List<SpaceWithAssessmentCount> extractSpacesWithCapacity(List<SpaceWithAssessmentCount> items, long currentSpaceId, int maxBasicAssessments) {
         return items.stream()
             .filter(item -> item.space().getId() != currentSpaceId
                 && (item.space().getType() == SpaceType.PREMIUM
                 || (item.space().getType() == SpaceType.BASIC && item.assessmentCount() < maxBasicAssessments)))
-            .limit(TOP_SPACES_LIMIT)
+            .limit(SPACES_LIMIT)
             .toList();
     }
 
@@ -69,7 +70,7 @@ public class GetAssessmentMoveTargetsService implements GetAssessmentMoveTargets
             space.isDefault());
     }
 
-    private static List<SpaceListItem> getMultipleBasicsAndPremium(List<LoadSpaceListPort.SpaceWithAssessmentCount> availableSpaces) {
+    private static List<SpaceListItem> getMultipleBasicsAndPremium(List<SpaceWithAssessmentCount> availableSpaces) {
         var selectedSpaceId = selectTargetSpace(availableSpaces);
 
         return availableSpaces.stream()
@@ -90,9 +91,9 @@ public class GetAssessmentMoveTargetsService implements GetAssessmentMoveTargets
             .toList();
     }
 
-    private static Long selectTargetSpace(List<LoadSpaceListPort.SpaceWithAssessmentCount> availableSpaces) {
+    private static Long selectTargetSpace(List<SpaceWithAssessmentCount> availableSpaces) {
         return availableSpaces.stream()
-            .map(LoadSpaceListPort.SpaceWithAssessmentCount::space)
+            .map(SpaceWithAssessmentCount::space)
             .collect(Collectors.collectingAndThen(
                 Collectors.toList(),
                 spaces -> spaces.stream()
