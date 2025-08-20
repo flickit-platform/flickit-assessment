@@ -2,13 +2,13 @@ package org.flickit.assessment.users.adapter.out.persistence.space;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.application.domain.space.SpaceStatus;
 import org.flickit.assessment.common.application.domain.space.SpaceType;
 import org.flickit.assessment.common.exception.InvalidStateException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.users.space.SpaceJpaEntity;
 import org.flickit.assessment.data.jpa.users.space.SpaceJpaRepository;
 import org.flickit.assessment.data.jpa.users.spaceuseraccess.SpaceUserAccessJpaEntity;
-import org.flickit.assessment.users.application.domain.SpaceStatus;
 import org.flickit.assessment.users.application.port.out.space.*;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.UpdateSpaceLastSeenPort;
 import org.springframework.data.domain.PageRequest;
@@ -102,7 +102,7 @@ public class SpacePersistenceJpaAdapter implements
 
     @Override
     public long loadDefaultSpaceId(UUID userId) {
-        return repository.loadDefaultSpaceIdByUserId(userId)
+        return repository.findDefaultSpaceIdByUserId(userId)
             .orElseThrow(() -> new InvalidStateException(DEFAULT_SPACE_NOT_FOUND)); // Can't happen
     }
 

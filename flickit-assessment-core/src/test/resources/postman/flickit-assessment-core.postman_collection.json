@@ -380,6 +380,36 @@
 					"response": []
 				},
 				{
+					"name": "Get Assessment Move Targets",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/c77948bf-29e2-4975-bef9-f2cd0b64d68a/move-targets",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"c77948bf-29e2-4975-bef9-f2cd0b64d68a",
+								"move-targets"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Get Comparable Assessment List",
 					"protocolProfileBehavior": {
 						"disabledSystemHeaders": {}

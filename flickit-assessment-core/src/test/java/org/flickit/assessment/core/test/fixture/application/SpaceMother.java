@@ -15,26 +15,22 @@ public class SpaceMother {
     }
 
     public static Space createBasicSpaceWithOwnerId(UUID ownerId) {
-        return createSpaceWithTypeAndOwnerId(SpaceType.BASIC, ownerId);
-    }
-
-    public static Space createPremiumSpaceWithOwnerId(UUID ownerId) {
-        return createSpaceWithTypeAndOwnerId(SpaceType.PREMIUM, ownerId);
-    }
-
-    private static Space createSpaceWithTypeAndOwnerId(SpaceType type, UUID ownerId){
         return new Space(++id,
             "title",
             ownerId,
-            type,
+            SpaceType.BASIC,
             false,
             LocalDateTime.now());
     }
 
     public static Space createPremiumSpace() {
+        return createPremiumSpaceWithOwnerId(UUID.randomUUID());
+    }
+
+    public static Space createPremiumSpaceWithOwnerId(UUID ownerId) {
         return new Space(++id,
             "title",
-            UUID.randomUUID(),
+            ownerId,
             SpaceType.PREMIUM,
             false,
             LocalDateTime.now());
