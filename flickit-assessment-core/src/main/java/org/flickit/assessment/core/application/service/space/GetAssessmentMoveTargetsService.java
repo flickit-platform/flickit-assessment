@@ -57,9 +57,9 @@ public class GetAssessmentMoveTargetsService implements GetAssessmentMoveTargets
         final int maxBasicAssessments = appSpecProperties.getSpace().getMaxBasicSpaceAssessments();
         return items.stream()
             .filter(item -> {
-                boolean isEligibleBasicSpace = !item.space().isDefault()
-                    && (item.space().getType() == SpaceType.BASIC && item.assessmentCount() < maxBasicAssessments);
-                boolean isEligibleDefaultSpace = item.space().isDefault() && item.space().getType() == SpaceType.BASIC
+                boolean isEligibleBasicSpace = item.space().getType() == SpaceType.BASIC && !item.space().isDefault()
+                    && item.assessmentCount() < maxBasicAssessments;
+                boolean isEligibleDefaultSpace = item.space().getType() == SpaceType.BASIC && item.space().isDefault()
                     && !loadAssessmentUsersPort.hasNonSpaceOwnerAccess(param.getAssessmentId());
 
                 return (item.space().getOwnerId().equals(param.getCurrentUserId()) && item.space().getId() != currentSpaceId)
