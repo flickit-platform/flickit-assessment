@@ -24,9 +24,9 @@ public interface LoadAssessmentUsersPort {
         }
     }
 
+    List<UUID> loadAllUserIds(UUID assessmentId);
+
     List<FullUser> loadAll(UUID assessmentId, List<Integer> roleIds);
 
     boolean hasNonSpaceOwnerAccess(UUID assessmentId);
-
-    List<UUID> loadAllUserIds(UUID assessmentId);
 }
