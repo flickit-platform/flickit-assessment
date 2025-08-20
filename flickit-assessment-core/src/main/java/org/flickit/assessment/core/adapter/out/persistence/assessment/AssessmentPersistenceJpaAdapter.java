@@ -308,4 +308,9 @@ public class AssessmentPersistenceJpaAdapter implements
     public boolean isInDefaultSpace(UUID assessmentId) {
         return spaceRepository.existsByAssessmentIdSpaceIsDefault(assessmentId);
     }
+
+    @Override
+    public void updateSpace(UUID assessmentId, long spaceId) {
+        repository.updateSpaceId(assessmentId, spaceId);
+    }
 }

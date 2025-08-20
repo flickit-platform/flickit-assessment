@@ -11,10 +11,22 @@ public class SpaceMother {
     static long id = 0;
 
     public static Space createBasicSpace() {
+        return createBasicSpaceWithOwnerId(UUID.randomUUID());
+    }
+
+    public static Space createBasicSpaceWithOwnerId(UUID ownerId) {
+        return createSpaceWithTypeAndOwnerId(SpaceType.BASIC, ownerId);
+    }
+
+    public static Space createPremiumSpaceWithOwnerId(UUID ownerId) {
+        return createSpaceWithTypeAndOwnerId(SpaceType.PREMIUM, ownerId);
+    }
+
+    private static Space createSpaceWithTypeAndOwnerId(SpaceType type, UUID ownerId){
         return new Space(++id,
             "title",
-            UUID.randomUUID(),
-            SpaceType.BASIC,
+            ownerId,
+            type,
             false,
             LocalDateTime.now());
     }
@@ -29,9 +41,13 @@ public class SpaceMother {
     }
 
     public static Space createDefaultSpace() {
+        return createDefaultSpaceWithOwnerId(UUID.randomUUID());
+    }
+
+    public static Space createDefaultSpaceWithOwnerId(UUID ownerId) {
         return new Space(++id,
             "title",
-            UUID.randomUUID(),
+            ownerId,
             SpaceType.BASIC,
             true,
             LocalDateTime.now());

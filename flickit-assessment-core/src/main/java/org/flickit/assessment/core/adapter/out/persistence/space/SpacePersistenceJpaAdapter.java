@@ -14,7 +14,6 @@ import java.util.UUID;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_SPACE_ID_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.ASSESSMENT_ID_NOT_FOUND;
 
-
 @Component("coreSpacePersistenceJpaAdapter")
 @RequiredArgsConstructor
 public class SpacePersistenceJpaAdapter implements

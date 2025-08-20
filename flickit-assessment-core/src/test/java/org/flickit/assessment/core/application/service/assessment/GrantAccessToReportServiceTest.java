@@ -15,7 +15,7 @@ import org.flickit.assessment.core.application.port.out.assessmentuserrole.Grant
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.LoadUserRoleForAssessmentPort;
 import org.flickit.assessment.core.application.port.out.space.CreateSpaceInvitePort;
 import org.flickit.assessment.core.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
-import org.flickit.assessment.core.application.port.out.spaceuseraccess.CreateAssessmentSpaceUserAccessPort;
+import org.flickit.assessment.core.application.port.out.spaceuseraccess.CreateSpaceUserAccessPort;
 import org.flickit.assessment.core.application.port.out.user.LoadUserPort;
 import org.flickit.assessment.core.test.fixture.application.AssessmentMother;
 import org.flickit.assessment.core.test.fixture.application.UserMother;
@@ -84,10 +84,10 @@ class GrantAccessToReportServiceTest {
     private CheckSpaceAccessPort checkSpaceAccessPort;
 
     @Mock
-    private CreateAssessmentSpaceUserAccessPort createAssessmentSpaceUserAccessPort;
+    private CreateSpaceUserAccessPort createSpaceUserAccessPort;
 
     @Captor
-    private ArgumentCaptor<CreateAssessmentSpaceUserAccessPort.Param> createAssessmentSpaceUserAccessParamCaptor;
+    private ArgumentCaptor<CreateSpaceUserAccessPort.CreateParam> createAssessmentSpaceUserAccessParamCaptor;
 
     @Captor
     private ArgumentCaptor<CreateSpaceInvitePort.Param> createSpaceInviteParamCaptor;
@@ -116,7 +116,7 @@ class GrantAccessToReportServiceTest {
             appSpecProperties,
             sendEmailPort,
             checkSpaceAccessPort,
-            createAssessmentSpaceUserAccessPort);
+            createSpaceUserAccessPort);
     }
 
     @Test
@@ -138,7 +138,7 @@ class GrantAccessToReportServiceTest {
             appSpecProperties,
             sendEmailPort,
             checkSpaceAccessPort,
-            createAssessmentSpaceUserAccessPort);
+            createSpaceUserAccessPort);
     }
 
     @Test
@@ -164,7 +164,7 @@ class GrantAccessToReportServiceTest {
 
         verify(grantUserAssessmentRolePort).persist(param.getAssessmentId(), accessGrantedUser.getId(), REPORT_VIEWER.getId());
 
-        verifyNoInteractions(createAssessmentSpaceUserAccessPort,
+        verifyNoInteractions(createSpaceUserAccessPort,
             createSpaceInvitePort,
             createAssessmentInvitePort,
             appSpecProperties,
@@ -183,7 +183,7 @@ class GrantAccessToReportServiceTest {
         when(loadAssessmentPort.loadById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
         when(loadUserPort.loadByEmail(param.getEmail())).thenReturn(Optional.of(accessGrantedUser));
         when(checkSpaceAccessPort.checkIsMember(assessment.getSpace().getId(), accessGrantedUser.getId())).thenReturn(false);
-        doNothing().when(createAssessmentSpaceUserAccessPort).persist(any(CreateAssessmentSpaceUserAccessPort.Param.class));
+        doNothing().when(createSpaceUserAccessPort).persistByAssessmentId(any(CreateSpaceUserAccessPort.CreateParam.class));
         when(loadUserRoleForAssessmentPort.load(param.getAssessmentId(), accessGrantedUser.getId())).thenReturn(Optional.empty());
         doNothing().when(grantUserAssessmentRolePort).persist(param.getAssessmentId(), accessGrantedUser.getId(), REPORT_VIEWER.getId());
 
@@ -193,7 +193,7 @@ class GrantAccessToReportServiceTest {
         assertEquals(param.getCurrentUserId(), result.notificationCmd().senderId());
         assertEquals(assessment, result.notificationCmd().assessment());
 
-        verify(createAssessmentSpaceUserAccessPort).persist(createAssessmentSpaceUserAccessParamCaptor.capture());
+        verify(createSpaceUserAccessPort).persistByAssessmentId(createAssessmentSpaceUserAccessParamCaptor.capture());
         assertNotNull(createAssessmentSpaceUserAccessParamCaptor.getValue());
         assertEquals(param.getAssessmentId(), createAssessmentSpaceUserAccessParamCaptor.getValue().assessmentId());
         assertEquals(accessGrantedUser.getId(), createAssessmentSpaceUserAccessParamCaptor.getValue().userId());
@@ -233,7 +233,7 @@ class GrantAccessToReportServiceTest {
             createAssessmentInvitePort,
             appSpecProperties,
             sendEmailPort,
-            createAssessmentSpaceUserAccessPort);
+            createSpaceUserAccessPort);
     }
 
     @Test
@@ -261,7 +261,7 @@ class GrantAccessToReportServiceTest {
             createAssessmentInvitePort,
             appSpecProperties,
             sendEmailPort,
-            createAssessmentSpaceUserAccessPort);
+            createSpaceUserAccessPort);
     }
 
     @ParameterizedTest

@@ -13,7 +13,7 @@ import org.flickit.assessment.core.application.port.out.assessmentinvite.CreateA
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.GrantUserAssessmentRolePort;
 import org.flickit.assessment.core.application.port.out.space.CreateSpaceInvitePort;
 import org.flickit.assessment.core.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
-import org.flickit.assessment.core.application.port.out.spaceuseraccess.CreateAssessmentSpaceUserAccessPort;
+import org.flickit.assessment.core.application.port.out.spaceuseraccess.CreateSpaceUserAccessPort;
 import org.flickit.assessment.core.application.port.out.user.LoadUserPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,7 +39,7 @@ public class InviteAssessmentUserService implements InviteAssessmentUserUseCase 
     private final CreateAssessmentInvitePort createAssessmentInvitePort;
     private final AppSpecProperties appSpecProperties;
     private final SendEmailPort sendEmailPort;
-    private final CreateAssessmentSpaceUserAccessPort createAssessmentSpaceUserAccessPort;
+    private final CreateSpaceUserAccessPort createSpaceUserAccessPort;
     private final GrantUserAssessmentRolePort grantUserAssessmentRolePort;
     private final CheckSpaceAccessPort checkSpaceAccessPort;
 
@@ -61,9 +61,9 @@ public class InviteAssessmentUserService implements InviteAssessmentUserUseCase 
             var userId = user.get().getId();
 
             if (!checkSpaceAccessPort.checkIsMember(assessment.getSpace().getId(), userId)) {
-                var createAssessmentParam = new CreateAssessmentSpaceUserAccessPort.Param(
+                var createAssessmentParam = new CreateSpaceUserAccessPort.CreateParam(
                     assessment.getId(), userId, param.getCurrentUserId(), creationTime);
-                createAssessmentSpaceUserAccessPort.persist(createAssessmentParam);
+                createSpaceUserAccessPort.persistByAssessmentId(createAssessmentParam);
             }
             grantUserAssessmentRolePort.persist(param.getAssessmentId(), userId, param.getRoleId());
         }
