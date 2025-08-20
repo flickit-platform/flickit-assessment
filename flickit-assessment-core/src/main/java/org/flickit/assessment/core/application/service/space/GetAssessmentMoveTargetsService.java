@@ -35,7 +35,7 @@ public class GetAssessmentMoveTargetsService implements GetAssessmentMoveTargets
     private final LoadAssessmentUsersPort loadAssessmentUsersPort;
 
     @Override
-    public Result getSpaceList(Param param) {
+    public Result getTargetSpaces(Param param) {
         var space = loadSpacePort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_MOVE_TARGETS_SPACE_NOT_FOUND));
         var loadedSpaces = loadSpaceListPort.loadSpaceList(param.getCurrentUserId());

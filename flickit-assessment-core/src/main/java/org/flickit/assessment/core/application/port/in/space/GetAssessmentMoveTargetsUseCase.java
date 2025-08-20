@@ -15,7 +15,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_
 
 public interface GetAssessmentMoveTargetsUseCase {
 
-    Result getSpaceList(Param param);
+	Result getTargetSpaces(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)

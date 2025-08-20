@@ -22,7 +22,7 @@ public class GetAssessmentMoveTargetsRestController {
     @GetMapping("/assessments/{assessmentId}/move-targets")
     public ResponseEntity<GetAssessmentMoveTargetsResponseDto> getAssessmentMoveTargets(@PathVariable UUID assessmentId) {
         UUID currentUserId = userContext.getUser().id();
-        var result = getAssessmentMoveTargetsUseCase.getSpaceList(toParam(assessmentId, currentUserId));
+		var result = getAssessmentMoveTargetsUseCase.getTargetSpaces(toParam(assessmentId, currentUserId));
         return new ResponseEntity<>(toResponseDto(result), HttpStatus.OK);
     }
 

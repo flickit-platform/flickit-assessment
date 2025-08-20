@@ -79,7 +79,7 @@ class GetAssessmentMoveTargetsServiceTest {
         when(loadSpaceListPort.loadSpaceList(param.getCurrentUserId())).thenReturn(List.of(resultItem));
         when(loadAssessmentUsersPort.hasNonSpaceOwnerAccess(param.getAssessmentId())).thenReturn(false);
 
-        var result = service.getSpaceList(param);
+        var result = service.getTargetSpaces(param);
 
         var items = result.items();
         assertEquals(1, items.size());
@@ -101,7 +101,7 @@ class GetAssessmentMoveTargetsServiceTest {
         when(loadSpacePort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(currentSpace));
         when(loadSpaceListPort.loadSpaceList(param.getCurrentUserId())).thenReturn(List.of(resultItem));
 
-        var result = service.getSpaceList(param);
+        var result = service.getTargetSpaces(param);
 
         var items = result.items();
         assertEquals(1, items.size());
@@ -125,8 +125,10 @@ class GetAssessmentMoveTargetsServiceTest {
         when(loadSpacePort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(currentSpace));
         when(loadSpaceListPort.loadSpaceList(param.getCurrentUserId())).thenReturn(List.of(fullBasicSpace));
 
-        var throwable = assertThrows(UpgradeRequiredException.class, () -> service.getSpaceList(param));
-        assertEquals(GET_ASSESSMENT_MOVE_TARGETS_NO_SPACE_AVAILABLE, throwable.getMessage());
+        var result = service.getTargetSpaces(param);
+
+        assertNotNull(result);
+        assertThat(result.items()).isEmpty();
 
         verify(appSpecProperties, times(1)).getSpace();
 
@@ -140,7 +142,7 @@ class GetAssessmentMoveTargetsServiceTest {
         when(loadSpacePort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(currentSpace));
         when(loadSpaceListPort.loadSpaceList(param.getCurrentUserId())).thenReturn(List.of(premiumItem));
 
-        var result = service.getSpaceList(param);
+        var result = service.getTargetSpaces(param);
         var items = result.items();
         assertEquals(1, items.size());
         assertEquals(premiumSpace.getId(), items.getFirst().id());
@@ -161,7 +163,7 @@ class GetAssessmentMoveTargetsServiceTest {
         when(loadSpaceListPort.loadSpaceList(param.getCurrentUserId()))
             .thenReturn(List.of(basicSpaceItem, premiumSpaceItem));
 
-        var result = service.getSpaceList(param);
+        var result = service.getTargetSpaces(param);
         var items = result.items();
         assertEquals(1, items.size());
         var returnedItem = items.getFirst();
@@ -192,7 +194,7 @@ class GetAssessmentMoveTargetsServiceTest {
             .thenReturn(portResult);
         when(loadAssessmentUsersPort.hasNonSpaceOwnerAccess(param.getAssessmentId())).thenReturn(true);
 
-        var result = service.getSpaceList(param);
+        var result = service.getTargetSpaces(param);
         var items = result.items();
         assertEquals(2, items.size());
         var selectedItem = items.stream()
@@ -227,7 +229,7 @@ class GetAssessmentMoveTargetsServiceTest {
         when(loadSpaceListPort.loadSpaceList(param.getCurrentUserId()))
             .thenReturn(List.of(fullBasicSpace, basicWithCapacity));
 
-        var result = service.getSpaceList(param);
+        var result = service.getTargetSpaces(param);
         var items = result.items();
         assertEquals(1, items.size());
         var returnedItem = items.getFirst();
@@ -258,7 +260,7 @@ class GetAssessmentMoveTargetsServiceTest {
         when(loadSpaceListPort.loadSpaceList(param.getCurrentUserId()))
             .thenReturn(portResult);
 
-        var result = service.getSpaceList(param);
+        var result = service.getTargetSpaces(param);
         var items = result.items();
         assertEquals(limit, items.size());
         assertThat(items)
@@ -293,7 +295,7 @@ class GetAssessmentMoveTargetsServiceTest {
         when(loadSpacePort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(premiumSpace));
         when(loadSpaceListPort.loadSpaceList(param.getCurrentUserId())).thenReturn(portResult);
 
-        var result = service.getSpaceList(param);
+        var result = service.getTargetSpaces(param);
         var items = result.items();
         assertEquals(2, items.size());
         assertThat(items).filteredOn(Result.SpaceListItem::selected).hasSize(1);
@@ -322,7 +324,7 @@ class GetAssessmentMoveTargetsServiceTest {
         when(loadSpacePort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(currentSpace));
         when(loadSpaceListPort.loadSpaceList(param.getCurrentUserId())).thenReturn(portResult);
 
-        var result = service.getSpaceList(param);
+        var result = service.getTargetSpaces(param);
         var items = result.items();
         assertEquals(3, items.size());
         assertThat(items).filteredOn(Result.SpaceListItem::selected).hasSize(1);
