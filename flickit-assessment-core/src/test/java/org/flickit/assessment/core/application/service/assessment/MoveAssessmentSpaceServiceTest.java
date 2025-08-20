@@ -12,13 +12,16 @@ import org.flickit.assessment.core.application.port.out.assessment.CountAssessme
 import org.flickit.assessment.core.application.port.out.assessment.UpdateAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.LoadAssessmentUsersPort;
 import org.flickit.assessment.core.application.port.out.space.LoadSpacePort;
+import org.flickit.assessment.core.application.port.out.spaceuseraccess.CreateSpaceUserAccessPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -28,8 +31,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_SPACE_ID_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 import static org.flickit.assessment.core.test.fixture.application.SpaceMother.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -52,6 +54,9 @@ class MoveAssessmentSpaceServiceTest {
 
     @Mock
     private LoadAssessmentUsersPort loadAssessmentUsersPort;
+
+    @Mock
+    private CreateSpaceUserAccessPort createSpaceUserAccessPort;
 
     @Spy
     private AppSpecProperties appSpecProperties = appSpecProperties();
@@ -200,33 +205,55 @@ class MoveAssessmentSpaceServiceTest {
 
     @Test
     void testMoveAssessment_whenParametersAreValidAndTargetSpaceIsBasic_thenSuccessfulUpdate() {
+        param = createParam(b -> b.targetSpaceId(targetSpace.getId()).currentUserId(currentSpace.getOwnerId()));
+        var otherUserId = UUID.randomUUID();
+        List<UUID> assessmentUserIds = List.of(param.getCurrentUserId(), otherUserId);
+
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MOVE_ASSESSMENT))
             .thenReturn(true);
         when(loadSpacePort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(currentSpace));
         when(loadSpacePort.loadById(param.getTargetSpaceId())).thenReturn(Optional.of(targetSpace));
         when(countAssessmentsPort.countSpaceAssessments(anyLong())).thenReturn(0);
+        when(loadAssessmentUsersPort.loadAllUserIds(param.getAssessmentId())).thenReturn(assessmentUserIds);
 
         service.moveAssessment(param);
 
         verify(appSpecProperties).getSpace();
         verify(updateAssessmentPort).updateSpace(param.getAssessmentId(), param.getTargetSpaceId());
-        verifyNoInteractions(loadAssessmentUsersPort);
+
+        ArgumentCaptor<CreateSpaceUserAccessPort.CreateAllParam> userAccessCaptor = ArgumentCaptor.forClass(CreateSpaceUserAccessPort.CreateAllParam.class);
+        verify(createSpaceUserAccessPort).persistByUserIds(userAccessCaptor.capture());
+        assertEquals(2, userAccessCaptor.getValue().userIds().size());
+        assertEquals(targetSpace.getId(), userAccessCaptor.getValue().spaceId());
+        assertEquals(param.getCurrentUserId(), userAccessCaptor.getValue().createdBy());
+        assertNotNull(userAccessCaptor.getValue().creationTime());
     }
 
     @Test
     void testMoveAssessment_whenParametersAreValidAndTargetSpaceIsPremium_thenSuccessfulUpdate() {
         targetSpace = createPremiumSpaceWithOwnerId(param.getCurrentUserId());
+        param = createParam(b -> b.targetSpaceId(targetSpace.getId()).currentUserId(currentSpace.getOwnerId()));
+        var otherUserId = UUID.randomUUID();
+        List<UUID> assessmentUserIds = List.of(param.getCurrentUserId(), otherUserId);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MOVE_ASSESSMENT))
             .thenReturn(true);
         when(loadSpacePort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(currentSpace));
         when(loadSpacePort.loadById(param.getTargetSpaceId())).thenReturn(Optional.of(targetSpace));
+        when(loadAssessmentUsersPort.loadAllUserIds(param.getAssessmentId())).thenReturn(assessmentUserIds);
 
         service.moveAssessment(param);
+
         verify(updateAssessmentPort).updateSpace(param.getAssessmentId(), param.getTargetSpaceId());
 
+        ArgumentCaptor<CreateSpaceUserAccessPort.CreateAllParam> userAccessCaptor = ArgumentCaptor.forClass(CreateSpaceUserAccessPort.CreateAllParam.class);
+        verify(createSpaceUserAccessPort).persistByUserIds(userAccessCaptor.capture());
+        assertEquals(2, userAccessCaptor.getValue().userIds().size());
+        assertEquals(targetSpace.getId(), userAccessCaptor.getValue().spaceId());
+        assertEquals(param.getCurrentUserId(), userAccessCaptor.getValue().createdBy());
+        assertNotNull(userAccessCaptor.getValue().creationTime());
+
         verifyNoInteractions(countAssessmentsPort,
-            loadAssessmentUsersPort,
             appSpecProperties);
     }
 

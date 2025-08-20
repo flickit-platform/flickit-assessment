@@ -14,9 +14,12 @@ import org.flickit.assessment.core.application.port.out.assessment.CountAssessme
 import org.flickit.assessment.core.application.port.out.assessment.UpdateAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.LoadAssessmentUsersPort;
 import org.flickit.assessment.core.application.port.out.space.LoadSpacePort;
+import org.flickit.assessment.core.application.port.out.spaceuseraccess.CreateSpaceUserAccessPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.MOVE_ASSESSMENT;
@@ -35,6 +38,7 @@ public class MoveAssessmentService implements MoveAssessmentUseCase {
     private final CountAssessmentsPort countAssessmentsPort;
     private final AppSpecProperties appSpecProperties;
     private final LoadAssessmentUsersPort loadAssessmentUsersPort;
+    private final CreateSpaceUserAccessPort createSpaceUserAccessPort;
 
     @Override
     public void moveAssessment(Param param) {
@@ -56,6 +60,7 @@ public class MoveAssessmentService implements MoveAssessmentUseCase {
 
         validateTargetSpace(targetSpace, param.getCurrentUserId(), param.getAssessmentId());
         updateAssessmentPort.updateSpace(param.getAssessmentId(), targetSpaceId);
+        createAssessmentUsersAccessOnTargetSpace(param.getAssessmentId(), targetSpaceId, param.getCurrentUserId());
     }
 
     private void validateTargetSpace(Space targetSpace, UUID currentUserId, UUID assessmentId) {
@@ -69,5 +74,11 @@ public class MoveAssessmentService implements MoveAssessmentUseCase {
         if (targetSpace.getType().equals(SpaceType.BASIC)
             && targetSpace.isDefault() && loadAssessmentUsersPort.hasNonSpaceOwnerAccess(assessmentId))
             throw new ValidationException(MOVE_ASSESSMENT_ASSESSMENT_NON_OWNER_ACCESS_NOT_ALLOWED);
+    }
+
+    private void createAssessmentUsersAccessOnTargetSpace(UUID assessmentId, long targetSpaceId, UUID currentUserId) {
+        List<UUID> userIds = loadAssessmentUsersPort.loadAllUserIds(assessmentId);
+        var createParam = new CreateSpaceUserAccessPort.CreateAllParam(targetSpaceId, userIds, currentUserId, LocalDateTime.now());
+        createSpaceUserAccessPort.persistByUserIds(createParam);
     }
 }
