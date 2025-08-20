@@ -36,4 +36,6 @@ public interface UpdateAssessmentPort {
      * @throws ResourceNotFoundException if the related kit of the given kitCustom is not equal to the kit that the assessment is created on
      */
     void updateKitCustomId(UUID id, long kitCustomId);
+
+    void updateSpace(UUID assessmentId, long spaceId);
 }

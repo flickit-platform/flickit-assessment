@@ -587,6 +587,45 @@
 					"response": []
 				},
 				{
+					"name": "Move Assessment",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"targetSpaceId\": 1177\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/00041fc4-19cb-4c03-82d2-7ac7a49ba329/move",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"00041fc4-19cb-4c03-82d2-7ac7a49ba329",
+								"move"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Migrate Assessment Result Kit Version",
 					"request": {
 						"method": "POST",

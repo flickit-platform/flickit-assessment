@@ -371,6 +371,13 @@ public class ErrorMessageKey {
     public static final String GET_ASSESSMENT_NEXT_QUESTIONNAIRE_QUESTIONNAIRE_ID_NOT_NULL = "get-assessment-next-questionnaire.questionnaireId.notNull";
     public static final String GET_ASSESSMENT_NEXT_QUESTIONNAIRE_ASSESSMENT_RESULT_NOT_FOUND = "get-assessment-next-questionnaire.assessmentResult.notFound";
 
+    public static final String MOVE_ASSESSMENT_ASSESSMENT_ID_NOT_NULL = "move-assessment.assessmentId.notNull";
+    public static final String MOVE_ASSESSMENT_TARGET_SPACE_ID_NOT_NULL = "move-assessment.targetSpaceId.notNull";
+    public static final String MOVE_ASSESSMENT_TARGET_SPACE_NOT_FOUND = "move-assessment.targetSpace.notFound";
+    public static final String MOVE_ASSESSMENT_TARGET_SPACE_INVALID = "move-assessment.targetSpace.invalid";
+    public static final String MOVE_ASSESSMENT_TARGET_SPACE_ASSESSMENTS_MAX = "move-assessment.targetSpaceAssessments.max";
+    public static final String MOVE_ASSESSMENT_ASSESSMENT_NON_OWNER_ACCESS_NOT_ALLOWED = "move-assessment.assessmentAccessibleByOthers.notAllowed";
+
     public static final String GET_ASSESSMENT_MOVE_TARGETS_ASSESSMENT_ID_NOT_NULL = "get-assessment-move-targets.assessmentId.notNull";
     public static final String GET_ASSESSMENT_MOVE_TARGETS_SPACE_NOT_FOUND = "get-assessment-move-targets.space.notFound";
     public static final String GET_ASSESSMENT_MOVE_TARGETS_NO_SPACE_AVAILABLE = "get-assessment-move-targets.noSpace.available";

@@ -8,7 +8,7 @@ import org.flickit.assessment.core.application.domain.notification.GrantAssessme
 import org.flickit.assessment.core.application.port.in.assessmentuserrole.GrantUserAssessmentRoleUseCase.Param;
 import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.GrantUserAssessmentRolePort;
-import org.flickit.assessment.core.application.port.out.spaceuseraccess.CreateAssessmentSpaceUserAccessPort;
+import org.flickit.assessment.core.application.port.out.spaceuseraccess.CreateSpaceUserAccessPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -37,7 +37,7 @@ class GrantUserAssessmentRoleServiceTest {
     private GrantUserAssessmentRolePort grantUserAssessmentRolePort;
 
     @Mock
-    private CreateAssessmentSpaceUserAccessPort createSpaceUserAccessPort;
+    private CreateSpaceUserAccessPort createSpaceUserAccessPort;
 
     @Mock
     private LoadAssessmentPort loadAssessmentPort;
@@ -87,7 +87,7 @@ class GrantUserAssessmentRoleServiceTest {
         when(loadAssessmentPort.isAssessmentSpaceMember(param.getAssessmentId(), param.getUserId()))
             .thenReturn(false);
 
-        doNothing().when(createSpaceUserAccessPort).persist(any());
+        doNothing().when(createSpaceUserAccessPort).persistByAssessmentId(any());
 
         var result = service.grantAssessmentUserRole(param);
 
@@ -96,9 +96,9 @@ class GrantUserAssessmentRoleServiceTest {
         assertEquals(notificationData.assignerUserId(), cmd.assignerUserId());
         assertEquals(notificationData.assessmentId(), cmd.assessmentId());
 
-        ArgumentCaptor<CreateAssessmentSpaceUserAccessPort.Param> createSpaceUserAccessPortParam =
-            ArgumentCaptor.forClass(CreateAssessmentSpaceUserAccessPort.Param.class);
-        verify(createSpaceUserAccessPort, times(1)).persist(createSpaceUserAccessPortParam.capture());
+        ArgumentCaptor<CreateSpaceUserAccessPort.CreateParam> createSpaceUserAccessPortParam =
+            ArgumentCaptor.forClass(CreateSpaceUserAccessPort.CreateParam.class);
+        verify(createSpaceUserAccessPort, times(1)).persistByAssessmentId(createSpaceUserAccessPortParam.capture());
 
         assertEquals(param.getAssessmentId(), createSpaceUserAccessPortParam.getValue().assessmentId());
         assertEquals(param.getUserId(), createSpaceUserAccessPortParam.getValue().userId());

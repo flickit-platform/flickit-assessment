@@ -156,5 +156,4 @@ public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> 
         )
         """)
     boolean existsByAssessmentIdSpaceIsDefault(@Param("assessmentId") UUID assessmentId);
-
 }

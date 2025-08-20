@@ -18,7 +18,6 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_SPACE_I
 import static org.flickit.assessment.core.adapter.out.persistence.space.SpaceMapper.mapToDomain;
 import static org.flickit.assessment.core.common.ErrorMessageKey.ASSESSMENT_ID_NOT_FOUND;
 
-
 @Component("coreSpacePersistenceJpaAdapter")
 @RequiredArgsConstructor
 public class SpacePersistenceJpaAdapter implements
