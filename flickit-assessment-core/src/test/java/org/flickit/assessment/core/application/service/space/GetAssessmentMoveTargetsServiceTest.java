@@ -266,18 +266,19 @@ class GetAssessmentMoveTargetsServiceTest {
         var otherPremiumSpace = SpaceMother.createPremiumSpaceWithOwner(param.getCurrentUserId());
         var premiumSpaceItem3 = new LoadSpaceListPort.SpaceWithAssessmentCount(otherPremiumSpace, 0);
         var portResult = List.of(premiumSpaceItem1, premiumSpaceItem2, premiumSpaceItem3);
+        var expectedItems = List.of(premiumSpaceItem2, premiumSpaceItem3);
 
-        when(loadSpacePort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(currentSpace));
+        when(loadSpacePort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(premiumSpace));
         when(loadSpaceListPort.loadSpaceList(param.getCurrentUserId())).thenReturn(portResult);
 
         var result = service.getSpaceList(param);
         var items = result.items();
-        assertEquals(3, items.size());
+        assertEquals(2, items.size());
         assertThat(items).filteredOn(Result.SpaceListItem::selected).hasSize(1);
         assertTrue(items.getFirst().selected());
         assertFalse(items.getFirst().isDefault());
         assertThat(items)
-            .zipSatisfy(portResult, (expected, actual) -> {
+            .zipSatisfy(expectedItems, (expected, actual) -> {
                 assertEquals(expected.id(), actual.space().getId());
                 assertEquals(expected.title(), actual.space().getTitle());
                 assertEquals(expected.type().code(), actual.space().getType().getCode());
