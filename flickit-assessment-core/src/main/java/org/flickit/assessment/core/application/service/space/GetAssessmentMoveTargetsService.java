@@ -38,7 +38,7 @@ public class GetAssessmentMoveTargetsService implements GetAssessmentMoveTargets
     public Result getTargetSpaces(Param param) {
         var space = loadSpacePort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_MOVE_TARGETS_SPACE_NOT_FOUND));
-        var loadedSpaces = loadSpaceListPort.loadSpaceList(param.getCurrentUserId());
+        var ownedSpaces = loadSpaceListPort.loadByOwnerId(param.getCurrentUserId());
 
         if (loadedSpaces.isEmpty())
             throw new InvalidStateException(GET_ASSESSMENT_MOVE_TARGETS_NO_SPACE_FOUND); // Can't happen

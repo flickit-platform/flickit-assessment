@@ -52,11 +52,8 @@ public class SpacePersistenceJpaAdapter implements
     }
 
     @Override
-    public List<SpaceWithAssessmentCount> loadSpaceList(UUID currentUserId) {
-        var result = Optional.ofNullable(repository.findByUserIdOrderByLastSeenDesc(currentUserId, SpaceStatus.ACTIVE.getId()))
-            .orElseGet(List::of);
-
-        return result.stream()
+    public List<SpaceWithAssessmentCount> loadByOwnerId(UUID ownerId) {
+        return repository.findByOwnerId(ownerId, SpaceStatus.ACTIVE.getId()).stream()
             .map(entity -> new SpaceWithAssessmentCount(
                 mapToDomain(entity.getSpace()),
                 entity.getAssessmentsCount()))

@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public interface LoadSpaceListPort {
 
-    List<SpaceWithAssessmentCount> loadSpaceList(UUID currentUserId);
+    List<SpaceWithAssessmentCount> loadByOwnerId(UUID ownerId);
 
     record SpaceWithAssessmentCount(Space space, int assessmentCount) {
     }

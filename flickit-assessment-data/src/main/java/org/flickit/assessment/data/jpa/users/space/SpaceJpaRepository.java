@@ -108,6 +108,20 @@ public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> 
 
     @Query("""
             SELECT
+                s AS space,
+                COUNT(DISTINCT fa.id) AS assessmentsCount
+            FROM SpaceJpaEntity s
+            LEFT JOIN AssessmentJpaEntity fa ON s.id = fa.spaceId AND fa.deleted = FALSE
+            WHERE s.deleted = FALSE
+                AND s.ownerId = :ownerId
+                AND s.status = :status
+            GROUP BY s.id
+        """)
+    List<SpaceWithAssessmentCount> findByOwnerId(@Param("ownerId") UUID ownerId,
+                                                 @Param("status") Integer status);
+
+    @Query("""
+            SELECT
                 COUNT(DISTINCT a.id)
             FROM AssessmentJpaEntity a
             WHERE a.spaceId = :spaceId AND a.deleted=FALSE
@@ -143,7 +157,7 @@ public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> 
             FROM SpaceJpaEntity s
             WHERE s.ownerId = :userId AND s.isDefault = TRUE AND s.deleted = FALSE
         """)
-    Optional<Long> loadDefaultSpaceIdByUserId(@Param("userId") UUID userId);
+    Optional<Long> findDefaultSpaceIdByUserId(@Param("userId") UUID userId);
 
     @Query("""
         SELECT EXISTS (
