@@ -2,8 +2,9 @@ package org.flickit.assessment.users.application.service.user;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.users.application.domain.User;
-import org.flickit.assessment.users.application.port.in.user.GetUserProfileUseCase;
+import org.flickit.assessment.users.application.port.in.user.GetUsersMeUseCase;
 import org.flickit.assessment.users.application.port.out.minio.CreateFileDownloadLinkPort;
+import org.flickit.assessment.users.application.port.out.space.LoadSpacePort;
 import org.flickit.assessment.users.application.port.out.user.LoadUserPort;
 import org.flickit.assessment.users.application.port.out.usersurvey.LoadUserSurveyPort;
 import org.springframework.stereotype.Service;
@@ -14,12 +15,13 @@ import java.time.Duration;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class GetUserProfileService implements GetUserProfileUseCase {
+public class GetUsersMeService implements GetUsersMeUseCase {
 
     private static final Duration EXPIRY_DURATION = Duration.ofDays(1);
 
     private final LoadUserPort loadUserPort;
     private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
+    private final LoadSpacePort loadSpacePort;
     private final LoadUserSurveyPort loadUserSurveyPort;
 
     @Override
@@ -30,22 +32,26 @@ public class GetUserProfileService implements GetUserProfileUseCase {
         if (user.getPicturePath() != null && !user.getPicturePath().trim().isBlank())
             pictureLink = createFileDownloadLinkPort.createDownloadLink(user.getPicturePath(), EXPIRY_DURATION);
 
+        long defaultSpaceId = loadSpacePort.loadDefaultSpaceId(param.getCurrentUserId());
+
         var showSurvey = loadUserSurveyPort.loadByUserId(param.getCurrentUserId())
             .map(s -> !(s.isCompleted() || s.isDontShowAgain()))
             .orElse(true);
 
         return mapToUserProfile(user,
             pictureLink,
+            defaultSpaceId,
             showSurvey);
     }
 
-    private UserProfile mapToUserProfile(User user, String pictureLink, boolean showSurvey) {
+    private UserProfile mapToUserProfile(User user, String pictureLink, long defaultSpaceId, boolean showSurvey) {
         return new UserProfile(user.getId(),
             user.getEmail(),
             user.getDisplayName(),
             user.getBio(),
             user.getLinkedin(),
             pictureLink,
+            defaultSpaceId,
             showSurvey);
     }
 }

@@ -10,7 +10,7 @@ import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 
-public interface GetUserProfileUseCase {
+public interface GetUsersMeUseCase {
 
     UserProfile getUserProfile(Param param);
 
@@ -34,6 +34,7 @@ public interface GetUserProfileUseCase {
                        String bio,
                        String linkedin,
                        String pictureLink,
+                       long defaultSpaceId,
                        boolean showSurvey) {
     }
 }
