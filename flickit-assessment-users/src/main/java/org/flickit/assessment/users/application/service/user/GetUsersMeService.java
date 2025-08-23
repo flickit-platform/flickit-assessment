@@ -46,7 +46,6 @@ public class GetUsersMeService implements GetUsersMeUseCase {
 
     private Result mapToUserProfile(User user, String pictureLink, long defaultSpaceId, boolean showSurvey) {
         return new Result(user.getId(),
-            user.getEmail(),
             user.getDisplayName(),
             pictureLink,
             defaultSpaceId,

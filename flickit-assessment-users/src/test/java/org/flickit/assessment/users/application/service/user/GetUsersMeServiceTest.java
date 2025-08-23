@@ -74,7 +74,6 @@ class GetUsersMeServiceTest {
 
         assertNotNull(actualUser);
         assertEquals(expectedUser.getId(), actualUser.id());
-        assertEquals(expectedUser.getEmail(), actualUser.email());
         assertEquals(expectedUser.getDisplayName(), actualUser.displayName());
         assertEquals(pictureLink, actualUser.pictureLink());
         assertEquals(defaultSpaceId, actualUser.defaultSpaceId());
@@ -94,7 +93,6 @@ class GetUsersMeServiceTest {
 
         assertNotNull(actualUser);
         assertEquals(expectedUser.getId(), actualUser.id());
-        assertEquals(expectedUser.getEmail(), actualUser.email());
         assertEquals(expectedUser.getDisplayName(), actualUser.displayName());
         assertNull(actualUser.pictureLink());
         assertEquals(defaultSpaceId, actualUser.defaultSpaceId());
@@ -116,7 +114,6 @@ class GetUsersMeServiceTest {
 
         assertNotNull(actualUser);
         assertEquals(expectedUser.getId(), actualUser.id());
-        assertEquals(expectedUser.getEmail(), actualUser.email());
         assertEquals(expectedUser.getDisplayName(), actualUser.displayName());
         assertNull(actualUser.pictureLink());
         assertEquals(defaultSpaceId, actualUser.defaultSpaceId());
@@ -138,7 +135,6 @@ class GetUsersMeServiceTest {
 
         assertNotNull(actualUser);
         assertEquals(expectedUser.getId(), actualUser.id());
-        assertEquals(expectedUser.getEmail(), actualUser.email());
         assertEquals(expectedUser.getDisplayName(), actualUser.displayName());
         assertNull(actualUser.pictureLink());
         assertEquals(defaultSpaceId, actualUser.defaultSpaceId());

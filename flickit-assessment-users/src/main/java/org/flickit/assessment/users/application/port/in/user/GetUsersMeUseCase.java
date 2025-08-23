@@ -29,7 +29,6 @@ public interface GetUsersMeUseCase {
     }
 
     record Result(UUID id,
-                  String email,
                   String displayName,
                   String pictureLink,
                   long defaultSpaceId,
