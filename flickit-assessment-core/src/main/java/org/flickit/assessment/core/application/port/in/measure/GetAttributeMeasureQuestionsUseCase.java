@@ -26,9 +26,6 @@ public interface GetAttributeMeasureQuestionsUseCase {
         @NotNull(message = GET_ATTRIBUTE_MEASURE_QUESTIONS_ATTRIBUTE_ID_NOT_NULL)
         Long attributeId;
 
-        @NotNull(message = GET_ATTRIBUTE_MEASURE_QUESTIONS_QUESTION_ID_NOT_NULL)
-        Long questionId;
-
         @NotNull(message = GET_ATTRIBUTE_MEASURE_QUESTIONS_MEASURE_ID_NOT_NULL)
         Long measureId;
 
@@ -36,10 +33,9 @@ public interface GetAttributeMeasureQuestionsUseCase {
         UUID currentUserId;
 
         @Builder
-        public Param(UUID assessmentId, Long attributeId, Long questionId, Long measureId, UUID currentUserId) {
+        public Param(UUID assessmentId, Long attributeId, Long measureId, UUID currentUserId) {
             this.assessmentId = assessmentId;
             this.attributeId = attributeId;
-            this.questionId = questionId;
             this.measureId = measureId;
             this.currentUserId = currentUserId;
             this.validateSelf();

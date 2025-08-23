@@ -28,13 +28,6 @@ class GetAttributeMeasureQuestionsUseCaseParamTest {
     }
 
     @Test
-    void testGetAttributeMeasureQuestionsUseCaseParam_questionIdParamViolatesConstraint_ErrorMessage() {
-        var throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.questionId(null)));
-        assertThat(throwable).hasMessage("questionId: " + GET_ATTRIBUTE_MEASURE_QUESTIONS_QUESTION_ID_NOT_NULL);
-    }
-
-    @Test
     void testGetAttributeMeasureQuestionsUseCaseParam_measureIdParamViolatesConstraint_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.measureId(null)));
@@ -58,7 +51,6 @@ class GetAttributeMeasureQuestionsUseCaseParamTest {
         return GetAttributeMeasureQuestionsUseCase.Param.builder()
             .assessmentId(UUID.randomUUID())
             .attributeId(1L)
-            .questionId(2L)
             .measureId(3L)
             .currentUserId(UUID.randomUUID());
     }
