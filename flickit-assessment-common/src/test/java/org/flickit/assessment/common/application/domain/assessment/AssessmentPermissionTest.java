@@ -78,12 +78,13 @@ class AssessmentPermissionTest {
             Map.entry(APPROVE_ALL_ANSWERS, "approveAllAnswers"),
             Map.entry(VIEW_ATTRIBUTE_MEASURES, "viewAttributeMeasures"),
             Map.entry(REFRESH_ASSESSMENT_ADVICE, "refreshAssessmentAdvice"),
-            Map.entry(VIEW_ASSESSMENT_NEXT_QUESTIONNAIRE, "viewAssessmentNextQuestionnaire"));
+            Map.entry(VIEW_ASSESSMENT_NEXT_QUESTIONNAIRE, "viewAssessmentNextQuestionnaire"),
+            Map.entry(VIEW_ATTRIBUTE_MEASURE_QUESTIONS, "viewAttributeMeasureQuestions"));
 
         permissionCodesMap.forEach((key, value) -> assertEquals(value, key.getCode()));
         Arrays.stream(AssessmentPermission.values()).forEach(e ->
             assertTrue(permissionCodesMap.containsValue(e.getCode()))
         );
-        assertEquals(65, AssessmentPermission.values().length);
+        assertEquals(66, AssessmentPermission.values().length);
     }
 }
