@@ -70,14 +70,12 @@ class GetUsersMeServiceTest {
         when(loadSpacePort.loadDefaultSpaceId(param.getCurrentUserId())).thenReturn(defaultSpaceId);
         when(loadUserSurveyPort.loadByUserId(param.getCurrentUserId())).thenReturn(Optional.empty());
 
-        GetUsersMeUseCase.UserProfile actualUser = service.getUserProfile(param);
+        GetUsersMeUseCase.Result actualUser = service.getUserProfile(param);
 
         assertNotNull(actualUser);
         assertEquals(expectedUser.getId(), actualUser.id());
         assertEquals(expectedUser.getEmail(), actualUser.email());
         assertEquals(expectedUser.getDisplayName(), actualUser.displayName());
-        assertEquals(expectedUser.getBio(), actualUser.bio());
-        assertEquals(expectedUser.getLinkedin(), actualUser.linkedin());
         assertEquals(pictureLink, actualUser.pictureLink());
         assertEquals(defaultSpaceId, actualUser.defaultSpaceId());
         assertTrue(actualUser.showSurvey());
@@ -92,14 +90,12 @@ class GetUsersMeServiceTest {
         when(loadSpacePort.loadDefaultSpaceId(param.getCurrentUserId())).thenReturn(defaultSpaceId);
         when(loadUserSurveyPort.loadByUserId(param.getCurrentUserId())).thenReturn(Optional.of(userSurvey));
 
-        GetUsersMeUseCase.UserProfile actualUser = service.getUserProfile(param);
+        GetUsersMeUseCase.Result actualUser = service.getUserProfile(param);
 
         assertNotNull(actualUser);
         assertEquals(expectedUser.getId(), actualUser.id());
         assertEquals(expectedUser.getEmail(), actualUser.email());
         assertEquals(expectedUser.getDisplayName(), actualUser.displayName());
-        assertEquals(expectedUser.getBio(), actualUser.bio());
-        assertEquals(expectedUser.getLinkedin(), actualUser.linkedin());
         assertNull(actualUser.pictureLink());
         assertEquals(defaultSpaceId, actualUser.defaultSpaceId());
         assertFalse(actualUser.showSurvey());
@@ -116,14 +112,12 @@ class GetUsersMeServiceTest {
         when(loadSpacePort.loadDefaultSpaceId(param.getCurrentUserId())).thenReturn(defaultSpaceId);
         when(loadUserSurveyPort.loadByUserId(param.getCurrentUserId())).thenReturn(Optional.of(userSurvey));
 
-        GetUsersMeUseCase.UserProfile actualUser = service.getUserProfile(param);
+        GetUsersMeUseCase.Result actualUser = service.getUserProfile(param);
 
         assertNotNull(actualUser);
         assertEquals(expectedUser.getId(), actualUser.id());
         assertEquals(expectedUser.getEmail(), actualUser.email());
         assertEquals(expectedUser.getDisplayName(), actualUser.displayName());
-        assertEquals(expectedUser.getBio(), actualUser.bio());
-        assertEquals(expectedUser.getLinkedin(), actualUser.linkedin());
         assertNull(actualUser.pictureLink());
         assertEquals(defaultSpaceId, actualUser.defaultSpaceId());
         assertFalse(actualUser.showSurvey());
@@ -140,14 +134,12 @@ class GetUsersMeServiceTest {
         when(loadSpacePort.loadDefaultSpaceId(param.getCurrentUserId())).thenReturn(defaultSpaceId);
         when(loadUserSurveyPort.loadByUserId(param.getCurrentUserId())).thenReturn(Optional.of(userSurvey));
 
-        GetUsersMeUseCase.UserProfile actualUser = service.getUserProfile(param);
+        GetUsersMeUseCase.Result actualUser = service.getUserProfile(param);
 
         assertNotNull(actualUser);
         assertEquals(expectedUser.getId(), actualUser.id());
         assertEquals(expectedUser.getEmail(), actualUser.email());
         assertEquals(expectedUser.getDisplayName(), actualUser.displayName());
-        assertEquals(expectedUser.getBio(), actualUser.bio());
-        assertEquals(expectedUser.getLinkedin(), actualUser.linkedin());
         assertNull(actualUser.pictureLink());
         assertEquals(defaultSpaceId, actualUser.defaultSpaceId());
         assertTrue(actualUser.showSurvey());

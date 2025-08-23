@@ -20,11 +20,11 @@ public class GetUsersMeRestController {
     @GetMapping("/users/me")
     public ResponseEntity<GetUsersMeResponseDto> getUsersMe() {
         UUID currentUserId = userContext.getUser().id();
-        GetUsersMeUseCase.UserProfile user = useCase.getUserProfile(new GetUsersMeUseCase.Param(currentUserId));
+        GetUsersMeUseCase.Result user = useCase.getUserProfile(new GetUsersMeUseCase.Param(currentUserId));
         return new ResponseEntity<>(toResponseDto(user), HttpStatus.OK);
     }
 
-    private GetUsersMeResponseDto toResponseDto(GetUsersMeUseCase.UserProfile user) {
+    private GetUsersMeResponseDto toResponseDto(GetUsersMeUseCase.Result user) {
         return new GetUsersMeResponseDto(user.id(),
             user.displayName(),
             user.pictureLink(),

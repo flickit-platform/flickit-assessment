@@ -12,7 +12,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 
 public interface GetUsersMeUseCase {
 
-    UserProfile getUserProfile(Param param);
+    Result getUserProfile(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
@@ -28,13 +28,11 @@ public interface GetUsersMeUseCase {
         }
     }
 
-    record UserProfile(UUID id,
-                       String email,
-                       String displayName,
-                       String bio,
-                       String linkedin,
-                       String pictureLink,
-                       long defaultSpaceId,
-                       boolean showSurvey) {
+    record Result(UUID id,
+                  String email,
+                  String displayName,
+                  String pictureLink,
+                  long defaultSpaceId,
+                  boolean showSurvey) {
     }
 }

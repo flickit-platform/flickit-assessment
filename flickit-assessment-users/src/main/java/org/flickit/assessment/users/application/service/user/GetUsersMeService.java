@@ -25,7 +25,7 @@ public class GetUsersMeService implements GetUsersMeUseCase {
     private final LoadUserSurveyPort loadUserSurveyPort;
 
     @Override
-    public UserProfile getUserProfile(Param param) {
+    public Result getUserProfile(Param param) {
         User user = loadUserPort.loadUser(param.getCurrentUserId());
 
         String pictureLink = null;
@@ -44,12 +44,10 @@ public class GetUsersMeService implements GetUsersMeUseCase {
             showSurvey);
     }
 
-    private UserProfile mapToUserProfile(User user, String pictureLink, long defaultSpaceId, boolean showSurvey) {
-        return new UserProfile(user.getId(),
+    private Result mapToUserProfile(User user, String pictureLink, long defaultSpaceId, boolean showSurvey) {
+        return new Result(user.getId(),
             user.getEmail(),
             user.getDisplayName(),
-            user.getBio(),
-            user.getLinkedin(),
             pictureLink,
             defaultSpaceId,
             showSurvey);
