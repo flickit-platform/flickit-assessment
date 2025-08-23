@@ -10,9 +10,9 @@ import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 
-public interface GetUserProfileUseCase {
+public interface GetUsersMeUseCase {
 
-    UserProfile getUserProfile(Param param);
+    Result getUserProfile(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
@@ -28,11 +28,10 @@ public interface GetUserProfileUseCase {
         }
     }
 
-    record UserProfile(UUID id,
-                       String email,
-                       String displayName,
-                       String bio,
-                       String linkedin,
-                       String pictureLink) {
+    record Result(UUID id,
+                  String displayName,
+                  String pictureLink,
+                  long defaultSpaceId,
+                  boolean showSurvey) {
     }
 }
