@@ -124,7 +124,8 @@ public interface GetAssessmentReportUseCase {
 
     record Permissions(boolean canViewDashboard,
                        boolean canShareReport,
-                       boolean canManageVisibility) {
+                       boolean canManageVisibility,
+                       boolean canViewMeasureQuestions) {
     }
 
     record AdviceItem(UUID id,
