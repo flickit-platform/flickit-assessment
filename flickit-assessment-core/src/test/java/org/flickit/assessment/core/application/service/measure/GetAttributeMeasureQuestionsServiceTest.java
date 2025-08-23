@@ -22,7 +22,6 @@ class GetAttributeMeasureQuestionsServiceTest {
         return GetAttributeMeasureQuestionsUseCase.Param.builder()
             .assessmentId(UUID.randomUUID())
             .attributeId(1L)
-            .questionId(2L)
             .measureId(3L)
             .currentUserId(UUID.randomUUID());
     }
