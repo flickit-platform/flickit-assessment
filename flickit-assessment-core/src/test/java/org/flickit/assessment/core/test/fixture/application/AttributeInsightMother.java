@@ -1,6 +1,6 @@
 package org.flickit.assessment.core.test.fixture.application;
 
-import org.flickit.assessment.core.application.domain.AttributeInsight;
+import org.flickit.assessment.core.application.domain.insight.AttributeInsight;
 
 import java.time.LocalDateTime;
 import java.util.Random;
@@ -8,23 +8,51 @@ import java.util.UUID;
 
 public class AttributeInsightMother {
 
-    public static AttributeInsight simpleAttributeAiInsight(){
+    public static AttributeInsight insightWithTimeAndApproved(LocalDateTime insightTime, boolean approved) {
         return new AttributeInsight(UUID.randomUUID(),
             new Random().nextLong(),
             "ai insight ",
             "assessor insight",
-            LocalDateTime.now(),
-            LocalDateTime.now(),
-            "input path");
+            insightTime,
+            insightTime,
+            "input path",
+            approved,
+            insightTime);
     }
 
-    public static AttributeInsight simpleAttributeAiInsightMinInsightTime(){
+    public static AttributeInsight attributeInsightWithTimes(LocalDateTime aiInsightTime, LocalDateTime assessorInsightTime, LocalDateTime lastModificationTime) {
         return new AttributeInsight(UUID.randomUUID(),
             new Random().nextLong(),
             "ai insight ",
             "assessor insight",
-            LocalDateTime.MIN,
+            aiInsightTime,
+            assessorInsightTime,
+            "input path",
+            true,
+            lastModificationTime);
+    }
+
+    public static AttributeInsight aiInsightWithTime(LocalDateTime insightTime) {
+        return new AttributeInsight(UUID.randomUUID(),
+            new Random().nextLong(),
+            "ai insight ",
+            null,
+            insightTime,
+            null,
+            "input path",
+            false,
+            insightTime);
+    }
+
+    public static AttributeInsight aiInsightWithAttributeId(Long attributeId) {
+        return new AttributeInsight(UUID.randomUUID(),
+            attributeId,
+            "ai insight ",
+            null,
             LocalDateTime.now(),
-            "input path");
+            null,
+            "input path",
+            false,
+            LocalDateTime.now());
     }
 }

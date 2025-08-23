@@ -15,6 +15,8 @@ import static ai.timefold.solver.core.api.score.stream.ConstraintCollectors.sum;
 
 public class PlanConstraintProvider implements ConstraintProvider {
 
+    public static final int SOFT_SCORE_FACTOR = 100;
+
     @Override
     public Constraint[] defineConstraints(ConstraintFactory constraintFactory) {
         return new Constraint[]{
@@ -50,7 +52,7 @@ public class PlanConstraintProvider implements ConstraintProvider {
                 sum(q -> (int) (Math.ceil(q.getCost())))
             )
             .reward(HardSoftScore.ONE_SOFT,
-                (totalGain, totalCost) -> Math.round(((float) totalGain / totalCost) * 100))
+                (totalGain, totalCost) -> Math.round(((float) totalGain / totalCost) * 100 * SOFT_SCORE_FACTOR))
             .asConstraint("totalBenefit");
     }
 
@@ -60,7 +62,7 @@ public class PlanConstraintProvider implements ConstraintProvider {
             .filter(isQuestionOnPlan())
             .groupBy(count())
             .filter(count -> count > 0)
-            .penalize(HardSoftScore.ONE_SOFT, c -> c)
+            .penalize(HardSoftScore.ONE_SOFT, c -> c * SOFT_SCORE_FACTOR)
             .asConstraint("leastCount");
     }
 

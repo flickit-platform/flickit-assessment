@@ -21,4 +21,8 @@ public class UserContext {
             throw new MissingAuthorizationHeaderException(COMMON_HEADER_AUTHORIZATION_NOT_NULL);
         }
     }
+
+    public boolean isAuthenticated() {
+        return user != null;
+    }
 }

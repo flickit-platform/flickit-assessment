@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Objects;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_EVIDENCE_LIST;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -40,7 +41,7 @@ public class GetEvidenceListService implements GetEvidenceListUseCase {
         );
 
         return new PaginatedResponse<>(
-            addPictureLink(portResult.getItems()),
+            enrichEvidenceItems(portResult.getItems(), param),
             param.getPage(),
             param.getSize(),
             portResult.getSort(),
@@ -49,18 +50,24 @@ public class GetEvidenceListService implements GetEvidenceListUseCase {
         );
     }
 
-    private List<EvidenceListItem> addPictureLink(List<EvidenceListItem> items) {
-        return items.stream().map(e -> new EvidenceListItem(
-            e.id(),
-            e.description(),
-            e.type(),
-            e.lastModificationTime(),
-            e.attachmentsCount(),
-            addPictureLinkToUser(e.createdBy())
-        )).toList();
+    private List<EvidenceListItem> enrichEvidenceItems(List<LoadEvidencesPort.EvidenceListItem> items, Param param) {
+        return items.stream()
+            .map(e -> {
+                var isCreator = Objects.equals(e.createdBy().id(), param.getCurrentUserId());
+                return new EvidenceListItem(
+                    e.id(),
+                    e.description(),
+                    e.type(),
+                    e.lastModificationTime(),
+                    e.attachmentsCount(),
+                    addPictureLinkToUser(e.createdBy()),
+                    isCreator,
+                    isCreator);
+            })
+            .toList();
     }
 
-    private User addPictureLinkToUser(User user) {
+    private User addPictureLinkToUser(LoadEvidencesPort.User user) {
         return new User(user.id(),
             user.displayName(),
             createFileDownloadLinkPort.createDownloadLink(user.pictureLink(), EXPIRY_DURATION));

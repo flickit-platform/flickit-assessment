@@ -3,10 +3,12 @@ package org.flickit.assessment.core.application.service.assessment;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.port.in.assessment.CalculateAssessmentUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.UpdateAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentkit.LoadKitLastMajorModificationTimePort;
+import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadCalculateInfoPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.UpdateCalculatedResultPort;
 import org.flickit.assessment.core.application.port.out.attributevalue.CreateAttributeValuePort;
@@ -21,48 +23,62 @@ import java.util.stream.Collectors;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CALCULATE_ASSESSMENT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.core.common.ErrorMessageKey.CALCULATE_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class CalculateAssessmentService implements CalculateAssessmentUseCase {
 
+    private final AssessmentAccessChecker assessmentAccessChecker;
+    private final LoadAssessmentResultPort loadAssessmentResultPort;
+    private final LoadKitLastMajorModificationTimePort loadKitLastMajorModificationTimePort;
     private final LoadCalculateInfoPort loadCalculateInfoPort;
     private final UpdateCalculatedResultPort updateCalculatedResultPort;
     private final UpdateAssessmentPort updateAssessmentPort;
-    private final LoadKitLastMajorModificationTimePort loadKitLastMajorModificationTimePort;
     private final LoadSubjectsPort loadSubjectsPort;
     private final CreateSubjectValuePort createSubjectValuePort;
     private final CreateAttributeValuePort createAttributeValuePort;
-    private final AssessmentAccessChecker assessmentAccessChecker;
 
     @Override
     public Result calculateMaturityLevel(Param param) {
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CALCULATE_ASSESSMENT))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        AssessmentResult assessmentResult = loadCalculateInfoPort.load(param.getAssessmentId());
-        if (isAssessmentResultReinitializationRequired(assessmentResult))
+        var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
+            .orElseThrow(() -> new ResourceNotFoundException(CALCULATE_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND));
+
+        var kitId = assessmentResult.getAssessment().getAssessmentKit().getId();
+        var kitLastMajorModificationTime = loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(kitId);
+
+        if (isCalculationValid(assessmentResult, kitLastMajorModificationTime))
+            return new Result(assessmentResult.getMaturityLevel(), false);
+
+        if (assessmentResult.getLastCalculationTime() == null || assessmentResult.getLastCalculationTime().isBefore(kitLastMajorModificationTime))
             reinitializeAssessmentResult(assessmentResult);
 
+        var assessmentResultCalculateInfo = loadCalculateInfoPort.load(param.getAssessmentId());
+
+        MaturityLevel calcResult = calculate(assessmentResultCalculateInfo);
+        updateCalculatedResultPort.updateCalculatedResult(assessmentResultCalculateInfo);
+        updateAssessmentPort.updateLastModificationTime(param.getAssessmentId(), assessmentResultCalculateInfo.getLastModificationTime());
+        return new Result(calcResult, true);
+    }
+
+    boolean isCalculationValid(AssessmentResult assessmentResult, LocalDateTime kitLastMajorModificationTime) {
+        var calculationTime = assessmentResult.getLastCalculationTime();
+        return Boolean.TRUE.equals(assessmentResult.getIsCalculateValid())
+            && calculationTime != null
+            && calculationTime.isAfter(kitLastMajorModificationTime);
+    }
+
+    private static MaturityLevel calculate(AssessmentResult assessmentResult) {
         MaturityLevel calcResult = assessmentResult.calculate();
         assessmentResult.setMaturityLevel(calcResult);
         assessmentResult.setIsCalculateValid(Boolean.TRUE);
         assessmentResult.setLastModificationTime(LocalDateTime.now());
         assessmentResult.setLastCalculationTime(LocalDateTime.now());
-
-        updateCalculatedResultPort.updateCalculatedResult(assessmentResult);
-
-        updateAssessmentPort.updateLastModificationTime(param.getAssessmentId(), assessmentResult.getLastModificationTime());
-
-
-        return new Result(calcResult);
-    }
-
-    private boolean isAssessmentResultReinitializationRequired(AssessmentResult assessmentResult) {
-        Long kitId = assessmentResult.getAssessment().getAssessmentKit().getId();
-        LocalDateTime kitLastMajorModificationTime = loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(kitId);
-        return assessmentResult.getLastCalculationTime().isBefore(kitLastMajorModificationTime);
+        return calcResult;
     }
 
     private void reinitializeAssessmentResult(AssessmentResult assessmentResult) {
@@ -102,6 +118,7 @@ public class CalculateAssessmentService implements CalculateAssessmentUseCase {
 
     private Map<UUID, List<AttributeValue>> createNewAttributeValues(List<Subject> kitSubjects, List<SubjectValue> subjectValues, UUID assessmentResultId) {
         List<Attribute> kitAttributes = kitSubjects.stream()
+            .filter(s -> s.getAttributes() != null)
             .flatMap(s -> s.getAttributes().stream())
             .toList();
 
@@ -117,13 +134,15 @@ public class CalculateAssessmentService implements CalculateAssessmentUseCase {
         var newAttributeIds = kitAttributes.stream()
             .map(Attribute::getId)
             .filter(a -> !attributesWithValue.contains(a))
-            .toList();
+            .collect(Collectors.toSet());
 
         Map<Long, Long> attributeIdToSubjectId = new HashMap<>();
-        for (Subject subject : kitSubjects) {
-            for (Attribute attribute : subject.getAttributes())
-                attributeIdToSubjectId.put(attribute.getId(), subject.getId());
-        }
+        kitSubjects.forEach(subject -> {
+            if (subject.getAttributes() != null) {
+                subject.getAttributes().forEach(attribute ->
+                    attributeIdToSubjectId.put(attribute.getId(), subject.getId()));
+            }
+        });
 
         List<AttributeValue> newAttributeValues = createAttributeValuePort.persistAll(newAttributeIds, assessmentResultId);
         Map<Long, SubjectValue> subjectIdToSubjectValue = subjectValues.stream().collect(Collectors.toMap(a -> a.getSubject().getId(), a -> a));

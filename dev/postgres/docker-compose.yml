@@ -1,0 +1,23 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:15.8
+    container_name: flickit-postgres
+    environment:
+      POSTGRES_USER: flickit
+      POSTGRES_PASSWORD: flickit
+      POSTGRES_DB: flickit
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/postgres-data
+    networks:
+      - flickit-network
+
+volumes:
+  postgres-data:
+
+networks:
+  flickit-network:
+    driver: bridge

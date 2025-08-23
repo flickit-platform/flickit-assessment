@@ -18,6 +18,7 @@ public class QuestionDslModelMother {
         String questionnaireCode,
         List<QuestionImpactDslModel> questionImpacts,
         List<AnswerOptionDslModel> answerOptions,
+        String answerRangeCode,
         boolean mayNotBeApplicable,
         boolean advisable) {
 
@@ -29,6 +30,7 @@ public class QuestionDslModelMother {
             .questionnaireCode(questionnaireCode)
             .questionImpacts(questionImpacts)
             .answerOptions(answerOptions)
+            .answerRangeCode(answerRangeCode)
             .mayNotBeApplicable(mayNotBeApplicable)
             .advisable(advisable)
             .build();

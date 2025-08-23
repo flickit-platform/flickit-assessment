@@ -31,6 +31,7 @@ public class UpdateAssessmentRestController {
         return new UpdateAssessmentUseCase.Param(
             id,
             request.title(),
+            request.shortTitle(),
             currentUserId
         );
     }

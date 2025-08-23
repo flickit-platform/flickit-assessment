@@ -1,4 +1,8 @@
 package org.flickit.assessment.users.adapter.in.rest.space;
 
-public record CreateSpaceRequestDto(String title) {
+import lombok.Builder;
+
+@Builder
+public record CreateSpaceRequestDto(String title,
+                                    String type) {
 }

@@ -4,6 +4,7 @@ import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
@@ -13,33 +14,40 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class GetSpaceListUseCaseParamTest {
 
     @Test
-    void testGetSpaceList_sizeIsLessThanMin_ErrorMessage() {
-        UUID currentUserId = UUID.randomUUID();
+    void testGetSpaceListUseCaseParam_sizeParamViolatesConstraint_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new GetSpaceListUseCase.Param(0, 10, currentUserId));
+            () -> createParam(b -> b.size(0)));
         assertThat(throwable).hasMessage("size: " + GET_SPACE_LIST_SIZE_MIN);
-    }
 
-    @Test
-    void testGetSpaceList_sizeIsMoreThenMax_ErrorMessage() {
-        UUID currentUserId = UUID.randomUUID();
-        var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new GetSpaceListUseCase.Param(101, 0, currentUserId));
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.size(101)));
         assertThat(throwable).hasMessage("size: " + GET_SPACE_LIST_SIZE_MAX);
     }
 
     @Test
-    void testGetSpaceList_pageIsLessThanZero_ErrorMessage() {
-        UUID currentUserId = UUID.randomUUID();
+    void testGetSpaceListUseCaseParam_pageParamViolatesConstraint_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new GetSpaceListUseCase.Param(10, -1, currentUserId));
+            () -> createParam(b -> b.page(-1)));
         assertThat(throwable).hasMessage("page: " + GET_SPACE_LIST_PAGE_MIN);
     }
 
     @Test
-    void testGetSpaceList_currentUserIsNull_ErrorMessage() {
+    void testGetSpaceListUseCaseParam_currentUserIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new GetSpaceListUseCase.Param(10, 0, null));
+            () -> createParam(b -> b.currentUserId(null)));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
+    }
+
+    private void createParam(Consumer<GetSpaceListUseCase.Param.ParamBuilder> changer) {
+        var paramBuilder = paramBuilder();
+        changer.accept(paramBuilder);
+        paramBuilder.build();
+    }
+
+    private GetSpaceListUseCase.Param.ParamBuilder paramBuilder() {
+        return GetSpaceListUseCase.Param.builder()
+            .page(0)
+            .size(10)
+            .currentUserId(UUID.randomUUID());
     }
 }

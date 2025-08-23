@@ -7,8 +7,8 @@ import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.users.application.domain.ExpertGroupAccess;
 import org.flickit.assessment.users.application.domain.ExpertGroupAccessStatus;
 import org.flickit.assessment.users.application.port.in.expertgroupaccess.ConfirmExpertGroupInvitationUseCase;
-import org.flickit.assessment.users.application.port.out.expertgroupaccess.LoadExpertGroupAccessPort;
 import org.flickit.assessment.users.application.port.out.expertgroupaccess.ConfirmExpertGroupInvitationPort;
+import org.flickit.assessment.users.application.port.out.expertgroupaccess.LoadExpertGroupAccessPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,7 +29,7 @@ public class ConfirmExpertGroupInvitationService implements ConfirmExpertGroupIn
             .loadExpertGroupAccess(param.getExpertGroupId(), param.getCurrentUserId())
             .orElseThrow(()-> new ResourceNotFoundException(CONFIRM_EXPERT_GROUP_INVITATION_LINK_INVALID));
 
-        if (expertGroupAccess.getStatus() == ExpertGroupAccessStatus.ACTIVE.ordinal())
+        if (expertGroupAccess.getStatus().equals(ExpertGroupAccessStatus.ACTIVE))
             throw new ResourceAlreadyExistsException(CONFIRM_EXPERT_GROUP_INVITATION_USER_ID_DUPLICATE);
 
         if (expertGroupAccess.getInviteToken() == null || !expertGroupAccess.getInviteToken().equals(param.getInviteToken()))

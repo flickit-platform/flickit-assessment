@@ -19,7 +19,7 @@ public class GetKitDetailRestController {
     private final UserContext userContext;
 
     @GetMapping("/assessment-kits/{kitId}/details")
-    public ResponseEntity<GetKitDetailResponseDto> getDslDownloadLink(@PathVariable("kitId") Long kitId) {
+    public ResponseEntity<GetKitDetailResponseDto> getKitDetail(@PathVariable("kitId") Long kitId) {
         UUID currentUserId = userContext.getUser().id();
         var response = useCase.getKitDetail(toParam(kitId, currentUserId));
         return new ResponseEntity<>(toResponseDto(response), HttpStatus.OK);

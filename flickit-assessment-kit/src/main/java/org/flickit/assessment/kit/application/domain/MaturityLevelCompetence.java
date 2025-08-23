@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MaturityLevelCompetence {
 
+    private final long id;
     private final long effectiveLevelId;
     private final int value;
 }

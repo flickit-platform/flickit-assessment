@@ -2,6 +2,7 @@ package org.flickit.assessment.data.jpa.kit.kitversion;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldNameConstants;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 
 import java.time.LocalDateTime;
@@ -11,6 +12,7 @@ import java.util.UUID;
 @Table(name = "fak_kit_version")
 @Getter
 @Setter
+@FieldNameConstants
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -18,8 +20,6 @@ public class KitVersionJpaEntity {
 
     @Id
     @EqualsAndHashCode.Include
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "fak_kit_version_id_seq")
-    @SequenceGenerator(name = "fak_kit_version_id_seq", sequenceName = "fak_kit_version_id_seq", allocationSize = 1)
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
@@ -29,6 +29,9 @@ public class KitVersionJpaEntity {
 
     @Column(name = "status", nullable = false)
     private int status;
+
+    @Column(name = "status_version", nullable = false)
+    private long statusVersion;
 
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;

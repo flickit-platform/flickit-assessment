@@ -36,4 +36,19 @@ public class EvidenceMother {
             false
         );
     }
+
+    public static Evidence evidenceAsComment() {
+        return new Evidence(
+            UUID.randomUUID(),
+            "description",
+            UUID.randomUUID(),
+            UUID.randomUUID(),
+            UUID.randomUUID(),
+            1L,
+            null,
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            false
+        );
+    }
 }

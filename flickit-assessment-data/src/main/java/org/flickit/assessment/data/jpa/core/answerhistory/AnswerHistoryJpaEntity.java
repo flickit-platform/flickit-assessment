@@ -5,7 +5,7 @@ import lombok.*;
 import lombok.experimental.FieldNameConstants;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
-import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -22,8 +22,8 @@ public class AnswerHistoryJpaEntity {
 
     @Id
     @EqualsAndHashCode.Include
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    @GeneratedValue
+    @UuidGenerator(style = UuidGenerator.Style.RANDOM)
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
@@ -46,6 +46,9 @@ public class AnswerHistoryJpaEntity {
 
     @Column(name = "is_not_applicable")
     private Boolean isNotApplicable;
+
+    @Column(name = "status")
+    private Integer status;
 
     @Column(name = "created_by", nullable = false)
     private UUID createdBy;

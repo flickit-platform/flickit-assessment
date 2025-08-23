@@ -8,12 +8,12 @@ import org.flickit.assessment.common.application.port.out.SendEmailPort;
 import org.flickit.assessment.common.config.AppSpecProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.port.in.assessmentinvite.InviteAssessmentUserUseCase;
-import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentPort;
+import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentinvite.CreateAssessmentInvitePort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.GrantUserAssessmentRolePort;
 import org.flickit.assessment.core.application.port.out.space.CreateSpaceInvitePort;
 import org.flickit.assessment.core.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
-import org.flickit.assessment.core.application.port.out.spaceuseraccess.CreateAssessmentSpaceUserAccessPort;
+import org.flickit.assessment.core.application.port.out.spaceuseraccess.CreateSpaceUserAccessPort;
 import org.flickit.assessment.core.application.port.out.user.LoadUserPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,13 +33,13 @@ public class InviteAssessmentUserService implements InviteAssessmentUserUseCase 
     private static final Duration EXPIRY_DURATION = Duration.ofDays(7);
 
     private final AssessmentAccessChecker assessmentAccessChecker;
-    private final GetAssessmentPort getAssessmentPort;
+    private final LoadAssessmentPort loadAssessmentPort;
     private final LoadUserPort loadUserPort;
     private final CreateSpaceInvitePort createSpaceInvitePort;
     private final CreateAssessmentInvitePort createAssessmentInvitePort;
     private final AppSpecProperties appSpecProperties;
     private final SendEmailPort sendEmailPort;
-    private final CreateAssessmentSpaceUserAccessPort createAssessmentSpaceUserAccessPort;
+    private final CreateSpaceUserAccessPort createSpaceUserAccessPort;
     private final GrantUserAssessmentRolePort grantUserAssessmentRolePort;
     private final CheckSpaceAccessPort checkSpaceAccessPort;
 
@@ -48,7 +48,7 @@ public class InviteAssessmentUserService implements InviteAssessmentUserUseCase 
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_USER_ASSESSMENT_ROLE))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        var assessment = getAssessmentPort.getAssessmentById(param.getAssessmentId()).orElseThrow();
+        var assessment = loadAssessmentPort.loadById(param.getAssessmentId()).orElseThrow();
 
         var user = loadUserPort.loadByEmail(param.getEmail());
         var creationTime = LocalDateTime.now();
@@ -61,9 +61,9 @@ public class InviteAssessmentUserService implements InviteAssessmentUserUseCase 
             var userId = user.get().getId();
 
             if (!checkSpaceAccessPort.checkIsMember(assessment.getSpace().getId(), userId)) {
-                var createAssessmentParam = new CreateAssessmentSpaceUserAccessPort.Param(
+                var createAssessmentParam = new CreateSpaceUserAccessPort.CreateParam(
                     assessment.getId(), userId, param.getCurrentUserId(), creationTime);
-                createAssessmentSpaceUserAccessPort.persist(createAssessmentParam);
+                createSpaceUserAccessPort.persistByAssessmentId(createAssessmentParam);
             }
             grantUserAssessmentRolePort.persist(param.getAssessmentId(), userId, param.getRoleId());
         }
@@ -88,8 +88,19 @@ public class InviteAssessmentUserService implements InviteAssessmentUserUseCase 
 
     private void sendInviteEmail(String sendTo) {
         String subject = MessageBundle.message(INVITE_TO_REGISTER_EMAIL_SUBJECT, appSpecProperties.getName());
-        String body = MessageBundle.message(INVITE_TO_REGISTER_EMAIL_BODY, appSpecProperties.getHost(), appSpecProperties.getName());
+        String body = generateEmailBody();
         log.debug("Sending invite email to [{}]", sendTo);
         sendEmailPort.send(sendTo, subject, body);
+    }
+
+    private String generateEmailBody() {
+        if (appSpecProperties.getSupportEmail() == null || appSpecProperties.getSupportEmail().isBlank())
+            return MessageBundle.message(INVITE_TO_REGISTER_EMAIL_BODY_WITHOUT_SUPPORT_EMAIL,
+                appSpecProperties.getHost(),
+                appSpecProperties.getName());
+        return MessageBundle.message(INVITE_TO_REGISTER_EMAIL_BODY,
+            appSpecProperties.getHost(),
+            appSpecProperties.getName(),
+            appSpecProperties.getSupportEmail());
     }
 }

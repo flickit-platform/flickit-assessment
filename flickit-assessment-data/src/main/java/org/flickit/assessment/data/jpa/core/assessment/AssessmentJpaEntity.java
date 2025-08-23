@@ -2,12 +2,11 @@ package org.flickit.assessment.data.jpa.core.assessment;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.GenericGenerator;
+import lombok.experimental.FieldNameConstants;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
-
-import static lombok.AccessLevel.PRIVATE;
 
 @Entity
 @Table(name = "fac_assessment")
@@ -16,13 +15,14 @@ import static lombok.AccessLevel.PRIVATE;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
+@FieldNameConstants
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class AssessmentJpaEntity {
 
     @Id
     @EqualsAndHashCode.Include
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    @GeneratedValue
+    @UuidGenerator(style = UuidGenerator.Style.RANDOM)
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
@@ -32,11 +32,20 @@ public class AssessmentJpaEntity {
     @Column(name = "title", length = 100, nullable = false)
     private String title;
 
+    @Column(name = "short_title", length = 20)
+    private String shortTitle;
+
     @Column(name = "assessment_kit_id", nullable = false)
     private Long assessmentKitId;
 
     @Column(name = "space_id", nullable = false)
     private Long spaceId;
+
+    @Column(name = "kit_custom_id")
+    private Long kitCustomId;
+
+    @Column(name = "mode")
+    private Integer mode;
 
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
@@ -55,11 +64,4 @@ public class AssessmentJpaEntity {
 
     @Column(name = "last_modified_by", nullable = false)
     private UUID lastModifiedBy;
-
-    @NoArgsConstructor(access = PRIVATE)
-    public static class Fields {
-        public static final String ASSESSMENT_KIT_ID = "assessmentKitId";
-        public static final String SPACE_ID = "spaceId";
-        public static final String LAST_MODIFICATION_TIME = "lastModificationTime";
-    }
 }

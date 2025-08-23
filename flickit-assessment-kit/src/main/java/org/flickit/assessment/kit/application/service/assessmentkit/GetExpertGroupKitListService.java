@@ -49,6 +49,10 @@ public class GetExpertGroupKitListService implements GetExpertGroupKitListUseCas
 
     private Result toResult(AssessmentKit kit) {
         return new Result(kit.getId(),
-            kit.getTitle(), kit.isPublished(), kit.isPrivate(), kit.getLastModificationTime());
+            kit.getTitle(),
+            kit.isPublished(),
+            kit.isPrivate(),
+            kit.getLastModificationTime(),
+            kit.getDraftVersionId());
     }
 }

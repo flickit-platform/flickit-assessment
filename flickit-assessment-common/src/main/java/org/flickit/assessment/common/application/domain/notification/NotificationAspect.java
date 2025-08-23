@@ -3,9 +3,9 @@ package org.flickit.assessment.common.application.domain.notification;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Pointcut;
 import org.flickit.assessment.common.application.port.out.SendNotificationPort;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.core.annotation.Order;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -14,10 +14,12 @@ import java.util.Map;
 
 import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.common.config.NotificationSenderConfig.NOTIFICATION_SENDER_THREAD_EXECUTOR;
+import static org.flickit.assessment.common.util.AspectOrders.NOTIFICATION_ORDER;
 
 @Slf4j
 @Aspect
 @Component
+@Order(NOTIFICATION_ORDER)
 @ConditionalOnProperty(name = "app.notif-sender.enabled", havingValue = "true")
 public class NotificationAspect {
 
@@ -31,12 +33,8 @@ public class NotificationAspect {
             .collect(toMap(NotificationCreator::cmdClass, x -> x));
     }
 
-    @Pointcut("@annotation(SendNotification)")
-    public void annotatedBySendNotification() {
-    }
-
     @Async(NOTIFICATION_SENDER_THREAD_EXECUTOR)
-    @AfterReturning(pointcut = "annotatedBySendNotification()", returning = "result")
+    @AfterReturning(value = "@annotation(SendNotification)", returning = "result")
     public void sendNotificationAfter(Object result) {
         if (!(result instanceof HasNotificationCmd hasCmd))
             return;

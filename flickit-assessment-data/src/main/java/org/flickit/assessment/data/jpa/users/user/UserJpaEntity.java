@@ -5,11 +5,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.*;
+import lombok.experimental.FieldNameConstants;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
-
-import static lombok.AccessLevel.PRIVATE;
 
 @Entity
 @Table(name = "fau_user")
@@ -17,6 +16,7 @@ import static lombok.AccessLevel.PRIVATE;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@FieldNameConstants
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class UserJpaEntity {
 
@@ -54,11 +54,6 @@ public class UserJpaEntity {
 
     @Column(name = "password", length = 128, nullable = false)
     private String password;
-
-    @NoArgsConstructor(access = PRIVATE)
-    public static class Fields {
-        public static final String NAME = "displayName";
-    }
 
     public UserJpaEntity(UUID id, String email, String displayName, Boolean isSuperUser, Boolean isStaff,
                          Boolean isActive, String password) {

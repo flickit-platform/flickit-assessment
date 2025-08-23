@@ -30,7 +30,9 @@ public class CreateAssessmentRestController {
         return new Param(
             requestDto.spaceId(),
             requestDto.title(),
+            requestDto.shortTitle(),
             requestDto.assessmentKitId(),
+            requestDto.lang(),
             currentUserId
         );
     }

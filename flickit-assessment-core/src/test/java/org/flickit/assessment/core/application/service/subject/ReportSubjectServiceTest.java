@@ -61,7 +61,7 @@ class ReportSubjectServiceTest {
 
         MaturityLevel maturityLevel1 = MaturityLevelMother.levelTwo();
         MaturityLevel maturityLevel2 = MaturityLevelMother.levelFive();
-        var subjectReportItem = new SubjectReportItem(2L, "software", maturityLevel1,
+        var subjectReportItem = new SubjectReportItem(2L, "software", "description", maturityLevel1,
             100.0, true, true);
         var maturityScore1 = new SubjectAttributeReportItem.MaturityScore(maturityLevel1, 23.1);
         var maturityScore2 = new SubjectAttributeReportItem.MaturityScore(maturityLevel2, 53.2);

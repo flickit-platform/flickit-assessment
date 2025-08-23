@@ -3,11 +3,14 @@ package org.flickit.assessment.core.application.port.in.assessment;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.core.application.domain.AssessmentListItem;
+import org.flickit.assessment.core.application.domain.AssessmentMode;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -36,6 +39,7 @@ public interface GetSpaceAssessmentListUseCase {
         @Min(value = 0, message = GET_SPACE_ASSESSMENT_LIST_PAGE_MIN)
         int page;
 
+        @Builder
         public Param(Long spaceId, UUID currentUserId, int size, int page) {
             this.spaceId = spaceId;
             this.currentUserId = currentUserId;
@@ -53,7 +57,27 @@ public interface GetSpaceAssessmentListUseCase {
                                    Double confidenceValue,
                                    boolean isCalculateValid,
                                    boolean isConfidenceValid,
-                                   Boolean manageable,
-                                   boolean viewable) {
+                                   Language language,
+                                   Mode mode,
+                                   boolean hasReport,
+                                   Permissions permissions) {
+
+        public record Permissions(boolean canManageSettings,
+                                  boolean canViewReport,
+                                  boolean canViewDashboard,
+                                  boolean canViewQuestionnaires) {
+        }
+
+        public record Language(String code, String title) {
+            public static Language of(KitLanguage language) {
+                return new Language(language.getCode(), language.getTitle());
+            }
+        }
+
+        public record Mode(String code) {
+            public static Mode of(AssessmentMode mode) {
+                return new Mode(mode.getCode());
+            }
+        }
     }
 }

@@ -1,6 +1,7 @@
 package org.flickit.assessment.kit.application.service.assessmentkit;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.UpdateKitInfoUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.UpdateKitInfoPort;
@@ -14,7 +15,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.kit.application.domain.AssessmentKit.generateSlugCode;
+import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
 
 @Service
 @Transactional
@@ -27,26 +28,28 @@ public class UpdateKitInfoService implements UpdateKitInfoUseCase {
     @Override
     public void updateKitInfo(Param param) {
         validateCurrentUser(param.getKitId(), param.getCurrentUserId());
-        if (containsNonNullParam(param))
-            updateKitInfoPort.update(toPortParam(param));
 
+        if (containsNonNullParam(param) || param.isRemoveTranslations() || param.isRemoveMetadata())
+            updateKitInfoPort.update(toPortParam(param));
     }
 
     private void validateCurrentUser(Long kitId, UUID currentUserId) {
         var expertGroup = loadKitExpertGroupPort.loadKitExpertGroup(kitId);
         if (!Objects.equals(expertGroup.getOwnerId(), currentUserId))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
-
     }
 
     private boolean containsNonNullParam(Param param) {
         return Objects.nonNull(param.getTitle()) ||
             Objects.nonNull(param.getSummary()) ||
+            Objects.nonNull(param.getLang()) ||
             Objects.nonNull(param.getPublished()) ||
             Objects.nonNull(param.getIsPrivate()) ||
             Objects.nonNull(param.getPrice()) ||
             Objects.nonNull(param.getAbout()) ||
-            Objects.nonNull(param.getTags());
+            Objects.nonNull(param.getTags()) ||
+            Objects.nonNull(param.getTranslations()) ||
+            Objects.nonNull(param.getMetadata());
     }
 
     private UpdateKitInfoPort.Param toPortParam(Param param) {
@@ -55,11 +58,16 @@ public class UpdateKitInfoService implements UpdateKitInfoUseCase {
             param.getTitle() != null ? generateSlugCode(param.getTitle()) : null,
             param.getTitle(),
             param.getSummary(),
+            param.getLang() != null ? KitLanguage.valueOf(param.getLang()) : null,
             param.getPublished(),
             param.getIsPrivate(),
             param.getPrice(),
             param.getAbout(),
             param.getTags() != null ? new HashSet<>(param.getTags()) : null,
+            param.getTranslations(),
+            param.isRemoveTranslations(),
+            param.getMetadata(),
+            param.isRemoveMetadata(),
             param.getCurrentUserId(),
             LocalDateTime.now()
         );

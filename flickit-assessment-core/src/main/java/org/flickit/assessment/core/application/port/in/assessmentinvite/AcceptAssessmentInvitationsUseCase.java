@@ -4,6 +4,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
+import org.flickit.assessment.common.application.domain.notification.HasNotificationCmd;
+import org.flickit.assessment.common.application.domain.notification.NotificationCmd;
 
 import java.util.UUID;
 
@@ -11,7 +13,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.ACCEPT_ASSESSME
 
 public interface AcceptAssessmentInvitationsUseCase {
 
-    void acceptInvitations (Param param);
+    Result acceptInvitations(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
@@ -24,5 +26,8 @@ public interface AcceptAssessmentInvitationsUseCase {
             this.userId = userId;
             this.validateSelf();
         }
+    }
+
+    record Result(NotificationCmd notificationCmd) implements HasNotificationCmd {
     }
 }

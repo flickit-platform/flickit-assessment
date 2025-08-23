@@ -20,7 +20,7 @@ import static org.flickit.assessment.users.application.service.constant.ExpertGr
 public class ExpertGroupMapper {
 
     public static LoadExpertGroupListPort.Result mapToPortResult(ExpertGroupWithDetailsView entity,
-                                                                 List<GetExpertGroupListUseCase.Member> recentMembers,
+                                                                 List<GetExpertGroupListUseCase.Member> members,
                                                                  int membersCount) {
         return new LoadExpertGroupListPort.Result(
             entity.getId(),
@@ -29,7 +29,7 @@ public class ExpertGroupMapper {
             entity.getPicture(),
             entity.getPublishedKitsCount(),
             membersCount,
-            recentMembers,
+            members,
             entity.getOwnerId());
     }
 

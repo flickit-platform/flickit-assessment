@@ -6,6 +6,7 @@ import org.flickit.assessment.advice.application.domain.Plan;
 import org.flickit.assessment.advice.application.domain.Question;
 import org.junit.jupiter.api.Test;
 
+import static org.flickit.assessment.advice.application.service.advice.PlanConstraintProvider.SOFT_SCORE_FACTOR;
 import static org.flickit.assessment.advice.test.fixture.application.QuestionMother.createQuestionWithTargetAndOptionIndexes;
 
 class PlanConstraintProviderTest {
@@ -46,7 +47,7 @@ class PlanConstraintProviderTest {
 
         constraintVerifier.verifyThat(PlanConstraintProvider::totalBenefit)
             .given(question)
-            .rewardsWith(80);
+            .rewardsWith(80 * SOFT_SCORE_FACTOR);
     }
 
     @Test
@@ -58,6 +59,6 @@ class PlanConstraintProviderTest {
 
         constraintVerifier.verifyThat(PlanConstraintProvider::leastCount)
             .given(question1, question2, question3, attributeLevelScore)
-            .penalizesBy(2);
+            .penalizesBy(2 * SOFT_SCORE_FACTOR);
     }
 }

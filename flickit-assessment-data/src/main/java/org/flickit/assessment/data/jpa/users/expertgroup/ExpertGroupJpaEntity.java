@@ -6,8 +6,6 @@ import lombok.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static lombok.AccessLevel.PRIVATE;
-
 @Entity
 @Table(name = "fau_expert_group")
 @Getter
@@ -62,9 +60,4 @@ public class ExpertGroupJpaEntity {
 
     @Column(name = "deletion_time", nullable = false)
     private long deletionTime;
-
-    @NoArgsConstructor(access = PRIVATE)
-    public static class Fields {
-        public static final String NAME = "title";
-    }
 }

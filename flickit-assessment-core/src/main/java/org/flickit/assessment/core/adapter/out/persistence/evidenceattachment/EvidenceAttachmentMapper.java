@@ -26,7 +26,7 @@ public class EvidenceAttachmentMapper {
             entity.getId(),
             entity.getFilePath(),
             entity.getDescription(),
-            new User(entity.getUserId(), entity.getDisplayName()),
+            new User(entity.getUserId(), entity.getDisplayName(), null),
             entity.getCreationTime());
     }
 }

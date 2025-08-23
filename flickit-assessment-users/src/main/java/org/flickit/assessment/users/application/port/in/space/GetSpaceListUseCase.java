@@ -3,6 +3,7 @@ package org.flickit.assessment.users.application.port.in.space;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
@@ -32,6 +33,7 @@ public interface GetSpaceListUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
+        @Builder
         public Param(int size, int page, UUID currentUserId) {
             this.size = size;
             this.page = page;
@@ -40,9 +42,19 @@ public interface GetSpaceListUseCase {
         }
     }
 
-    record SpaceListItem(long id, String title, Owner owner, LocalDateTime lastModificationTime,
-                         int membersCount, int assessmentsCount) {
+    record SpaceListItem(long id,
+                         String title,
+                         Owner owner,
+                         Type type,
+                         boolean isActive,
+                         LocalDateTime lastModificationTime,
+                         int membersCount,
+                         int assessmentsCount) {
 
-        public record Owner(UUID id, String displayName, Boolean isCurrentUserOwner) {}
+        public record Owner(UUID id, String displayName, Boolean isCurrentUserOwner) {
+        }
+
+        public record Type(String code, String title) {
+        }
     }
 }

@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.adapter.in.rest.assessmentkit;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
+import org.flickit.assessment.kit.application.domain.KitMetadata;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.UpdateKitInfoUseCase;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.UpdateKitInfoUseCase.Param;
 import org.springframework.http.HttpStatus;
@@ -33,12 +34,29 @@ public class UpdateKitInfoRestController {
             kitId,
             request.title(),
             request.summary(),
+            request.lang(),
             request.published(),
             request.isPrivate(),
             request.price(),
             request.about(),
             request.tags(),
+            request.translations(),
+            request.removeTranslations(),
+            toKitMetadata(request.metadata()),
+            request.removeMetadata(),
             currentUserId
         );
+
+    }
+
+    private KitMetadata toKitMetadata(UpdateKitInfoRequestDto.MetadataDto metadataDto) {
+        KitMetadata metadata = null;
+
+        if (metadataDto != null) {
+            var goal = metadataDto.goal() != null && !metadataDto.goal().isBlank() ? metadataDto.goal().strip() : null;
+            var context = metadataDto.context() != null && !metadataDto.context().isBlank() ? metadataDto.context().strip() : null;
+            metadata = new KitMetadata(goal, context);
+        }
+        return metadata;
     }
 }

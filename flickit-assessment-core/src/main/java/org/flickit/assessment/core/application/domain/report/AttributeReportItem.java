@@ -6,7 +6,9 @@ public record AttributeReportItem(
     long id,
     String title,
     String description,
+    String insight,
     int index,
-    Double confidenceValue,
+    int weight,
+    double confidenceValue,
     MaturityLevel maturityLevel) {
 }

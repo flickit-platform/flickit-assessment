@@ -4,7 +4,7 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentAcc
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.domain.Question;
 import org.flickit.assessment.core.application.port.in.subject.GetSubjectProgressUseCase;
-import org.flickit.assessment.core.application.port.out.answer.CountAnswersByQuestionIdsPort;
+import org.flickit.assessment.core.application.port.out.answer.CountAnswersPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionsBySubjectPort;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectPort;
@@ -43,7 +43,7 @@ class GetSubjectProgressServiceTest {
     private LoadAssessmentResultPort loadAssessmentResultPort;
 
     @Mock
-    private CountAnswersByQuestionIdsPort countAnswersByQuestionIdsPort;
+    private CountAnswersPort countAnswersPort;
 
     @Test
     void testGetSubjectProgress_ValidResult() {
@@ -56,8 +56,8 @@ class GetSubjectProgressServiceTest {
         var questionIds = questions.stream()
             .map(Question::getId)
             .toList();
-        var qav = AttributeValueMother.toBeCalcAsLevelThreeWithWeight(1);
-        var subjectValue = SubjectValueMother.withQAValues(List.of(qav));
+        var qav = AttributeValueMother.hasFullScoreOnLevel23WithWeight(1, 1533);
+        var subjectValue = SubjectValueMother.withAttributeValues(List.of(qav), 1);
         var result = AssessmentResultMother.validResultWithSubjectValuesAndMaturityLevel(
             List.of(subjectValue), MaturityLevelMother.levelTwo());
 
@@ -67,7 +67,7 @@ class GetSubjectProgressServiceTest {
         when(loadSubjectPort.loadByIdAndKitVersionId(subjectValue.getSubject().getId(), result.getKitVersionId())).
             thenReturn(Optional.of(subjectValue.getSubject()));
         when(loadAssessmentResultPort.loadByAssessmentId(result.getAssessment().getId())).thenReturn(Optional.of(result));
-        when(countAnswersByQuestionIdsPort.countByQuestionIds(
+        when(countAnswersPort.countByQuestionIds(
             result.getId(), questionIds)).thenReturn(2);
 
         var subjectProgress = service.getSubjectProgress(new GetSubjectProgressUseCase.Param(

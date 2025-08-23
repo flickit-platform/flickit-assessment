@@ -4,7 +4,7 @@ import co.novu.api.events.requests.TriggerEventRequest;
 import org.flickit.assessment.common.application.domain.notification.NotificationEnvelope;
 import org.flickit.assessment.common.application.domain.notification.NotificationPayload;
 
-public interface NovuRequestConverter {
+interface NovuRequestConverter {
 
     TriggerEventRequest convert(NotificationEnvelope envelope);
 

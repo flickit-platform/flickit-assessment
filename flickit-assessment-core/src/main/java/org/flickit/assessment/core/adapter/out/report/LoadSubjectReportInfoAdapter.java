@@ -56,7 +56,7 @@ public class LoadSubjectReportInfoAdapter implements LoadSubjectReportInfoPort {
             .orElseThrow(() -> new ResourceNotFoundException(REPORT_SUBJECT_ID_NOT_FOUND));
 
         var maturityLevels = maturityLevelJpaRepository.findAllByKitVersionIdOrderByIndex(kitVersionId).stream()
-            .map(e -> MaturityLevelMapper.mapToDomainModel(e, null))
+            .map(MaturityLevelMapper::mapToDomainModel)
             .toList();
 
         Map<Long, MaturityLevel> idToMaturityLevelMap = maturityLevels.stream()
@@ -79,6 +79,7 @@ public class LoadSubjectReportInfoAdapter implements LoadSubjectReportInfoPort {
 
         return new SubjectReportItem(subjectEntity.getId(),
             subjectEntity.getTitle(),
+            subjectEntity.getDescription(),
             subjectMaturityLevel,
             svEntity.getConfidenceValue(),
             assessmentResultEntity.getIsCalculateValid(),

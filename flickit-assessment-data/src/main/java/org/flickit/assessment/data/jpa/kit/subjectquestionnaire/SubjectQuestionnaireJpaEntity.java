@@ -1,7 +1,11 @@
 package org.flickit.assessment.data.jpa.kit.subjectquestionnaire;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.*;
+import lombok.experimental.FieldNameConstants;
 
 @Entity
 @Table(name = "fak_subject_questionnaire")
@@ -9,14 +13,12 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@FieldNameConstants
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class SubjectQuestionnaireJpaEntity {
 
     @Id
     @EqualsAndHashCode.Include
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "fak_subject_questionnaire_id_seq")
-    @SequenceGenerator(name = "fak_subject_questionnaire_id_seq",
-        sequenceName = "fak_subject_questionnaire_id_seq", allocationSize = 1)
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 

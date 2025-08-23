@@ -3,7 +3,6 @@ package org.flickit.assessment.users.application.service.expertgroupaccess;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.users.application.domain.ExpertGroup;
 import org.flickit.assessment.users.application.domain.ExpertGroupAccess;
-import org.flickit.assessment.users.application.domain.ExpertGroupAccessStatus;
 import org.flickit.assessment.users.application.port.in.expertgroupaccess.UpdateExpertGroupLastSeenUseCase;
 import org.flickit.assessment.users.application.port.out.expertgroupaccess.LoadExpertGroupAccessPort;
 import org.flickit.assessment.users.application.port.out.expertgroupaccess.UpdateExpertGroupLastSeenPort;
@@ -20,7 +19,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.users.test.fixture.application.ExpertGroupAccessMother.createExpertGroupAccess;
+import static org.flickit.assessment.users.test.fixture.application.ExpertGroupAccessMother.activeAccess;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -42,7 +41,7 @@ class UpdateExpertGroupLastSeenServiceTest {
     @DisplayName("When the current user is a member of the expertGroup, the update LastSeen should function properly.")
     void testUpdateExpertGroupLastSeenService_isMember_success() {
         UUID currentUserId = UUID.randomUUID();
-        ExpertGroupAccess expertGroupAccess = createExpertGroupAccess(7, ExpertGroupAccessStatus.ACTIVE.ordinal());
+        ExpertGroupAccess expertGroupAccess = activeAccess();
         ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup("path", currentUserId);
         UpdateExpertGroupLastSeenUseCase.Param param = new UpdateExpertGroupLastSeenUseCase.Param(expertGroup.getId(), currentUserId);
 

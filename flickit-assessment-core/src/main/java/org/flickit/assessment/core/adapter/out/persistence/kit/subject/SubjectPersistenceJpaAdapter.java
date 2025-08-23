@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.core.adapter.out.persistence.kit.attribute.AttributeMapper;
 import org.flickit.assessment.core.application.domain.Attribute;
 import org.flickit.assessment.core.application.domain.Subject;
+import org.flickit.assessment.core.application.port.out.subject.CountSubjectsPort;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectPort;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectsPort;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
@@ -23,7 +24,8 @@ import static org.flickit.assessment.core.adapter.out.persistence.kit.subject.Su
 @RequiredArgsConstructor
 public class SubjectPersistenceJpaAdapter implements
     LoadSubjectsPort,
-    LoadSubjectPort {
+    LoadSubjectPort,
+    CountSubjectsPort {
 
     private final SubjectJpaRepository repository;
     private final AttributeJpaRepository attributeRepository;
@@ -38,9 +40,13 @@ public class SubjectPersistenceJpaAdapter implements
             .collect(Collectors.groupingBy(AttributeJpaEntity::getSubjectId));
 
         return views.stream().map(entity -> {
-            List<Attribute> attributes = subjectIdToAttrEntities.get(entity.getId()).stream()
-                .map(AttributeMapper::mapToDomainModel)
-                .toList();
+            var subjectAttributeEntities = subjectIdToAttrEntities.get(entity.getId());
+            List<Attribute> attributes = List.of();
+            if (subjectAttributeEntities != null) {
+                attributes = subjectAttributeEntities.stream()
+                    .map(AttributeMapper::mapToDomainModel)
+                    .toList();
+            }
 
             return mapToDomainModel(entity, attributes);
         }).toList();
@@ -50,5 +56,10 @@ public class SubjectPersistenceJpaAdapter implements
     public Optional<Subject> loadByIdAndKitVersionId(long id, long kitVersionId) {
         return repository.findByIdAndKitVersionId(id, kitVersionId)
             .map(entity -> mapToDomainModel(entity, null));
+    }
+
+    @Override
+    public int countSubjects(long kitVersionId) {
+        return repository.countByKitVersionId(kitVersionId);
     }
 }

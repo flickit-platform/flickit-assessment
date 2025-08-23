@@ -14,7 +14,15 @@ import java.util.UUID;
 
 public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEntity, Long> {
 
-    @Query("SELECT e.ownerId FROM ExpertGroupJpaEntity as e where e.id = :id and deleted=false")
+    Optional<ExpertGroupJpaEntity> findByIdAndDeletedFalse(long id);
+
+    boolean existsByIdAndDeletedFalse(long id);
+
+    @Query("""
+            SELECT e.ownerId
+            FROM ExpertGroupJpaEntity as e
+            WHERE e.id = :id AND deleted=false
+        """)
     Optional<UUID> loadOwnerIdById(@Param("id") Long id);
 
     @Query("""
@@ -36,7 +44,7 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
             FROM ExpertGroupJpaEntity e
             LEFT JOIN AssessmentKitJpaEntity ak on e.id = ak.expertGroupId
             LEFT JOIN ExpertGroupAccessJpaEntity ac on e.id = ac.expertGroupId
-            WHERE ac.userId = :userId AND e.deleted = FALSE
+            WHERE ac.userId = :userId AND e.deleted = FALSE AND ac.status = 1
             GROUP BY
                 e.id,
                 e.title,
@@ -50,23 +58,15 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
 
     @Query("""
             SELECT
-                a.expertGroupId as id,
-                COUNT(DISTINCT userId) as membersCount
-            FROM ExpertGroupAccessJpaEntity a
-            WHERE a.expertGroupId IN :expertGroupIdList AND a.status = 1
-            GROUP BY a.expertGroupId
+                u.id as id,
+                u.displayName as displayName,
+                e.id as expertGroupId
+            FROM ExpertGroupJpaEntity e
+            JOIN ExpertGroupAccessJpaEntity a on a.expertGroupId = e.id
+            JOIN UserJpaEntity u on a.userId = u.id
+            WHERE a.status = 1 AND a.expertGroupId in :expertGroupIds
         """)
-    List<ExpertGroupMembersCountView> expertGroupMembersCount(List<Long> expertGroupIdList);
-
-    @Query("""
-            SELECT
-                u.displayName as displayName
-            FROM ExpertGroupAccessJpaEntity a
-            LEFT JOIN UserJpaEntity u on a.userId = u.id
-            LEFT JOIN ExpertGroupJpaEntity e on a.expertGroupId = e.id
-            WHERE a.status = 1 AND a.expertGroupId = :expertGroupId
-        """)
-    List<String> findMembersByExpertGroupId(@Param(value = "expertGroupId") Long expertGroupId, Pageable pageable);
+    List<ExpertGroupMembersView> findMembersByExpertGroupId(@Param("expertGroupIds") List<Long> expertGroupIds);
 
     @Query("""
             SELECT
@@ -95,10 +95,6 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
             WHERE e.id = :expertGroupId
         """)
     KitsCountView countKits(@Param("expertGroupId") long expertGroupId);
-
-    Optional<ExpertGroupJpaEntity> findByIdAndDeletedFalse(long id);
-
-    boolean existsByIdAndDeletedFalse(@Param(value = "id") long id);
 
     @Modifying
     @Query("""

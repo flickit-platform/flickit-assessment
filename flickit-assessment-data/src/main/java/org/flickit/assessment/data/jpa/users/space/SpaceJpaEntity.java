@@ -2,6 +2,7 @@ package org.flickit.assessment.data.jpa.users.space;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldNameConstants;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -12,6 +13,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@FieldNameConstants
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class SpaceJpaEntity {
 
@@ -22,14 +24,26 @@ public class SpaceJpaEntity {
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
-    @Column(name = "code", length = 50, nullable = false)
+    @Column(name = "code", length = 100, nullable = false)
     private String code;
 
     @Column(name = "title", length = 100, nullable = false)
     private String title;
 
+    @Column(name= "type", nullable = false)
+    private int type;
+
     @Column(name = "owner_id", nullable = false)
     private UUID ownerId;
+
+    @Column(name = "status", nullable = false)
+    private int status;
+
+    @Column(name = "subscription_expiry")
+    private LocalDateTime subscriptionExpiry;
+
+    @Column(name = "is_default")
+    private boolean isDefault;
 
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;

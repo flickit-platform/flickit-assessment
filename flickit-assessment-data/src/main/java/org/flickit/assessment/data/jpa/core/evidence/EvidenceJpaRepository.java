@@ -8,10 +8,16 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, UUID> {
+
+    boolean existsByIdAndDeletedFalse(UUID evidenceId);
+
+    Optional<EvidenceJpaEntity> findByIdAndDeletedFalse(UUID id);
 
     @Query("""
             SELECT
@@ -22,15 +28,17 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
                 e.lastModificationTime as lastModificationTime,
                 COUNT (a) as attachmentsCount
             FROM EvidenceJpaEntity e
-            LEFT JOIN EvidenceAttachmentJpaEntity a on e.id = a.evidenceId
+            LEFT JOIN EvidenceAttachmentJpaEntity a ON e.id = a.evidenceId
             WHERE e.questionId = :questionId AND e.assessmentId = :assessmentId AND e.deleted = false
+                AND CASE WHEN (:hasType = TRUE)
+                        THEN (e.type IS NOT NULL AND e.resolved IS NULL)
+                        ELSE (e.type IS NULL AND (e.resolved IS NULL OR e.resolved = false)) END
             GROUP BY e.id, e.description, e.type, e.createdBy, e.lastModificationTime
         """)
     Page<EvidenceWithAttachmentsCountView> findByQuestionIdAndAssessmentId(@Param("questionId") Long questionId,
                                                                            @Param("assessmentId") UUID assessmentId,
+                                                                           @Param("hasType") Boolean hasType,
                                                                            Pageable pageable);
-
-    Optional<EvidenceJpaEntity> findByIdAndDeletedFalse(UUID id);
 
     @Modifying
     @Query("""
@@ -55,29 +63,141 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
         """)
     void delete(@Param(value = "id") UUID id);
 
+    @Modifying
     @Query("""
-            SELECT
-                evd.id as id,
-                evd.description as description,
-                COUNT(eva.evidenceId) as attachmentsCount,
-                evd.lastModificationTime as lastModificationTime
-            FROM QuestionJpaEntity q
-            LEFT JOIN EvidenceJpaEntity evd ON q.id = evd.questionId
-            LEFT JOIN EvidenceAttachmentJpaEntity eva ON evd.id = eva.evidenceId
-            WHERE evd.assessmentId = :assessmentId
-                AND evd.type = :type
-                AND evd.deleted = false
-                AND q.id IN (SELECT qs.id
-                             FROM QuestionJpaEntity qs
-                             LEFT JOIN AssessmentResultJpaEntity ar ON qs.kitVersionId = ar.kitVersionId
-                             LEFT JOIN QuestionImpactJpaEntity qi ON qs.id = qi.questionId
-                             WHERE qi.attributeId = :attributeId AND ar.assessment.id = :assessmentId)
-            GROUP BY evd.description, evd.lastModificationTime, evd.id
+            UPDATE EvidenceJpaEntity e
+            SET e.resolved = true,
+                e.lastModifiedBy = :lastModifiedBy,
+                e.lastModificationTime = :lastModificationTime
+            WHERE e.id = :evidenceId
         """)
-    Page<MinimalEvidenceView> findAssessmentAttributeEvidencesByType(@Param(value = "assessmentId") UUID assessmentId,
-                                                                     @Param(value = "attributeId") Long attributeId,
-                                                                     @Param(value = "type") Integer type,
-                                                                     Pageable pageable);
+    void resolveComment(@Param("evidenceId") UUID evidenceId,
+                        @Param("lastModifiedBy") UUID lastModifiedBy,
+                        @Param("lastModificationTime") LocalDateTime lastModificationTime);
 
-    boolean existsByIdAndDeletedFalse(UUID evidenceId);
+    @Modifying
+    @Query("""
+            UPDATE EvidenceJpaEntity e
+            SET e.resolved = true,
+                e.lastModifiedBy = :lastModifiedBy,
+                e.lastModificationTime = :lastModificationTime
+            WHERE e.assessmentId = :assessmentId
+                    AND e.deleted = false
+                    AND e.type IS NULL
+                    AND (e.resolved IS NULL OR e.resolved = false)
+        """)
+    void resolveAllAssessmentComments(@Param("assessmentId") UUID assessmentId,
+                                      @Param("lastModifiedBy") UUID lastModifiedBy,
+                                      @Param("lastModificationTime") LocalDateTime lastModificationTime);
+
+    @Query("""
+            SELECT COUNT(DISTINCT e.questionId)
+            FROM EvidenceJpaEntity e
+            LEFT JOIN AnswerJpaEntity a ON e.questionId = a.questionId AND a.assessmentResult.assessment.id = :assessmentId
+            LEFT JOIN AssessmentResultJpaEntity ar on a.assessmentResult.assessment.id = e.assessmentId
+            WHERE e.assessmentId = :assessmentId
+                AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
+                AND e.deleted = false
+                AND e.type IS NOT NULL
+        """)
+    int countAnsweredQuestionsHavingEvidence(@Param("assessmentId") UUID assessmentId);
+
+    @Query("""
+            SELECT q.questionnaireId  AS questionnaireId,
+                COUNT(DISTINCT q.id) AS count
+            FROM AnswerJpaEntity a
+            JOIN EvidenceJpaEntity e ON e.questionId  = a.questionId
+            JOIN AssessmentResultJpaEntity ar ON ar.assessment.id = e.assessmentId AND ar.id = a.assessmentResult.id
+            JOIN QuestionJpaEntity q ON e.questionId = q.id and ar.kitVersionId = q.kitVersionId
+            WHERE e.assessmentId  = :assessmentId
+                AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
+                AND q.questionnaireId  IN :questionnaireIds
+                AND e.type IS NOT NULL
+                AND e.deleted = false
+            GROUP BY q.questionnaireId
+        """)
+    List<EvidencesQuestionnaireAndCountView> countQuestionnairesQuestionsHavingEvidence(@Param("assessmentId") UUID assessmentId,
+                                                                                        @Param("questionnaireIds") Collection<Long> questionnaireIds);
+
+    @Query("""
+            SELECT q.id  AS questionId,
+                COUNT(e) AS count
+            FROM AnswerJpaEntity a
+            JOIN EvidenceJpaEntity e ON e.questionId  = a.questionId
+            JOIN AssessmentResultJpaEntity ar ON ar.assessment.id = e.assessmentId AND ar.id = a.assessmentResult.id
+            JOIN QuestionJpaEntity q ON e.questionId = q.id and ar.kitVersionId = q.kitVersionId
+            WHERE e.assessmentId  = :assessmentId
+                AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
+                AND e.type IS NOT NULL
+                AND e.deleted = false
+                AND q.questionnaireId  = :questionnaireId
+            GROUP BY q.id
+        """)
+    List<EvidencesQuestionAndCountView> countQuestionnaireQuestionsEvidences(@Param("assessmentId") UUID assessmentId,
+                                                                             @Param("questionnaireId") long questionnaireId);
+
+    @Query("""
+            SELECT COUNT(e.id)
+            FROM EvidenceJpaEntity e
+            WHERE e.assessmentId = :assessmentId
+                AND e.questionId = :questionId
+                AND e.deleted = false
+                AND e.type IS NOT NULL
+        """)
+    int countQuestionEvidences(@Param("assessmentId") UUID assessmentId,
+                               @Param("questionId") long questionId);
+
+    @Query("""
+            SELECT COUNT(e.id)
+            FROM EvidenceJpaEntity e
+            WHERE e.assessmentId = :assessmentId
+                AND e.deleted = false
+                AND e.type IS NULL
+                AND (e.resolved IS NULL OR e.resolved = false)
+        """)
+    int countUnresolvedComments(@Param("assessmentId") UUID assessmentId);
+
+    @Query("""
+            SELECT q.questionnaireId as questionnaireId,
+                COUNT(e) as count
+            FROM EvidenceJpaEntity e
+            JOIN QuestionJpaEntity q ON e.questionId = q.id
+            JOIN AssessmentResultJpaEntity ar on ar.assessment.id = e.assessmentId AND ar.kitVersionId = q.kitVersionId
+            WHERE e.assessmentId = :assessmentId
+                 AND q.questionnaireId IN :questionnaireIds
+                 AND e.type IS NULL
+                 AND (e.resolved IS NULL OR e.resolved = false)
+                 AND e.deleted = false
+            GROUP BY q.questionnaireId
+        """)
+    List<EvidencesQuestionnaireAndCountView> countQuestionnairesUnresolvedComments(@Param("assessmentId") UUID assessmentId,
+                                                                                   @Param("questionnaireIds") Collection<Long> questionnaireIds);
+
+    @Query("""
+            SELECT q.id as questionId,
+                COUNT(e) as count
+            FROM EvidenceJpaEntity e
+            JOIN QuestionJpaEntity q ON e.questionId = q.id
+            JOIN AssessmentResultJpaEntity ar on ar.assessment.id = e.assessmentId AND ar.kitVersionId = q.kitVersionId
+            WHERE e.assessmentId = :assessmentId
+                 AND q.questionnaireId = :questionnaireId
+                 AND e.type IS NULL
+                 AND (e.resolved IS NULL OR e.resolved = false)
+                 AND e.deleted = false
+            GROUP BY q.id
+        """)
+    List<EvidencesQuestionAndCountView> countQuestionnaireQuestionsUnresolvedComments(@Param("assessmentId") UUID assessmentId,
+                                                                                      @Param("questionnaireId") long questionnaireId);
+
+    @Query("""
+            SELECT COUNT(e)
+            FROM EvidenceJpaEntity e
+            WHERE e.assessmentId = :assessmentId
+                AND e.questionId = :questionId
+                AND e.deleted = false
+                AND e.type IS NULL
+                AND (e.resolved IS NULL OR e.resolved = false)
+        """)
+    int countQuestionUnresolvedComments(@Param("assessmentId") UUID assessmentId,
+                                        @Param("questionId") long questionId);
 }

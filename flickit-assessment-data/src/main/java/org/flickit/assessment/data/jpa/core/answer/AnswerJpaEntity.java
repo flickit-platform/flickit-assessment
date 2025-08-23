@@ -2,12 +2,11 @@ package org.flickit.assessment.data.jpa.core.answer;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldNameConstants;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
-import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.util.UUID;
-
-import static lombok.AccessLevel.PRIVATE;
 
 @Entity
 @Table(name = "fac_answer")
@@ -15,13 +14,14 @@ import static lombok.AccessLevel.PRIVATE;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@FieldNameConstants
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class AnswerJpaEntity {
 
     @Id
     @EqualsAndHashCode.Include
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    @GeneratedValue
+    @UuidGenerator(style = UuidGenerator.Style.RANDOM)
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
@@ -44,20 +44,12 @@ public class AnswerJpaEntity {
     @Column(name = "is_not_applicable")
     private Boolean isNotApplicable;
 
+    @Column(name = "status")
+    private Integer status;
+
     @Column(name = "created_by", nullable = false)
     private UUID createdBy;
 
     @Column(name = "last_modified_by", nullable = false)
     private UUID lastModifiedBy;
-
-    @Override
-    public String toString() {
-        return id.toString();
-    }
-
-    @NoArgsConstructor(access = PRIVATE)
-    public static class Fields {
-        public static final String QUESTION_ID = "questionId";
-        public static final String QUESTION_INDEX = "questionIndex";
-    }
 }

@@ -40,6 +40,7 @@ class UpdateAssessmentServiceTest {
         UpdateAssessmentUseCase.Param param = new UpdateAssessmentUseCase.Param(
             id,
             "new title",
+            "short title",
             currentUserId
         );
 
@@ -67,6 +68,7 @@ class UpdateAssessmentServiceTest {
         UpdateAssessmentUseCase.Param param = new UpdateAssessmentUseCase.Param(
             id,
             "new title",
+            "short title",
             currentUserId
         );
 

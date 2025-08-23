@@ -8,8 +8,8 @@ public record AssessmentSubjectReportItem(
     Long id,
     String title,
     Integer index,
-    String description,
-    Double confidenceValue,
+    String insight,
+    double confidenceValue,
     MaturityLevel maturityLevel,
     List<AttributeReportItem> attributes) {
 }

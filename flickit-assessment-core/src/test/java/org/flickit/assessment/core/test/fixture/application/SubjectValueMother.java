@@ -1,33 +1,33 @@
 package org.flickit.assessment.core.test.fixture.application;
 
 
-import org.flickit.assessment.core.application.domain.MaturityLevel;
-import org.flickit.assessment.core.application.domain.Attribute;
 import org.flickit.assessment.core.application.domain.AttributeValue;
 import org.flickit.assessment.core.application.domain.SubjectValue;
 
 import java.util.List;
 import java.util.UUID;
 
+import static org.flickit.assessment.core.test.fixture.application.SubjectMother.subjectWithWeightAndAttributes;
+
 public class SubjectValueMother {
 
-    public static SubjectValue withQAValues(List<AttributeValue> qaValues) {
-        return new SubjectValue(UUID.randomUUID(), SubjectMother.withNoAttributes(), qaValues);
+    public static SubjectValue withAttributeValues(List<AttributeValue> attributeValues, int weight) {
+        var attributes = attributeValues.stream().map(AttributeValue::getAttribute).toList();
+        return new SubjectValue(UUID.randomUUID(), subjectWithWeightAndAttributes(weight, attributes), attributeValues);
     }
 
-    public static SubjectValue withQAValuesAndMaturityLevel(List<AttributeValue> qaValues, MaturityLevel maturityLevel) {
-        SubjectValue subjectValue = new SubjectValue(UUID.randomUUID(), SubjectMother.withNoAttributes(), qaValues);
-        subjectValue.setMaturityLevel(maturityLevel);
+    public static SubjectValue createSubjectValue() {
+        var attributeValues = List.of(
+            AttributeValueMother.hasFullScoreOnLevel23WithWeight(1, 123L),
+            AttributeValueMother.hasFullScoreOnLevel23WithWeight(2, 124L));
+        var attributes = attributeValues.stream()
+            .map(AttributeValue::getAttribute)
+            .toList();
+        var subjectValue = new SubjectValue(UUID.randomUUID(), subjectWithWeightAndAttributes(4, attributes), attributeValues);
+        subjectValue.setAttributeValues(attributeValues);
+        subjectValue.setConfidenceValue(68D);
+        subjectValue.setMaturityLevel(MaturityLevelMother.levelThree());
+
         return subjectValue;
-    }
-
-    public static SubjectValue withQAValuesAndMaturityLevelAndSubjectWithQAs(List<AttributeValue> qaValues, MaturityLevel maturityLevel, List<Attribute> qas) {
-        SubjectValue subjectValue = new SubjectValue(UUID.randomUUID(), SubjectMother.withAttributes(qas), qaValues);
-        subjectValue.setMaturityLevel(maturityLevel);
-        return subjectValue;
-    }
-
-    public static SubjectValue withQAValuesAndSubjectWithQAs(List<AttributeValue> qaValues, List<Attribute> qas) {
-        return new SubjectValue(UUID.randomUUID(), SubjectMother.withAttributes(qas), qaValues);
     }
 }

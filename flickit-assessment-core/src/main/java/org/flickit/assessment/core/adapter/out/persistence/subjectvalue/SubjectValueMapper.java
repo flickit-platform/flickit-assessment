@@ -1,12 +1,21 @@
 package org.flickit.assessment.core.adapter.out.persistence.subjectvalue;
 
+import jakarta.annotation.Nullable;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.flickit.assessment.core.application.domain.Subject;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.core.adapter.out.persistence.kit.attribute.AttributeMapper;
+import org.flickit.assessment.core.adapter.out.persistence.kit.maturitylevel.MaturityLevelMapper;
+import org.flickit.assessment.core.adapter.out.persistence.kit.subject.SubjectMapper;
 import org.flickit.assessment.core.application.domain.SubjectValue;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
+import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueWithSubjectView;
+import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
+import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
+import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SubjectValueMapper {
@@ -21,12 +30,30 @@ public class SubjectValueMapper {
         );
     }
 
-    public static SubjectValue mapToDomainModel(SubjectValueJpaEntity entity) {
-        var subject = new Subject(entity.getSubjectId(), null);
+    public static SubjectValue mapToDomainModel(SubjectValueJpaEntity entity, SubjectJpaEntity subjectEntity) {
+        var subject = SubjectMapper.mapToDomainModel(subjectEntity, null);
         return new SubjectValue(
             entity.getId(),
             subject,
             new ArrayList<>()
         );
+    }
+
+    public static SubjectValue mapToDomainModel(SubjectValueWithSubjectView view,
+                                                MaturityLevelJpaEntity maturityLevelJpaEntity,
+                                                List<AttributeJpaEntity> attributeJpaEntities,
+                                                @Nullable KitLanguage language) {
+        var attributes = attributeJpaEntities.stream()
+            .map(entity -> AttributeMapper.mapToDomainModel(entity, language))
+            .toList();
+        var subject = SubjectMapper.mapToDomainModel(view.getSubject(), attributes, language);
+        var subjectValue = new SubjectValue(
+            view.getSubjectValue().getId(),
+            subject,
+            new ArrayList<>());
+        var maturityLevel = MaturityLevelMapper.mapToDomainModel(maturityLevelJpaEntity, language);
+        subjectValue.setMaturityLevel(maturityLevel);
+        subjectValue.setConfidenceValue(view.getSubjectValue().getConfidenceValue());
+        return subjectValue;
     }
 }

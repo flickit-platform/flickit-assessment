@@ -39,8 +39,7 @@ public class GetAnswerHistoryListService implements GetAnswerHistoryListUseCase 
             param.getQuestionId(),
             param.getPage(),
             param.getSize());
-
-
+        
         List<AnswerHistoryListItem> items = paginatedResponse.getItems().stream()
             .map(e -> new AnswerHistoryListItem(Answer.of(e.getAnswer()),
                 e.getCreationTime(),

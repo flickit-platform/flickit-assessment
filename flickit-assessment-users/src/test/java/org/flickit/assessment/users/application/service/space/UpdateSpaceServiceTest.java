@@ -2,22 +2,24 @@ package org.flickit.assessment.users.application.service.space;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.users.application.domain.Space;
+import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.users.application.port.in.space.UpdateSpaceUseCase;
-import org.flickit.assessment.users.application.port.out.space.LoadSpaceOwnerPort;
+import org.flickit.assessment.users.application.port.out.space.LoadSpacePort;
 import org.flickit.assessment.users.application.port.out.space.UpdateSpacePort;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
 import static org.flickit.assessment.users.common.ErrorMessageKey.SPACE_ID_NOT_FOUND;
+import static org.flickit.assessment.users.common.ErrorMessageKey.UPDATE_SPACE_DEFAULT_SPACE_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -25,62 +27,74 @@ import static org.mockito.Mockito.*;
 class UpdateSpaceServiceTest {
 
     @InjectMocks
-    UpdateSpaceService service;
+    private UpdateSpaceService service;
 
     @Mock
-    LoadSpaceOwnerPort loadSpaceOwnerPort;
+    private LoadSpacePort loadSpacePort;
 
     @Mock
-    UpdateSpacePort updateSpacePort;
+    private UpdateSpacePort updateSpacePort;
+
+    private final UpdateSpaceUseCase.Param param = createParam(UpdateSpaceUseCase.Param.ParamBuilder::build);
 
     @Test
-    @DisplayName("If the space does not exist, updating space should return ResourceNotFound")
-    void testUpdateSpace_spaceNotExist_resourceNotFound() {
-        long spaceId = 0L;
-        String title = "Test";
-        UUID currentUserId = UUID.randomUUID();
-        UpdateSpaceUseCase.Param param = new UpdateSpaceUseCase.Param(spaceId, title, currentUserId);
+    void testUpdateSpace_whenSpaceDoesNotExist_thenThrowResourceNotFound() {
+        when(loadSpacePort.loadOwnerId(param.getId())).thenThrow(new ResourceNotFoundException(SPACE_ID_NOT_FOUND));
 
-        when(loadSpaceOwnerPort.loadOwnerId(spaceId)).thenThrow(new ResourceNotFoundException(SPACE_ID_NOT_FOUND));
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.updateSpace(param));
         assertEquals(SPACE_ID_NOT_FOUND, throwable.getMessage());
 
-        verify(loadSpaceOwnerPort).loadOwnerId(anyLong());
         verifyNoInteractions(updateSpacePort);
     }
 
     @Test
-    @DisplayName("Updating a space should be done only by the owner of the space")
-    void testUpdateSpace_requesterIsNotOwner_AccessDeniedException(){
-        long spaceId = 0L;
-        String title = "Test";
-        UUID currentUserId = UUID.randomUUID();
-        UpdateSpaceUseCase.Param param = new UpdateSpaceUseCase.Param(spaceId, title, currentUserId);
+    void testUpdateSpace_whenUserIsNotOwner_thenThrowAccessDeniedException() {
+        when(loadSpacePort.loadOwnerId(param.getId())).thenReturn(UUID.randomUUID());
 
-        when(loadSpaceOwnerPort.loadOwnerId(spaceId)).thenReturn(UUID.randomUUID());
-        var throwable = assertThrows(AccessDeniedException.class, ()-> service.updateSpace(param));
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.updateSpace(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
-        verify(loadSpaceOwnerPort).loadOwnerId(anyLong());
         verifyNoInteractions(updateSpacePort);
     }
 
     @Test
-    @DisplayName("Updating a space with valid parameters should be successful")
-    void testUpdateSpace_validParameters_successful(){
-        long spaceId = 0L;
-        String title = "Test";
-        UUID currentUserId = UUID.randomUUID();
-        UpdateSpaceUseCase.Param param = new UpdateSpaceUseCase.Param(spaceId, title, currentUserId);
-        Space space = new Space(spaceId, "title", "Title", currentUserId,
-                LocalDateTime.now(),LocalDateTime.now(), UUID.randomUUID(), currentUserId);
+    void testUpdateSpace_whenSpaceIsDefault_thenThrowValidationException() {
+        when(loadSpacePort.loadOwnerId(param.getId())).thenReturn(param.getCurrentUserId());
+        when(loadSpacePort.checkIsDefault(param.getId())).thenReturn(true);
 
-        when(loadSpaceOwnerPort.loadOwnerId(spaceId)).thenReturn(currentUserId);
-        doNothing().when(updateSpacePort).updateSpace(any(UpdateSpacePort.Param.class));
+        var throwable = assertThrows(ValidationException.class, () -> service.updateSpace(param));
+        assertEquals(UPDATE_SPACE_DEFAULT_SPACE_NOT_ALLOWED, throwable.getMessageKey());
 
-        assertDoesNotThrow(()-> service.updateSpace(param));
+        verifyNoInteractions(updateSpacePort);
+    }
 
-        verify(loadSpaceOwnerPort).loadOwnerId(anyLong());
-        verify(updateSpacePort).updateSpace(any(UpdateSpacePort.Param.class));
+    @Test
+    void testUpdateSpace_whenParametersAreValid_thenSuccessfulUpdate() {
+        when(loadSpacePort.loadOwnerId(param.getId())).thenReturn(param.getCurrentUserId());
+        when(loadSpacePort.checkIsDefault(param.getId())).thenReturn(false);
+
+        service.updateSpace(param);
+
+        var captor = ArgumentCaptor.forClass(UpdateSpacePort.Param.class);
+        verify(updateSpacePort).updateSpace(captor.capture());
+
+        assertEquals(param.getId(), captor.getValue().id());
+        assertEquals(generateSlugCode(param.getTitle()), captor.getValue().code());
+        assertEquals(param.getTitle(), captor.getValue().title());
+        assertEquals(param.getCurrentUserId(), captor.getValue().lastModifiedBy());
+        assertNotNull(captor.getValue().lastModificationTime());
+    }
+
+    private UpdateSpaceUseCase.Param createParam(Consumer<UpdateSpaceUseCase.Param.ParamBuilder> changer) {
+        var paramBuilder = paramBuilder();
+        changer.accept(paramBuilder);
+        return paramBuilder.build();
+    }
+
+    private UpdateSpaceUseCase.Param.ParamBuilder paramBuilder() {
+        return UpdateSpaceUseCase.Param.builder()
+            .id(0L)
+            .title("title")
+            .currentUserId(UUID.randomUUID());
     }
 }

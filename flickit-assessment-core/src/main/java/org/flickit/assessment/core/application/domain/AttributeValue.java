@@ -7,9 +7,11 @@ import org.springframework.util.Assert;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.*;
+import static org.flickit.assessment.common.util.NumberUtils.isLessThanWithPrecision;
 
 @Getter
 @AllArgsConstructor
@@ -42,7 +44,7 @@ public class AttributeValue {
             .flatMap(ml ->
                 attribute.getQuestions().stream()
                     .filter(question -> !isMarkedAsNotApplicable(question.getId()))
-                    .map(question -> question.findImpactByMaturityLevel(ml))
+                    .map(question -> question.findImpactByAttributeAndMaturityLevel(this.getAttribute().getId(), ml.getId()))
                     .filter(Objects::nonNull)
                     .map(impact -> new MaturityLevelScore(ml, impact.getWeight()))
             ).collect(groupingBy(x -> x.maturityLevel().getId(), summingDouble(MaturityLevelScore::score)));
@@ -55,13 +57,27 @@ public class AttributeValue {
 
     private Map<Long, Double> calcGainedScore(List<MaturityLevel> maturityLevels) {
         return maturityLevels.stream()
-            .flatMap(ml ->
-                answers.stream()
-                    .filter(answer ->  !Boolean.TRUE.equals(answer.getIsNotApplicable()) && answer.getSelectedOption() != null)
-                    .map(answer -> answer.findImpactByAttributeAndMaturityLevel(this.getAttribute(), ml))
-                    .filter(Objects::nonNull)
-                    .map(impact -> new MaturityLevelScore(ml, impact.calculateScore()))
-            ).collect(groupingBy(x -> x.maturityLevel().getId(), summingDouble(MaturityLevelScore::score)));
+            .flatMap(ml -> {
+                assert attribute.getQuestions() != null;
+                Map<Long, QuestionImpact> questionIdToQuestionImpact = new HashMap<>();
+                for (Question q : attribute.getQuestions()) {
+                    var impact = q.findImpactByAttributeAndMaturityLevel(this.getAttribute().getId(), ml.getId());
+                    if (impact != null) // Only add non-null impacts to the map
+                        questionIdToQuestionImpact.put(q.getId(), impact);
+                }
+                if (questionIdToQuestionImpact.isEmpty())
+                    return Stream.of(new MaturityLevelScore(ml, 0.0));
+
+                return answers.stream()
+                    .filter(answer -> !Boolean.TRUE.equals(answer.getIsNotApplicable()) && answer.getSelectedOption() != null)
+                    .map(answer -> {
+                        var score = 0.0;
+                        var impact = questionIdToQuestionImpact.get(answer.getQuestionId());
+                        if (impact != null)
+                            score = answer.getSelectedOption().getValue() * impact.getWeight();
+                        return new MaturityLevelScore(ml, score);
+                    });
+            }).collect(groupingBy(x -> x.maturityLevel().getId(), summingDouble(MaturityLevelScore::score)));
     }
 
     private Map<Long, Double> calcPercent(Map<Long, Double> totalScore, Map<Long, Double> gainedScore) {
@@ -87,14 +103,15 @@ public class AttributeValue {
         return result;
     }
 
-    private boolean passLevel(Map<Long, Double> percentScore, MaturityLevel ml) {
+    private boolean passLevel(Map<Long, Double> percentScores, MaturityLevel ml) {
         List<LevelCompetence> levelCompetences = ml.getLevelCompetences();
 
-        return levelCompetences.isEmpty() || levelCompetences.stream()
-            .allMatch(levelCompetence -> {
-                Long mlId = levelCompetence.getEffectiveLevelId();
-                return !percentScore.containsKey(mlId) || percentScore.get(mlId) >= levelCompetence.getValue();
-            });
+        for (LevelCompetence levelCompetence : levelCompetences) {
+            Long mlId = levelCompetence.getEffectiveLevelId();
+            if (percentScores.containsKey(mlId) && isLessThanWithPrecision(percentScores.get(mlId), levelCompetence.getValue()))
+                return false;
+        }
+        return true;
     }
 
     private record MaturityLevelScore(MaturityLevel maturityLevel, double score) {
@@ -103,6 +120,19 @@ public class AttributeValue {
     public int getWeightedLevel() {
         Assert.notNull(maturityLevel, () -> "maturityLevel should not be null");
         return maturityLevel.getValue() * attribute.getWeight();
+    }
+
+    public Map<Long, Double> getWeightedScore() {
+        Map<Long, Double> weightedScores = new HashMap<>();
+
+        for (MaturityScore maturityScore : maturityScores) {
+            Long maturityLevelId = maturityScore.getMaturityLevelId();
+            double score = maturityScore.getScore() == null ? 0 : maturityScore.getScore(); //todo:redundant nullability check
+            double weightedScore = score * (attribute.getWeight());
+            weightedScores.put(maturityLevelId, weightedScore);
+        }
+
+        return weightedScores;
     }
 
     public void calculateConfidenceValue() {

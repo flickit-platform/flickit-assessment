@@ -27,8 +27,8 @@ class CreateAttributeScoresFileAdapterTest {
     void testCreateAttributeScoresFileAdapter_ValidParam_CreateFile() {
         var attributeId = 1563L;
 
-        Answer answer = AnswerMother.fullScoreOnLevels23(attributeId);
-        Question question = QuestionMother.withIdAndImpactsOnLevel23(answer.getQuestionId(), attributeId);
+        Question question = QuestionMother.withImpactsOnLevel23(attributeId);
+        Answer answer = AnswerMother.fullScore(question.getId());
         Attribute attribute = AttributeMother.withIdAndQuestions(attributeId, List.of(question));
         AttributeValue attributeValue = AttributeValueMother.withAttributeAndAnswerAndLevelOne(attribute, List.of(answer));
         List<MaturityLevel> maturityLevels = MaturityLevelMother.allLevels();
@@ -45,8 +45,8 @@ class CreateAttributeScoresFileAdapterTest {
     void testCreateAttributeScoresFileAdapter_ValidParam_FileStructureShouldNotBeChanged() {
         var attributeId = 1563L;
 
-        Answer answer = AnswerMother.fullScoreOnLevels23(attributeId);
-        Question question = QuestionMother.withIdAndImpactsOnLevel23(answer.getQuestionId(), attributeId);
+        Question question = QuestionMother.withImpactsOnLevel23(attributeId);
+        Answer answer = AnswerMother.fullScore(question.getId());
         Attribute attribute = AttributeMother.withIdAndQuestions(attributeId, List.of(question));
         AttributeValue attributeValue = AttributeValueMother.withAttributeAndAnswerAndLevelOne(attribute, List.of(answer));
         List<MaturityLevel> maturityLevels = MaturityLevelMother.allLevels();
@@ -70,7 +70,7 @@ class CreateAttributeScoresFileAdapterTest {
         assertEquals(question.getTitle(), questionsFirstRow.getCell(0).getStringCellValue());
         assertEquals(question.getHint(), questionsFirstRow.getCell(1).getStringCellValue());
         assertEquals(question.getImpacts().getFirst().getWeight(), questionsFirstRow.getCell(2).getNumericCellValue());
-        assertEquals(answer.getSelectedOption().getImpacts().getFirst().getValue(), questionsFirstRow.getCell(3).getNumericCellValue());
+        assertEquals(answer.getSelectedOption().getValue(), questionsFirstRow.getCell(3).getNumericCellValue());
 
         Sheet attributeSheet = workbook.getSheetAt(1);
         assertEquals(1, attributeSheet.getLastRowNum());

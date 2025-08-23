@@ -3,7 +3,6 @@ package org.flickit.assessment.common.exception.handler;
 import io.sentry.Sentry;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
-import org.apache.tomcat.util.http.fileupload.impl.SizeLimitExceededException;
 import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.exception.api.ErrorResponseDto;
 import org.springframework.core.Ordered;

@@ -3,6 +3,7 @@ package org.flickit.assessment.users.application.service.space;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.data.jpa.users.spaceuseraccess.SpaceUserAccessJpaEntity;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
+import org.flickit.assessment.common.application.domain.space.SpaceStatus;
 import org.flickit.assessment.users.application.port.in.space.GetSpaceListUseCase;
 import org.flickit.assessment.users.application.port.out.space.LoadSpaceListPort;
 import org.flickit.assessment.users.application.port.out.space.LoadSpaceListPort.Result;
@@ -17,8 +18,11 @@ import org.springframework.data.domain.Sort;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -32,71 +36,87 @@ class GetSpaceListServiceTest {
 
     @Test
     void testGetSpaceList_validInputs_validResults() {
-        int size = 10;
-        int page = 0;
-        UUID currentUserId = UUID.randomUUID();
-        var space1 = SpaceMother.createSpace(currentUserId);
-        var space2 = SpaceMother.createSpace(UUID.randomUUID());
-        String ownerName = "sample name";
+        var param = createParam(GetSpaceListUseCase.Param.ParamBuilder::build);
+        var space1 = SpaceMother.basicSpace(param.getCurrentUserId());
+        var space2 = SpaceMother.premiumSpace(UUID.randomUUID());
+        var space3 = SpaceMother.inactiveSpace(UUID.randomUUID());
         var spacePortList = List.of(
-            new LoadSpaceListPort.Result(space1, ownerName, 2, 5),
-            new LoadSpaceListPort.Result(space2, ownerName, 4, 3));
+            new LoadSpaceListPort.Result(space1, "owner1", 2, 5),
+            new LoadSpaceListPort.Result(space2, "owner2", 4, 3),
+            new LoadSpaceListPort.Result(space3, "owner3", 4, 6));
 
         PaginatedResponse<LoadSpaceListPort.Result> paginatedResponse = new PaginatedResponse<>(
             spacePortList,
-            page,
-            size,
-            SpaceUserAccessJpaEntity.Fields.LAST_SEEN,
+            param.getPage(),
+            param.getSize(),
+            SpaceUserAccessJpaEntity.Fields.lastSeen,
             Sort.Direction.DESC.name().toLowerCase(),
             spacePortList.size());
 
-        when(loadSpaceListPort.loadSpaceList(currentUserId, page, size)).thenReturn(paginatedResponse);
+        when(loadSpaceListPort.loadNonDefaultSpaceList(param.getCurrentUserId(), paginatedResponse.getPage(), param.getSize())).thenReturn(paginatedResponse);
 
-        GetSpaceListUseCase.Param param = new GetSpaceListUseCase.Param(size, page, currentUserId);
         var result = service.getSpaceList(param);
 
         assertNotNull(paginatedResponse);
         assertNotNull(result.getItems());
-        assertEquals(2, result.getItems().size());
-        assertEquals(spacePortList.getFirst().space().getId(), result.getItems().getFirst().id());
-        assertEquals(spacePortList.getFirst().space().getTitle(), result.getItems().getFirst().title());
-        assertEquals(space1.getOwnerId(), result.getItems().getFirst().owner().id());
-        assertEquals(ownerName, result.getItems().getFirst().owner().displayName());
-        assertTrue(result.getItems().getFirst().owner().isCurrentUserOwner());
-        assertEquals(spacePortList.getFirst().space().getLastModificationTime(), result.getItems().getFirst().lastModificationTime());
-        assertEquals(spacePortList.getFirst().assessmentsCount(), result.getItems().getFirst().assessmentsCount());
-        assertEquals(spacePortList.getFirst().membersCount(), result.getItems().getFirst().membersCount());
+        assertEquals(paginatedResponse.getItems().size(), result.getItems().size());
+        assertEquals(paginatedResponse.getTotal(), result.getTotal());
+        assertEquals(param.getSize(), result.getSize());
+        assertEquals(param.getPage(), result.getPage());
+        assertEquals(paginatedResponse.getSort(), result.getSort());
+        assertEquals(paginatedResponse.getOrder(), result.getOrder());
 
-        assertEquals(spacePortList.get(1).space().getId(), result.getItems().get(1).id());
-        assertEquals(spacePortList.get(1).space().getTitle(), result.getItems().get(1).title());
-        assertEquals(space2.getOwnerId(), result.getItems().get(1).owner().id());
-        assertEquals(ownerName, result.getItems().get(1).owner().displayName());
-        assertFalse(result.getItems().get(1).owner().isCurrentUserOwner());
-        assertEquals(spacePortList.get(1).space().getLastModificationTime(), result.getItems().get(1).lastModificationTime());
-        assertEquals(spacePortList.get(1).assessmentsCount(), result.getItems().get(1).assessmentsCount());
-        assertEquals(spacePortList.get(1).membersCount(), result.getItems().get(1).membersCount());
+        assertThat(result.getItems())
+            .zipSatisfy(paginatedResponse.getItems(), (actual, expected) -> {
+                assertEquals(expected.space().getId(), actual.id());
+                assertEquals(expected.space().getTitle(), actual.title());
+                assertEquals(expected.space().getOwnerId(), actual.owner().id());
+                assertEquals(expected.ownerName(), actual.owner().displayName());
+                assertEquals(SpaceStatus.ACTIVE.equals(expected.space().getStatus()), actual.isActive());
+                assertEquals(expected.space().getLastModificationTime(), actual.lastModificationTime());
+                assertEquals(expected.space().getType().getCode(), actual.type().code());
+                assertEquals(expected.space().getType().getTitle(), actual.type().title());
+                assertEquals(expected.assessmentsCount(), actual.assessmentsCount());
+                assertEquals(expected.membersCount(), actual.membersCount());
+            });
     }
 
     @Test
     void testGetSpaceList_ValidInputs_emptyResults() {
-        int page = 0;
-        int size = 10;
-        UUID currentUserId = UUID.randomUUID();
+        var param = createParam(GetSpaceListUseCase.Param.ParamBuilder::build);
 
         PaginatedResponse<Result> paginatedResponse = new PaginatedResponse<>(
             Collections.emptyList(),
-            page,
-            size,
-            UserJpaEntity.Fields.NAME,
+            param.getPage(),
+            param.getSize(),
+            UserJpaEntity.Fields.displayName,
             Sort.Direction.ASC.name().toLowerCase(),
             0);
-        when(loadSpaceListPort.loadSpaceList(currentUserId, page, size)).thenReturn(paginatedResponse);
 
-        var param = new GetSpaceListUseCase.Param(size, page, currentUserId);
+        when(loadSpaceListPort.loadNonDefaultSpaceList(param.getCurrentUserId(), paginatedResponse.getPage(), param.getSize())).thenReturn(paginatedResponse);
+
         var result = service.getSpaceList(param);
 
         assertNotNull(paginatedResponse);
         assertNotNull(result.getItems());
         assertEquals(0, result.getItems().size());
+        assertEquals(0, result.getTotal());
+        assertEquals(param.getSize(), result.getSize());
+        assertEquals(param.getPage(), result.getPage());
+        assertEquals(paginatedResponse.getSort(), result.getSort());
+        assertEquals(paginatedResponse.getOrder(), result.getOrder());
+    }
+
+    private GetSpaceListUseCase.Param createParam(Consumer<GetSpaceListUseCase.Param.ParamBuilder> changer) {
+        var paramBuilder = paramBuilder();
+        changer.accept(paramBuilder);
+        return paramBuilder.build();
+    }
+
+    private GetSpaceListUseCase.Param.ParamBuilder paramBuilder() {
+        return GetSpaceListUseCase.Param.builder()
+            .page(0)
+            .size(10)
+            .currentUserId(UUID.randomUUID());
     }
 }

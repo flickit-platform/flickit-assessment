@@ -2,6 +2,7 @@ package org.flickit.assessment.data.jpa.kit.kituseraccess;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldNameConstants;
 import org.flickit.assessment.data.jpa.AbstractEntity;
 
 import java.util.UUID;
@@ -12,6 +13,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@FieldNameConstants
 @IdClass(KitUserAccessJpaEntity.KitUserAccessKey.class)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 public class KitUserAccessJpaEntity extends AbstractEntity<KitUserAccessJpaEntity.KitUserAccessKey> {

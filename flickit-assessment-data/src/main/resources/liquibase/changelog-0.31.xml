@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+    <changeSet id="0.31-01" author="Maziyar Gerami">
+        <addUniqueConstraint tableName="fac_assessment_insight" columnNames="assessment_result_id"
+                             constraintName="uq_fac_assessment_insight_assessmentresultid"/>
+    </changeSet>
+
+    <changeSet id="0.31-02" author="Maziyar Gerami">
+        <createTable tableName="faa_advice_narration">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_faa_advice_narration"/>
+            </column>
+            <column name="assessment_result_id" type="uuid">
+                <constraints unique="true" uniqueConstraintName="uq_faa_advice_narration_assessmentresultid" nullable="false" />
+            </column>
+            <column name="ai_narration" type="varchar(1000)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="assessor_narration" type="varchar(1000)"/>
+            <column name="ai_narration_time" type="${datetime_with_time_zone_type}">
+                    <constraints nullable="false"/>
+            </column>
+            <column name="assessor_narration_time" type="${datetime_with_time_zone_type}"/>
+            <column name="created_by" type="UUID"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.31-03" author="Ali Sedaghat">
+        <addColumn tableName="fac_assessment">
+            <column name="short_title" type="varchar(20)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.31-04" author="Ali Sedaghat">
+        <dropNotNullConstraint tableName="faa_advice_narration" columnName="ai_narration"/>
+    </changeSet>
+
+    <changeSet id="0.31-05" author="Ali Sedaghat">
+        <dropNotNullConstraint tableName="faa_advice_narration" columnName="ai_narration_time"/>
+    </changeSet>
+
+</databaseChangeLog>

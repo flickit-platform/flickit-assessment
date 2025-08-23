@@ -2,13 +2,14 @@ package org.flickit.assessment.data.jpa.kit.assessmentkit;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldNameConstants;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
-
-import static lombok.AccessLevel.PRIVATE;
 
 @Entity
 @Table(name = "fak_assessment_kit")
@@ -16,13 +17,12 @@ import static lombok.AccessLevel.PRIVATE;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@FieldNameConstants
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class AssessmentKitJpaEntity {
 
     @Id
     @EqualsAndHashCode.Include
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "fak_assessment_kit_id_seq")
-    @SequenceGenerator(name = "fak_assessment_kit_id_seq", sequenceName = "fak_assessment_kit_id_seq", allocationSize = 1)
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
@@ -46,6 +46,19 @@ public class AssessmentKitJpaEntity {
 
     @Column(name = "expert_group_id", nullable = false)
     private Long expertGroupId;
+
+    @Column(name = "language_id", nullable = false)
+    private Integer languageId;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "translations", columnDefinition = "json")
+    private String translations;
+
+    @Column(name = "metadata")
+    private String metadata;
+
+    @Column(name = "price", nullable = false)
+    private Long price;
 
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
@@ -71,10 +84,4 @@ public class AssessmentKitJpaEntity {
 
     @Column(name = "kit_version_id")
     private Long kitVersionId;
-
-    @NoArgsConstructor(access = PRIVATE)
-    public static class Fields {
-        public static final String TITLE = "title";
-        public static final String LAST_MODIFICATION_TIME = "lastModificationTime";
-    }
 }

@@ -4,108 +4,80 @@ import org.flickit.assessment.core.application.domain.Answer;
 import org.flickit.assessment.core.application.domain.AnswerOption;
 import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 
-import java.util.List;
 import java.util.UUID;
+
+import static org.flickit.assessment.core.application.domain.AnswerStatus.APPROVED;
+import static org.flickit.assessment.core.application.domain.AnswerStatus.UNAPPROVED;
 
 public class AnswerMother {
 
     public static Answer answer(AnswerOption option) {
-        return new Answer(UUID.randomUUID(), option, option.getQuestionId(), ConfidenceLevel.getDefault().getId(), Boolean.FALSE);
+        return new Answer(UUID.randomUUID(), option, 1L, ConfidenceLevel.getDefault().getId(), Boolean.FALSE, APPROVED);
     }
 
-    public static Answer fullScoreOnLevels23(long attributeId) {
-        AnswerOption selectedOption = AnswerOptionMother.withImpacts(List.of(
-            AnswerOptionImpactMother.onLevelTwoOfAttributeId(1, attributeId),
-            AnswerOptionImpactMother.onLevelThreeOfAttributeId(1, attributeId)));
+    public static Answer fullScore(long questionId) {
+        AnswerOption selectedOption = AnswerOptionMother.optionFour();
         return new Answer(UUID.randomUUID(),
             selectedOption,
-            selectedOption.getQuestionId(),
+            questionId,
             ConfidenceLevel.COMPLETELY_UNSURE.getId(),
-            Boolean.FALSE);
+            Boolean.FALSE,
+            APPROVED);
     }
 
-    public static Answer fullScoreOnLevels24(long attributeId) {
-        AnswerOption selectedOption = AnswerOptionMother.withImpacts(List.of(
-            AnswerOptionImpactMother.onLevelTwoOfAttributeId(1, attributeId),
-            AnswerOptionImpactMother.onLevelFourOfAttributeId(1, attributeId)));
+    public static Answer partialScore(long questionId, double value) {
+        AnswerOption selectedOption = AnswerOptionMother.withValue(value);
         return new Answer(UUID.randomUUID(),
             selectedOption,
-            selectedOption.getQuestionId(),
-            ConfidenceLevel.SOMEWHAT_UNSURE.getId(),
-            Boolean.FALSE);
+            questionId,
+            ConfidenceLevel.COMPLETELY_UNSURE.getId(),
+            Boolean.FALSE,
+            APPROVED);
     }
 
-    public static Answer noScoreOnLevel4(long attributeId) {
-        AnswerOption selectedOption = AnswerOptionMother.withImpacts(List.of(
-            AnswerOptionImpactMother.onLevelFourOfAttributeId(0, attributeId)));
+    public static Answer noScore(long questionId) {
+        AnswerOption selectedOption = AnswerOptionMother.optionOne();
         return new Answer(UUID.randomUUID(),
             selectedOption,
-            selectedOption.getQuestionId(),
+            questionId,
             ConfidenceLevel.FAIRLY_SURE.getId(),
-            Boolean.FALSE);
-    }
-
-    public static Answer fullScoreOnLevel4AndNoScoreOnLevel5(long attributeId) {
-        AnswerOption selectedOption = AnswerOptionMother.withImpacts(List.of(
-            AnswerOptionImpactMother.onLevelFourOfAttributeId(1, attributeId),
-            AnswerOptionImpactMother.onLevelFiveOfAttributeId(0, attributeId)));
-        return new Answer(UUID.randomUUID(),
-            selectedOption,
-            selectedOption.getQuestionId(),
-            ConfidenceLevel.FAIRLY_SURE.getId(),
-            Boolean.FALSE);
-    }
-
-    public static Answer fullScoreOnLevels34(long attributeId) {
-        AnswerOption selectedOption = AnswerOptionMother.withImpacts(List.of(
-            AnswerOptionImpactMother.onLevelThreeOfAttributeId(1, attributeId),
-            AnswerOptionImpactMother.onLevelFourOfAttributeId(1, attributeId)));
-        return new Answer(UUID.randomUUID(),
-            selectedOption,
-            selectedOption.getQuestionId(),
-            ConfidenceLevel.FAIRLY_SURE.getId(),
-            Boolean.FALSE);
-    }
-
-    public static Answer fullScoreOnLevels45(long attributeId) {
-        AnswerOption selectedOption = AnswerOptionMother.withImpacts(List.of(
-            AnswerOptionImpactMother.onLevelFourOfAttributeId(1, attributeId),
-            AnswerOptionImpactMother.onLevelFiveOfAttributeId(1, attributeId)));
-        return new Answer(UUID.randomUUID(),
-            selectedOption,
-            selectedOption.getQuestionId(),
-            ConfidenceLevel.COMPLETELY_SURE.getId(),
-            Boolean.FALSE);
+            Boolean.FALSE,
+            UNAPPROVED);
     }
 
     public static Answer answerWithNullNotApplicable(AnswerOption option) {
-        Long questionId = option != null ? option.getQuestionId() : 1L;
-        return new Answer(UUID.randomUUID(), option, questionId, ConfidenceLevel.getDefault().getId(), null);
+        return new Answer(UUID.randomUUID(), option, 1L, ConfidenceLevel.getDefault().getId(), null, APPROVED);
     }
 
     public static Answer answerWithNotApplicableFalse(AnswerOption option) {
-        Long questionId = option != null ? option.getQuestionId() : 1L;
-        return new Answer(UUID.randomUUID(), option, questionId, ConfidenceLevel.getDefault().getId(), Boolean.FALSE);
+        return new Answer(UUID.randomUUID(), option, 1L, ConfidenceLevel.getDefault().getId(), Boolean.FALSE, APPROVED);
     }
 
     public static Answer answerWithNotApplicableTrue(AnswerOption option) {
-        Long questionId = option != null ? option.getQuestionId() : 1L;
         Integer confidenceLevelId = ConfidenceLevel.getDefault().getId();
-        return new Answer(UUID.randomUUID(), option, questionId, confidenceLevelId, Boolean.TRUE);
+        return new Answer(UUID.randomUUID(), option, 1L, confidenceLevelId, Boolean.TRUE, APPROVED);
     }
 
     public static Answer answerWithQuestionIdAndNotApplicableTrue(long questionId) {
-        return new Answer(UUID.randomUUID(), null, questionId, ConfidenceLevel.getDefault().getId(), Boolean.TRUE);
+        return new Answer(UUID.randomUUID(), null, questionId, ConfidenceLevel.getDefault().getId(), Boolean.TRUE, APPROVED);
     }
 
-    public static Answer answerWithConfidenceLevel(int confidenceLevelId, Long questionId, long attributeId) {
-        AnswerOption selectedOption = AnswerOptionMother.withImpacts(List.of(
-            AnswerOptionImpactMother.onLevelFiveOfAttributeId(1, attributeId)));
+    public static Answer answerWithConfidenceLevel(int confidenceLevelId, Long questionId) {
+        AnswerOption selectedOption = AnswerOptionMother.optionFour();
         return new Answer(UUID.randomUUID(),
             selectedOption,
             questionId,
             confidenceLevelId,
-            Boolean.FALSE);
+            Boolean.FALSE,
+            APPROVED);
     }
 
+    public static Answer answerWithNotApplicableTrueAndUnapprovedStatus(AnswerOption option) {
+        return new Answer(UUID.randomUUID(),
+                option,
+                1L,
+                ConfidenceLevel.getDefault().getId(),
+                Boolean.TRUE,
+                UNAPPROVED);
+    }
 }

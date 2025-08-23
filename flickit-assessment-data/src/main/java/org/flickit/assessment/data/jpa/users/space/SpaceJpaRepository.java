@@ -8,10 +8,27 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> {
+
+    boolean existsByIdAndDeletedFalse(long id);
+
+    int countByOwnerIdAndTypeAndDeletedFalseAndIsDefaultFalse(UUID ownerId, Integer type);
+
+    Optional<SpaceJpaEntity> findByIdAndDeletedFalse(long spaceId);
+
+    boolean existsByIdAndDeletedFalseAndIsDefaultTrue(long spaceId);
+
+    @Query("""
+            SELECT s
+            FROM SpaceJpaEntity as s
+            JOIN AssessmentJpaEntity as a ON a.spaceId = s.id
+            WHERE a.id = :assessmentId AND s.deleted = FALSE
+    """)
+    Optional<SpaceJpaEntity> findByAssessmentIdAndDeletedFalse(@Param("assessmentId") UUID assessmentId);
 
     @Query("""
             SELECT s.ownerId
@@ -62,7 +79,7 @@ public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> 
             LEFT JOIN AssessmentJpaEntity fa on s.id = fa.spaceId
             LEFT JOIN UserJpaEntity u ON s.ownerId = u.id
             LEFT JOIN SpaceUserAccessJpaEntity sua on s.id = sua.spaceId
-            WHERE s.deleted = FALSE
+            WHERE s.deleted = FALSE AND s.isDefault = FALSE
                 AND EXISTS (
                     SELECT 1 FROM SpaceUserAccessJpaEntity sua
                     WHERE sua.spaceId = s.id AND sua.userId = :userId
@@ -70,7 +87,38 @@ public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> 
             GROUP BY s.id, u.displayName
             ORDER BY lastSeen DESC
         """)
-    Page<SpaceWithDetails> findByUserId(@Param(value = "userId") UUID userId, Pageable pageable);
+    Page<SpaceWithDetails> findByUserIdAndIsDefaultFalse(@Param(value = "userId") UUID userId, Pageable pageable);
+
+    @Query("""
+            SELECT
+                s AS space,
+                COUNT(DISTINCT fa.id) AS assessmentsCount,
+                sua.lastSeen AS lastSeen
+            FROM SpaceJpaEntity s
+            LEFT JOIN AssessmentJpaEntity fa ON s.id = fa.spaceId AND fa.deleted = FALSE
+            LEFT JOIN SpaceUserAccessJpaEntity sua ON s.id = sua.spaceId AND sua.userId = :userId
+            WHERE s.deleted = FALSE
+                AND s.status = :status
+                AND sua.userId IS NOT NULL
+            GROUP BY s.id, sua.lastSeen
+            ORDER BY sua.lastSeen DESC
+        """)
+    List<SpaceWithDetails> findByUserIdOrderByLastSeenDesc(@Param("userId") UUID userId,
+                                                           @Param("status") Integer status);
+
+    @Query("""
+            SELECT
+                s AS space,
+                COUNT(DISTINCT fa.id) AS assessmentsCount
+            FROM SpaceJpaEntity s
+            LEFT JOIN AssessmentJpaEntity fa ON s.id = fa.spaceId AND fa.deleted = FALSE
+            WHERE s.deleted = FALSE
+                AND s.ownerId = :ownerId
+                AND s.status = :status
+            GROUP BY s.id
+        """)
+    List<SpaceWithAssessmentCount> findByOwnerId(@Param("ownerId") UUID ownerId,
+                                                 @Param("status") Integer status);
 
     @Query("""
             SELECT
@@ -89,8 +137,6 @@ public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> 
         """)
     void delete(@Param("spaceId") long spaceId, @Param("deletionTime") long deletionTime);
 
-    boolean existsByIdAndDeletedFalse(long id);
-
     @Modifying
     @Query("""
             UPDATE SpaceJpaEntity s SET
@@ -105,4 +151,23 @@ public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> 
                 @Param("code") String code,
                 @Param("lastModificationTime") LocalDateTime lastModificationTime,
                 @Param("lastModifiedBy") UUID lastModifiedBy);
+
+    @Query("""
+            SELECT s.id
+            FROM SpaceJpaEntity s
+            WHERE s.ownerId = :userId AND s.isDefault = TRUE AND s.deleted = FALSE
+        """)
+    Optional<Long> findDefaultSpaceIdByUserId(@Param("userId") UUID userId);
+
+    @Query("""
+        SELECT EXISTS (
+            SELECT 1
+            FROM SpaceJpaEntity s
+            JOIN AssessmentJpaEntity a ON a.spaceId = s.id
+            WHERE a.id = :assessmentId
+              AND s.isDefault = true
+              AND s.deleted = false
+        )
+        """)
+    boolean existsByAssessmentIdSpaceIsDefault(@Param("assessmentId") UUID assessmentId);
 }

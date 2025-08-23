@@ -1,6 +1,5 @@
 package org.flickit.assessment.data.jpa.kit.question;
 
-import org.flickit.assessment.data.jpa.kit.question.advice.QuestionAdviceView;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -21,14 +21,26 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
 
     Page<QuestionJpaEntity> findAllByQuestionnaireIdAndKitVersionIdOrderByIndex(Long questionnaireId, Long kitVersionId, Pageable pageable);
 
+    boolean existsByIdAndKitVersionId(long id, long kitVersionId);
+
+    void deleteByIdAndKitVersionId(long id, long kitVersionId);
+
+    boolean existsByAnswerRangeIdAndKitVersionId(long answerRangeId, long kitVersionId);
+
+    List<QuestionJpaEntity> findAllByIdInAndKitVersionIdAndQuestionnaireId(List<Long> ids, long kitVersionId, long questionnaireId);
+
     @Modifying
     @Query("""
             UPDATE QuestionJpaEntity q
             SET q.title = :title,
+                q.code = :code,
                 q.hint = :hint,
                 q.index = :index,
                 q.mayNotBeApplicable = :mayNotBeApplicable,
                 q.advisable = :advisable,
+                q.answerRangeId = :answerRangeId,
+                q.measureId = :measureId,
+                q.translations = :translations,
                 q.lastModificationTime = :lastModificationTime,
                 q.lastModifiedBy = :lastModifiedBy
             WHERE q.id = :id AND q.kitVersionId = :kitVersionId
@@ -36,10 +48,14 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
     void update(@Param("id") Long id,
                 @Param("kitVersionId") Long kitVersionId,
                 @Param("title") String title,
+                @Param("code") String code,
                 @Param("index") Integer index,
                 @Param("hint") String hint,
                 @Param("mayNotBeApplicable") Boolean mayNotBeApplicable,
                 @Param("advisable") Boolean advisable,
+                @Param("answerRangeId") Long answerRangeId,
+                @Param("measureId") Long measureId,
+                @Param("translations") String translations,
                 @Param("lastModificationTime") LocalDateTime lastModificationTime,
                 @Param("lastModifiedBy") UUID lastModifiedBy);
 
@@ -47,7 +63,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
             SELECT q as question,
                 qi as questionImpact
             FROM QuestionJpaEntity q
-            LEFT JOIN QuestionImpactJpaEntity qi ON q.id = qi.questionId
+            LEFT JOIN QuestionImpactJpaEntity qi ON q.id = qi.questionId AND qi.kitVersionId = q.kitVersionId
             WHERE q.kitVersionId = :kitVersionId
         """)
     List<QuestionJoinQuestionImpactView> loadByKitVersionId(@Param("kitVersionId") Long kitVersionId);
@@ -71,49 +87,56 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
     Integer countDistinctBySubjectId(@Param("subjectId") long subjectId, @Param("kitVersionId") Long kitVersionId);
 
     @Query("""
-           SELECT DISTINCT q.id AS  questionId,
-                anso.index AS answeredOptionIndex,
+            SELECT DISTINCT
+                q.id AS questionId,
                 qanso.id AS optionId,
                 qanso.index AS optionIndex,
                 qi.weight AS questionImpactWeight,
-                ansoi.value AS optionImpactValue
-           FROM QuestionJpaEntity q
-           JOIN QuestionnaireJpaEntity qn ON q.questionnaireId = qn.id AND q.kitVersionId = qn.kitVersionId
-           JOIN AssessmentResultJpaEntity asmr ON asmr.assessment.id = :assessmentId
-           JOIN QuestionImpactJpaEntity qi ON q.id = qi.questionId AND q.kitVersionId = qi.kitVersionId
-           JOIN AnswerOptionJpaEntity qanso ON q.id = qanso.questionId AND q.kitVersionId = qanso.kitVersionId
-           LEFT JOIN  AnswerOptionImpactJpaEntity ansoi ON qanso.id = ansoi.optionId and qi.id = ansoi.questionImpact.id AND qi.kitVersionId = ansoi.kitVersionId
-           LEFT JOIN AnswerJpaEntity ans ON ans.assessmentResult.id = asmr.id and q.id = ans.questionId
-           LEFT JOIN AnswerOptionJpaEntity anso ON ans.answerOptionId = anso.id AND q.id = anso.questionId AND q.kitVersionId = anso.kitVersionId
-           WHERE (asmr.assessment.id = :assessmentId
-               AND anso.index NOT IN (SELECT MAX(sq_ans.index)
-                                  FROM AnswerOptionJpaEntity sq_ans
-                                  WHERE sq_ans.questionId = q.id)
-               AND qi.attributeId = :attributeId
-               AND qi.maturityLevelId = :maturityLevelId)
-               OR (asmr.assessment.id = :assessmentId
-                   AND ans.answerOptionId IS NULL
-                   AND qi.attributeId = :attributeId)
-               AND qi.maturityLevelId = :maturityLevelId
-               AND q.kitVersionId = asmr.kitVersionId
+                qanso.value AS optionValue
+            FROM QuestionJpaEntity q
+            JOIN QuestionImpactJpaEntity qi ON q.id = qi.questionId AND q.kitVersionId = qi.kitVersionId
+            JOIN AnswerOptionJpaEntity qanso ON q.answerRangeId = qanso.answerRangeId AND q.kitVersionId = qanso.kitVersionId
+            WHERE
+                q.advisable = TRUE
+                AND q.kitVersionId = :kitVersionId
+                AND qi.attributeId = :attributeId
+                AND qi.maturityLevelId = :maturityLevelId
         """)
-    List<ImprovableImpactfulQuestionView> findImprovableImpactfulQuestions(@Param("assessmentId") UUID assessmentId,
-                                                                           @Param("attributeId") Long attributeId,
-                                                                           @Param("maturityLevelId") Long maturityLevelId);
+    List<ImpactfulQuestionView> findAdvisableImpactfulQuestions(@Param("kitVersionId") long kitVersionId,
+                                                                @Param("attributeId") long attributeId,
+                                                                @Param("maturityLevelId") long maturityLevelId);
+
+    @Query("""
+            SELECT DISTINCT
+                q.id AS questionId,
+                anso.index AS answeredOptionIndex
+            FROM QuestionJpaEntity q
+            LEFT JOIN AnswerJpaEntity ans ON ans.assessmentResult.id = :assessmentResultId AND q.id = ans.questionId
+            LEFT JOIN AnswerOptionJpaEntity anso ON ans.answerOptionId = anso.id AND q.kitVersionId = anso.kitVersionId
+            WHERE
+                q.id IN :questionIds
+                AND q.kitVersionId = :kitVersionId
+                AND (ans.answerOptionId IS NULL
+                    OR (anso.index != (
+                        SELECT MAX(sq_ans.index) FROM AnswerOptionJpaEntity sq_ans
+                        WHERE sq_ans.answerRangeId = anso.answerRangeId AND sq_ans.kitVersionId = :kitVersionId
+                    )))
+        """)
+    List<QuestionIdWithAnsweredOptionIndexView> findImprovableQuestions(@Param("assessmentResultId") UUID assessmentResultId,
+                                                                        @Param("kitVersionId") long kitVersionId,
+                                                                        @Param("questionIds") Collection<Long> questionIds);
 
     @Query("""
             SELECT
-                q.id AS id,
-                q.title AS title,
-                q.index AS index,
+                q AS question,
                 ao AS option,
                 atr AS attribute,
-                questionnaire AS questionnaire
+                qsnnr AS questionnaire
             FROM QuestionJpaEntity q
-            JOIN AnswerOptionJpaEntity ao ON q.id = ao.questionId AND q.kitVersionId = ao.kitVersionId
-            JOIN QuestionnaireJpaEntity questionnaire ON q.questionnaireId = questionnaire.id AND q.kitVersionId = questionnaire.kitVersionId
-            JOIN AnswerOptionImpactJpaEntity impact ON ao.id = impact.optionId AND ao.kitVersionId = impact.kitVersionId
-            JOIN AttributeJpaEntity atr ON impact.questionImpact.attributeId = atr.id AND impact.questionImpact.kitVersionId = atr.kitVersionId
+            JOIN AnswerOptionJpaEntity ao ON q.answerRangeId = ao.answerRangeId AND q.kitVersionId = ao.kitVersionId
+            JOIN QuestionnaireJpaEntity qsnnr ON q.questionnaireId = qsnnr.id AND q.kitVersionId = qsnnr.kitVersionId
+            JOIN QuestionImpactJpaEntity qi ON qi.questionId = q.id AND qi.kitVersionId = q.kitVersionId
+            JOIN AttributeJpaEntity atr ON qi.attributeId = atr.id AND qi.kitVersionId = atr.kitVersionId
             WHERE q.id IN :ids AND q.kitVersionId = :kitVersionId
         """)
     List<QuestionAdviceView> findAdviceQuestionsDetail(@Param("ids") List<Long> ids, @Param("kitVersionId") long kitVersionId);
@@ -142,25 +165,32 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
     List<FirstUnansweredQuestionView> findQuestionnairesFirstUnansweredQuestion(@Param("assessmentResultId") UUID assessmentResultId);
 
     @Query("""
-            SELECT q as question
-            FROM QuestionJpaEntity q
-            LEFT JOIN KitVersionJpaEntity kv On kv.id = q.kitVersionId
-            WHERE q.id = :id AND kv.kit.id = :kitId
+            SELECT MIN(q.index)
+            FROM QuestionJpaEntity q JOIN QuestionnaireJpaEntity qn ON q.questionnaireId = qn.id AND q.kitVersionId = qn.kitVersionId
+            JOIN AssessmentResultJpaEntity ar ON ar.kitVersionId = qn.kitVersionId
+            WHERE ar.id = :assessmentResultId AND q.id NOT IN (
+                    SELECT fq.id
+                    FROM QuestionJpaEntity fq
+                    JOIN QuestionnaireJpaEntity qsn ON fq.questionnaireId = qsn.id AND fq.kitVersionId = qsn.kitVersionId
+                    JOIN AnswerJpaEntity ans ON ans.questionId = fq.id
+                    WHERE ans.assessmentResult.id = :assessmentResultId
+                        AND (ans.answerOptionId IS NOT NULL OR ans.isNotApplicable = TRUE)
+                        AND qsn.kitVersionId = ans.assessmentResult.kitVersionId)
+                        AND qn.id = :questionnaireId
         """)
-    Optional<QuestionJpaEntity> findByIdAndKitId(@Param("id") long id, @Param("kitId") long kitId);
+    Integer findQuestionnaireFirstUnansweredQuestion(@Param("questionnaireId") Long questionnaireId,
+                                                     @Param("assessmentResultId") UUID assessmentResultId);
 
     @Query("""
             SELECT
                 qr as questionnaire,
                 qsn as question,
                 qi as questionImpact,
-                ov as optionImpact,
                 ao as answerOption
             FROM QuestionJpaEntity qsn
-            LEFT JOIN AnswerOptionJpaEntity ao on qsn.id = ao.questionId AND qsn.kitVersionId = ao.kitVersionId
+            LEFT JOIN AnswerOptionJpaEntity ao on qsn.answerRangeId = ao.answerRangeId AND qsn.kitVersionId = ao.kitVersionId
             LEFT JOIN QuestionnaireJpaEntity qr on qsn.questionnaireId = qr.id AND qsn.kitVersionId = qr.kitVersionId
             LEFT JOIN QuestionImpactJpaEntity qi on qsn.id = qi.questionId AND qsn.kitVersionId = qi.kitVersionId
-            LEFT JOIN AnswerOptionImpactJpaEntity ov on ov.questionImpact.id = qi.id AND ov.kitVersionId = qi.kitVersionId
             WHERE qi.attributeId = :attributeId
                 AND qi.maturityLevelId = :maturityLevelId
                 AND qi.kitVersionId = :kitVersionId
@@ -183,9 +213,58 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
                 qi as questionImpact
             FROM QuestionJpaEntity qsn
             LEFT JOIN QuestionImpactJpaEntity qi on qsn.id = qi.questionId AND qsn.kitVersionId = qi.kitVersionId
-            WHERE qi.attributeId = :attributeId
+            WHERE qi.attributeId IN :attributeIds
                 AND qi.kitVersionId = :kitVersionId
             ORDER BY qsn.questionnaireId asc, qsn.index asc
         """)
-    List<AttributeImpactfulQuestionsView> findByAttributeIdAndKitVersionId(Long attributeId, Long kitVersionId);
+    List<AttributeImpactfulQuestionsView> findByAttributeIdInAndKitVersionId(@Param("attributeIds") List<Long> attributeIds,
+                                                                             @Param("kitVersionId") Long kitVersionId);
+
+    @Modifying
+    @Query("""
+            UPDATE QuestionJpaEntity q
+            SET q.answerRangeId = :answerRangeId,
+                q.lastModificationTime = :lastModificationTime,
+                q.lastModifiedBy = :lastModifiedBy
+            WHERE q.id = :id AND q.kitVersionId = :kitVersionId
+        """)
+    void updateAnswerRange(@Param("id") Long id,
+                           @Param("kitVersionId") Long kitVersionId,
+                           @Param("answerRangeId") Long answerRangeId,
+                           @Param("lastModificationTime") LocalDateTime lastModificationTime,
+                           @Param("lastModifiedBy") UUID lastModifiedBy);
+
+    @Query("""
+            SELECT
+                q.index AS questionIndex,
+                qn.id AS questionnaireId,
+                qn.title AS questionnaireTitle
+            FROM QuestionJpaEntity q
+            JOIN QuestionnaireJpaEntity qn ON qn.id = q.questionnaireId AND qn.kitVersionId = q.kitVersionId
+            WHERE q.kitVersionId = :kitVersionId AND q.answerRangeId IS NULL
+        """)
+    List<QuestionQuestionnaireView> findAllByKitVersionIdAndWithoutAnswerRange(long kitVersionId);
+
+    @Query("""
+            SELECT
+                q.index as questionIndex,
+                q.questionnaireId as questionnaireId,
+                qr.title as questionnaireTitle
+            FROM QuestionJpaEntity q
+            JOIN QuestionnaireJpaEntity qr ON q.questionnaireId = qr.id AND qr.kitVersionId = q.kitVersionId
+            LEFT JOIN QuestionImpactJpaEntity qi ON qi.questionId = q.id AND qi.kitVersionId = q.kitVersionId
+            WHERE q.kitVersionId = :kitVersionId AND qi.id IS null
+        """)
+    List<QuestionQuestionnaireView> findAllByKitVersionIdAndWithoutImpact(@Param("kitVersionId") long kitVersionId);
+
+    @Query("""
+            SELECT
+                q.index as questionIndex,
+                q.questionnaireId as questionnaireId,
+                qr.title as questionnaireTitle
+            FROM QuestionJpaEntity q
+            JOIN QuestionnaireJpaEntity qr ON q.questionnaireId = qr.id AND qr.kitVersionId = q.kitVersionId
+            WHERE q.kitVersionId = :kitVersionId and q.measureId IS NULL
+        """)
+    List<QuestionQuestionnaireView> findAllByKitVersionIdAndWithoutMeasure(@Param("kitVersionId") long kitVersionId);
 }

@@ -2,6 +2,7 @@ package org.flickit.assessment.core.adapter.out.persistence.assessmentresult;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.core.adapter.out.persistence.assessment.AssessmentMapper;
 import org.flickit.assessment.core.application.domain.AssessmentKit;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
@@ -14,24 +15,23 @@ import java.util.ArrayList;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AssessmentResultMapper {
 
-
     public static AssessmentResultJpaEntity mapToJpaEntity(CreateAssessmentResultPort.Param param) {
         return new AssessmentResultJpaEntity(
             null,
             null,
             param.kitVersionId(),
-            null,
-            null,
+            param.maturityLevelId(),
+            param.confidenceValue(),
             param.isCalculateValid(),
             param.isConfidenceValid(),
+            param.langId(),
             param.lastModificationTime(),
             param.lastModificationTime(),
             param.lastModificationTime()
         );
     }
 
-    public static AssessmentResult mapToDomainModel(AssessmentResultJpaEntity entity, MaturityLevel maturityLevel) {
-        var kit = new AssessmentKit(entity.getAssessment().getAssessmentKitId(), null, entity.getKitVersionId(), null);
+    public static AssessmentResult mapToDomainModel(AssessmentResultJpaEntity entity, MaturityLevel maturityLevel, AssessmentKit kit) {
         return new AssessmentResult(
             entity.getId(),
             AssessmentMapper.mapToDomainModel(entity.getAssessment(), kit, null),
@@ -41,6 +41,7 @@ public class AssessmentResultMapper {
             entity.getConfidenceValue(),
             entity.getIsCalculateValid(),
             entity.getIsConfidenceValid(),
+            KitLanguage.valueOfById(entity.getLangId()),
             entity.getLastModificationTime(),
             entity.getLastCalculationTime(),
             entity.getLastConfidenceCalculationTime()

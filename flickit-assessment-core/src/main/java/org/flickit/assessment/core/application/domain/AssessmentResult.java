@@ -6,10 +6,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.lang3.mutable.MutableDouble;
 import org.apache.commons.lang3.mutable.MutableInt;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+
+import static org.flickit.assessment.common.util.NumberUtils.isLessThanWithPrecision;
 
 @Getter
 @AllArgsConstructor
@@ -36,6 +38,9 @@ public class AssessmentResult {
     private Boolean isConfidenceValid;
 
     @Setter
+    private KitLanguage language;
+
+    @Setter
     private LocalDateTime lastModificationTime;
 
     @Setter
@@ -54,39 +59,87 @@ public class AssessmentResult {
         this.lastConfidenceCalculationTime = lastConfidenceCalculationTime;
     }
 
+    public AssessmentResult(UUID assessmentResultId, Assessment assessment, long kitVersionId, List<SubjectValue> subjectValues,
+                            Boolean isCalculateValid, MaturityLevel maturityLevel, LocalDateTime lastCalculationTime, LocalDateTime lastConfidenceCalculationTime) {
+        this.id = assessmentResultId;
+        this.assessment = assessment;
+        this.kitVersionId = kitVersionId;
+        this.subjectValues = subjectValues;
+        this.isCalculateValid = isCalculateValid;
+        this.maturityLevel = maturityLevel;
+        this.lastCalculationTime = lastCalculationTime;
+        this.lastConfidenceCalculationTime = lastConfidenceCalculationTime;
+    }
 
     public MaturityLevel calculate() {
         List<MaturityLevel> maturityLevels = assessment.getAssessmentKit().getMaturityLevels();
         calculateSubjectValuesAndSetMaturityLevel(maturityLevels);
-        int weightedMeanLevel = calculateWeightedMeanOfAttributeValues();
-        return maturityLevels.stream()
-            .filter(m -> m.getValue() == weightedMeanLevel)
-            .findAny()
-            .orElseThrow(IllegalStateException::new);
+        var maturityLevelIdToScores = calculateSubjectWeightedMeanScoresByMaturityLevel(maturityLevels);
+
+        return findGainedMaturityLevel(maturityLevelIdToScores, maturityLevels);
     }
 
     private void calculateSubjectValuesAndSetMaturityLevel(List<MaturityLevel> maturityLevels) {
-        subjectValues.forEach(x -> {
-            MaturityLevel calcResult = x.calculate(maturityLevels);
-            x.setMaturityLevel(calcResult);
+        subjectValues.forEach(e -> {
+            MaturityLevel calcResult = e.calculate(maturityLevels);
+            e.setMaturityLevel(calcResult);
         });
     }
 
-    private int calculateWeightedMeanOfAttributeValues() {
-        MutableInt weightedSum = new MutableInt();
-        MutableInt sum = new MutableInt();
-        subjectValues.stream()
-            .flatMap(x -> x.getAttributeValues().stream())
-            .forEach(x -> {
-                weightedSum.add(x.getWeightedLevel());
-                sum.add(x.getAttribute().getWeight());
+    private Map<Long, Double> calculateSubjectWeightedMeanScoresByMaturityLevel(List<MaturityLevel> maturityLevels) {
+        Map<Long, Double> levelIdToSubjectsWeightedScoreSum = new HashMap<>();
+        MutableInt subjectsTotalWeight = new MutableInt();
+
+        subjectValues.forEach(e -> {
+            Map<Long, Double> maturityLevelWeightedScore = e.getSubjectLevelWeightedScore();
+            int weight = e.getSubject().getWeight();
+            subjectsTotalWeight.add(weight);
+            maturityLevels.forEach(x -> {
+                long mLevelId = x.getId();
+                double weightedScore = maturityLevelWeightedScore.get(mLevelId);
+                levelIdToSubjectsWeightedScoreSum.merge(mLevelId, weightedScore, Double::sum);
             });
-        return (int) Math.round((double) weightedSum.getValue() / sum.getValue());
+        });
+
+        Map<Long, Double> mLevelIdToScoreWeightedMean = new HashMap<>();
+        levelIdToSubjectsWeightedScoreSum.forEach((mLevelId, weightedScoreSum) -> {
+            if (subjectsTotalWeight.intValue() > 0)
+                mLevelIdToScoreWeightedMean.put(mLevelId, weightedScoreSum / subjectsTotalWeight.intValue());
+            else
+                mLevelIdToScoreWeightedMean.put(mLevelId, 0d);
+        });
+        return mLevelIdToScoreWeightedMean;
+    }
+
+    private MaturityLevel findGainedMaturityLevel(Map<Long, Double> maturityLevelIdToScores, List<MaturityLevel> maturityLevels) {
+        List<MaturityLevel> sortedMaturityLevels = maturityLevels.stream()
+            .sorted(Comparator.comparingInt(MaturityLevel::getIndex))
+            .toList();
+
+        MaturityLevel result = null;
+        for (MaturityLevel ml : sortedMaturityLevels) {
+            if (!passLevel(maturityLevelIdToScores, ml))
+                break;
+
+            result = ml;
+        }
+        return result;
+    }
+
+    private boolean passLevel(Map<Long, Double> percentScores, MaturityLevel ml) {
+        List<LevelCompetence> levelCompetences = ml.getLevelCompetences();
+
+        for (LevelCompetence levelCompetence : levelCompetences) {
+            Long mlId = levelCompetence.getEffectiveLevelId();
+            if (percentScores.containsKey(mlId) && isLessThanWithPrecision(percentScores.get(mlId), levelCompetence.getValue()))
+                return false;
+        }
+        return true;
     }
 
     public Double calculateConfidenceValue() {
         calculateSubjectValuesAndSetConfidenceValue();
-        return calculateWeightedMeanOfAttributeConfidenceValues();
+        return calculateWeightedMeanOfSubjectConfidenceValues();
     }
 
     private void calculateSubjectValuesAndSetConfidenceValue() {
@@ -96,17 +149,15 @@ public class AssessmentResult {
         });
     }
 
-    private Double calculateWeightedMeanOfAttributeConfidenceValues() {
+    private Double calculateWeightedMeanOfSubjectConfidenceValues() {
         MutableDouble weightedSum = new MutableDouble();
         MutableDouble sum = new MutableDouble();
         subjectValues.stream()
-            .flatMap(x -> x.getAttributeValues().stream())
             .filter(x -> x.getConfidenceValue() != null)
             .forEach(x -> {
                 weightedSum.add(x.getWeightedConfidenceValue());
-                sum.add(x.getAttribute().getWeight());
+                sum.add(x.getSubject().getWeight());
             });
-        return sum.getValue() == 0 ? null : weightedSum.getValue() / sum.getValue();
+        return sum.getValue() == 0 ? 0 : weightedSum.getValue() / sum.getValue();
     }
-
 }

@@ -21,34 +21,19 @@ public class GetPublishedKitRestController {
     private final UserContext userContext;
 
     @GetMapping("assessment-kits/{kitId}")
-    public ResponseEntity<GetPublishedKitResponseDto> getPublishedKit(@PathVariable("kitId") Long kitId) {
+    public ResponseEntity<Result> getPublishedKit(@PathVariable("kitId") Long kitId) {
         UUID currentUserId = userContext.getUser().id();
         Result result = useCase.getPublishedKit(toParam(kitId, currentUserId));
-        return new ResponseEntity<>(toResponse(result), HttpStatus.OK);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @GetMapping("/public/assessment-kits/{kitId}")
+    public ResponseEntity<Result> getPublicKit(@PathVariable("kitId") Long kitId) {
+        Result result = useCase.getPublishedKit(toParam(kitId, null));
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     private Param toParam(Long kitId, UUID currentUserId) {
         return new Param(kitId, currentUserId);
-    }
-
-    private GetPublishedKitResponseDto toResponse(Result result) {
-        return new GetPublishedKitResponseDto(
-            result.id(),
-            result.title(),
-            result.summary(),
-            result.about(),
-            result.published(),
-            result.isPrivate(),
-            result.creationTime(),
-            result.lastModificationTime(),
-            result.like(),
-            result.assessmentsCount(),
-            result.subjectsCount(),
-            result.questionnairesCount(),
-            result.expertGroupId(),
-            result.subjects(),
-            result.questionnaires(),
-            result.maturityLevels(),
-            result.tags());
     }
 }

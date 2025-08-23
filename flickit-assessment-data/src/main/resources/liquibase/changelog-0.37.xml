@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+    <changeSet id="0.37-01" author="Maziyar Gerami">
+        <addColumn tableName="fak_kit_version">
+            <column name="status_version" type="bigint" valueComputed="
+            CASE
+                WHEN status = 0 THEN 0
+                WHEN status = 1 THEN 1
+                ELSE -id
+            END"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.37-02" author="Maziyar Gerami">
+        <addUniqueConstraint tableName="fak_kit_version" columnNames="kit_id, status_version"
+                             constraintName="uq_fak_kitversion_kitId_statusversion">
+        </addUniqueConstraint>
+    </changeSet>
+
+    <changeSet id="0.37-03" author="Maziyar Gerami">
+        <addNotNullConstraint tableName="fak_kit_version" columnName="status_version"/>
+    </changeSet>
+
+    <changeSet id="0.37-04" author="Mahdi Rezazadeh">
+        <addColumn tableName="fak_answer_range">
+            <column name="code" type="varchar(50)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.37-05" author="Mahdi Rezazadeh">
+        <customChange class="org.flickit.assessment.data.config.db.PopulateAnswerRangeCodeColumnTask"/>
+    </changeSet>
+
+    <changeSet id="0.37-06" author="Mahdi Rezazadeh">
+        <sql>
+            ALTER TABLE fak_answer_range
+            ADD CONSTRAINT fak_answer_range_title_notnull
+            CHECK (NOT reusable OR (title IS NOT NULL AND code IS NOT NULL));
+        </sql>
+    </changeSet>
+
+    <changeSet id="0.37-07" author="Mahdi Rezazadeh">
+        <sql>
+            CREATE UNIQUE INDEX uq_fak_answer_range_code_kitversionid
+            ON fak_answer_range (kit_version_id, code) WHERE reusable = TRUE;
+        </sql>
+    </changeSet>
+
+    <changeSet id="0.37-08" author="Maziyar Gerami">
+        <createTable tableName="faa_advice_item">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" primaryKeyName="pk_faa_advice_item" nullable="false"/>
+            </column>
+            <column name="assessment_result_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="varchar(3000)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cost" type="tinyint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="priority" type="tinyint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="impact" type="tinyint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="creation_time" type="${datetime_with_time_zone_type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modification_time" type="${datetime_with_time_zone_type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_by" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

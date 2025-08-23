@@ -11,5 +11,5 @@ public class AnswerOptionDslModel {
 
     Integer index;
     String caption;
-    Integer value; //TODO it's unused and can be removed
+    Double value;
 }

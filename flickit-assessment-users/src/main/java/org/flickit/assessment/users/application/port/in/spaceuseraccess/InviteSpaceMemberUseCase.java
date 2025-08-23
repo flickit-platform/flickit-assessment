@@ -2,6 +2,7 @@ package org.flickit.assessment.users.application.port.in.spaceuseraccess;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
@@ -31,6 +32,7 @@ public interface InviteSpaceMemberUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
+        @Builder
         public Param(Long spaceId, String email, UUID currentUserId) {
             this.spaceId = spaceId;
             this.email = (email == null || email.isBlank()) ? null : email.strip().toLowerCase();

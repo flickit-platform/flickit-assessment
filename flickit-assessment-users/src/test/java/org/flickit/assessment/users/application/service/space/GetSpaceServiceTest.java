@@ -1,101 +1,155 @@
 package org.flickit.assessment.users.application.service.space;
 
+import org.flickit.assessment.common.config.AppSpecProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.users.application.domain.Space;
 import org.flickit.assessment.users.application.port.in.space.GetSpaceUseCase;
-import org.flickit.assessment.users.application.port.out.space.LoadSpaceDetailsPort;
+import org.flickit.assessment.users.application.port.out.space.LoadSpacePort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
-import org.flickit.assessment.users.test.fixture.application.SpaceMother;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.users.common.ErrorMessageKey.SPACE_ID_NOT_FOUND;
+import static org.flickit.assessment.users.test.fixture.application.SpaceMother.basicSpace;
+import static org.flickit.assessment.users.test.fixture.application.SpaceMother.premiumSpace;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class GetSpaceServiceTest {
 
     @InjectMocks
-    GetSpaceService service;
+    private GetSpaceService service;
 
     @Mock
-    CheckSpaceAccessPort checkSpaceAccessPort;
+    private CheckSpaceAccessPort checkSpaceAccessPort;
 
     @Mock
-    LoadSpaceDetailsPort loadSpaceDetailsPort;
+    private LoadSpacePort loadSpacePort;
+
+    @Spy
+    private AppSpecProperties appSpecProperties = appSpecProperties();
+
+    private final GetSpaceUseCase.Param param = createParam(GetSpaceUseCase.Param.ParamBuilder::build);
+    private final int maxBasicAssessments = 2;
 
     @Test
-    @DisplayName("When the current user is owner, 'editable' field in service result must be true")
-    void testGetSpaceService_isOwner_successFullWithEditableTrue() {
-        UUID currentUserId = UUID.randomUUID();
-        Space space = SpaceMother.createSpace(currentUserId);
-        GetSpaceUseCase.Param param = new GetSpaceUseCase.Param(space.getId(), currentUserId);
-        LoadSpaceDetailsPort.Result portResult = new LoadSpaceDetailsPort.Result(space, 1, 1);
-
-        when(checkSpaceAccessPort.checkIsMember(space.getId(), currentUserId)).thenReturn(true);
-        when(loadSpaceDetailsPort.loadSpace(space.getId())).thenReturn(portResult);
-
-        var result = service.getSpace(param);
-
-        assertTrue(result.editable(), "'editable' should be true");
-        verify(loadSpaceDetailsPort).loadSpace(space.getId());
-    }
-
-    @Test
-    @DisplayName("When the current user is not owner, 'editable' field in service result must be true")
-    void testGetSpaceService_isNotOwner_successFullWithEditableFalse() {
-        UUID ownerId = UUID.randomUUID();
-        Space space = SpaceMother.createSpace(ownerId);
-        UUID currentUserId = UUID.randomUUID();
-        GetSpaceUseCase.Param param = new GetSpaceUseCase.Param(space.getId(), currentUserId);
-        LoadSpaceDetailsPort.Result portResult = new LoadSpaceDetailsPort.Result(space, 1, 1);
-
-        when(checkSpaceAccessPort.checkIsMember(space.getId(), currentUserId)).thenReturn(true);
-        when(loadSpaceDetailsPort.loadSpace(space.getId())).thenReturn(portResult);
-
-        var result = service.getSpace(param);
-        assertFalse(result.editable(), "'editable' should be false");
-        verify(loadSpaceDetailsPort).loadSpace(anyLong());
-    }
-
-    @Test
-    @DisplayName("When the 'space' does not exist, update last seen should not be executed.")
-    void testGetSpace_spaceDoesNotExist_throwException() {
-        long spaceId = 0L;
-        UUID currentUserId = UUID.randomUUID();
-        GetSpaceUseCase.Param param = new GetSpaceUseCase.Param(spaceId, currentUserId);
-
-        when(checkSpaceAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(true);
-        when(loadSpaceDetailsPort.loadSpace(spaceId))
-            .thenThrow(new ResourceNotFoundException(SPACE_ID_NOT_FOUND));
-
-        assertThrows(ResourceNotFoundException.class, () -> service.getSpace(param));
-        verify(loadSpaceDetailsPort).loadSpace(anyLong());
-    }
-
-    @Test
-    @DisplayName("Only members can see the Space")
-    void testGetSpace_spaceAccessNotFound_accessDeniedException() {
-        long spaceId = 0L;
-        UUID currentUserId = UUID.randomUUID();
-        GetSpaceUseCase.Param param = new GetSpaceUseCase.Param(spaceId, currentUserId);
-
-        when(checkSpaceAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(false);
+    void testGetSpace_whenCurrentUserIsNotASpaceMember_thenThrowAccessDeniedException() {
+        when(checkSpaceAccessPort.checkIsMember(param.getId(), param.getCurrentUserId())).thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.getSpace(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
-        verify(checkSpaceAccessPort).checkIsMember(spaceId, currentUserId);
+        verifyNoInteractions(loadSpacePort, appSpecProperties);
+    }
+
+    @Test
+    void testGetSpace_whenSpaceDoesNotExist_thenThrowResourceNotFoundException() {
+        when(checkSpaceAccessPort.checkIsMember(param.getId(), param.getCurrentUserId())).thenReturn(true);
+        when(loadSpacePort.loadById(param.getId()))
+            .thenThrow(new ResourceNotFoundException(SPACE_ID_NOT_FOUND));
+
+        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.getSpace(param));
+        assertEquals(SPACE_ID_NOT_FOUND, throwable.getMessage());
+
+        verifyNoInteractions(appSpecProperties);
+    }
+
+    @Test
+    void testGetSpace_whenCurrentUserIsSpaceOwner_thenReturnSpaceWithEditableTrue() {
+        var space = basicSpace(param.getCurrentUserId());
+        var portResult = new LoadSpacePort.Result(space, 1, maxBasicAssessments - 1);
+
+        when(checkSpaceAccessPort.checkIsMember(param.getId(), param.getCurrentUserId())).thenReturn(true);
+        when(loadSpacePort.loadById(param.getId())).thenReturn(portResult);
+
+        var result = service.getSpace(param);
+
+        assertEquals(portResult.space().getId(), result.space().getId());
+        assertEquals(portResult.space().getCode(), result.space().getCode());
+        assertEquals(portResult.space().getTitle(), result.space().getTitle());
+        assertEquals(space.getType().getCode(), result.space().getType().getCode());
+        assertEquals(space.getType().getTitle(), result.space().getType().getTitle());
+        assertTrue(result.editable());
+        assertEquals(portResult.space().getLastModificationTime(), result.space().getLastModificationTime());
+        assertEquals(portResult.membersCount(), result.membersCount());
+        assertEquals(portResult.assessmentsCount(), result.assessmentsCount());
+        assertTrue(result.canCreateAssessment());
+    }
+
+    @Test
+    void testGetSpace_whenCurrentUserIsNotSpaceOwner_thenReturnSpaceWithEditableFalse() {
+        var space = basicSpace(UUID.randomUUID());
+        var portResult = new LoadSpacePort.Result(space, 1, maxBasicAssessments - 1);
+
+        when(checkSpaceAccessPort.checkIsMember(param.getId(), param.getCurrentUserId())).thenReturn(true);
+        when(loadSpacePort.loadById(param.getId())).thenReturn(portResult);
+
+        var result = service.getSpace(param);
+
+        assertEquals(portResult.space().getId(), result.space().getId());
+        assertEquals(portResult.space().getCode(), result.space().getCode());
+        assertEquals(portResult.space().getTitle(), result.space().getTitle());
+        assertEquals(space.getType().getCode(), result.space().getType().getCode());
+        assertEquals(space.getType().getTitle(), result.space().getType().getTitle());
+        assertFalse(result.editable());
+        assertEquals(portResult.space().getLastModificationTime(), result.space().getLastModificationTime());
+        assertEquals(portResult.membersCount(), result.membersCount());
+        assertEquals(portResult.assessmentsCount(), result.assessmentsCount());
+        assertTrue(result.canCreateAssessment());
+    }
+
+    @Test
+    void testGetSpace_whenSpaceIsPremium_thenReturnCanCreateAssessmentTrue() {
+        var space = premiumSpace(UUID.randomUUID());
+        var portResult = new LoadSpacePort.Result(space, 1, maxBasicAssessments);
+
+        when(checkSpaceAccessPort.checkIsMember(param.getId(), param.getCurrentUserId())).thenReturn(true);
+        when(loadSpacePort.loadById(param.getId())).thenReturn(portResult);
+
+        var result = service.getSpace(param);
+
+        assertTrue(result.canCreateAssessment());
+    }
+
+    @Test
+    void testGetSpace_whenSpaceIsBasicAndMaxAssessmentIsCreated_thenReturnCanCreateAssessmentFalse() {
+        var space = basicSpace(UUID.randomUUID());
+        var portResult = new LoadSpacePort.Result(space, 1, maxBasicAssessments);
+
+        when(checkSpaceAccessPort.checkIsMember(param.getId(), param.getCurrentUserId())).thenReturn(true);
+        when(loadSpacePort.loadById(param.getId())).thenReturn(portResult);
+
+        var result = service.getSpace(param);
+
+        assertFalse(result.canCreateAssessment());
+    }
+
+    private AppSpecProperties appSpecProperties() {
+        var properties = new AppSpecProperties();
+        properties.setSpace(new AppSpecProperties.Space());
+        properties.getSpace().setMaxBasicSpaceAssessments(maxBasicAssessments);
+        return properties;
+    }
+
+    private GetSpaceUseCase.Param createParam(Consumer<GetSpaceUseCase.Param.ParamBuilder> changer) {
+        var paramBuilder = paramBuilder();
+        changer.accept(paramBuilder);
+        return paramBuilder.build();
+    }
+
+    private GetSpaceUseCase.Param.ParamBuilder paramBuilder() {
+        return GetSpaceUseCase.Param.builder()
+            .id(123L)
+            .currentUserId(UUID.randomUUID());
     }
 }

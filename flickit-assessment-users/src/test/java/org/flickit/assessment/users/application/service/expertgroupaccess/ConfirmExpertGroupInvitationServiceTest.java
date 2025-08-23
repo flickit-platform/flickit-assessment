@@ -5,7 +5,6 @@ import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.users.application.domain.ExpertGroupAccess;
-import org.flickit.assessment.users.application.domain.ExpertGroupAccessStatus;
 import org.flickit.assessment.users.application.port.in.expertgroupaccess.ConfirmExpertGroupInvitationUseCase.Param;
 import org.flickit.assessment.users.application.port.out.expertgroupaccess.ConfirmExpertGroupInvitationPort;
 import org.flickit.assessment.users.application.port.out.expertgroupaccess.LoadExpertGroupAccessPort;
@@ -16,11 +15,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.assessment.users.common.ErrorMessageKey.*;
+import static org.flickit.assessment.users.test.fixture.application.ExpertGroupAccessMother.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -44,9 +43,7 @@ class ConfirmExpertGroupInvitationServiceTest {
         long expertGroupId = 0L;
 
         Param param = new Param(expertGroupId, inviteToken, currentUserId);
-        LocalDateTime expirationDate = LocalDateTime.now().plusDays(7);
-        ExpertGroupAccess expertGroupAccess =
-            new ExpertGroupAccess(expirationDate, inviteToken, ExpertGroupAccessStatus.PENDING.ordinal());
+        ExpertGroupAccess expertGroupAccess = pendingAccess(inviteToken);
 
         when(loadExpertGroupAccessPort.loadExpertGroupAccess(expertGroupId, currentUserId))
             .thenReturn(Optional.of(expertGroupAccess));
@@ -85,8 +82,7 @@ class ConfirmExpertGroupInvitationServiceTest {
         long expertGroupId = 0L;
 
         Param param = new Param(expertGroupId, inviteToken, currentUserId);
-        LocalDateTime expirationDate = LocalDateTime.now().minusDays(1);
-        var expertGroupAccess = new ExpertGroupAccess(expirationDate, inviteToken, ExpertGroupAccessStatus.PENDING.ordinal());
+        var expertGroupAccess = expiredPendingAccess(inviteToken);
 
         when(loadExpertGroupAccessPort.loadExpertGroupAccess(expertGroupId, currentUserId))
             .thenReturn(Optional.of(expertGroupAccess));
@@ -106,8 +102,7 @@ class ConfirmExpertGroupInvitationServiceTest {
         long expertGroupId = 0L;
 
         Param param = new Param(expertGroupId, inviteToken, currentUserId);
-        LocalDateTime expirationDate = LocalDateTime.now().minusDays(1);
-        var expertGroupAccess = new ExpertGroupAccess(expirationDate, UUID.randomUUID(), ExpertGroupAccessStatus.PENDING.ordinal());
+        var expertGroupAccess = pendingAccess(UUID.randomUUID());
 
         when(loadExpertGroupAccessPort.loadExpertGroupAccess(expertGroupId, currentUserId))
             .thenReturn(Optional.of(expertGroupAccess));
@@ -120,15 +115,14 @@ class ConfirmExpertGroupInvitationServiceTest {
     }
 
     @Test
-    @DisplayName("Confirm invite member invitation with an for an active member causes ResourceAlreadyExistsException")
+    @DisplayName("Confirm invite member invitation with for an active member causes ResourceAlreadyExistsException")
     void testConfirmInviteMember_activeStatus_alreadyExist() {
         UUID currentUserId = UUID.randomUUID();
         UUID inviteToken = UUID.randomUUID();
         long expertGroupId = 0L;
 
         Param param = new Param(expertGroupId, inviteToken, currentUserId);
-        LocalDateTime expirationDate = LocalDateTime.now().plusDays(1);
-        var expertGroupAccess = new ExpertGroupAccess(expirationDate, inviteToken, ExpertGroupAccessStatus.ACTIVE.ordinal());
+        var expertGroupAccess = activeAccess();
 
         when(loadExpertGroupAccessPort.loadExpertGroupAccess(expertGroupId, currentUserId))
             .thenReturn(Optional.of(expertGroupAccess));

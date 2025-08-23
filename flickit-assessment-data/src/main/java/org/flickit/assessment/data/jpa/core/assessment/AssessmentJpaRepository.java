@@ -1,5 +1,6 @@
 package org.flickit.assessment.data.jpa.core.assessment;
 
+import org.flickit.assessment.data.jpa.kit.attribute.QuestionAnswerView;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,11 +10,18 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
 public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEntity, UUID>, JpaSpecificationExecutor<AssessmentJpaEntity> {
+
+    boolean existsByIdAndDeletedFalse(UUID id);
+
+    Optional<AssessmentJpaEntity> findByIdAndDeletedFalse(UUID id);
+
+    int countBySpaceIdAndDeletedFalse(long spaceId);
 
     @Query("""
             SELECT
@@ -31,6 +39,7 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
                 AND (a.assessmentKitId = :kitId OR :kitId IS NULL)
                 AND a.deleted = FALSE
                 AND r.lastModificationTime = (SELECT MAX(ar.lastModificationTime) FROM AssessmentResultJpaEntity ar WHERE ar.assessment.id = a.id)
+                AND r.kitVersionId = k.kitVersionId
                 AND (s.ownerId = :userId OR (ur.roleId is not null AND ur.roleId != :associateRoleId))
             ORDER BY a.lastModificationTime DESC
         """)
@@ -45,11 +54,15 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
                 r as assessmentResult,
                 CASE
                     WHEN ur.roleId = :managerRoleId OR space.ownerId = :userId THEN TRUE ELSE FALSE
-                END as manageable
+                END as manageable,
+                CASE
+                    WHEN arp IS NOT NULL AND COALESCE(arp.published, FALSE) = TRUE THEN TRUE ELSE FALSE
+                END as hasReport
             FROM AssessmentJpaEntity a
             LEFT JOIN AssessmentResultJpaEntity r ON a.id = r.assessment.id
             LEFT JOIN AssessmentUserRoleJpaEntity ur ON a.id = ur.assessmentId AND ur.userId = :userId
             LEFT JOIN SpaceJpaEntity space ON a.spaceId = space.id
+            LEFT JOIN AssessmentReportJpaEntity arp ON r.id = arp.assessmentResultId
             WHERE a.spaceId = :spaceId
                 AND a.deleted=false
                 AND r.lastModificationTime = (SELECT MAX(ar.lastModificationTime) FROM AssessmentResultJpaEntity ar WHERE ar.assessment.id = a.id)
@@ -65,6 +78,7 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
     @Query("""
             UPDATE AssessmentJpaEntity a SET
                 a.title = :title,
+                a.shortTitle = :shortTitle,
                 a.code = :code,
                 a.lastModificationTime = :lastModificationTime,
                 a.lastModifiedBy = :lastModifiedBy
@@ -72,6 +86,7 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
         """)
     void update(@Param(value = "id") UUID id,
                 @Param(value = "title") String title,
+                @Param(value = "shortTitle") String shortTitle,
                 @Param(value = "code") String code,
                 @Param(value = "lastModificationTime") LocalDateTime lastModificationTime,
                 @Param(value = "lastModifiedBy") UUID lastModifiedBy);
@@ -85,8 +100,6 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
         """)
     void delete(@Param(value = "id") UUID id, @Param(value = "deletionTime") Long deletionTime);
 
-    boolean existsByIdAndDeletedFalse(@Param(value = "id") UUID id);
-
     @Query("""
             SELECT
                 a AS assessment,
@@ -97,51 +110,98 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
             JOIN SpaceJpaEntity s ON a.spaceId = s.id
             WHERE a.id = :id AND a.deleted = FALSE
         """)
-    Optional<AssessmentKitSpaceJoinView> findByIdAndDeletedFalse(@Param(value = "id") UUID id);
+    Optional<AssessmentKitSpaceJoinView> findByIdAndDeletedFalseWithKitAndSpace(@Param(value = "id") UUID id);
 
     @Modifying
     @Query("""
-        UPDATE AssessmentJpaEntity a SET
-        a.lastModificationTime = :lastModificationTime
-        WHERE a.id = :id
+            UPDATE AssessmentJpaEntity a
+            SET a.lastModificationTime = :lastModificationTime
+            WHERE a.id = :id
         """)
     void updateLastModificationTime(UUID id, LocalDateTime lastModificationTime);
 
     @Query("""
             SELECT a.id
             FROM AssessmentJpaEntity a
-            WHERE a.id = :assessmentId AND
-            EXISTS (
-              SELECT 1 FROM SpaceUserAccessJpaEntity su
-              WHERE a.spaceId = su.spaceId AND su.userId = :userId)
+            WHERE a.id = :assessmentId AND a.deleted = FALSE
+                AND EXISTS (
+                    SELECT 1 FROM SpaceUserAccessJpaEntity su
+                    WHERE a.spaceId = su.spaceId AND su.userId = :userId)
         """)
     Optional<UUID> checkIsAssessmentSpaceMember(@Param(value = "assessmentId") UUID assessmentId,
                                                 @Param(value = "userId") UUID userId);
 
     @Query("""
-        SELECT attr.id
-        FROM AssessmentJpaEntity asm
-        JOIN AssessmentKitJpaEntity kit
-        ON asm.assessmentKitId = kit.id
-        JOIN AttributeJpaEntity attr
-        ON attr.kitVersionId = kit.kitVersionId
-        WHERE asm.id = :assessmentId
-        AND attr.id in :attributeIds
-    """)
-    Set<Long> findSelectedAttributeIdsRelatedToAssessment(UUID assessmentId, Set<Long> attributeIds);
+            SELECT attr.id
+            FROM AssessmentJpaEntity asm
+            JOIN AssessmentKitJpaEntity kit ON asm.assessmentKitId = kit.id
+            JOIN AttributeJpaEntity attr ON attr.kitVersionId = kit.kitVersionId
+            WHERE asm.id = :assessmentId AND attr.id in :attributeIds
+        """)
+    Set<Long> findSelectedAttributeIdsRelatedToAssessment(@Param("assessmentId") UUID assessmentId,
+                                                          @Param("attributeIds") Set<Long> attributeIds);
 
     @Query("""
-        SELECT level.id
-        FROM AssessmentJpaEntity asm
-        JOIN AssessmentKitJpaEntity kit
-        ON asm.assessmentKitId = kit.id
-        JOIN MaturityLevelJpaEntity level
-        ON level.kitVersionId = kit.kitVersionId
-        WHERE asm.id = :assessmentId
-        AND level.id in :levelIds
-    """)
-    Set<Long> findSelectedLevelIdsRelatedToAssessment(UUID assessmentId, Set<Long> levelIds);
+            SELECT level.id
+            FROM AssessmentJpaEntity asm
+            JOIN AssessmentKitJpaEntity kit ON asm.assessmentKitId = kit.id
+            JOIN MaturityLevelJpaEntity level ON level.kitVersionId = kit.kitVersionId
+            WHERE asm.id = :assessmentId AND level.id in :levelIds
+        """)
+    Set<Long> findSelectedLevelIdsRelatedToAssessment(@Param("assessmentId") UUID assessmentId,
+                                                      @Param("levelIds") Set<Long> levelIds);
+
+    @Modifying
+    @Query("""
+            UPDATE AssessmentJpaEntity a
+            SET a.kitCustomId = :kitCustomId
+            WHERE a.id = :id
+        """)
+    void updateKitCustomId(@Param("id") UUID id, @Param("kitCustomId") long kitCustomId);
+
+    @Query("""
+            SELECT k.languageId
+            FROM AssessmentKitJpaEntity k
+            JOIN AssessmentJpaEntity a ON k.id = a.assessmentKitId
+            WHERE a.id = :assessmentId
+        """)
+    Optional<Integer> loadKitLanguageByAssessmentId(@Param("assessmentId") UUID assessmentId);
+
+    @Query("""
+            SELECT
+                qsn AS question,
+                ans AS answer,
+                qi AS questionImpact,
+                ao AS answerOption
+            FROM QuestionJpaEntity qsn
+            LEFT JOIN AnswerJpaEntity ans on ans.questionId = qsn.id and ans.assessmentResult.id = :assessmentResultId
+            LEFT JOIN AnswerOptionJpaEntity ao on ans.answerOptionId = ao.id and ao.kitVersionId = :kitVersionId
+            LEFT JOIN QuestionImpactJpaEntity qi on qsn.id = qi.questionId and qsn.kitVersionId = qi.kitVersionId
+            WHERE qsn.kitVersionId = :kitVersionId
+                AND ans.isNotApplicable IS NOT TRUE
+        """)
+    List<QuestionAnswerView> findAttributeQuestionsAndAnswers(@Param("assessmentResultId") UUID assessmentResultId,
+                                                              @Param("kitVersionId") Long kitVersionId);
+
+    @Modifying
+    @Query("""
+            UPDATE AssessmentJpaEntity a
+                SET a.mode = :mode,
+                    a.lastModificationTime = :lastModificationTime,
+                    a.lastModifiedBy = :lastModifiedBy
+            WHERE a.id = :assessmentId
+        """)
+    void updateMode(@Param("assessmentId") UUID assessmentId,
+                    @Param("mode") Integer mode,
+                    @Param("lastModificationTime") LocalDateTime lastModificationTime,
+                    @Param("lastModifiedBy") UUID lastModifiedBy);
+
+    @Modifying
+    @Query("""
+            UPDATE AssessmentJpaEntity a
+                SET a.spaceId = :spaceId
+            WHERE a.id = :assessmentId
+        """)
+    void updateSpaceId(@Param("assessmentId") UUID assessmentId,
+                       @Param("spaceId") long spaceId);
 }
-
-
-

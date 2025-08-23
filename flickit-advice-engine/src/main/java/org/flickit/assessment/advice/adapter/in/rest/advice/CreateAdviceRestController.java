@@ -1,9 +1,9 @@
 package org.flickit.assessment.advice.adapter.in.rest.advice;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase;
-import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase.Param;
-import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase.Result;
+import org.flickit.assessment.advice.application.port.in.advice.CreateAdviceUseCase;
+import org.flickit.assessment.advice.application.port.in.advice.CreateAdviceUseCase.Param;
+import org.flickit.assessment.advice.application.port.in.advice.CreateAdviceUseCase.Result;
 import org.flickit.assessment.common.config.jwt.UserContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

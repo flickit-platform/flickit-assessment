@@ -1,6 +1,7 @@
 package org.flickit.assessment.users.application.port.in.space;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
@@ -25,6 +26,7 @@ public interface GetSpaceUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
+        @Builder
         public Param(Long id, UUID currentUserId) {
             this.id = id;
             this.currentUserId = currentUserId;
@@ -32,6 +34,10 @@ public interface GetSpaceUseCase {
         }
     }
 
-    record Result(Space space, boolean editable, int membersCount, int assessmentsCount) {
+    record Result(Space space,
+                  boolean editable,
+                  int membersCount,
+                  int assessmentsCount,
+                  boolean canCreateAssessment) {
     }
 }

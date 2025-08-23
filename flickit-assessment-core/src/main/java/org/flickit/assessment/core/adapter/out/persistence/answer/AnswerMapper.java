@@ -4,10 +4,9 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.core.application.domain.Answer;
 import org.flickit.assessment.core.application.domain.AnswerOption;
+import org.flickit.assessment.core.application.domain.AnswerStatus;
 import org.flickit.assessment.core.application.port.out.answer.CreateAnswerPort;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
-
-import java.util.ArrayList;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AnswerMapper {
@@ -21,6 +20,7 @@ public class AnswerMapper {
             param.answerOptionId(),
             param.confidenceLevelId(),
             param.isNotApplicable(),
+            param.status() != null ? param.status().getId() : null,
             param.currentUserId(),
             param.currentUserId()
         );
@@ -28,13 +28,14 @@ public class AnswerMapper {
 
     public static Answer mapToDomainModel(AnswerJpaEntity answer) {
         var answerOption = answer.getAnswerOptionId() != null ?
-            new AnswerOption(answer.getAnswerOptionId(), null, null, answer.getQuestionId(), new ArrayList<>()) : null;
+            new AnswerOption(answer.getAnswerOptionId(), null, null, null) : null;
         return new Answer(
             answer.getId(),
             answerOption,
             answer.getQuestionId(),
             answer.getConfidenceLevelId(),
-            answer.getIsNotApplicable()
+            answer.getIsNotApplicable(),
+            answer.getStatus() != null ? AnswerStatus.valueOfById(answer.getStatus()) : null
         );
     }
 
@@ -44,7 +45,8 @@ public class AnswerMapper {
             answerOption,
             answer.getQuestionId(),
             answer.getConfidenceLevelId(),
-            answer.getIsNotApplicable()
+            answer.getIsNotApplicable(),
+            answer.getStatus() != null ? AnswerStatus.valueOfById(answer.getStatus()) : null
         );
     }
 }

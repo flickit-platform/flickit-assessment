@@ -2,11 +2,20 @@ package org.flickit.assessment.kit.adapter.out.persistence.question;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.common.application.domain.kit.translation.QuestionTranslation;
+import org.flickit.assessment.common.util.JsonUtils;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
+import org.flickit.assessment.data.jpa.kit.question.QuestionQuestionnaireView;
 import org.flickit.assessment.kit.application.domain.Question;
+import org.flickit.assessment.kit.application.domain.dsl.AnswerOptionDslModel;
+import org.flickit.assessment.kit.application.domain.dsl.QuestionDslModel;
+import org.flickit.assessment.kit.application.domain.dsl.QuestionImpactDslModel;
 import org.flickit.assessment.kit.application.port.out.question.CreateQuestionPort;
+import org.flickit.assessment.kit.application.port.out.question.LoadQuestionsPort;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class QuestionMapper {
@@ -19,10 +28,19 @@ public class QuestionMapper {
             entity.getHint(),
             entity.getMayNotBeApplicable(),
             entity.getAdvisable(),
+            null,
+            entity.getAnswerRangeId(),
+            entity.getMeasureId(),
+            null,
             entity.getQuestionnaireId(),
+            JsonUtils.fromJsonToMap(entity.getTranslations(), KitLanguage.class, QuestionTranslation.class),
             entity.getCreationTime(),
             entity.getLastModificationTime()
         );
+    }
+
+    public static LoadQuestionsPort.Result mapToPortResult(QuestionQuestionnaireView view) {
+        return new LoadQuestionsPort.Result(view.getQuestionIndex(), view.getQuestionnaireId(), view.getQuestionnaireTitle());
     }
 
     public static QuestionJpaEntity mapToJpaEntity(CreateQuestionPort.Param param) {
@@ -37,10 +55,32 @@ public class QuestionMapper {
             param.mayNotBeApplicable(),
             param.advisable(),
             param.questionnaireId(),
+            param.measureId(),
+            param.answerRangeId(),
+            JsonUtils.toJson(param.translations()),
             creationTime,
             creationTime,
             param.createdBy(),
             param.createdBy()
         );
+    }
+
+    public static QuestionDslModel mapToDslModel(QuestionJpaEntity question,
+                                                 String questionnaireCode,
+                                                 String answerRangeCode,
+                                                 List<QuestionImpactDslModel> impacts,
+                                                 List<AnswerOptionDslModel> answerOptions) {
+        return QuestionDslModel.builder()
+            .code(question.getCode())
+            .index(question.getIndex())
+            .title(question.getTitle())
+            .description(question.getHint())
+            .questionnaireCode(questionnaireCode)
+            .answerRangeCode(answerRangeCode)
+            .mayNotBeApplicable(question.getMayNotBeApplicable())
+            .advisable(question.getAdvisable())
+            .questionImpacts(impacts)
+            .answerOptions(answerOptions)
+            .build();
     }
 }

@@ -1,44 +1,76 @@
 package org.flickit.assessment.users.application.service.space;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.users.application.domain.Space;
+import org.flickit.assessment.common.application.domain.notification.SendNotification;
+import org.flickit.assessment.common.application.domain.space.SpaceType;
+import org.flickit.assessment.common.config.AppSpecProperties;
+import org.flickit.assessment.common.exception.UpgradeRequiredException;
+import org.flickit.assessment.common.application.domain.space.SpaceStatus;
 import org.flickit.assessment.users.application.domain.SpaceUserAccess;
+import org.flickit.assessment.users.application.domain.notification.CreatePremiumSpaceNotificationCmd;
 import org.flickit.assessment.users.application.port.in.space.CreateSpaceUseCase;
+import org.flickit.assessment.users.application.port.out.space.CountSpacesPort;
 import org.flickit.assessment.users.application.port.out.space.CreateSpacePort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CreateSpaceUserAccessPort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static org.flickit.assessment.users.application.domain.Space.generateSlugCode;
+import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
+import static org.flickit.assessment.users.common.ErrorMessageKey.CREATE_SPACE_BASIC_SPACE_MAX;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class CreateSpaceService implements CreateSpaceUseCase {
 
     private final CreateSpacePort createSpacePort;
     private final CreateSpaceUserAccessPort createSpaceUserAccessPort;
+    private final CountSpacesPort countSpacesPort;
+    private final AppSpecProperties appSpecProperties;
 
     @Override
+    @SendNotification
     public Result createSpace(Param param) {
-        long id = createSpacePort.persist(buildSpace(param.getTitle(), param.getCurrentUserId()));
+        if (SpaceType.BASIC == SpaceType.valueOf(param.getType()))
+            checkBasicLimit(param.getCurrentUserId());
 
+        var createSpaceParam = toCreateParam(param);
+        long id = createSpacePort.persist(createSpaceParam);
         createOwnerAccessToSpace(id, param.getCurrentUserId(), param.getCurrentUserId());
-        return new Result(id);
+
+        if (SpaceType.PREMIUM == SpaceType.valueOf(param.getType())) {
+            String adminEmail = appSpecProperties.getEmail().getAdminEmail();
+            return new CreatePremium(id,
+                new CreatePremiumSpaceNotificationCmd(adminEmail,
+                    createSpaceParam.title(),
+                    createSpaceParam.createdBy(),
+                    createSpaceParam.creationTime()));
+        }
+
+        return new CreateBasic(id);
     }
 
-    private Space buildSpace(String title, UUID currentUserId) {
+    private void checkBasicLimit(UUID currentUserId) {
+        var maxBasicSpaces = appSpecProperties.getSpace().getMaxBasicSpaces();
+        var userBasicSpacesCount = countSpacesPort.countBasicSpaces(currentUserId);
+
+        if (userBasicSpacesCount >= maxBasicSpaces)
+            throw new UpgradeRequiredException(CREATE_SPACE_BASIC_SPACE_MAX);
+    }
+
+    private CreateSpacePort.Param toCreateParam(Param param) {
         LocalDateTime creationTime = LocalDateTime.now();
-        return new Space(null,
-            generateSlugCode(title),
-            title,
-            currentUserId,
-            creationTime,
-            creationTime,
-            currentUserId,
-            currentUserId
-        );
+        return new CreateSpacePort.Param(generateSlugCode(param.getTitle()),
+            param.getTitle(),
+            SpaceType.valueOf(param.getType()),
+            SpaceStatus.ACTIVE,
+            null,
+            false,
+            param.getCurrentUserId(),
+            creationTime);
     }
 
     private void createOwnerAccessToSpace(long id, UUID invitee, UUID inviter) {

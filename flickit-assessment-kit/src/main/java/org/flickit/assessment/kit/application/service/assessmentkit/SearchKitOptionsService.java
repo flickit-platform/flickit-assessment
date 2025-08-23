@@ -5,10 +5,11 @@ import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.SearchKitOptionsUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.SearchKitOptionsPort;
+import org.flickit.assessment.kit.application.port.out.kitlanguage.LoadKitLanguagesPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.Comparator;
 import java.util.UUID;
 
 @Service
@@ -17,16 +18,30 @@ import java.util.UUID;
 public class SearchKitOptionsService implements SearchKitOptionsUseCase {
 
     private final SearchKitOptionsPort port;
+    private final LoadKitLanguagesPort loadKitLanguagesPort;
 
     @Override
     public PaginatedResponse<KitListItem> searchKitOptions(Param param) {
-        PaginatedResponse<AssessmentKit> paginatedResponse = port.searchKitOptions(toParam(param.getQuery(),
+        var paginatedResponse = port.searchKitOptions(toParam(param.getQuery(),
             param.getPage(),
             param.getSize(),
             param.getCurrentUserId()));
 
-        List<KitListItem> items = paginatedResponse.getItems().stream()
-            .map(e -> new KitListItem(e.getId(), e.getTitle()))
+        var kitIds = paginatedResponse.getItems().stream()
+            .map(AssessmentKit::getId)
+            .toList();
+
+        var idToLanguagesMap = loadKitLanguagesPort.loadByKitIds(kitIds);
+
+        var items = paginatedResponse.getItems().stream()
+            .map(e -> new KitListItem(e.getId(),
+                e.getTitle(),
+                e.isPrivate(),
+                KitListItem.Language.of(e.getLanguage()),
+                idToLanguagesMap.get(e.getId()).stream()
+                    .map(KitListItem.Language::of)
+                    .toList()))
+            .sorted(Comparator.comparing(KitListItem::title))
             .toList();
 
         return new PaginatedResponse<>(

@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.application.port.in.assessmentkit;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
@@ -34,6 +35,7 @@ public interface GetKitUserListUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
+        @Builder
         public Param(Long kitId, int page, int size, UUID currentUserId) {
             this.kitId = kitId;
             this.page = page;
@@ -43,7 +45,7 @@ public interface GetKitUserListUseCase {
         }
     }
 
-    record UserListItem(UUID id, String name, String email) {
+    record UserListItem(UUID id, String name, String email, String pictureLink, boolean editable) {
     }
 
 }

@@ -1,0 +1,21 @@
+<configuration scan="false">
+
+    <contextName>flickit-assessment</contextName>
+    <jmxConfigurator/>
+    <statusListener class="ch.qos.logback.core.status.NopStatusListener"/>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>[%date{ISO8601,UTC}] %-5level -| %logger{0} -| %msg %rEx%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="warn">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+    <logger name="org.flickit.assessment" level="info" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+
+</configuration>

@@ -8,6 +8,11 @@ import lombok.RequiredArgsConstructor;
 public enum NotificationType {
 
     GRANT_USER_ASSESSMENT_ROLE,
+    GRANT_ACCESS_TO_REPORT,
+    CREATE_ASSESSMENT,
+    COMPLETE_ASSESSMENT,
+    ACCEPT_ASSESSMENT_INVITATION,
+    CREATE_PREMIUM_SPACE,
     TOGGLE_KIT_LIKE;
 
     final String code;

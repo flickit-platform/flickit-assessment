@@ -5,15 +5,16 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentPer
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.port.in.assessment.GetSpaceAssessmentListUseCase;
+import org.flickit.assessment.core.application.port.in.assessment.GetSpaceAssessmentListUseCase.SpaceAssessmentListItem.Language;
+import org.flickit.assessment.core.application.port.in.assessment.GetSpaceAssessmentListUseCase.SpaceAssessmentListItem.Mode;
 import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentListPort;
 import org.flickit.assessment.core.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.UUID;
 
-import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_REPORT;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
 @Service
@@ -27,14 +28,11 @@ public class GetSpaceAssessmentListService implements GetSpaceAssessmentListUseC
 
     @Override
     public PaginatedResponse<SpaceAssessmentListItem> getAssessmentList(Param param) {
-        UUID currentUserId = param.getCurrentUserId();
-
-        Long spaceId = param.getSpaceId();
-        if (!checkSpaceAccessPort.checkIsMember(spaceId, currentUserId))
+        if (!checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         var assessmentListItemPaginatedResponse = loadAssessmentsBySpace.loadSpaceAssessments(
-            spaceId,
+            param.getSpaceId(),
             param.getCurrentUserId(),
             param.getPage(),
             param.getSize()
@@ -42,17 +40,24 @@ public class GetSpaceAssessmentListService implements GetSpaceAssessmentListUseC
 
         List<SpaceAssessmentListItem> items = assessmentListItemPaginatedResponse.getItems().stream()
             .map(e -> {
-                boolean viewable = assessmentPermissionChecker.isAuthorized(e.id(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT);
+                boolean viewable = assessmentPermissionChecker.isAuthorized(e.id(), param.getCurrentUserId(), VIEW_GRAPHICAL_REPORT);
+                boolean canViewDashboard = assessmentPermissionChecker.isAuthorized(e.id(), param.getCurrentUserId(), VIEW_DASHBOARD);
+                boolean canViewQuestionnaires = assessmentPermissionChecker.isAuthorized(e.id(), param.getCurrentUserId(), VIEW_ASSESSMENT_QUESTIONNAIRE_LIST);
                 return new SpaceAssessmentListItem(e.id(),
                     e.title(),
                     e.kit(),
                     e.lastModificationTime(),
                     viewable ? e.maturityLevel() : null,
-                    e.confidenceValue(),
+                    viewable ? e.confidenceValue() : null,
                     e.isCalculateValid(),
                     e.isConfidenceValid(),
-                    e.manageable(),
-                    viewable);
+                    Language.of(e.language()),
+                    Mode.of(e.mode()),
+                    e.hasReport(),
+                    new SpaceAssessmentListItem.Permissions(e.manageable(),
+                        viewable,
+                        canViewDashboard,
+                        canViewQuestionnaires));
             }).toList();
 
         return new PaginatedResponse<>(items,

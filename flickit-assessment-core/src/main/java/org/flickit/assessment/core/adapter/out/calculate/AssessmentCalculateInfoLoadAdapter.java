@@ -1,9 +1,14 @@
 package org.flickit.assessment.core.adapter.out.calculate;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
+import org.flickit.assessment.common.application.domain.kitcustom.KitCustomData;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.adapter.out.persistence.answer.AnswerMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.answeroption.AnswerOptionMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.attribute.AttributeMapper;
+import org.flickit.assessment.core.adapter.out.persistence.kit.maturitylevel.MaturityLevelMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.maturitylevel.MaturityLevelPersistenceJpaAdapter;
 import org.flickit.assessment.core.adapter.out.persistence.kit.question.QuestionMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.questionimpact.QuestionImpactMapper;
@@ -21,10 +26,10 @@ import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepository;
-import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpactJpaEntity;
-import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpactJpaRepository;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
+import org.flickit.assessment.data.jpa.kit.kitcustom.KitCustomJpaRepository;
+import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJoinQuestionImpactView;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
@@ -37,9 +42,11 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.toSet;
 import static org.flickit.assessment.core.adapter.out.persistence.assessment.AssessmentMapper.mapToDomainModel;
 import static org.flickit.assessment.core.common.ErrorMessageKey.CALCULATE_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND;
+import static org.flickit.assessment.core.common.ErrorMessageKey.KIT_CUSTOM_ID_NOT_FOUND;
 
 @Component
 @AllArgsConstructor
@@ -53,22 +60,25 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
     private final QuestionJpaRepository questionRepository;
     private final AttributeJpaRepository attributeRepository;
     private final AnswerOptionJpaRepository answerOptionRepository;
-    private final AnswerOptionImpactJpaRepository answerOptionImpactRepository;
     private final MaturityLevelPersistenceJpaAdapter maturityLevelJpaAdapter;
+    private final KitCustomJpaRepository kitCustomRepository;
+    private final MaturityLevelJpaRepository maturityLevelRepository;
+    private final ObjectMapper objectMapper;
 
     record Context(List<AnswerJpaEntity> allAnswerEntities,
                    List<AnswerOptionJpaEntity> allAnswerOptionsEntities,
-                   Map<Long, List<AnswerOptionImpactJpaEntity>> optionIdToAnswerOptionImpactsMap,
                    List<AttributeValueJpaEntity> allAttributeValueEntities,
                    Map<Long, Map<Long, QuestionWithImpacts>> impactfulQuestions) {
     }
 
     @Override
+    @SneakyThrows
     public AssessmentResult load(UUID assessmentId) {
         AssessmentResultJpaEntity assessmentResultEntity = assessmentResultRepo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(CALCULATE_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND));
         UUID assessmentResultId = assessmentResultEntity.getId();
         long kitVersionId = assessmentResultEntity.getKitVersionId();
+        Boolean isCalculateValid = assessmentResultEntity.getIsCalculateValid();
 
         /*
          load all subjectValue and attributeValue entities
@@ -77,8 +87,28 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
         var subjectValueEntities = subjectValueRepo.findByAssessmentResultId(assessmentResultId);
         var allAttributeValueEntities = attrValueRepository.findByAssessmentResultId(assessmentResultId);
 
-        // load all subjects by kitVersionId
-        List<SubjectJpaEntity> subjectEntities = subjectRepository.findAllByKitVersionIdOrderByIndex(kitVersionId);
+        AssessmentJpaEntity assessment = assessmentResultEntity.getAssessment();
+        Long kitCustomId = assessment.getKitCustomId();
+        KitCustomData kitCustomData = null;
+        if (kitCustomId != null) {
+            var kitCustomEntity = kitCustomRepository.findByIdAndKitId(kitCustomId, assessment.getAssessmentKitId())
+                .orElseThrow(() -> new ResourceNotFoundException(KIT_CUSTOM_ID_NOT_FOUND));
+            kitCustomData = objectMapper.readValue(kitCustomEntity.getCustomData(), KitCustomData.class);
+        }
+
+        MaturityLevel maturityLevel = null;
+        var maturityLevelId = assessmentResultEntity.getMaturityLevelId();
+        if (maturityLevelId != null) {
+            var maturityLevelEntity = maturityLevelRepository.findByIdAndKitVersionId(maturityLevelId, assessmentResultEntity.getKitVersionId());
+            maturityLevel = maturityLevelEntity.map(MaturityLevelMapper::mapToDomainModel).orElse(null);
+        }
+
+        // load all subject entities by kitVersionId and customData
+        List<SubjectJpaEntity> subjectEntities = loadSubjectEntities(kitVersionId, kitCustomData);
+
+        // load all attribute entities by kitVersionId and customData
+        List<Long> subjectIds = subjectEntities.stream().map(SubjectJpaEntity::getId).toList();
+        List<AttributeJpaEntity> attributeEntities = loadAttributeEntities(subjectIds, kitVersionId, kitCustomData);
 
         // load all questions with their impacts (by assessmentKit)
         List<QuestionJoinQuestionImpactView> allQuestionsJoinImpactViews = questionRepository.loadByKitVersionId(kitVersionId);
@@ -93,27 +123,67 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
         */
         var allAnswerOptionIds = allAnswerEntities.stream().map(AnswerJpaEntity::getAnswerOptionId).toList();
         var allAnswerOptionEntities = answerOptionRepository.findAllByIdInAndKitVersionId(allAnswerOptionIds, kitVersionId);
-        var optionIdToAnswerOptionImpactEntitiesMap = answerOptionImpactRepository.findAllByOptionIdInAndKitVersionId(allAnswerOptionIds, kitVersionId).stream()
-            .collect(groupingBy(AnswerOptionImpactJpaEntity::getOptionId));
 
         Context context = new Context(
             allAnswerEntities,
             allAnswerOptionEntities,
-            optionIdToAnswerOptionImpactEntitiesMap,
             allAttributeValueEntities,
             impactfulQuestions);
 
-        Map<Long, AttributeValue> attributeIdToValue = buildAttributeValues(context, subjectEntities, kitVersionId);
+        Map<Long, AttributeValue> attributeIdToValue = buildAttributeValues(context, attributeEntities);
 
-        List<SubjectValue> subjectValues = buildSubjectValues(attributeIdToValue, subjectEntities, subjectValueEntities, kitVersionId);
+        List<SubjectValue> subjectValues = buildSubjectValues(attributeIdToValue,
+            subjectEntities,
+            attributeEntities,
+            subjectValueEntities);
 
         return new AssessmentResult(
             assessmentResultId,
-            buildAssessment(assessmentResultEntity.getAssessment(), kitVersionId),
+            buildAssessment(assessment, kitVersionId),
             kitVersionId,
             subjectValues,
+            isCalculateValid,
+            maturityLevel,
             assessmentResultEntity.getLastCalculationTime(),
             assessmentResultEntity.getLastConfidenceCalculationTime());
+    }
+
+    /**
+     * Loads and returns a list of {@code SubjectJpaEntity} objects associated with the given kit version.
+     * If custom subject data is provided, updates the weight of the subjects in the list based on the custom data.
+     *
+     * @return a list of {@code SubjectJpaEntity} objects
+     */
+    private List<SubjectJpaEntity> loadSubjectEntities(long kitVersionId, KitCustomData kitCustomData) {
+        List<SubjectJpaEntity> subjectEntities = subjectRepository.findAllByKitVersionIdOrderByIndex(kitVersionId);
+        if (kitCustomData != null && kitCustomData.subjects() != null) {
+            Map<Long, Integer> subjectIdToWeight = kitCustomData.subjects().stream()
+                .collect(toMap(KitCustomData.Subject::id, KitCustomData.Subject::weight));
+            subjectEntities.forEach(e -> {
+                if (subjectIdToWeight.containsKey(e.getId()))
+                    e.setWeight(subjectIdToWeight.get(e.getId()));
+            });
+        }
+        return subjectEntities;
+    }
+
+    /**
+     * Loads and returns a list of {@code AttributeJpaEntity} objects associated with the given subjects and kit version.
+     * If custom attribute data is provided, updates the weight of the attributes in the list based on the custom data.
+     *
+     * @return a list of {@code AttributeJpaEntity} objects with updated weights if custom data is provided
+     */
+    private List<AttributeJpaEntity> loadAttributeEntities(List<Long> subjectIds, long kitVersionId, KitCustomData kitCustomData) {
+        List<AttributeJpaEntity> attributeEntities = attributeRepository.findAllBySubjectIdInAndKitVersionId(subjectIds, kitVersionId);
+        if (kitCustomData != null && kitCustomData.attributes() != null) {
+            Map<Long, Integer> attributeIdToWeight = kitCustomData.attributes().stream()
+                .collect(toMap(KitCustomData.Attribute::id, KitCustomData.Attribute::weight));
+            attributeEntities.forEach(e -> {
+                if (attributeIdToWeight.containsKey(e.getId()))
+                    e.setWeight(attributeIdToWeight.get(e.getId()));
+            });
+        }
+        return attributeEntities;
     }
 
     private Map<Long, Map<Long, QuestionWithImpacts>> mapQuestionToImpacts(List<QuestionJoinQuestionImpactView> questionJoinImpactViews) {
@@ -123,6 +193,9 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
             QuestionJpaEntity question = view.getQuestion();
             QuestionImpactJpaEntity questionImpact = view.getQuestionImpact();
 
+            if (questionImpact == null)
+                continue;
+
             Long attributeId = questionImpact.getAttributeId();
             Long questionId = question.getId();
 
@@ -130,22 +203,18 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
                 .computeIfAbsent(questionId, k -> new QuestionWithImpacts(question, new ArrayList<>()))
                 .add(questionImpact);
         }
-        return  impactfulQuestionsWithImpact;
+        return impactfulQuestionsWithImpact;
     }
 
     /**
      * build attributeValues domain
      * with all information needed for calculate their maturity levels
      *
-     * @param context      all previously loaded data
-     * @param subjectEntities list of all subject entities
-     * @param kitVersionId the intended version of kit
+     * @param context           all previously loaded data
+     * @param attributeEntities list of all attribute entities
      * @return a map of each attributeId to it's corresponding attributeValue
      */
-    private Map<Long, AttributeValue> buildAttributeValues(Context context, List<SubjectJpaEntity> subjectEntities, long kitVersionId) {
-        List<Long> subjectIds = subjectEntities.stream().map(SubjectJpaEntity::getId).toList();
-        List<AttributeJpaEntity> attributeEntities = attributeRepository.findAllBySubjectIdInAndKitVersionId(subjectIds, kitVersionId);
-
+    private Map<Long, AttributeValue> buildAttributeValues(Context context, List<AttributeJpaEntity> attributeEntities) {
         Map<Long, AttributeJpaEntity> attributeIdToEntityMap = attributeEntities.stream()
             .collect(toMap(AttributeJpaEntity::getId, Function.identity()));
 
@@ -154,13 +223,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
             Long attributeId = qavEntity.getAttributeId();
             List<Question> impactfulQuestions = questionsWithImpact(context.impactfulQuestions.get(attributeId));
             List<Answer> impactfulAnswers = answersOfImpactfulQuestions(impactfulQuestions, context);
-            Attribute attribute = new Attribute(
-                attributeId,
-                attributeIdToEntityMap.get(attributeId).getTitle(),
-                null,
-                attributeIdToEntityMap.get(attributeId).getWeight(),
-                impactfulQuestions
-            );
+            Attribute attribute = AttributeMapper.mapToDomainWithQuestions(attributeIdToEntityMap.get(attributeId), impactfulQuestions);
 
             AttributeValue attributeValue = new AttributeValue(qavEntity.getId(), attribute, impactfulAnswers);
             attrIdToValue.put(attribute.getId(), attributeValue);
@@ -178,7 +241,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
 
         return impactfulQuestions.values().stream()
             .filter(Objects::nonNull)
-            .map(questionWithImpacts -> QuestionMapper.mapToDomainModel(questionWithImpacts.question(),
+            .map(questionWithImpacts -> QuestionMapper.mapToDomainModelWithImpacts(questionWithImpacts.question(),
                 questionWithImpacts.impacts().stream()
                     .map(QuestionImpactMapper::mapToDomainModel)
                     .toList()))
@@ -187,7 +250,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
 
     /**
      * @param impactfulQuestions subset of questions extracted in {@linkplain AssessmentCalculateInfoLoadAdapter#questionsWithImpact} method
-     * @param context all previously loaded data
+     * @param context            all previously loaded data
      * @return list of answers related to the given list of questions,
      * it is possible that no answer is submitted for any of these questions
      * returning list has {minSize = 0}, {maxSize = size of input questionList}
@@ -197,22 +260,16 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
             .map(Question::getId)
             .collect(toSet());
         Map<Long, AnswerOptionJpaEntity> idToAnswerOptionEntity = context.allAnswerOptionsEntities.stream()
-            .collect(toMap(AnswerOptionJpaEntity::getId, x -> x));
+            .collect(toMap(AnswerOptionJpaEntity::getId, Function.identity()));
         return context.allAnswerEntities.stream()
             .filter(a -> impactfulQuestionIds.contains(a.getQuestionId()))
             .map(entity -> {
-                AnswerOptionJpaEntity option = idToAnswerOptionEntity.get(entity.getAnswerOptionId());
+                AnswerOptionJpaEntity optionEntity = idToAnswerOptionEntity.get(entity.getAnswerOptionId());
                 AnswerOption answerOption = null;
-                if (option != null) {
-                    var impactsEntities = context.optionIdToAnswerOptionImpactsMap.get(option.getId());
-                    answerOption = AnswerOptionMapper.mapToDomainModel(option, impactsEntities);
-                }
-                return new Answer(
-                    entity.getId(),
-                    answerOption,
-                    entity.getQuestionId(),
-                    entity.getConfidenceLevelId(),
-                    entity.getIsNotApplicable());
+                if (optionEntity != null)
+                    answerOption = AnswerOptionMapper.mapToDomainModel(optionEntity);
+
+                return AnswerMapper.mapToDomainModel(entity, answerOption);
             }).toList();
     }
 
@@ -220,27 +277,28 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
      * build subjectValues domain with all information needed for calculate their maturity levels
      *
      * @param attrIdToValue        map of attributeIds to their corresponding value
-     * @param subjectEntities    list of subjects
+     * @param subjectEntities      list of subjects
+     * @param attributeEntities    list of attributes
      * @param subjectValueEntities list of subjectValue entities
-     * @param kitVersionId         the intended version of kit
      * @return list of subjectValues
      */
     private List<SubjectValue> buildSubjectValues(Map<Long, AttributeValue> attrIdToValue,
                                                   List<SubjectJpaEntity> subjectEntities,
-                                                  List<SubjectValueJpaEntity> subjectValueEntities,
-                                                  long kitVersionId) {
+                                                  List<AttributeJpaEntity> attributeEntities,
+                                                  List<SubjectValueJpaEntity> subjectValueEntities) {
         List<SubjectValue> subjectValues = new ArrayList<>();
         Map<Long, SubjectValueJpaEntity> subjectIdToValue = subjectValueEntities.stream()
             .collect(toMap(SubjectValueJpaEntity::getSubjectId, sv -> sv));
 
-        List<Long> subjectIds = subjectEntities.stream().map(SubjectJpaEntity::getId).toList();
-        List<AttributeJpaEntity> attributeEntities = attributeRepository.findAllBySubjectIdInAndKitVersionId(subjectIds, kitVersionId);
         Map<Long, List<AttributeJpaEntity>> subjectIdToAttrEntities = attributeEntities.stream()
             .collect(Collectors.groupingBy(AttributeJpaEntity::getSubjectId));
 
         for (SubjectJpaEntity sEntity : subjectEntities) {
-            List<Attribute> attributes = subjectIdToAttrEntities.get(sEntity.getId()).stream()
-                .map(AttributeMapper::mapToDomainModel).toList();
+            List<Attribute> attributes = List.of();
+            if (subjectIdToAttrEntities.get(sEntity.getId()) != null) {
+                attributes = subjectIdToAttrEntities.get(sEntity.getId()).stream()
+                    .map(AttributeMapper::mapToDomainModel).toList();
+            }
             List<AttributeValue> qavList = attributes.stream()
                 .map(q -> attrIdToValue.get(q.getId()))
                 .filter(Objects::nonNull)
@@ -260,7 +318,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
     private Assessment buildAssessment(AssessmentJpaEntity assessmentEntity, long kitVersionId) {
         Long kitId = assessmentEntity.getAssessmentKitId();
         List<MaturityLevel> maturityLevels = maturityLevelJpaAdapter.loadByKitVersionIdWithCompetences(kitVersionId);
-        AssessmentKit kit = new AssessmentKit(kitId, null, kitVersionId, maturityLevels);
+        AssessmentKit kit = new AssessmentKit(kitId, null, kitVersionId, null, maturityLevels, null);
         return mapToDomainModel(assessmentEntity, kit, null);
     }
 

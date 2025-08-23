@@ -6,6 +6,8 @@ import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpa
 
 import java.util.UUID;
 
+import static org.flickit.assessment.core.application.domain.AnswerStatus.APPROVED;
+
 public class AnswerJpaEntityMother {
 
     public static AnswerJpaEntity answerEntityWithOption(AssessmentResultJpaEntity assessmentResultJpaEntity, Long questionId, Long answerOptionId) {
@@ -18,6 +20,7 @@ public class AnswerJpaEntityMother {
             answerOptionId,
             ConfidenceLevel.getDefault().getId(),
             null,
+            APPROVED.getId(),
             createdBy,
             createdBy
         );
@@ -33,6 +36,7 @@ public class AnswerJpaEntityMother {
             null,
             ConfidenceLevel.getDefault().getId(),
             null,
+            APPROVED.getId(),
             createdBy,
             createdBy
         );
@@ -48,6 +52,7 @@ public class AnswerJpaEntityMother {
             null,
             ConfidenceLevel.getDefault().getId(),
             Boolean.TRUE,
+            APPROVED.getId(),
             createdBy,
             createdBy
         );
