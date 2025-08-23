@@ -71,7 +71,8 @@ public enum AssessmentPermission {
     APPROVE_ALL_ANSWERS("approveAllAnswers"),
     VIEW_ATTRIBUTE_MEASURES("viewAttributeMeasures"),
     REFRESH_ASSESSMENT_ADVICE("refreshAssessmentAdvice"),
-    VIEW_ASSESSMENT_NEXT_QUESTIONNAIRE("viewAssessmentNextQuestionnaire"),;
+    VIEW_ASSESSMENT_NEXT_QUESTIONNAIRE("viewAssessmentNextQuestionnaire"),
+    VIEW_ATTRIBUTE_MEASURE_QUESTIONS("viewAttributeMeasureQuestions"),;
 
     private final String code;
 }
