@@ -96,7 +96,8 @@ public interface GetAssessmentReportUseCase {
                      List<AttributeMeasure> attributeMeasures) {
     }
 
-    record AttributeMeasure(String title,
+    record AttributeMeasure(long id,
+                            String title,
                             Double impactPercentage,
                             Double maxPossibleScore,
                             Double gainedScore,
