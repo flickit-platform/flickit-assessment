@@ -5,7 +5,6 @@ import org.flickit.assessment.users.application.domain.User;
 import org.flickit.assessment.users.application.port.in.user.GetUserProfileUseCase;
 import org.flickit.assessment.users.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.flickit.assessment.users.application.port.out.user.LoadUserPort;
-import org.flickit.assessment.users.application.port.out.usersurvey.LoadUserSurveyPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +19,6 @@ public class GetUserProfileService implements GetUserProfileUseCase {
 
     private final LoadUserPort loadUserPort;
     private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
-    private final LoadUserSurveyPort loadUserSurveyPort;
 
     @Override
     public UserProfile getUserProfile(Param param) {
@@ -30,22 +28,16 @@ public class GetUserProfileService implements GetUserProfileUseCase {
         if (user.getPicturePath() != null && !user.getPicturePath().trim().isBlank())
             pictureLink = createFileDownloadLinkPort.createDownloadLink(user.getPicturePath(), EXPIRY_DURATION);
 
-        var showSurvey = loadUserSurveyPort.loadByUserId(param.getCurrentUserId())
-            .map(s -> !(s.isCompleted() || s.isDontShowAgain()))
-            .orElse(true);
-
         return mapToUserProfile(user,
-            pictureLink,
-            showSurvey);
+            pictureLink);
     }
 
-    private UserProfile mapToUserProfile(User user, String pictureLink, boolean showSurvey) {
+    private UserProfile mapToUserProfile(User user, String pictureLink) {
         return new UserProfile(user.getId(),
             user.getEmail(),
             user.getDisplayName(),
             user.getBio(),
             user.getLinkedin(),
-            pictureLink,
-            showSurvey);
+            pictureLink);
     }
 }

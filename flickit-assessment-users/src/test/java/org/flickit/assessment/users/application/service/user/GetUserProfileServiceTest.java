@@ -5,7 +5,6 @@ import org.flickit.assessment.users.application.domain.User;
 import org.flickit.assessment.users.application.port.in.user.GetUserProfileUseCase;
 import org.flickit.assessment.users.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.flickit.assessment.users.application.port.out.user.LoadUserPort;
-import org.flickit.assessment.users.application.port.out.usersurvey.LoadUserSurveyPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -13,14 +12,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Duration;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.users.common.ErrorMessageKey.USER_ID_NOT_FOUND;
 import static org.flickit.assessment.users.test.fixture.application.UserMother.createUser;
-import static org.flickit.assessment.users.test.fixture.application.UserSurveyMother.createWithCompletedAndDontShowAgain;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -37,9 +34,6 @@ class GetUserProfileServiceTest {
     @Mock
     private CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
-    @Mock
-    private LoadUserSurveyPort loadUserSurveyPort;
-
     private final GetUserProfileUseCase.Param param = createParam(GetUserProfileUseCase.Param.ParamBuilder::build);
     private static final Duration EXPIRY_DURATION = Duration.ofDays(1);
 
@@ -50,8 +44,7 @@ class GetUserProfileServiceTest {
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.getUserProfile(param));
         assertThat(throwable).hasMessage(USER_ID_NOT_FOUND);
 
-        verifyNoInteractions(createFileDownloadLinkPort,
-            loadUserSurveyPort);
+        verifyNoInteractions(createFileDownloadLinkPort);
     }
 
     @Test
@@ -61,7 +54,6 @@ class GetUserProfileServiceTest {
 
         when(loadUserPort.loadUser(param.getCurrentUserId())).thenReturn(expectedUser);
         when(createFileDownloadLinkPort.createDownloadLink(expectedUser.getPicturePath(), EXPIRY_DURATION)).thenReturn(pictureLink);
-        when(loadUserSurveyPort.loadByUserId(param.getCurrentUserId())).thenReturn(Optional.empty());
 
         GetUserProfileUseCase.UserProfile actualUser = service.getUserProfile(param);
 
@@ -72,16 +64,13 @@ class GetUserProfileServiceTest {
         assertEquals(expectedUser.getBio(), actualUser.bio());
         assertEquals(expectedUser.getLinkedin(), actualUser.linkedin());
         assertEquals(pictureLink, actualUser.pictureLink());
-        assertTrue(actualUser.showSurvey());
     }
 
     @Test
     void testGetUserProfile_whenParametersAreValidAndPictureIsNull_thenReturnValidResultWithoutPictureLink() {
         User expectedUser = createUser(param.getCurrentUserId(), null);
-        var userSurvey = createWithCompletedAndDontShowAgain(true, false);
 
         when(loadUserPort.loadUser(param.getCurrentUserId())).thenReturn(expectedUser);
-        when(loadUserSurveyPort.loadByUserId(param.getCurrentUserId())).thenReturn(Optional.of(userSurvey));
 
         GetUserProfileUseCase.UserProfile actualUser = service.getUserProfile(param);
 
@@ -92,7 +81,6 @@ class GetUserProfileServiceTest {
         assertEquals(expectedUser.getBio(), actualUser.bio());
         assertEquals(expectedUser.getLinkedin(), actualUser.linkedin());
         assertNull(actualUser.pictureLink());
-        assertFalse(actualUser.showSurvey());
 
         verifyNoInteractions(createFileDownloadLinkPort);
     }
@@ -100,10 +88,8 @@ class GetUserProfileServiceTest {
     @Test
     void testGetUserProfile_whenParametersAreValidAndPictureIsBlank_thenReturnValidResultWithoutPictureLink() {
         User expectedUser = createUser(param.getCurrentUserId(), "");
-        var userSurvey = createWithCompletedAndDontShowAgain(false, true);
 
         when(loadUserPort.loadUser(param.getCurrentUserId())).thenReturn(expectedUser);
-        when(loadUserSurveyPort.loadByUserId(param.getCurrentUserId())).thenReturn(Optional.of(userSurvey));
 
         GetUserProfileUseCase.UserProfile actualUser = service.getUserProfile(param);
 
@@ -114,7 +100,6 @@ class GetUserProfileServiceTest {
         assertEquals(expectedUser.getBio(), actualUser.bio());
         assertEquals(expectedUser.getLinkedin(), actualUser.linkedin());
         assertNull(actualUser.pictureLink());
-        assertFalse(actualUser.showSurvey());
 
         verifyNoInteractions(createFileDownloadLinkPort);
     }
@@ -122,10 +107,8 @@ class GetUserProfileServiceTest {
     @Test
     void testGetUserProfile_whenParametersAreValidAndSurveyIsNotCompletedAndDontShowAgainIsFalse_thenReturnValidResult() {
         User expectedUser = createUser(param.getCurrentUserId(), "");
-        var userSurvey = createWithCompletedAndDontShowAgain(false, false);
 
         when(loadUserPort.loadUser(param.getCurrentUserId())).thenReturn(expectedUser);
-        when(loadUserSurveyPort.loadByUserId(param.getCurrentUserId())).thenReturn(Optional.of(userSurvey));
 
         GetUserProfileUseCase.UserProfile actualUser = service.getUserProfile(param);
 
@@ -136,7 +119,6 @@ class GetUserProfileServiceTest {
         assertEquals(expectedUser.getBio(), actualUser.bio());
         assertEquals(expectedUser.getLinkedin(), actualUser.linkedin());
         assertNull(actualUser.pictureLink());
-        assertTrue(actualUser.showSurvey());
 
         verifyNoInteractions(createFileDownloadLinkPort);
     }
