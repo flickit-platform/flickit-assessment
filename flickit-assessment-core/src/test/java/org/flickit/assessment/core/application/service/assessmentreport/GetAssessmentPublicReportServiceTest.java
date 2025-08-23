@@ -164,6 +164,7 @@ class GetAssessmentPublicReportServiceTest {
         assertFalse(result.permissions().canViewDashboard());
         assertFalse(result.permissions().canManageVisibility());
         assertFalse(result.permissions().canShareReport());
+        assertFalse(result.permissions().canViewMeasureQuestions());
         verifyNoInteractions(assessmentAccessChecker);
     }
 
@@ -222,6 +223,7 @@ class GetAssessmentPublicReportServiceTest {
         assertFalse(result.permissions().canViewDashboard());
         assertFalse(result.permissions().canManageVisibility());
         assertFalse(result.permissions().canShareReport());
+        assertFalse(result.permissions().canViewMeasureQuestions());
         assertFalse(result.isAdvisable());
     }
 
@@ -284,6 +286,7 @@ class GetAssessmentPublicReportServiceTest {
         assertTrue(result.permissions().canViewDashboard());
         assertFalse(result.permissions().canShareReport());
         assertTrue(result.permissions().canManageVisibility());
+        assertFalse(result.permissions().canViewMeasureQuestions());
         assertTrue(result.isAdvisable());
     }
 
@@ -340,6 +343,7 @@ class GetAssessmentPublicReportServiceTest {
         assertTrue(result.permissions().canViewDashboard());
         assertTrue(result.permissions().canShareReport());
         assertFalse(result.permissions().canManageVisibility());
+        assertFalse(result.permissions().canViewMeasureQuestions());
         assertFalse(result.isAdvisable());
     }
 
