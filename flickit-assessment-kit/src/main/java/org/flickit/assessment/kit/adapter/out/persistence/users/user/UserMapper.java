@@ -10,7 +10,7 @@ import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitUser
 public class UserMapper {
 
     public static User mapToDomainModel(UserJpaEntity entity) {
-        return new User(entity.getId(), entity.getDisplayName());
+        return new User(entity.getId(), entity.getDisplayName(), entity.getEmail());
     }
 
     public static LoadKitUsersPort.KitUser mapToUserListItem(UserJpaEntity entity) {
