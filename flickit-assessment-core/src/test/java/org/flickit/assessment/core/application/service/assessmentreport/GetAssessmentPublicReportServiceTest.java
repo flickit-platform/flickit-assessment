@@ -169,7 +169,7 @@ class GetAssessmentPublicReportServiceTest {
     }
 
     @Test
-    void testGetAssessmentPublicReport_whenReportIsPublicAndLoggedInUserLacksViewGraphicalReportPermission_thenReturnReportWithoutPermissions() {
+    void testGetAssessmentPublicReport_whenReportIsPublicAndLoggedInUserLacksViewReportPermission_thenReturnReportWithoutPermissions() {
         var assessmentId = assessmentResult.getAssessment().getId();
 
         when(loadAssessmentReportPort.loadByLinkHash(paramWithUserId.getLinkHash())).thenReturn(publicReport);
@@ -264,6 +264,8 @@ class GetAssessmentPublicReportServiceTest {
             .thenReturn(false);
         when(assessmentAccessChecker.isAuthorized(assessmentId, paramWithUserId.getCurrentUserId(), MANAGE_ASSESSMENT_REPORT_VISIBILITY))
             .thenReturn(true);
+        when(assessmentAccessChecker.isAuthorized(assessmentId, paramWithUserId.getCurrentUserId(), VIEW_ATTRIBUTE_MEASURE_QUESTIONS))
+            .thenReturn(true);
 
         when(loadAssessmentQuestionsPort.loadApplicableQuestions(assessmentId))
             .thenReturn(questionAnswers);
@@ -286,12 +288,12 @@ class GetAssessmentPublicReportServiceTest {
         assertTrue(result.permissions().canViewDashboard());
         assertFalse(result.permissions().canShareReport());
         assertTrue(result.permissions().canManageVisibility());
-        assertFalse(result.permissions().canViewMeasureQuestions());
+        assertTrue(result.permissions().canViewMeasureQuestions());
         assertTrue(result.isAdvisable());
     }
 
     @Test
-    void testGetAssessmentPublicReport_whenReportIsRestrictedAndLoggedInUserHasViewGraphicalReportPermission_thenReturnReportWithPermissions() {
+    void testGetAssessmentPublicReport_whenReportIsRestrictedAndLoggedInUserHasViewReportPermission_thenReturnReportWithPermissions() {
         var assessmentId = assessmentResult.getAssessment().getId();
 
         when(loadAssessmentReportPort.loadByLinkHash(paramWithUserId.getLinkHash())).thenReturn(restrictedReport);
@@ -348,7 +350,7 @@ class GetAssessmentPublicReportServiceTest {
     }
 
     @Test
-    void testGetAssessmentPublicReport_whenReportIsRestrictedAndLoggedInUserLacksViewGraphicalReportPermission_thenThrowResourceNotFoundException() {
+    void testGetAssessmentPublicReport_whenReportIsRestrictedAndLoggedInUserLacksViewReportPermission_thenThrowResourceNotFoundException() {
         when(loadAssessmentReportPort.loadByLinkHash(paramWithUserId.getLinkHash())).thenReturn(notPublishedReport);
         when(loadAssessmentResultPort.load(notPublishedReport.getAssessmentResultId())).thenReturn(Optional.of(assessmentResult));
         when(assessmentAccessChecker.isAuthorized(assessmentResult.getAssessment().getId(), paramWithUserId.getCurrentUserId(), VIEW_GRAPHICAL_REPORT))
