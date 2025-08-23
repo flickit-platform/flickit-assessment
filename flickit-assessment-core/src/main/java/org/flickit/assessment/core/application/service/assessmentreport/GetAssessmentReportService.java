@@ -333,7 +333,8 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
 
         var missedScore = measureMaxPossibleScore - gainedScore;
 
-        return new AttributeMeasure(measure.getTitle(),
+        return new AttributeMeasure(measure.getId(),
+            measure.getTitle(),
             MathUtils.round(impactPercentage, 2),
             MathUtils.round(measureMaxPossibleScore, 2),
             MathUtils.round(gainedScore, 2),
