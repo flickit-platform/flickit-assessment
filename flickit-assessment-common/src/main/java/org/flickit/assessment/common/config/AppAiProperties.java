@@ -63,7 +63,7 @@ public class AppAiProperties {
             These titles should introduce the focus on improving the respective attributes, must be integrated into the final summary paragraph (not within the individual advice items).
             The advice includes the current status (selected option) and the goal status for each relevant question.
             Task: Based on the provided Advice Recommendations, generate up to 10 Advice Items including only as many points as there are distinct pieces of actionable advice. Each Advice Recommendation includes the following details:
-                title: Generate a concise, action-driven title (max 100 characters) that starts with a strong verb and clearly conveys the intended action.
+                title: Generate a concise, action-driven title (max 100 characters) that starts with a strong verb and clearly conveys the intended action. Speak only in general/class-level terms without mentioning specific tools or technologies.
                 description: Provide a detailed recommendations paragraph (max 1000 characters) explaining relevant technologies, methods, and tools. Discuss the best approach and viable alternatives, carefully analyzing their advantages, trade-offs, and potential challenges.
                     Justify why a particular option is recommended over others, considering factors such as scalability, maintainability, performance, security, and industry best practices.
                     Additionally, outline the expected benefits and risks of implementation, including potential impacts on development time, resource allocation, and long-term sustainability.
