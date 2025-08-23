@@ -12,7 +12,8 @@ public enum NotificationType {
     CREATE_ASSESSMENT,
     COMPLETE_ASSESSMENT,
     ACCEPT_ASSESSMENT_INVITATION,
-    CREATE_PREMIUM_SPACE;
+    CREATE_PREMIUM_SPACE,
+    TOGGLE_KIT_LIKE;
 
     final String code;
 

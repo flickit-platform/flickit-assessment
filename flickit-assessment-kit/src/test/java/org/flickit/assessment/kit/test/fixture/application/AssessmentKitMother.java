@@ -7,6 +7,7 @@ import org.flickit.assessment.kit.application.domain.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.kit.translation.KitTranslation.MetadataTranslation;
 
@@ -43,6 +44,7 @@ public class AssessmentKitMother {
             KitLanguage.EN,
             LocalDateTime.now(),
             LocalDateTime.now(),
+            UUID.randomUUID(),
             Boolean.TRUE,
             isPrivate,
             EXPERT_GROUP_ID,
@@ -69,6 +71,7 @@ public class AssessmentKitMother {
             KitLanguage.EN,
             LocalDateTime.now(),
             LocalDateTime.now(),
+            UUID.randomUUID(),
             Boolean.FALSE,
             Boolean.FALSE,
             EXPERT_GROUP_ID,
@@ -91,6 +94,7 @@ public class AssessmentKitMother {
             KitLanguage.EN,
             LocalDateTime.now(),
             LocalDateTime.now(),
+            UUID.randomUUID(),
             Boolean.TRUE,
             Boolean.FALSE,
             EXPERT_GROUP_ID,
@@ -121,6 +125,7 @@ public class AssessmentKitMother {
             KitLanguage.EN,
             LocalDateTime.now(),
             LocalDateTime.now(),
+            UUID.randomUUID(),
             Boolean.TRUE,
             Boolean.FALSE,
             EXPERT_GROUP_ID,
@@ -143,6 +148,7 @@ public class AssessmentKitMother {
             KitLanguage.EN,
             LocalDateTime.now(),
             LocalDateTime.now(),
+            UUID.randomUUID(),
             Boolean.TRUE,
             Boolean.FALSE,
             EXPERT_GROUP_ID,
@@ -165,6 +171,7 @@ public class AssessmentKitMother {
             KitLanguage.EN,
             LocalDateTime.now(),
             LocalDateTime.now(),
+            UUID.randomUUID(),
             Boolean.TRUE,
             Boolean.FALSE,
             EXPERT_GROUP_ID,
@@ -187,6 +194,7 @@ public class AssessmentKitMother {
             KitLanguage.EN,
             LocalDateTime.now(),
             LocalDateTime.now(),
+            UUID.randomUUID(),
             Boolean.TRUE,
             Boolean.FALSE,
             EXPERT_GROUP_ID,
@@ -213,6 +221,7 @@ public class AssessmentKitMother {
             KitLanguage.EN,
             LocalDateTime.now(),
             LocalDateTime.now(),
+            UUID.randomUUID(),
             Boolean.TRUE,
             Boolean.FALSE,
             EXPERT_GROUP_ID,
@@ -235,6 +244,7 @@ public class AssessmentKitMother {
             KitLanguage.EN,
             LocalDateTime.now(),
             LocalDateTime.now(),
+            UUID.randomUUID(),
             Boolean.TRUE,
             isPrivate,
             EXPERT_GROUP_ID,
@@ -257,6 +267,7 @@ public class AssessmentKitMother {
             KitLanguage.EN,
             LocalDateTime.now(),
             LocalDateTime.now(),
+            UUID.randomUUID(),
             Boolean.TRUE,
             Boolean.FALSE,
             EXPERT_GROUP_ID,
@@ -279,6 +290,7 @@ public class AssessmentKitMother {
             KitLanguage.FA,
             LocalDateTime.now(),
             LocalDateTime.now(),
+            UUID.randomUUID(),
             Boolean.TRUE,
             Boolean.TRUE,
             EXPERT_GROUP_ID,
@@ -301,6 +313,7 @@ public class AssessmentKitMother {
             KitLanguage.EN,
             LocalDateTime.now(),
             LocalDateTime.now(),
+            UUID.randomUUID(),
             Boolean.TRUE,
             Boolean.FALSE,
             EXPERT_GROUP_ID,

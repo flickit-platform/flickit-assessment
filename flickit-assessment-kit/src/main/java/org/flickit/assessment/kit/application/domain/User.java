@@ -10,5 +10,6 @@ import java.util.UUID;
 public class User {
 
     private final UUID id;
-
+    private final String displayName;
+    private final String email;
 }

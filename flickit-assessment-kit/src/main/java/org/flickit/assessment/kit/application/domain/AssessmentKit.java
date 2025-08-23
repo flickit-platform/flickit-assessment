@@ -11,6 +11,7 @@ import org.flickit.assessment.common.application.domain.kit.translation.KitTrans
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Getter
 @RequiredArgsConstructor
@@ -25,6 +26,7 @@ public class AssessmentKit {
     private final KitLanguage language;
     private final LocalDateTime creationTime;
     private final LocalDateTime lastModificationTime;
+    private final UUID createdBy;
     private final boolean published;
     private final boolean isPrivate;
     private final long expertGroupId;
