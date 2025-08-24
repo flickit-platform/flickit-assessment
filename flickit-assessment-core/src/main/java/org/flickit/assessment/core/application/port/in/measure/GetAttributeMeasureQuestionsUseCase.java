@@ -14,7 +14,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 public interface GetAttributeMeasureQuestionsUseCase {
 
-    Result getAttributeMeasureQuestions(Param param);
+    List<Result> getAttributeMeasureQuestions(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = true)
@@ -42,10 +42,10 @@ public interface GetAttributeMeasureQuestionsUseCase {
         }
     }
 
-    record Result(List<Question> items) {
-    }
+    record Result(Question question, Answer answer) {
 
-    record Question(long id, int index, String title, int weight, Answer answer) {
+        public record Question(long id, int index, String title, int weight) {
+        }
 
         public record Answer(Integer index,
                              String title,
