@@ -216,7 +216,7 @@ public class AttributePersistenceJpaAdapter implements
     }
 
     @Override
-    public List<LoadAttributeQuestionsPort.Result> loadAttributeMeasureQuestions(UUID assessmentId, long attributeId, long measureId) {
+    public List<LoadAttributeQuestionsPort.Result> loadApplicableMeasureQuestions(UUID assessmentId, long attributeId, long measureId) {
         var questionIdToViewMap = repository.findApplicableQuestionsByAttributeIdAndMeasureId(assessmentId,
                 attributeId,
                 measureId).stream()

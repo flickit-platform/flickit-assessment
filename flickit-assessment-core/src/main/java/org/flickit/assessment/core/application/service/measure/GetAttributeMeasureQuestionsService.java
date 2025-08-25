@@ -24,7 +24,7 @@ public class GetAttributeMeasureQuestionsService implements GetAttributeMeasureQ
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ATTRIBUTE_MEASURE_QUESTIONS))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        var portResults = loadAttributeQuestionsPort.loadAttributeMeasureQuestions(
+        var portResults = loadAttributeQuestionsPort.loadApplicableMeasureQuestions(
             param.getAssessmentId(),
             param.getAttributeId(),
             param.getMeasureId());

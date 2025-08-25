@@ -5,7 +5,6 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.port.in.measure.GetAttributeMeasureQuestionsUseCase;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeQuestionsPort;
 import org.flickit.assessment.core.test.fixture.application.AnswerMother;
-import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.flickit.assessment.core.test.fixture.application.MeasureMother;
 import org.flickit.assessment.core.test.fixture.application.QuestionMother;
 import org.junit.jupiter.api.Test;
@@ -53,7 +52,6 @@ class GetAttributeMeasureQuestionsServiceTest {
 
     @Test
     void testGetAttributeMeasureQuestions_whenParamsAreValid_thenReturnQuestions() {
-        var assessmentResult = AssessmentResultMother.validResult();
         var measure1 = MeasureMother.createMeasure();
         var measure2 = MeasureMother.createMeasure();
         var question1 = QuestionMother.withMeasure(measure1);
@@ -67,7 +65,7 @@ class GetAttributeMeasureQuestionsServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ATTRIBUTE_MEASURE_QUESTIONS))
             .thenReturn(true);
-        when(loadAttributeQuestionsPort.loadAttributeMeasureQuestions(param.getAssessmentId(), param.getAttributeId(), param.getMeasureId()))
+        when(loadAttributeQuestionsPort.loadApplicableMeasureQuestions(param.getAssessmentId(), param.getAttributeId(), param.getMeasureId()))
             .thenReturn(portResult);
 
         var result = service.getQuestions(param);
