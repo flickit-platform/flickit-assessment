@@ -215,6 +215,32 @@ public class AttributePersistenceJpaAdapter implements
             .toList();
     }
 
+    @Override
+    public List<LoadAttributeQuestionsPort.Result> loadApplicableMeasureQuestions(UUID assessmentId, long attributeId, long measureId) {
+        var questionIdToViewMap = repository.findApplicableQuestionsByAttributeIdAndMeasureId(assessmentId,
+                attributeId,
+                measureId).stream()
+            .collect(groupingBy(v -> v.getQuestion().getId()));
+
+        return questionIdToViewMap.values().stream()
+            .map(views -> {
+                var impacts = views.stream()
+                    .map(i -> QuestionImpactMapper.mapToDomainModel(i.getQuestionImpact()))
+                    .toList();
+
+                var firstView = views.getFirst();
+                var question = QuestionMapper.mapToDomainModelWithImpacts(firstView.getQuestion(), impacts);
+                var answerOption = firstView.getAnswerOption() != null
+                    ? AnswerOptionMapper.mapToDomainModel(firstView.getAnswerOption())
+                    : null;
+                var answer = firstView.getAnswer() != null
+                    ? AnswerMapper.mapToDomainModel(firstView.getAnswer(), answerOption)
+                    : null;
+                return new LoadAttributeQuestionsPort.Result(question, answer);
+            })
+            .toList();
+    }
+
     private KitLanguage resolveLanguage(AssessmentResultJpaEntity assessmentResult) {
         var assessmentKit = assessmentKitRepository.findByKitVersionId(assessmentResult.getKitVersionId())
             .orElseThrow(() -> new ResourceNotFoundException(ErrorMessageKey.COMMON_ASSESSMENT_KIT_NOT_FOUND));

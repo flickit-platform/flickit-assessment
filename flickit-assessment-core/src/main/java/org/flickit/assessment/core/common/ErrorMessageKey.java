@@ -380,4 +380,8 @@ public class ErrorMessageKey {
 
     public static final String GET_ASSESSMENT_MOVE_TARGETS_ASSESSMENT_ID_NOT_NULL = "get-assessment-move-targets.assessmentId.notNull";
     public static final String GET_ASSESSMENT_MOVE_TARGETS_SPACE_NOT_FOUND = "get-assessment-move-targets.space.notFound";
+
+    public static final String GET_ATTRIBUTE_MEASURE_QUESTIONS_ASSESSMENT_ID_NOT_NULL = "get-attribute-measure-questions.assessmentId.notNull";
+    public static final String GET_ATTRIBUTE_MEASURE_QUESTIONS_ATTRIBUTE_ID_NOT_NULL = "get-attribute-measure-questions.attributeId.notNull";
+    public static final String GET_ATTRIBUTE_MEASURE_QUESTIONS_MEASURE_ID_NOT_NULL = "get-attribute-measure-questions.measureId.notNull";
 }
