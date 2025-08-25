@@ -5,7 +5,6 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.port.in.measure.GetAttributeMeasureQuestionsUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeQuestionsPort;
-import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeScoreDetailPort;
 import org.flickit.assessment.core.test.fixture.application.AnswerMother;
 import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.flickit.assessment.core.test.fixture.application.MeasureMother;
@@ -51,7 +50,7 @@ class GetAttributeMeasureQuestionsServiceTest {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ATTRIBUTE_MEASURE_QUESTIONS))
             .thenReturn(false);
 
-        var throwable = assertThrows(AccessDeniedException.class, () -> service.getAttributeMeasureQuestions(param));
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.getQuestions(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
         verifyNoInteractions(loadAssessmentResultPort, loadAssessmentResultPort);
@@ -77,9 +76,9 @@ class GetAttributeMeasureQuestionsServiceTest {
         when(loadAttributeQuestionsPort.loadAttributeMeasureQuestions(assessmentResult, param.getAttributeId(), param.getMeasureId()))
             .thenReturn(portResult);
 
-        var result = service.getAttributeMeasureQuestions(param);
+        var result = service.getQuestions(param);
 
-        assertThat(result).zipSatisfy(portResult, (actual, expected) -> {
+        assertThat(result.items()).zipSatisfy(portResult, (actual, expected) -> {
             assertEquals(expected.question().getId(), actual.question().id());
             assertEquals(expected.question().getIndex(), actual.question().index());
             assertEquals(expected.question().getTitle(), actual.question().title());

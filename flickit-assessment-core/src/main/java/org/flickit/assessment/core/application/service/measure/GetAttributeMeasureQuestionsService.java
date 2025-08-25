@@ -10,8 +10,6 @@ import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeQ
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ATTRIBUTE_MEASURE_QUESTIONS;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -26,7 +24,7 @@ public class GetAttributeMeasureQuestionsService implements GetAttributeMeasureQ
     private final LoadAttributeQuestionsPort loadAttributeQuestionsPort;
 
     @Override
-    public List<Result> getAttributeMeasureQuestions(Param param) {
+    public Result getQuestions(Param param) {
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ATTRIBUTE_MEASURE_QUESTIONS))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
@@ -38,12 +36,14 @@ public class GetAttributeMeasureQuestionsService implements GetAttributeMeasureQ
             param.getAttributeId(),
             param.getMeasureId());
 
-        return portResults.stream()
-            .map(item -> toResult(item, param.getAttributeId()))
+        var measureQuestions = portResults.stream()
+            .map(item -> toMeasureQuestions(item, param.getAttributeId()))
             .toList();
+
+        return new Result(measureQuestions);
     }
 
-    private Result toResult(LoadAttributeQuestionsPort.Result item, long attributeId) {
+    private MeasureQuestion toMeasureQuestions(LoadAttributeQuestionsPort.Result item, long attributeId) {
         var question = item.question();
         var answer = item.answer();
 
@@ -74,9 +74,9 @@ public class GetAttributeMeasureQuestionsService implements GetAttributeMeasureQ
             }
         }
 
-        return new Result(
-            new Result.Question(question.getId(), question.getIndex(), question.getTitle(), weight),
-            new Result.Answer(optionIndex, optionTitle, isNotApplicable, gained, missed)
+        return new MeasureQuestion(
+            new MeasureQuestion.Question(question.getId(), question.getIndex(), question.getTitle(), weight),
+            new MeasureQuestion.Answer(optionIndex, optionTitle, isNotApplicable, gained, missed)
         );
     }
 }
