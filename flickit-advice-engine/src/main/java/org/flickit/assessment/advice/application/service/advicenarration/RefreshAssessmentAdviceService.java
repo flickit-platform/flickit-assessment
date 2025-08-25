@@ -172,7 +172,7 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
     }
 
     private void generateAdvice(AssessmentResult result, List<AttributeLevelTarget> targets) {
-        var adviceListItems = createAdviceHelper.createAdvice(result.getAssessmentId(), targets);
-        createAiAdviceNarrationHelper.createAiAdviceNarration(result, adviceListItems, targets);
+        var improvableQuestions = createAdviceHelper.createAdvice(result.getAssessmentId(), targets);
+        createAiAdviceNarrationHelper.createAiAdviceNarration(result, improvableQuestions, targets);
     }
 }
