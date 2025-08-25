@@ -201,13 +201,13 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
                 ans AS answer,
                 qi AS questionImpact,
                 ao AS answerOption
-            FROM AssessmentResultEntity ar
+            FROM AssessmentResultJpaEntity ar
             JOIN QuestionJpaEntity qsn ON qsn.kitVersionId = ar.kitVersionId
             LEFT JOIN AnswerJpaEntity ans ON ans.questionId = qsn.id AND ans.assessmentResult.id = ar.id
             LEFT JOIN AnswerOptionJpaEntity ao ON ans.answerOptionId = ao.id AND ao.kitVersionId = ar.kitVersionId
             LEFT JOIN QuestionImpactJpaEntity qi ON qsn.id = qi.questionId AND qsn.kitVersionId = qi.kitVersionId
             WHERE qi.attributeId = :attributeId
-              AND ar.assessmentId = :assessmentId
+              AND ar.assessment.id = :assessmentId
               AND ans.isNotApplicable IS NOT TRUE
               AND qsn.measureId = :measureId
         """)
