@@ -255,7 +255,8 @@ class RefreshAssessmentAdviceServiceTest {
             new LoadAttributeValuesPort.Result(attribute2.getId(), levelThree().getId()),
             new LoadAttributeValuesPort.Result(attribute3.getId(), levelFive().getId()),
             new LoadAttributeValuesPort.Result(attribute4.getId(), levelOne().getId()),
-            new LoadAttributeValuesPort.Result(attribute5.getId(), levelFour().getId()));
+            new LoadAttributeValuesPort.Result(attribute5.getId(), levelFour().getId()),
+            new LoadAttributeValuesPort.Result(attribute6.getId(), levelFour().getId()));
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), REFRESH_ASSESSMENT_ADVICE)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
