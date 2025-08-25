@@ -12,6 +12,7 @@ import org.flickit.assessment.core.adapter.out.persistence.answer.AnswerMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.answeroption.AnswerOptionMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.question.QuestionMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.questionimpact.QuestionImpactMapper;
+import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.Attribute;
 import org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreDetailUseCase;
 import org.flickit.assessment.core.application.port.out.attribute.*;
@@ -194,6 +195,33 @@ public class AttributePersistenceJpaAdapter implements
         var questionIdToViewMap = repository.findAttributeQuestionsAndAnswers(assessmentResult.getId(),
                 assessmentResult.getKitVersionId(),
                 attributeId).stream()
+            .collect(groupingBy(v -> v.getQuestion().getId()));
+
+        return questionIdToViewMap.values().stream()
+            .map(views -> {
+                var impacts = views.stream()
+                    .map(i -> QuestionImpactMapper.mapToDomainModel(i.getQuestionImpact()))
+                    .toList();
+
+                var firstView = views.getFirst();
+                var question = QuestionMapper.mapToDomainModelWithImpacts(firstView.getQuestion(), impacts);
+                var answerOption = firstView.getAnswerOption() != null
+                    ? AnswerOptionMapper.mapToDomainModel(firstView.getAnswerOption())
+                    : null;
+                var answer = firstView.getAnswer() != null
+                    ? AnswerMapper.mapToDomainModel(firstView.getAnswer(), answerOption)
+                    : null;
+                return new LoadAttributeQuestionsPort.Result(question, answer);
+            })
+            .toList();
+    }
+
+    @Override
+    public List<LoadAttributeQuestionsPort.Result> loadAttributeMeasureQuestions(AssessmentResult assessmentResult, long attributeId, long measureId) {
+        var questionIdToViewMap = repository.findAttributeMeasureQuestionsAndAnswers(assessmentResult.getId(),
+                assessmentResult.getKitVersionId(),
+                attributeId,
+                measureId).stream()
             .collect(groupingBy(v -> v.getQuestion().getId()));
 
         return questionIdToViewMap.values().stream()
