@@ -3,7 +3,6 @@ package org.flickit.assessment.core.application.service.measure;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.port.in.measure.GetAttributeMeasureQuestionsUseCase;
-import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeQuestionsPort;
 import org.flickit.assessment.core.test.fixture.application.AnswerMother;
 import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
@@ -16,7 +15,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -37,9 +35,6 @@ class GetAttributeMeasureQuestionsServiceTest {
     private AssessmentAccessChecker assessmentAccessChecker;
 
     @Mock
-    private LoadAssessmentResultPort loadAssessmentResultPort;
-
-    @Mock
     private LoadAttributeQuestionsPort loadAttributeQuestionsPort;
 
     private final GetAttributeMeasureQuestionsUseCase.Param param =
@@ -53,7 +48,7 @@ class GetAttributeMeasureQuestionsServiceTest {
         var throwable = assertThrows(AccessDeniedException.class, () -> service.getQuestions(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
-        verifyNoInteractions(loadAssessmentResultPort, loadAssessmentResultPort);
+        verifyNoInteractions(loadAttributeQuestionsPort);
     }
 
     @Test
@@ -72,8 +67,7 @@ class GetAttributeMeasureQuestionsServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ATTRIBUTE_MEASURE_QUESTIONS))
             .thenReturn(true);
-        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
-        when(loadAttributeQuestionsPort.loadAttributeMeasureQuestions(assessmentResult, param.getAttributeId(), param.getMeasureId()))
+        when(loadAttributeQuestionsPort.loadAttributeMeasureQuestions(param.getAssessmentId(), param.getAttributeId(), param.getMeasureId()))
             .thenReturn(portResult);
 
         var result = service.getQuestions(param);
