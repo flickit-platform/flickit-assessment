@@ -308,7 +308,7 @@ class RefreshAssessmentAdviceServiceTest {
     }
 
     /*
-    | Attribute         | Weight | Maturity Level | Furthest Score |      Selected        |                   |
+    | Attribute         | Weight | Maturity Level | Furthest Score |      Selected        |     Iteration     |
     |-------------------|--------|----------------|----------------|----------------------|-------------------|
     | attribute1(1035)  |   1    |       3        |       2        | no                   |       X           |
     | attribute2(1036)  |   3    |       3        |       6        | yes (furthest)       |       0           |
@@ -318,7 +318,7 @@ class RefreshAssessmentAdviceServiceTest {
     | attribute6(1040)  |   1    |       4        |       1        | no                   |       X           |
     | attribute7(1041)  |   2    |       4        |       2        | yes (few questions)  |       2           |
     | attribute8(1042)  |   4    |       4        |       4        | yes (few questions)  |       1           |
-    -----------------------------------------------------------------------------------------------------
+    -----------------------------------------------------------------------------------------------------------
     |
     |Furthest Score is calculated as: weight multiplied by (maxLevel - currentLevel)
     */
