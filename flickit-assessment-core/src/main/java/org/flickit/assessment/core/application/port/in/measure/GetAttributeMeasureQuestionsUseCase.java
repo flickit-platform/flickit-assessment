@@ -42,7 +42,7 @@ public interface GetAttributeMeasureQuestionsUseCase {
         }
     }
 
-    record Result(List<MeasureQuestion> items) {
+    record Result(List<MeasureQuestion> highScores, List<MeasureQuestion> lowScores) {
     }
 
     record MeasureQuestion(Question question, Answer answer) {
