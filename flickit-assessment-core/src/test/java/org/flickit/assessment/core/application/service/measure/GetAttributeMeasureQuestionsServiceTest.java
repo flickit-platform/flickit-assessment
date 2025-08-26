@@ -74,13 +74,11 @@ class GetAttributeMeasureQuestionsServiceTest {
             assertEquals(expected.question().getId(), actual.question().id());
             assertEquals(expected.question().getIndex(), actual.question().index());
             assertEquals(expected.question().getTitle(), actual.question().title());
-            assertEquals(expected.question().getAvgWeight(param.getAttributeId()), actual.question().weight());
 
             if (expected.answer() != null) {
                 assertNotNull(expected.answer().getSelectedOption());
                 assertEquals(expected.answer().getSelectedOption().getIndex(), actual.answer().index());
                 assertEquals(expected.answer().getSelectedOption().getTitle(), actual.answer().title());
-                assertEquals(expected.answer().getIsNotApplicable(), actual.answer().isNotApplicable());
                 assertNotNull(actual.answer().gainedScore());
                 assertNotNull(actual.answer().missedScore());
             }

@@ -47,12 +47,11 @@ public interface GetAttributeMeasureQuestionsUseCase {
 
     record MeasureQuestion(Question question, Answer answer) {
 
-        public record Question(long id, int index, String title, int weight) {
+        public record Question(long id, int index, String title) {
         }
 
         public record Answer(Integer index,
                              String title,
-                             Boolean isNotApplicable,
                              Double gainedScore,
                              Double missedScore) {
         }
