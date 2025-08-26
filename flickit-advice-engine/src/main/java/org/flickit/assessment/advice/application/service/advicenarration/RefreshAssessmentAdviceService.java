@@ -147,15 +147,21 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
             .map(Map.Entry::getKey)
             .collect(toSet());
 
+        Comparator<LoadAttributeValuesPort.Result> scoreComparator =
+            Comparator.comparingInt(v ->
+                (maxLevel.getIndex() - maturityLevelIdToIndexMap.get(v.maturityLevelId()))
+                    * attributeIdToWeightMap.get(v.attributeId())
+            );
         return attributeValues.stream()
             .filter(v -> mostImportantAttributes.contains(v.attributeId()))
+            .sorted(scoreComparator)
             .flatMap(value -> toTarget(
                     value.attributeId(),
                     maturityLevelIdToIndexMap.get(value.maturityLevelId()),
                     maturityLevels
                 ).stream()
             )
-            .toList();
+            .toList().reversed();
     }
 
     private Optional<AttributeLevelTarget> toTarget(long attributeId,
