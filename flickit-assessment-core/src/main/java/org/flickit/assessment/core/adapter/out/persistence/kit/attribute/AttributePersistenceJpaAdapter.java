@@ -12,7 +12,6 @@ import org.flickit.assessment.core.adapter.out.persistence.answer.AnswerMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.answeroption.AnswerOptionMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.question.QuestionMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.questionimpact.QuestionImpactMapper;
-import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.Attribute;
 import org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreDetailUseCase;
 import org.flickit.assessment.core.application.port.out.attribute.*;
@@ -217,9 +216,8 @@ public class AttributePersistenceJpaAdapter implements
     }
 
     @Override
-    public List<LoadAttributeQuestionsPort.Result> loadAttributeMeasureQuestions(AssessmentResult assessmentResult, long attributeId, long measureId) {
-        var questionIdToViewMap = repository.findAttributeMeasureQuestionsAndAnswers(assessmentResult.getId(),
-                assessmentResult.getKitVersionId(),
+    public List<LoadAttributeQuestionsPort.Result> loadApplicableMeasureQuestions(UUID assessmentId, long attributeId, long measureId) {
+        var questionIdToViewMap = repository.findApplicableQuestionsByAttributeIdAndMeasureId(assessmentId,
                 attributeId,
                 measureId).stream()
             .collect(groupingBy(v -> v.getQuestion().getId()));

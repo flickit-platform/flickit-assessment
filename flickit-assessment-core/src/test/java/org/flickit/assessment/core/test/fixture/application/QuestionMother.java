@@ -79,4 +79,11 @@ public class QuestionMother {
             QuestionnaireMother.createQuestionnaire(),
             measure);
     }
+
+    public static Question withAttributeAndMeasure(long attributeId, long measureId, int weight) {
+        return new Question(id++, "question" + id, index++, null, Boolean.FALSE,
+            List.of(QuestionImpactMother.onLevelTwo(weight, attributeId)),
+            QuestionnaireMother.createQuestionnaire(),
+            new Measure(measureId, "title" + measureId));
+    }
 }
