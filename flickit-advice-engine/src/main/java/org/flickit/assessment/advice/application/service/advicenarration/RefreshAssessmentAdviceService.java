@@ -75,7 +75,7 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
         }
     }
 
-    private List<AttributeLevelTarget> prepareAttributeLevelTargets(AssessmentResult result) {
+    private AttributeTargetsDto prepareAttributeLevelTargets(AssessmentResult result) {
         var attributeValues = loadAttributeValuesPort.loadAll(result.getId());
         var maturityLevels = loadMaturityLevelsPort.loadAll(result.getAssessmentId());
 
@@ -103,16 +103,13 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
 
         var weakAttributeTargets = buildWeakAttributeTargets(weakAttributeIds, midLevel);
         if (weakAttributeTargets.size() >= MIN_REQUIRED_TARGET_ATTRIBUTES_SIZE)
-            return weakAttributeTargets;
+            return AttributeTargetsDto.of(weakAttributeTargets, Collections.emptyList());
 
         List<Long> attributeIds = attributeValues.stream().map(LoadAttributeValuesPort.Result::attributeId).toList();
         var attributes = loadAttributesPort.loadByIdsAndAssessmentId(attributeIds, result.getAssessmentId());
         var nonWeakAttributeTargets = buildNonWeakAttributeTargets(attributes, sortedLevels, nonWeakAttributes, maxLevel);
 
-        return Stream.concat(
-            weakAttributeTargets.stream(),
-            nonWeakAttributeTargets.stream()
-        ).toList();
+        return AttributeTargetsDto.of(weakAttributeTargets, nonWeakAttributeTargets);
     }
 
     private MaturityLevel extractMidLevel(List<MaturityLevel> maturityLevels) {
