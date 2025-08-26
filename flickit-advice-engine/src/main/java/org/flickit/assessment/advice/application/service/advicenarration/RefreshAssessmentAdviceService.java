@@ -144,7 +144,6 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
                 return Map.entry(v.attributeId(), score);
             })
             .sorted(Map.Entry.<Long, Integer>comparingByValue().reversed())
-            .limit(MAX_FURTHEST_TARGET_ATTRIBUTES_SIZE)
             .map(Map.Entry::getKey)
             .collect(toSet());
 
