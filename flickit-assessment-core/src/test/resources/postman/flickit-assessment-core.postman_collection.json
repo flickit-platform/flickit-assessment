@@ -3026,6 +3026,44 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Measure",
+			"item": [
+				{
+					"name": "Get Attribute Measure Question",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/83349858-c15a-4d53-b380-330180dfe514/attributes/1863/measures/2800",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"83349858-c15a-4d53-b380-330180dfe514",
+								"attributes",
+								"1863",
+								"measures",
+								"2800"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"event": [
