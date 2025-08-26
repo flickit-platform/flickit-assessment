@@ -374,9 +374,7 @@ class RefreshAssessmentAdviceServiceTest {
         assertTrue(allCalls.getFirst().stream().anyMatch(t -> t.getAttributeId() == attribute2.getId()));
         assertTrue(allCalls.getFirst().stream().anyMatch(t -> t.getAttributeId() == attribute4.getId()));
         assertTrue(allCalls.getFirst().stream().anyMatch(t -> t.getAttributeId() == attribute5.getId()));
-
         assertTrue(allCalls.get(1).stream().anyMatch(t -> t.getAttributeId() == attribute8.getId()));
-
         assertTrue(allCalls.get(2).stream().anyMatch(t -> t.getAttributeId() == attribute7.getId()));
 
         assertEquals(12, improvableCaptor.getValue().size());
