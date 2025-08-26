@@ -175,4 +175,17 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
         var improvableQuestions = createAdviceHelper.createAdvice(result.getAssessmentId(), targets);
         createAiAdviceNarrationHelper.createAiAdviceNarration(result, improvableQuestions, targets);
     }
+
+    record AttributeTargetsDto(List<AttributeLevelTarget> weakAttributeTargets,
+                               Deque<AttributeLevelTarget> nonWeakAttributeTargets) {
+
+        public boolean isEmpty() {
+            return weakAttributeTargets.isEmpty() && nonWeakAttributeTargets.isEmpty();
+        }
+
+        public static AttributeTargetsDto of(List<AttributeLevelTarget> weakAttributeTargets,
+                                             List<AttributeLevelTarget> nonWeakAttributeTargets) {
+            return new AttributeTargetsDto(new ArrayList<>(weakAttributeTargets), new ArrayDeque<>(nonWeakAttributeTargets));
+        }
+    }
 }
