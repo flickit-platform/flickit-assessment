@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.stream.Stream;
 
 import static java.lang.Math.ceilDiv;
 import static java.util.Comparator.comparingInt;
@@ -52,6 +51,7 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
 
     private static final int MIN_REQUIRED_TARGET_ATTRIBUTES_SIZE = 2;
     private static final int MAX_FURTHEST_TARGET_ATTRIBUTES_SIZE = 2;
+    private static final int MIN_REQUIRED_IMPROVABLE_QUESTIONS_SIZE = 10;
 
     @Override
     public void refreshAssessmentAdvice(Param param) {
