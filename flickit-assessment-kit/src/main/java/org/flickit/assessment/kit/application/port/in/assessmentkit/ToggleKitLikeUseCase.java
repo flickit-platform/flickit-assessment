@@ -5,7 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.application.domain.notification.HasNotificationCmd;
-import org.flickit.assessment.common.application.domain.notification.NotificationCmd;
+import org.flickit.assessment.kit.application.service.assessmentkit.notification.ToggleKitLikeNotificationCmd;
 
 import java.util.UUID;
 
@@ -33,6 +33,16 @@ public interface ToggleKitLikeUseCase {
         }
     }
 
-    record Result(NotificationCmd notificationCmd, int count, boolean liked) implements HasNotificationCmd {
+    sealed interface Result permits Liked, Unliked {
+        int count();
+
+        boolean liked();
+    }
+
+    record Liked(int count, boolean liked,
+                 ToggleKitLikeNotificationCmd notificationCmd) implements Result, HasNotificationCmd {
+    }
+
+    record Unliked(int count, boolean liked) implements Result {
     }
 }

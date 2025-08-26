@@ -29,26 +29,22 @@ public class ToggleKitLikeNotificationCreator
 
     @Override
     public List<NotificationEnvelope> create(ToggleKitLikeNotificationCmd cmd) {
-        if (!cmd.liked()) {
-            log.debug("kit unliked");
-            return List.of();
-        }
         AssessmentKit assessmentKit = loadAssessmentKitPort.load(cmd.kitId());
 
-        var createdBy = loadUserPort.loadById(cmd.targetUserId())
-            .map(x -> new NotificationEnvelope.User(x.getId(), x.getEmail()));
-        if (createdBy.isEmpty()) {
+        var userOptional = loadUserPort.loadById(cmd.likerId());
+        if (userOptional.isEmpty()) {
             log.warn("user not found");
             return List.of();
         }
+        String likerName = userOptional.get().getDisplayName();
 
         var title = MessageBundle.message(NOTIFICATION_TITLE_TOGGLE_KIT_LIKE);
         var payload = new ToggleKitLikeNotificationPayload(
             new AssessmentKitModel(assessmentKit.getId(), assessmentKit.getTitle()),
-            new UserModel(createdBy.get().id(), createdBy.get().email())
+            new UserModel(likerName)
         );
         return List.of(
-            new NotificationEnvelope(createdBy.get(), title, payload)
+            new NotificationEnvelope(new NotificationEnvelope.User(assessmentKit.getCreatedBy(), null), title, payload)
         );
     }
 

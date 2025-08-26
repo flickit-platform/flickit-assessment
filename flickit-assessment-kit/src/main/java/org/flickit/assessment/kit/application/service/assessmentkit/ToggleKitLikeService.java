@@ -35,20 +35,17 @@ public class ToggleKitLikeService implements ToggleKitLikeUseCase {
         if (kit.isPrivate() && !checkKitUserAccessPort.hasAccess(param.getKitId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        boolean liked = false;
         if (!checkKitLikeExistencePort.exist(param.getKitId(), param.getCurrentUserId())) {
             createKitLikePort.create(param.getKitId(), param.getCurrentUserId());
-            liked = true;
-        } else
-            deleteKitLikePort.delete(param.getKitId(), param.getCurrentUserId());
+            int likesCount = countKitLikePort.countByKitId(param.getKitId());
+            var notificationCmd = new ToggleKitLikeNotificationCmd(kit.getId(), param.getCurrentUserId());
 
-        int likesCount = countKitLikePort.countByKitId(param.getKitId());
-        return new Result(new ToggleKitLikeNotificationCmd(kit.getCreatedBy(),
-            kit.getId(),
-            param.getCurrentUserId(),
-            likesCount,
-            liked),
-            likesCount,
-            liked);
+            return new Liked(likesCount, true, notificationCmd);
+        } else {
+            deleteKitLikePort.delete(param.getKitId(), param.getCurrentUserId());
+            int likesCount = countKitLikePort.countByKitId(param.getKitId());
+
+            return new Unliked(likesCount, false);
+        }
     }
 }

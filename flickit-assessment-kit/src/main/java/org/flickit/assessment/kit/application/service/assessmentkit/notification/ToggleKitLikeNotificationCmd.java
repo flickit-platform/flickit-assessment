@@ -4,9 +4,5 @@ import org.flickit.assessment.common.application.domain.notification.Notificatio
 
 import java.util.UUID;
 
-public record ToggleKitLikeNotificationCmd(UUID targetUserId,
-                                           Long kitId,
-                                           UUID kitLikerUserId,
-                                           int likesCount,
-                                           boolean liked) implements NotificationCmd {
+public record ToggleKitLikeNotificationCmd(Long kitId, UUID likerId) implements NotificationCmd {
 }
