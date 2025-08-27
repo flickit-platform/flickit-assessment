@@ -6,9 +6,6 @@ import org.flickit.assessment.common.application.domain.space.SpaceStatus;
 import org.flickit.assessment.common.application.domain.space.SpaceType;
 import org.flickit.assessment.data.jpa.users.space.SpaceJpaEntity;
 import org.flickit.assessment.users.application.domain.Space;
-import org.flickit.assessment.common.application.domain.space.SpaceStatus;
-
-import static org.flickit.assessment.users.application.service.constant.SpaceConstants.NOT_DELETED_DELETION_TIME;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SpaceMapper {
