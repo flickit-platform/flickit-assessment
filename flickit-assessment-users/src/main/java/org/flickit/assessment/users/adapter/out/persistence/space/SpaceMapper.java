@@ -2,10 +2,10 @@ package org.flickit.assessment.users.adapter.out.persistence.space;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.flickit.assessment.common.application.domain.space.SpaceStatus;
 import org.flickit.assessment.common.application.domain.space.SpaceType;
 import org.flickit.assessment.data.jpa.users.space.SpaceJpaEntity;
 import org.flickit.assessment.users.application.domain.Space;
-import org.flickit.assessment.common.application.domain.space.SpaceStatus;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SpaceMapper {

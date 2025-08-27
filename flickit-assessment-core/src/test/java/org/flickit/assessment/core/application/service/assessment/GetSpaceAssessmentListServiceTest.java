@@ -2,11 +2,14 @@ package org.flickit.assessment.core.application.service.assessment;
 
 import org.flickit.assessment.common.application.domain.assessment.AssessmentPermissionChecker;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.application.domain.space.SpaceStatus;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentListItem;
 import org.flickit.assessment.core.application.domain.AssessmentMode;
 import org.flickit.assessment.core.application.port.in.assessment.GetSpaceAssessmentListUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentListPort;
+import org.flickit.assessment.core.application.port.out.space.LoadSpacePort;
 import org.flickit.assessment.core.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
 import org.junit.jupiter.api.Test;
@@ -17,15 +20,18 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Sort;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.core.common.ErrorMessageKey.GET_SPACE_ASSESSMENT_LIST_SPACE_ID_NOT_FOUND;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentKitMother.kit;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentMother.assessmentListItem;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -43,20 +49,44 @@ class GetSpaceAssessmentListServiceTest {
     @Mock
     private AssessmentPermissionChecker assessmentPermissionChecker;
 
+    @Mock
+    private LoadSpacePort loadSpacePort;
+
+    private final GetSpaceAssessmentListUseCase.Param param = createParam(GetSpaceAssessmentListUseCase.Param.ParamBuilder::build);
+
+    @Test
+    void testGetSpaceAssessmentList_whenSpaceNotFound_thenThrowResourceNotFoundException() {
+        when(loadSpacePort.loadStatusById(param.getSpaceId())).thenReturn(Optional.empty());
+
+        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.getAssessmentList(param));
+        assertEquals(GET_SPACE_ASSESSMENT_LIST_SPACE_ID_NOT_FOUND, throwable.getMessage());
+
+        verifyNoInteractions(loadAssessmentPort, assessmentPermissionChecker, checkSpaceAccessPort);
+    }
+
+    @Test
+    void testGetSpaceAssessmentList_whenSpaceIsInactive_thenThrowAccessDeniedException() {
+        when(loadSpacePort.loadStatusById(param.getSpaceId())).thenReturn(Optional.of(SpaceStatus.INACTIVE));
+
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.getAssessmentList(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+
+        verifyNoInteractions(loadAssessmentPort, assessmentPermissionChecker, checkSpaceAccessPort);
+    }
+
     @Test
     void testGetSpaceAssessmentList_whenCurrentUserIsNotSpaceMember_thenThrowAccessDeniedException() {
-        var param = createParam(GetSpaceAssessmentListUseCase.Param.ParamBuilder::build);
-
+        when(loadSpacePort.loadStatusById(param.getSpaceId())).thenReturn(Optional.of(SpaceStatus.ACTIVE));
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.getAssessmentList(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+
+        verifyNoInteractions(assessmentPermissionChecker, loadAssessmentPort);
     }
 
     @Test
-    void testGetSpaceAssessmentList_NoResultsFound_NoItemReturned() {
-        var param = createParam(GetSpaceAssessmentListUseCase.Param.ParamBuilder::build);
-
+    void testGetSpaceAssessmentList_whenNoResultFound_thenReturnEmptyPaginatedResponse() {
         PaginatedResponse<AssessmentListItem> paginatedResponse = new PaginatedResponse<>(
             List.of(),
             param.getPage(),
@@ -67,6 +97,7 @@ class GetSpaceAssessmentListServiceTest {
 
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
         when(loadAssessmentPort.loadSpaceAssessments(param.getSpaceId(), param.getCurrentUserId(), param.getPage(), param.getSize())).thenReturn(paginatedResponse);
+        when(loadSpacePort.loadStatusById(param.getSpaceId())).thenReturn(Optional.of(SpaceStatus.ACTIVE));
 
         var result = service.getAssessmentList(param);
 
@@ -90,6 +121,7 @@ class GetSpaceAssessmentListServiceTest {
             3
         );
 
+        when(loadSpacePort.loadStatusById(param.getSpaceId())).thenReturn(Optional.of(SpaceStatus.ACTIVE));
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
         when(loadAssessmentPort.loadSpaceAssessments(param.getSpaceId(), param.getCurrentUserId(), param.getPage(), param.getSize()))
             .thenReturn(paginatedRes);
