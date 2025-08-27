@@ -56,7 +56,7 @@ class GetSpaceAssessmentListServiceTest {
 
     @Test
     void testGetSpaceAssessmentList_whenSpaceNotFound_thenThrowResourceNotFoundException() {
-        when(loadSpacePort.loadById(param.getSpaceId())).thenReturn(Optional.empty());
+        when(loadSpacePort.loadStatusById(param.getSpaceId())).thenReturn(Optional.empty());
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.getAssessmentList(param));
         assertEquals(GET_SPACE_ASSESSMENT_LIST_SPACE_ID_NOT_FOUND, throwable.getMessage());
@@ -66,7 +66,7 @@ class GetSpaceAssessmentListServiceTest {
 
     @Test
     void testGetSpaceAssessmentList_whenSpaceIsInactive_thenThrowAccessDeniedException() {
-        when(loadSpacePort.loadById(param.getSpaceId())).thenReturn(Optional.of(SpaceStatus.INACTIVE));
+        when(loadSpacePort.loadStatusById(param.getSpaceId())).thenReturn(Optional.of(SpaceStatus.INACTIVE));
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.getAssessmentList(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
@@ -76,7 +76,7 @@ class GetSpaceAssessmentListServiceTest {
 
     @Test
     void testGetSpaceAssessmentList_whenCurrentUserIsNotSpaceMember_thenThrowAccessDeniedException() {
-        when(loadSpacePort.loadById(param.getSpaceId())).thenReturn(Optional.of(space));
+        when(loadSpacePort.loadStatusById(param.getSpaceId())).thenReturn(Optional.of(SpaceStatus.ACTIVE));
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.getAssessmentList(param));
@@ -97,7 +97,7 @@ class GetSpaceAssessmentListServiceTest {
 
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
         when(loadAssessmentPort.loadSpaceAssessments(param.getSpaceId(), param.getCurrentUserId(), param.getPage(), param.getSize())).thenReturn(paginatedResponse);
-        when(loadSpacePort.loadById(param.getSpaceId())).thenReturn(Optional.of(space));
+        when(loadSpacePort.loadStatusById(param.getSpaceId())).thenReturn(Optional.of(SpaceStatus.ACTIVE));
 
         var result = service.getAssessmentList(param);
 
@@ -121,7 +121,7 @@ class GetSpaceAssessmentListServiceTest {
             3
         );
 
-        when(loadSpacePort.loadById(param.getSpaceId())).thenReturn(Optional.of(space));
+        when(loadSpacePort.loadStatusById(param.getSpaceId())).thenReturn(Optional.of(SpaceStatus.ACTIVE));
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
         when(loadAssessmentPort.loadSpaceAssessments(param.getSpaceId(), param.getCurrentUserId(), param.getPage(), param.getSize()))
             .thenReturn(paginatedRes);
