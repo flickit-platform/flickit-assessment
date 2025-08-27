@@ -1,7 +1,6 @@
 package org.flickit.assessment.core.test.fixture.application;
 
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
-import org.flickit.assessment.common.application.domain.space.SpaceStatus;
 import org.flickit.assessment.core.application.domain.Assessment;
 import org.flickit.assessment.core.application.domain.AssessmentListItem;
 import org.flickit.assessment.core.application.domain.AssessmentMode;
