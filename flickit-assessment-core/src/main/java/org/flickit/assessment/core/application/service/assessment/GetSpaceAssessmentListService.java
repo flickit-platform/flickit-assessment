@@ -33,7 +33,7 @@ public class GetSpaceAssessmentListService implements GetSpaceAssessmentListUseC
 
     @Override
     public PaginatedResponse<SpaceAssessmentListItem> getAssessmentList(Param param) {
-        var space = loadSpacePort.loadSpace(param.getSpaceId())
+        var space = loadSpacePort.loadById(param.getSpaceId())
             .orElseThrow(() -> new ResourceNotFoundException(GET_SPACE_ASSESSMENT_LIST_SPACE_ID_NOT_FOUND));
         if (SpaceStatus.INACTIVE.equals(space.getStatus()) || !checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);

@@ -2,7 +2,6 @@ package org.flickit.assessment.core.test.fixture.application;
 
 import org.flickit.assessment.common.application.domain.space.SpaceStatus;
 import org.flickit.assessment.common.application.domain.space.SpaceType;
-import org.flickit.assessment.common.application.domain.space.SpaceStatus;
 import org.flickit.assessment.core.application.domain.Space;
 
 import java.time.LocalDateTime;
@@ -28,6 +27,16 @@ public class SpaceMother {
 
     public static Space createPremiumSpace() {
         return createPremiumSpaceWithOwnerId(UUID.randomUUID());
+    }
+
+    public static Space createPremiumSpaceWithOwnerId(UUID ownerId) {
+        return new Space(++id,
+            "title",
+            ownerId,
+            SpaceType.PREMIUM,
+            false,
+            LocalDateTime.now(),
+            SpaceStatus.ACTIVE);
     }
 
     public static Space createSpaceWithStatus(SpaceStatus status) {

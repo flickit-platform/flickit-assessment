@@ -30,8 +30,6 @@ public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> 
     """)
     Optional<SpaceJpaEntity> findByAssessmentIdAndDeletedFalse(@Param("assessmentId") UUID assessmentId);
 
-    Optional<SpaceJpaEntity> findByIdAndDeletedFalse(long spaceId);
-
     @Query("""
             SELECT s.ownerId
             FROM SpaceJpaEntity as s
