@@ -102,8 +102,6 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
         }
 
         var weakAttributeTargets = buildWeakAttributeTargets(weakAttributeIds, midLevel);
-        if (weakAttributeTargets.size() >= MIN_REQUIRED_TARGET_ATTRIBUTES_SIZE)
-            return AttributeTargetsDto.of(weakAttributeTargets, Collections.emptyList());
 
         List<Long> attributeIds = attributeValues.stream().map(LoadAttributeValuesPort.Result::attributeId).toList();
         var attributes = loadAttributesPort.loadByIdsAndAssessmentId(attributeIds, result.getAssessmentId());
