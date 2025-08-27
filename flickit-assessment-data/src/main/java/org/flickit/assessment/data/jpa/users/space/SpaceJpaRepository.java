@@ -25,7 +25,7 @@ public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> 
     @Query("""
                 SELECT s.status
                 FROM SpaceJpaEntity as s
-                WHERE a.id = :spaceId
+                WHERE s.id = :spaceId
         """)
     Optional<Integer> findStatusById(long spaceId);
 
