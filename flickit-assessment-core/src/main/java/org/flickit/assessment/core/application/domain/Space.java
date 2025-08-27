@@ -6,7 +6,6 @@ import org.flickit.assessment.common.application.domain.space.SpaceType;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
-import org.flickit.assessment.common.application.domain.space.SpaceStatus;
 
 @Getter
 @RequiredArgsConstructor
@@ -18,5 +17,4 @@ public class Space {
     private final SpaceType type;
     private final boolean isDefault;
     private final LocalDateTime subscriptionExpiry;
-    private final SpaceStatus status;
 }

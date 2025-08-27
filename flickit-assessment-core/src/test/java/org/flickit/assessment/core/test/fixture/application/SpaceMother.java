@@ -21,8 +21,7 @@ public class SpaceMother {
             ownerId,
             SpaceType.BASIC,
             false,
-            LocalDateTime.now(),
-            SpaceStatus.ACTIVE);
+            LocalDateTime.now());
     }
 
     public static Space createPremiumSpace() {
@@ -35,18 +34,7 @@ public class SpaceMother {
             ownerId,
             SpaceType.PREMIUM,
             false,
-            LocalDateTime.now(),
-            SpaceStatus.ACTIVE);
-    }
-
-    public static Space createSpaceWithStatus(SpaceStatus status) {
-        return new Space(++id,
-            "title",
-            UUID.randomUUID(),
-            SpaceType.PREMIUM,
-            false,
-            LocalDateTime.now(),
-            status);
+            LocalDateTime.now());
     }
 
     public static Space createDefaultSpace() {
@@ -59,8 +47,7 @@ public class SpaceMother {
             ownerId,
             SpaceType.BASIC,
             true,
-            LocalDateTime.now(),
-            SpaceStatus.ACTIVE);
+            LocalDateTime.now());
     }
 
     public static Space createExpiredPremiumSpace(UUID ownerId) {
@@ -69,7 +56,6 @@ public class SpaceMother {
             ownerId,
             SpaceType.PREMIUM,
             false,
-            LocalDateTime.MIN,
-            SpaceStatus.ACTIVE);
+            LocalDateTime.MIN);
     }
 }

@@ -7,12 +7,10 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentListItem;
 import org.flickit.assessment.core.application.domain.AssessmentMode;
-import org.flickit.assessment.core.application.domain.Space;
 import org.flickit.assessment.core.application.port.in.assessment.GetSpaceAssessmentListUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentListPort;
 import org.flickit.assessment.core.application.port.out.space.LoadSpacePort;
 import org.flickit.assessment.core.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
-import org.flickit.assessment.core.test.fixture.application.SpaceMother;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -55,7 +53,6 @@ class GetSpaceAssessmentListServiceTest {
     private LoadSpacePort loadSpacePort;
 
     private final GetSpaceAssessmentListUseCase.Param param = createParam(GetSpaceAssessmentListUseCase.Param.ParamBuilder::build);
-    private final Space space = SpaceMother.createSpaceWithStatus(SpaceStatus.ACTIVE);
 
     @Test
     void testGetSpaceAssessmentList_whenSpaceNotFound_thenThrowResourceNotFoundException() {
@@ -69,9 +66,7 @@ class GetSpaceAssessmentListServiceTest {
 
     @Test
     void testGetSpaceAssessmentList_whenSpaceIsInactive_thenThrowAccessDeniedException() {
-        var inactiveSpace = SpaceMother.createSpaceWithStatus(SpaceStatus.INACTIVE);
-
-        when(loadSpacePort.loadById(param.getSpaceId())).thenReturn(Optional.of(inactiveSpace));
+        when(loadSpacePort.loadById(param.getSpaceId())).thenReturn(Optional.of(SpaceStatus.INACTIVE));
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.getAssessmentList(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
