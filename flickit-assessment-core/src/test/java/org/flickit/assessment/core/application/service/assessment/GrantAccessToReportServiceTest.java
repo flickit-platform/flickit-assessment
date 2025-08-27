@@ -15,7 +15,7 @@ import org.flickit.assessment.core.application.port.out.assessmentuserrole.Grant
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.LoadUserRoleForAssessmentPort;
 import org.flickit.assessment.core.application.port.out.space.CreateSpaceInvitePort;
 import org.flickit.assessment.core.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
-import org.flickit.assessment.core.application.port.out.spaceuseraccess.CreateAssessmentSpaceUserAccessPort;
+import org.flickit.assessment.core.application.port.out.spaceuseraccess.CreateSpaceUserAccessPort;
 import org.flickit.assessment.core.application.port.out.user.LoadUserPort;
 import org.flickit.assessment.core.test.fixture.application.AssessmentMother;
 import org.flickit.assessment.core.test.fixture.application.UserMother;
@@ -42,8 +42,7 @@ import static org.flickit.assessment.common.application.domain.assessment.Assess
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_GRAPHICAL_REPORT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.application.domain.AssessmentUserRole.REPORT_VIEWER;
-import static org.flickit.assessment.core.common.ErrorMessageKey.GRANT_ACCESS_TO_REPORT_NOT_ALLOWED_CONTACT_ASSESSMENT_MANAGER;
-import static org.flickit.assessment.core.common.ErrorMessageKey.GRANT_ACCESS_TO_REPORT_USER_ALREADY_GRANTED;
+import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 import static org.flickit.assessment.core.common.MessageKey.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -85,10 +84,10 @@ class GrantAccessToReportServiceTest {
     private CheckSpaceAccessPort checkSpaceAccessPort;
 
     @Mock
-    private CreateAssessmentSpaceUserAccessPort createAssessmentSpaceUserAccessPort;
+    private CreateSpaceUserAccessPort createSpaceUserAccessPort;
 
     @Captor
-    private ArgumentCaptor<CreateAssessmentSpaceUserAccessPort.Param> createAssessmentSpaceUserAccessParamCaptor;
+    private ArgumentCaptor<CreateSpaceUserAccessPort.CreateParam> createAssessmentSpaceUserAccessParamCaptor;
 
     @Captor
     private ArgumentCaptor<CreateSpaceInvitePort.Param> createSpaceInviteParamCaptor;
@@ -117,7 +116,29 @@ class GrantAccessToReportServiceTest {
             appSpecProperties,
             sendEmailPort,
             checkSpaceAccessPort,
-            createAssessmentSpaceUserAccessPort);
+            createSpaceUserAccessPort);
+    }
+
+    @Test
+    void testGrantAccessToReport_whenAssessmentIsInDefaultSpace_thenThrowValidationException() {
+        var param = createParam(GrantAccessToReportUseCase.Param.ParamBuilder::build);
+
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_ACCESS_TO_REPORT))
+            .thenReturn(true);
+        when(loadAssessmentPort.isInDefaultSpace(param.getAssessmentId())).thenReturn(true);
+
+        var throwable = assertThrows(ValidationException.class, () -> service.grantAccessToReport(param));
+        assertEquals(GRANT_ACCESS_TO_REPORT_DEFAULT_SPACE_NOT_ALLOWED, throwable.getMessageKey());
+
+        verifyNoInteractions(loadUserPort,
+            grantUserAssessmentRolePort,
+            loadUserRoleForAssessmentPort,
+            createSpaceInvitePort,
+            createAssessmentInvitePort,
+            appSpecProperties,
+            sendEmailPort,
+            checkSpaceAccessPort,
+            createSpaceUserAccessPort);
     }
 
     @Test
@@ -128,7 +149,8 @@ class GrantAccessToReportServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_ACCESS_TO_REPORT))
             .thenReturn(true);
-        when(loadAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
+        when(loadAssessmentPort.isInDefaultSpace(param.getAssessmentId())).thenReturn(false);
+        when(loadAssessmentPort.loadById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
         when(loadUserPort.loadByEmail(param.getEmail())).thenReturn(Optional.of(accessGrantedUser));
         when(checkSpaceAccessPort.checkIsMember(assessment.getSpace().getId(), accessGrantedUser.getId())).thenReturn(true);
         when(loadUserRoleForAssessmentPort.load(param.getAssessmentId(), accessGrantedUser.getId())).thenReturn(Optional.empty());
@@ -142,7 +164,7 @@ class GrantAccessToReportServiceTest {
 
         verify(grantUserAssessmentRolePort).persist(param.getAssessmentId(), accessGrantedUser.getId(), REPORT_VIEWER.getId());
 
-        verifyNoInteractions(createAssessmentSpaceUserAccessPort,
+        verifyNoInteractions(createSpaceUserAccessPort,
             createSpaceInvitePort,
             createAssessmentInvitePort,
             appSpecProperties,
@@ -157,10 +179,11 @@ class GrantAccessToReportServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_ACCESS_TO_REPORT))
             .thenReturn(true);
-        when(loadAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
+        when(loadAssessmentPort.isInDefaultSpace(param.getAssessmentId())).thenReturn(false);
+        when(loadAssessmentPort.loadById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
         when(loadUserPort.loadByEmail(param.getEmail())).thenReturn(Optional.of(accessGrantedUser));
         when(checkSpaceAccessPort.checkIsMember(assessment.getSpace().getId(), accessGrantedUser.getId())).thenReturn(false);
-        doNothing().when(createAssessmentSpaceUserAccessPort).persist(any(CreateAssessmentSpaceUserAccessPort.Param.class));
+        doNothing().when(createSpaceUserAccessPort).persistByAssessmentId(any(CreateSpaceUserAccessPort.CreateParam.class));
         when(loadUserRoleForAssessmentPort.load(param.getAssessmentId(), accessGrantedUser.getId())).thenReturn(Optional.empty());
         doNothing().when(grantUserAssessmentRolePort).persist(param.getAssessmentId(), accessGrantedUser.getId(), REPORT_VIEWER.getId());
 
@@ -170,7 +193,7 @@ class GrantAccessToReportServiceTest {
         assertEquals(param.getCurrentUserId(), result.notificationCmd().senderId());
         assertEquals(assessment, result.notificationCmd().assessment());
 
-        verify(createAssessmentSpaceUserAccessPort).persist(createAssessmentSpaceUserAccessParamCaptor.capture());
+        verify(createSpaceUserAccessPort).persistByAssessmentId(createAssessmentSpaceUserAccessParamCaptor.capture());
         assertNotNull(createAssessmentSpaceUserAccessParamCaptor.getValue());
         assertEquals(param.getAssessmentId(), createAssessmentSpaceUserAccessParamCaptor.getValue().assessmentId());
         assertEquals(accessGrantedUser.getId(), createAssessmentSpaceUserAccessParamCaptor.getValue().userId());
@@ -193,7 +216,8 @@ class GrantAccessToReportServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_ACCESS_TO_REPORT))
             .thenReturn(true);
-        when(loadAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
+        when(loadAssessmentPort.isInDefaultSpace(param.getAssessmentId())).thenReturn(false);
+        when(loadAssessmentPort.loadById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
         when(loadUserPort.loadByEmail(param.getEmail())).thenReturn(Optional.of(accessGrantedUser));
         when(loadUserRoleForAssessmentPort.load(param.getAssessmentId(), accessGrantedUser.getId())).thenReturn(Optional.of(AssessmentUserRole.ASSESSOR));
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), accessGrantedUser.getId(), VIEW_GRAPHICAL_REPORT))
@@ -209,7 +233,7 @@ class GrantAccessToReportServiceTest {
             createAssessmentInvitePort,
             appSpecProperties,
             sendEmailPort,
-            createAssessmentSpaceUserAccessPort);
+            createSpaceUserAccessPort);
     }
 
     @Test
@@ -220,7 +244,8 @@ class GrantAccessToReportServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_ACCESS_TO_REPORT))
             .thenReturn(true);
-        when(loadAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
+        when(loadAssessmentPort.isInDefaultSpace(param.getAssessmentId())).thenReturn(false);
+        when(loadAssessmentPort.loadById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
         when(loadUserPort.loadByEmail(param.getEmail())).thenReturn(Optional.of(accessGrantedUser));
         when(loadUserRoleForAssessmentPort.load(param.getAssessmentId(), accessGrantedUser.getId())).thenReturn(Optional.of(AssessmentUserRole.ASSOCIATE));
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), accessGrantedUser.getId(), VIEW_GRAPHICAL_REPORT))
@@ -236,7 +261,7 @@ class GrantAccessToReportServiceTest {
             createAssessmentInvitePort,
             appSpecProperties,
             sendEmailPort,
-            createAssessmentSpaceUserAccessPort);
+            createSpaceUserAccessPort);
     }
 
     @ParameterizedTest
@@ -258,7 +283,8 @@ class GrantAccessToReportServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_ACCESS_TO_REPORT))
             .thenReturn(true);
-        when(loadAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
+        when(loadAssessmentPort.isInDefaultSpace(param.getAssessmentId())).thenReturn(false);
+        when(loadAssessmentPort.loadById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
         when(loadUserPort.loadByEmail(param.getEmail())).thenReturn(Optional.empty());
         doNothing().when(createSpaceInvitePort).persist(any(CreateSpaceInvitePort.Param.class));
         doNothing().when(createAssessmentInvitePort).persist(any(CreateAssessmentInvitePort.Param.class));
@@ -316,7 +342,8 @@ class GrantAccessToReportServiceTest {
             reportLink);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_ACCESS_TO_REPORT))
             .thenReturn(true);
-        when(loadAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
+        when(loadAssessmentPort.isInDefaultSpace(param.getAssessmentId())).thenReturn(false);
+        when(loadAssessmentPort.loadById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
         when(loadUserPort.loadByEmail(param.getEmail())).thenReturn(Optional.empty());
         doNothing().when(createSpaceInvitePort).persist(any(CreateSpaceInvitePort.Param.class));
         doNothing().when(createAssessmentInvitePort).persist(any(CreateAssessmentInvitePort.Param.class));

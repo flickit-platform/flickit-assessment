@@ -10,8 +10,10 @@ import org.flickit.assessment.core.application.domain.User;
 import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentUseCase.Param;
 import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentUseCase.Result;
 import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentPort;
+import org.flickit.assessment.core.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.LoadUserRoleForAssessmentPort;
+import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelPort;
 import org.flickit.assessment.core.application.port.out.user.LoadUserPort;
 import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
@@ -55,6 +57,12 @@ class GetAssessmentServiceTest {
     @Mock
     private AssessmentPermissionChecker assessmentPermissionChecker;
 
+    @Mock
+    private LoadMaturityLevelPort loadMaturityLevelPort;
+
+    @Mock
+    private LoadAssessmentKitPort loadAssessmentKitPort;
+
     @Test
     void testGetAssessment_validResultManageableViewable_successful() {
         var maturityLevel = MaturityLevelMother.levelThree();
@@ -65,35 +73,39 @@ class GetAssessmentServiceTest {
         UUID currentUserId = UUID.randomUUID();
 
         when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_ASSESSMENT)).thenReturn(true);
-        when(loadAssessmentPort.getAssessmentById(assessmentId)).thenReturn(Optional.of(assessment));
+        when(loadAssessmentPort.loadById(assessmentId)).thenReturn(Optional.of(assessment));
         when(loadUserPort.loadById(assessment.getCreatedBy())).thenReturn(Optional.of(assessmentCreator));
         when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult));
         when(loadUserRoleForAssessmentPort.load(assessmentId, currentUserId)).thenReturn(Optional.of(AssessmentUserRole.MANAGER));
         when(assessmentPermissionChecker.isAuthorized(eq(assessmentId), eq(currentUserId), any())).thenReturn(true);
+        when(loadMaturityLevelPort.load(assessmentResult.getMaturityLevel().getId(), assessmentId)).thenReturn(maturityLevel);
+        when(loadAssessmentKitPort.loadAssessmentKit(assessment.getAssessmentKit().getId(), assessmentResult.getLanguage()))
+            .thenReturn(Optional.ofNullable(assessment.getAssessmentKit()));
 
         Result result = service.getAssessment(new Param(assessmentId, currentUserId));
 
         ArgumentCaptor<UUID> assessmentIdArgument = ArgumentCaptor.forClass(UUID.class);
-        verify(loadAssessmentPort).getAssessmentById(assessmentIdArgument.capture());
+        verify(loadAssessmentPort).loadById(assessmentIdArgument.capture());
 
         assertEquals(assessmentId, assessmentIdArgument.getValue());
         assertEquals(assessment.getTitle(), result.title());
         assertEquals(assessment.getSpace().getId(), result.space().getId());
         assertEquals(assessment.getSpace().getTitle(), result.space().getTitle());
-        assertEquals(assessment.getAssessmentKit().getId(), result.kit().getId());
-        assertEquals(assessment.getAssessmentKit().getTitle(), result.kit().getTitle());
+        assertEquals(assessment.getSpace().isDefault(), result.space().isDefault());
+        assertEquals(assessment.getAssessmentKit().getId(), result.kit().id());
+        assertEquals(assessment.getAssessmentKit().getTitle(), result.kit().title());
         assertEquals(assessment.getCreationTime(), result.creationTime());
         assertEquals(assessment.getLastModificationTime(), result.lastModificationTime());
+        assertEquals(assessment.getMode().getCode(), result.mode().code());
+        assertEquals(assessment.getMode().getTitle(), result.mode().title());
         assertEquals(assessmentCreator.getId(), result.createdBy().getId());
         assertEquals(assessmentCreator.getDisplayName(), result.createdBy().getDisplayName());
         assertEquals(maturityLevel, result.maturityLevel());
         assertEquals(assessmentResult.getIsCalculateValid(), result.isCalculateValid());
+        assertEquals(assessmentResult.getLanguage().getCode(), result.language().code());
+        assertEquals(assessmentResult.getLanguage().getTitle(), result.language().title());
         assertTrue(result.manageable());
         assertTrue(result.viewable());
-
-        verify(assessmentAccessChecker, times(1)).isAuthorized(any(), any(), any());
-        verify(loadAssessmentPort, times(1)).getAssessmentById(any());
-        verify(loadUserPort, times(1)).loadById(any());
     }
 
     @Test
@@ -106,24 +118,23 @@ class GetAssessmentServiceTest {
         UUID currentUserId = UUID.randomUUID();
 
         when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_ASSESSMENT)).thenReturn(true);
-        when(loadAssessmentPort.getAssessmentById(assessmentId)).thenReturn(Optional.of(assessment));
+        when(loadAssessmentPort.loadById(assessmentId)).thenReturn(Optional.of(assessment));
         when(loadUserPort.loadById(assessment.getCreatedBy())).thenReturn(Optional.of(assessmentCreator));
         when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult));
         when(loadUserRoleForAssessmentPort.load(assessmentId, currentUserId)).thenReturn(Optional.of(AssessmentUserRole.ASSESSOR));
         when(assessmentPermissionChecker.isAuthorized(eq(assessmentId), eq(currentUserId), any())).thenReturn(true);
+        when(loadMaturityLevelPort.load(assessmentResult.getMaturityLevel().getId(), assessmentId)).thenReturn(maturityLevel);
+        when(loadAssessmentKitPort.loadAssessmentKit(assessment.getAssessmentKit().getId(), assessmentResult.getLanguage()))
+            .thenReturn(Optional.ofNullable(assessment.getAssessmentKit()));
 
         Result result = service.getAssessment(new Param(assessmentId, currentUserId));
 
         ArgumentCaptor<UUID> assessmentIdArgument = ArgumentCaptor.forClass(UUID.class);
-        verify(loadAssessmentPort).getAssessmentById(assessmentIdArgument.capture());
+        verify(loadAssessmentPort).loadById(assessmentIdArgument.capture());
 
         assertFalse(result.manageable());
         assertTrue(result.viewable());
         assertNotNull(result.maturityLevel());
-
-        verify(assessmentAccessChecker, times(1)).isAuthorized(any(), any(), any());
-        verify(loadAssessmentPort, times(1)).getAssessmentById(any());
-        verify(loadUserPort, times(1)).loadById(any());
     }
 
     @Test
@@ -136,23 +147,23 @@ class GetAssessmentServiceTest {
         UUID currentUserId = UUID.randomUUID();
 
         when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_ASSESSMENT)).thenReturn(true);
-        when(loadAssessmentPort.getAssessmentById(assessmentId)).thenReturn(Optional.of(assessment));
+        when(loadAssessmentPort.loadById(assessmentId)).thenReturn(Optional.of(assessment));
         when(loadUserPort.loadById(assessment.getCreatedBy())).thenReturn(Optional.of(assessmentCreator));
         when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult));
-        when(assessmentPermissionChecker.isAuthorized (eq(assessmentId), eq(currentUserId),any())).thenReturn(false);
+        when(assessmentPermissionChecker.isAuthorized(eq(assessmentId), eq(currentUserId), any())).thenReturn(false);
+        when(loadAssessmentKitPort.loadAssessmentKit(assessment.getAssessmentKit().getId(), assessmentResult.getLanguage()))
+            .thenReturn(Optional.ofNullable(assessment.getAssessmentKit()));
 
         Result result = service.getAssessment(new Param(assessmentId, currentUserId));
 
         ArgumentCaptor<UUID> assessmentIdArgument = ArgumentCaptor.forClass(UUID.class);
-        verify(loadAssessmentPort).getAssessmentById(assessmentIdArgument.capture());
+        verify(loadAssessmentPort).loadById(assessmentIdArgument.capture());
 
         assertFalse(result.manageable());
         assertFalse(result.viewable());
         assertNull(result.maturityLevel());
 
-        verify(assessmentAccessChecker, times(1)).isAuthorized(any(), any(), any());
-        verify(loadAssessmentPort, times(1)).getAssessmentById(any());
-        verify(loadUserPort, times(1)).loadById(any());
+        verifyNoInteractions(loadMaturityLevelPort);
     }
 
     @Test
@@ -161,18 +172,18 @@ class GetAssessmentServiceTest {
         UUID currentUserId = UUID.randomUUID();
 
         when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_ASSESSMENT)).thenReturn(true);
-        when(loadAssessmentPort.getAssessmentById(assessmentId))
+        when(loadAssessmentPort.loadById(assessmentId))
             .thenReturn(Optional.empty());
 
         Param param = new Param(assessmentId, currentUserId);
         assertThrows(ResourceNotFoundException.class, () -> service.getAssessment(param));
 
         ArgumentCaptor<UUID> assessmentIdArgument = ArgumentCaptor.forClass(UUID.class);
-        verify(loadAssessmentPort).getAssessmentById(assessmentIdArgument.capture());
+        verify(loadAssessmentPort).loadById(assessmentIdArgument.capture());
 
         assertEquals(assessmentId, assessmentIdArgument.getValue());
         verify(assessmentAccessChecker, times(1)).isAuthorized(any(), any(), any());
-        verify(loadAssessmentPort, times(1)).getAssessmentById(any());
+        verify(loadAssessmentPort, times(1)).loadById(any());
         verify(loadUserPort, never()).loadById(any());
         verifyNoInteractions(loadUserRoleForAssessmentPort, assessmentPermissionChecker);
     }
@@ -189,7 +200,7 @@ class GetAssessmentServiceTest {
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
         verify(assessmentAccessChecker, times(1)).isAuthorized(any(), any(), any());
-        verify(loadAssessmentPort, never()).getAssessmentById(any());
+        verify(loadAssessmentPort, never()).loadById(any());
         verifyNoInteractions(loadUserRoleForAssessmentPort, assessmentPermissionChecker);
     }
 }

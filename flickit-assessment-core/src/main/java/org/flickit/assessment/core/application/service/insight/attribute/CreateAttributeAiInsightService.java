@@ -7,21 +7,18 @@ import org.flickit.assessment.common.application.port.out.ValidateAssessmentResu
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
-import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.domain.insight.AttributeInsight;
 import org.flickit.assessment.core.application.port.in.insight.attribute.CreateAttributeAiInsightUseCase;
-import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentProgressPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributePort;
 import org.flickit.assessment.core.application.port.out.insight.attribute.CreateAttributeInsightPort;
 import org.flickit.assessment.core.application.port.out.insight.attribute.LoadAttributeInsightPort;
 import org.flickit.assessment.core.application.port.out.insight.attribute.UpdateAttributeInsightPort;
-import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
+import org.flickit.assessment.core.application.service.insight.attribute.CreateAttributeAiInsightHelper.AttributeInsightParam;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -40,8 +37,6 @@ public class CreateAttributeAiInsightService implements CreateAttributeAiInsight
     private final LoadAttributePort loadAttributePort;
     private final LoadAttributeInsightPort loadAttributeInsightPort;
     private final UpdateAttributeInsightPort updateAttributeInsightPort;
-    private final LoadMaturityLevelsPort loadMaturityLevelsPort;
-    private final GetAssessmentProgressPort getAssessmentProgressPort;
     private final CreateAttributeAiInsightHelper createAttributeAiInsightHelper;
     private final CreateAttributeInsightPort createAttributeInsightPort;
 
@@ -63,14 +58,9 @@ public class CreateAttributeAiInsightService implements CreateAttributeAiInsight
             updateAttributeInsightPort.updateAiInsightTime(toUpdateTimeParam(assessmentResult.getId(), attribute.getId()));
             return new Result(attributeInsight.get().getAiInsight());
         }
-        var locale = Locale.of(assessmentResult.getAssessment().getAssessmentKit().getLanguage().getCode());
-
-        var maturityLevels = loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId());
-        var progress = getAssessmentProgressPort.getProgress(param.getAssessmentId());
-        var attributeAiInsight = createAttributeAiInsightHelper.createAttributeAiInsight(toCreateAiInsightParam(param,
-            assessmentResult,
-            maturityLevels,
-            progress,
+        var locale = Locale.of(assessmentResult.getLanguage().getCode());
+        var attributeAiInsight = createAttributeAiInsightHelper.createAttributeAiInsight(new AttributeInsightParam(assessmentResult,
+            param.getAttributeId(),
             locale));
 
         if (attributeInsight.isPresent())
@@ -91,18 +81,6 @@ public class CreateAttributeAiInsightService implements CreateAttributeAiInsight
             attributeId,
             LocalDateTime.now(),
             LocalDateTime.now());
-    }
-
-    private CreateAttributeAiInsightHelper.Param toCreateAiInsightParam(Param param,
-                                                                        AssessmentResult assessmentResult,
-                                                                        List<MaturityLevel> maturityLevels,
-                                                                        GetAssessmentProgressPort.Result progress,
-                                                                        Locale locale) {
-        return new CreateAttributeAiInsightHelper.Param(assessmentResult,
-            param.getAttributeId(),
-            maturityLevels,
-            progress,
-            locale);
     }
 
     private UpdateAttributeInsightPort.AiParam toUpdateParam(AttributeInsight attributeAiInsight) {

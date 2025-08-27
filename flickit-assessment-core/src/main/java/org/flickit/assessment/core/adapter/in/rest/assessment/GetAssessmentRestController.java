@@ -33,14 +33,16 @@ public class GetAssessmentRestController {
             result.id(),
             result.title(),
             result.shortTitle(),
-            new GetAssessmentResponseDto.SpaceResponseDto(result.space().getId(), result.space().getTitle()),
+            new GetAssessmentResponseDto.SpaceResponseDto(result.space().getId(), result.space().getTitle(), result.space().isDefault()),
             result.kitCustomId(),
-            new GetAssessmentResponseDto.KitResponseDto(result.kit().getId(), result.kit().getTitle()),
+            new GetAssessmentResponseDto.KitResponseDto(result.kit().id(), result.kit().title()),
             result.creationTime(),
             result.lastModificationTime(),
             new UserResponseDto(result.createdBy().getId(), result.createdBy().getDisplayName()),
             result.maturityLevel(),
             result.isCalculateValid(),
+            result.language(),
+            result.mode(),
             result.manageable(),
             result.viewable());
     }

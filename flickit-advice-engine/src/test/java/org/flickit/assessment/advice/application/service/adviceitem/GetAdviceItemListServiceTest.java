@@ -98,6 +98,12 @@ class GetAdviceItemListServiceTest {
                 assertEquals(expected.getImpact().getTitle(), actual.impact().title());
                 assertEquals(expected.getImpact().getCode(), actual.impact().code());
             });
+
+        assertEquals(2, result.getTotal());
+        assertEquals(param.getSize(), result.getSize());
+        assertEquals(param.getPage(), result.getPage());
+        assertEquals(expectedResult.getSort(), result.getSort());
+        assertEquals(expectedResult.getOrder(), result.getOrder());
     }
 
     private GetAdviceItemListUseCase.Param createParam(Consumer<GetAdviceItemListUseCase.Param.ParamBuilder> changer) {

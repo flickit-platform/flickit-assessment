@@ -20,6 +20,7 @@ public class SpaceMother {
             ownerId,
             SpaceStatus.ACTIVE,
             null,
+            false,
             LocalDateTime.now(),
             LocalDateTime.now(),
             UUID.randomUUID(),
@@ -36,6 +37,7 @@ public class SpaceMother {
             ownerId,
             SpaceStatus.ACTIVE,
             LocalDateTime.now().minusMonths(3),
+            false,
             LocalDateTime.now(),
             LocalDateTime.now(),
             UUID.randomUUID(),
@@ -52,6 +54,24 @@ public class SpaceMother {
             ownerId,
             SpaceStatus.INACTIVE,
             LocalDateTime.now().minusMonths(3),
+            false,
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            UUID.randomUUID(),
+            UUID.randomUUID()
+        );
+    }
+
+    public static Space defaultSpace(UUID ownerId) {
+        return new Space(
+            id++,
+            "Code" + id,
+            "Title",
+            SpaceType.BASIC,
+            ownerId,
+            SpaceStatus.ACTIVE,
+            null,
+            true,
             LocalDateTime.now(),
             LocalDateTime.now(),
             UUID.randomUUID(),

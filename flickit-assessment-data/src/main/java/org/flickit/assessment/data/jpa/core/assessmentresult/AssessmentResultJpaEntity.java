@@ -45,6 +45,9 @@ public class AssessmentResultJpaEntity {
     @Column(name = "is_confidence_valid")
     private Boolean isConfidenceValid;
 
+    @Column(name = "lang_id", nullable = false)
+    private Integer langId;
+
     @Column(name = "last_modification_time", nullable = false)
     private LocalDateTime lastModificationTime;
 

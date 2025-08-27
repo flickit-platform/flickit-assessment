@@ -33,7 +33,7 @@ jobs:
         run: mvn clean compile
 
   test:
-    needs: [build]
+    needs: [ build ]
     runs-on: ubuntu-latest
 
     steps:
@@ -57,7 +57,7 @@ jobs:
           restore-keys: ${{ runner.os }}-sonar
 
   sonar:
-    needs: [test]
+    needs: [ test ]
     runs-on: ubuntu-latest
 
     outputs:
@@ -99,7 +99,7 @@ jobs:
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY }}
 
   build-and-push-latest-image:
-    needs: [sonar]
+    needs: [ sonar ]
     name: deploy latest image
     runs-on: ubuntu-latest
     if: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
@@ -144,25 +144,8 @@ jobs:
         run: mvn ${{ env.JIB_OPT }} -Djib.to.image="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.github_sha7.outputs.sha }}" ${{ env.JIB_CMD }}
 
   deploy-latest:
-    needs: [build-and-push-latest-image]
+    needs: [ build-and-push-latest-image ]
     name: deploy latest
-    container:
-      image: registry.hectora.cloud/hectora-public/darkube-cli:v1.1
-      env:
-        CONSOLE_API_BASE_URL: "https://api.hectora.cloud"
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Run script
-        run: darkube deploy --ref main --token ${DEPLOY_TOKEN} --app-id ${APP_ID}  --image-tag "${GITHUB_SHA:0:7}" --job-id "$GITHUB_RUN_ID" --stateless-app true
-        env:
-          DEPLOY_TOKEN: ${{ secrets.ASSESSMENT_CORE_DEPLOY_TOKEN_STAGING }}
-          APP_ID: ${{ secrets.ASSESSMENT_CORE_APP_ID_STAGING }}
-
-          
-  deploy-with-webhook:
-    needs: [build-and-push-latest-image]
-    name: deploy with webhook
     runs-on: ubuntu-latest
     steps:
       - name: Deploy service on Webhook
@@ -175,7 +158,7 @@ jobs:
 
 
   tag-and-release:
-    needs: [sonar]
+    needs: [ sonar ]
     name: tag and release
     runs-on: ubuntu-latest
     if: ${{ ((github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/releases-'))) ||
@@ -193,7 +176,7 @@ jobs:
           makeLatest: true
 
   build-and-push-image:
-    needs: [tag-and-release]
+    needs: [ tag-and-release ]
     name: deploy image
     runs-on: ubuntu-latest
 
@@ -240,17 +223,16 @@ jobs:
         run: mvn ${{ env.JIB_OPT }} -Djib.to.image="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.project.outputs.version }}" ${{ env.JIB_CMD }}
 
   deploy:
-    needs: [build-and-push-image]
-    name:  deploy
-    container:
-      image: registry.hectora.cloud/hectora-public/darkube-cli:v1.1
-      env:
-        CONSOLE_API_BASE_URL: "https://api.hectora.cloud"
+    needs: [ build-and-push-image ]
+    name: deploy
     runs-on: ubuntu-latest
     steps:
-      - name: Run script
-        run: darkube deploy --ref main --token ${DEPLOY_TOKEN} --app-id ${APP_ID}  --image-tag "${PROJECT_VERSION}" --job-id "$GITHUB_RUN_ID" --stateless-app true
+      - name: Deploy service on Webhook
+        run: |
+          status_code=$(curl --silent --output /dev/null --write-out "%{http_code}" -X POST "${{ secrets.ASSESSMENT_VERSION }}?ASSESSMENT_VERSION=${PROJECT_VERSION}")
+          if [ "$status_code" -ne 204 ]; then
+            echo "Unexpected status code: $status_code"
+            exit 1
+          fi
         env:
-          DEPLOY_TOKEN: ${{ secrets.ASSESSMENT_CORE_DEPLOY_TOKEN_PROD }}
-          APP_ID: ${{ secrets.ASSESSMENT_CORE_APP_ID_PROD }}
           PROJECT_VERSION: ${{ needs.build-and-push-image.outputs.project_version }}

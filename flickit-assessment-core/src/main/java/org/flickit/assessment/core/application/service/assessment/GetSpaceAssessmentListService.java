@@ -7,6 +7,8 @@ import org.flickit.assessment.common.application.domain.space.SpaceStatus;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.port.in.assessment.GetSpaceAssessmentListUseCase;
+import org.flickit.assessment.core.application.port.in.assessment.GetSpaceAssessmentListUseCase.SpaceAssessmentListItem.Language;
+import org.flickit.assessment.core.application.port.in.assessment.GetSpaceAssessmentListUseCase.SpaceAssessmentListItem.Mode;
 import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentListPort;
 import org.flickit.assessment.core.application.port.out.space.LoadSpacePort;
 import org.flickit.assessment.core.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
@@ -56,6 +58,8 @@ public class GetSpaceAssessmentListService implements GetSpaceAssessmentListUseC
                     viewable ? e.confidenceValue() : null,
                     e.isCalculateValid(),
                     e.isConfidenceValid(),
+                    Language.of(e.language()),
+                    Mode.of(e.mode()),
                     e.hasReport(),
                     new SpaceAssessmentListItem.Permissions(e.manageable(),
                         viewable,

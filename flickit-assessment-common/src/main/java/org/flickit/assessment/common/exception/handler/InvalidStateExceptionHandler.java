@@ -1,5 +1,6 @@
 package org.flickit.assessment.common.exception.handler;
 
+import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.exception.InvalidStateException;
 import org.flickit.assessment.common.exception.api.ErrorResponseDto;
 import org.springframework.core.Ordered;
@@ -18,6 +19,6 @@ public class InvalidStateExceptionHandler {
     @ExceptionHandler(InvalidStateException.class)
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     ErrorResponseDto handle(InvalidStateException ex) {
-        return new ErrorResponseDto(ex.getCode(), ex.getMessage());
+        return new ErrorResponseDto(ex.getCode(), MessageBundle.message(ex.getMessage()));
     }
 }

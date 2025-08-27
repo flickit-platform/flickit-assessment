@@ -92,10 +92,20 @@ public class AdviceItemPersistenceJpaAdapter implements
     }
 
     @Override
+    public boolean existsByAssessmentResultId(UUID assessmentResultId) {
+        return repository.existsByAssessmentResultId(assessmentResultId);
+    }
+
+    @Override
     public void delete(UUID id) {
         if (!repository.existsById(id))
             throw new ResourceNotFoundException(ADVICE_ITEM_ID_NOT_FOUND);
 
         repository.deleteById(id);
+    }
+
+    @Override
+    public void deleteAllAiGenerated(UUID assessmentResultId) {
+        repository.deleteByAssessmentResultIdAndCreatedByIsNullAndLastModifiedByIsNull(assessmentResultId);
     }
 }

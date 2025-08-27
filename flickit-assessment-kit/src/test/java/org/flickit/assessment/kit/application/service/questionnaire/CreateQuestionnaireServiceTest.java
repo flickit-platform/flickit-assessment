@@ -1,20 +1,21 @@
 package org.flickit.assessment.kit.application.service.questionnaire;
 
+import org.flickit.assessment.common.application.domain.kit.translation.QuestionnaireTranslation;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.KitVersion;
-import org.flickit.assessment.kit.application.domain.Measure;
 import org.flickit.assessment.kit.application.domain.Questionnaire;
-import org.flickit.assessment.kit.application.port.in.questionnaire.CreateQuestionnaireUseCase;
+import org.flickit.assessment.kit.application.port.in.questionnaire.CreateQuestionnaireUseCase.Param;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
-import org.flickit.assessment.kit.application.port.out.measure.CreateMeasurePort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.CreateQuestionnairePort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -25,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CreateQuestionnaireServiceTest {
@@ -35,9 +36,6 @@ class CreateQuestionnaireServiceTest {
 
     @Mock
     private CreateQuestionnairePort createQuestionnairePort;
-
-    @Mock
-    private CreateMeasurePort createMeasurePort;
 
     @Mock
     private LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
@@ -50,7 +48,7 @@ class CreateQuestionnaireServiceTest {
 
     @Test
     void testCreateQuestionnaire_WhenCurrentUserIsNotOwner_ShouldThrowAccessDeniedException() {
-        var param = createParam(CreateQuestionnaireUseCase.Param.ParamBuilder::build);
+        var param = createParam(Param.ParamBuilder::build);
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
@@ -62,32 +60,38 @@ class CreateQuestionnaireServiceTest {
     @Test
     void testCreateQuestionnaire_WhenCurrentUserIsOwner_ThenCreateQuestionnaire() {
         long questionnaireId = 123L;
-        long measureId = 321L;
         var param = createParam(b -> b.currentUserId(ownerId));
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
         when(createQuestionnairePort.persist(any(Questionnaire.class), eq(param.getKitVersionId()), eq(param.getCurrentUserId())))
             .thenReturn(questionnaireId);
-        when(createMeasurePort.persist(any(Measure.class), eq(param.getKitVersionId()), eq(param.getCurrentUserId())))
-            .thenReturn(measureId);
 
         long actualQuestionnaireId = createQuestionnaireService.createQuestionnaire(param);
+
+        var createPortArgument = ArgumentCaptor.forClass(Questionnaire.class);
+        verify(createQuestionnairePort, times(1)).persist(createPortArgument.capture(), anyLong(), any(UUID.class));
+        assertEquals(param.getIndex(), createPortArgument.getValue().getIndex());
+        assertEquals(param.getTitle(), createPortArgument.getValue().getTitle());
+        assertEquals(param.getDescription(), createPortArgument.getValue().getDescription());
+        assertEquals(param.getTranslations(), createPortArgument.getValue().getTranslations());
+
         assertEquals(questionnaireId, actualQuestionnaireId);
     }
 
-    private CreateQuestionnaireUseCase.Param createParam(Consumer<CreateQuestionnaireUseCase.Param.ParamBuilder> changer) {
+    private Param createParam(Consumer<Param.ParamBuilder> changer) {
         var paramBuilder = paramBuilder();
         changer.accept(paramBuilder);
         return paramBuilder.build();
     }
 
-    private CreateQuestionnaireUseCase.Param.ParamBuilder paramBuilder() {
-        return CreateQuestionnaireUseCase.Param.builder()
+    private Param.ParamBuilder paramBuilder() {
+        return Param.builder()
             .kitVersionId(1L)
             .index(1)
             .title("title")
             .description("description")
+            .translations(Map.of("EN", new QuestionnaireTranslation("title", "desc")))
             .currentUserId(UUID.randomUUID());
     }
 }

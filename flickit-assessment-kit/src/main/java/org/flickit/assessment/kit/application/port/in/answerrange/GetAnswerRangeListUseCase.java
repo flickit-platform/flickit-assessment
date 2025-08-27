@@ -8,8 +8,12 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.common.application.domain.kit.translation.AnswerOptionTranslation;
+import org.flickit.assessment.common.application.domain.kit.translation.AnswerRangeTranslation;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
@@ -47,9 +51,16 @@ public interface GetAnswerRangeListUseCase {
         }
     }
 
-    record AnswerRangeListItem(Long id, String title, List<AnswerOptionListItem> answerOptions) {
+    record AnswerRangeListItem(Long id,
+                               String title,
+                               Map<KitLanguage, AnswerRangeTranslation> translations,
+                               List<AnswerOptionListItem> answerOptions) {
 
-        public record AnswerOptionListItem(long id, String title, int index, double value) {
+        public record AnswerOptionListItem(long id,
+                                           String title,
+                                           int index,
+                                           double value,
+                                           Map<KitLanguage, AnswerOptionTranslation> translations) {
         }
     }
 }

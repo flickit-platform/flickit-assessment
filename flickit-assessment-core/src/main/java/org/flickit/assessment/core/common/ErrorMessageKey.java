@@ -22,6 +22,7 @@ public class ErrorMessageKey {
     public static final String ASSESSMENT_INSIGHT_ID_NOT_FOUND = "assessment-insight.id.notFound";
     public static final String SUBJECT_VALUE_NOT_FOUND = "subjectValue.subjectIdAssessmentResultId.notFound";
     public static final String SUBJECT_NOT_FOUND = "subjectId.notFound";
+    public static final String ASSESSMENT_REPORT_LINK_HASH_NOT_FOUND = "assessmentReport.linkHash.notFound";
 
     public static final String CREATE_ASSESSMENT_TITLE_NOT_BLANK = "create-assessment.title.notBlank";
     public static final String CREATE_ASSESSMENT_TITLE_SIZE_MIN = "create-assessment.title.size.min";
@@ -30,8 +31,12 @@ public class ErrorMessageKey {
     public static final String CREATE_ASSESSMENT_SHORT_TITLE_SIZE_MAX = "create-assessment.shortTitle.size.max";
     public static final String CREATE_ASSESSMENT_ASSESSMENT_KIT_ID_NOT_NULL = "create-assessment.assessmentKitId.notNull";
     public static final String CREATE_ASSESSMENT_SPACE_ID_NOT_NULL = "create-assessment.spaceId.notNull";
-    public static final String CREATE_ASSESSMENT_DUPLICATE_TITLE_AND_SPACE_ID = "create-assessment.duplicate.titleAndSpaceId";
     public static final String CREATE_ASSESSMENT_KIT_NOT_ALLOWED = "create-assessment.kit.notAllowed";
+    public static final String CREATE_ASSESSMENT_BASIC_SPACE_ASSESSMENTS_MAX = "create-assessment.basicSpaceAssessments.max";
+    public static final String CREATE_ASSESSMENT_BASIC_SPACE_PRIVATE_KIT_NOT_ALLOWED = "create-assessment.basicSpacePrivateKits.notAllowed";
+    public static final String CREATE_ASSESSMENT_PREMIUM_SPACE_EXPIRED = "create-assessment.premiumSpace.expired";
+    public static final String CREATE_ASSESSMENT_LANGUAGE_INVALID = "create-assessment.language.invalid";
+    public static final String CREATE_ASSESSMENT_LANGUAGE_NOT_SUPPORTED = "create-assessment.language.notSupported";
 
     public static final String CREATE_ASSESSMENT_RESULT_ASSESSMENT_ID_NOT_FOUND = "create-assessmentresult.assessmentId.notFound";
 
@@ -83,13 +88,6 @@ public class ErrorMessageKey {
     public static final String GET_EVIDENCE_LIST_SIZE_MIN = "get-evidence-list.size.min";
     public static final String GET_EVIDENCE_LIST_SIZE_MAX = "get-evidence-list.size.max";
     public static final String GET_EVIDENCE_LIST_PAGE_MIN = "get-evidence-list.page.min";
-
-    public static final String REPORT_ASSESSMENT_ASSESSMENT_ID_NOT_FOUND = "report-assessment-assessment.id.notFound";
-    public static final String REPORT_ASSESSMENT_ID_NOT_NULL = "report-assessment.assessment.id.notNull";
-    public static final String REPORT_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND = "report-assessment.assessmentResult.notFound";
-    public static final String REPORT_ASSESSMENT_ASSESSMENT_KIT_NOT_FOUND = "report-assessment.assessmentKit.notFound";
-    public static final String REPORT_ASSESSMENT_EXPERT_GROUP_NOT_FOUND = "report-assessment.expertGroup.notFound";
-    public static final String REPORT_ASSESSMENT_SPACE_NOT_FOUND = "report-assessment.space.notFound";
 
     public static final String GET_ASSESSMENT_PROGRESS_ASSESSMENT_ID_NOT_NULL = "get-assessment-progress.assessment.id.notNull";
     public static final String GET_ASSESSMENT_PROGRESS_ASSESSMENT_NOT_FOUND = "get-assessment-progress.assessment.notFound";
@@ -146,7 +144,6 @@ public class ErrorMessageKey {
     public static final String GET_ASSESSMENT_QUESTIONNAIRE_QUESTION_LIST_SIZE_MIN = "get-assessment-questionnaire-question-list.size.min";
     public static final String GET_ASSESSMENT_QUESTIONNAIRE_QUESTION_LIST_SIZE_MAX = "get-assessment-questionnaire-question-list.size.max";
     public static final String GET_ASSESSMENT_QUESTIONNAIRE_QUESTION_LIST_PAGE_MIN = "get-assessment-questionnaire-question-list.page.min";
-    public static final String GET_ASSESSMENT_QUESTIONNAIRE_QUESTION_LIST_ASSESSMENT_ID_NOT_FOUND = "get-assessment-questionnaire-question-list.assessmentResultId.notFound";
 
     public static final String GRANT_ASSESSMENT_USER_ROLE_ASSESSMENT_ID_NOT_NULL = "grant-assessment-user-role.assessmentId.notNull";
     public static final String GRANT_ASSESSMENT_USER_ROLE_USER_ID_NOT_NULL = "grant-assessment-user-role.userId.notNull";
@@ -154,6 +151,7 @@ public class ErrorMessageKey {
     public static final String GRANT_ASSESSMENT_USER_ROLE_ROLE_ID_NOT_NULL = "grant-assessment-user-role.roleId.notNull";
     public static final String GRANT_ASSESSMENT_USER_ROLE_ROLE_ID_NOT_FOUND = "grant-assessment-user-role.roleId.notFound";
     public static final String GRANT_ASSESSMENT_USER_ROLE_DUPLICATE_USER_ACCESS = "grant-assessment-user-role.duplicateUserAccess";
+    public static final String GRANT_ASSESSMENT_USER_ROLE_DEFAULT_SPACE_NOT_ALLOWED = "grant-assessment-user-role.defaultSpace.notAllowed";
 
     public static final String UPDATE_ASSESSMENT_USER_ROLE_ASSESSMENT_ID_NOT_NULL = "update-assessment-user-role.assessmentId.notNull";
     public static final String UPDATE_ASSESSMENT_USER_ROLE_USER_ID_NOT_NULL = "update-assessment-user-role.userId.notNull";
@@ -294,6 +292,7 @@ public class ErrorMessageKey {
     public static final String GRANT_ACCESS_TO_REPORT_ASSESSMENT_ID_NOT_NULL = "grant-access-to-report.assessmentId.notNull";
     public static final String GRANT_ACCESS_TO_REPORT_NOT_ALLOWED_CONTACT_ASSESSMENT_MANAGER = "grant-access-to-report.not-allowed.contact-assessment-manager";
     public static final String GRANT_ACCESS_TO_REPORT_USER_ALREADY_GRANTED = "grant-access-to-report.user-already-granted";
+    public static final String GRANT_ACCESS_TO_REPORT_DEFAULT_SPACE_NOT_ALLOWED = "grant-access-to-report.defaultSpace.notAllowed";
 
     public static final String GET_GRAPHICAL_REPORT_USERS_ASSESSMENT_ID_NOT_NULL = "get-graphical-report-users.assessmentId.notNull";
 
@@ -309,6 +308,9 @@ public class ErrorMessageKey {
     public static final String CREATE_ASSESSMENT_REPORT_METADATA_PROS_AND_CONS_SIZE_MAX = "create-assessment-report-metadata.prosAndCons.size.max";
 
     public static final String GET_ASSESSMENT_REPORT_ASSESSMENT_ID_NOT_NULL = "get-assessment-report.assessmentId.notNull";
+    public static final String GET_ASSESSMENT_REPORT_ASSESSMENT_ID_NOT_FOUND = "get-assessment-report.assessment.id.notFound";
+    public static final String GET_ASSESSMENT_REPORT_ASSESSMENT_RESULT_NOT_FOUND = "get-assessment-report.assessmentResult.notFound";
+    public static final String GET_ASSESSMENT_REPORT_ASSESSMENT_KIT_NOT_FOUND = "get-assessment-report.assessmentKit.notFound";
     public static final String GET_ASSESSMENT_REPORT_REPORT_NOT_PUBLISHED = "get-assessment-report.report-not-published";
 
     public static final String UPDATE_ASSESSMENT_REPORT_PUBLISH_STATUS_ASSESSMENT_ID_NOT_NULL = "update-assessment-report-publish-status.assessmentId.notNull";
@@ -346,4 +348,41 @@ public class ErrorMessageKey {
 
     public static final String GET_ASSESSMENT_INSIGHTS_ISSUES_ASSESSMENT_ID_NOT_NULL = "get-assessment-insights-issues.assessmentId.notNull";
     public static final String GET_ASSESSMENT_INSIGHTS_ISSUES_ASSESSMENT_RESULT_NOT_FOUND = "get-assessment-insights-issues.assessmentResult.notFound";
+
+    public static final String GET_ASSESSMENT_ATTRIBUTE_MEASURES_ASSESSMENT_ID_NOT_NULL = "get-assessment-attribute-measures.assessmentId.notNull";
+    public static final String GET_ASSESSMENT_ATTRIBUTE_MEASURES_ATTRIBUTE_ID_NOT_NULL = "get-assessment-attribute-measures.attributeId.notNull";
+    public static final String GET_ASSESSMENT_ATTRIBUTE_MEASURES_SORT_INVALID = "get-assessment-attribute-measures.sort.invalid";
+    public static final String GET_ASSESSMENT_ATTRIBUTE_MEASURES_INVALID = "get-assessment-attribute-measures.order.invalid";
+
+    public static final String UPDATE_ASSESSMENT_REPORT_VISIBILITY_ASSESSMENT_ID_NOT_NULL = "update-assessment-report-visibility.assessmentId.notNull";
+    public static final String UPDATE_ASSESSMENT_REPORT_VISIBILITY_VISIBILITY_NOT_NULL = "update-assessment-report-visibility.visibility.notFound";
+    public static final String UPDATE_ASSESSMENT_REPORT_VISIBILITY_ASSESSMENT_REPORT_NOT_FOUND = "update-assessment-report-visibility.assessmentReport.notFound";
+    public static final String UPDATE_ASSESSMENT_REPORT_VISIBILITY_VISIBILITY_INVALID = "update-assessment-report-visibility.visibility.invalid";
+    public static final String UPDATE_ASSESSMENT_REPORT_VISIBILITY_ASSESSMENT_REPORT_NOT_PUBLISHED = "update-assessment-report-visibility.assessmentReport.notPublished";
+
+    public static final String GET_ASSESSMENT_PUBLIC_REPORT_LINK_HASH_NOT_NULL = "get-assessment-public-report.linkHash.notNull";
+
+    public static final String UPDATE_ASSESSMENT_MODE_ID_NOT_NULL = "update-assessment-mode.assessmentId.notNull";
+    public static final String UPDATE_ASSESSMENT_MODE_MODE_NOT_NULL = "update-assessment-mode.mode.notNull";
+    public static final String UPDATE_ASSESSMENT_MODE_MODE_INVALID = "update-assessment-mode.mode.invalid";
+
+    public static final String PREPARE_REPORT_ASSESSMENT_ID_NOT_NULL = "prepare-report.assessmentId.notNull";
+
+    public static final String GET_ASSESSMENT_NEXT_QUESTIONNAIRE_ASSESSMENT_ID_NOT_NULL = "get-assessment-next-questionnaire.assessmentId.notNull";
+    public static final String GET_ASSESSMENT_NEXT_QUESTIONNAIRE_QUESTIONNAIRE_ID_NOT_NULL = "get-assessment-next-questionnaire.questionnaireId.notNull";
+    public static final String GET_ASSESSMENT_NEXT_QUESTIONNAIRE_ASSESSMENT_RESULT_NOT_FOUND = "get-assessment-next-questionnaire.assessmentResult.notFound";
+
+    public static final String MOVE_ASSESSMENT_ASSESSMENT_ID_NOT_NULL = "move-assessment.assessmentId.notNull";
+    public static final String MOVE_ASSESSMENT_TARGET_SPACE_ID_NOT_NULL = "move-assessment.targetSpaceId.notNull";
+    public static final String MOVE_ASSESSMENT_TARGET_SPACE_NOT_FOUND = "move-assessment.targetSpace.notFound";
+    public static final String MOVE_ASSESSMENT_TARGET_SPACE_INVALID = "move-assessment.targetSpace.invalid";
+    public static final String MOVE_ASSESSMENT_TARGET_SPACE_ASSESSMENTS_MAX = "move-assessment.targetSpaceAssessments.max";
+    public static final String MOVE_ASSESSMENT_ASSESSMENT_NON_OWNER_ACCESS_NOT_ALLOWED = "move-assessment.assessmentAccessibleByOthers.notAllowed";
+
+    public static final String GET_ASSESSMENT_MOVE_TARGETS_ASSESSMENT_ID_NOT_NULL = "get-assessment-move-targets.assessmentId.notNull";
+    public static final String GET_ASSESSMENT_MOVE_TARGETS_SPACE_NOT_FOUND = "get-assessment-move-targets.space.notFound";
+
+    public static final String GET_ATTRIBUTE_MEASURE_QUESTIONS_ASSESSMENT_ID_NOT_NULL = "get-attribute-measure-questions.assessmentId.notNull";
+    public static final String GET_ATTRIBUTE_MEASURE_QUESTIONS_ATTRIBUTE_ID_NOT_NULL = "get-attribute-measure-questions.attributeId.notNull";
+    public static final String GET_ATTRIBUTE_MEASURE_QUESTIONS_MEASURE_ID_NOT_NULL = "get-attribute-measure-questions.measureId.notNull";
 }

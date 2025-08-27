@@ -1,3 +1,11 @@
 package org.flickit.assessment.kit.adapter.in.rest.questionnaire;
 
-public record UpdateQuestionnaireRequestDto(Integer index, String title, String description) {}
+import org.flickit.assessment.common.application.domain.kit.translation.QuestionnaireTranslation;
+
+import java.util.Map;
+
+public record UpdateQuestionnaireRequestDto(Integer index,
+                                            String title,
+                                            String description,
+                                            Map<String, QuestionnaireTranslation> translations) {
+}

@@ -13,7 +13,7 @@ import org.flickit.assessment.core.application.port.out.assessmentinvite.CreateA
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.GrantUserAssessmentRolePort;
 import org.flickit.assessment.core.application.port.out.space.CreateSpaceInvitePort;
 import org.flickit.assessment.core.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
-import org.flickit.assessment.core.application.port.out.spaceuseraccess.CreateAssessmentSpaceUserAccessPort;
+import org.flickit.assessment.core.application.port.out.spaceuseraccess.CreateSpaceUserAccessPort;
 import org.flickit.assessment.core.application.port.out.user.LoadUserPort;
 import org.flickit.assessment.core.test.fixture.application.AssessmentMother;
 import org.junit.jupiter.api.Test;
@@ -65,7 +65,7 @@ class InviteAssessmentUserServiceTest {
     CheckSpaceAccessPort checkSpaceAccessPort;
 
     @Mock
-    CreateAssessmentSpaceUserAccessPort createAssessmentSpaceUserAccessPort;
+    CreateSpaceUserAccessPort createSpaceUserAccessPort;
 
     @Spy // @Spy added for injecting this field in #service
     AppSpecProperties appSpecProperties = appSpecProperties();
@@ -75,7 +75,7 @@ class InviteAssessmentUserServiceTest {
         var param = createParam(InviteAssessmentUserUseCase.Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_USER_ASSESSMENT_ROLE)).thenReturn(true);
-        when(loadAssessmentPort.getAssessmentById(param.getAssessmentId())).thenThrow(new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND));
+        when(loadAssessmentPort.loadById(param.getAssessmentId())).thenThrow(new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND));
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.inviteUser(param));
         assertEquals(ASSESSMENT_ID_NOT_FOUND, throwable.getMessage());
@@ -102,7 +102,7 @@ class InviteAssessmentUserServiceTest {
         var assessment = AssessmentMother.assessment();
         var param = createParam(b -> b.assessmentId(assessment.getId()));
 
-        when(loadAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
+        when(loadAssessmentPort.loadById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
         when(loadUserPort.loadByEmail(param.getEmail())).thenReturn(Optional.empty());
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_USER_ASSESSMENT_ROLE)).thenReturn(true);
         doNothing().when(createSpaceInvitePort).persist(any());
@@ -141,7 +141,7 @@ class InviteAssessmentUserServiceTest {
         var assessment = AssessmentMother.assessment();
         var param = createParam(b -> b.assessmentId(assessment.getId()));
 
-        when(loadAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
+        when(loadAssessmentPort.loadById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
         when(loadUserPort.loadByEmail(param.getEmail())).thenReturn(Optional.empty());
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_USER_ASSESSMENT_ROLE)).thenReturn(true);
         doNothing().when(createSpaceInvitePort).persist(any());
@@ -165,7 +165,7 @@ class InviteAssessmentUserServiceTest {
         var param = createParam(b -> b.assessmentId(assessment.getId()));
         var user = new User(UUID.randomUUID(), "Display Name", "user@mail.com");
 
-        when(loadAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
+        when(loadAssessmentPort.loadById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
         when(loadUserPort.loadByEmail(param.getEmail())).thenReturn(Optional.of(user));
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_USER_ASSESSMENT_ROLE)).thenReturn(true);
         when(checkSpaceAccessPort.checkIsMember(assessment.getSpace().getId(), user.getId())).thenReturn(true);
@@ -174,7 +174,7 @@ class InviteAssessmentUserServiceTest {
         service.inviteUser(param);
 
         verifyNoInteractions(sendEmailPort, createAssessmentInvitePort, createSpaceInvitePort,
-            createAssessmentSpaceUserAccessPort);
+            createSpaceUserAccessPort);
     }
 
     @Test
@@ -183,18 +183,18 @@ class InviteAssessmentUserServiceTest {
         var param = createParam(b -> b.assessmentId(assessment.getId()));
         var user = new User(UUID.randomUUID(), "Display Name", "user@mail.com");
 
-        when(loadAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
+        when(loadAssessmentPort.loadById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
         when(loadUserPort.loadByEmail(param.getEmail())).thenReturn(Optional.of(user));
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_USER_ASSESSMENT_ROLE)).thenReturn(true);
         when(checkSpaceAccessPort.checkIsMember(assessment.getSpace().getId(), user.getId())).thenReturn(false);
         doNothing().when(grantUserAssessmentRolePort).persist(assessment.getId(), user.getId(), param.getRoleId());
-        doNothing().when(createAssessmentSpaceUserAccessPort).persist(any(CreateAssessmentSpaceUserAccessPort.Param.class));
+        doNothing().when(createSpaceUserAccessPort).persistByAssessmentId(any(CreateSpaceUserAccessPort.CreateParam.class));
 
         service.inviteUser(param);
 
-        ArgumentCaptor<CreateAssessmentSpaceUserAccessPort.Param> spaceAccessParamCaptor =
-            ArgumentCaptor.forClass(CreateAssessmentSpaceUserAccessPort.Param.class);
-        verify(createAssessmentSpaceUserAccessPort).persist(spaceAccessParamCaptor.capture());
+        ArgumentCaptor<CreateSpaceUserAccessPort.CreateParam> spaceAccessParamCaptor =
+            ArgumentCaptor.forClass(CreateSpaceUserAccessPort.CreateParam.class);
+        verify(createSpaceUserAccessPort).persistByAssessmentId(spaceAccessParamCaptor.capture());
         assertEquals(param.getAssessmentId(), spaceAccessParamCaptor.getValue().assessmentId());
         assertEquals(user.getId(), spaceAccessParamCaptor.getValue().userId());
         assertEquals(param.getCurrentUserId(), spaceAccessParamCaptor.getValue().createdBy());

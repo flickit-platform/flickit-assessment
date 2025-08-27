@@ -2,9 +2,15 @@ package org.flickit.assessment.core.adapter.out.persistence.assessment;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.adapter.out.persistence.answer.AnswerMapper;
+import org.flickit.assessment.core.adapter.out.persistence.kit.answeroption.AnswerOptionMapper;
+import org.flickit.assessment.core.adapter.out.persistence.kit.question.QuestionMapper;
+import org.flickit.assessment.core.adapter.out.persistence.kit.questionimpact.QuestionImpactMapper;
 import org.flickit.assessment.core.application.domain.Assessment;
 import org.flickit.assessment.core.application.domain.AssessmentListItem;
+import org.flickit.assessment.core.application.domain.AssessmentMode;
 import org.flickit.assessment.core.application.port.out.assessment.*;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
@@ -19,6 +25,8 @@ import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.flickit.assessment.data.jpa.users.space.SpaceJpaEntity;
+import org.flickit.assessment.data.jpa.users.space.SpaceJpaRepository;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
@@ -28,8 +36,10 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.toMap;
-import static java.util.stream.Collectors.toSet;
+import static java.util.stream.Collectors.*;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
+import static org.flickit.assessment.core.adapter.out.persistence.kit.assessmentkit.AssessmentKitMapper.mapToAssessmentListItemKit;
+import static org.flickit.assessment.core.adapter.out.persistence.kit.maturitylevel.MaturityLevelMapper.toAssessmentListItemMaturityLevel;
 import static org.flickit.assessment.core.application.domain.AssessmentUserRole.ASSOCIATE;
 import static org.flickit.assessment.core.application.domain.AssessmentUserRole.MANAGER;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
@@ -40,10 +50,10 @@ public class AssessmentPersistenceJpaAdapter implements
     CreateAssessmentPort,
     LoadAssessmentListPort,
     UpdateAssessmentPort,
-    GetAssessmentProgressPort,
     LoadAssessmentPort,
     DeleteAssessmentPort,
-    CheckAssessmentSpaceMembershipPort {
+    CountAssessmentsPort,
+    LoadAssessmentQuestionsPort {
 
     private final AssessmentJpaRepository repository;
     private final AssessmentResultJpaRepository resultRepository;
@@ -52,6 +62,7 @@ public class AssessmentPersistenceJpaAdapter implements
     private final AssessmentKitJpaRepository kitRepository;
     private final MaturityLevelJpaRepository maturityLevelRepository;
     private final KitCustomJpaRepository kitCustomRepository;
+    private final SpaceJpaRepository spaceRepository;
 
     @Override
     public UUID persist(CreateAssessmentPort.Param param) {
@@ -106,6 +117,8 @@ public class AssessmentPersistenceJpaAdapter implements
                     e.getAssessmentResult().getConfidenceValue(),
                     e.getAssessmentResult().getIsCalculateValid(),
                     e.getAssessmentResult().getIsConfidenceValid(),
+                    KitLanguage.valueOfById(e.getAssessmentKit().getLanguageId()),
+                    AssessmentMode.valueOfById(e.getAssessment().getMode()),
                     null,
                     false);
             }).toList();
@@ -145,16 +158,19 @@ public class AssessmentPersistenceJpaAdapter implements
             .map(e -> {
                 AssessmentKitJpaEntity kitEntity = kitIdToKitEntity.get(e.getAssessment().getAssessmentKitId());
                 List<MaturityLevelJpaEntity> kitLevelEntities = kitVersionIdToMaturityLevelEntities.get(e.getAssessmentResult().getKitVersionId());
-                AssessmentListItem.Kit kit = new AssessmentListItem.Kit(kitEntity.getId(), kitEntity.getTitle(), kitLevelEntities.size());
+
+                var language = resolveLanguage(e.getAssessmentResult().getLangId(), kitEntity.getLanguageId());
+
+                AssessmentListItem.Kit kit = mapToAssessmentListItemKit(kitEntity, kitLevelEntities.size(), language);
                 AssessmentListItem.Space space = null;
                 AssessmentListItem.MaturityLevel maturityLevel = null;
                 if (Boolean.TRUE.equals(e.getAssessmentResult().getIsCalculateValid())) {
-                    MaturityLevelJpaEntity maturityLevelEntity = maturityLevelIdToMaturityLevel.get(
-                        new MaturityLevelJpaEntity.EntityId(e.getAssessmentResult().getMaturityLevelId(), e.getAssessmentResult().getKitVersionId()));
-                    maturityLevel = new AssessmentListItem.MaturityLevel(maturityLevelEntity.getId(),
-                        maturityLevelEntity.getTitle(),
-                        maturityLevelEntity.getValue(),
-                        maturityLevelEntity.getIndex());
+                    var maturityLevelEntity = maturityLevelIdToMaturityLevel.get(
+                        new MaturityLevelJpaEntity.EntityId(
+                            e.getAssessmentResult().getMaturityLevelId(),
+                            e.getAssessmentResult().getKitVersionId()));
+
+                    maturityLevel = toAssessmentListItemMaturityLevel(maturityLevelEntity, language);
                 }
 
                 return new AssessmentListItem(e.getAssessment().getId(),
@@ -166,10 +182,11 @@ public class AssessmentPersistenceJpaAdapter implements
                     e.getAssessmentResult().getConfidenceValue(),
                     e.getAssessmentResult().getIsCalculateValid(),
                     e.getAssessmentResult().getIsConfidenceValid(),
+                    KitLanguage.valueOfById(e.getAssessmentResult().getLangId()),
+                    AssessmentMode.valueOfById(e.getAssessment().getMode()),
                     e.getManageable(),
                     e.getHasReport());
             }).toList();
-
 
         return new PaginatedResponse<>(
             items,
@@ -197,17 +214,22 @@ public class AssessmentPersistenceJpaAdapter implements
     }
 
     @Override
-    public GetAssessmentProgressPort.Result getProgress(UUID assessmentId) {
+    public void updateMode(UpdateAssessmentPort.UpdateModeParam param) {
+        repository.updateMode(param.assessmentId(), param.mode().getId(), param.lastModificationTime(), param.lastModifiedBy());
+    }
+
+    @Override
+    public LoadAssessmentPort.ProgressResult progress(UUID assessmentId) {
         var assessmentResult = resultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_PROGRESS_ASSESSMENT_NOT_FOUND));
 
         int answersCount = answerRepository.getCountByAssessmentResultId(assessmentResult.getId());
         int questionsCount = questionRepository.countByKitVersionId(assessmentResult.getKitVersionId());
-        return new GetAssessmentProgressPort.Result(assessmentId, answersCount, questionsCount);
+        return new LoadAssessmentPort.ProgressResult(assessmentId, answersCount, questionsCount);
     }
 
     @Override
-    public Optional<Assessment> getAssessmentById(UUID assessmentId) {
+    public Optional<Assessment> loadById(UUID assessmentId) {
         Optional<AssessmentKitSpaceJoinView> entity = repository.findByIdAndDeletedFalseWithKitAndSpace(assessmentId);
         if (entity.isEmpty())
             throw new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND);
@@ -241,5 +263,54 @@ public class AssessmentPersistenceJpaAdapter implements
     @Override
     public boolean isAssessmentSpaceMember(UUID assessmentId, UUID userId) {
         return repository.checkIsAssessmentSpaceMember(assessmentId, userId).isPresent();
+    }
+
+    @Override
+    public int countSpaceAssessments(long spaceId) {
+        return repository.countBySpaceIdAndDeletedFalse(spaceId);
+    }
+
+    @Override
+    public List<LoadAssessmentQuestionsPort.Result> loadApplicableQuestions(UUID assessmentId) {
+        var assessmentResult = resultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
+            .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
+
+        var questionIdToViewMap = repository.findAttributeQuestionsAndAnswers(assessmentResult.getId(),
+                assessmentResult.getKitVersionId()).stream()
+            .collect(groupingBy(v -> v.getQuestion().getId()));
+
+        return questionIdToViewMap.values().stream()
+            .map(views -> {
+                var impacts = views.stream()
+                    .map(i -> QuestionImpactMapper.mapToDomainModel(i.getQuestionImpact()))
+                    .toList();
+
+                var firstView = views.getFirst();
+                var question = QuestionMapper.mapToDomainModelWithImpacts(firstView.getQuestion(), impacts);
+                var answerOption = firstView.getAnswerOption() != null
+                    ? AnswerOptionMapper.mapToDomainModel(firstView.getAnswerOption())
+                    : null;
+                var answer = firstView.getAnswer() != null
+                    ? AnswerMapper.mapToDomainModel(firstView.getAnswer(), answerOption)
+                    : null;
+                return new LoadAssessmentQuestionsPort.Result(question, answer);
+            })
+            .toList();
+    }
+
+    private @Nullable KitLanguage resolveLanguage(int assessmentResultLangId, int kitLangId) {
+        return Objects.equals(assessmentResultLangId, kitLangId)
+            ? null
+            : KitLanguage.valueOfById(assessmentResultLangId);
+    }
+
+    @Override
+    public boolean isInDefaultSpace(UUID assessmentId) {
+        return spaceRepository.existsByAssessmentIdSpaceIsDefault(assessmentId);
+    }
+
+    @Override
+    public void updateSpace(UUID assessmentId, long spaceId) {
+        repository.updateSpaceId(assessmentId, spaceId);
     }
 }

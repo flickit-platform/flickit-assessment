@@ -36,6 +36,7 @@ public class UpdateAnswerRangeRestController {
             answerRangeId,
             requestDto.title(),
             requestDto.reusable(),
+            requestDto.translations(),
             currentUserId);
     }
 }

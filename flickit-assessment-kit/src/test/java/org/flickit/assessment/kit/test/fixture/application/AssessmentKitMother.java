@@ -1,10 +1,14 @@
 package org.flickit.assessment.kit.test.fixture.application;
 
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.common.application.domain.kit.translation.KitTranslation;
 import org.flickit.assessment.kit.application.domain.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+
+import static org.flickit.assessment.common.application.domain.kit.translation.KitTranslation.MetadataTranslation;
 
 public class AssessmentKitMother {
 
@@ -12,10 +16,24 @@ public class AssessmentKitMother {
     public static final String TITLE = "title";
     public static final String SUMMARY = "summary";
     public static final String ABOUT = "about";
+    public static final String GOAL = "goal";
+    public static final String CONTEXT = "context";
     public static final long EXPERT_GROUP_ID = 1L;
     private static long id = 134L;
 
-    public static AssessmentKit simpleKit() {
+    public static AssessmentKit simpleKit(){
+        return simpleKitWithPrice(0);
+    }
+
+    public static AssessmentKit simpleKitWithPrice(long price) {
+        return kitWithIsPrivateAndPrice(false, price);
+    }
+
+    public static AssessmentKit privateKitWithPrice(long price) {
+        return kitWithIsPrivateAndPrice(true, price);
+    }
+
+    private static AssessmentKit kitWithIsPrivateAndPrice(boolean isPrivate, long price) {
         return new AssessmentKit(
             id++,
             CODE + id,
@@ -26,14 +44,19 @@ public class AssessmentKitMother {
             LocalDateTime.now(),
             LocalDateTime.now(),
             Boolean.TRUE,
-            Boolean.FALSE,
+            isPrivate,
             EXPERT_GROUP_ID,
+            Map.of(KitLanguage.EN, new KitTranslation(TITLE, SUMMARY, ABOUT,
+                new MetadataTranslation(GOAL, CONTEXT))),
             null,
             null,
             null,
             null,
             null,
-            id++);
+            id++,
+            price,
+            null,
+            null);
     }
 
     public static AssessmentKit notPublishedKit() {
@@ -54,7 +77,34 @@ public class AssessmentKitMother {
             null,
             null,
             null,
-            id++);
+            id++,
+            0L);
+    }
+
+    public static AssessmentKit kitWithMetadata(KitMetadata metadata) {
+        return new AssessmentKit(
+            id++,
+            CODE + id,
+            TITLE + id,
+            SUMMARY,
+            ABOUT,
+            KitLanguage.EN,
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            Boolean.TRUE,
+            Boolean.FALSE,
+            EXPERT_GROUP_ID,
+            Map.of(KitLanguage.EN, new KitTranslation(TITLE, SUMMARY, ABOUT,
+                new MetadataTranslation(GOAL, CONTEXT))),
+            null,
+            null,
+            null,
+            null,
+            null,
+            id++,
+            0L,
+            metadata,
+            null);
     }
 
     public static AssessmentKit completeKit(List<Subject> subjects,
@@ -79,7 +129,8 @@ public class AssessmentKitMother {
             questionnaires,
             measures,
             reusableAnswerRanges,
-            id++);
+            id++,
+            0L);
     }
 
     public static AssessmentKit kitWithMaturityLevels(List<MaturityLevel> maturityLevels) {
@@ -100,7 +151,8 @@ public class AssessmentKitMother {
             null,
             null,
             null,
-            id++);
+            id++,
+            0L);
     }
 
     public static AssessmentKit kitWithQuestionnaires(List<Questionnaire> questionnaires) {
@@ -121,7 +173,8 @@ public class AssessmentKitMother {
             questionnaires,
             null,
             null,
-            id++);
+            id++,
+            0L);
     }
 
     public static AssessmentKit kitWithMeasures(List<Measure> measures) {
@@ -142,7 +195,8 @@ public class AssessmentKitMother {
             null,
             measures,
             null,
-            id++);
+            id++,
+            0L);
     }
 
     public static AssessmentKit kitWithSubjects(List<Subject> subjects) {
@@ -167,7 +221,8 @@ public class AssessmentKitMother {
             null,
             null,
             answerRanges,
-            id++);
+            id++,
+            0L);
     }
 
     public static AssessmentKit kitWithSubjects(List<Subject> subjects, boolean isPrivate) {
@@ -188,7 +243,8 @@ public class AssessmentKitMother {
             null,
             null,
             null,
-            id++);
+            id++,
+            0L);
     }
 
     public static AssessmentKit kitWithSubjectsAndQuestionnaires(List<Subject> subjects, List<Questionnaire> questionnaires) {
@@ -209,7 +265,8 @@ public class AssessmentKitMother {
             questionnaires,
             null,
             null,
-            id++);
+            id++,
+            0L);
     }
 
     public static AssessmentKit privateKit() {
@@ -230,7 +287,8 @@ public class AssessmentKitMother {
             null,
             null,
             null,
-            id++);
+            id++,
+            0L);
     }
 
     public static AssessmentKit kitWithKitVersionId(Long activeVersionId) {
@@ -251,6 +309,7 @@ public class AssessmentKitMother {
             null,
             null,
             null,
-            activeVersionId);
+            activeVersionId,
+            0L);
     }
 }

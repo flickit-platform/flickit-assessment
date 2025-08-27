@@ -10,18 +10,10 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class GetKitListUseCaseParamTest {
-
-    @Test
-    void testGetAssessmentKitListUseCaseParam_IsPrivateParamViolatesConstraint_ErrorMessage() {
-        var throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.isPrivate(null)));
-        assertThat(throwable).hasMessage("isPrivate: " + GET_KIT_LIST_IS_PRIVATE_NOT_NULL);
-    }
 
     @Test
     void testGetAssessmentKitListUseCaseParam_LangsParamViolatesConstraint_ErrorMessage() {
@@ -45,13 +37,6 @@ class GetKitListUseCaseParamTest {
         throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.size(101)));
         assertThat(throwable).hasMessage("size: " + GET_KIT_LIST_SIZE_MAX);
-    }
-
-    @Test
-    void testGetAssessmentKitListUseCaseParam_currentUserIdParamViolatesConstraint_ErrorMessage() {
-        var throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.currentUserId(null)));
-        assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 
     private void createParam(Consumer<Param.ParamBuilder> changer) {

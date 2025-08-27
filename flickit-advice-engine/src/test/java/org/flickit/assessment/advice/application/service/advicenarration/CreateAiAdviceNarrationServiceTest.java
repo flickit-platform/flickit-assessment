@@ -6,7 +6,6 @@ import org.flickit.assessment.advice.application.port.out.adviceitem.CreateAdvic
 import org.flickit.assessment.advice.application.port.out.advicenarration.CreateAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.LoadAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.UpdateAdviceNarrationPort;
-import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentKitLanguagePort;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentPort;
 import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.advice.application.port.out.atribute.LoadAttributesPort;
@@ -17,7 +16,6 @@ import org.flickit.assessment.advice.test.fixture.application.AdviceListItemMoth
 import org.flickit.assessment.advice.test.fixture.application.AttributeLevelTargetMother;
 import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
-import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.application.port.out.CallAiPromptPort;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.config.AppAiProperties;
@@ -42,7 +40,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.advice.common.ErrorMessageKey.CREATE_AI_ADVICE_NARRATION_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.advice.common.ErrorMessageKey.CREATE_AI_ADVICE_NARRATION_ATTRIBUTE_LEVEL_TARGETS_SIZE_MIN;
 import static org.flickit.assessment.advice.common.MessageKey.ADVICE_NARRATION_AI_IS_DISABLED;
-import static org.flickit.assessment.advice.test.fixture.application.AssessmentMother.assessmentWithShortTitle;
+import static org.flickit.assessment.advice.test.fixture.application.AssessmentMother.simpleAssessment;
 import static org.flickit.assessment.advice.test.fixture.application.AssessmentResultMother.createAssessmentResult;
 import static org.flickit.assessment.advice.test.fixture.application.AttributeLevelTargetMother.createAttributeLevelTarget;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_ADVICE;
@@ -92,9 +90,6 @@ class CreateAiAdviceNarrationServiceTest {
     @Mock
     private CreateAdviceItemPort createAdviceItemPort;
 
-    @Mock
-    private LoadAssessmentKitLanguagePort loadAssessmentKitLanguagePort;
-
     @Captor
     private ArgumentCaptor<AdviceNarration> adviceNarrationCaptor;
 
@@ -113,6 +108,8 @@ class CreateAiAdviceNarrationServiceTest {
     @Spy
     private AppAiProperties appAiProperties = appAiProperties();
 
+    private final Assessment assessment = simpleAssessment();
+    private final CreateAiAdviceNarrationUseCase.Param param = createParam(b -> b.assessmentId(assessment.getId()));
     private final String aiNarration = "aiNarration";
     private final AssessmentResult assessmentResult = createAssessmentResult();
     private final List<CreateAiAdviceNarrationService.AdviceDto.AdviceItemDto> adviceItems = List.of(
@@ -120,9 +117,8 @@ class CreateAiAdviceNarrationServiceTest {
         new CreateAiAdviceNarrationService.AdviceDto.AdviceItemDto("title1", "description1", 2, 0, 1)
     );
     private final AdviceDto aiAdvice = new AdviceDto(aiNarration, adviceItems);
-    private CreateAiAdviceNarrationUseCase.Param param = createParam(CreateAiAdviceNarrationUseCase.Param.ParamBuilder::build);
-    private final List<Attribute> attributes = List.of(new Attribute(param.getAttributeLevelTargets().getFirst().getAttributeId(), "Reliability"));
-    private final List<MaturityLevel> maturityLevels = List.of(new MaturityLevel(param.getAttributeLevelTargets().getFirst().getMaturityLevelId(), "Great"));
+    private final List<Attribute> attributes = List.of(new Attribute(param.getAttributeLevelTargets().getFirst().getAttributeId(), "Reliability", 1));
+    private final List<MaturityLevel> maturityLevels = List.of(new MaturityLevel(param.getAttributeLevelTargets().getFirst().getMaturityLevelId(), "Great", 1));
 
     @Test
     void testCreateAiAdviceNarration_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
@@ -139,7 +135,6 @@ class CreateAiAdviceNarrationServiceTest {
             createAdviceNarrationPort,
             loadAttributeCurrentAndTargetLevelIndexPort,
             loadMaturityLevelsPort,
-            loadAssessmentKitLanguagePort,
             loadAssessmentPort,
             loadAttributesPort,
             createAdviceItemPort);
@@ -162,7 +157,6 @@ class CreateAiAdviceNarrationServiceTest {
             loadAttributesPort,
             loadAssessmentPort,
             loadMaturityLevelsPort,
-            loadAssessmentKitLanguagePort,
             createAdviceItemPort);
     }
 
@@ -180,33 +174,26 @@ class CreateAiAdviceNarrationServiceTest {
             loadAdviceNarrationPort,
             loadAssessmentPort,
             loadMaturityLevelsPort,
-            loadAssessmentKitLanguagePort,
             createAdviceNarrationPort,
             createAdviceItemPort);
     }
 
     @Test
     void testCreateAiAdviceNarration_whenAdviceNarrationDoesNotExist_thenCreateAdviceNarration() {
-        var assessment = assessmentWithShortTitle("ShortTitle");
-        param = createParam(b -> b.assessmentId(assessment.getId()));
-
-        KitLanguage kitLanguage = KitLanguage.EN;
         var expectedPrompt = new PromptTemplate(appAiProperties.getPrompt().getAdviceNarrationAndAdviceItems(),
-            Map.of("assessmentTitle", assessment.getShortTitle(),
-                "attributeTargets", "TargetAttribute[attribute=Reliability, targetMaturityLevel=Great]",
+            Map.of("attributeTargets", "TargetAttribute[attribute=Reliability, targetMaturityLevel=Great]",
                 "adviceRecommendations", "AdviceRecommendation[question=title, currentOption=answeredOption, recommendedOption=recommendedOption]",
-                "language", kitLanguage.getTitle())).create();
+                "language", assessmentResult.getLanguage().getTitle())).create();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.empty());
         when(loadAttributeCurrentAndTargetLevelIndexPort.load(param.getAssessmentId(), param.getAttributeLevelTargets()))
             .thenReturn(List.of(new LoadAttributeCurrentAndTargetLevelIndexPort.Result(param.getAttributeLevelTargets().getFirst().getAttributeId(), 1, 2)));
-        when(loadMaturityLevelsPort.loadAll(assessmentResult.getKitVersionId())).thenReturn(maturityLevels);
-        when(loadAttributesPort.loadByIdsAndKitVersionId(List.of(param.getAttributeLevelTargets().getFirst().getAttributeId()), assessmentResult.getKitVersionId())).thenReturn(attributes);
+        when(loadMaturityLevelsPort.loadAll(param.getAssessmentId())).thenReturn(maturityLevels);
+        when(loadAttributesPort.loadByIdsAndAssessmentId(List.of(param.getAttributeLevelTargets().getFirst().getAttributeId()), param.getAssessmentId())).thenReturn(attributes);
         when(loadAssessmentPort.loadById(param.getAssessmentId())).thenReturn(assessment);
         when(callAiPromptPort.call(promptArgumentCaptor.capture(), classCaptor.capture())).thenReturn(aiAdvice);
-        when(loadAssessmentKitLanguagePort.loadKitLanguage(assessment.getId())).thenReturn(kitLanguage);
 
         service.createAiAdviceNarration(param);
 
@@ -233,27 +220,21 @@ class CreateAiAdviceNarrationServiceTest {
 
     @Test
     void testCreateAiAdviceNarration_whenAdviceNarrationExistsAndShortTitleNotExists_thenUpdateAdviceNarration() {
-        var assessment = assessmentWithShortTitle(null);
-        param = createParam(b -> b.assessmentId(assessment.getId()));
-
-        KitLanguage kitLanguage = KitLanguage.EN;
         var adviceNarration = new AdviceNarration(UUID.randomUUID(), assessmentResult.getId(), aiNarration, null, LocalDateTime.now(), null, UUID.randomUUID());
         var expectedPrompt = new PromptTemplate(appAiProperties.getPrompt().getAdviceNarrationAndAdviceItems(),
-            Map.of("assessmentTitle", assessment.getTitle(),
-                "attributeTargets", "TargetAttribute[attribute=Reliability, targetMaturityLevel=Great]",
+            Map.of("attributeTargets", "TargetAttribute[attribute=Reliability, targetMaturityLevel=Great]",
                 "adviceRecommendations", "AdviceRecommendation[question=title, currentOption=answeredOption, recommendedOption=recommendedOption]",
-                "language", kitLanguage.getTitle())).create();
+                "language", assessmentResult.getLanguage().getTitle())).create();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(adviceNarration));
         when(loadAttributeCurrentAndTargetLevelIndexPort.load(param.getAssessmentId(), param.getAttributeLevelTargets()))
             .thenReturn(List.of(new LoadAttributeCurrentAndTargetLevelIndexPort.Result(param.getAttributeLevelTargets().getFirst().getAttributeId(), 1, 2)));
-        when(loadMaturityLevelsPort.loadAll(assessmentResult.getKitVersionId())).thenReturn(maturityLevels);
-        when(loadAttributesPort.loadByIdsAndKitVersionId(List.of(param.getAttributeLevelTargets().getFirst().getAttributeId()), assessmentResult.getKitVersionId())).thenReturn(attributes);
+        when(loadMaturityLevelsPort.loadAll(param.getAssessmentId())).thenReturn(maturityLevels);
+        when(loadAttributesPort.loadByIdsAndAssessmentId(List.of(param.getAttributeLevelTargets().getFirst().getAttributeId()), param.getAssessmentId())).thenReturn(attributes);
         when(loadAssessmentPort.loadById(param.getAssessmentId())).thenReturn(assessment);
         when(callAiPromptPort.call(promptArgumentCaptor.capture(), classCaptor.capture())).thenReturn(aiAdvice);
-        when(loadAssessmentKitLanguagePort.loadKitLanguage(assessment.getId())).thenReturn(kitLanguage);
 
         service.createAiAdviceNarration(param);
 
@@ -276,27 +257,21 @@ class CreateAiAdviceNarrationServiceTest {
 
     @Test
     void testCreateAiAdviceNarration_whenAdviceNarrationExistsAndShortTitleExists_thenUpdateAdviceNarration() {
-        var assessment = assessmentWithShortTitle("ShortTitle");
-        param = createParam(b -> b.assessmentId(assessment.getId()));
-
-        KitLanguage kitLanguage = KitLanguage.EN;
         var adviceNarration = new AdviceNarration(UUID.randomUUID(), assessmentResult.getId(), aiNarration, null, LocalDateTime.now(), null, UUID.randomUUID());
         var expectedPrompt = new PromptTemplate(appAiProperties.getPrompt().getAdviceNarrationAndAdviceItems(),
-            Map.of("assessmentTitle", assessment.getShortTitle(),
-                "attributeTargets", "TargetAttribute[attribute=Reliability, targetMaturityLevel=Great]",
+            Map.of("attributeTargets", "TargetAttribute[attribute=Reliability, targetMaturityLevel=Great]",
                 "adviceRecommendations", "AdviceRecommendation[question=title, currentOption=answeredOption, recommendedOption=recommendedOption]",
-                "language", kitLanguage.getTitle())).create();
+                "language", assessmentResult.getLanguage().getTitle())).create();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(adviceNarration));
         when(loadAttributeCurrentAndTargetLevelIndexPort.load(param.getAssessmentId(), param.getAttributeLevelTargets()))
             .thenReturn(List.of(new LoadAttributeCurrentAndTargetLevelIndexPort.Result(param.getAttributeLevelTargets().getFirst().getAttributeId(), 1, 2)));
-        when(loadMaturityLevelsPort.loadAll(assessmentResult.getKitVersionId())).thenReturn(maturityLevels);
-        when(loadAttributesPort.loadByIdsAndKitVersionId(List.of(param.getAttributeLevelTargets().getFirst().getAttributeId()), assessmentResult.getKitVersionId())).thenReturn(attributes);
+        when(loadMaturityLevelsPort.loadAll(param.getAssessmentId())).thenReturn(maturityLevels);
+        when(loadAttributesPort.loadByIdsAndAssessmentId(List.of(param.getAttributeLevelTargets().getFirst().getAttributeId()), param.getAssessmentId())).thenReturn(attributes);
         when(loadAssessmentPort.loadById(param.getAssessmentId())).thenReturn(assessment);
         when(callAiPromptPort.call(promptArgumentCaptor.capture(), classCaptor.capture())).thenReturn(aiAdvice);
-        when(loadAssessmentKitLanguagePort.loadKitLanguage(assessment.getId())).thenReturn(KitLanguage.EN);
 
         service.createAiAdviceNarration(param);
 
@@ -361,9 +336,8 @@ class CreateAiAdviceNarrationServiceTest {
         properties.setEnabled(true);
         properties.setPrompt(new AppAiProperties.Prompt());
         properties.setSaveAiInputFileEnabled(true);
-        properties.getPrompt().setAdviceNarrationAndAdviceItems("The assessment \"{assessmentTitle}\" " +
-            "with attribute targets {attributeTargets} and recommendations {adviceRecommendations} has been evaluated. " +
-            "Provide the result in the {language} language");
+        properties.getPrompt().setAdviceNarrationAndAdviceItems("The assessment with attribute targets {attributeTargets} " +
+            "and recommendations {adviceRecommendations} has been evaluated. Provide the result in the {language} language");
         return properties;
     }
 

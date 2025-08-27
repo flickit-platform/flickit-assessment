@@ -8,6 +8,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.adapter.out.persistence.answer.AnswerMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.answeroption.AnswerOptionMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.attribute.AttributeMapper;
+import org.flickit.assessment.core.adapter.out.persistence.kit.maturitylevel.MaturityLevelMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.maturitylevel.MaturityLevelPersistenceJpaAdapter;
 import org.flickit.assessment.core.adapter.out.persistence.kit.question.QuestionMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.questionimpact.QuestionImpactMapper;
@@ -28,6 +29,7 @@ import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepositor
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
 import org.flickit.assessment.data.jpa.kit.kitcustom.KitCustomJpaRepository;
+import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJoinQuestionImpactView;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
@@ -60,6 +62,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
     private final AnswerOptionJpaRepository answerOptionRepository;
     private final MaturityLevelPersistenceJpaAdapter maturityLevelJpaAdapter;
     private final KitCustomJpaRepository kitCustomRepository;
+    private final MaturityLevelJpaRepository maturityLevelRepository;
     private final ObjectMapper objectMapper;
 
     record Context(List<AnswerJpaEntity> allAnswerEntities,
@@ -75,6 +78,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
             .orElseThrow(() -> new ResourceNotFoundException(CALCULATE_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND));
         UUID assessmentResultId = assessmentResultEntity.getId();
         long kitVersionId = assessmentResultEntity.getKitVersionId();
+        Boolean isCalculateValid = assessmentResultEntity.getIsCalculateValid();
 
         /*
          load all subjectValue and attributeValue entities
@@ -90,6 +94,13 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
             var kitCustomEntity = kitCustomRepository.findByIdAndKitId(kitCustomId, assessment.getAssessmentKitId())
                 .orElseThrow(() -> new ResourceNotFoundException(KIT_CUSTOM_ID_NOT_FOUND));
             kitCustomData = objectMapper.readValue(kitCustomEntity.getCustomData(), KitCustomData.class);
+        }
+
+        MaturityLevel maturityLevel = null;
+        var maturityLevelId = assessmentResultEntity.getMaturityLevelId();
+        if (maturityLevelId != null) {
+            var maturityLevelEntity = maturityLevelRepository.findByIdAndKitVersionId(maturityLevelId, assessmentResultEntity.getKitVersionId());
+            maturityLevel = maturityLevelEntity.map(MaturityLevelMapper::mapToDomainModel).orElse(null);
         }
 
         // load all subject entities by kitVersionId and customData
@@ -131,6 +142,8 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
             buildAssessment(assessment, kitVersionId),
             kitVersionId,
             subjectValues,
+            isCalculateValid,
+            maturityLevel,
             assessmentResultEntity.getLastCalculationTime(),
             assessmentResultEntity.getLastConfidenceCalculationTime());
     }
@@ -210,7 +223,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
             Long attributeId = qavEntity.getAttributeId();
             List<Question> impactfulQuestions = questionsWithImpact(context.impactfulQuestions.get(attributeId));
             List<Answer> impactfulAnswers = answersOfImpactfulQuestions(impactfulQuestions, context);
-            Attribute attribute = AttributeMapper.mapToDomainModel(attributeIdToEntityMap.get(attributeId), impactfulQuestions);
+            Attribute attribute = AttributeMapper.mapToDomainWithQuestions(attributeIdToEntityMap.get(attributeId), impactfulQuestions);
 
             AttributeValue attributeValue = new AttributeValue(qavEntity.getId(), attribute, impactfulAnswers);
             attrIdToValue.put(attribute.getId(), attributeValue);
@@ -228,7 +241,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
 
         return impactfulQuestions.values().stream()
             .filter(Objects::nonNull)
-            .map(questionWithImpacts -> QuestionMapper.mapToDomainModel(questionWithImpacts.question(),
+            .map(questionWithImpacts -> QuestionMapper.mapToDomainModelWithImpacts(questionWithImpacts.question(),
                 questionWithImpacts.impacts().stream()
                     .map(QuestionImpactMapper::mapToDomainModel)
                     .toList()))
@@ -305,7 +318,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
     private Assessment buildAssessment(AssessmentJpaEntity assessmentEntity, long kitVersionId) {
         Long kitId = assessmentEntity.getAssessmentKitId();
         List<MaturityLevel> maturityLevels = maturityLevelJpaAdapter.loadByKitVersionIdWithCompetences(kitVersionId);
-        AssessmentKit kit = new AssessmentKit(kitId, null, kitVersionId, null, maturityLevels);
+        AssessmentKit kit = new AssessmentKit(kitId, null, kitVersionId, null, maturityLevels, null);
         return mapToDomainModel(assessmentEntity, kit, null);
     }
 

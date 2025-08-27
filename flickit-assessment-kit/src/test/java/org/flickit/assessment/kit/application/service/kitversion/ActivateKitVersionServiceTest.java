@@ -27,10 +27,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -84,7 +81,7 @@ class ActivateKitVersionServiceTest {
     );
 
     @Test
-    void testActivateKitVersion_kitVersionIsNotInUpdatingStatus_ThrowsValidationException() {
+    void testActivateKitVersion_whenKitVersionIsNotInUpdatingStatus_thenThrowValidationException() {
         kitVersion = KitVersionMother.createActiveKitVersion(simpleKit());
         var param = createParam(ActivateKitVersionUseCase.Param.ParamBuilder::build);
 
@@ -102,7 +99,7 @@ class ActivateKitVersionServiceTest {
     }
 
     @Test
-    void testActivateKitVersion_userHasNotAccess_ThrowsAccessDeniedException() {
+    void testActivateKitVersion_whenUserHasNotAccess_thenThrowAccessDeniedException() {
         var param = createParam(ActivateKitVersionUseCase.Param.ParamBuilder::build);
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
@@ -119,7 +116,7 @@ class ActivateKitVersionServiceTest {
     }
 
     @Test
-    void testActivateKitVersion_kitVersionIsNotValid_ThrowsValidationException() {
+    void testActivateKitVersion_whenKitVersionIsNotValid_thenThrowValidationException() {
         var param = createParam(b -> b.currentUserId(ownerId));
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
@@ -136,7 +133,7 @@ class ActivateKitVersionServiceTest {
     }
 
     @Test
-    void testActivateKitVersion_ActiveVersionExists_ArchiveOldVersion() {
+    void testActivateKitVersion_whenActiveVersionExists_thenArchiveOldVersion() {
         Param param = createParam(b -> b.currentUserId(ownerId));
 
         var option1 = AnswerOptionMother.createAnswerOption(1L, "op1", 1);
@@ -174,7 +171,7 @@ class ActivateKitVersionServiceTest {
     }
 
     @Test
-    void testActivateKitVersion_ThereIsNoActiveVersion_ActivateNewKitVersion() {
+    void testActivateKitVersion_whenThereIsNoActiveVersion_thenActivateNewKitVersion() {
         var kit = kitWithKitVersionId(null);
         kitVersion = createKitVersion(kit);
         var param = createParam(b -> b.currentUserId(ownerId));

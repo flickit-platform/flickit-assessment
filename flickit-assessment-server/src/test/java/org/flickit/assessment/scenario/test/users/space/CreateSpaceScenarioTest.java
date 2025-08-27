@@ -47,6 +47,7 @@ class CreateSpaceScenarioTest extends AbstractScenarioTest {
         assertNotNull(loadedSpace.getLastModificationTime());
         assertEquals(0, loadedSpace.getDeletionTime());
         assertFalse(loadedSpace.isDeleted());
+        assertFalse(loadedSpace.isDefault());
 
         boolean userAccessExists = jpaTemplate.existById(
             new SpaceUserAccessJpaEntity.EntityId(spaceId.longValue(), getCurrentUserId()),

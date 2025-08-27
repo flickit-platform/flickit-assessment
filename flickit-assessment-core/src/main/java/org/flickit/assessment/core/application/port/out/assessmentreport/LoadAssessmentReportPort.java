@@ -8,4 +8,6 @@ import java.util.UUID;
 public interface LoadAssessmentReportPort {
 
     Optional<AssessmentReport> load(UUID assessmentId);
+
+    AssessmentReport loadByLinkHash(UUID linkHash);
 }

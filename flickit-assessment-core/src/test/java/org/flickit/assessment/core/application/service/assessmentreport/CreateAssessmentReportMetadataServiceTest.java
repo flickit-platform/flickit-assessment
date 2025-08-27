@@ -3,7 +3,6 @@ package org.flickit.assessment.core.application.service.assessmentreport;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.application.domain.AssessmentReport;
 import org.flickit.assessment.core.application.domain.AssessmentReportMetadata;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.port.in.assessmentreport.CreateAssessmentReportMetadataUseCase;
@@ -94,22 +93,47 @@ class CreateAssessmentReportMetadataServiceTest {
 
         service.createReportMetadata(param);
 
-        ArgumentCaptor<AssessmentReport> assessmentReportParam = ArgumentCaptor.forClass(AssessmentReport.class);
+        ArgumentCaptor<CreateAssessmentReportPort.Param> assessmentReportParam = ArgumentCaptor.forClass(CreateAssessmentReportPort.Param.class);
         verify(createAssessmentReportPort, times(1)).persist(assessmentReportParam.capture());
 
-        assertEquals(assessmentResult.getId(), assessmentReportParam.getValue().getAssessmentResultId());
-        var actualMetadata = assessmentReportParam.getValue().getMetadata();
+        assertEquals(assessmentResult.getId(), assessmentReportParam.getValue().assessmentResultId());
+        var actualMetadata = assessmentReportParam.getValue().metadata();
         assertNotNull(actualMetadata);
         assertEquals(param.getMetadata().getIntro(), actualMetadata.intro());
         assertNull(actualMetadata.prosAndCons());
         assertNull(param.getMetadata().getSteps(), actualMetadata.steps());
         assertNull(param.getMetadata().getParticipants(), actualMetadata.participants());
-        assertNotNull(assessmentReportParam.getValue().getCreationTime());
-        assertNotNull(assessmentReportParam.getValue().getLastModificationTime());
-        assertEquals(param.getCurrentUserId(), assessmentReportParam.getValue().getCreatedBy());
-        assertEquals(param.getCurrentUserId(), assessmentReportParam.getValue().getLastModifiedBy());
+        assertNotNull(assessmentReportParam.getValue().creationTime());
+        assertEquals(param.getCurrentUserId(), assessmentReportParam.getValue().createdBy());
 
         verifyNoInteractions(updateAssessmentReportPort);
+    }
+
+    @Test
+    void testCreateAssessmentReportMetadata_whenAssessmentReportMetadataIsNull_thenPersistAssessmentReport() {
+        var param = createParam(ParamBuilder::build);
+        var report = reportWithMetadata(null);
+
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MANAGE_REPORT_METADATA))
+            .thenReturn(true);
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.of(report));
+
+        service.createReportMetadata(param);
+
+        ArgumentCaptor<UpdateAssessmentReportPort.UpdateMetadataParam> updateMetadataParamCaptor = ArgumentCaptor.forClass(UpdateAssessmentReportPort.UpdateMetadataParam.class);
+        verify(updateAssessmentReportPort, times(1)).updateMetadata(updateMetadataParamCaptor.capture());
+
+        var updateMetadataParam = updateMetadataParamCaptor.getValue();
+        assertEquals(report.getId(), updateMetadataParam.id());
+        assertEquals(param.getMetadata().getIntro(), updateMetadataParam.reportMetadata().intro());
+        assertNull(updateMetadataParam.reportMetadata().prosAndCons());
+        assertNull(updateMetadataParam.reportMetadata().steps());
+        assertNull(updateMetadataParam.reportMetadata().participants());
+        assertNotNull(updateMetadataParam.lastModificationTime());
+        assertEquals(param.getCurrentUserId(), updateMetadataParam.lastModifiedBy());
+
+        verifyNoInteractions(createAssessmentReportPort);
     }
 
     @Test

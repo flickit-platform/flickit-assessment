@@ -27,6 +27,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_KIT_NOT_FOUND;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSMENT_RESULT_ASSESSMENT_ID_NOT_FOUND;
 
 @Component
@@ -74,17 +75,22 @@ public class AssessmentResultPersistenceJpaAdapter implements
         var maturityLevelId = entity.get().getMaturityLevelId();
         if (maturityLevelId != null) {
             var maturityLevelEntity = maturityLevelRepository.findByIdAndKitVersionId(maturityLevelId, entity.get().getKitVersionId());
-            maturityLevel = maturityLevelEntity.map(maturityLevelJpaEntity ->
-                MaturityLevelMapper.mapToDomainModel(maturityLevelJpaEntity, null)).orElse(null);
+            maturityLevel = maturityLevelEntity.map(MaturityLevelMapper::mapToDomainModel).orElse(null);
         }
         var kit = kitRepository.findById(entity.get().getAssessment().getAssessmentKitId())
-            .map(x -> AssessmentKitMapper.mapToDomainModel(x, null))
+            .map(AssessmentKitMapper::mapToDomainModel)
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_KIT_NOT_FOUND));
 
         var assessmentResult = AssessmentResultMapper.mapToDomainModel(entity.get(), maturityLevel, kit);
         var subjectValues = createSubjectValues(entity.get().getId());
         assessmentResult.setSubjectValues(subjectValues);
         return Optional.of(assessmentResult);
+    }
+
+    @Override
+    public Optional<AssessmentResult> load(UUID id) {
+        return repository.findById(id)
+            .map(entity -> AssessmentResultMapper.mapToDomainModel(entity, null, null));
     }
 
     private List<SubjectValue> createSubjectValues(UUID assessmentResultId) {

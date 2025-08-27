@@ -3,6 +3,7 @@ package org.flickit.assessment.users.application.port.in.expertgroup;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
@@ -47,6 +48,7 @@ public interface CreateExpertGroupUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
+        @Builder
         public Param(String title, String bio, String about, MultipartFile picture, String website, UUID currentUserId) {
             this.title = title != null ? title.strip() : null;
             this.bio = bio;

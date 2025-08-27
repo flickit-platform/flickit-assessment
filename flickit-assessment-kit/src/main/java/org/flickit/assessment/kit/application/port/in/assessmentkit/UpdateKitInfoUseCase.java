@@ -1,5 +1,7 @@
 package org.flickit.assessment.kit.application.port.in.assessmentkit;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
@@ -7,12 +9,18 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.common.application.domain.kit.translation.KitTranslation;
 import org.flickit.assessment.common.validation.EnumValue;
+import org.flickit.assessment.kit.application.domain.KitMetadata;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
+import static io.jsonwebtoken.lang.Collections.isEmpty;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_KIT_LANGUAGE_NOT_VALID;
+import static org.flickit.assessment.common.validation.EnumValidateUtils.validateAndConvert;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 public interface UpdateKitInfoUseCase {
@@ -50,8 +58,28 @@ public interface UpdateKitInfoUseCase {
         @Size(min = 1, message = UPDATE_KIT_INFO_TAGS_SIZE_MIN)
         List<Long> tags;
 
+        @Valid
+        Map<KitLanguage, KitTranslation> translations;
+
+        boolean removeTranslations;
+
+        @Valid
+        KitMetadata metadata;
+
+        boolean removeMetadata;
+
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
+
+        @AssertTrue(message = UPDATE_KIT_INFO_TRANSLATIONS_INCORRECT)
+        boolean isTranslationFieldCorrect() {
+            return !removeTranslations || isEmpty(translations);
+        }
+
+        @AssertTrue(message = UPDATE_KIT_INFO_METADATA_INCORRECT)
+        boolean isMetadataFieldCorrect() {
+            return !removeMetadata || metadata == null;
+        }
 
         @Builder
         public Param(Long kitId,
@@ -63,9 +91,12 @@ public interface UpdateKitInfoUseCase {
                      Double price,
                      String about,
                      List<Long> tags,
+                     Map<String, KitTranslation> translations,
+                     boolean removeTranslations,
+                     KitMetadata metadata,
+                     boolean removeMetadata,
                      UUID currentUserId) {
             this.kitId = kitId;
-            this.currentUserId = currentUserId;
             this.title = title;
             this.summary = summary;
             this.lang = lang != null ? KitLanguage.getEnum(lang).name() : null;
@@ -74,6 +105,11 @@ public interface UpdateKitInfoUseCase {
             this.price = price;
             this.about = about;
             this.tags = tags;
+            this.translations = validateAndConvert(translations, KitLanguage.class, COMMON_KIT_LANGUAGE_NOT_VALID);
+            this.removeTranslations = removeTranslations;
+            this.metadata = metadata;
+            this.removeMetadata = removeMetadata;
+            this.currentUserId = currentUserId;
             this.validateSelf();
         }
     }

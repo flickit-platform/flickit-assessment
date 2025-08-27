@@ -26,7 +26,7 @@ public class CreatePremiumSpaceNotificationCreator implements NotificationCreato
 
     @Override
     public List<NotificationEnvelope> create(CreatePremiumSpaceNotificationCmd cmd) {
-        var user = loadUserPort.loadUser(cmd.space().getCreatedBy());
+        var user = loadUserPort.loadUser(cmd.createdBy());
         var adminId = loadUserPort.loadUserIdByEmail(cmd.adminEmail());
 
         if (user == null || adminId.isEmpty()) {
@@ -35,8 +35,8 @@ public class CreatePremiumSpaceNotificationCreator implements NotificationCreato
         }
 
         var formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
-        var formattedDateTime = cmd.space().getCreationTime().format(formatter);
-        var spaceModel = new CreatePremiumSpaceNotificationPayload.SpaceModel(cmd.space().getTitle(), formattedDateTime);
+        var formattedDateTime = cmd.creationTime().format(formatter);
+        var spaceModel = new CreatePremiumSpaceNotificationPayload.SpaceModel(cmd.title(), formattedDateTime);
         var userModel = new CreatePremiumSpaceNotificationPayload.UserModel(user.getDisplayName(), user.getEmail());
         var title = MessageBundle.message(NOTIFICATION_TITLE_CREATE_PREMIUM_SPACE);
         var payload = new CreatePremiumSpaceNotificationPayload(userModel, spaceModel);
