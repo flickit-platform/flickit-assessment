@@ -8,6 +8,7 @@ import org.flickit.assessment.advice.application.port.out.advicenarration.Create
 import org.flickit.assessment.advice.application.port.out.advicenarration.LoadAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.UpdateAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadAssessmentResultPort;
+import org.flickit.assessment.advice.test.fixture.application.AdviceNarrationMother;
 import org.flickit.assessment.advice.test.fixture.application.AssessmentResultMother;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
@@ -20,7 +21,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -96,15 +96,8 @@ class CreateAssessorAdviceNarrationServiceTest {
     @Test
     void testCreateAssessorAdviceNarration_WhenAdviceExists_ThenUpdateItsAssessorNarration() {
         var param = createParam(CreateAssessorAdviceNarrationUseCase.Param.ParamBuilder::build);
-        UUID assessmentResultId = UUID.randomUUID();
         AssessmentResult assessmentResult = AssessmentResultMother.createAssessmentResult();
-        AdviceNarration adviceNarration = new AdviceNarration(UUID.randomUUID(),
-            assessmentResultId,
-            "aiNarration",
-            null,
-            LocalDateTime.now(),
-            null,
-            param.getCurrentUserId());
+        AdviceNarration adviceNarration = AdviceNarrationMother.aiNarration();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));

@@ -12,6 +12,7 @@ public class AdviceNarrationMother {
             UUID.randomUUID(),
             "aiNarration",
             null,
+            true,
             LocalDateTime.now(),
             null,
             null);
@@ -22,6 +23,7 @@ public class AdviceNarrationMother {
             UUID.randomUUID(),
             "aiNarration",
             "assessorNarration",
+            false,
             LocalDateTime.now(),
             LocalDateTime.now(),
             UUID.randomUUID());
