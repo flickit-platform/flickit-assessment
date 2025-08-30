@@ -234,15 +234,15 @@ class RefreshAssessmentAdviceServiceTest {
     }
 
     /*
-    | Attribute   | Weight | Maturity Level | Furthest Score |      Selected        |
-    |-------------|--------|----------------|----------------|----------------------|
-    | attribute1  |   1    |       3        |       2        | no                   |
-    | attribute2  |   3    |       3        |       6        | yes (furthest)       |
-    | attribute3  |   5    |       5        |       x        | no                   |
-    | attribute4  |   7    |       1        |       x        | yes (below median)   |
-    | attribute5  |   8    |       4        |       8        | yes (furthest)       |
-    | attribute6  |   1    |       4        |       1        | no                   |
-    --------------------------------------------------------------------------------
+    | Attribute   | Weight | Maturity Level | Furthest Score |      Selected        | Iteration |
+    |-------------|--------|----------------|----------------|----------------------|-----------|
+    | attribute1  |   1    |       3        |       2        | no                   |     X     |
+    | attribute2  |   3    |       3        |       6        | yes (furthest)       |     0     |
+    | attribute3  |   5    |       5        |       x        | no                   |     X     |
+    | attribute4  |   7    |       1        |       x        | yes (below median)   |     0     |
+    | attribute5  |   8    |       4        |       8        | yes (furthest)       |     0     |
+    | attribute6  |   1    |       4        |       1        | no                   |     X     |
+    ---------------------------------------------------------------------------------------------
     |
     |Furthest Score is calculated as: weight multiplied by (maxLevel - currentLevel)
     */
@@ -367,13 +367,22 @@ class RefreshAssessmentAdviceServiceTest {
         List<List<AttributeLevelTarget>> allCalls = adviceTargetsCaptor.getAllValues();
 
         assertEquals(3, allCalls.get(0).size());
-        assertEquals(1, allCalls.get(1).size());
-        assertEquals(1, allCalls.get(2).size());
+        assertEquals(4, allCalls.get(1).size());
+        assertEquals(5, allCalls.get(2).size());
 
         assertTrue(allCalls.getFirst().stream().anyMatch(t -> t.getAttributeId() == attribute2.getId()));
         assertTrue(allCalls.getFirst().stream().anyMatch(t -> t.getAttributeId() == attribute4.getId()));
         assertTrue(allCalls.getFirst().stream().anyMatch(t -> t.getAttributeId() == attribute5.getId()));
+
+        assertTrue(allCalls.get(1).stream().anyMatch(t -> t.getAttributeId() == attribute2.getId()));
+        assertTrue(allCalls.get(1).stream().anyMatch(t -> t.getAttributeId() == attribute4.getId()));
+        assertTrue(allCalls.get(1).stream().anyMatch(t -> t.getAttributeId() == attribute5.getId()));
         assertTrue(allCalls.get(1).stream().anyMatch(t -> t.getAttributeId() == attribute8.getId()));
+
+        assertTrue(allCalls.get(2).stream().anyMatch(t -> t.getAttributeId() == attribute2.getId()));
+        assertTrue(allCalls.get(2).stream().anyMatch(t -> t.getAttributeId() == attribute4.getId()));
+        assertTrue(allCalls.get(2).stream().anyMatch(t -> t.getAttributeId() == attribute5.getId()));
+        assertTrue(allCalls.get(2).stream().anyMatch(t -> t.getAttributeId() == attribute8.getId()));
         assertTrue(allCalls.get(2).stream().anyMatch(t -> t.getAttributeId() == attribute7.getId()));
 
         assertEquals(12, improvableCaptor.getValue().size());
@@ -443,12 +452,19 @@ class RefreshAssessmentAdviceServiceTest {
         List<List<AttributeLevelTarget>> allCalls = adviceTargetsCaptor.getAllValues();
 
         assertEquals(2, allCalls.get(0).size());
-        assertEquals(1, allCalls.get(1).size());
-        assertEquals(1, allCalls.get(2).size());
+        assertEquals(3, allCalls.get(1).size());
+        assertEquals(4, allCalls.get(2).size());
 
         assertTrue(allCalls.getFirst().stream().anyMatch(t -> t.getAttributeId() == attribute4.getId()));
         assertTrue(allCalls.getFirst().stream().anyMatch(t -> t.getAttributeId() == attribute6.getId()));
+
+        assertTrue(allCalls.get(1).stream().anyMatch(t -> t.getAttributeId() == attribute4.getId()));
+        assertTrue(allCalls.get(1).stream().anyMatch(t -> t.getAttributeId() == attribute6.getId()));
         assertTrue(allCalls.get(1).stream().anyMatch(t -> t.getAttributeId() == attribute5.getId()));
+
+        assertTrue(allCalls.get(2).stream().anyMatch(t -> t.getAttributeId() == attribute4.getId()));
+        assertTrue(allCalls.get(2).stream().anyMatch(t -> t.getAttributeId() == attribute6.getId()));
+        assertTrue(allCalls.get(2).stream().anyMatch(t -> t.getAttributeId() == attribute5.getId()));
         assertTrue(allCalls.get(2).stream().anyMatch(t -> t.getAttributeId() == attribute2.getId()));
 
         assertEquals(12, improvableCaptor.getValue().size());

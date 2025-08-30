@@ -6,6 +6,7 @@ import org.flickit.assessment.advice.application.domain.AssessmentResult;
 import org.flickit.assessment.advice.application.domain.Attribute;
 import org.flickit.assessment.advice.application.domain.AttributeLevelTarget;
 import org.flickit.assessment.advice.application.domain.MaturityLevel;
+import org.flickit.assessment.advice.application.domain.advice.AdviceListItem;
 import org.flickit.assessment.advice.application.port.in.advicenarration.RefreshAssessmentAdviceUseCase;
 import org.flickit.assessment.advice.application.port.out.adviceitem.DeleteAdviceItemPort;
 import org.flickit.assessment.advice.application.port.out.adviceitem.LoadAdviceItemPort;
@@ -175,7 +176,7 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
         var weakAttributeTargets = targets.weakAttributeTargets;
         var nonWeakAttributeTargets = targets.nonWeakAttributeTargets;
 
-        if (weakAttributeTargets.size() < MIN_REQUIRED_TARGET_ATTRIBUTES_SIZE) {
+        if (weakAttributeTargets.size() < MIN_REQUIRED_TARGET_ATTRIBUTES_SIZE && !nonWeakAttributeTargets.isEmpty()) {
             for (int i = 0; i < MAX_FURTHEST_TARGET_ATTRIBUTES_SIZE; i++) {
                 AttributeLevelTarget next = nonWeakAttributeTargets.pollFirst();
                 if (next == null) break;
@@ -183,14 +184,14 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
             }
         }
 
-        var improvableQuestions = new ArrayList<>(
-            createAdviceHelper.createAdvice(result.getAssessmentId(), List.copyOf(weakAttributeTargets))
+        var attributeTargets = new ArrayList<>(weakAttributeTargets);
+        List<AdviceListItem> improvableQuestions = new ArrayList<>(
+            createAdviceHelper.createAdvice(result.getAssessmentId(), List.copyOf(attributeTargets))
         );
         while (improvableQuestions.size() < MIN_REQUIRED_IMPROVABLE_QUESTIONS_SIZE && !nonWeakAttributeTargets.isEmpty()) {
             AttributeLevelTarget next = nonWeakAttributeTargets.pollFirst();
-            improvableQuestions.addAll(
-                createAdviceHelper.createAdvice(result.getAssessmentId(), List.of(next))
-            );
+            attributeTargets.add(next);
+            improvableQuestions.addAll(createAdviceHelper.createAdvice(result.getAssessmentId(), List.copyOf(attributeTargets)));
             weakAttributeTargets.add(next);
         }
 
