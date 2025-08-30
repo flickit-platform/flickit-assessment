@@ -131,6 +131,7 @@ class CreateAiAdviceNarrationHelperTest {
         assertNull(capturedAdviceNarration.getAssessorNarration());
         assertNotNull(capturedAdviceNarration.getAiNarrationTime());
         assertNull(capturedAdviceNarration.getAssessorNarrationTime());
+        assertFalse(capturedAdviceNarration.isApproved());
         assertEquals(assessmentResult.getId(), capturedAdviceNarration.getAssessmentResultId());
 
         var capturedAdviceItems = adviceItemsCaptor.getValue();
