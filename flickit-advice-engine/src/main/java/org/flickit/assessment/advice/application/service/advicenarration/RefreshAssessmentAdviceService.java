@@ -175,25 +175,24 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
     private void generateAdvice(AssessmentResult result, AttributeTargetsDto targets) {
         var weakAttributeTargets = targets.weakAttributeTargets;
         var nonWeakAttributeTargets = targets.nonWeakAttributeTargets;
+        var attributeTargets = new ArrayList<>(weakAttributeTargets);
 
-        if (weakAttributeTargets.size() < MIN_REQUIRED_TARGET_ATTRIBUTES_SIZE && !nonWeakAttributeTargets.isEmpty()) {
+        if (attributeTargets.size() < MIN_REQUIRED_TARGET_ATTRIBUTES_SIZE && !nonWeakAttributeTargets.isEmpty()) {
             for (int i = 0; i < MAX_FURTHEST_TARGET_ATTRIBUTES_SIZE; i++) {
                 AttributeLevelTarget next = nonWeakAttributeTargets.pollFirst();
                 if (next == null) break;
-                weakAttributeTargets.add(next);
+                attributeTargets.add(next);
             }
         }
 
-        var attributeTargets = new ArrayList<>(weakAttributeTargets);
         List<AdviceListItem> improvableQuestions = createAdviceHelper.createAdvice(result.getAssessmentId(), List.copyOf(attributeTargets));
-        while (improvableQuestions.size() < MIN_REQUIRED_IMPROVABLE_QUESTIONS_SIZE && !nonWeakAttributeTargets.isEmpty()) {
+        while (improvableQuestions.size() < MIN_REQUIRED_IMPROVABLE_QUESTIONS_SIZE) {
             AttributeLevelTarget next = nonWeakAttributeTargets.pollFirst();
             attributeTargets.add(next);
             improvableQuestions = createAdviceHelper.createAdvice(result.getAssessmentId(), List.copyOf(attributeTargets));
-            weakAttributeTargets.add(next);
         }
 
-        createAiAdviceNarrationHelper.createAiAdviceNarration(result, improvableQuestions, List.copyOf(weakAttributeTargets));
+        createAiAdviceNarrationHelper.createAiAdviceNarration(result, improvableQuestions, List.copyOf(attributeTargets));
     }
 
     record AttributeTargetsDto(List<AttributeLevelTarget> weakAttributeTargets,
