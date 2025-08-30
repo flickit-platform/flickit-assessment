@@ -1,5 +1,6 @@
 package org.flickit.assessment.core.application.port.out.space;
 
+import org.flickit.assessment.common.application.domain.space.SpaceStatus;
 import org.flickit.assessment.core.application.domain.Space;
 
 import java.util.Optional;
@@ -22,4 +23,6 @@ public interface LoadSpacePort {
      * @return an Optional containing the Space if found, empty Optional otherwise
      */
     Optional<Space> loadByAssessmentId(UUID assessmentId);
+
+    Optional<SpaceStatus> loadStatusById(long spaceId);
 }

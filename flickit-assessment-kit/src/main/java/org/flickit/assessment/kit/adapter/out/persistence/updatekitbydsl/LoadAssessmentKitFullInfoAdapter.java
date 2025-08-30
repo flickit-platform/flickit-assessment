@@ -114,6 +114,7 @@ public class LoadAssessmentKitFullInfoAdapter implements
             KitLanguage.valueOfById(entity.getLanguageId()),
             entity.getCreationTime(),
             entity.getLastModificationTime(),
+            entity.getCreatedBy(),
             entity.getPublished(),
             entity.getIsPrivate(),
             entity.getExpertGroupId(),

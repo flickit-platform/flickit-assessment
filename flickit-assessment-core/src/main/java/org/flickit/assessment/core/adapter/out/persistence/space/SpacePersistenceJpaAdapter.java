@@ -52,6 +52,12 @@ public class SpacePersistenceJpaAdapter implements
     }
 
     @Override
+    public Optional<SpaceStatus> loadStatusById(long spaceId) {
+        return repository.findStatusById(spaceId)
+            .map(SpaceStatus::valueOfById);
+    }
+
+    @Override
     public List<SpaceWithAssessmentCount> loadByOwnerId(UUID ownerId) {
         return repository.findByOwnerId(ownerId, SpaceStatus.ACTIVE.getId()).stream()
             .map(entity -> new SpaceWithAssessmentCount(
