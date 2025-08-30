@@ -45,8 +45,7 @@ public class CreateAiAdviceNarrationHelper {
 
     public String createAiAdviceNarration(AssessmentResult assessmentResult,
                                           List<AdviceListItem> adviceListItems,
-                                          List<AttributeLevelTarget> attributeLevelTargets,
-                                          boolean approved) {
+                                          List<AttributeLevelTarget> attributeLevelTargets) {
         if (!appAiProperties.isEnabled())
             return MessageBundle.message(ADVICE_NARRATION_AI_IS_DISABLED);
 
@@ -66,7 +65,7 @@ public class CreateAiAdviceNarrationHelper {
             updateAdviceNarrationPort.updateAiNarration(updateParam);
         } else {
             UUID assessmentResultId = assessmentResult.getId();
-            createAdviceNarrationPort.persist(toAdviceNarration(assessmentResultId, aiAdvice.narration(), approved));
+            createAdviceNarrationPort.persist(toAdviceNarration(assessmentResultId, aiAdvice.narration()));
         }
         return aiAdvice.narration();
     }
@@ -126,12 +125,12 @@ public class CreateAiAdviceNarrationHelper {
     record TargetAttribute(String attribute, String targetMaturityLevel) {
     }
 
-    AdviceNarration toAdviceNarration(UUID assessmentResultId, String aiNarration, boolean approved) {
+    AdviceNarration toAdviceNarration(UUID assessmentResultId, String aiNarration) {
         return new AdviceNarration(null,
             assessmentResultId,
             aiNarration,
             null,
-            approved,
+            false,
             LocalDateTime.now(),
             null,
             null);
