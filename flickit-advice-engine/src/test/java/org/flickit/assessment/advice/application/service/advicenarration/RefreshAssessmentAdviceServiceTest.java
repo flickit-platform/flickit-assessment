@@ -79,7 +79,7 @@ class RefreshAssessmentAdviceServiceTest {
     private RefreshAssessmentAdviceUseCase.Param param = createParam(RefreshAssessmentAdviceUseCase.Param.ParamBuilder::build);
     private AssessmentResult assessmentResult = createAssessmentResultWithAssessmentId(param.getAssessmentId());
 
-    private List<AdviceListItem> adviceListItems = createAdviceListItems(10);
+    private final List<AdviceListItem> adviceListItems = createAdviceListItems(10);
     private final Attribute attribute1 = createWithWeight(1), attribute2 = createWithWeight(3), attribute3 = createWithWeight(5);
 
     @Test
@@ -323,7 +323,9 @@ class RefreshAssessmentAdviceServiceTest {
     */
     @Test
     void testRefreshAssessmentAdvice_whenThereIsFewQuestions_thenRegenerateAdvice() {
-        adviceListItems = createAdviceListItems(4);
+        var adviceListItems1 = createAdviceListItems(4);
+        var adviceListItems2 = createAdviceListItems(8);
+        var adviceListItems3 = createAdviceListItems(11);
         Attribute attribute4 = createWithWeight(7), attribute5 = createWithWeight(8), attribute6 = createWithWeight(1),
             attribute7 = createWithWeight(2), attribute8 = createWithWeight(4);
         param = createParam(b -> b.forceRegenerate(false));
@@ -352,7 +354,10 @@ class RefreshAssessmentAdviceServiceTest {
         @SuppressWarnings("unchecked")
         ArgumentCaptor<List<AttributeLevelTarget>> narrationTargetsCaptor = ArgumentCaptor.forClass(List.class);
 
-        when(createAdviceHelper.createAdvice(eq(param.getAssessmentId()), anyList())).thenReturn(adviceListItems);
+        when(createAdviceHelper.createAdvice(eq(param.getAssessmentId()), anyList()))
+            .thenReturn(adviceListItems1)
+            .thenReturn(adviceListItems2)
+            .thenReturn(adviceListItems3);
 
         service.refreshAssessmentAdvice(param);
 
@@ -385,7 +390,7 @@ class RefreshAssessmentAdviceServiceTest {
         assertTrue(allCalls.get(2).stream().anyMatch(t -> t.getAttributeId() == attribute8.getId()));
         assertTrue(allCalls.get(2).stream().anyMatch(t -> t.getAttributeId() == attribute7.getId()));
 
-        assertEquals(12, improvableCaptor.getValue().size());
+        assertEquals(11, improvableCaptor.getValue().size());
 
         List<AttributeLevelTarget> narratedTargets = narrationTargetsCaptor.getValue();
         assertEquals(5, narratedTargets.size());
@@ -411,7 +416,10 @@ class RefreshAssessmentAdviceServiceTest {
     */
     @Test
     void testRefreshAssessmentAdvice_whenWeakAttributesAreEnoughButNotEnoughQuestions_thenRegenerateAdvice() {
-        adviceListItems = createAdviceListItems(3);
+        var adviceListItems1 = createAdviceListItems(3);
+        var adviceListItems2 = createAdviceListItems(6);
+        var adviceListItems3 = createAdviceListItems(9);
+        var adviceListItems4 = createAdviceListItems(10);
         Attribute attribute4 = createWithWeight(7), attribute5 = createWithWeight(8), attribute6 = createWithWeight(1);
         param = createParam(b -> b.forceRegenerate(false));
         assessmentResult = createAssessmentResultWithAssessmentId(param.getAssessmentId());
@@ -437,7 +445,11 @@ class RefreshAssessmentAdviceServiceTest {
         @SuppressWarnings("unchecked")
         ArgumentCaptor<List<AttributeLevelTarget>> narrationTargetsCaptor = ArgumentCaptor.forClass(List.class);
 
-        when(createAdviceHelper.createAdvice(eq(param.getAssessmentId()), anyList())).thenReturn(adviceListItems);
+        when(createAdviceHelper.createAdvice(eq(param.getAssessmentId()), anyList()))
+            .thenReturn(adviceListItems1)
+            .thenReturn(adviceListItems2)
+            .thenReturn(adviceListItems3)
+            .thenReturn(adviceListItems4);
 
         service.refreshAssessmentAdvice(param);
 
@@ -467,7 +479,7 @@ class RefreshAssessmentAdviceServiceTest {
         assertTrue(allCalls.get(2).stream().anyMatch(t -> t.getAttributeId() == attribute5.getId()));
         assertTrue(allCalls.get(2).stream().anyMatch(t -> t.getAttributeId() == attribute2.getId()));
 
-        assertEquals(12, improvableCaptor.getValue().size());
+        assertEquals(10, improvableCaptor.getValue().size());
 
         List<AttributeLevelTarget> narratedTargets = narrationTargetsCaptor.getValue();
         assertEquals(5, narratedTargets.size());

@@ -185,13 +185,11 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
         }
 
         var attributeTargets = new ArrayList<>(weakAttributeTargets);
-        List<AdviceListItem> improvableQuestions = new ArrayList<>(
-            createAdviceHelper.createAdvice(result.getAssessmentId(), List.copyOf(attributeTargets))
-        );
+        List<AdviceListItem> improvableQuestions = createAdviceHelper.createAdvice(result.getAssessmentId(), List.copyOf(attributeTargets));
         while (improvableQuestions.size() < MIN_REQUIRED_IMPROVABLE_QUESTIONS_SIZE && !nonWeakAttributeTargets.isEmpty()) {
             AttributeLevelTarget next = nonWeakAttributeTargets.pollFirst();
             attributeTargets.add(next);
-            improvableQuestions.addAll(createAdviceHelper.createAdvice(result.getAssessmentId(), List.copyOf(attributeTargets)));
+            improvableQuestions = createAdviceHelper.createAdvice(result.getAssessmentId(), List.copyOf(attributeTargets));
             weakAttributeTargets.add(next);
         }
 
