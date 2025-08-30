@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.advice.application.port.in.adviceitem.UpdateAdviceItemUseCase;
 import org.flickit.assessment.advice.application.port.out.adviceitem.LoadAdviceItemPort;
 import org.flickit.assessment.advice.application.port.out.adviceitem.UpdateAdviceItemPort;
-import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.common.application.domain.adviceitem.CostLevel;
 import org.flickit.assessment.common.application.domain.adviceitem.ImpactLevel;
 import org.flickit.assessment.common.application.domain.adviceitem.PriorityLevel;
@@ -17,8 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static org.flickit.assessment.advice.common.ErrorMessageKey.UPDATE_ADVICE_ITEM_ADVICE_ITEM_NOT_FOUND;
-import static org.flickit.assessment.advice.common.ErrorMessageKey.UPDATE_ADVICE_ITEM_ASSESSMENT_RESULT_NOT_FOUND;
+import static org.flickit.assessment.advice.common.ErrorMessageKey.UPDATE_ADVICE_ITEM_ASSESSMENT_NOT_FOUND;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.MANAGE_ADVICE_ITEM;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
@@ -28,18 +26,15 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 public class UpdateAdviceItemService implements UpdateAdviceItemUseCase {
 
     private final LoadAdviceItemPort loadAdviceItemPort;
-    private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final AssessmentAccessChecker assessmentAccessChecker;
     private final UpdateAdviceItemPort updateAdviceItemPort;
 
     @Override
     public void updateAdviceItem(Param param) {
-        var adviceItem = loadAdviceItemPort.load(param.getAdviceItemId())
-                .orElseThrow(() -> new ResourceNotFoundException(UPDATE_ADVICE_ITEM_ADVICE_ITEM_NOT_FOUND));
-        var assessmentResult = loadAssessmentResultPort.loadById(adviceItem.getAssessmentResultId())
-                .orElseThrow(() -> new ResourceNotFoundException(UPDATE_ADVICE_ITEM_ASSESSMENT_RESULT_NOT_FOUND));
+        var assessmentId = loadAdviceItemPort.loadAssessmentIdById(param.getAdviceItemId())
+            .orElseThrow(() -> new ResourceNotFoundException(UPDATE_ADVICE_ITEM_ASSESSMENT_NOT_FOUND));
 
-        validateUserAccess(assessmentResult.getAssessmentId(), param.getCurrentUserId());
+        validateUserAccess(assessmentId, param.getCurrentUserId());
 
         updateAdviceItemPort.update(toParam(param));
     }

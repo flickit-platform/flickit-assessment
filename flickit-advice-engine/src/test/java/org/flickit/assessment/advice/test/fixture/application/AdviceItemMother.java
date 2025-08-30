@@ -5,7 +5,6 @@ import org.flickit.assessment.common.application.domain.adviceitem.CostLevel;
 import org.flickit.assessment.common.application.domain.adviceitem.ImpactLevel;
 import org.flickit.assessment.common.application.domain.adviceitem.PriorityLevel;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class AdviceItemMother {
@@ -14,31 +13,9 @@ public class AdviceItemMother {
         return new AdviceItem(
             UUID.randomUUID(),
             "title",
-            UUID.randomUUID(),
             "description",
             CostLevel.MEDIUM,
             PriorityLevel.HIGH,
-            ImpactLevel.LOW,
-            LocalDateTime.now(),
-            LocalDateTime.now(),
-            UUID.randomUUID(),
-            UUID.randomUUID()
-        );
-    }
-
-    public static AdviceItem adviceItemWithLevels(int cost, int priority, int impact) {
-        return new AdviceItem(
-            UUID.randomUUID(),
-            "title",
-            UUID.randomUUID(),
-            "description",
-            CostLevel.valueOfById(cost),
-            PriorityLevel.valueOfById(priority),
-            ImpactLevel.valueOfById(impact),
-            LocalDateTime.now(),
-            LocalDateTime.now(),
-            UUID.randomUUID(),
-            UUID.randomUUID()
-        );
+            ImpactLevel.LOW);
     }
 }

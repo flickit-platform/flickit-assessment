@@ -67,12 +67,10 @@ public class ErrorMessageKey {
     public static final String UPDATE_ADVICE_ITEM_PRIORITY_INVALID = "update-advice-item.priority.invalid";
     public static final String UPDATE_ADVICE_ITEM_IMPACT_NOT_NULL = "update-advice-item.impact.notNull";
     public static final String UPDATE_ADVICE_ITEM_IMPACT_INVALID = "update-advice-item.impact.invalid";
-    public static final String UPDATE_ADVICE_ITEM_ADVICE_ITEM_NOT_FOUND = "update-advice-item.adviceItem.notFound";
-    public static final String UPDATE_ADVICE_ITEM_ASSESSMENT_RESULT_NOT_FOUND = "update-advice-item.assessmentResult.notFound";
+    public static final String UPDATE_ADVICE_ITEM_ASSESSMENT_NOT_FOUND = "update-advice-item.assessment.notFound";
 
     public static final String DELETE_ADVICE_ITEM_ID_NOT_NULL = "delete-advice-item.id.notNull";
-    public static final String DELETE_ADVICE_ITEM_ADVICE_ITEM_NOT_FOUND = "delete-advice-item.adviceItem.notFound";
-    public static final String DELETE_ADVICE_ITEM_ASSESSMENT_RESULT_NOT_FOUND = "delete-advice-item.assessmentResult.notFound";
+    public static final String DELETE_ADVICE_ITEM_ASSESSMENT_NOT_FOUND = "delete-advice-item.assessment.notFound";
 
     public static final String REFRESH_ASSESSMENT_ADVICE_ASSESSMENT_ID_NOT_NULL = "refresh-assessment-advice.assessmentId.notNull";
     public static final String REFRESH_ASSESSMENT_ADVICE_FORCE_REGENERATE_NOT_NULL = "refresh-assessment-advice.forceRegenerate.notNull";

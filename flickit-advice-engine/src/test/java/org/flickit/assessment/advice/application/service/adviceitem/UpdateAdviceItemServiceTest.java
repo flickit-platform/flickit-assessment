@@ -3,9 +3,6 @@ package org.flickit.assessment.advice.application.service.adviceitem;
 import org.flickit.assessment.advice.application.port.in.adviceitem.UpdateAdviceItemUseCase;
 import org.flickit.assessment.advice.application.port.out.adviceitem.LoadAdviceItemPort;
 import org.flickit.assessment.advice.application.port.out.adviceitem.UpdateAdviceItemPort;
-import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadAssessmentResultPort;
-import org.flickit.assessment.advice.test.fixture.application.AdviceItemMother;
-import org.flickit.assessment.advice.test.fixture.application.AssessmentResultMother;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
@@ -20,8 +17,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-import static org.flickit.assessment.advice.common.ErrorMessageKey.UPDATE_ADVICE_ITEM_ADVICE_ITEM_NOT_FOUND;
-import static org.flickit.assessment.advice.common.ErrorMessageKey.UPDATE_ADVICE_ITEM_ASSESSMENT_RESULT_NOT_FOUND;
+import static org.flickit.assessment.advice.common.ErrorMessageKey.UPDATE_ADVICE_ITEM_ASSESSMENT_NOT_FOUND;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.MANAGE_ADVICE_ITEM;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -38,37 +34,19 @@ class UpdateAdviceItemServiceTest {
     LoadAdviceItemPort loadAdviceItemPort;
 
     @Mock
-    LoadAssessmentResultPort loadAssessmentResultPort;
-
-    @Mock
     AssessmentAccessChecker assessmentAccessChecker;
 
     @Mock
     UpdateAdviceItemPort updateAdviceItemPort;
 
     @Test
-    void testUpdateAdviceItem_whenAdviceItemNotExist_thenThrowResourceNotFoundException() {
+    void testUpdateAdviceItem_whenAssessmentNotExist_thenThrowResourceNotFoundException() {
         var param = createParam(UpdateAdviceItemUseCase.Param.ParamBuilder::build);
 
-        when(loadAdviceItemPort.load(param.getAdviceItemId())).thenReturn(Optional.empty());
+        when(loadAdviceItemPort.loadAssessmentIdById(param.getAdviceItemId())).thenReturn(Optional.empty());
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.updateAdviceItem(param));
-        assertEquals(UPDATE_ADVICE_ITEM_ADVICE_ITEM_NOT_FOUND, throwable.getMessage());
-
-        verifyNoInteractions(loadAssessmentResultPort, assessmentAccessChecker, updateAdviceItemPort);
-    }
-
-
-    @Test
-    void testUpdateAdviceItem_whenAssessmentResultNotExist_thenThrowResourceNotFoundException() {
-        var param = createParam(UpdateAdviceItemUseCase.Param.ParamBuilder::build);
-        var adviceItem = AdviceItemMother.adviceItem();
-
-        when(loadAdviceItemPort.load(param.getAdviceItemId())).thenReturn(Optional.of(adviceItem));
-        when(loadAssessmentResultPort.loadById(adviceItem.getAssessmentResultId())).thenReturn(Optional.empty());
-
-        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.updateAdviceItem(param));
-        assertEquals(UPDATE_ADVICE_ITEM_ASSESSMENT_RESULT_NOT_FOUND, throwable.getMessage());
+        assertEquals(UPDATE_ADVICE_ITEM_ASSESSMENT_NOT_FOUND, throwable.getMessage());
 
         verifyNoInteractions(assessmentAccessChecker, updateAdviceItemPort);
     }
@@ -76,12 +54,10 @@ class UpdateAdviceItemServiceTest {
     @Test
     void testUpdateAdviceItem_whenUserIsNotAuthorized_thenThrowAccessDeniedException() {
         var param = createParam(UpdateAdviceItemUseCase.Param.ParamBuilder::build);
-        var adviceItem = AdviceItemMother.adviceItem();
-        var assessmentResult = AssessmentResultMother.createAssessmentResult();
+        var assessmentId = UUID.randomUUID();
 
-        when(loadAdviceItemPort.load(param.getAdviceItemId())).thenReturn(Optional.of(adviceItem));
-        when(loadAssessmentResultPort.loadById(adviceItem.getAssessmentResultId())).thenReturn(Optional.of(assessmentResult));
-        when(assessmentAccessChecker.isAuthorized(assessmentResult.getAssessmentId(), param.getCurrentUserId(), MANAGE_ADVICE_ITEM)).thenReturn(false);
+        when(loadAdviceItemPort.loadAssessmentIdById(param.getAdviceItemId())).thenReturn(Optional.of(assessmentId));
+        when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), MANAGE_ADVICE_ITEM)).thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.updateAdviceItem(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
@@ -92,12 +68,10 @@ class UpdateAdviceItemServiceTest {
     @Test
     void testUpdateAdviceItem_whenValidParameter_thenUpdatesAdviceItemSuccessfully() {
         var param = createParam(UpdateAdviceItemUseCase.Param.ParamBuilder::build);
-        var adviceItem = AdviceItemMother.adviceItem();
-        var assessmentResult = AssessmentResultMother.createAssessmentResult();
+        var assessmentId = UUID.randomUUID();
 
-        when(loadAdviceItemPort.load(param.getAdviceItemId())).thenReturn(Optional.of(adviceItem));
-        when(loadAssessmentResultPort.loadById(adviceItem.getAssessmentResultId())).thenReturn(Optional.of(assessmentResult));
-        when(assessmentAccessChecker.isAuthorized(assessmentResult.getAssessmentId(), param.getCurrentUserId(), MANAGE_ADVICE_ITEM)).thenReturn(true);
+        when(loadAdviceItemPort.loadAssessmentIdById(param.getAdviceItemId())).thenReturn(Optional.of(assessmentId));
+        when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), MANAGE_ADVICE_ITEM)).thenReturn(true);
 
         service.updateAdviceItem(param);
 
@@ -110,7 +84,6 @@ class UpdateAdviceItemServiceTest {
         assertEquals(param.getPriority(), argumentCaptor.getValue().priority().name());
         assertEquals(param.getCurrentUserId(), argumentCaptor.getValue().lastModifiedBy());
     }
-
 
     private UpdateAdviceItemUseCase.Param createParam(Consumer<UpdateAdviceItemUseCase.Param.ParamBuilder> changer) {
         var paramBuilder = paramBuilder();

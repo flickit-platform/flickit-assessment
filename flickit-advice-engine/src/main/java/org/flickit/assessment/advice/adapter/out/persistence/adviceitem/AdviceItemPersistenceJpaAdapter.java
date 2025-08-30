@@ -29,15 +29,15 @@ public class AdviceItemPersistenceJpaAdapter implements
     private final AdviceItemJpaRepository repository;
 
     @Override
-    public UUID persist(AdviceItem adviceItem) {
-        var entity = AdviceItemMapper.toJpaEntity(adviceItem);
+    public UUID persist(CreateAdviceItemPort.Param param, UUID assessmentResultId) {
+        var entity = AdviceItemMapper.toJpaEntity(param, assessmentResultId);
         return repository.save(entity).getId();
     }
 
     @Override
-    public void persistAll(List<AdviceItem> adviceItems) {
+    public void persistAll(List<CreateAdviceItemPort.Param> adviceItems, UUID assessmentResultId) {
         var entities = adviceItems.stream()
-            .map(AdviceItemMapper::toJpaEntity)
+            .map(e -> AdviceItemMapper.toJpaEntity(e, assessmentResultId))
             .toList();
         repository.saveAll(entities);
     }
@@ -87,8 +87,8 @@ public class AdviceItemPersistenceJpaAdapter implements
     }
 
     @Override
-    public Optional<AdviceItem> load(UUID id) {
-        return repository.findById(id).map(AdviceItemMapper::mapToDomainModel);
+    public Optional<UUID> loadAssessmentIdById(UUID id) {
+        return repository.findAssessmentIdById(id);
     }
 
     @Override

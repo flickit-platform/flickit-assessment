@@ -1,7 +1,6 @@
 package org.flickit.assessment.advice.application.service.adviceitem;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.advice.application.domain.AdviceItem;
 import org.flickit.assessment.advice.application.port.in.adviceitem.CreateAdviceItemUseCase;
 import org.flickit.assessment.advice.application.port.out.adviceitem.CreateAdviceItemPort;
 import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadAssessmentResultPort;
@@ -37,7 +36,7 @@ public class CreateAdviceItemService implements CreateAdviceItemUseCase {
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(CREATE_ADVICE_ITEM_ASSESSMENT_RESULT_NOT_FOUND));
 
-        return new Result(createAdviceItemPort.persist(toAdviceItem(param, assessmentResult.getId())));
+        return new Result(createAdviceItemPort.persist(toCreateParam(param), assessmentResult.getId()));
     }
 
     private void validateUserAccess(UUID assessmentId, UUID currentUserId) {
@@ -45,17 +44,14 @@ public class CreateAdviceItemService implements CreateAdviceItemUseCase {
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
     }
 
-    private AdviceItem toAdviceItem(Param param, UUID assessmentResultId) {
-        return new AdviceItem(null,
+    private CreateAdviceItemPort.Param toCreateParam(Param param) {
+        return new CreateAdviceItemPort.Param(
             param.getTitle(),
-            assessmentResultId,
             param.getDescription(),
             CostLevel.valueOf(param.getCost()),
             PriorityLevel.valueOf(param.getPriority()),
             ImpactLevel.valueOf(param.getImpact()),
             LocalDateTime.now(),
-            LocalDateTime.now(),
-            param.getCurrentUserId(),
             param.getCurrentUserId());
     }
 }
