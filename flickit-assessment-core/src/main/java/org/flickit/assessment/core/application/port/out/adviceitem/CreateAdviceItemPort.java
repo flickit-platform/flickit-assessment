@@ -1,4 +1,4 @@
-package org.flickit.assessment.advice.application.port.out.adviceitem;
+package org.flickit.assessment.core.application.port.out.adviceitem;
 
 import org.flickit.assessment.common.application.domain.adviceitem.CostLevel;
 import org.flickit.assessment.common.application.domain.adviceitem.ImpactLevel;
@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.UUID;
 
 public interface CreateAdviceItemPort {
+
+    UUID persist(Param param, UUID assessmentResultId);
 
     void persistAll(List<Param> params, UUID assessmentResultId);
 

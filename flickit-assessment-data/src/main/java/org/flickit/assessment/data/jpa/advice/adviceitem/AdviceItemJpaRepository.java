@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface AdviceItemJpaRepository extends JpaRepository<AdviceItemJpaEntity, UUID> {
@@ -19,6 +20,14 @@ public interface AdviceItemJpaRepository extends JpaRepository<AdviceItemJpaEnti
     void deleteByAssessmentResultIdAndCreatedByIsNullAndLastModifiedByIsNull(UUID assessmentResultId);
 
     boolean existsByAssessmentResultId(UUID assessmentResultId);
+
+    @Query("""
+            SELECT a.assessment.id
+            FROM AdviceItemJpaEntity ad
+            JOIN AssessmentResultJpaEntity a ON a.id = ad.assessmentResultId
+            WHERE ad.id = :id
+        """)
+    Optional<UUID> findAssessmentIdById(UUID id);
 
     @Modifying
     @Query("""

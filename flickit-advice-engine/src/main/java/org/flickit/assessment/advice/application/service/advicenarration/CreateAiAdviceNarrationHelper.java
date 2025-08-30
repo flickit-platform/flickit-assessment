@@ -49,16 +49,15 @@ public class CreateAiAdviceNarrationHelper {
         if (!appAiProperties.isEnabled())
             return MessageBundle.message(ADVICE_NARRATION_AI_IS_DISABLED);
 
-        var adviceNarration = loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId());
-
         var prompt = createPrompt(adviceListItems, attributeLevelTargets, assessmentResult.getAssessmentId(), assessmentResult.getLanguage());
         AdviceDto aiAdvice = callAiPromptPort.call(prompt, AdviceDto.class);
 
         var adviceItems = aiAdvice.adviceItems().stream()
-            .map(i -> i.toDomainModel(assessmentResult.getId()))
+            .map(AdviceDto.AdviceItemDto::toCreateParam)
             .toList();
-        createAdviceItemPort.persistAll(adviceItems);
+        createAdviceItemPort.persistAll(adviceItems, assessmentResult.getId());
 
+        var adviceNarration = loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId());
         if (adviceNarration.isPresent()) {
             UUID narrationId = adviceNarration.get().getId();
             var updateParam = new UpdateAdviceNarrationPort.AiNarrationParam(narrationId, aiAdvice.narration(), LocalDateTime.now());
@@ -103,17 +102,14 @@ public class CreateAiAdviceNarrationHelper {
 
         record AdviceItemDto(String title, String description, int cost, int priority, int impact) {
 
-            AdviceItem toDomainModel(UUID assessmentResultId) {
-                return new AdviceItem(null,
+            CreateAdviceItemPort.Param toCreateParam() {
+                return new CreateAdviceItemPort.Param(
                     title,
-                    assessmentResultId,
                     description,
                     CostLevel.valueOfById(cost),
                     PriorityLevel.valueOfById(priority),
                     ImpactLevel.valueOfById(impact),
                     LocalDateTime.now(),
-                    LocalDateTime.now(),
-                    null,
                     null);
             }
         }
