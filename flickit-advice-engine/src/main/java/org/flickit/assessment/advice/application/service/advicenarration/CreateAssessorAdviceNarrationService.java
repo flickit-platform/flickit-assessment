@@ -63,6 +63,7 @@ public class CreateAssessorAdviceNarrationService implements CreateAssessorAdvic
             assessmentResultId,
             null,
             param.getAssessorNarration(),
+            true,
             null,
             LocalDateTime.now(),
             param.getCurrentUserId());

@@ -175,6 +175,7 @@ public class CreateAiAdviceNarrationService implements CreateAiAdviceNarrationUs
             assessmentResultId,
             aiNarration,
             null,
+            false,
             LocalDateTime.now(),
             null,
             null);
