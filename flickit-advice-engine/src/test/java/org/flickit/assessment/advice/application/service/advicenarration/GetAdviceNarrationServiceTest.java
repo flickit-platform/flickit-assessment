@@ -87,6 +87,10 @@ class GetAdviceNarrationServiceTest {
         assertNull(result.assessorNarration());
         assertTrue(result.editable());
         assertTrue(result.aiEnabled());
+
+        assertTrue(result.issues().notGenerated());
+        assertFalse(result.issues().unapproved());
+        assertFalse(result.issues().expired());
     }
 
     @Test
@@ -112,6 +116,10 @@ class GetAdviceNarrationServiceTest {
         assertNull(result.assessorNarration());
         assertTrue(result.editable());
         assertFalse(result.aiEnabled());
+
+        assertFalse(result.issues().notGenerated());
+        assertTrue(result.issues().unapproved());
+        assertFalse(result.issues().expired());
     }
 
     @Test
@@ -137,5 +145,9 @@ class GetAdviceNarrationServiceTest {
         assertEquals(adviceNarration.getAssessorNarrationTime(), result.assessorNarration().creationTime());
         assertFalse(result.editable());
         assertTrue(result.aiEnabled());
+
+        assertFalse(result.issues().notGenerated());
+        assertFalse(result.issues().unapproved());
+        assertFalse(result.issues().expired());
     }
 }

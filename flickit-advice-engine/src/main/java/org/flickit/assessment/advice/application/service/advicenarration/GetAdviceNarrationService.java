@@ -3,6 +3,7 @@ package org.flickit.assessment.advice.application.service.advicenarration;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.advice.application.domain.AdviceNarration;
 import org.flickit.assessment.advice.application.port.in.advicenarration.GetAdviceNarrationUseCase;
+import org.flickit.assessment.advice.application.port.in.advicenarration.GetAdviceNarrationUseCase.Result.Issues;
 import org.flickit.assessment.advice.application.port.out.advicenarration.LoadAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
@@ -11,6 +12,8 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 import static org.flickit.assessment.advice.common.ErrorMessageKey.GET_ADVICE_NARRATION_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_ADVICE;
@@ -39,23 +42,29 @@ public class GetAdviceNarrationService implements GetAdviceNarrationUseCase {
         boolean aiEnabled = appAiProperties.isEnabled();
 
         var adviceNarration = loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId());
+        var issues = buildIssues(adviceNarration);
 
         if (adviceNarration.isEmpty())
-            return new Result(null, null, editable, aiEnabled);
+            return new Result(null, null, issues, editable, aiEnabled);
 
         var narration = adviceNarration.get();
         return (narration.getCreatedBy() == null)
-            ? getAiNarration(narration, editable, aiEnabled)
-            : getAssessorNarration(narration, editable, aiEnabled);
+            ? getAiNarration(narration, issues, editable, aiEnabled)
+            : getAssessorNarration(narration, issues, editable, aiEnabled);
     }
 
-    private Result getAiNarration(AdviceNarration narration, boolean editable, boolean aiEnabled) {
+    private Issues buildIssues(Optional<AdviceNarration> adviceNarration) {
+        return adviceNarration.map(narration -> new Issues(false, !narration.isApproved(), false))
+            .orElseGet(() -> new Issues(true, false, false));
+    }
+
+    private Result getAiNarration(AdviceNarration narration, Issues issues, boolean editable, boolean aiEnabled) {
         var aiNarration = new Result.AdviceNarration(narration.getAiNarration(), narration.getAiNarrationTime());
-        return new Result(aiNarration, null, editable, aiEnabled);
+        return new Result(aiNarration, null, issues, editable, aiEnabled);
     }
 
-    private Result getAssessorNarration(AdviceNarration narration, boolean editable, boolean aiEnabled) {
+    private Result getAssessorNarration(AdviceNarration narration, Issues issues, boolean editable, boolean aiEnabled) {
         var assessorNarration = new Result.AdviceNarration(narration.getAssessorNarration(), narration.getAssessorNarrationTime());
-        return new Result(null, assessorNarration, editable, aiEnabled);
+        return new Result(null, assessorNarration, issues, editable, aiEnabled);
     }
 }
