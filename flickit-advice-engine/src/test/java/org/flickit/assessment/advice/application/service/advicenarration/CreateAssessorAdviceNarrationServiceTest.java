@@ -86,9 +86,19 @@ class CreateAssessorAdviceNarrationServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
         when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.empty());
-        doNothing().when(createAdviceNarrationPort).persist(any(AdviceNarration.class));
+        ArgumentCaptor<AdviceNarration> adviceNarrationArgumentCaptor = ArgumentCaptor.forClass(AdviceNarration.class);
 
         service.createAssessorAdviceNarration(param);
+        verify(createAdviceNarrationPort).persist(adviceNarrationArgumentCaptor.capture());
+
+        AdviceNarration capturedAdviceNarration = adviceNarrationArgumentCaptor.getValue();
+        assertEquals(assessmentResult.getId(), capturedAdviceNarration.getAssessmentResultId());
+        assertEquals(param.getAssessorNarration() , capturedAdviceNarration.getAssessorNarration());
+        assertEquals(param.getCurrentUserId(), capturedAdviceNarration.getCreatedBy());
+        assertTrue(capturedAdviceNarration.isApproved());
+        assertNull(capturedAdviceNarration.getAiNarration());
+        assertNull(capturedAdviceNarration.getAiNarrationTime());
+        assertNotNull(capturedAdviceNarration.getAssessorNarrationTime());
 
         verifyNoInteractions(updateAdviceNarrationPort);
     }
