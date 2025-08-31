@@ -61,7 +61,7 @@ public class CreateAiAdviceNarrationHelper {
 
         if (adviceNarration.isPresent()) {
             UUID narrationId = adviceNarration.get().getId();
-            var updateParam = new UpdateAdviceNarrationPort.AiNarrationParam(narrationId, aiAdvice.narration(), LocalDateTime.now());
+            var updateParam = buildAiNarrationParam(narrationId, aiAdvice);
             updateAdviceNarrationPort.updateAiNarration(updateParam);
         } else {
             UUID assessmentResultId = assessmentResult.getId();
@@ -97,6 +97,13 @@ public class CreateAiAdviceNarrationHelper {
                 "adviceRecommendations", adviceRecommendations,
                 "language", kitLanguage.getTitle()))
             .create();
+    }
+
+    private UpdateAdviceNarrationPort.AiNarrationParam buildAiNarrationParam(UUID narrationId, AdviceDto aiAdvice) {
+        return new UpdateAdviceNarrationPort.AiNarrationParam(narrationId,
+            aiAdvice.narration(),
+            false,
+            LocalDateTime.now());
     }
 
     record AdviceDto(String narration, List<AdviceItemDto> adviceItems) {

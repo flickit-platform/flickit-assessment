@@ -29,6 +29,7 @@ public class AdviceNarrationPersistenceJpaAdapter implements
     public void updateAssessorNarration(AssessorNarrationParam param) {
         repository.updateAssessorNarration(param.id(),
             param.narration(),
+            param.approved(),
             param.narrationTime(),
             param.createdBy());
     }
@@ -37,6 +38,7 @@ public class AdviceNarrationPersistenceJpaAdapter implements
     public void updateAiNarration(AiNarrationParam param) {
         repository.updateAiNarration(param.id(),
             param.narration(),
+            param.approved(),
             param.narrationTime());
     }
 

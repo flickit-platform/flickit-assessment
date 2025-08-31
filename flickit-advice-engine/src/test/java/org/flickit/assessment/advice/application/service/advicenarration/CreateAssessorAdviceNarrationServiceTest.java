@@ -122,6 +122,7 @@ class CreateAssessorAdviceNarrationServiceTest {
         assertEquals(adviceNarration.getId(), updateParamCaptor.getValue().id());
         assertEquals(param.getAssessorNarration(), updateParamCaptor.getValue().narration());
         assertNotNull(updateParamCaptor.getValue().id());
+        assertTrue(updateParamCaptor.getValue().approved());
         assertEquals(param.getCurrentUserId(), updateParamCaptor.getValue().createdBy());
 
         verifyNoInteractions(createAdviceNarrationPort);

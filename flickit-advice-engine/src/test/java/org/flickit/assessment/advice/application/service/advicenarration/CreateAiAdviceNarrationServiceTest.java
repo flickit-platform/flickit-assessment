@@ -247,6 +247,7 @@ class CreateAiAdviceNarrationServiceTest {
         assertEquals(aiNarration, capturedAdviceNarration.narration());
         assertEquals(expectedPrompt.getContents(), promptArgumentCaptor.getValue().getContents());
         assertNotNull(capturedAdviceNarration.narrationTime());
+        assertFalse(capturedAdviceNarration.approved());
 
         var capturedAdviceItems = adviceItemsCaptor.getValue();
         var expectedAdviceItems = aiAdvice.adviceItems();
@@ -284,6 +285,7 @@ class CreateAiAdviceNarrationServiceTest {
         assertEquals(aiNarration, capturedAdviceNarration.narration());
         assertEquals(expectedPrompt.getContents(), promptArgumentCaptor.getValue().getContents());
         assertNotNull(capturedAdviceNarration.narrationTime());
+        assertFalse(capturedAdviceNarration.approved());
 
         var capturedAdviceItems = adviceItemsCaptor.getValue();
         var expectedAdviceItems = aiAdvice.adviceItems();
