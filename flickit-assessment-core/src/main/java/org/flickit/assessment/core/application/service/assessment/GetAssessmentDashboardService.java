@@ -6,15 +6,13 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentAcc
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.util.ClassUtils;
-import org.flickit.assessment.core.application.domain.AssessmentReport;
-import org.flickit.assessment.core.application.domain.AssessmentReportMetadata;
-import org.flickit.assessment.core.application.domain.AssessmentResult;
-import org.flickit.assessment.core.application.domain.ConfidenceLevel;
+import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.domain.insight.AssessmentInsight;
 import org.flickit.assessment.core.application.domain.insight.AttributeInsight;
 import org.flickit.assessment.core.application.domain.insight.SubjectInsight;
 import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentDashboardUseCase;
 import org.flickit.assessment.core.application.port.out.adviceitem.CountAdviceItemsPort;
+import org.flickit.assessment.core.application.port.out.advicenarration.LoadAdviceNarrationPort;
 import org.flickit.assessment.core.application.port.out.answer.CountAnswersPort;
 import org.flickit.assessment.core.application.port.out.answer.CountLowConfidenceAnswersPort;
 import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentPort;
@@ -57,6 +55,7 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
     private final LoadAssessmentInsightPort loadAssessmentInsightPort;
     private final LoadAssessmentReportPort loadAssessmentReportPort;
     private final CountAnswersPort countAnswersPort;
+    private final LoadAdviceNarrationPort loadAdviceNarrationPort;
 
     @Override
     public Result getAssessmentDashboard(Param param) {
@@ -71,7 +70,7 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
         return new Result(
             buildQuestionsResult(param.getAssessmentId(), assessmentResult.getId()),
             buildInsightsResult(assessmentResult),
-            buildAdvices(assessmentResult.getId()),
+            buildAdvices(assessmentResult.getId(), assessmentResult.getLastCalculationTime()),
             buildReport(assessmentReport)
         );
     }
@@ -156,9 +155,22 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
         return expiredAttributeInsightsCount + expiredSubjectsInsightsCount + assessmentInsightExpired;
     }
 
-    private Result.Advices buildAdvices(UUID assessmentResultId) {
-        var adviceItemsCount = loadAdvicesDashboardPort.countAdviceItems(assessmentResultId);
-        return new Result.Advices(adviceItemsCount);
+    private Result.Advices buildAdvices(UUID assessmentResultId, LocalDateTime lastCalculationTime) {
+        int adviceItemsCount = loadAdvicesDashboardPort.countAdviceItems(assessmentResultId);
+
+        return loadAdviceNarrationPort.loadAdviceNarration(assessmentResultId)
+            .map(narration -> {
+                int expired = isExpired(narration, lastCalculationTime) ? 1 : 0;
+                int unapproved = narration.isApproved() ? 0 : 1;
+                return new Result.Advices(adviceItemsCount, unapproved, expired);
+            })
+            .orElseGet(() -> new Result.Advices(adviceItemsCount, 0, 0));
+    }
+
+    private boolean isExpired(AdviceNarration narration, LocalDateTime lastCalculationTime) {
+        if (narration.getCreatedBy() == null)
+            return narration.getAiNarrationTime().isBefore(lastCalculationTime);
+        return narration.getAssessorNarrationTime().isBefore(lastCalculationTime);
     }
 
     private Result.Report buildReport(AssessmentReport assessmentReport) {
