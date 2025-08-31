@@ -1,10 +1,12 @@
 package org.flickit.assessment.core.adapter.out.persistence.advicenarration;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.core.application.domain.AdviceNarration;
 import org.flickit.assessment.core.application.port.out.advicenarration.LoadAdviceNarrationPort;
 import org.flickit.assessment.data.jpa.advice.advicenarration.AdviceNarrationJpaRepository;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Component("coreAdviceNarrationPersistenceJpaAdapter")
@@ -24,5 +26,11 @@ public class AdviceNarrationPersistenceJpaAdapter implements LoadAdviceNarration
             return narration.getAiNarration();
         }
         return narration.getAssessorNarration();
+    }
+
+    @Override
+    public Optional<AdviceNarration> loadAdviceNarration(UUID assessmentResultId) {
+        return repository.findByAssessmentResultId(assessmentResultId)
+            .map(AdviceNarrationMapper::mapToDomainModel);
     }
 }
