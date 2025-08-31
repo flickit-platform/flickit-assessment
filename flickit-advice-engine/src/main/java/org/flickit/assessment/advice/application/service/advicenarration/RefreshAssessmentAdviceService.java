@@ -23,11 +23,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.function.Function;
 
 import static java.lang.Math.ceilDiv;
 import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.toMap;
-import static java.util.stream.Collectors.toSet;
 import static org.flickit.assessment.advice.common.ErrorMessageKey.REFRESH_ASSESSMENT_ADVICE_MEDIAN_MATURITY_LEVEL_NOT_FOUND;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.REFRESH_ASSESSMENT_ADVICE;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
@@ -104,9 +104,7 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
 
         var weakAttributeTargets = buildWeakAttributeTargets(weakAttributeIds, midLevel);
 
-        List<Long> attributeIds = attributeValues.stream().map(LoadAttributeValuesPort.Result::attributeId).toList();
-        var attributes = loadAttributesPort.loadByIdsAndAssessmentId(attributeIds, result.getAssessmentId());
-        var nonWeakAttributeTargets = buildNonWeakAttributeTargets(attributes, sortedLevels, nonWeakAttributes, maxLevel);
+        var nonWeakAttributeTargets = buildNonWeakAttributeTargets(sortedLevels, nonWeakAttributes, maxLevel, result.getAssessmentId());
 
         return AttributeTargetsDto.of(weakAttributeTargets, nonWeakAttributeTargets);
     }
@@ -127,10 +125,12 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
             .toList();
     }
 
-    private List<AttributeLevelTarget> buildNonWeakAttributeTargets(List<Attribute> attributes,
-                                                                    List<MaturityLevel> maturityLevels,
+    private List<AttributeLevelTarget> buildNonWeakAttributeTargets(List<MaturityLevel> maturityLevels,
                                                                     List<LoadAttributeValuesPort.Result> attributeValues,
-                                                                    MaturityLevel maxLevel) {
+                                                                    MaturityLevel maxLevel,
+                                                                    UUID assessmentId) {
+        List<Long> attributeIds = attributeValues.stream().map(LoadAttributeValuesPort.Result::attributeId).toList();
+        var attributes = loadAttributesPort.loadByIdsAndAssessmentId(attributeIds, assessmentId);
         var attributeIdToWeightMap = attributes.stream()
             .collect(toMap(Attribute::getId, Attribute::getWeight));
         var maturityLevelIdToIndexMap = maturityLevels.stream()
@@ -144,23 +144,20 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
             })
             .sorted(Map.Entry.<Long, Integer>comparingByValue().reversed())
             .map(Map.Entry::getKey)
-            .collect(toSet());
+            .toList();
 
-        Comparator<LoadAttributeValuesPort.Result> scoreComparator =
-            Comparator.comparingInt(v ->
-                (maxLevel.getIndex() - maturityLevelIdToIndexMap.get(v.maturityLevelId()))
-                    * attributeIdToWeightMap.get(v.attributeId())
-            );
-        return attributeValues.stream()
-            .filter(v -> mostImportantAttributes.contains(v.attributeId()))
-            .sorted(scoreComparator)
+        var attrIdToValueMap = attributeValues.stream()
+            .collect(toMap(LoadAttributeValuesPort.Result::attributeId, Function.identity()));
+
+        return mostImportantAttributes.stream()
+            .map(attrIdToValueMap::get)
             .flatMap(value -> toTarget(
                     value.attributeId(),
                     maturityLevelIdToIndexMap.get(value.maturityLevelId()),
                     maturityLevels
                 ).stream()
             )
-            .toList().reversed();
+            .toList();
     }
 
     private Optional<AttributeLevelTarget> toTarget(long attributeId,

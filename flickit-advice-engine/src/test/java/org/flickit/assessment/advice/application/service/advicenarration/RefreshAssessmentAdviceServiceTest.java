@@ -309,7 +309,7 @@ class RefreshAssessmentAdviceServiceTest {
     /*
     | Attribute         | Weight | Maturity Level | Furthest Score |      Selected        |     Iteration     |
     |-------------------|--------|----------------|----------------|----------------------|-------------------|
-    | attribute1(1035)  |   1    |       3        |       2        | no                   |       X           |
+    | attribute1(1035)  |   1    |       4        |       1        | no                   |       X           |
     | attribute2(1036)  |   3    |       3        |       6        | yes (furthest)       |       0           |
     | attribute3(1037)  |   5    |       5        |       x        | no                   |       X           |
     | attribute4(1038)  |   7    |       1        |       x        | yes (below median)   |       0           |
@@ -330,7 +330,7 @@ class RefreshAssessmentAdviceServiceTest {
             attribute7 = createWithWeight(2), attribute8 = createWithWeight(4);
         param = createParam(b -> b.forceRegenerate(false));
         assessmentResult = createAssessmentResultWithAssessmentId(param.getAssessmentId());
-        var attributeValues = List.of(new LoadAttributeValuesPort.Result(attribute1.getId(), levelThree().getId()),
+        var attributeValues = List.of(new LoadAttributeValuesPort.Result(attribute1.getId(), levelFour().getId()),
             new LoadAttributeValuesPort.Result(attribute2.getId(), levelThree().getId()),
             new LoadAttributeValuesPort.Result(attribute3.getId(), levelFive().getId()),
             new LoadAttributeValuesPort.Result(attribute4.getId(), levelOne().getId()),
