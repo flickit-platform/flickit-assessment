@@ -57,7 +57,7 @@ class CreateAssessorAdviceNarrationServiceTest {
     private UpdateAdviceNarrationPort updateAdviceNarrationPort;
 
     @Test
-    void testCreateAssessorAdviceNarration_WhenCurrentUserDoesNotHaveRequiredPermission_ThenThrowAccessDeniedException() {
+    void testCreateAssessorAdviceNarration_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
         var param = createParam(CreateAssessorAdviceNarrationUseCase.Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(false);
@@ -67,7 +67,7 @@ class CreateAssessorAdviceNarrationServiceTest {
     }
 
     @Test
-    void testCreateAssessorAdviceNarration_WhenAssessmentResultDoesNotNotExist_ThenThrowResourceNotFoundException() {
+    void testCreateAssessorAdviceNarration_whenAssessmentResultDoesNotNotExist_thenThrowResourceNotFoundException() {
         var param = createParam(CreateAssessorAdviceNarrationUseCase.Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(true);
@@ -78,7 +78,7 @@ class CreateAssessorAdviceNarrationServiceTest {
     }
 
     @Test
-    void testCreateAssessorAdviceNarration_WhenAdviceNarrationDoesNotExist_ThenCreateNewOne() {
+    void testCreateAssessorAdviceNarration_whenAdviceNarrationDoesNotExist_thenCreateNewOne() {
         var param = createParam(CreateAssessorAdviceNarrationUseCase.Param.ParamBuilder::build);
         AssessmentResult assessmentResult = AssessmentResultMother.createAssessmentResult();
 
@@ -94,7 +94,7 @@ class CreateAssessorAdviceNarrationServiceTest {
     }
 
     @Test
-    void testCreateAssessorAdviceNarration_WhenAdviceExists_ThenUpdateItsAssessorNarration() {
+    void testCreateAssessorAdviceNarration_whenAdviceExists_thenUpdateItsAssessorNarration() {
         var param = createParam(CreateAssessorAdviceNarrationUseCase.Param.ParamBuilder::build);
         AssessmentResult assessmentResult = AssessmentResultMother.createAssessmentResult();
         AdviceNarration adviceNarration = AdviceNarrationMother.aiNarration();
