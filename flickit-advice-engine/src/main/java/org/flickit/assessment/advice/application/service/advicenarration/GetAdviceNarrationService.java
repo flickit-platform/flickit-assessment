@@ -13,6 +13,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.flickit.assessment.advice.common.ErrorMessageKey.GET_ADVICE_NARRATION_ASSESSMENT_RESULT_NOT_FOUND;
@@ -42,7 +43,7 @@ public class GetAdviceNarrationService implements GetAdviceNarrationUseCase {
         boolean aiEnabled = appAiProperties.isEnabled();
 
         var adviceNarration = loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId());
-        var issues = buildIssues(adviceNarration);
+        var issues = buildIssues(adviceNarration, assessmentResult.getLastCalculationTime());
 
         if (adviceNarration.isEmpty())
             return new Result(null, null, issues, editable, aiEnabled);
@@ -53,8 +54,14 @@ public class GetAdviceNarrationService implements GetAdviceNarrationUseCase {
             : getAssessorNarration(narration, issues, editable, aiEnabled);
     }
 
-    private Issues buildIssues(Optional<AdviceNarration> adviceNarration) {
-        return adviceNarration.map(narration -> new Issues(false, !narration.isApproved(), false))
+    private Issues buildIssues(Optional<AdviceNarration> adviceNarration, LocalDateTime lastCalculationTime) {
+        return adviceNarration.map(narration -> {
+                boolean expired = narration.getCreatedBy() == null
+                    ? narration.getAiNarrationTime().isBefore(lastCalculationTime)
+                    : narration.getAssessorNarrationTime().isBefore(lastCalculationTime);
+
+                return new Issues(false, !narration.isApproved(), expired);
+            })
             .orElseGet(() -> new Issues(true, false, false));
     }
 
