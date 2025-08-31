@@ -22,10 +22,6 @@ public class AdviceNarrationMother {
             null);
     }
 
-    public static AdviceNarration assessorNarration() {
-        return assessorNarrationWithNarrationTime(LocalDateTime.now());
-    }
-
     public static AdviceNarration assessorNarrationWithNarrationTime(LocalDateTime narrationTime) {
         return new AdviceNarration(UUID.randomUUID(),
             UUID.randomUUID(),
