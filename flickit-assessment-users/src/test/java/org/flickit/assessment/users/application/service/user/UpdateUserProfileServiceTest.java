@@ -13,7 +13,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 
 @ExtendWith(MockitoExtension.class)
@@ -29,7 +28,7 @@ class UpdateUserProfileServiceTest {
     private ArgumentCaptor<UpdateUserPort.Param> updateUserCaptor;
 
     @Test
-    void testUpdateUserProfile_ValidInput_ValidResult() {
+    void testUpdateUserProfile_whenParamsAreValid_thenValidResult() {
         UUID userId = UUID.randomUUID();
         String displayName = "Flickit Admin";
         String bio = "Admin bio";
@@ -39,7 +38,7 @@ class UpdateUserProfileServiceTest {
             bio,
             linkedin);
 
-        doNothing().when(updateUserPort).updateUser(any());
+        doNothing().when(updateUserPort).updateUser(updateUserCaptor.capture());
 
         service.updateUserProfile(param);
 
