@@ -50,7 +50,9 @@ public interface GetAssessmentDashboardUseCase {
                                int expired) {
         }
 
-        public record Advices(int total) {
+        public record Advices(int total,
+                              int unapproved,
+                              int expired) {
         }
 
         public record Report(boolean unpublished,
