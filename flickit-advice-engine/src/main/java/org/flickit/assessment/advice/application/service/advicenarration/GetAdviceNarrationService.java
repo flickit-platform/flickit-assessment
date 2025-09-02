@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 import static org.flickit.assessment.advice.common.ErrorMessageKey.GET_ADVICE_NARRATION_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_ADVICE;
@@ -43,26 +42,25 @@ public class GetAdviceNarrationService implements GetAdviceNarrationUseCase {
         boolean aiEnabled = appAiProperties.isEnabled();
 
         var adviceNarration = loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId());
-        var issues = buildIssues(adviceNarration, assessmentResult.getLastCalculationTime());
 
-        if (adviceNarration.isEmpty())
+        if (adviceNarration.isEmpty()) {
+            var issues = new Issues(true, false, false);
             return new Result(null, null, issues, editable, aiEnabled);
+        }
 
         var narration = adviceNarration.get();
+        var issues = buildIssues(narration, assessmentResult.getLastCalculationTime());
         return (narration.getCreatedBy() == null)
             ? getAiNarration(narration, issues, editable, aiEnabled)
             : getAssessorNarration(narration, issues, editable, aiEnabled);
     }
 
-    private Issues buildIssues(Optional<AdviceNarration> adviceNarration, LocalDateTime lastCalculationTime) {
-        return adviceNarration.map(narration -> {
-                boolean expired = narration.getCreatedBy() == null
-                    ? narration.getAiNarrationTime().isBefore(lastCalculationTime)
-                    : narration.getAssessorNarrationTime().isBefore(lastCalculationTime);
+    private Issues buildIssues(AdviceNarration narration, LocalDateTime lastCalculationTime) {
+        boolean expired = narration.getCreatedBy() == null
+            ? narration.getAiNarrationTime().isBefore(lastCalculationTime)
+            : narration.getAssessorNarrationTime().isBefore(lastCalculationTime);
 
-                return new Issues(false, !narration.isApproved(), expired);
-            })
-            .orElseGet(() -> new Issues(true, false, false));
+        return new Issues(false, !narration.isApproved(), expired);
     }
 
     private Result getAiNarration(AdviceNarration narration, Issues issues, boolean editable, boolean aiEnabled) {
