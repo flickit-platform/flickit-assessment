@@ -50,17 +50,16 @@ public class UserPersistenceJpaAdapter implements
             .orElseThrow(() -> new ResourceNotFoundException(USER_BY_EMAIL_NOT_FOUND));
 
         User user = UserMapper.mapToDomainModel(userEntity);
-        return new LoadUserPort.Result(user,
-            userEntity.getLastLogin(),
-            userEntity.getIsSuperUser(),
-            userEntity.getIsStaff(),
-            userEntity.getIsActive(),
-            userEntity.getPassword());
+        return new LoadUserPort.Result(user);
     }
 
     @Override
-    public UUID persist(UUID id, String displayName, String email) {
-        UserJpaEntity userEntity = UserMapper.mapToJpaEntity(id, email, displayName);
+    public UUID persist(CreateUserPort.Param param) {
+        UserJpaEntity userEntity = UserMapper.mapToJpaEntity(param.id(),
+            param.email(),
+            param.displayName(),
+            param.creationTime(),
+            param.lastModificationTime());
 
         return repository.save(userEntity).getId();
     }
