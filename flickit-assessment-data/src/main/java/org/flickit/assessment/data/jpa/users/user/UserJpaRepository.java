@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -31,13 +32,15 @@ public interface UserJpaRepository extends JpaRepository<UserJpaEntity, UUID> {
             UPDATE UserJpaEntity a
             SET a.displayName = :displayName,
                 a.bio = :bio,
-                a.linkedin = :linkedin
+                a.linkedin = :linkedin,
+                a.lastModificationTime = :lastModificationTime
             WHERE a.id = :id
         """)
     void update(@Param("id") UUID id,
                 @Param("displayName") String displayName,
                 @Param("bio") String bio,
-                @Param("linkedin") String linkedin);
+                @Param("linkedin") String linkedin,
+                @Param("lastModificationTime") LocalDateTime lastModificationTime);
 
     @Modifying
     @Query("""

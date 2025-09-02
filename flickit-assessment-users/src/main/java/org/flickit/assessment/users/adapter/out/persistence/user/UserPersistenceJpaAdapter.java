@@ -69,7 +69,7 @@ public class UserPersistenceJpaAdapter implements
         if (!repository.existsById(param.userId()))
             throw new ResourceNotFoundException(USER_ID_NOT_FOUND);
 
-        repository.update(param.userId(), param.displayName(), param.bio(), param.linkedin());
+        repository.update(param.userId(), param.displayName(), param.bio(), param.linkedin(), param.lastModificationTime());
     }
 
     @Override
