@@ -30,11 +30,6 @@ public interface GetUserByEmailUseCase {
         }
     }
 
-    record Result(User user,
-                  LocalDateTime lastLogin,
-                  boolean isSuperUser,
-                  boolean isStaff,
-                  boolean isActive,
-                  String password) {
+    record Result(User user) {
     }
 }

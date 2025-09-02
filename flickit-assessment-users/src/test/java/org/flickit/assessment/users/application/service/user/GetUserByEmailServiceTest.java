@@ -1,6 +1,5 @@
 package org.flickit.assessment.users.application.service.user;
 
-import org.apache.commons.lang3.RandomStringUtils;
 import org.flickit.assessment.users.application.domain.User;
 import org.flickit.assessment.users.application.port.in.user.GetUserByEmailUseCase;
 import org.flickit.assessment.users.application.port.out.user.LoadUserPort;
@@ -10,7 +9,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -34,13 +32,7 @@ class GetUserByEmailServiceTest {
             "admin",
             "linkedin.com/in/flickit",
             "media/flickit.svg");
-        LocalDateTime lastLogin = LocalDateTime.now();
-        LoadUserPort.Result result = new LoadUserPort.Result(user,
-            lastLogin,
-            true,
-            true,
-            true,
-            RandomStringUtils.randomAlphanumeric(50));
+        LoadUserPort.Result result = new LoadUserPort.Result(user);
 
         when(loadUserPort.loadFullUserByEmail(mail)).thenReturn(result);
         GetUserByEmailUseCase.Param param = new GetUserByEmailUseCase.Param(mail);
@@ -48,11 +40,6 @@ class GetUserByEmailServiceTest {
 
         assertNotNull(actual);
         assertEquals(result.user(), actual.user());
-        assertEquals(result.lastLogin(), actual.lastLogin());
-        assertTrue(actual.isSuperUser());
-        assertTrue(actual.isStaff());
-        assertTrue(actual.isActive());
-        assertEquals(result.password(), actual.password());
     }
 
 }
