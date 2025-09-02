@@ -29,7 +29,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -40,6 +39,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.advice.common.ErrorMessageKey.CREATE_AI_ADVICE_NARRATION_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.advice.common.ErrorMessageKey.CREATE_AI_ADVICE_NARRATION_ATTRIBUTE_LEVEL_TARGETS_SIZE_MIN;
 import static org.flickit.assessment.advice.common.MessageKey.ADVICE_NARRATION_AI_IS_DISABLED;
+import static org.flickit.assessment.advice.test.fixture.application.AdviceNarrationMother.aiNarration;
 import static org.flickit.assessment.advice.test.fixture.application.AssessmentMother.simpleAssessment;
 import static org.flickit.assessment.advice.test.fixture.application.AssessmentResultMother.createAssessmentResult;
 import static org.flickit.assessment.advice.test.fixture.application.AttributeLevelTargetMother.createAttributeLevelTarget;
@@ -220,7 +220,7 @@ class CreateAiAdviceNarrationServiceTest {
 
     @Test
     void testCreateAiAdviceNarration_whenAdviceNarrationExistsAndShortTitleNotExists_thenUpdateAdviceNarration() {
-        var adviceNarration = new AdviceNarration(UUID.randomUUID(), assessmentResult.getId(), aiNarration, null, LocalDateTime.now(), null, UUID.randomUUID());
+        var adviceNarration = aiNarration();
         var expectedPrompt = new PromptTemplate(appAiProperties.getPrompt().getAdviceNarrationAndAdviceItems(),
             Map.of("attributeTargets", "TargetAttribute[attribute=Reliability, targetMaturityLevel=Great]",
                 "adviceRecommendations", "AdviceRecommendation[question=title, currentOption=answeredOption, recommendedOption=recommendedOption]",
@@ -247,6 +247,7 @@ class CreateAiAdviceNarrationServiceTest {
         assertEquals(aiNarration, capturedAdviceNarration.narration());
         assertEquals(expectedPrompt.getContents(), promptArgumentCaptor.getValue().getContents());
         assertNotNull(capturedAdviceNarration.narrationTime());
+        assertFalse(capturedAdviceNarration.approved());
 
         var capturedAdviceItems = adviceItemsCaptor.getValue();
         var expectedAdviceItems = aiAdvice.adviceItems();
@@ -257,7 +258,7 @@ class CreateAiAdviceNarrationServiceTest {
 
     @Test
     void testCreateAiAdviceNarration_whenAdviceNarrationExistsAndShortTitleExists_thenUpdateAdviceNarration() {
-        var adviceNarration = new AdviceNarration(UUID.randomUUID(), assessmentResult.getId(), aiNarration, null, LocalDateTime.now(), null, UUID.randomUUID());
+        var adviceNarration = aiNarration();
         var expectedPrompt = new PromptTemplate(appAiProperties.getPrompt().getAdviceNarrationAndAdviceItems(),
             Map.of("attributeTargets", "TargetAttribute[attribute=Reliability, targetMaturityLevel=Great]",
                 "adviceRecommendations", "AdviceRecommendation[question=title, currentOption=answeredOption, recommendedOption=recommendedOption]",
@@ -284,6 +285,7 @@ class CreateAiAdviceNarrationServiceTest {
         assertEquals(aiNarration, capturedAdviceNarration.narration());
         assertEquals(expectedPrompt.getContents(), promptArgumentCaptor.getValue().getContents());
         assertNotNull(capturedAdviceNarration.narrationTime());
+        assertFalse(capturedAdviceNarration.approved());
 
         var capturedAdviceItems = adviceItemsCaptor.getValue();
         var expectedAdviceItems = aiAdvice.adviceItems();
@@ -295,7 +297,7 @@ class CreateAiAdviceNarrationServiceTest {
     @Test
     void testCreateAiAdviceNarration_whenNoValidTargetExists_thenThrowValidationException() {
         var attributeLevelTargets = List.of(createAttributeLevelTarget());
-        var adviceNarration = new AdviceNarration(UUID.randomUUID(), assessmentResult.getId(), aiNarration, null, LocalDateTime.now(), null, UUID.randomUUID());
+        var adviceNarration = aiNarration();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
