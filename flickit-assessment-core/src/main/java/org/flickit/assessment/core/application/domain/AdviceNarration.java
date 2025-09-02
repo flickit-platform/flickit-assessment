@@ -11,6 +11,8 @@ import java.util.UUID;
 public class AdviceNarration {
 
     private final UUID id;
+    private final String aiNarration;
+    private final String assessorNarration;
     private final boolean approved;
     private final LocalDateTime aiNarrationTime;
     private final LocalDateTime assessorNarrationTime;

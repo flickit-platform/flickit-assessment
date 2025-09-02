@@ -9,6 +9,8 @@ public class AdviceNarrationMother {
 
     public static AdviceNarration aiAdviceNarrationWithTime(LocalDateTime narrationTime) {
         return new AdviceNarration(UUID.randomUUID(),
+            "aiNarration",
+            null,
             false,
             narrationTime,
             null,
@@ -17,6 +19,8 @@ public class AdviceNarrationMother {
 
     public static AdviceNarration assessorAdviceNarrationWithTime(LocalDateTime narrationTime) {
         return new AdviceNarration(UUID.randomUUID(),
+            "aiNarration",
+            "assessorNarration",
             true,
             LocalDateTime.MIN,
             narrationTime,

@@ -142,7 +142,7 @@ class GetAssessmentPublicReportServiceTest {
             new LoadAssessmentQuestionsPort.Result(QuestionMother.withMeasure(measure2), answer(optionFour())));
 
         when(loadAssessmentReportInfoPort.load(assessmentId)).thenReturn(assessmentReportInfo);
-        when(loadAdviceNarrationPort.load(assessmentReport.assessmentResultId())).thenReturn(null);
+        when(loadAdviceNarrationPort.loadNarration(assessmentReport.assessmentResultId())).thenReturn(null);
         when(loadAdviceItemsPort.loadAll(assessmentReport.assessmentResultId())).thenReturn(List.of());
         when(loadAssessmentQuestionsPort.loadApplicableQuestions(assessmentId))
             .thenReturn(questionAnswers);
@@ -195,7 +195,7 @@ class GetAssessmentPublicReportServiceTest {
             new LoadAssessmentQuestionsPort.Result(QuestionMother.withMeasure(measure2), answer(optionFour())));
 
         when(loadAssessmentReportInfoPort.load(assessmentId)).thenReturn(assessmentReportInfo);
-        when(loadAdviceNarrationPort.load(assessmentReport.assessmentResultId())).thenReturn(adviceNarration);
+        when(loadAdviceNarrationPort.loadNarration(assessmentReport.assessmentResultId())).thenReturn(adviceNarration);
         when(loadAdviceItemsPort.loadAll(assessmentReport.assessmentResultId())).thenReturn(adviceItems);
         when(loadAssessmentQuestionsPort.loadApplicableQuestions(assessmentId))
             .thenReturn(questionAnswers);
@@ -256,7 +256,7 @@ class GetAssessmentPublicReportServiceTest {
             new LoadAssessmentQuestionsPort.Result(QuestionMother.withMeasure(measure2), answer(optionFour())));
 
         when(loadAssessmentReportInfoPort.load(assessmentId)).thenReturn(assessmentReportInfo);
-        when(loadAdviceNarrationPort.load(assessmentReport.assessmentResultId())).thenReturn(adviceNarration);
+        when(loadAdviceNarrationPort.loadNarration(assessmentReport.assessmentResultId())).thenReturn(adviceNarration);
         when(loadAdviceItemsPort.loadAll(assessmentReport.assessmentResultId())).thenReturn(adviceItems);
         when(assessmentAccessChecker.isAuthorized(assessmentId, paramWithUserId.getCurrentUserId(), VIEW_DASHBOARD))
             .thenReturn(true);
@@ -328,7 +328,7 @@ class GetAssessmentPublicReportServiceTest {
         when(loadAssessmentQuestionsPort.loadApplicableQuestions(assessmentId))
             .thenReturn(questionAnswers);
         when(loadAdviceItemsPort.loadAll(assessmentReport.assessmentResultId())).thenReturn(List.of());
-        when(loadAdviceNarrationPort.load(assessmentReport.assessmentResultId())).thenReturn(null);
+        when(loadAdviceNarrationPort.loadNarration(assessmentReport.assessmentResultId())).thenReturn(null);
 
         var result = service.getAssessmentPublicReport(paramWithUserId);
 

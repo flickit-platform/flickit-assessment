@@ -16,7 +16,7 @@ public class AdviceNarrationPersistenceJpaAdapter implements LoadAdviceNarration
     private final AdviceNarrationJpaRepository repository;
 
     @Override
-    public String load(UUID assessmentResultId) {
+    public String loadNarration(UUID assessmentResultId) {
         var narration = repository.findByAssessmentResultId(assessmentResultId).orElse(null);
 
         if (narration == null || (narration.getAiNarration() == null && narration.getAssessorNarration() == null))
@@ -29,7 +29,7 @@ public class AdviceNarrationPersistenceJpaAdapter implements LoadAdviceNarration
     }
 
     @Override
-    public Optional<AdviceNarration> loadAdviceNarration(UUID assessmentResultId) {
+    public Optional<AdviceNarration> loadByAssessmentResultId(UUID assessmentResultId) {
         return repository.findByAssessmentResultId(assessmentResultId)
             .map(AdviceNarrationMapper::mapToDomainModel);
     }
