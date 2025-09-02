@@ -14,12 +14,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.assessment.advice.common.ErrorMessageKey.GET_ADVICE_NARRATION_ASSESSMENT_RESULT_NOT_FOUND;
-import static org.flickit.assessment.advice.test.fixture.application.AdviceNarrationMother.aiNarration;
-import static org.flickit.assessment.advice.test.fixture.application.AdviceNarrationMother.assessorNarration;
+import static org.flickit.assessment.advice.test.fixture.application.AdviceNarrationMother.*;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_ADVICE;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_REPORT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -87,6 +87,10 @@ class GetAdviceNarrationServiceTest {
         assertNull(result.assessorNarration());
         assertTrue(result.editable());
         assertTrue(result.aiEnabled());
+
+        assertTrue(result.issues().notGenerated());
+        assertFalse(result.issues().unapproved());
+        assertFalse(result.issues().expired());
     }
 
     @Test
@@ -95,7 +99,7 @@ class GetAdviceNarrationServiceTest {
         UUID currentUserId = UUID.randomUUID();
         var param = new GetAdviceNarrationUseCase.Param(assessmentId, currentUserId);
         var assessmentResult = AssessmentResultMother.createAssessmentResult();
-        var adviceNarration = aiNarration();
+        var adviceNarration = aiNarrationWithNarrationTime(LocalDateTime.MAX);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
@@ -112,6 +116,10 @@ class GetAdviceNarrationServiceTest {
         assertNull(result.assessorNarration());
         assertTrue(result.editable());
         assertFalse(result.aiEnabled());
+
+        assertFalse(result.issues().notGenerated());
+        assertTrue(result.issues().unapproved());
+        assertFalse(result.issues().expired());
     }
 
     @Test
@@ -120,7 +128,7 @@ class GetAdviceNarrationServiceTest {
         UUID currentUserId = UUID.randomUUID();
         var param = new GetAdviceNarrationUseCase.Param(assessmentId, currentUserId);
         var assessmentResult = AssessmentResultMother.createAssessmentResult();
-        var adviceNarration = assessorNarration();
+        var adviceNarration = assessorNarrationWithNarrationTime(LocalDateTime.MIN);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
@@ -137,5 +145,9 @@ class GetAdviceNarrationServiceTest {
         assertEquals(adviceNarration.getAssessorNarrationTime(), result.assessorNarration().creationTime());
         assertFalse(result.editable());
         assertTrue(result.aiEnabled());
+
+        assertFalse(result.issues().notGenerated());
+        assertFalse(result.issues().unapproved());
+        assertTrue(result.issues().expired());
     }
 }

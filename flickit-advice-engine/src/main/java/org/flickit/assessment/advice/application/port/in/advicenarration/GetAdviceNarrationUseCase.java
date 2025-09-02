@@ -32,8 +32,10 @@ public interface GetAdviceNarrationUseCase {
         }
     }
 
-    record Result(AdviceNarration aiNarration, AdviceNarration assessorNarration, boolean editable, boolean aiEnabled) {
+    record Result(AdviceNarration aiNarration, AdviceNarration assessorNarration, Issues issues, boolean editable, boolean aiEnabled) {
 
         public record AdviceNarration(String narration, LocalDateTime creationTime) {}
+
+        public record Issues(boolean notGenerated, boolean unapproved, boolean expired){}
     }
 }
