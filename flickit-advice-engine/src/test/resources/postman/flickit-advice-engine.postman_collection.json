@@ -220,6 +220,37 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Approve Advice Narration",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/7773640c-7cd3-429e-a482-60009802a352/approve-advice-narration",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"7773640c-7cd3-429e-a482-60009802a352",
+								"approve-advice-narration"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
