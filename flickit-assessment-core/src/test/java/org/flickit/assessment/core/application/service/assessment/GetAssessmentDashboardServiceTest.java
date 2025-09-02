@@ -9,6 +9,7 @@ import org.flickit.assessment.core.application.domain.insight.AttributeInsight;
 import org.flickit.assessment.core.application.domain.insight.SubjectInsight;
 import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentDashboardUseCase;
 import org.flickit.assessment.core.application.port.out.adviceitem.CountAdviceItemsPort;
+import org.flickit.assessment.core.application.port.out.advicenarration.LoadAdviceNarrationPort;
 import org.flickit.assessment.core.application.port.out.answer.CountAnswersPort;
 import org.flickit.assessment.core.application.port.out.answer.CountLowConfidenceAnswersPort;
 import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentPort;
@@ -39,6 +40,8 @@ import java.util.function.Consumer;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_DASHBOARD;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_DASHBOARD_ASSESSMENT_RESULT_NOT_FOUND;
+import static org.flickit.assessment.core.test.fixture.application.AdviceNarrationMother.aiAdviceNarrationWithTime;
+import static org.flickit.assessment.core.test.fixture.application.AdviceNarrationMother.assessorAdviceNarrationWithTime;
 import static org.flickit.assessment.core.test.fixture.application.AttributeInsightMother.insightWithTimeAndApproved;
 import static org.flickit.assessment.core.test.fixture.application.SubjectInsightMother.subjectInsight;
 import static org.flickit.assessment.core.test.fixture.application.SubjectInsightMother.subjectInsightMinInsightTime;
@@ -91,6 +94,9 @@ class GetAssessmentDashboardServiceTest {
     @Mock
     private CountAnswersPort countAnswersPort;
 
+    @Mock
+    private LoadAdviceNarrationPort loadAdviceNarrationPort;
+
     private final int attributeCount = 7;
     private final int subjectsCount = 2;
     private final int questionCount = 15;
@@ -125,7 +131,8 @@ class GetAssessmentDashboardServiceTest {
             loadAssessmentPort,
             countAttributesPort,
             countSubjectsPort,
-            countAnswersPort);
+            countAnswersPort,
+            loadAdviceNarrationPort);
     }
 
     @Test
@@ -146,15 +153,17 @@ class GetAssessmentDashboardServiceTest {
             loadAssessmentPort,
             countAttributesPort,
             countSubjectsPort,
-            countAnswersPort);
+            countAnswersPort,
+            loadAdviceNarrationPort);
     }
 
     @Test
-    void testGetAssessmentDashboard_whenAssessmentInsightExistsAndAssessmentReportHasFullProvidedMetadata_ThenProduceResult() {
+    void testGetAssessmentDashboard_whenAssessmentInsightExistsAndAssessmentReportHasFullProvidedMetadata_thenProduceResult() {
         var param = createParam(GetAssessmentDashboardUseCase.Param.ParamBuilder::build);
         var assessmentResult = AssessmentResultMother.validResult();
         var assessmentInsight = AssessmentInsightMother.createSimpleAssessmentInsight();
         var metadata = AssessmentReportMetadataMother.fullMetadata();
+        var aiNarration = aiAdviceNarrationWithTime(LocalDateTime.MIN);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_DASHBOARD)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
@@ -167,9 +176,10 @@ class GetAssessmentDashboardServiceTest {
         when(loadAttributeInsightsPort.loadInsights(assessmentResult.getId())).thenReturn(List.of(attributeInsight1, attributeInsight2, attributeInsight3));
         when(loadSubjectInsightsPort.loadSubjectInsights(assessmentResult.getId())).thenReturn(List.of(subjectInsight1, subjectInsight2, subjectInsight3));
         when(loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(assessmentInsight));
-        when(loadAdvicesDashboardPort.countAdviceItems(assessmentResult.getId())).thenReturn(2);
+        when(loadAdvicesDashboardPort.countByAssessmentResultId(assessmentResult.getId())).thenReturn(2);
         when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.of(AssessmentReportMother.publishedReportWithMetadata(metadata)));
         when(countAnswersPort.countUnapprovedAnswers(assessmentResult.getId())).thenReturn(unapprovedAnswersCount);
+        when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(aiNarration));
 
         var result = service.getAssessmentDashboard(param);
         //questions
@@ -187,6 +197,8 @@ class GetAssessmentDashboardServiceTest {
         assertEquals(2, result.insights().expired());
         //advices
         assertEquals(2, result.advices().total());
+        assertEquals(1, result.advices().unapproved());
+        assertEquals(1, result.advices().expired());
         //report
         assertFalse(result.report().unpublished());
         assertEquals(0, result.report().unprovidedMetadata());
@@ -195,16 +207,17 @@ class GetAssessmentDashboardServiceTest {
     }
 
     @Test
-    void testGetAssessmentDashboard_WhenAssessmentInsightNotExistsAndAssessmentReportHasPartialMetadata_ThenProduceResult() {
+    void testGetAssessmentDashboard_whenAssessmentInsightNotExistsAndAssessmentReportHasPartialMetadata_thenProduceResult() {
         var param = createParam(GetAssessmentDashboardUseCase.Param.ParamBuilder::build);
         var assessmentResult = AssessmentResultMother.validResult();
         var metadata = AssessmentReportMetadataMother.partialMetadata();
+        var assessorNarration = assessorAdviceNarrationWithTime(LocalDateTime.MAX);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_DASHBOARD)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(countLowConfidenceAnswersPort.countWithConfidenceLessThan(assessmentResult.getId(), ConfidenceLevel.SOMEWHAT_UNSURE)).thenReturn(2);
         when(loadAttributeInsightsPort.loadInsights(assessmentResult.getId())).thenReturn(List.of(attributeInsight1, attributeInsight2, attributeInsight3));
-        when(loadAdvicesDashboardPort.countAdviceItems(assessmentResult.getId())).thenReturn(2);
+        when(loadAdvicesDashboardPort.countByAssessmentResultId(assessmentResult.getId())).thenReturn(2);
         when(countSubjectsPort.countSubjects(assessmentResult.getKitVersionId())).thenReturn(subjectsCount);
         when(countAttributesPort.countAttributes(assessmentResult.getKitVersionId())).thenReturn(attributeCount);
         when(loadAssessmentPort.progress(param.getAssessmentId())).thenReturn(new LoadAssessmentPort.ProgressResult(param.getAssessmentId(), answerCount, questionCount));
@@ -214,6 +227,7 @@ class GetAssessmentDashboardServiceTest {
         when(countEvidencesPort.countAnsweredQuestionsHavingEvidence(param.getAssessmentId())).thenReturn(questionsWithEvidenceCount);
         when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.of(AssessmentReportMother.publishedReportWithMetadata(metadata)));
         when(countAnswersPort.countUnapprovedAnswers(assessmentResult.getId())).thenReturn(unapprovedAnswersCount);
+        when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(assessorNarration));
 
         var result = service.getAssessmentDashboard(param);
         //questions
@@ -231,6 +245,8 @@ class GetAssessmentDashboardServiceTest {
         assertEquals(2, result.insights().expired());
         //advices
         assertEquals(2, result.advices().total());
+        assertEquals(0, result.advices().unapproved());
+        assertEquals(0, result.advices().expired());
         //report
         assertFalse(result.report().unpublished());
         assertEquals(3, result.report().unprovidedMetadata());
@@ -239,16 +255,17 @@ class GetAssessmentDashboardServiceTest {
     }
 
     @Test
-    void testGetAssessmentDashboard_WhenAssessmentInsightExpiredAndNullAssessmentReport_ThenProduceResult() {
+    void testGetAssessmentDashboard_whenAssessmentInsightExpiredAndNullAssessmentReport_thenProduceResult() {
         var param = createParam(GetAssessmentDashboardUseCase.Param.ParamBuilder::build);
         var assessmentResult = AssessmentResultMother.validResult();
         var assessmentInsight = AssessmentInsightMother.createWithMinInsightTime();
+        var aiNarration = aiAdviceNarrationWithTime(LocalDateTime.MAX);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_DASHBOARD)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(countLowConfidenceAnswersPort.countWithConfidenceLessThan(assessmentResult.getId(), ConfidenceLevel.SOMEWHAT_UNSURE)).thenReturn(2);
         when(loadAttributeInsightsPort.loadInsights(assessmentResult.getId())).thenReturn(List.of(attributeInsight1, attributeInsight2, attributeInsight3));
-        when(loadAdvicesDashboardPort.countAdviceItems(assessmentResult.getId())).thenReturn(2);
+        when(loadAdvicesDashboardPort.countByAssessmentResultId(assessmentResult.getId())).thenReturn(2);
         when(countSubjectsPort.countSubjects(assessmentResult.getKitVersionId())).thenReturn(subjectsCount);
         when(countAttributesPort.countAttributes(assessmentResult.getKitVersionId())).thenReturn(attributeCount);
         when(loadAssessmentPort.progress(param.getAssessmentId())).thenReturn(new LoadAssessmentPort.ProgressResult(param.getAssessmentId(), answerCount, questionCount));
@@ -258,6 +275,7 @@ class GetAssessmentDashboardServiceTest {
         when(countEvidencesPort.countAnsweredQuestionsHavingEvidence(param.getAssessmentId())).thenReturn(questionsWithEvidenceCount);
         when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.empty());
         when(countAnswersPort.countUnapprovedAnswers(assessmentResult.getId())).thenReturn(unapprovedAnswersCount);
+        when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(aiNarration));
 
         var result = service.getAssessmentDashboard(param);
         //questions
@@ -276,6 +294,57 @@ class GetAssessmentDashboardServiceTest {
         assertEquals(4, result.questions().unapprovedAnswers());
         //advices
         assertEquals(2, result.advices().total());
+        assertEquals(1, result.advices().unapproved());
+        assertEquals(0, result.advices().expired());
+        //report
+        assertTrue(result.report().unpublished());
+        assertEquals(4, result.report().unprovidedMetadata());
+        assertEquals(0, result.report().providedMetadata());
+        assertEquals(4, result.report().totalMetadata());
+    }
+
+    @Test
+    void testGetAssessmentDashboard_whenAssessorAdviceNarrationExpired_thenProduceResult() {
+        var param = createParam(GetAssessmentDashboardUseCase.Param.ParamBuilder::build);
+        var assessmentResult = AssessmentResultMother.validResult();
+        var assessmentInsight = AssessmentInsightMother.createWithMinInsightTime();
+        var aiNarration = assessorAdviceNarrationWithTime(LocalDateTime.MIN);
+
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_DASHBOARD)).thenReturn(true);
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        when(countLowConfidenceAnswersPort.countWithConfidenceLessThan(assessmentResult.getId(), ConfidenceLevel.SOMEWHAT_UNSURE)).thenReturn(2);
+        when(loadAttributeInsightsPort.loadInsights(assessmentResult.getId())).thenReturn(List.of(attributeInsight1, attributeInsight2, attributeInsight3));
+        when(loadAdvicesDashboardPort.countByAssessmentResultId(assessmentResult.getId())).thenReturn(2);
+        when(countSubjectsPort.countSubjects(assessmentResult.getKitVersionId())).thenReturn(subjectsCount);
+        when(countAttributesPort.countAttributes(assessmentResult.getKitVersionId())).thenReturn(attributeCount);
+        when(loadAssessmentPort.progress(param.getAssessmentId())).thenReturn(new LoadAssessmentPort.ProgressResult(param.getAssessmentId(), answerCount, questionCount));
+        when(loadSubjectInsightsPort.loadSubjectInsights(assessmentResult.getId())).thenReturn(List.of(subjectInsight1, subjectInsight2, subjectInsight3));
+        when(loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(assessmentInsight));
+        when(countEvidencesPort.countUnresolvedComments(param.getAssessmentId())).thenReturn(unresolvedCommentsCount);
+        when(countEvidencesPort.countAnsweredQuestionsHavingEvidence(param.getAssessmentId())).thenReturn(questionsWithEvidenceCount);
+        when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.empty());
+        when(countAnswersPort.countUnapprovedAnswers(assessmentResult.getId())).thenReturn(unapprovedAnswersCount);
+        when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(aiNarration));
+
+        var result = service.getAssessmentDashboard(param);
+        //questions
+        assertEquals(questionCount, result.questions().total());
+        assertEquals(answerCount, result.questions().answered());
+        assertEquals(5, result.questions().unanswered());
+        assertEquals(2, result.questions().answeredWithLowConfidence());
+        assertEquals(7, result.questions().withoutEvidence());
+        assertEquals(1, result.questions().unresolvedComments());
+        assertEquals(4, result.questions().unapprovedAnswers());
+        //insights
+        assertEquals(10, result.insights().expected());
+        assertEquals(3, result.insights().notGenerated());
+        assertEquals(3, result.insights().unapproved());
+        assertEquals(3, result.insights().expired());
+        assertEquals(4, result.questions().unapprovedAnswers());
+        //advices
+        assertEquals(2, result.advices().total());
+        assertEquals(0, result.advices().unapproved());
+        assertEquals(1, result.advices().expired());
         //report
         assertTrue(result.report().unpublished());
         assertEquals(4, result.report().unprovidedMetadata());

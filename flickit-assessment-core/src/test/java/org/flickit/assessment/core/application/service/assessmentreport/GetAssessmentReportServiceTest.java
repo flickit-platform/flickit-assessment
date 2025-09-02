@@ -173,7 +173,7 @@ class GetAssessmentReportServiceTest {
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
         when(loadAssessmentReportInfoPort.load(param.getAssessmentId())).thenReturn(assessmentReportInfo);
         when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.empty());
-        when(loadAdviceNarrationPort.load(assessmentReport.assessmentResultId())).thenReturn(adviceNarration);
+        when(loadAdviceNarrationPort.loadNarration(assessmentReport.assessmentResultId())).thenReturn(adviceNarration);
         when(loadAdviceItemsPort.loadAll(assessmentReport.assessmentResultId())).thenReturn(adviceItems);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_REPORT_PREVIEW))
             .thenReturn(true);
@@ -255,7 +255,7 @@ class GetAssessmentReportServiceTest {
         when(loadAssessmentQuestionsPort.loadApplicableQuestions(param.getAssessmentId()))
             .thenReturn(questionAnswers);
         when(loadAdviceItemsPort.loadAll(assessmentReport.assessmentResultId())).thenReturn(adviceItems);
-        when(loadAdviceNarrationPort.load(assessmentReport.assessmentResultId())).thenReturn(adviceNarration);
+        when(loadAdviceNarrationPort.loadNarration(assessmentReport.assessmentResultId())).thenReturn(adviceNarration);
         when(loadSpacePort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(space));
 
         var result = service.getAssessmentReport(param);
@@ -321,7 +321,7 @@ class GetAssessmentReportServiceTest {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ATTRIBUTE_MEASURE_QUESTIONS))
             .thenReturn(true);
         when(loadAdviceItemsPort.loadAll(assessmentReport.assessmentResultId())).thenReturn(List.of());
-        when(loadAdviceNarrationPort.load(assessmentReport.assessmentResultId())).thenReturn(null);
+        when(loadAdviceNarrationPort.loadNarration(assessmentReport.assessmentResultId())).thenReturn(null);
         when(loadSpacePort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(space));
 
         var result = service.getAssessmentReport(param);
@@ -387,7 +387,7 @@ class GetAssessmentReportServiceTest {
         when(loadAssessmentQuestionsPort.loadApplicableQuestions(param.getAssessmentId()))
             .thenReturn(questionAnswers);
         when(loadAdviceItemsPort.loadAll(assessmentReport.assessmentResultId())).thenReturn(List.of());
-        when(loadAdviceNarrationPort.load(assessmentReport.assessmentResultId())).thenReturn(null);
+        when(loadAdviceNarrationPort.loadNarration(assessmentReport.assessmentResultId())).thenReturn(null);
         when(loadSpacePort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(space));
 
         var result = service.getAssessmentReport(param);
