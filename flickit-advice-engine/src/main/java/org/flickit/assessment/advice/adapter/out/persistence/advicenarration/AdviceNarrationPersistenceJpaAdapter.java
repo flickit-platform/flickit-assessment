@@ -40,10 +40,10 @@ public class AdviceNarrationPersistenceJpaAdapter implements
     }
 
     @Override
-    public void approveAdviceNarration(UUID assessmentId) {
+    public void approve(UUID assessmentId) {
         var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(APPROVE_ADVICE_NARRATION_ASSESSMENT_RESULT_NOT_FOUND));
-        repository.approveAiAdviceNarration(assessmentResult.getId());
+        repository.approveByAssessmentResultId(assessmentResult.getId());
     }
 
     @Override

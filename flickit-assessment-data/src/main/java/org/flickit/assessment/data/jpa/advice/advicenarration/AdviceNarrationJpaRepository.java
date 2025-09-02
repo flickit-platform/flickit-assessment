@@ -52,5 +52,5 @@ public interface AdviceNarrationJpaRepository extends JpaRepository<AdviceNarrat
             SET a.approved = true
             WHERE a.assessmentResultId = :assessmentResultId
         """)
-    void approveAiAdviceNarration(@Param("assessmentResultId") UUID assessmentResultId);
+    void approveByAssessmentResultId(@Param("assessmentResultId") UUID assessmentResultId);
 }

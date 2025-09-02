@@ -20,10 +20,10 @@ public class ApproveAdviceNarrationService implements ApproveAdviceNarrationUseC
     private final UpdateAdviceNarrationPort updateAdviceNarrationPort;
 
     @Override
-    public void approveAdviceNarration(Param param) {
+    public void approve(Param param) {
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), APPROVE_ADVICE_NARRATION))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        updateAdviceNarrationPort.approveAdviceNarration(param.getAssessmentId());
+        updateAdviceNarrationPort.approve(param.getAssessmentId());
     }
 }

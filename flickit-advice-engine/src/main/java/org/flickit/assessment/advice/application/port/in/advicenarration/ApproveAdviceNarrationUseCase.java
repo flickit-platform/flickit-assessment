@@ -8,12 +8,12 @@ import org.flickit.assessment.common.application.SelfValidating;
 
 import java.util.UUID;
 
-import static org.flickit.assessment.advice.common.ErrorMessageKey.*;
+import static org.flickit.assessment.advice.common.ErrorMessageKey.APPROVE_ADVICE_NARRATION_ASSESSMENT_ID_NOT_NULL;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 
 public interface ApproveAdviceNarrationUseCase {
 
-    void approveAdviceNarration(Param param);
+    void approve(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
