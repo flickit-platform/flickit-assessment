@@ -28,11 +28,20 @@ public class CreateUserService implements CreateUserUseCase {
 
     @Override
     public Result createUser(Param param) {
-        UUID userId = createUserPort.persist(param.getUserId(), param.getDisplayName(), param.getEmail());
+        UUID userId = createUserPort.persist(toUserParam(param.getUserId(), param.getDisplayName(), param.getEmail()));
 
         createDefaultSpace(userId);
 
         return new Result(userId);
+    }
+
+    private CreateUserPort.Param toUserParam(UUID userId, String displayName, String email) {
+        var currentTime = LocalDateTime.now();
+        return new CreateUserPort.Param(userId,
+            displayName,
+            email,
+            currentTime,
+            currentTime);
     }
 
     private void createDefaultSpace(UUID userId) {
