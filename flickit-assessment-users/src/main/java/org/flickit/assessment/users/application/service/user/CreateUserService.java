@@ -28,14 +28,14 @@ public class CreateUserService implements CreateUserUseCase {
 
     @Override
     public Result createUser(Param param) {
-        UUID userId = createUserPort.persist(toUserParam(param.getUserId(), param.getDisplayName(), param.getEmail()));
+        UUID userId = createUserPort.persist(toCreateUserPortParam(param.getUserId(), param.getDisplayName(), param.getEmail()));
 
         createDefaultSpace(userId);
 
         return new Result(userId);
     }
 
-    private CreateUserPort.Param toUserParam(UUID userId, String displayName, String email) {
+    private CreateUserPort.Param toCreateUserPortParam(UUID userId, String displayName, String email) {
         var currentTime = LocalDateTime.now();
         return new CreateUserPort.Param(userId,
             displayName,
@@ -45,12 +45,12 @@ public class CreateUserService implements CreateUserUseCase {
     }
 
     private void createDefaultSpace(UUID userId) {
-        var spaceId = createSpacePort.persist(toParam(userId));
+        var spaceId = createSpacePort.persist(toCreateSpacePortParam(userId));
         var spaceUserAccess = new SpaceUserAccess(spaceId, userId, userId, LocalDateTime.now());
         createSpaceUserAccessPort.persist(spaceUserAccess);
     }
 
-    private CreateSpacePort.Param toParam(UUID userId) {
+    private CreateSpacePort.Param toCreateSpacePortParam(UUID userId) {
         LocalDateTime creationTime = LocalDateTime.now();
         return new CreateSpacePort.Param(
             generateSlugCode(DEFAULT_SPACE_TITLE),

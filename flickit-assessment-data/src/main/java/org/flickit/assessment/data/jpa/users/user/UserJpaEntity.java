@@ -46,8 +46,6 @@ public class UserJpaEntity {
     @Column(name = "last_modification_time")
     private LocalDateTime lastModificationTime;
 
-
-
     public UserJpaEntity(UUID id, String email, String displayName, LocalDateTime creationTime, LocalDateTime lastModificationTime) {
         this.id = id;
         this.email = email;
