@@ -45,7 +45,7 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
     private final AssessmentAccessChecker assessmentAccessChecker;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final LoadAttributeInsightsPort loadAttributeInsightsPort;
-    private final CountAdviceItemsPort loadAdvicesDashboardPort;
+    private final CountAdviceItemsPort countAdviceItemsPort;
     private final CountEvidencesPort countEvidencesPort;
     private final CountAttributesPort countAttributesPort;
     private final CountSubjectsPort countSubjectsPort;
@@ -156,7 +156,7 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
     }
 
     private Result.Advices buildAdvices(UUID assessmentResultId, LocalDateTime lastCalculationTime) {
-        int adviceItemsCount = loadAdvicesDashboardPort.countAdviceItems(assessmentResultId);
+        int adviceItemsCount = countAdviceItemsPort.countByAssessmentResultId(assessmentResultId);
 
         return loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResultId)
             .map(narration -> {
