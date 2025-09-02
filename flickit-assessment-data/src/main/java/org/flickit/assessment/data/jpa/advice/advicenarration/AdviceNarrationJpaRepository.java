@@ -45,4 +45,12 @@ public interface AdviceNarrationJpaRepository extends JpaRepository<AdviceNarrat
                            @Param("aiNarration") String aiNarration,
                            @Param("approved") boolean approved,
                            @Param("aiNarrationTime") LocalDateTime aiNarrationTime);
+
+    @Modifying
+    @Query("""
+            UPDATE AdviceNarrationJpaEntity a
+            SET a.approved = true
+            WHERE a.assessmentResultId = :assessmentResultId
+        """)
+    void approveAiAdviceNarration(@Param("assessmentResultId") UUID assessmentResultId);
 }
