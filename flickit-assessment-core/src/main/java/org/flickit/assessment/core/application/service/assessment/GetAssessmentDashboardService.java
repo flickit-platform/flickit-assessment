@@ -158,7 +158,7 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
     private Result.Advices buildAdvices(UUID assessmentResultId, LocalDateTime lastCalculationTime) {
         int adviceItemsCount = loadAdvicesDashboardPort.countAdviceItems(assessmentResultId);
 
-        return loadAdviceNarrationPort.loadAdviceNarration(assessmentResultId)
+        return loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResultId)
             .map(narration -> {
                 int expired = isExpired(narration, lastCalculationTime) ? 1 : 0;
                 int unapproved = narration.isApproved() ? 0 : 1;

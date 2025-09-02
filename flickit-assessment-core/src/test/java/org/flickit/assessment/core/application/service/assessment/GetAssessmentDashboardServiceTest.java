@@ -179,7 +179,7 @@ class GetAssessmentDashboardServiceTest {
         when(loadAdvicesDashboardPort.countAdviceItems(assessmentResult.getId())).thenReturn(2);
         when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.of(AssessmentReportMother.publishedReportWithMetadata(metadata)));
         when(countAnswersPort.countUnapprovedAnswers(assessmentResult.getId())).thenReturn(unapprovedAnswersCount);
-        when(loadAdviceNarrationPort.loadAdviceNarration(assessmentResult.getId())).thenReturn(Optional.of(aiNarration));
+        when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(aiNarration));
 
         var result = service.getAssessmentDashboard(param);
         //questions
@@ -227,7 +227,7 @@ class GetAssessmentDashboardServiceTest {
         when(countEvidencesPort.countAnsweredQuestionsHavingEvidence(param.getAssessmentId())).thenReturn(questionsWithEvidenceCount);
         when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.of(AssessmentReportMother.publishedReportWithMetadata(metadata)));
         when(countAnswersPort.countUnapprovedAnswers(assessmentResult.getId())).thenReturn(unapprovedAnswersCount);
-        when(loadAdviceNarrationPort.loadAdviceNarration(assessmentResult.getId())).thenReturn(Optional.of(assessorNarration));
+        when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(assessorNarration));
 
         var result = service.getAssessmentDashboard(param);
         //questions
@@ -275,7 +275,7 @@ class GetAssessmentDashboardServiceTest {
         when(countEvidencesPort.countAnsweredQuestionsHavingEvidence(param.getAssessmentId())).thenReturn(questionsWithEvidenceCount);
         when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.empty());
         when(countAnswersPort.countUnapprovedAnswers(assessmentResult.getId())).thenReturn(unapprovedAnswersCount);
-        when(loadAdviceNarrationPort.loadAdviceNarration(assessmentResult.getId())).thenReturn(Optional.of(aiNarration));
+        when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(aiNarration));
 
         var result = service.getAssessmentDashboard(param);
         //questions
@@ -324,7 +324,7 @@ class GetAssessmentDashboardServiceTest {
         when(countEvidencesPort.countAnsweredQuestionsHavingEvidence(param.getAssessmentId())).thenReturn(questionsWithEvidenceCount);
         when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.empty());
         when(countAnswersPort.countUnapprovedAnswers(assessmentResult.getId())).thenReturn(unapprovedAnswersCount);
-        when(loadAdviceNarrationPort.loadAdviceNarration(assessmentResult.getId())).thenReturn(Optional.of(aiNarration));
+        when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(aiNarration));
 
         var result = service.getAssessmentDashboard(param);
         //questions
