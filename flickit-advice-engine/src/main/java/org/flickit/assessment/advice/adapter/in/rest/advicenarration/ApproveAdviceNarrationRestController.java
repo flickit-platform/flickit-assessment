@@ -20,9 +20,9 @@ public class ApproveAdviceNarrationRestController {
     private final UserContext userContext;
 
     @PutMapping("/assessments/{assessmentId}/approve-advice-narration")
-    ResponseEntity<Void> approveAdviceNarration(@PathVariable("assessmentId") UUID assessmentId) {
+    ResponseEntity<Void> approve(@PathVariable("assessmentId") UUID assessmentId) {
         var currentUserId = userContext.getUser().id();
-        useCase.approveAdviceNarration(toParam(assessmentId, currentUserId));
+        useCase.approve(toParam(assessmentId, currentUserId));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

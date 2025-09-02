@@ -22,5 +22,5 @@ public interface UpdateAdviceNarrationPort {
                             LocalDateTime narrationTime) {
     }
 
-    void approveAdviceNarration(UUID assessmentId);
+    void approve(UUID assessmentId);
 }

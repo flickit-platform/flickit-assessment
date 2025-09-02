@@ -15,7 +15,8 @@ import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.APPROVE_ADVICE_NARRATION;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -37,7 +38,7 @@ class ApproveAdviceNarrationServiceTest {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), APPROVE_ADVICE_NARRATION))
             .thenReturn(false);
 
-        var throwable = assertThrows(AccessDeniedException.class, () -> service.approveAdviceNarration(param));
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.approve(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
         verifyNoInteractions(updateAdviceNarrationPort);
@@ -48,9 +49,9 @@ class ApproveAdviceNarrationServiceTest {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), APPROVE_ADVICE_NARRATION))
             .thenReturn(true);
 
-        service.approveAdviceNarration(param);
+        service.approve(param);
 
-        verify(updateAdviceNarrationPort).approveAdviceNarration(param.getAssessmentId());
+        verify(updateAdviceNarrationPort).approve(param.getAssessmentId());
     }
 
     private ApproveAdviceNarrationUseCase.Param createParam(Consumer<ApproveAdviceNarrationUseCase.Param.ParamBuilder> changer) {
