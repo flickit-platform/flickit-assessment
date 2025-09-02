@@ -7,6 +7,8 @@ public class AdviceNarrationMapper {
 
     public static AdviceNarration mapToDomainModel(AdviceNarrationJpaEntity entity) {
         return new AdviceNarration(entity.getId(),
+            entity.getAiNarration(),
+            entity.getAssessorNarration(),
             entity.isApproved(),
             entity.getAiNarrationTime(),
             entity.getAssessorNarrationTime(),

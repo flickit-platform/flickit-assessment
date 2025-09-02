@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public interface LoadAdviceNarrationPort {
 
-    String load(UUID assessmentResultId);
+    String loadNarration(UUID assessmentResultId);
 
-    Optional<AdviceNarration> loadAdviceNarration(UUID assessmentResultId);
+    Optional<AdviceNarration> loadByAssessmentResultId(UUID assessmentResultId);
 }
