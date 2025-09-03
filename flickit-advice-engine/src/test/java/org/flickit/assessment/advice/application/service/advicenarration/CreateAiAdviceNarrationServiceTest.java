@@ -297,7 +297,6 @@ class CreateAiAdviceNarrationServiceTest {
     @Test
     void testCreateAiAdviceNarration_whenNoValidTargetExists_thenThrowValidationException() {
         var attributeLevelTargets = List.of(createAttributeLevelTarget());
-        var adviceNarration = aiNarration();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
