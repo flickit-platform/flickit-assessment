@@ -60,11 +60,11 @@ public class CreateAiAdviceNarrationHelper {
         var adviceNarration = loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId());
         if (adviceNarration.isPresent()) {
             UUID narrationId = adviceNarration.get().getId();
-            var updateParam = new UpdateAdviceNarrationPort.AiNarrationParam(narrationId, aiAdvice.narration(), LocalDateTime.now());
+            var updateParam = toAiNarrationParam(narrationId, aiAdvice.narration);
             updateAdviceNarrationPort.updateAiNarration(updateParam);
         } else {
             UUID assessmentResultId = assessmentResult.getId();
-            createAdviceNarrationPort.persist(toAdviceNarration(assessmentResultId, aiAdvice.narration()));
+            createAdviceNarrationPort.persist(toAiAdviceNarration(assessmentResultId, aiAdvice.narration()));
         }
         return aiAdvice.narration();
     }
@@ -98,6 +98,13 @@ public class CreateAiAdviceNarrationHelper {
             .create();
     }
 
+    private UpdateAdviceNarrationPort.AiNarrationParam toAiNarrationParam(UUID narrationId, String narration) {
+        return new UpdateAdviceNarrationPort.AiNarrationParam(narrationId,
+            narration,
+            false,
+            LocalDateTime.now());
+    }
+
     record AdviceDto(String narration, List<AdviceItemDto> adviceItems) {
 
         record AdviceItemDto(String title, String description, int cost, int priority, int impact) {
@@ -121,11 +128,12 @@ public class CreateAiAdviceNarrationHelper {
     record TargetAttribute(String attribute, String targetMaturityLevel) {
     }
 
-    AdviceNarration toAdviceNarration(UUID assessmentResultId, String aiNarration) {
+    AdviceNarration toAiAdviceNarration(UUID assessmentResultId, String aiNarration) {
         return new AdviceNarration(null,
             assessmentResultId,
             aiNarration,
             null,
+            false,
             LocalDateTime.now(),
             null,
             null);

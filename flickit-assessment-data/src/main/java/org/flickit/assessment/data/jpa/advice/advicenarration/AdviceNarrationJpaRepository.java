@@ -22,11 +22,13 @@ public interface AdviceNarrationJpaRepository extends JpaRepository<AdviceNarrat
             UPDATE AdviceNarrationJpaEntity a
             SET a.assessorNarration = :assessorNarration,
                 a.assessorNarrationTime = :assessorNarrationTime,
+                a.approved = :approved,
                 a.createdBy = :createdBy
             WHERE a.id = :id
         """)
     void updateAssessorNarration(@Param("id") UUID id,
                                  @Param("assessorNarration") String assessorNarration,
+                                 @Param("approved") boolean approved,
                                  @Param("assessorNarrationTime") LocalDateTime assessorNarrationTime,
                                  @Param("createdBy") UUID createdBy);
 
@@ -35,10 +37,20 @@ public interface AdviceNarrationJpaRepository extends JpaRepository<AdviceNarrat
             UPDATE AdviceNarrationJpaEntity a
             SET a.aiNarration = :aiNarration,
                 a.aiNarrationTime = :aiNarrationTime,
+                a.approved = :approved,
                 a.createdBy = null
             WHERE a.id = :id
         """)
     void updateAiNarration(@Param("id") UUID id,
                            @Param("aiNarration") String aiNarration,
+                           @Param("approved") boolean approved,
                            @Param("aiNarrationTime") LocalDateTime aiNarrationTime);
+
+    @Modifying
+    @Query("""
+            UPDATE AdviceNarrationJpaEntity a
+            SET a.approved = true
+            WHERE a.assessmentResultId = :assessmentResultId
+        """)
+    void approveByAssessmentResultId(@Param("assessmentResultId") UUID assessmentResultId);
 }

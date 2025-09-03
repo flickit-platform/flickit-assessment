@@ -35,4 +35,9 @@ public class ErrorMessageKey {
     public static final String REFRESH_ASSESSMENT_ADVICE_ASSESSMENT_ID_NOT_NULL = "refresh-assessment-advice.assessmentId.notNull";
     public static final String REFRESH_ASSESSMENT_ADVICE_FORCE_REGENERATE_NOT_NULL = "refresh-assessment-advice.forceRegenerate.notNull";
     public static final String REFRESH_ASSESSMENT_ADVICE_MEDIAN_MATURITY_LEVEL_NOT_FOUND = "refresh-assessment-advice.median-maturityLevel.notFound";
+
+    public static final String APPROVE_ADVICE_NARRATION_ASSESSMENT_ID_NOT_NULL = "approve-advice-narration.assessmentId.notNull";
+    public static final String APPROVE_ADVICE_NARRATION_ASSESSMENT_RESULT_NOT_FOUND = "approve-advice-narration.assessmentResult.notFound";
+
+
 }

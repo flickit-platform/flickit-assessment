@@ -3,6 +3,7 @@ package org.flickit.assessment.advice.test.fixture.application;
 import org.flickit.assessment.advice.application.domain.AssessmentResult;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class AssessmentResultMother {
@@ -17,6 +18,7 @@ public class AssessmentResultMother {
         return new AssessmentResult(UUID.randomUUID(),
             ++kitVersionId,
             assessmentId,
+            LocalDateTime.now(),
             KitLanguage.FA);
     }
 }

@@ -13,6 +13,7 @@ public class AdviceNarrationMapper {
             adviceNarration.getAssessmentResultId(),
             adviceNarration.getAiNarration(),
             adviceNarration.getAssessorNarration(),
+            adviceNarration.isApproved(),
             adviceNarration.getAiNarrationTime(),
             adviceNarration.getAssessorNarrationTime(),
             adviceNarration.getCreatedBy());
@@ -23,6 +24,7 @@ public class AdviceNarrationMapper {
             entity.getAssessmentResultId(),
             entity.getAiNarration(),
             entity.getAssessorNarration(),
+            entity.isApproved(),
             entity.getAiNarrationTime(),
             entity.getAssessorNarrationTime(),
             entity.getCreatedBy());
