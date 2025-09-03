@@ -5,11 +5,15 @@ import org.flickit.assessment.advice.application.domain.AdviceNarration;
 import org.flickit.assessment.advice.application.port.out.advicenarration.CreateAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.LoadAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.UpdateAdviceNarrationPort;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.advice.advicenarration.AdviceNarrationJpaRepository;
+import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 import java.util.UUID;
+
+import static org.flickit.assessment.advice.common.ErrorMessageKey.APPROVE_ADVICE_NARRATION_ASSESSMENT_RESULT_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
@@ -19,6 +23,7 @@ public class AdviceNarrationPersistenceJpaAdapter implements
     LoadAdviceNarrationPort {
 
     private final AdviceNarrationJpaRepository repository;
+    private final AssessmentResultJpaRepository assessmentResultRepository;
 
     @Override
     public void persist(AdviceNarration adviceNarration) {
@@ -32,6 +37,13 @@ public class AdviceNarrationPersistenceJpaAdapter implements
             param.approved(),
             param.narrationTime(),
             param.createdBy());
+    }
+
+    @Override
+    public void approve(UUID assessmentId) {
+        var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
+            .orElseThrow(() -> new ResourceNotFoundException(APPROVE_ADVICE_NARRATION_ASSESSMENT_RESULT_NOT_FOUND));
+        repository.approveByAssessmentResultId(assessmentResult.getId());
     }
 
     @Override
