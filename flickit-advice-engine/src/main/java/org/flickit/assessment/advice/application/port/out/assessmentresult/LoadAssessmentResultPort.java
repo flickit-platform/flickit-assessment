@@ -7,7 +7,5 @@ import java.util.UUID;
 
 public interface LoadAssessmentResultPort {
 
-    Optional<AssessmentResult> loadById(UUID assessmentResultId);
-
     Optional<AssessmentResult> loadByAssessmentId(UUID assessmentId);
 }

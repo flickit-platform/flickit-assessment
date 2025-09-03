@@ -73,19 +73,14 @@ public class CreateAiAdviceNarrationService implements CreateAiAdviceNarrationUs
 
         validateAssessmentResultPort.validate(param.getAssessmentId());
 
-        var adviceNarration = loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId());
-
         var attributeLevelTargets = filterValidAttributeLevelTargets(param.getAssessmentId(), param.getAttributeLevelTargets());
-
 
         var prompt = createPrompt(param.getAdviceListItems(), attributeLevelTargets, assessmentResult, param.getAssessmentId());
         AdviceDto aiAdvice = callAiPromptPort.call(prompt, AdviceDto.class);
 
-        var adviceItems = aiAdvice.adviceItems().stream()
-            .map(i -> i.toDomainModel(assessmentResult.getId()))
-            .toList();
-        createAdviceItemPort.persistAll(adviceItems);
+        createAdviceItems(aiAdvice.adviceItems, assessmentResult.getId());
 
+        var adviceNarration = loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId());
         if (adviceNarration.isPresent()) {
             UUID narrationId = adviceNarration.get().getId();
             var updateParam = toAiNarrationParam(narrationId, aiAdvice.narration);
@@ -144,6 +139,7 @@ public class CreateAiAdviceNarrationService implements CreateAiAdviceNarrationUs
             .create();
     }
 
+
     private UpdateAdviceNarrationPort.AiNarrationParam toAiNarrationParam(UUID narrationId, String narration) {
         return new UpdateAdviceNarrationPort.AiNarrationParam(narrationId,
             narration,
@@ -151,21 +147,25 @@ public class CreateAiAdviceNarrationService implements CreateAiAdviceNarrationUs
             LocalDateTime.now());
     }
 
+    void createAdviceItems(List<AdviceDto.AdviceItemDto> adviceItems, UUID assessmentResultId) {
+        var createAdviceItemsParam = adviceItems.stream()
+            .map(AdviceDto.AdviceItemDto::toCreateParam)
+            .toList();
+        createAdviceItemPort.persistAll(createAdviceItemsParam, assessmentResultId);
+    }
+
     record AdviceDto(String narration, List<AdviceItemDto> adviceItems) {
 
         record AdviceItemDto(String title, String description, int cost, int priority, int impact) {
 
-            AdviceItem toDomainModel(UUID assessmentResultId) {
-                return new AdviceItem(null,
+            CreateAdviceItemPort.Param toCreateParam() {
+                return new CreateAdviceItemPort.Param(
                     title,
-                    assessmentResultId,
                     description,
                     CostLevel.valueOfById(cost),
                     PriorityLevel.valueOfById(priority),
                     ImpactLevel.valueOfById(impact),
                     LocalDateTime.now(),
-                    LocalDateTime.now(),
-                    null,
                     null);
             }
         }
