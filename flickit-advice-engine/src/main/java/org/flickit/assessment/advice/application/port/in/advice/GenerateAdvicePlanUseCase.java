@@ -1,7 +1,7 @@
-package org.flickit.assessment.advice.application.port.in.advicenarration;
+package org.flickit.assessment.advice.application.port.in.advice;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
+import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.advice.application.domain.AttributeLevelTarget;
@@ -14,36 +14,32 @@ import java.util.UUID;
 import static org.flickit.assessment.advice.common.ErrorMessageKey.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 
-public interface CreateAiAdviceNarrationUseCase {
+public interface GenerateAdvicePlanUseCase {
 
-    Result createAiAdviceNarration(Param param);
+    Result generate(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = CREATE_AI_ADVICE_NARRATION_ASSESSMENT_ID_NOT_NULL)
+        @NotNull(message = CREATE_ADVICE_ASSESSMENT_ID_NOT_NULL)
         UUID assessmentId;
 
-        @NotNull(message = CREATE_AI_ADVICE_NARRATION_ADVICE_LIST_ITEMS_NOT_NULL)
-        List<QuestionRecommendation> questionRecommendations;
-
-        @NotNull(message = CREATE_AI_ADVICE_NARRATION_ATTRIBUTE_LEVEL_TARGETS_NOT_NULL)
+        @NotNull(message = CREATE_ADVICE_ATTRIBUTE_LEVEL_TARGETS_NOT_NULL)
+        @Size(min = 1, message = CREATE_ADVICE_ATTRIBUTE_LEVEL_TARGETS_SIZE_MIN)
         List<AttributeLevelTarget> attributeLevelTargets;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        @Builder
-        public Param(UUID assessmentId, List<QuestionRecommendation> questionRecommendations, List<AttributeLevelTarget> attributeLevelTargets, UUID currentUserId) {
+        public Param(UUID assessmentId, List<AttributeLevelTarget> attributeLevelTargets, UUID currentUserId) {
             this.assessmentId = assessmentId;
-            this.questionRecommendations = questionRecommendations;
             this.attributeLevelTargets = attributeLevelTargets;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
     }
 
-    record Result(String content){
+    record Result(List<QuestionRecommendation> adviceItems) {
     }
 }

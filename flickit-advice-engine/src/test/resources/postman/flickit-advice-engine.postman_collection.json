@@ -10,7 +10,7 @@
 			"name": "Advice",
 			"item": [
 				{
-					"name": "Create Advice",
+					"name": "Generate Advice Plan",
 					"protocolProfileBehavior": {
 						"disabledSystemHeaders": {}
 					},

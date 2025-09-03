@@ -1,7 +1,7 @@
 package org.flickit.assessment.advice.application.port.in.advicenarration;
 
 import jakarta.validation.ConstraintViolationException;
-import org.flickit.assessment.advice.test.fixture.application.AdviceListItemMother;
+import org.flickit.assessment.advice.test.fixture.application.QuestionRecommendationMother;
 import org.flickit.assessment.advice.test.fixture.application.AttributeLevelTargetMother;
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +26,7 @@ class CreateAiAdviceNarrationUseCaseParamTest {
     @Test
     void testCreateAiAdviceNarrationParam_adviceAiListItemsParamViolatesConstraint_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.adviceListItems(null)));
+            () -> createParam(b -> b.questionRecommendations(null)));
         assertThat(throwable).hasMessage("adviceListItems: " + CREATE_AI_ADVICE_NARRATION_ADVICE_LIST_ITEMS_NOT_NULL);
     }
 
@@ -53,7 +53,7 @@ class CreateAiAdviceNarrationUseCaseParamTest {
     private CreateAiAdviceNarrationUseCase.Param.ParamBuilder paramBuilder() {
         return CreateAiAdviceNarrationUseCase.Param.builder()
             .assessmentId(UUID.randomUUID())
-            .adviceListItems(List.of(AdviceListItemMother.createSimpleAdviceListItem()))
+            .questionRecommendations(List.of(QuestionRecommendationMother.createSimpleAdviceListItem()))
             .attributeLevelTargets(List.of(AttributeLevelTargetMother.createAttributeLevelTarget()))
             .currentUserId(UUID.randomUUID());
     }

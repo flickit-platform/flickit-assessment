@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.advice.application.domain.AttributeLevelTarget;
 import org.flickit.assessment.advice.application.domain.Plan;
 import org.flickit.assessment.advice.application.domain.Question;
-import org.flickit.assessment.advice.application.domain.advice.AdviceListItem;
+import org.flickit.assessment.advice.application.domain.advice.QuestionRecommendation;
 import org.flickit.assessment.advice.application.exception.FinalSolutionNotFoundException;
 import org.flickit.assessment.advice.application.port.out.calculation.LoadAdviceCalculationInfoPort;
 import org.flickit.assessment.advice.application.port.out.calculation.LoadCreatedAdviceDetailsPort;
@@ -32,7 +32,7 @@ public class CreateAdviceHelper {
     private final SolverManager<Plan, UUID> solverManager;
     private final LoadCreatedAdviceDetailsPort loadCreatedAdviceDetailsPort;
 
-    public List<AdviceListItem> createAdvice(UUID assessmentId, List<AttributeLevelTarget> attributeLevelTargets) {
+    public List<QuestionRecommendation> createAdvice(UUID assessmentId, List<AttributeLevelTarget> attributeLevelTargets) {
         var problem = loadAdviceCalculationInfoPort.loadAdviceCalculationInfo(assessmentId, attributeLevelTargets);
         var solution = solverManager.solve(UUID.randomUUID(), problem);
         Plan plan;
@@ -49,7 +49,7 @@ public class CreateAdviceHelper {
         return mapToResult(plan, assessmentId);
     }
 
-    private List<AdviceListItem> mapToResult(Plan solution, UUID assessmentId) {
+    private List<QuestionRecommendation> mapToResult(Plan solution, UUID assessmentId) {
         var questionIdsMap = solution.getQuestions().stream()
             .filter(Question::isRecommended)
             .collect(Collectors.toMap(Question::getId, Function.identity()));
@@ -62,14 +62,14 @@ public class CreateAdviceHelper {
                 var recommendedOption = adv.options().get(question.getRecommendedOptionIndex());
                 var benefit = question.calculateBenefit();
 
-                return new AdviceListItem(
+                return new QuestionRecommendation(
                     adv.question(),
                     answeredOption,
                     recommendedOption,
                     benefit,
                     adv.attributes(),
                     adv.questionnaire());
-            }).sorted(Comparator.comparingDouble(AdviceListItem::benefit).reversed())
+            }).sorted(Comparator.comparingDouble(QuestionRecommendation::benefit).reversed())
             .toList();
     }
 }

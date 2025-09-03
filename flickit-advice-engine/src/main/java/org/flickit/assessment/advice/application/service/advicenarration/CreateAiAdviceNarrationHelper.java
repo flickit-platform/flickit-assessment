@@ -2,7 +2,7 @@ package org.flickit.assessment.advice.application.service.advicenarration;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.advice.application.domain.*;
-import org.flickit.assessment.advice.application.domain.advice.AdviceListItem;
+import org.flickit.assessment.advice.application.domain.advice.QuestionRecommendation;
 import org.flickit.assessment.advice.application.port.out.adviceitem.CreateAdviceItemPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.CreateAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.LoadAdviceNarrationPort;
@@ -44,12 +44,12 @@ public class CreateAiAdviceNarrationHelper {
     private final UpdateAdviceNarrationPort updateAdviceNarrationPort;
 
     public String createAiAdviceNarration(AssessmentResult assessmentResult,
-                                          List<AdviceListItem> adviceListItems,
+                                          List<QuestionRecommendation> questionRecommendations,
                                           List<AttributeLevelTarget> attributeLevelTargets) {
         if (!appAiProperties.isEnabled())
             return MessageBundle.message(ADVICE_NARRATION_AI_IS_DISABLED);
 
-        var prompt = createPrompt(adviceListItems, attributeLevelTargets, assessmentResult.getAssessmentId(), assessmentResult.getLanguage());
+        var prompt = createPrompt(questionRecommendations, attributeLevelTargets, assessmentResult.getAssessmentId(), assessmentResult.getLanguage());
         AdviceDto aiAdvice = callAiPromptPort.call(prompt, AdviceDto.class);
 
         var adviceItems = aiAdvice.adviceItems().stream()
@@ -69,7 +69,7 @@ public class CreateAiAdviceNarrationHelper {
         return aiAdvice.narration();
     }
 
-    private Prompt createPrompt(List<AdviceListItem> adviceItems, List<AttributeLevelTarget> targets, UUID assessmentId, KitLanguage kitLanguage) {
+    private Prompt createPrompt(List<QuestionRecommendation> adviceItems, List<AttributeLevelTarget> targets, UUID assessmentId, KitLanguage kitLanguage) {
         var maturityLevelsMap = loadMaturityLevelsPort.loadAll(assessmentId).stream()
             .collect(Collectors.toMap(MaturityLevel::getId, MaturityLevel::getTitle));
 

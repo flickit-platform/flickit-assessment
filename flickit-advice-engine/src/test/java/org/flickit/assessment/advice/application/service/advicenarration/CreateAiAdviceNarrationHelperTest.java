@@ -1,7 +1,7 @@
 package org.flickit.assessment.advice.application.service.advicenarration;
 
 import org.flickit.assessment.advice.application.domain.*;
-import org.flickit.assessment.advice.application.domain.advice.AdviceListItem;
+import org.flickit.assessment.advice.application.domain.advice.QuestionRecommendation;
 import org.flickit.assessment.advice.application.port.out.adviceitem.CreateAdviceItemPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.CreateAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.LoadAdviceNarrationPort;
@@ -9,7 +9,7 @@ import org.flickit.assessment.advice.application.port.out.advicenarration.Update
 import org.flickit.assessment.advice.application.port.out.atribute.LoadAttributesPort;
 import org.flickit.assessment.advice.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.advice.application.service.advicenarration.CreateAiAdviceNarrationHelper.AdviceDto;
-import org.flickit.assessment.advice.test.fixture.application.AdviceListItemMother;
+import org.flickit.assessment.advice.test.fixture.application.QuestionRecommendationMother;
 import org.flickit.assessment.advice.test.fixture.application.AttributeLevelTargetMother;
 import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.port.out.CallAiPromptPort;
@@ -77,7 +77,7 @@ class CreateAiAdviceNarrationHelperTest {
     @Spy
     private AppAiProperties appAiProperties = appAiProperties();
 
-    private final List<AdviceListItem> adviceListItems = List.of(AdviceListItemMother.createSimpleAdviceListItem());
+    private final List<QuestionRecommendation> questionRecommendations = List.of(QuestionRecommendationMother.createSimpleAdviceListItem());
     private final List<AttributeLevelTarget> attributeLevelTargets = List.of(AttributeLevelTargetMother.createAttributeLevelTarget());
 
     private final String aiNarration = "aiNarration";
@@ -94,7 +94,7 @@ class CreateAiAdviceNarrationHelperTest {
     void testCreateAiAdviceNarration_whenAiIsDisabled_thenReturnAiIsDisabledMessage() {
         when(appAiProperties.isEnabled()).thenReturn(false);
 
-        var result = helper.createAiAdviceNarration(assessmentResult, adviceListItems, attributeLevelTargets);
+        var result = helper.createAiAdviceNarration(assessmentResult, questionRecommendations, attributeLevelTargets);
         assertEquals(MessageBundle.message(ADVICE_NARRATION_AI_IS_DISABLED), result);
 
         verifyNoInteractions(
@@ -118,7 +118,7 @@ class CreateAiAdviceNarrationHelperTest {
         when(loadAttributesPort.loadByIdsAndAssessmentId(List.of(attributeLevelTargets.getFirst().getAttributeId()), assessmentResult.getAssessmentId())).thenReturn(attributes);
         when(callAiPromptPort.call(promptArgumentCaptor.capture(), classCaptor.capture())).thenReturn(aiAdvice);
 
-        helper.createAiAdviceNarration(assessmentResult, adviceListItems, attributeLevelTargets);
+        helper.createAiAdviceNarration(assessmentResult, questionRecommendations, attributeLevelTargets);
 
         verify(createAdviceNarrationPort).persist(adviceNarrationCaptor.capture());
         verify(createAdviceItemPort).persistAll(adviceItemsCaptor.capture(), eq(assessmentResult.getId()));
@@ -154,7 +154,7 @@ class CreateAiAdviceNarrationHelperTest {
         when(loadAttributesPort.loadByIdsAndAssessmentId(List.of(attributeLevelTargets.getFirst().getAttributeId()), assessmentResult.getAssessmentId())).thenReturn(attributes);
         when(callAiPromptPort.call(promptArgumentCaptor.capture(), classCaptor.capture())).thenReturn(aiAdvice);
 
-        helper.createAiAdviceNarration(assessmentResult, adviceListItems, attributeLevelTargets);
+        helper.createAiAdviceNarration(assessmentResult, questionRecommendations, attributeLevelTargets);
 
         verify(updateAdviceNarrationPort).updateAiNarration(updateNarrationCaptor.capture());
         verify(createAdviceItemPort).persistAll(adviceItemsCaptor.capture(), eq(assessmentResult.getId()));
@@ -185,7 +185,7 @@ class CreateAiAdviceNarrationHelperTest {
         when(loadAttributesPort.loadByIdsAndAssessmentId(List.of(attributeLevelTargets.getFirst().getAttributeId()), assessmentResult.getAssessmentId())).thenReturn(attributes);
         when(callAiPromptPort.call(promptArgumentCaptor.capture(), classCaptor.capture())).thenReturn(aiAdvice);
 
-        helper.createAiAdviceNarration(assessmentResult, adviceListItems, attributeLevelTargets);
+        helper.createAiAdviceNarration(assessmentResult, questionRecommendations, attributeLevelTargets);
 
         verify(createAdviceItemPort).persistAll(adviceItemsCaptor.capture(), eq(assessmentResult.getId()));
         verify(updateAdviceNarrationPort).updateAiNarration(updateNarrationCaptor.capture());

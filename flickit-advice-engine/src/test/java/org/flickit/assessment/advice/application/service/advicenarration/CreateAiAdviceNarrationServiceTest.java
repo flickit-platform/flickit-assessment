@@ -12,7 +12,7 @@ import org.flickit.assessment.advice.application.port.out.atribute.LoadAttribute
 import org.flickit.assessment.advice.application.port.out.attributevalue.LoadAttributeCurrentAndTargetLevelIndexPort;
 import org.flickit.assessment.advice.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.advice.application.service.advicenarration.CreateAiAdviceNarrationService.AdviceDto;
-import org.flickit.assessment.advice.test.fixture.application.AdviceListItemMother;
+import org.flickit.assessment.advice.test.fixture.application.QuestionRecommendationMother;
 import org.flickit.assessment.advice.test.fixture.application.AttributeLevelTargetMother;
 import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
@@ -347,7 +347,7 @@ class CreateAiAdviceNarrationServiceTest {
     private CreateAiAdviceNarrationUseCase.Param.ParamBuilder paramBuilder() {
         return CreateAiAdviceNarrationUseCase.Param.builder()
             .assessmentId(UUID.randomUUID())
-            .adviceListItems(List.of(AdviceListItemMother.createSimpleAdviceListItem()))
+            .questionRecommendations(List.of(QuestionRecommendationMother.createSimpleAdviceListItem()))
             .attributeLevelTargets(List.of(AttributeLevelTargetMother.createAttributeLevelTarget()))
             .currentUserId(UUID.randomUUID());
     }

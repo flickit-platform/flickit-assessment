@@ -6,7 +6,7 @@ import org.flickit.assessment.advice.application.domain.AssessmentResult;
 import org.flickit.assessment.advice.application.domain.Attribute;
 import org.flickit.assessment.advice.application.domain.AttributeLevelTarget;
 import org.flickit.assessment.advice.application.domain.MaturityLevel;
-import org.flickit.assessment.advice.application.domain.advice.AdviceListItem;
+import org.flickit.assessment.advice.application.domain.advice.QuestionRecommendation;
 import org.flickit.assessment.advice.application.port.in.advicenarration.RefreshAssessmentAdviceUseCase;
 import org.flickit.assessment.advice.application.port.out.adviceitem.DeleteAdviceItemPort;
 import org.flickit.assessment.advice.application.port.out.adviceitem.LoadAdviceItemPort;
@@ -182,7 +182,7 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
             }
         }
 
-        List<AdviceListItem> improvableQuestions = createAdviceHelper.createAdvice(result.getAssessmentId(), List.copyOf(attributeTargets));
+        List<QuestionRecommendation> improvableQuestions = createAdviceHelper.createAdvice(result.getAssessmentId(), List.copyOf(attributeTargets));
         log.debug("Advice engine returns [{}] questions for targets [{}", improvableQuestions.size(), attributeTargets);
         while (improvableQuestions.size() < MIN_REQUIRED_IMPROVABLE_QUESTIONS_SIZE && !nonWeakAttributeTargets.isEmpty()) {
             AttributeLevelTarget next = nonWeakAttributeTargets.pollFirst();
