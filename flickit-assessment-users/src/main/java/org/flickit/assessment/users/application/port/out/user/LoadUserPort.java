@@ -2,7 +2,6 @@ package org.flickit.assessment.users.application.port.out.user;
 
 import org.flickit.assessment.users.application.domain.User;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
