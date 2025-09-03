@@ -32,7 +32,7 @@ public class AdviceItemPersistenceJpaAdapter implements
     private final AdviceItemJpaRepository repository;
 
     @Override
-    public int countAdviceItems(UUID assessmentResultId) {
+    public int countByAssessmentResultId(UUID assessmentResultId) {
         return repository.countByAssessmentResultId(assessmentResultId);
     }
 

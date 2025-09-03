@@ -215,7 +215,7 @@ public class GetAssessmentPublicReportService implements GetAssessmentPublicRepo
     }
 
     private Advice toAdvice(UUID assessmentResultId, Locale locale) {
-        var narration = loadAdviceNarrationPort.load(assessmentResultId);
+        var narration = loadAdviceNarrationPort.loadNarration(assessmentResultId);
         var adviceItems = loadAdviceItemsPort.loadAll(assessmentResultId);
 
         return Advice.of(narration, toAdviceItems(adviceItems, locale));

@@ -8,6 +8,7 @@ import org.flickit.assessment.advice.application.port.out.advicenarration.Create
 import org.flickit.assessment.advice.application.port.out.advicenarration.LoadAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.UpdateAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadAssessmentResultPort;
+import org.flickit.assessment.advice.test.fixture.application.AdviceNarrationMother;
 import org.flickit.assessment.advice.test.fixture.application.AssessmentResultMother;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
@@ -20,7 +21,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -57,7 +57,7 @@ class CreateAssessorAdviceNarrationServiceTest {
     private UpdateAdviceNarrationPort updateAdviceNarrationPort;
 
     @Test
-    void testCreateAssessorAdviceNarration_WhenCurrentUserDoesNotHaveRequiredPermission_ThenThrowAccessDeniedException() {
+    void testCreateAssessorAdviceNarration_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
         var param = createParam(CreateAssessorAdviceNarrationUseCase.Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(false);
@@ -67,7 +67,7 @@ class CreateAssessorAdviceNarrationServiceTest {
     }
 
     @Test
-    void testCreateAssessorAdviceNarration_WhenAssessmentResultDoesNotNotExist_ThenThrowResourceNotFoundException() {
+    void testCreateAssessorAdviceNarration_whenAssessmentResultDoesNotNotExist_thenThrowResourceNotFoundException() {
         var param = createParam(CreateAssessorAdviceNarrationUseCase.Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(true);
@@ -78,7 +78,7 @@ class CreateAssessorAdviceNarrationServiceTest {
     }
 
     @Test
-    void testCreateAssessorAdviceNarration_WhenAdviceNarrationDoesNotExist_ThenCreateNewOne() {
+    void testCreateAssessorAdviceNarration_whenAdviceNarrationDoesNotExist_thenCreateNewOne() {
         var param = createParam(CreateAssessorAdviceNarrationUseCase.Param.ParamBuilder::build);
         AssessmentResult assessmentResult = AssessmentResultMother.createAssessmentResult();
 
@@ -86,25 +86,28 @@ class CreateAssessorAdviceNarrationServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
         when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.empty());
-        doNothing().when(createAdviceNarrationPort).persist(any(AdviceNarration.class));
+        ArgumentCaptor<AdviceNarration> adviceNarrationArgumentCaptor = ArgumentCaptor.forClass(AdviceNarration.class);
 
         service.createAssessorAdviceNarration(param);
+        verify(createAdviceNarrationPort).persist(adviceNarrationArgumentCaptor.capture());
+
+        AdviceNarration capturedAdviceNarration = adviceNarrationArgumentCaptor.getValue();
+        assertEquals(assessmentResult.getId(), capturedAdviceNarration.getAssessmentResultId());
+        assertEquals(param.getAssessorNarration() , capturedAdviceNarration.getAssessorNarration());
+        assertEquals(param.getCurrentUserId(), capturedAdviceNarration.getCreatedBy());
+        assertTrue(capturedAdviceNarration.isApproved());
+        assertNull(capturedAdviceNarration.getAiNarration());
+        assertNull(capturedAdviceNarration.getAiNarrationTime());
+        assertNotNull(capturedAdviceNarration.getAssessorNarrationTime());
 
         verifyNoInteractions(updateAdviceNarrationPort);
     }
 
     @Test
-    void testCreateAssessorAdviceNarration_WhenAdviceExists_ThenUpdateItsAssessorNarration() {
+    void testCreateAssessorAdviceNarration_whenAdviceExists_thenUpdateItsAssessorNarration() {
         var param = createParam(CreateAssessorAdviceNarrationUseCase.Param.ParamBuilder::build);
-        UUID assessmentResultId = UUID.randomUUID();
         AssessmentResult assessmentResult = AssessmentResultMother.createAssessmentResult();
-        AdviceNarration adviceNarration = new AdviceNarration(UUID.randomUUID(),
-            assessmentResultId,
-            "aiNarration",
-            null,
-            LocalDateTime.now(),
-            null,
-            param.getCurrentUserId());
+        AdviceNarration adviceNarration = AdviceNarrationMother.aiNarration();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
@@ -119,6 +122,7 @@ class CreateAssessorAdviceNarrationServiceTest {
         assertEquals(adviceNarration.getId(), updateParamCaptor.getValue().id());
         assertEquals(param.getAssessorNarration(), updateParamCaptor.getValue().narration());
         assertNotNull(updateParamCaptor.getValue().id());
+        assertTrue(updateParamCaptor.getValue().approved());
         assertEquals(param.getCurrentUserId(), updateParamCaptor.getValue().createdBy());
 
         verifyNoInteractions(createAdviceNarrationPort);

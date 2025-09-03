@@ -32,6 +32,9 @@ public class AdviceNarrationJpaEntity {
     @Column(name = "assessor_narration")
     private String assessorNarration;
 
+    @Column(name = "approved")
+    private boolean approved;
+
     @Column(name = "ai_narration_time")
     private LocalDateTime aiNarrationTime;
 

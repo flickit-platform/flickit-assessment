@@ -9,6 +9,7 @@ public interface UpdateAdviceNarrationPort {
 
     record AssessorNarrationParam(UUID id,
                                   String narration,
+                                  boolean approved,
                                   LocalDateTime narrationTime,
                                   UUID createdBy) {
     }
@@ -17,6 +18,9 @@ public interface UpdateAdviceNarrationPort {
 
     record AiNarrationParam(UUID id,
                             String narration,
+                            boolean approved,
                             LocalDateTime narrationTime) {
     }
+
+    void approve(UUID assessmentId);
 }
