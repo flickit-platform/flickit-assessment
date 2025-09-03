@@ -66,7 +66,7 @@ class CreateAiAdviceNarrationHelperTest {
     private ArgumentCaptor<UpdateAdviceNarrationPort.AiNarrationParam> updateNarrationCaptor;
 
     @Captor
-    private ArgumentCaptor<List<AdviceItem>> adviceItemsCaptor;
+    private ArgumentCaptor<List<CreateAdviceItemPort.Param>> adviceItemsCaptor;
 
     @Captor
     private ArgumentCaptor<Prompt> promptArgumentCaptor;
@@ -121,7 +121,7 @@ class CreateAiAdviceNarrationHelperTest {
         helper.createAiAdviceNarration(assessmentResult, adviceListItems, attributeLevelTargets);
 
         verify(createAdviceNarrationPort).persist(adviceNarrationCaptor.capture());
-        verify(createAdviceItemPort).persistAll(adviceItemsCaptor.capture());
+        verify(createAdviceItemPort).persistAll(adviceItemsCaptor.capture(), eq(assessmentResult.getId()));
 
         var capturedAdviceNarration = adviceNarrationCaptor.getValue();
         assertEquals(aiNarration, adviceNarrationCaptor.getValue().getAiNarration());
@@ -157,7 +157,7 @@ class CreateAiAdviceNarrationHelperTest {
         helper.createAiAdviceNarration(assessmentResult, adviceListItems, attributeLevelTargets);
 
         verify(updateAdviceNarrationPort).updateAiNarration(updateNarrationCaptor.capture());
-        verify(createAdviceItemPort).persistAll(adviceItemsCaptor.capture());
+        verify(createAdviceItemPort).persistAll(adviceItemsCaptor.capture(), eq(assessmentResult.getId()));
 
         var capturedAdviceNarration = updateNarrationCaptor.getValue();
         assertEquals(adviceNarration.getId(), capturedAdviceNarration.id());
@@ -187,7 +187,7 @@ class CreateAiAdviceNarrationHelperTest {
 
         helper.createAiAdviceNarration(assessmentResult, adviceListItems, attributeLevelTargets);
 
-        verify(createAdviceItemPort).persistAll(adviceItemsCaptor.capture());
+        verify(createAdviceItemPort).persistAll(adviceItemsCaptor.capture(), eq(assessmentResult.getId()));
         verify(updateAdviceNarrationPort).updateAiNarration(updateNarrationCaptor.capture());
 
         var capturedAdviceNarration = updateNarrationCaptor.getValue();
@@ -203,21 +203,17 @@ class CreateAiAdviceNarrationHelperTest {
         verifyNoInteractions(createAdviceNarrationPort);
     }
 
-    private void assertAdviceItems(List<AdviceDto.AdviceItemDto> expectedAdviceItems, List<AdviceItem> capturedAdviceItems) {
+    private void assertAdviceItems(List<AdviceDto.AdviceItemDto> expectedAdviceItems, List<CreateAdviceItemPort.Param> capturedAdviceItems) {
         assertEquals(expectedAdviceItems.size(), capturedAdviceItems.size());
-        assertEquals(AdviceDto.class, classCaptor.getValue());
         assertThat(capturedAdviceItems)
             .zipSatisfy(expectedAdviceItems, (actual, expected) -> {
-                assertEquals(expected.title(), actual.getTitle());
-                assertEquals(expected.description(), actual.getDescription());
-                assertEquals(assessmentResult.getId(), actual.getAssessmentResultId());
-                assertEquals(expected.cost(), actual.getCost().getId());
-                assertEquals(expected.impact(), actual.getImpact().getId());
-                assertEquals(expected.priority(), actual.getPriority().getId());
-                assertNotNull(actual.getCreationTime());
-                assertNotNull(actual.getLastModificationTime());
-                assertNull(actual.getCreatedBy());
-                assertNull(actual.getLastModifiedBy());
+                assertEquals(expected.title(), actual.title());
+                assertEquals(expected.description(), actual.description());
+                assertEquals(expected.cost(), actual.cost().getId());
+                assertEquals(expected.impact(), actual.impact().getId());
+                assertEquals(expected.priority(), actual.priority().getId());
+                assertNotNull(actual.creationTime());
+                assertNull(actual.createdBy());
             });
     }
 

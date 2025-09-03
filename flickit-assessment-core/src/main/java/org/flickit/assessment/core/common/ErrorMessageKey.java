@@ -23,6 +23,7 @@ public class ErrorMessageKey {
     public static final String SUBJECT_VALUE_NOT_FOUND = "subjectValue.subjectIdAssessmentResultId.notFound";
     public static final String SUBJECT_NOT_FOUND = "subjectId.notFound";
     public static final String ASSESSMENT_REPORT_LINK_HASH_NOT_FOUND = "assessmentReport.linkHash.notFound";
+    public static final String ADVICE_ITEM_ID_NOT_FOUND = "advice-item-id.notFound";
 
     public static final String CREATE_ASSESSMENT_TITLE_NOT_BLANK = "create-assessment.title.notBlank";
     public static final String CREATE_ASSESSMENT_TITLE_SIZE_MIN = "create-assessment.title.size.min";
@@ -385,4 +386,43 @@ public class ErrorMessageKey {
     public static final String GET_ATTRIBUTE_MEASURE_QUESTIONS_ASSESSMENT_ID_NOT_NULL = "get-attribute-measure-questions.assessmentId.notNull";
     public static final String GET_ATTRIBUTE_MEASURE_QUESTIONS_ATTRIBUTE_ID_NOT_NULL = "get-attribute-measure-questions.attributeId.notNull";
     public static final String GET_ATTRIBUTE_MEASURE_QUESTIONS_MEASURE_ID_NOT_NULL = "get-attribute-measure-questions.measureId.notNull";
+
+    public static final String CREATE_ADVICE_ITEM_ASSESSMENT_ID_NOT_NULL = "create-advice-item.assessmentId.notNull";
+    public static final String CREATE_ADVICE_ITEM_TITLE_NOT_NULL = "create-advice-item.title.notNull";
+    public static final String CREATE_ADVICE_ITEM_TITLE_SIZE_MIN = "create-advice-item.title.size.min";
+    public static final String CREATE_ADVICE_ITEM_TITLE_SIZE_MAX = "create-advice-item.title.size.max";
+    public static final String CREATE_ADVICE_ITEM_DESCRIPTION_NOT_NULL = "create-advice-item.description.notNull";
+    public static final String CREATE_ADVICE_ITEM_DESCRIPTION_SIZE_MIN = "create-advice-item.description.size.min";
+    public static final String CREATE_ADVICE_ITEM_DESCRIPTION_SIZE_MAX = "create-advice-item.description.size.max";
+    public static final String CREATE_ADVICE_ITEM_COST_NOT_NULL = "create-advice-item.cost.notNull";
+    public static final String CREATE_ADVICE_ITEM_COST_INVALID = "create-advice-item.cost.invalid";
+    public static final String CREATE_ADVICE_ITEM_PRIORITY_NOT_NULL = "create-advice-item.priority.notNull";
+    public static final String CREATE_ADVICE_ITEM_PRIORITY_INVALID = "create-advice-item.priority.invalid";
+    public static final String CREATE_ADVICE_ITEM_IMPACT_NOT_NULL = "create-advice-item.impact.notNull";
+    public static final String CREATE_ADVICE_ITEM_IMPACT_INVALID = "create-advice-item.impact.invalid";
+    public static final String CREATE_ADVICE_ITEM_ASSESSMENT_RESULT_NOT_FOUND = "create-advice-item.assessmentResult.notFound";
+
+    public static final String GET_ADVICE_ITEM_LIST_ASSESSMENT_ID_NOT_NULL = "get-advice-item-list.assessmentId.notNull";
+    public static final String GET_ADVICE_ITEM_LIST_SIZE_MIN = "get-advice-item-list.size.min";
+    public static final String GET_ADVICE_ITEM_LIST_SIZE_MAX = "get-advice-item-list.size.max";
+    public static final String GET_ADVICE_ITEM_LIST_PAGE_MIN = "get-advice-item-list.page.min";
+    public static final String GET_ADVICE_ITEM_LIST_ASSESSMENT_RESULT_NOT_FOUND = "get-advice-item-list.assessmentResult.notFound";
+
+    public static final String UPDATE_ADVICE_ITEM_ID_NOT_NULL = "update-advice-item.id.notNull";
+    public static final String UPDATE_ADVICE_ITEM_TITLE_NOT_NULL = "update-advice-item.title.notNull";
+    public static final String UPDATE_ADVICE_ITEM_TITLE_SIZE_MIN = "update-advice-item.title.size.min";
+    public static final String UPDATE_ADVICE_ITEM_TITLE_SIZE_MAX = "update-advice-item.title.size.max";
+    public static final String UPDATE_ADVICE_ITEM_DESCRIPTION_NOT_NULL = "update-advice-item.description.notNull";
+    public static final String UPDATE_ADVICE_ITEM_DESCRIPTION_SIZE_MIN = "update-advice-item.description.size.min";
+    public static final String UPDATE_ADVICE_ITEM_DESCRIPTION_SIZE_MAX = "update-advice-item.description.size.max";
+    public static final String UPDATE_ADVICE_ITEM_COST_NOT_NULL = "update-advice-item.cost.notNull";
+    public static final String UPDATE_ADVICE_ITEM_COST_INVALID = "update-advice-item.cost.invalid";
+    public static final String UPDATE_ADVICE_ITEM_PRIORITY_NOT_NULL = "update-advice-item.priority.notNull";
+    public static final String UPDATE_ADVICE_ITEM_PRIORITY_INVALID = "update-advice-item.priority.invalid";
+    public static final String UPDATE_ADVICE_ITEM_IMPACT_NOT_NULL = "update-advice-item.impact.notNull";
+    public static final String UPDATE_ADVICE_ITEM_IMPACT_INVALID = "update-advice-item.impact.invalid";
+    public static final String UPDATE_ADVICE_ITEM_ASSESSMENT_NOT_FOUND = "update-advice-item.assessment.notFound";
+
+    public static final String DELETE_ADVICE_ITEM_ID_NOT_NULL = "delete-advice-item.id.notNull";
+    public static final String DELETE_ADVICE_ITEM_ASSESSMENT_NOT_FOUND = "delete-advice-item.assessment.notFound";
 }
