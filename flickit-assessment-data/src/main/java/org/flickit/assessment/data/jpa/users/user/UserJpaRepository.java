@@ -45,8 +45,11 @@ public interface UserJpaRepository extends JpaRepository<UserJpaEntity, UUID> {
     @Modifying
     @Query("""
             UPDATE UserJpaEntity a
-            SET a.picture = :picture
+            SET a.picture = :picture,
+                a.lastModificationTime = :lastModificationTime
             WHERE a.id = :id
         """)
-    void updatePicture(@Param("id") UUID id, @Param("picture") String picture);
+    void updatePicture(@Param("id") UUID id,
+                       @Param("picture") String picture,
+                       @Param("lastModificationTime") LocalDateTime lastModificationTime);
 }

@@ -8,6 +8,7 @@ import org.flickit.assessment.users.application.domain.User;
 import org.flickit.assessment.users.application.port.out.user.*;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -73,10 +74,10 @@ public class UserPersistenceJpaAdapter implements
     }
 
     @Override
-    public void updatePicture(UUID userId, String picture) {
+    public void updatePicture(UUID userId, String picture, LocalDateTime lastModificationTime) {
         if (!repository.existsById(userId))
             throw new ResourceNotFoundException(USER_ID_NOT_FOUND);
-        repository.updatePicture(userId, picture);
+        repository.updatePicture(userId, picture, lastModificationTime);
     }
 }
 
