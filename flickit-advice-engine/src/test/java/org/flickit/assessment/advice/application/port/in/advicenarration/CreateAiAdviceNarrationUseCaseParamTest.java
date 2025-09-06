@@ -1,8 +1,8 @@
 package org.flickit.assessment.advice.application.port.in.advicenarration;
 
 import jakarta.validation.ConstraintViolationException;
-import org.flickit.assessment.advice.test.fixture.application.AdviceListItemMother;
 import org.flickit.assessment.advice.test.fixture.application.AttributeLevelTargetMother;
+import org.flickit.assessment.advice.test.fixture.application.QuestionRecommendationMother;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -53,7 +53,7 @@ class CreateAiAdviceNarrationUseCaseParamTest {
     private CreateAiAdviceNarrationUseCase.Param.ParamBuilder paramBuilder() {
         return CreateAiAdviceNarrationUseCase.Param.builder()
             .assessmentId(UUID.randomUUID())
-            .adviceListItems(List.of(AdviceListItemMother.createSimpleAdviceListItem()))
+            .adviceListItems(List.of(QuestionRecommendationMother.createSimpleAdviceListItem()))
             .attributeLevelTargets(List.of(AttributeLevelTargetMother.createAttributeLevelTarget()))
             .currentUserId(UUID.randomUUID());
     }

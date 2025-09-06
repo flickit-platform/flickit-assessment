@@ -3,7 +3,7 @@ package org.flickit.assessment.advice.application.service.advicenarration;
 import org.flickit.assessment.advice.application.domain.AssessmentResult;
 import org.flickit.assessment.advice.application.domain.Attribute;
 import org.flickit.assessment.advice.application.domain.AttributeLevelTarget;
-import org.flickit.assessment.advice.application.domain.advice.AdviceListItem;
+import org.flickit.assessment.advice.application.domain.advice.QuestionRecommendation;
 import org.flickit.assessment.advice.application.port.in.advicenarration.RefreshAssessmentAdviceUseCase;
 import org.flickit.assessment.advice.application.port.out.adviceitem.DeleteAdviceItemPort;
 import org.flickit.assessment.advice.application.port.out.adviceitem.LoadAdviceItemPort;
@@ -12,8 +12,8 @@ import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadA
 import org.flickit.assessment.advice.application.port.out.atribute.LoadAttributesPort;
 import org.flickit.assessment.advice.application.port.out.attributevalue.LoadAttributeValuesPort;
 import org.flickit.assessment.advice.application.port.out.maturitylevel.LoadMaturityLevelsPort;
-import org.flickit.assessment.advice.application.service.advice.CreateAdviceHelper;
-import org.flickit.assessment.advice.test.fixture.application.AdviceListItemMother;
+import org.flickit.assessment.advice.application.service.advice.GenerateAdvicePlanHelper;
+import org.flickit.assessment.advice.test.fixture.application.QuestionRecommendationMother;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
@@ -59,7 +59,7 @@ class RefreshAssessmentAdviceServiceTest {
     LoadAttributeValuesPort loadAttributeValuesPort;
 
     @Mock
-    CreateAdviceHelper createAdviceHelper;
+    GenerateAdvicePlanHelper generateAdvicePlanHelper;
 
     @Mock
     CreateAiAdviceNarrationHelper createAiAdviceNarrationHelper;
@@ -79,7 +79,7 @@ class RefreshAssessmentAdviceServiceTest {
     private RefreshAssessmentAdviceUseCase.Param param = createParam(RefreshAssessmentAdviceUseCase.Param.ParamBuilder::build);
     private AssessmentResult assessmentResult = createAssessmentResultWithAssessmentId(param.getAssessmentId());
 
-    private final List<AdviceListItem> adviceListItems = createAdviceListItems(10);
+    private final List<QuestionRecommendation> questionRecommendations = createAdviceListItems(10);
     private final Attribute attribute1 = createWithWeight(1), attribute2 = createWithWeight(3), attribute3 = createWithWeight(5);
 
     @Test
@@ -92,7 +92,7 @@ class RefreshAssessmentAdviceServiceTest {
         verifyNoInteractions(loadAssessmentResultPort,
             loadAttributeValuesPort,
             loadMaturityLevelsPort,
-            createAdviceHelper,
+            generateAdvicePlanHelper,
             createAiAdviceNarrationHelper,
             deleteAdviceItemPort,
             loadAdviceItemPort,
@@ -110,7 +110,7 @@ class RefreshAssessmentAdviceServiceTest {
 
         verifyNoInteractions(loadMaturityLevelsPort,
             loadAttributeValuesPort,
-            createAdviceHelper,
+            generateAdvicePlanHelper,
             createAiAdviceNarrationHelper,
             deleteAdviceItemPort,
             loadAdviceItemPort,
@@ -131,7 +131,7 @@ class RefreshAssessmentAdviceServiceTest {
 
         verifyNoInteractions(loadMaturityLevelsPort,
             loadAttributeValuesPort,
-            createAdviceHelper,
+            generateAdvicePlanHelper,
             createAiAdviceNarrationHelper,
             deleteAdviceItemPort,
             loadAttributesPort);
@@ -149,15 +149,15 @@ class RefreshAssessmentAdviceServiceTest {
         when(loadAttributeValuesPort.loadAll(assessmentResult.getId())).thenReturn(attributeValues);
         @SuppressWarnings("unchecked")
         ArgumentCaptor<List<AttributeLevelTarget>> targetCaptor = ArgumentCaptor.forClass(List.class);
-        when(createAdviceHelper.createAdvice(eq(param.getAssessmentId()), anyList())).thenReturn(adviceListItems);
+        when(generateAdvicePlanHelper.createAdvice(eq(param.getAssessmentId()), anyList())).thenReturn(questionRecommendations);
         @SuppressWarnings("unchecked")
         ArgumentCaptor<List<AttributeLevelTarget>> narrationCaptor = ArgumentCaptor.forClass(List.class);
 
         service.refreshAssessmentAdvice(param);
-        verify(createAdviceHelper).createAdvice(eq(param.getAssessmentId()), targetCaptor.capture());
+        verify(generateAdvicePlanHelper).createAdvice(eq(param.getAssessmentId()), targetCaptor.capture());
         verify(createAiAdviceNarrationHelper).createAiAdviceNarration(
             eq(assessmentResult),
-            eq(adviceListItems),
+            eq(questionRecommendations),
             narrationCaptor.capture()
         );
         List<AttributeLevelTarget> capturedTargets = targetCaptor.getValue();
@@ -199,15 +199,15 @@ class RefreshAssessmentAdviceServiceTest {
         when(loadAttributesPort.loadByIdsAndAssessmentId(anyList(), eq(param.getAssessmentId()))).thenReturn(List.of(attribute1, attribute2, attribute3));
         @SuppressWarnings("unchecked")
         ArgumentCaptor<List<AttributeLevelTarget>> targetCaptor = ArgumentCaptor.forClass(List.class);
-        when(createAdviceHelper.createAdvice(eq(param.getAssessmentId()), anyList())).thenReturn(adviceListItems);
+        when(generateAdvicePlanHelper.createAdvice(eq(param.getAssessmentId()), anyList())).thenReturn(questionRecommendations);
         @SuppressWarnings("unchecked")
         ArgumentCaptor<List<AttributeLevelTarget>> narrationCaptor = ArgumentCaptor.forClass(List.class);
 
         service.refreshAssessmentAdvice(param);
-        verify(createAdviceHelper).createAdvice(eq(param.getAssessmentId()), targetCaptor.capture());
+        verify(generateAdvicePlanHelper).createAdvice(eq(param.getAssessmentId()), targetCaptor.capture());
         verify(createAiAdviceNarrationHelper).createAiAdviceNarration(
             eq(assessmentResult),
-            eq(adviceListItems),
+            eq(questionRecommendations),
             narrationCaptor.capture()
         );
         List<AttributeLevelTarget> capturedTargets = targetCaptor.getValue();
@@ -267,15 +267,15 @@ class RefreshAssessmentAdviceServiceTest {
         when(loadAttributesPort.loadByIdsAndAssessmentId(anyList(), eq(param.getAssessmentId()))).thenReturn(List.of(attribute1, attribute2, attribute3, attribute4, attribute5, attribute6));
         @SuppressWarnings("unchecked")
         ArgumentCaptor<List<AttributeLevelTarget>> targetCaptor = ArgumentCaptor.forClass(List.class);
-        when(createAdviceHelper.createAdvice(eq(param.getAssessmentId()), anyList())).thenReturn(adviceListItems);
+        when(generateAdvicePlanHelper.createAdvice(eq(param.getAssessmentId()), anyList())).thenReturn(questionRecommendations);
         @SuppressWarnings("unchecked")
         ArgumentCaptor<List<AttributeLevelTarget>> narrationCaptor = ArgumentCaptor.forClass(List.class);
 
         service.refreshAssessmentAdvice(param);
-        verify(createAdviceHelper).createAdvice(eq(param.getAssessmentId()), targetCaptor.capture());
+        verify(generateAdvicePlanHelper).createAdvice(eq(param.getAssessmentId()), targetCaptor.capture());
         verify(createAiAdviceNarrationHelper).createAiAdviceNarration(
             eq(assessmentResult),
-            eq(adviceListItems),
+            eq(questionRecommendations),
             narrationCaptor.capture()
         );
         List<AttributeLevelTarget> capturedTargets = targetCaptor.getValue();
@@ -350,18 +350,18 @@ class RefreshAssessmentAdviceServiceTest {
         @SuppressWarnings("unchecked")
         ArgumentCaptor<List<AttributeLevelTarget>> adviceTargetsCaptor = ArgumentCaptor.forClass(List.class);
         @SuppressWarnings("unchecked")
-        ArgumentCaptor<List<AdviceListItem>> improvableCaptor = ArgumentCaptor.forClass(List.class);
+        ArgumentCaptor<List<QuestionRecommendation>> improvableCaptor = ArgumentCaptor.forClass(List.class);
         @SuppressWarnings("unchecked")
         ArgumentCaptor<List<AttributeLevelTarget>> narrationTargetsCaptor = ArgumentCaptor.forClass(List.class);
 
-        when(createAdviceHelper.createAdvice(eq(param.getAssessmentId()), anyList()))
+        when(generateAdvicePlanHelper.createAdvice(eq(param.getAssessmentId()), anyList()))
             .thenReturn(adviceListItems1)
             .thenReturn(adviceListItems2)
             .thenReturn(adviceListItems3);
 
         service.refreshAssessmentAdvice(param);
 
-        verify(createAdviceHelper, times(3)).createAdvice(eq(param.getAssessmentId()), adviceTargetsCaptor.capture());
+        verify(generateAdvicePlanHelper, times(3)).createAdvice(eq(param.getAssessmentId()), adviceTargetsCaptor.capture());
 
         verify(createAiAdviceNarrationHelper).createAiAdviceNarration(
             eq(assessmentResult),
@@ -441,11 +441,11 @@ class RefreshAssessmentAdviceServiceTest {
         @SuppressWarnings("unchecked")
         ArgumentCaptor<List<AttributeLevelTarget>> adviceTargetsCaptor = ArgumentCaptor.forClass(List.class);
         @SuppressWarnings("unchecked")
-        ArgumentCaptor<List<AdviceListItem>> improvableCaptor = ArgumentCaptor.forClass(List.class);
+        ArgumentCaptor<List<QuestionRecommendation>> improvableCaptor = ArgumentCaptor.forClass(List.class);
         @SuppressWarnings("unchecked")
         ArgumentCaptor<List<AttributeLevelTarget>> narrationTargetsCaptor = ArgumentCaptor.forClass(List.class);
 
-        when(createAdviceHelper.createAdvice(eq(param.getAssessmentId()), anyList()))
+        when(generateAdvicePlanHelper.createAdvice(eq(param.getAssessmentId()), anyList()))
             .thenReturn(adviceListItems1)
             .thenReturn(adviceListItems2)
             .thenReturn(adviceListItems3)
@@ -453,7 +453,7 @@ class RefreshAssessmentAdviceServiceTest {
 
         service.refreshAssessmentAdvice(param);
 
-        verify(createAdviceHelper, times(4)).createAdvice(eq(param.getAssessmentId()), adviceTargetsCaptor.capture());
+        verify(generateAdvicePlanHelper, times(4)).createAdvice(eq(param.getAssessmentId()), adviceTargetsCaptor.capture());
 
         verify(createAiAdviceNarrationHelper).createAiAdviceNarration(
             eq(assessmentResult),
@@ -504,7 +504,7 @@ class RefreshAssessmentAdviceServiceTest {
         service.refreshAssessmentAdvice(param);
 
         verifyNoInteractions(deleteAdviceItemPort,
-            createAdviceHelper,
+            generateAdvicePlanHelper,
             createAiAdviceNarrationHelper,
             loadAdviceItemPort,
             loadAdviceNarrationPort,
@@ -525,7 +525,7 @@ class RefreshAssessmentAdviceServiceTest {
             .currentUserId(UUID.randomUUID());
     }
 
-    private List<AdviceListItem> createAdviceListItems(int count) {
-        return IntStream.range(0, count).mapToObj(i -> AdviceListItemMother.createSimpleAdviceListItem()).toList();
+    private List<QuestionRecommendation> createAdviceListItems(int count) {
+        return IntStream.range(0, count).mapToObj(i -> QuestionRecommendationMother.createSimpleAdviceListItem()).toList();
     }
 }

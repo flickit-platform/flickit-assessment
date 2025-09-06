@@ -1,14 +1,11 @@
-package org.flickit.assessment.advice.application.domain.advice;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
+package org.flickit.assessment.common.application.domain.advice;
 
 import java.util.List;
 
-public record AdviceListItem(
+public record AdvicePlanItem(
     AdviceQuestion question,
     AdviceOption answeredOption,
     AdviceOption recommendedOption,
-    @JsonIgnore double benefit,
     List<AdviceAttribute> attributes,
     AdviceQuestionnaire questionnaire) {
 }

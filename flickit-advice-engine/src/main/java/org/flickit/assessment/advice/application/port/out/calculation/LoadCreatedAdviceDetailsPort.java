@@ -16,7 +16,6 @@ public interface LoadCreatedAdviceDetailsPort {
         AdviceQuestion question,
         List<AdviceOption> options,
         List<AdviceAttribute> attributes,
-        AdviceQuestionnaire questionnaire
-    ) {
+        AdviceQuestionnaire questionnaire) {
     }
 }

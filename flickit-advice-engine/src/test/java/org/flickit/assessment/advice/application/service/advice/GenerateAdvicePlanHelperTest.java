@@ -33,10 +33,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class CreateAdviceHelperTest {
+class GenerateAdvicePlanHelperTest {
 
     @InjectMocks
-    private CreateAdviceHelper helper;
+    private GenerateAdvicePlanHelper helper;
 
     @Mock
     private LoadAdviceCalculationInfoPort loadInfoPort;

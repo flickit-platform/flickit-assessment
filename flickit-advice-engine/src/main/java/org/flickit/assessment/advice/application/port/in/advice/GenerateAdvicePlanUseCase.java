@@ -5,7 +5,7 @@ import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.advice.application.domain.AttributeLevelTarget;
-import org.flickit.assessment.advice.application.domain.advice.AdviceListItem;
+import org.flickit.assessment.advice.application.domain.advice.QuestionRecommendation;
 import org.flickit.assessment.common.application.SelfValidating;
 
 import java.util.List;
@@ -14,9 +14,9 @@ import java.util.UUID;
 import static org.flickit.assessment.advice.common.ErrorMessageKey.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 
-public interface CreateAdviceUseCase {
+public interface GenerateAdvicePlanUseCase {
 
-    Result createAdvice(Param param);
+    Result generate(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
@@ -40,6 +40,6 @@ public interface CreateAdviceUseCase {
         }
     }
 
-    record Result(List<AdviceListItem> adviceItems) {
+    record Result(List<QuestionRecommendation> adviceItems) {
     }
 }

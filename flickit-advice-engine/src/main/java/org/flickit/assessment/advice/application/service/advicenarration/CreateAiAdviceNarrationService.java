@@ -2,7 +2,7 @@ package org.flickit.assessment.advice.application.service.advicenarration;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.advice.application.domain.*;
-import org.flickit.assessment.advice.application.domain.advice.AdviceListItem;
+import org.flickit.assessment.advice.application.domain.advice.QuestionRecommendation;
 import org.flickit.assessment.advice.application.port.in.advicenarration.CreateAiAdviceNarrationUseCase;
 import org.flickit.assessment.advice.application.port.out.adviceitem.CreateAdviceItemPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.CreateAdviceNarrationPort;
@@ -106,7 +106,7 @@ public class CreateAiAdviceNarrationService implements CreateAiAdviceNarrationUs
             .toList();
     }
 
-    private Prompt createPrompt(List<AdviceListItem> adviceItems, List<AttributeLevelTarget> targets, AssessmentResult assessmentResult, UUID assessmentId) {
+    private Prompt createPrompt(List<QuestionRecommendation> adviceItems, List<AttributeLevelTarget> targets, AssessmentResult assessmentResult, UUID assessmentId) {
         var assessment = loadAssessmentPort.loadById(assessmentId);
         var assessmentTitle = assessment.getShortTitle() != null ? assessment.getShortTitle() : assessment.getTitle();
 
@@ -138,7 +138,6 @@ public class CreateAiAdviceNarrationService implements CreateAiAdviceNarrationUs
                 "language", assessmentResult.getLanguage().getTitle()))
             .create();
     }
-
 
     private UpdateAdviceNarrationPort.AiNarrationParam toAiNarrationParam(UUID narrationId, String narration) {
         return new UpdateAdviceNarrationPort.AiNarrationParam(narrationId,
