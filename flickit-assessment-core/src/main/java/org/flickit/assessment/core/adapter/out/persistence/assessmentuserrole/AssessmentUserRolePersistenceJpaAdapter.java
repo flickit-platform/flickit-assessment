@@ -67,8 +67,7 @@ public class AssessmentUserRolePersistenceJpaAdapter implements
         if (!repository.existsByAssessmentIdAndUserId(assessmentId, userId))
             throw new ResourceNotFoundException(UPDATE_ASSESSMENT_USER_ROLE_ASSESSMENT_ID_USER_ID_NOT_FOUND);
 
-        var entity = new AssessmentUserRoleJpaEntity(assessmentId, userId, roleId);
-        repository.update(entity.getAssessmentId(), entity.getUserId(), entity.getRoleId());
+        repository.update(assessmentId, userId, roleId);
     }
 
     @Override
