@@ -34,14 +34,11 @@ class CreateUserScenarioTest extends AbstractScenarioTest {
 
         assertEquals(request.email(), loadedUser.getEmail());
         assertEquals(request.displayName(), loadedUser.getDisplayName());
-        assertTrue(loadedUser.getIsActive());
-        assertFalse(loadedUser.getIsSuperUser());
-        assertFalse(loadedUser.getIsStaff());
         assertNull(loadedUser.getBio());
         assertNull(loadedUser.getLinkedin());
         assertNull(loadedUser.getPicture());
-        assertNull(loadedUser.getLastLogin());
-        assertNotNull(loadedUser.getPassword());
+        assertNotNull(loadedUser.getCreationTime());
+        assertNotNull(loadedUser.getLastModificationTime());
 
         List<SpaceJpaEntity> loadedSpaces = loadSpaceByOwnerId(loadedUser.getId());
         assertEquals(1, loadedSpaces.size());

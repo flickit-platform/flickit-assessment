@@ -45,20 +45,30 @@ class CreateUserServiceTest {
     @Captor
     private ArgumentCaptor<SpaceUserAccess> createSpaceUserAccessCaptor;
 
+    @Captor
+    private ArgumentCaptor<CreateUserPort.Param> createUserCaptor;
+
     @Test
     void testCreateUserService_whenParametersAreValid_thenReturnValidResult() {
         var param = createParam(CreateUserUseCase.Param.ParamBuilder::build);
         var userId = UUID.randomUUID();
 
-        when(createUserPort.persist(param.getUserId(), param.getDisplayName(), param.getEmail())).thenReturn(userId);
+        when(createUserPort.persist(createUserCaptor.capture())).thenReturn(userId);
 
         var result = service.createUser(param);
 
         assertEquals(userId, result.userId());
 
         verify(createSpacePort).persist(createSpaceCaptor.capture());
-        var capturedSpace = createSpaceCaptor.getValue();
 
+        var capturedUser = createUserCaptor.getValue();
+        assertEquals(param.getUserId(), capturedUser.id());
+        assertEquals(param.getDisplayName(), capturedUser.displayName());
+        assertEquals(param.getEmail(), capturedUser.email());
+        assertNotNull(capturedUser.creationTime());
+        assertNotNull(capturedUser.lastModificationTime());
+
+        var capturedSpace = createSpaceCaptor.getValue();
         assertEquals(generateSlugCode(DEFAULT_SPACE_TITLE), capturedSpace.code());
         assertEquals(DEFAULT_SPACE_TITLE, capturedSpace.title());
         assertEquals(SpaceType.BASIC, capturedSpace.type());
