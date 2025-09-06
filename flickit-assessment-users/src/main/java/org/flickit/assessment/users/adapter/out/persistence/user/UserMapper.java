@@ -2,6 +2,7 @@ package org.flickit.assessment.users.adapter.out.persistence.user;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 import org.flickit.assessment.users.application.domain.User;
 
@@ -26,6 +27,7 @@ public class UserMapper {
             email,
             displayName,
             creationTime,
-            lastModificationTime);
+            lastModificationTime,
+            "!" + RandomStringUtils.randomAlphanumeric(40));
     }
 }

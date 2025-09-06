@@ -46,11 +46,15 @@ public class UserJpaEntity {
     @Column(name = "last_modification_time")
     private LocalDateTime lastModificationTime;
 
-    public UserJpaEntity(UUID id, String email, String displayName, LocalDateTime creationTime, LocalDateTime lastModificationTime) {
+    @Column(name = "password", length = 128, nullable = false)
+    private String password;
+
+    public UserJpaEntity(UUID id, String email, String displayName, LocalDateTime creationTime, LocalDateTime lastModificationTime, String password) {
         this.id = id;
         this.email = email;
         this.displayName = displayName;
         this.creationTime = creationTime;
         this.lastModificationTime = lastModificationTime;
+        this.password = password;
     }
 }
