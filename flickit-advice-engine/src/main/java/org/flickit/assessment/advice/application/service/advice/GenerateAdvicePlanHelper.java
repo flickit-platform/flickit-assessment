@@ -26,7 +26,7 @@ import static org.flickit.assessment.advice.common.ErrorMessageKey.CREATE_ADVICE
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class CreateAdviceHelper {
+public class GenerateAdvicePlanHelper {
 
     private final LoadAdviceCalculationInfoPort loadAdviceCalculationInfoPort;
     private final SolverManager<Plan, UUID> solverManager;

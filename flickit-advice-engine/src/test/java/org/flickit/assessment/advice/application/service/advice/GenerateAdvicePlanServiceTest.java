@@ -51,7 +51,7 @@ class GenerateAdvicePlanServiceTest {
     private LoadAttributeCurrentAndTargetLevelIndexPort loadAttributeCurrentAndTargetLevelIndexPort;
 
     @Mock
-    private CreateAdviceHelper createAdviceHelper;
+    private GenerateAdvicePlanHelper generateAdvicePlanHelper;
 
     @Test
     void testGenerate_AssessmentNotExist_ThrowException() {
@@ -69,7 +69,7 @@ class GenerateAdvicePlanServiceTest {
 
         assertThrows(ResourceNotFoundException.class, () -> service.generate(param), COMMON_ASSESSMENT_RESULT_NOT_FOUND);
 
-        verifyNoInteractions(createAdviceHelper);
+        verifyNoInteractions(generateAdvicePlanHelper);
     }
 
     @Test
@@ -91,7 +91,7 @@ class GenerateAdvicePlanServiceTest {
 
         assertThrows(ResourceNotFoundException.class, () -> service.generate(param), CREATE_ADVICE_ASSESSMENT_ATTRIBUTE_RELATION_NOT_FOUND);
 
-        verifyNoInteractions(createAdviceHelper);
+        verifyNoInteractions(generateAdvicePlanHelper);
     }
 
     @Test
@@ -115,7 +115,7 @@ class GenerateAdvicePlanServiceTest {
 
         assertThrows(ResourceNotFoundException.class, () -> service.generate(param), CREATE_ADVICE_ASSESSMENT_LEVEL_RELATION_NOT_FOUND);
 
-        verifyNoInteractions(createAdviceHelper);
+        verifyNoInteractions(generateAdvicePlanHelper);
     }
 
     @Test
@@ -132,7 +132,7 @@ class GenerateAdvicePlanServiceTest {
         assertThrows(AccessDeniedException.class, () -> service.generate(param), COMMON_CURRENT_USER_NOT_ALLOWED);
         verify(assessmentAccessChecker, times(1)).isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE);
 
-        verifyNoInteractions(createAdviceHelper);
+        verifyNoInteractions(generateAdvicePlanHelper);
     }
 
     @Test
@@ -154,7 +154,7 @@ class GenerateAdvicePlanServiceTest {
         verify(validateAssessmentResultPort, times(1)).validate(param.getAssessmentId());
         verify(assessmentAccessChecker, times(1)).isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE);
 
-        verifyNoInteractions(createAdviceHelper);
+        verifyNoInteractions(generateAdvicePlanHelper);
     }
 
     @Test
@@ -177,7 +177,7 @@ class GenerateAdvicePlanServiceTest {
         verify(validateAssessmentResultPort, times(1)).validate(param.getAssessmentId());
         verify(assessmentAccessChecker, times(1)).isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE);
 
-        verifyNoInteractions(createAdviceHelper);
+        verifyNoInteractions(generateAdvicePlanHelper);
     }
 
     @SneakyThrows
@@ -207,7 +207,7 @@ class GenerateAdvicePlanServiceTest {
         verify(loadAttributeCurrentAndTargetLevelIndexPort, times(1))
             .load(param.getAssessmentId(), param.getAttributeLevelTargets());
 
-        verifyNoInteractions(createAdviceHelper);
+        verifyNoInteractions(generateAdvicePlanHelper);
     }
 
     @SneakyThrows
@@ -234,7 +234,7 @@ class GenerateAdvicePlanServiceTest {
 
         verify(validateAssessmentResultPort, times(1)).validate(param.getAssessmentId());
         verify(assessmentAccessChecker, times(1)).isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE);
-        verify(createAdviceHelper, times(1)).createAdvice(param.getAssessmentId(), param.getAttributeLevelTargets());
+        verify(generateAdvicePlanHelper, times(1)).createAdvice(param.getAssessmentId(), param.getAttributeLevelTargets());
     }
 
     private void mockPorts(GenerateAdvicePlanUseCase.Param param) {
@@ -283,7 +283,7 @@ class GenerateAdvicePlanServiceTest {
             0.5,
             List.of(attribute), questionnaire);
 
-        when(createAdviceHelper.createAdvice(param.getAssessmentId(), param.getAttributeLevelTargets()))
+        when(generateAdvicePlanHelper.createAdvice(param.getAssessmentId(), param.getAttributeLevelTargets()))
             .thenReturn(List.of(qr1, qr2));
 
     }

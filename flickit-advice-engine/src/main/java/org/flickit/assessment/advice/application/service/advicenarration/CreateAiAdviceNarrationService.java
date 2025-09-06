@@ -139,7 +139,6 @@ public class CreateAiAdviceNarrationService implements CreateAiAdviceNarrationUs
             .create();
     }
 
-
     private UpdateAdviceNarrationPort.AiNarrationParam toAiNarrationParam(UUID narrationId, String narration) {
         return new UpdateAdviceNarrationPort.AiNarrationParam(narrationId,
             narration,

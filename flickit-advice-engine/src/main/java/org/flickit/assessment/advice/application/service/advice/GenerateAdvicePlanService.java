@@ -35,7 +35,7 @@ public class GenerateAdvicePlanService implements GenerateAdvicePlanUseCase {
     private final LoadSelectedAttributeIdsRelatedToAssessmentPort loadSelectedAttributeIdsRelatedToAssessmentPort;
     private final LoadSelectedLevelIdsRelatedToAssessmentPort loadSelectedLevelIdsRelatedToAssessmentPort;
     private final LoadAttributeCurrentAndTargetLevelIndexPort loadAttributeCurrentAndTargetLevelIndexPort;
-    private final CreateAdviceHelper createAdviceHelper;
+    private final GenerateAdvicePlanHelper generateAdvicePlanHelper;
 
     @Override
     public Result generate(Param param) {
@@ -50,7 +50,7 @@ public class GenerateAdvicePlanService implements GenerateAdvicePlanUseCase {
         validateAssessmentLevelRelation(assessmentId, attributeLevelTargets);
         var validAttributeLevelTargets = filterValidAttributeLevelTargets(assessmentId, param.getAttributeLevelTargets());
 
-        var advices = createAdviceHelper.createAdvice(assessmentId, validAttributeLevelTargets);
+        var advices = generateAdvicePlanHelper.createAdvice(assessmentId, validAttributeLevelTargets);
         return new Result(advices);
     }
 

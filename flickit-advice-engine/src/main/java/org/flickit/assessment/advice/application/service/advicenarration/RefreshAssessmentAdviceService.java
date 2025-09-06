@@ -15,7 +15,7 @@ import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadA
 import org.flickit.assessment.advice.application.port.out.atribute.LoadAttributesPort;
 import org.flickit.assessment.advice.application.port.out.attributevalue.LoadAttributeValuesPort;
 import org.flickit.assessment.advice.application.port.out.maturitylevel.LoadMaturityLevelsPort;
-import org.flickit.assessment.advice.application.service.advice.CreateAdviceHelper;
+import org.flickit.assessment.advice.application.service.advice.GenerateAdvicePlanHelper;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
@@ -43,7 +43,7 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
     private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final LoadMaturityLevelsPort loadMaturityLevelsPort;
     private final LoadAttributeValuesPort loadAttributeValuesPort;
-    private final CreateAdviceHelper createAdviceHelper;
+    private final GenerateAdvicePlanHelper generateAdvicePlanHelper;
     private final CreateAiAdviceNarrationHelper createAiAdviceNarrationHelper;
     private final DeleteAdviceItemPort deleteAdviceItemPort;
     private final LoadAdviceItemPort loadAdviceItemPort;
@@ -182,12 +182,12 @@ public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUs
             }
         }
 
-        List<QuestionRecommendation> improvableQuestions = createAdviceHelper.createAdvice(result.getAssessmentId(), List.copyOf(attributeTargets));
+        List<QuestionRecommendation> improvableQuestions = generateAdvicePlanHelper.createAdvice(result.getAssessmentId(), List.copyOf(attributeTargets));
         log.debug("Advice engine returns [{}] questions for targets [{}", improvableQuestions.size(), attributeTargets);
         while (improvableQuestions.size() < MIN_REQUIRED_IMPROVABLE_QUESTIONS_SIZE && !nonWeakAttributeTargets.isEmpty()) {
             AttributeLevelTarget next = nonWeakAttributeTargets.pollFirst();
             attributeTargets.add(next);
-            improvableQuestions = createAdviceHelper.createAdvice(result.getAssessmentId(), List.copyOf(attributeTargets));
+            improvableQuestions = generateAdvicePlanHelper.createAdvice(result.getAssessmentId(), List.copyOf(attributeTargets));
             log.debug("Advice engine returns [{}] questions for targets [{}", improvableQuestions.size(), attributeTargets);
         }
 
