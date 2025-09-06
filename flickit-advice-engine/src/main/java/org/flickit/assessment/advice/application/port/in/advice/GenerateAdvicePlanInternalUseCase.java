@@ -5,18 +5,17 @@ import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.advice.application.domain.AttributeLevelTarget;
-import org.flickit.assessment.advice.application.domain.advice.AdviceListItem;
+import org.flickit.assessment.advice.application.domain.advice.QuestionRecommendation;
 import org.flickit.assessment.common.application.SelfValidating;
 
 import java.util.List;
 import java.util.UUID;
 
 import static org.flickit.assessment.advice.common.ErrorMessageKey.*;
-import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 
-public interface CreateAdviceUseCase {
+public interface GenerateAdvicePlanInternalUseCase {
 
-    Result createAdvice(Param param);
+    Result generate(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
@@ -29,17 +28,13 @@ public interface CreateAdviceUseCase {
         @Size(min = 1, message = CREATE_ADVICE_ATTRIBUTE_LEVEL_TARGETS_SIZE_MIN)
         List<AttributeLevelTarget> attributeLevelTargets;
 
-        @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
-        UUID currentUserId;
-
-        public Param(UUID assessmentId, List<AttributeLevelTarget> attributeLevelTargets, UUID currentUserId) {
+        public Param(UUID assessmentId, List<AttributeLevelTarget> attributeLevelTargets) {
             this.assessmentId = assessmentId;
             this.attributeLevelTargets = attributeLevelTargets;
-            this.currentUserId = currentUserId;
             this.validateSelf();
         }
     }
 
-    record Result(List<AdviceListItem> adviceItems) {
+    record Result(List<QuestionRecommendation> adviceItems) {
     }
 }
