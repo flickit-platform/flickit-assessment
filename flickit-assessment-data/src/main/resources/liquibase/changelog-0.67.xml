@@ -12,4 +12,27 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="0.67-02" author="Maziyar Gerami">
+        <addColumn tableName="fac_assessment_user_role">
+            <column name="created_by" type="UUID"/>
+            <column name="creation_time" type="${datetime_with_time_zone_type}"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.67-03" author="Maziyar Gerami">
+        <update tableName="fac_assessment_user_role">
+            <column name="created_by"
+                    valueComputed="(SELECT a.created_by FROM fac_assessment a WHERE a.id = assessment_id)"/>
+            <column name="creation_time"
+                    valueComputed="(SELECT a.creation_time FROM fac_assessment a WHERE a.id = assessment_id)"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.67-04" author="Maziyar Gerami">
+        <addNotNullConstraint tableName="fac_assessment_user_role"
+                              columnName="created_by"/>
+        <addNotNullConstraint tableName="fac_assessment_user_role"
+                              columnName="creation_time"/>
+    </changeSet>
+
 </databaseChangeLog>
