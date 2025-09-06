@@ -26,7 +26,7 @@ public interface CreateAiAdviceNarrationUseCase {
         UUID assessmentId;
 
         @NotNull(message = CREATE_AI_ADVICE_NARRATION_ADVICE_LIST_ITEMS_NOT_NULL)
-        List<QuestionRecommendation> questionRecommendations;
+        List<QuestionRecommendation> adviceListItems;
 
         @NotNull(message = CREATE_AI_ADVICE_NARRATION_ATTRIBUTE_LEVEL_TARGETS_NOT_NULL)
         List<AttributeLevelTarget> attributeLevelTargets;
@@ -35,9 +35,9 @@ public interface CreateAiAdviceNarrationUseCase {
         UUID currentUserId;
 
         @Builder
-        public Param(UUID assessmentId, List<QuestionRecommendation> questionRecommendations, List<AttributeLevelTarget> attributeLevelTargets, UUID currentUserId) {
+        public Param(UUID assessmentId, List<QuestionRecommendation> adviceListItems, List<AttributeLevelTarget> attributeLevelTargets, UUID currentUserId) {
             this.assessmentId = assessmentId;
-            this.questionRecommendations = questionRecommendations;
+            this.adviceListItems = adviceListItems;
             this.attributeLevelTargets = attributeLevelTargets;
             this.currentUserId = currentUserId;
             this.validateSelf();

@@ -75,7 +75,7 @@ public class CreateAiAdviceNarrationService implements CreateAiAdviceNarrationUs
 
         var attributeLevelTargets = filterValidAttributeLevelTargets(param.getAssessmentId(), param.getAttributeLevelTargets());
 
-        var prompt = createPrompt(param.getQuestionRecommendations(), attributeLevelTargets, assessmentResult, param.getAssessmentId());
+        var prompt = createPrompt(param.getAdviceListItems(), attributeLevelTargets, assessmentResult, param.getAssessmentId());
         AdviceDto aiAdvice = callAiPromptPort.call(prompt, AdviceDto.class);
 
         createAdviceItems(aiAdvice.adviceItems, assessmentResult.getId());
