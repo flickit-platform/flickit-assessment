@@ -9,5 +9,5 @@ public interface GrantUserAssessmentRolePort {
 
     void persist(UUID assessmentId, UUID userId, Integer roleId);
 
-    void persistAll(List<AssessmentUserRoleItem> assementUserRoleItemList);
+    void persistAll(List<AssessmentUserRoleItem> assessmentUserRoleItemList);
 }
