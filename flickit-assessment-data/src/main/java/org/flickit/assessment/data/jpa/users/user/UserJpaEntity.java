@@ -40,21 +40,37 @@ public class UserJpaEntity {
     @Column(name = "picture", length = 100)
     private String picture;
 
+    @Column(name = "last_login")
+    private LocalDateTime lastLogin;
+
+    @Column(name = "is_superuser", nullable = false)
+    private Boolean isSuperUser;
+
+    @Column(name = "is_staff", nullable = false)
+    private Boolean isStaff;
+
+    @Column(name = "is_active", nullable = false)
+    private Boolean isActive;
+
+    @Column(name = "password", length = 128, nullable = false)
+    private String password;
+
     @Column(name = "creation_time")
     private LocalDateTime creationTime;
 
     @Column(name = "last_modification_time")
     private LocalDateTime lastModificationTime;
 
-    @Column(name = "password", length = 128, nullable = false)
-    private String password;
-
-    public UserJpaEntity(UUID id, String email, String displayName, LocalDateTime creationTime, LocalDateTime lastModificationTime, String password) {
+    public UserJpaEntity(UUID id, String email, String displayName, Boolean isSuperUser, Boolean isStaff,
+                         Boolean isActive, String password, LocalDateTime creationTime, LocalDateTime lastModificationTime) {
         this.id = id;
         this.email = email;
         this.displayName = displayName;
+        this.isSuperUser = isSuperUser;
+        this.isStaff = isStaff;
+        this.isActive = isActive;
+        this.password = password;
         this.creationTime = creationTime;
         this.lastModificationTime = lastModificationTime;
-        this.password = password;
     }
 }

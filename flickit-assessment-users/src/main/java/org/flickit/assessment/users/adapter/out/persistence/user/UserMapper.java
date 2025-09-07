@@ -26,8 +26,11 @@ public class UserMapper {
             id,
             email,
             displayName,
+            false,
+            false,
+            true,
+            "!" + RandomStringUtils.randomAlphanumeric(40),
             creationTime,
-            lastModificationTime,
-            "!" + RandomStringUtils.randomAlphanumeric(40));
+            lastModificationTime);
     }
 }
