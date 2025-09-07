@@ -67,7 +67,7 @@ public class CreateAiAdviceNarrationHelper {
             updateAdviceNarrationPort.updateAiNarration(updateParam);
         } else {
             UUID assessmentResultId = assessmentResult.getId();
-            createAdviceNarrationPort.persist(toCreateAiAdviceNarrationParam(assessmentResultId, aiAdvice.narration()), assessmentResultId);
+            createAdviceNarrationPort.persist(toCreateAiAdviceNarrationParam(aiAdvice.narration()), assessmentResultId);
         }
         return aiAdvice.narration();
     }
@@ -131,7 +131,7 @@ public class CreateAiAdviceNarrationHelper {
     record TargetAttribute(String attribute, String targetMaturityLevel) {
     }
 
-    CreateAdviceNarrationPort.Param toCreateAiAdviceNarrationParam(UUID assessmentResultId, String aiNarration) {
+    CreateAdviceNarrationPort.Param toCreateAiAdviceNarrationParam(String aiNarration) {
         return new CreateAdviceNarrationPort.Param(aiNarration,
             null,
             false,
