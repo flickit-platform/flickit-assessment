@@ -45,7 +45,6 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_AI_ADVIC
 import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_AI_ADVICE_NARRATION_ATTRIBUTE_LEVEL_TARGETS_SIZE_MIN;
 import static org.flickit.assessment.core.common.MessageKey.ADVICE_NARRATION_AI_IS_DISABLED;
 import static org.flickit.assessment.core.test.fixture.application.AdviceNarrationMother.aiNarration;
-import static org.flickit.assessment.core.test.fixture.application.AttributeLevelTargetMother.createAttributeLevelTarget;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -297,8 +296,6 @@ class CreateAiAdviceNarrationServiceTest {
 
     @Test
     void testCreateAiAdviceNarration_whenNoValidTargetExists_thenThrowValidationException() {
-        var attributeLevelTargets = List.of(createAttributeLevelTarget());
-
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(loadAttributeValuePort.loadCurrentAndTargetLevelIndices(param.getAssessmentId(), param.getAttributeLevelTargets()))

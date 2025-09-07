@@ -129,6 +129,7 @@ class GenerateAdvicePlanHelperTest {
         mockPorts();
 
         var result = helper.createAdvice(assessmentId, attributeLevelTargets);
+        assertThat(result).isNotEmpty();
         assertThat(result)
             .allSatisfy(advice -> {
                 assertNotNull(advice.recommendedOption());

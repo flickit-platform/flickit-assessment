@@ -32,6 +32,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.stream.IntStream;
 
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.REFRESH_ASSESSMENT_ADVICE;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -365,7 +366,6 @@ class RefreshAssessmentAdviceServiceTest {
         service.refreshAssessmentAdvice(param);
 
         ArgumentCaptor<GenerateAdvicePlanInternalApi.Param> generateAdvicePlanApiParamCaptor = ArgumentCaptor.forClass(GenerateAdvicePlanInternalApi.Param.class);
-
         verify(generateAdvicePlanInternalApi, times(3)).generate(generateAdvicePlanApiParamCaptor.capture());
 
         verify(createAiAdviceNarrationHelper).createAiAdviceNarration(
@@ -376,22 +376,23 @@ class RefreshAssessmentAdviceServiceTest {
 
         List<GenerateAdvicePlanInternalApi.Param> allCalls = generateAdvicePlanApiParamCaptor.getAllValues();
 
+        assertThat(allCalls)
+            .extracting(GenerateAdvicePlanInternalApi.Param::assessmentId)
+            .allMatch(id -> id.equals(param.getAssessmentId()));
+
         assertEquals(3, allCalls.get(0).attributeLevelTargets().size());
         assertEquals(4, allCalls.get(1).attributeLevelTargets().size());
         assertEquals(5, allCalls.get(2).attributeLevelTargets().size());
 
-        assertEquals(param.getAssessmentId(), allCalls.getFirst().assessmentId());
         assertTrue(allCalls.getFirst().attributeLevelTargets().stream().anyMatch(t -> t.getAttributeId() == attribute2.getId()));
         assertTrue(allCalls.getFirst().attributeLevelTargets().stream().anyMatch(t -> t.getAttributeId() == attribute4.getId()));
         assertTrue(allCalls.getFirst().attributeLevelTargets().stream().anyMatch(t -> t.getAttributeId() == attribute5.getId()));
 
-        assertEquals(param.getAssessmentId(), allCalls.get(1).assessmentId());
         assertTrue(allCalls.get(1).attributeLevelTargets().stream().anyMatch(t -> t.getAttributeId() == attribute2.getId()));
         assertTrue(allCalls.get(1).attributeLevelTargets().stream().anyMatch(t -> t.getAttributeId() == attribute4.getId()));
         assertTrue(allCalls.get(1).attributeLevelTargets().stream().anyMatch(t -> t.getAttributeId() == attribute5.getId()));
         assertTrue(allCalls.get(1).attributeLevelTargets().stream().anyMatch(t -> t.getAttributeId() == attribute8.getId()));
 
-        assertEquals(param.getAssessmentId(), allCalls.get(2).assessmentId());
         assertTrue(allCalls.get(2).attributeLevelTargets().stream().anyMatch(t -> t.getAttributeId() == attribute2.getId()));
         assertTrue(allCalls.get(2).attributeLevelTargets().stream().anyMatch(t -> t.getAttributeId() == attribute4.getId()));
         assertTrue(allCalls.get(2).attributeLevelTargets().stream().anyMatch(t -> t.getAttributeId() == attribute5.getId()));
