@@ -275,7 +275,7 @@ class CreateAssessmentServiceTest {
         when(loadSubjectsPort.loadByKitVersionIdWithAttributes(publicKit.getKitVersion())).thenReturn(createSubjects());
         when(loadSpacePort.loadById(param.getSpaceId())).thenReturn(Optional.of(space));
         when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId(), null)).thenReturn(Optional.of(publicKit));
-        when(loadMaturityLevelsPort.loadAll(publicKit.getKitVersion())).thenReturn(MaturityLevelMother.allLevels());
+        when(loadMaturityLevelsPort.loadAllByKitVersion(publicKit.getKitVersion())).thenReturn(MaturityLevelMother.allLevels());
 
         var result = service.createAssessment(param);
         assertNotNull(result);
@@ -318,7 +318,7 @@ class CreateAssessmentServiceTest {
         when(loadSubjectsPort.loadByKitVersionIdWithAttributes(publicKit.getKitVersion())).thenReturn(expectedResponse);
         when(loadSpacePort.loadById(param.getSpaceId())).thenReturn(Optional.of(space));
         when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId(), null)).thenReturn(Optional.of(publicKit));
-        when(loadMaturityLevelsPort.loadAll(publicKit.getKitVersion())).thenReturn(MaturityLevelMother.allLevels());
+        when(loadMaturityLevelsPort.loadAllByKitVersion(publicKit.getKitVersion())).thenReturn(MaturityLevelMother.allLevels());
 
         CreateAssessmentUseCase.Result result = service.createAssessment(param);
         assertNotNull(result);

@@ -241,6 +241,17 @@ public class AttributePersistenceJpaAdapter implements
             .toList();
     }
 
+    @Override
+    public List<Attribute> loadByIdsAndAssessmentId(List<Long> attributeIds, UUID assessmentId) {
+        var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
+            .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
+
+        var translationLanguage = resolveLanguage(assessmentResult);
+        return repository.findAllByIdInAndKitVersionId(attributeIds, assessmentResult.getKitVersionId()).stream()
+            .map(entity -> mapToDomainModel(entity, translationLanguage))
+            .toList();
+    }
+
     private KitLanguage resolveLanguage(AssessmentResultJpaEntity assessmentResult) {
         var assessmentKit = assessmentKitRepository.findByKitVersionId(assessmentResult.getKitVersionId())
             .orElseThrow(() -> new ResourceNotFoundException(ErrorMessageKey.COMMON_ASSESSMENT_KIT_NOT_FOUND));

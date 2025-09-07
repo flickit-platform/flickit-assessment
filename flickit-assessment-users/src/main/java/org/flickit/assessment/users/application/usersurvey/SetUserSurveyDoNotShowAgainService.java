@@ -1,12 +1,12 @@
 package org.flickit.assessment.users.application.usersurvey;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.users.application.port.in.usersurvey.SetUserSurveyDoNotShowAgainUseCase;
 import org.flickit.assessment.users.application.port.out.usersurvey.CreateUserSurveyPort;
 import org.flickit.assessment.users.application.port.out.usersurvey.LoadUserSurveyPort;
 import org.flickit.assessment.users.application.port.out.usersurvey.UpdateUserSurveyPort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
