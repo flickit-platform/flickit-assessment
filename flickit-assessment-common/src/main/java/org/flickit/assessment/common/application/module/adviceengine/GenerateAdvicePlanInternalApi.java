@@ -16,6 +16,6 @@ public interface GenerateAdvicePlanInternalApi {
     }
 
     @Builder
-    record Result(List<AdvicePlanItem> adviceItems) {
+    record Result(List<AdvicePlanItem> advicePlanItems) {
     }
 }
