@@ -43,4 +43,7 @@ public class AdviceNarrationJpaEntity {
 
     @Column(name = "created_by")
     private UUID createdBy;
+
+    @Column(name = "last_modification_time", nullable = false)
+    private LocalDateTime lastModificationTime;
 }
