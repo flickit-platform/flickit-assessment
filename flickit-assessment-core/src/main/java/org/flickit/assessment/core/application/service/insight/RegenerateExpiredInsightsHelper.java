@@ -1,6 +1,5 @@
 package org.flickit.assessment.core.application.service.insight;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
@@ -17,6 +16,7 @@ import org.flickit.assessment.core.application.service.insight.assessment.Create
 import org.flickit.assessment.core.application.service.insight.attribute.CreateAttributeAiInsightHelper;
 import org.flickit.assessment.core.application.service.insight.subject.CreateSubjectInsightsHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Locale;
 import java.util.UUID;

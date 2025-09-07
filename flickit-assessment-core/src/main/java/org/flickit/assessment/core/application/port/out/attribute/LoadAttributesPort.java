@@ -1,5 +1,7 @@
 package org.flickit.assessment.core.application.port.out.attribute;
 
+import org.flickit.assessment.core.application.domain.Attribute;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -26,4 +28,6 @@ public interface LoadAttributesPort {
 
     record Subject(long id, String title) {
     }
+
+    List<Attribute> loadByIdsAndAssessmentId(List<Long> attributeIds, UUID assessmentId);
 }

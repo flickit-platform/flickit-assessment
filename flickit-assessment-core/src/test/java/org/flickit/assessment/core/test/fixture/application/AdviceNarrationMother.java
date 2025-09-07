@@ -7,6 +7,10 @@ import java.util.UUID;
 
 public class AdviceNarrationMother {
 
+    public static AdviceNarration aiNarration() {
+        return aiAdviceNarrationWithTime(LocalDateTime.now());
+    }
+
     public static AdviceNarration aiAdviceNarrationWithTime(LocalDateTime narrationTime) {
         return new AdviceNarration(UUID.randomUUID(),
             "aiNarration",
