@@ -30,6 +30,11 @@ public class GetUserByEmailRestController {
             result.user().getDisplayName(),
             result.user().getBio(),
             result.user().getLinkedin(),
-            result.user().getPicturePath());
+            result.user().getPicturePath(),
+            result.lastLogin(),
+            result.isSuperUser(),
+            result.isStaff(),
+            result.isActive(),
+            result.password());
     }
 }
