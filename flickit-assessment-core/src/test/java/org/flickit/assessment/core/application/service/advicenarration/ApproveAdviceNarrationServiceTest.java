@@ -51,7 +51,7 @@ class ApproveAdviceNarrationServiceTest {
 
         service.approve(param);
 
-        verify(updateAdviceNarrationPort).approve(param.getAssessmentId());
+        verify(updateAdviceNarrationPort).approve(eq(param.getAssessmentId()), any());
     }
 
     private ApproveAdviceNarrationUseCase.Param createParam(Consumer<ApproveAdviceNarrationUseCase.Param.ParamBuilder> changer) {

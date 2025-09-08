@@ -56,9 +56,7 @@ public class GetAdviceNarrationService implements GetAdviceNarrationUseCase {
     }
 
     private Issues buildIssues(AdviceNarration narration, LocalDateTime lastCalculationTime) {
-        boolean expired = narration.getCreatedBy() == null
-            ? narration.getAiNarrationTime().isBefore(lastCalculationTime)
-            : narration.getAssessorNarrationTime().isBefore(lastCalculationTime);
+        boolean expired = narration.getLastModificationTime().isBefore(lastCalculationTime);
 
         return new Issues(false, !narration.isApproved(), expired);
     }

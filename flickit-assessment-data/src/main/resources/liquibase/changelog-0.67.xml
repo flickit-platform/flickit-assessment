@@ -12,4 +12,13 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="0.67-02" author="Khorsandi">
+        <addColumn tableName="faa_advice_narration">
+            <column name="last_modification_time" type="${datetime_with_time_zone_type}"
+                    valueComputed="GREATEST(ai_narration_time, COALESCE(assessor_narration_time, ai_narration_time))">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

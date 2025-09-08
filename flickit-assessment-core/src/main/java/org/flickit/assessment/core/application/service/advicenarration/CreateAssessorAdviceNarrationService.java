@@ -59,11 +59,13 @@ public class CreateAssessorAdviceNarrationService implements CreateAssessorAdvic
     }
 
     private void handleNewAdviceNarration(String assessorNarration, UUID assessmentResultId, UUID currentUserId) {
+        var creationTime = LocalDateTime.now();
         var createParam = new CreateAdviceNarrationPort.Param(null,
             assessorNarration,
             true,
             null,
-            LocalDateTime.now(),
+            creationTime,
+            creationTime,
             currentUserId);
         createAdviceNarrationPort.persist(createParam, assessmentResultId);
     }
