@@ -19,7 +19,8 @@ public class AdviceNarrationMapper {
             param.approved(),
             param.aiNarrationTime(),
             param.assessorNarrationTime(),
-            param.createdBy());
+            param.createdBy(),
+        param.lastModificationTime());
     }
 
     public static AdviceNarration mapToDomainModel(AdviceNarrationJpaEntity entity) {
@@ -29,6 +30,7 @@ public class AdviceNarrationMapper {
             entity.isApproved(),
             entity.getAiNarrationTime(),
             entity.getAssessorNarrationTime(),
+            entity.getLastModificationTime(),
             entity.getCreatedBy());
     }
 }

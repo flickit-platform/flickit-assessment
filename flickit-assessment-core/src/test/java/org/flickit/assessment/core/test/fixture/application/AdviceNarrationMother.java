@@ -18,6 +18,7 @@ public class AdviceNarrationMother {
             false,
             narrationTime,
             null,
+            narrationTime,
             null);
     }
 
@@ -27,6 +28,7 @@ public class AdviceNarrationMother {
             "assessorNarration",
             true,
             LocalDateTime.MIN,
+            narrationTime,
             narrationTime,
             UUID.randomUUID());
     }

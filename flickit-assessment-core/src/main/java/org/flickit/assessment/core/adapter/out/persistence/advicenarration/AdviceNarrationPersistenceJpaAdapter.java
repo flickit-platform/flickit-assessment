@@ -10,6 +10,7 @@ import org.flickit.assessment.data.jpa.advice.advicenarration.AdviceNarrationJpa
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -55,14 +56,15 @@ public class AdviceNarrationPersistenceJpaAdapter implements
             param.narration(),
             param.approved(),
             param.narrationTime(),
+            param.narrationTime(),
             param.createdBy());
     }
 
     @Override
-    public void approve(UUID assessmentId) {
+    public void approve(UUID assessmentId, LocalDateTime lastModificationTime) {
         var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(APPROVE_ADVICE_NARRATION_ASSESSMENT_RESULT_NOT_FOUND));
-        repository.approveByAssessmentResultId(assessmentResult.getId());
+        repository.approveByAssessmentResultId(assessmentResult.getId(), lastModificationTime);
     }
 
     @Override
@@ -70,6 +72,7 @@ public class AdviceNarrationPersistenceJpaAdapter implements
         repository.updateAiNarration(param.id(),
             param.narration(),
             param.approved(),
+            param.narrationTime(),
             param.narrationTime());
     }
 

@@ -180,11 +180,13 @@ public class CreateAiAdviceNarrationService implements CreateAiAdviceNarrationUs
     }
 
     CreateAdviceNarrationPort.Param toCreateAiAdviceNarrationParam(String aiNarration) {
+        var creationTime = LocalDateTime.now();
         return new CreateAdviceNarrationPort.Param(aiNarration,
             null,
             false,
-            LocalDateTime.now(),
+            creationTime,
             null,
+            creationTime,
             null);
     }
 }

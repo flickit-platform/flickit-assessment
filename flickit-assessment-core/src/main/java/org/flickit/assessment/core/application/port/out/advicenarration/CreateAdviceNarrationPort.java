@@ -12,6 +12,7 @@ public interface CreateAdviceNarrationPort {
                  boolean approved,
                  LocalDateTime aiNarrationTime,
                  LocalDateTime assessorNarrationTime,
+                 LocalDateTime lastModificationTime,
                  UUID createdBy) {
     }
 }
