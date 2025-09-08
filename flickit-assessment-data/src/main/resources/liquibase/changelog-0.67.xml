@@ -21,4 +21,10 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="0.67-03" author="Maziyar Gerami">
+        <addColumn tableName="fau_user">
+            <column name="creation_time" type="${datetime_with_time_zone_type}"/>
+            <column name="last_modification_time" type="${datetime_with_time_zone_type}"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

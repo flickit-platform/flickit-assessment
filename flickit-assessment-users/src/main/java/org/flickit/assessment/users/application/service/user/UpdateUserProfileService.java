@@ -6,6 +6,8 @@ import org.flickit.assessment.users.application.port.out.user.UpdateUserPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -22,6 +24,7 @@ public class UpdateUserProfileService implements UpdateUserProfileUseCase {
         return new UpdateUserPort.Param(param.getCurrentUserId(),
             param.getDisplayName(),
             param.getBio(),
-            param.getLinkedin());
+            param.getLinkedin(),
+            LocalDateTime.now());
     }
 }
