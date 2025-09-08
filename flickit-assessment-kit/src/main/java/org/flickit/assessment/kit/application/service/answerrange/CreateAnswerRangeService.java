@@ -1,6 +1,5 @@
 package org.flickit.assessment.kit.application.service.answerrange;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.port.in.answerrange.CreateAnswerRangeUseCase;
@@ -8,6 +7,7 @@ import org.flickit.assessment.kit.application.port.out.answerrange.CreateAnswerR
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.common.util.GenerateHashCodeUtil.generateCode;

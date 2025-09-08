@@ -7,6 +7,10 @@ import java.util.UUID;
 
 public class AdviceNarrationMother {
 
+    public static AdviceNarration aiNarration() {
+        return aiAdviceNarrationWithTime(LocalDateTime.now());
+    }
+
     public static AdviceNarration aiAdviceNarrationWithTime(LocalDateTime narrationTime) {
         return new AdviceNarration(UUID.randomUUID(),
             "aiNarration",
@@ -14,6 +18,7 @@ public class AdviceNarrationMother {
             false,
             narrationTime,
             null,
+            narrationTime,
             null);
     }
 
@@ -23,6 +28,7 @@ public class AdviceNarrationMother {
             "assessorNarration",
             true,
             LocalDateTime.MIN,
+            narrationTime,
             narrationTime,
             UUID.randomUUID());
     }

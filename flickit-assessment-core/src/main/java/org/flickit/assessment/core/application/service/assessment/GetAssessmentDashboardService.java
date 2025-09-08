@@ -160,17 +160,11 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
 
         return loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResultId)
             .map(narration -> {
-                int expired = isExpired(narration, lastCalculationTime) ? 1 : 0;
+                int expired = narration.getLastModificationTime().isBefore(lastCalculationTime) ? 1 : 0;
                 int unapproved = narration.isApproved() ? 0 : 1;
                 return new Result.Advices(adviceItemsCount, unapproved, expired);
             })
             .orElseGet(() -> new Result.Advices(adviceItemsCount, 0, 0));
-    }
-
-    private boolean isExpired(AdviceNarration narration, LocalDateTime lastCalculationTime) {
-        if (narration.getCreatedBy() == null)
-            return narration.getAiNarrationTime().isBefore(lastCalculationTime);
-        return narration.getAssessorNarrationTime().isBefore(lastCalculationTime);
     }
 
     private Result.Report buildReport(AssessmentReport assessmentReport) {
