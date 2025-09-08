@@ -51,7 +51,12 @@ public class UserPersistenceJpaAdapter implements
             .orElseThrow(() -> new ResourceNotFoundException(USER_BY_EMAIL_NOT_FOUND));
 
         User user = UserMapper.mapToDomainModel(userEntity);
-        return new LoadUserPort.Result(user);
+        return new LoadUserPort.Result(user,
+            userEntity.getLastLogin(),
+            userEntity.getIsSuperUser(),
+            userEntity.getIsStaff(),
+            userEntity.getIsActive(),
+            userEntity.getPassword());
     }
 
     @Override
