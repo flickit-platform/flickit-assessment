@@ -1,6 +1,7 @@
 package org.flickit.assessment.core.application.port.in.assessmentuserrole;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
@@ -27,6 +28,7 @@ public interface DeleteUserAssessmentRoleUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
+        @Builder
         public Param(UUID assessmentId, UUID userId, UUID currentUserId) {
             this.assessmentId = assessmentId;
             this.userId = userId;
