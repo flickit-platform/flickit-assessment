@@ -42,15 +42,18 @@ public class AssessmentUserRolePersistenceJpaAdapter implements
     }
 
     @Override
-    public void persist(UUID assessmentId, UUID userId, Integer roleId) {
-        if (!AssessmentUserRole.isValidId(roleId))
-            throw new ResourceNotFoundException(GRANT_ASSESSMENT_USER_ROLE_ROLE_ID_NOT_FOUND);
+    public Optional<AssessmentUserRoleItem> loadRoleItem(UUID assessmentId, UUID userId) {
+        return repository.findByAssessmentIdAndUserId(assessmentId, userId)
+            .map(AssessmentUserRoleMapper::mapToRoleItem);
+    }
 
-        var assessmentUserRole = repository.findByAssessmentIdAndUserId(assessmentId, userId);
+    @Override
+    public void persist(AssessmentUserRoleItem item) {
+        var assessmentUserRole = repository.findByAssessmentIdAndUserId(item.getAssessmentId(), item.getUserId());
         if(assessmentUserRole.isPresent())
             throw new ResourceAlreadyExistsException(GRANT_ASSESSMENT_USER_ROLE_DUPLICATE_USER_ACCESS);
 
-        var entity = new AssessmentUserRoleJpaEntity(assessmentId, userId, roleId);
+        var entity = new AssessmentUserRoleJpaEntity(item.getAssessmentId(), item.getUserId(), item.getRole().getId(), item.getCreatedBy(), item.getCreationTime());
         repository.save(entity);
     }
 
@@ -70,8 +73,7 @@ public class AssessmentUserRolePersistenceJpaAdapter implements
         if (!repository.existsByAssessmentIdAndUserId(assessmentId, userId))
             throw new ResourceNotFoundException(UPDATE_ASSESSMENT_USER_ROLE_ASSESSMENT_ID_USER_ID_NOT_FOUND);
 
-        var entity = new AssessmentUserRoleJpaEntity(assessmentId, userId, roleId);
-        repository.update(entity.getAssessmentId(), entity.getUserId(), entity.getRoleId());
+        repository.update(assessmentId, userId, roleId);
     }
 
     @Override

@@ -4,6 +4,7 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentAcc
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.domain.AssessmentUserRole;
+import org.flickit.assessment.core.application.domain.AssessmentUserRoleItem;
 import org.flickit.assessment.core.application.domain.notification.GrantAssessmentUserRoleNotificationCmd;
 import org.flickit.assessment.core.application.port.in.assessmentuserrole.GrantUserAssessmentRoleUseCase.Param;
 import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentPort;
@@ -12,6 +13,7 @@ import org.flickit.assessment.core.application.port.out.spaceuseraccess.CreateSp
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -41,6 +43,9 @@ class GrantUserAssessmentRoleServiceTest {
 
     @Mock
     private LoadAssessmentPort loadAssessmentPort;
+
+    @Captor
+    private ArgumentCaptor<AssessmentUserRoleItem> roleItemArgumentCaptor;
 
     @Test
     void testGrantUserAssessmentRoleRole_whenCurrentUserIsNotAuthorized_thenThrowsException() {
@@ -105,8 +110,12 @@ class GrantUserAssessmentRoleServiceTest {
         assertEquals(param.getCurrentUserId(), createSpaceUserAccessPortParam.getValue().createdBy());
         assertNotNull(createSpaceUserAccessPortParam.getValue().creationTime());
 
-        verify(grantUserAssessmentRolePort, times(1))
-            .persist(param.getAssessmentId(), param.getUserId(), param.getRoleId());
+        verify(grantUserAssessmentRolePort, times(1)).persist(roleItemArgumentCaptor.capture());
+        assertEquals(param.getAssessmentId(), roleItemArgumentCaptor.getValue().getAssessmentId());
+        assertEquals(param.getUserId(), roleItemArgumentCaptor.getValue().getUserId());
+        assertEquals(param.getRoleId(), roleItemArgumentCaptor.getValue().getRole().getId());
+        assertEquals(param.getCurrentUserId(), roleItemArgumentCaptor.getValue().getCreatedBy());
+        assertNotNull(roleItemArgumentCaptor.getValue().getCreationTime());
     }
 
     @Test
@@ -124,9 +133,6 @@ class GrantUserAssessmentRoleServiceTest {
         when(loadAssessmentPort.isAssessmentSpaceMember(param.getAssessmentId(), param.getUserId()))
             .thenReturn(true);
 
-        doNothing().when(grantUserAssessmentRolePort)
-            .persist(param.getAssessmentId(), param.getUserId(), param.getRoleId());
-
         var result = service.grantAssessmentUserRole(param);
 
         GrantAssessmentUserRoleNotificationCmd cmd = result.notificationCmd();
@@ -134,7 +140,11 @@ class GrantUserAssessmentRoleServiceTest {
         assertEquals(notificationData.assignerUserId(), cmd.assignerUserId());
         assertEquals(notificationData.assessmentId(), cmd.assessmentId());
 
-        verify(grantUserAssessmentRolePort, times(1))
-            .persist(param.getAssessmentId(), param.getUserId(), param.getRoleId());
+        verify(grantUserAssessmentRolePort, times(1)).persist(roleItemArgumentCaptor.capture());
+        assertEquals(param.getAssessmentId(), roleItemArgumentCaptor.getValue().getAssessmentId());
+        assertEquals(param.getUserId(), roleItemArgumentCaptor.getValue().getUserId());
+        assertEquals(param.getRoleId(), roleItemArgumentCaptor.getValue().getRole().getId());
+        assertEquals(param.getCurrentUserId(), roleItemArgumentCaptor.getValue().getCreatedBy());
+        assertNotNull(roleItemArgumentCaptor.getValue().getCreationTime());
     }
 }

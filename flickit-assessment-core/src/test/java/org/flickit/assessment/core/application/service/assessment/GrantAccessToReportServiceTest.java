@@ -8,6 +8,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.domain.AssessmentUserRole;
+import org.flickit.assessment.core.application.domain.AssessmentUserRoleItem;
 import org.flickit.assessment.core.application.port.in.assessment.GrantAccessToReportUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentinvite.CreateAssessmentInvitePort;
@@ -95,6 +96,9 @@ class GrantAccessToReportServiceTest {
     @Captor
     private ArgumentCaptor<CreateAssessmentInvitePort.Param> createAssessmentInviteParamCaptor;
 
+    @Captor
+    private ArgumentCaptor<AssessmentUserRoleItem> roleItemArgumentCaptor;
+
     private static final Duration EXPIRY_DURATION = Duration.ofDays(7);
 
     @Test
@@ -154,7 +158,6 @@ class GrantAccessToReportServiceTest {
         when(loadUserPort.loadByEmail(param.getEmail())).thenReturn(Optional.of(accessGrantedUser));
         when(checkSpaceAccessPort.checkIsMember(assessment.getSpace().getId(), accessGrantedUser.getId())).thenReturn(true);
         when(loadUserRoleForAssessmentPort.load(param.getAssessmentId(), accessGrantedUser.getId())).thenReturn(Optional.empty());
-        doNothing().when(grantUserAssessmentRolePort).persist(param.getAssessmentId(), accessGrantedUser.getId(), REPORT_VIEWER.getId());
 
         var result = service.grantAccessToReport(param);
         assertNotNull(result);
@@ -162,7 +165,12 @@ class GrantAccessToReportServiceTest {
         assertEquals(param.getCurrentUserId(), result.notificationCmd().senderId());
         assertEquals(assessment, result.notificationCmd().assessment());
 
-        verify(grantUserAssessmentRolePort).persist(param.getAssessmentId(), accessGrantedUser.getId(), REPORT_VIEWER.getId());
+        verify(grantUserAssessmentRolePort).persist(roleItemArgumentCaptor.capture());
+        assertEquals(param.getAssessmentId(), roleItemArgumentCaptor.getValue().getAssessmentId());
+        assertEquals(accessGrantedUser.getId(), roleItemArgumentCaptor.getValue().getUserId());
+        assertEquals(param.getCurrentUserId(), roleItemArgumentCaptor.getValue().getCreatedBy());
+        assertEquals(AssessmentUserRole.REPORT_VIEWER.getId(), roleItemArgumentCaptor.getValue().getRole().getId());
+        assertNotNull(roleItemArgumentCaptor.getValue().getCreationTime());
 
         verifyNoInteractions(createSpaceUserAccessPort,
             createSpaceInvitePort,
@@ -185,7 +193,6 @@ class GrantAccessToReportServiceTest {
         when(checkSpaceAccessPort.checkIsMember(assessment.getSpace().getId(), accessGrantedUser.getId())).thenReturn(false);
         doNothing().when(createSpaceUserAccessPort).persistByAssessmentId(any(CreateSpaceUserAccessPort.CreateParam.class));
         when(loadUserRoleForAssessmentPort.load(param.getAssessmentId(), accessGrantedUser.getId())).thenReturn(Optional.empty());
-        doNothing().when(grantUserAssessmentRolePort).persist(param.getAssessmentId(), accessGrantedUser.getId(), REPORT_VIEWER.getId());
 
         var result = service.grantAccessToReport(param);
         assertNotNull(result);
@@ -200,7 +207,12 @@ class GrantAccessToReportServiceTest {
         assertEquals(param.getCurrentUserId(), createAssessmentSpaceUserAccessParamCaptor.getValue().createdBy());
         assertNotNull(createAssessmentSpaceUserAccessParamCaptor.getValue().creationTime());
 
-        verify(grantUserAssessmentRolePort).persist(param.getAssessmentId(), accessGrantedUser.getId(), REPORT_VIEWER.getId());
+        verify(grantUserAssessmentRolePort).persist(roleItemArgumentCaptor.capture());
+        assertEquals(param.getAssessmentId(), roleItemArgumentCaptor.getValue().getAssessmentId());
+        assertEquals(accessGrantedUser.getId(), roleItemArgumentCaptor.getValue().getUserId());
+        assertEquals(param.getCurrentUserId(), roleItemArgumentCaptor.getValue().getCreatedBy());
+        assertEquals(AssessmentUserRole.REPORT_VIEWER.getId(), roleItemArgumentCaptor.getValue().getRole().getId());
+        assertNotNull(roleItemArgumentCaptor.getValue().getCreationTime());
 
         verifyNoInteractions(createSpaceInvitePort,
             createAssessmentInvitePort,

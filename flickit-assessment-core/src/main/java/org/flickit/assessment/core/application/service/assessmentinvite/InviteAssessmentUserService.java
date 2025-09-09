@@ -7,6 +7,8 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentAcc
 import org.flickit.assessment.common.application.port.out.SendEmailPort;
 import org.flickit.assessment.common.config.AppSpecProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.core.application.domain.AssessmentUserRole;
+import org.flickit.assessment.core.application.domain.AssessmentUserRoleItem;
 import org.flickit.assessment.core.application.port.in.assessmentinvite.InviteAssessmentUserUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentinvite.CreateAssessmentInvitePort;
@@ -20,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.GRANT_USER_ASSESSMENT_ROLE;
 import static org.flickit.assessment.common.error.ErrorMessageKey.*;
@@ -65,7 +68,7 @@ public class InviteAssessmentUserService implements InviteAssessmentUserUseCase 
                     assessment.getId(), userId, param.getCurrentUserId(), creationTime);
                 createSpaceUserAccessPort.persistByAssessmentId(createAssessmentParam);
             }
-            grantUserAssessmentRolePort.persist(param.getAssessmentId(), userId, param.getRoleId());
+            grantUserAssessmentRolePort.persist(toAssessmentUserRole(param.getAssessmentId(), userId, param.getRoleId(), param.getCurrentUserId()));
         }
     }
 
@@ -102,5 +105,13 @@ public class InviteAssessmentUserService implements InviteAssessmentUserUseCase 
             appSpecProperties.getHost(),
             appSpecProperties.getName(),
             appSpecProperties.getSupportEmail());
+    }
+
+    private AssessmentUserRoleItem toAssessmentUserRole(UUID assessmentId, UUID userId, Integer roleId, UUID createdBy) {
+        return new AssessmentUserRoleItem(assessmentId,
+            userId,
+            AssessmentUserRole.valueOfById(roleId),
+            createdBy,
+            LocalDateTime.now());
     }
 }
