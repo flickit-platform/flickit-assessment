@@ -134,9 +134,9 @@ class DeleteUserAssessmentRoleServiceTest {
     }
 
     private DeleteUserAssessmentRoleUseCase.Param createParam(Consumer<DeleteUserAssessmentRoleUseCase.Param.ParamBuilder> changer) {
-        var param = paramBuilder();
-        changer.accept(param);
-        return param.build();
+        var paramBuilder = paramBuilder();
+        changer.accept(paramBuilder);
+        return paramBuilder.build();
     }
 
     private DeleteUserAssessmentRoleUseCase.Param.ParamBuilder paramBuilder() {
