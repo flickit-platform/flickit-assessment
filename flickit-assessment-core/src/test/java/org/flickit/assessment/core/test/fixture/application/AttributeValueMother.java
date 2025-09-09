@@ -1,9 +1,6 @@
 package org.flickit.assessment.core.test.fixture.application;
 
-import org.flickit.assessment.core.application.domain.Answer;
-import org.flickit.assessment.core.application.domain.Attribute;
-import org.flickit.assessment.core.application.domain.AttributeValue;
-import org.flickit.assessment.core.application.domain.Question;
+import org.flickit.assessment.core.application.domain.*;
 
 import java.util.HashSet;
 import java.util.List;
@@ -115,5 +112,9 @@ public class AttributeValueMother {
 
     public static AttributeValue withAttributeAndAnswerAndLevelOne(Attribute attribute, List<Answer> answers) {
         return new AttributeValue(UUID.randomUUID(), attribute, answers, null, MaturityLevelMother.levelOne(), null);
+    }
+
+    public static AttributeValue withAttributeAndLevel(Attribute attribute, MaturityLevel level) {
+        return new AttributeValue(UUID.randomUUID(), attribute, null, null, level, null);
     }
 }

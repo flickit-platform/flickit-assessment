@@ -1,0 +1,142 @@
+package org.flickit.assessment.core.application.service.advicenarration;
+
+import org.apache.commons.lang3.RandomStringUtils;
+import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
+import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
+import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.domain.AdviceNarration;
+import org.flickit.assessment.core.application.domain.AssessmentResult;
+import org.flickit.assessment.core.application.port.in.advicenarration.CreateAssessorAdviceNarrationUseCase;
+import org.flickit.assessment.core.application.port.out.advicenarration.CreateAdviceNarrationPort;
+import org.flickit.assessment.core.application.port.out.advicenarration.LoadAdviceNarrationPort;
+import org.flickit.assessment.core.application.port.out.advicenarration.UpdateAdviceNarrationPort;
+import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
+import org.flickit.assessment.core.test.fixture.application.AdviceNarrationMother;
+import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
+import java.util.UUID;
+import java.util.function.Consumer;
+
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_ADVICE;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSOR_ADVICE_NARRATION_ASSESSMENT_RESULT_NOT_FOUND;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+class CreateAssessorAdviceNarrationServiceTest {
+
+    @InjectMocks
+    private CreateAssessorAdviceNarrationService service;
+
+    @Mock
+    private AssessmentAccessChecker assessmentAccessChecker;
+
+    @Mock
+    private LoadAssessmentResultPort loadAssessmentResultPort;
+
+    @Mock
+    private LoadAdviceNarrationPort loadAdviceNarrationPort;
+
+    @Mock
+    private ValidateAssessmentResultPort validateAssessmentResultPort;
+
+    @Mock
+    private CreateAdviceNarrationPort createAdviceNarrationPort;
+
+    @Mock
+    private UpdateAdviceNarrationPort updateAdviceNarrationPort;
+
+    @Test
+    void testCreateAssessorAdviceNarration_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
+        var param = createParam(CreateAssessorAdviceNarrationUseCase.Param.ParamBuilder::build);
+
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(false);
+
+        var accessDeniedException = assertThrows(AccessDeniedException.class, () -> service.createAssessorAdviceNarration(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, accessDeniedException.getMessage());
+    }
+
+    @Test
+    void testCreateAssessorAdviceNarration_whenAssessmentResultDoesNotNotExist_thenThrowResourceNotFoundException() {
+        var param = createParam(CreateAssessorAdviceNarrationUseCase.Param.ParamBuilder::build);
+
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(true);
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.empty());
+
+        var resourceNotFoundException = assertThrows(ResourceNotFoundException.class, () -> service.createAssessorAdviceNarration(param));
+        assertEquals(CREATE_ASSESSOR_ADVICE_NARRATION_ASSESSMENT_RESULT_NOT_FOUND, resourceNotFoundException.getMessage());
+    }
+
+    @Test
+    void testCreateAssessorAdviceNarration_whenAdviceNarrationDoesNotExist_thenCreateNewOne() {
+        var param = createParam(CreateAssessorAdviceNarrationUseCase.Param.ParamBuilder::build);
+        AssessmentResult assessmentResult = AssessmentResultMother.validResult();
+
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(true);
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
+        when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.empty());
+        ArgumentCaptor<CreateAdviceNarrationPort.Param> adviceNarrationArgumentCaptor = ArgumentCaptor.forClass(CreateAdviceNarrationPort.Param.class);
+
+        service.createAssessorAdviceNarration(param);
+        verify(createAdviceNarrationPort).persist(adviceNarrationArgumentCaptor.capture(), eq(assessmentResult.getId()));
+
+        var capturedAdviceNarration = adviceNarrationArgumentCaptor.getValue();
+        assertEquals(param.getAssessorNarration(), capturedAdviceNarration.assessorNarration());
+        assertEquals(param.getCurrentUserId(), capturedAdviceNarration.createdBy());
+        assertTrue(capturedAdviceNarration.approved());
+        assertNull(capturedAdviceNarration.aiNarration());
+        assertNull(capturedAdviceNarration.aiNarrationTime());
+        assertNotNull(capturedAdviceNarration.assessorNarrationTime());
+
+        verifyNoInteractions(updateAdviceNarrationPort);
+    }
+
+    @Test
+    void testCreateAssessorAdviceNarration_whenAdviceExists_thenUpdateItsAssessorNarration() {
+        var param = createParam(CreateAssessorAdviceNarrationUseCase.Param.ParamBuilder::build);
+        AssessmentResult assessmentResult = AssessmentResultMother.validResult();
+        AdviceNarration adviceNarration = AdviceNarrationMother.aiNarration();
+
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(true);
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
+        when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(adviceNarration));
+        doNothing().when(updateAdviceNarrationPort).updateAssessorNarration(any(UpdateAdviceNarrationPort.AssessorNarrationParam.class));
+
+        service.createAssessorAdviceNarration(param);
+
+        ArgumentCaptor<UpdateAdviceNarrationPort.AssessorNarrationParam> updateParamCaptor = ArgumentCaptor.forClass(UpdateAdviceNarrationPort.AssessorNarrationParam.class);
+        verify(updateAdviceNarrationPort).updateAssessorNarration(updateParamCaptor.capture());
+        assertEquals(adviceNarration.getId(), updateParamCaptor.getValue().id());
+        assertEquals(param.getAssessorNarration(), updateParamCaptor.getValue().narration());
+        assertNotNull(updateParamCaptor.getValue().id());
+        assertTrue(updateParamCaptor.getValue().approved());
+        assertEquals(param.getCurrentUserId(), updateParamCaptor.getValue().createdBy());
+
+        verifyNoInteractions(createAdviceNarrationPort);
+    }
+
+    private CreateAssessorAdviceNarrationUseCase.Param createParam(Consumer<CreateAssessorAdviceNarrationUseCase.Param.ParamBuilder> changer) {
+        var paramBuilder = paramBuilder();
+        changer.accept(paramBuilder);
+        return paramBuilder.build();
+    }
+
+    private CreateAssessorAdviceNarrationUseCase.Param.ParamBuilder paramBuilder() {
+        return CreateAssessorAdviceNarrationUseCase.Param.builder()
+            .assessmentId(UUID.randomUUID())
+            .assessorNarration(RandomStringUtils.randomAlphabetic(100))
+            .currentUserId(UUID.randomUUID());
+    }
+}

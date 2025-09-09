@@ -2,14 +2,15 @@ package org.flickit.assessment.core.adapter.out.persistence.kit.maturitylevel;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.common.error.ErrorMessageKey;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.adapter.out.persistence.assessmentresult.AssessmentResultMapper;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.LevelCompetence;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.port.out.maturitylevel.CountMaturityLevelsPort;
 import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelPort;
 import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
+import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
 import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaEntity;
@@ -41,7 +42,6 @@ public class MaturityLevelPersistenceJpaAdapter implements
     @Override
     public MaturityLevel load(long id, UUID assessmentId) {
         var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
-            .map(entity -> AssessmentResultMapper.mapToDomainModel(entity, null, null))
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
         var translationLanguage = resolveLanguage(assessmentResult);
 
@@ -51,9 +51,20 @@ public class MaturityLevelPersistenceJpaAdapter implements
     }
 
     @Override
-    public List<MaturityLevel> loadAll(Long kitVersionId) {
+    public List<MaturityLevel> loadAllByKitVersion(Long kitVersionId) {
         return repository.findAllByKitVersionId(kitVersionId).stream()
             .map(MaturityLevelMapper::mapToDomainModel)
+            .toList();
+    }
+
+    @Override
+    public List<MaturityLevel> loadAllByAssessment(UUID assessmentId) {
+        var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
+            .orElseThrow(() -> new ResourceNotFoundException(ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND));
+        var translationLanguage = resolveLanguage(assessmentResult);
+
+        return repository.findAllByKitVersionIdOrderByIndex(assessmentResult.getKitVersionId()).stream()
+            .map(entity -> MaturityLevelMapper.mapToDomainModel(entity, translationLanguage))
             .toList();
     }
 
@@ -108,5 +119,13 @@ public class MaturityLevelPersistenceJpaAdapter implements
 
         return Objects.equals(assessmentResult.getLanguage().getId(), kit.getLanguageId()) ? null
             : assessmentResult.getLanguage();
+    }
+
+    private KitLanguage resolveLanguage(AssessmentResultJpaEntity assessmentResult) {
+        var assessmentKit = assessmentKitRepository.findByKitVersionId(assessmentResult.getKitVersionId())
+            .orElseThrow(() -> new ResourceNotFoundException(ErrorMessageKey.COMMON_ASSESSMENT_KIT_NOT_FOUND));
+        return Objects.equals(assessmentResult.getLangId(), assessmentKit.getLanguageId())
+            ? null
+            : KitLanguage.valueOfById(assessmentResult.getLangId());
     }
 }

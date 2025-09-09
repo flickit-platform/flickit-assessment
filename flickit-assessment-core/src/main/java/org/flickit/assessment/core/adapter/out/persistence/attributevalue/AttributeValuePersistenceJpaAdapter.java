@@ -1,6 +1,7 @@
 package org.flickit.assessment.core.adapter.out.persistence.attributevalue;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.domain.advice.AttributeLevelTarget;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.adapter.out.persistence.answer.AnswerMapper;
@@ -203,6 +204,42 @@ public class AttributeValuePersistenceJpaAdapter implements
                 return AnswerMapper.mapToDomainModel(answerEntity, answerOption);
             })
             .toList();
+    }
+
+    @Override
+    public List<LoadAttributeValuePort.AttributeLevelIndex> loadCurrentAndTargetLevelIndices(UUID assessmentId, List<AttributeLevelTarget> attributeLevelTargets) {
+        var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
+            .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
+        var maturityLevels = maturityLevelRepository.findAllByKitVersionId(assessmentResult.getKitVersionId());
+        var maturityLevelsIdMap = maturityLevels.stream()
+            .collect(toMap(MaturityLevelJpaEntity::getId, Function.identity()));
+
+        var attributeIds = attributeLevelTargets.stream()
+            .map(AttributeLevelTarget::getAttributeId)
+            .toList();
+
+        List<AttributeValueJpaEntity> attrValueEntities =
+            repository.findByAssessmentResult_assessment_IdAndAttributeIdIn(assessmentId, attributeIds);
+
+        Map<Long, AttributeValueJpaEntity> attributeIdToAttributeValueMap = attrValueEntities.stream()
+            .collect(toMap(AttributeValueJpaEntity::getAttributeId, Function.identity()));
+
+        List<LoadAttributeValuePort.AttributeLevelIndex> result = new ArrayList<>();
+        for (AttributeLevelTarget attributeLevelTarget : attributeLevelTargets) {
+            var attributeId = attributeLevelTarget.getAttributeId();
+            Long currentMaturityLevelId = attributeIdToAttributeValueMap.get(attributeId).getMaturityLevelId();
+            var currentMaturityLevel = maturityLevelsIdMap
+                .get(currentMaturityLevelId);
+            var targetMaturityLevel = maturityLevelsIdMap
+                .get(attributeLevelTarget.getMaturityLevelId());
+
+            result.add(new LoadAttributeValuePort.AttributeLevelIndex(
+                attributeId,
+                currentMaturityLevel.getIndex(),
+                targetMaturityLevel.getIndex()
+            ));
+        }
+        return result;
     }
 
     private KitLanguage resolveLanguage(AssessmentResultJpaEntity assessmentResult) {

@@ -151,7 +151,7 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
     }
 
     private MaturityLevel resolveInitialMaturityLevel(Long kitVersionId) {
-        return loadMaturityLevelsPort.loadAll(kitVersionId).stream()
+        return loadMaturityLevelsPort.loadAllByKitVersion(kitVersionId).stream()
             .sorted(Comparator.comparingInt(MaturityLevel::getValue))
             .toList()
             .getFirst();

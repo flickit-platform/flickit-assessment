@@ -20,4 +20,6 @@ public class MessageKey {
     public static final String GRANT_ACCESS_TO_REPORT_INVITE_TO_REGISTER_EMAIL_SUBJECT = "grant-access-to-report.invite-to-register.email.subject";
     public static final String GRANT_ACCESS_TO_REPORT_INVITE_TO_REGISTER_EMAIL_BODY = "grant-access-to-report.invite-to-register.email.body";
     public static final String GRANT_ACCESS_TO_REPORT_INVITE_TO_REGISTER_EMAIL_BODY_WITHOUT_SUPPORT_EMAIL = "grant-access-to-report.invite-to-register.email.body.without.support.email";
+
+    public static final String ADVICE_NARRATION_AI_IS_DISABLED = "advice.narration.aiIsDisabled";
 }

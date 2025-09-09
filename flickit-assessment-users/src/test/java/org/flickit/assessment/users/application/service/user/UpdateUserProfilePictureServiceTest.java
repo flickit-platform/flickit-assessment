@@ -19,6 +19,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.util.unit.DataSize;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -108,7 +109,7 @@ class UpdateUserProfilePictureServiceTest {
         when(fileProperties.getPictureContentTypes()).thenReturn(Arrays.asList("image/jpeg", "image/png", "image/gif", "image/bmp"));
         doNothing().when(deleteFilePort).deletePicture(user.getPicturePath());
         when(uploadUserProfilePicturePort.uploadUserProfilePicture(param.getPicture())).thenReturn(uploadedFilePath);
-        doNothing().when(updateUserPicturePort).updatePicture(param.getCurrentUserId(), uploadedFilePath);
+        doNothing().when(updateUserPicturePort).updatePicture(eq(param.getCurrentUserId()), eq(uploadedFilePath), any(LocalDateTime.class));
         when(createFileDownloadLinkPort.createDownloadLink(uploadedFilePath, Duration.ofDays(1))).thenReturn("link/to/file");
 
         assertDoesNotThrow(() ->service.update(param));
@@ -124,7 +125,7 @@ class UpdateUserProfilePictureServiceTest {
         when(fileProperties.getPictureMaxSize()).thenReturn(DataSize.ofBytes(2));
         when(fileProperties.getPictureContentTypes()).thenReturn(Arrays.asList("image/jpeg", "image/png", "image/gif", "image/bmp"));
         when(uploadUserProfilePicturePort.uploadUserProfilePicture(param.getPicture())).thenReturn(uploadedFilePath);
-        doNothing().when(updateUserPicturePort).updatePicture(param.getCurrentUserId(), uploadedFilePath);
+        doNothing().when(updateUserPicturePort).updatePicture(eq(param.getCurrentUserId()), eq(uploadedFilePath), any(LocalDateTime.class));
         when(createFileDownloadLinkPort.createDownloadLink(uploadedFilePath, Duration.ofDays(1))).thenReturn("link/to/file");
 
         service.update(param);

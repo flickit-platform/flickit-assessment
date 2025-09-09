@@ -1,6 +1,5 @@
 package org.flickit.assessment.kit.application.service.kitversion;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.kit.application.port.out.answerrange.LoadAnswerRangesPort;
@@ -10,6 +9,7 @@ import org.flickit.assessment.kit.application.port.out.question.LoadQuestionsPor
 import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairesPort;
 import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectsPort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.LinkedList;
 import java.util.List;
