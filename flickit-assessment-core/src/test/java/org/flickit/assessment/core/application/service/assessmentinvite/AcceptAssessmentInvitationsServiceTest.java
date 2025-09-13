@@ -15,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -79,12 +80,14 @@ class AcceptAssessmentInvitationsServiceTest {
 
         AcceptAssessmentInvitationNotificationsCmd cmd = (AcceptAssessmentInvitationNotificationsCmd) result.notificationCmd();
         List<AssessmentUserRoleItem> capturedList = captor.getValue();
-        var assessmentUserRoleItem = new AssessmentUserRoleItem(invitation2.getAssessmentId(), userId, invitation2.getRole());
+        var assessmentUserRoleItem = new AssessmentUserRoleItem(invitation2.getAssessmentId(), userId, invitation2.getRole(), invitation2.getCreatedBy(), LocalDateTime.now());
 
         assertEquals(1, capturedList.size());
         assertEquals(assessmentUserRoleItem.getAssessmentId(), capturedList.getFirst().getAssessmentId());
         assertEquals(assessmentUserRoleItem.getUserId(), capturedList.getFirst().getUserId());
         assertEquals(assessmentUserRoleItem.getRole().getId(), capturedList.getFirst().getRole().getId());
+        assertEquals(assessmentUserRoleItem.getCreatedBy(), capturedList.getFirst().getCreatedBy());
+        assertNotNull(capturedList.getFirst().getCreationTime());
         assertEquals(1, cmd.targetUserIds().size());
 
         verify(loadUserEmailByUserIdPort).loadEmail(userId);
@@ -114,18 +117,23 @@ class AcceptAssessmentInvitationsServiceTest {
         verify(grantUserAssessmentRolePort).persistAll(captor.capture());
 
         List<AssessmentUserRoleItem> capturedList = captor.getValue();
-        var assessmentUserRoleItem1 = new AssessmentUserRoleItem(invitation2.getAssessmentId(), userId, invitation2.getRole());
-        var assessmentUserRoleItem2 = new AssessmentUserRoleItem(invitation3.getAssessmentId(), userId, invitation3.getRole());
+        var assessmentUserRoleItem1 = new AssessmentUserRoleItem(invitation2.getAssessmentId(), userId, invitation2.getRole(), invitation2.getCreatedBy(), LocalDateTime.now());
+        var assessmentUserRoleItem2 = new AssessmentUserRoleItem(invitation3.getAssessmentId(), userId, invitation3.getRole(), invitation3.getCreatedBy(), LocalDateTime.now());
         var assessmentUserRoleListItem = List.of(assessmentUserRoleItem1, assessmentUserRoleItem2);
 
-        // Assert that the captured list contains exactly one item ,and it is equal to the expected item
+        // Assert that the captured list contains exactly one item, and it is equal to the expected item
         assertEquals(2, capturedList.size());
         assertEquals(assessmentUserRoleListItem.getFirst().getAssessmentId(), capturedList.getFirst().getAssessmentId());
-        assertEquals(assessmentUserRoleListItem.get(0).getUserId(), capturedList.get(0).getUserId());
-        assertEquals(assessmentUserRoleListItem.get(0).getRole().getId(), capturedList.get(0).getRole().getId());
-        assertEquals(assessmentUserRoleListItem.get(1).getAssessmentId(), capturedList.get(1).getAssessmentId());
-        assertEquals(assessmentUserRoleListItem.get(1).getUserId(), capturedList.get(1).getUserId());
-        assertEquals(assessmentUserRoleListItem.get(1).getRole().getId(), capturedList.get(1).getRole().getId());
+        assertEquals(assessmentUserRoleListItem.getFirst().getUserId(), capturedList.getFirst().getUserId());
+        assertEquals(assessmentUserRoleListItem.getFirst().getRole().getId(), capturedList.getFirst().getRole().getId());
+        assertEquals(assessmentUserRoleListItem.getFirst().getCreatedBy(), capturedList.getFirst().getCreatedBy());
+        assertNotNull(capturedList.getFirst().getCreationTime());
+        assertEquals(assessmentUserRoleListItem.getLast().getAssessmentId(), capturedList.getLast().getAssessmentId());
+        assertEquals(assessmentUserRoleListItem.getLast().getUserId(), capturedList.getLast().getUserId());
+        assertEquals(assessmentUserRoleListItem.getLast().getRole().getId(), capturedList.getLast().getRole().getId());
+        assertEquals(assessmentUserRoleListItem.getLast().getCreatedBy(), capturedList.getLast().getCreatedBy());
+        assertNotNull(capturedList.getLast().getCreationTime());
+
         assertEquals(2, cmd.targetUserIds().size());
 
         verify(loadUserEmailByUserIdPort).loadEmail(userId);

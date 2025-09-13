@@ -6,6 +6,7 @@ import org.flickit.assessment.common.application.domain.notification.SendNotific
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.domain.AssessmentUserRole;
+import org.flickit.assessment.core.application.domain.AssessmentUserRoleItem;
 import org.flickit.assessment.core.application.domain.notification.GrantAssessmentUserRoleNotificationCmd;
 import org.flickit.assessment.core.application.port.in.assessmentuserrole.GrantUserAssessmentRoleUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentPort;
@@ -42,7 +43,7 @@ public class GrantUserAssessmentRoleService implements GrantUserAssessmentRoleUs
         if (!loadAssessmentPort.isAssessmentSpaceMember(param.getAssessmentId(), param.getUserId()))
             createSpaceUserAccessPort.persistByAssessmentId(toCreateSpaceAccessPortParam(param));
 
-        grantUserAssessmentRolePort.persist(param.getAssessmentId(), param.getUserId(), param.getRoleId());
+        grantUserAssessmentRolePort.persist(toAssessmentUserRoleItem(param));
 
         return new Result(new GrantAssessmentUserRoleNotificationCmd(
             param.getUserId(),
@@ -55,6 +56,14 @@ public class GrantUserAssessmentRoleService implements GrantUserAssessmentRoleUs
     private CreateSpaceUserAccessPort.CreateParam toCreateSpaceAccessPortParam(Param param) {
         return new CreateSpaceUserAccessPort.CreateParam(param.getAssessmentId(),
             param.getUserId(),
+            param.getCurrentUserId(),
+            LocalDateTime.now());
+    }
+
+    private AssessmentUserRoleItem toAssessmentUserRoleItem(Param param) {
+        return new AssessmentUserRoleItem(param.getAssessmentId(),
+            param.getUserId(),
+            AssessmentUserRole.valueOfById(param.getRoleId()),
             param.getCurrentUserId(),
             LocalDateTime.now());
     }

@@ -1,6 +1,7 @@
 package org.flickit.assessment.core.application.port.in.assessmentinvite;
 
 import jakarta.validation.ConstraintViolationException;
+import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
@@ -53,6 +54,13 @@ class InviteAssessmentUserUseCaseParamTest {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.currentUserId(null)));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
+    }
+
+    @Test
+    void testInviteAssessmentUserParam_roleIdInvalid_ErrorMessage() {
+        var throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.roleId(AssessmentUserRole.values().length)));
+        assertThat(throwable).hasMessage("roleIdValid: " + INVITE_ASSESSMENT_USER_ROLE_ID_INVALID);
     }
 
     private InviteAssessmentUserUseCase.Param createParam(Consumer<InviteAssessmentUserUseCase.Param.ParamBuilder> changer) {

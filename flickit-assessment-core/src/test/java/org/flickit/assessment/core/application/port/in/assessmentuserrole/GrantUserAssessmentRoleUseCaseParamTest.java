@@ -1,6 +1,7 @@
 package org.flickit.assessment.core.application.port.in.assessmentuserrole;
 
 import jakarta.validation.ConstraintViolationException;
+import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
@@ -47,5 +48,16 @@ class GrantUserAssessmentRoleUseCaseParamTest {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new GrantUserAssessmentRoleUseCase.Param(assessmentId, userId, 1, null));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
+    }
+
+    @Test
+    void testGrantUserAssessmentRoleParam_roleIdIsInvalid_ErrorMessage() {
+        UUID assessmentId = UUID.randomUUID();
+        UUID userId = UUID.randomUUID();
+        UUID currentUserId = UUID.randomUUID();
+        int roleId = AssessmentUserRole.values().length;
+        var throwable = assertThrows(ConstraintViolationException.class,
+            () -> new GrantUserAssessmentRoleUseCase.Param(assessmentId, userId, roleId, currentUserId));
+        assertThat(throwable).hasMessage("roleIdValid: " + GRANT_ASSESSMENT_USER_ROLE_ROLE_ID_INVALID);
     }
 }

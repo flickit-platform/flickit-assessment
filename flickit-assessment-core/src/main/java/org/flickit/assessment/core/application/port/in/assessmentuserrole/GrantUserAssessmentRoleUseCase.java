@@ -1,5 +1,6 @@
 package org.flickit.assessment.core.application.port.in.assessmentuserrole;
 
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
@@ -10,6 +11,7 @@ import org.flickit.assessment.core.application.domain.notification.GrantAssessme
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
+import static org.flickit.assessment.core.application.domain.AssessmentUserRole.isValidId;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 public interface GrantUserAssessmentRoleUseCase {
@@ -31,6 +33,12 @@ public interface GrantUserAssessmentRoleUseCase {
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
+
+        @AssertTrue(message = GRANT_ASSESSMENT_USER_ROLE_ROLE_ID_INVALID)
+        private boolean isRoleIdValid() {
+            if (roleId == null) return true; // Checked by @NotNull
+            return isValidId(roleId);
+        }
 
         public Param(UUID assessmentId, UUID userId, Integer roleId, UUID currentUserId) {
             this.assessmentId = assessmentId;

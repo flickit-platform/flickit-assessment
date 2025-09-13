@@ -27,7 +27,7 @@ public class AssessmentInviteMapper {
             id,
             param.assessmentId(),
             param.email(),
-            param.roleId(),
+            param.role().getId(),
             param.expirationTime(),
             param.creationTime(),
             param.createdBy());

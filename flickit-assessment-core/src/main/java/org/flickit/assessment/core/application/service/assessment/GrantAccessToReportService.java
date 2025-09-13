@@ -11,6 +11,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.domain.Assessment;
+import org.flickit.assessment.core.application.domain.AssessmentUserRoleItem;
 import org.flickit.assessment.core.application.domain.notification.GrantAccessToReportNotificationCmd;
 import org.flickit.assessment.core.application.port.in.assessment.GrantAccessToReportUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentPort;
@@ -27,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.text.MessageFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.GRANT_ACCESS_TO_REPORT;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_GRAPHICAL_REPORT;
@@ -82,7 +84,7 @@ public class GrantAccessToReportService implements GrantAccessToReportUseCase {
                         assessment.getId(), user.getId(), param.getCurrentUserId(), creationTime);
                     createSpaceUserAccessPort.persistByAssessmentId(createSpaceAccessParam);
                 }
-                grantUserAssessmentRolePort.persist(param.getAssessmentId(), user.getId(), REPORT_VIEWER.getId());
+                grantUserAssessmentRolePort.persist(toAssessmentUserRole(param.getAssessmentId(), user.getId(), param.getCurrentUserId()));
             }
 
             return new Result(new GrantAccessToReportNotificationCmd(assessment, user, param.getCurrentUserId()));
@@ -95,6 +97,10 @@ public class GrantAccessToReportService implements GrantAccessToReportUseCase {
         }
 
         return null;
+    }
+
+    private AssessmentUserRoleItem toAssessmentUserRole(UUID assessmentId, UUID spaceOwnerId, UUID createdBy) {
+        return new AssessmentUserRoleItem(assessmentId, spaceOwnerId, REPORT_VIEWER, createdBy, LocalDateTime.now());
     }
 
     CreateSpaceInvitePort.Param toCreateSpaceInviteParam(long spaceId,
@@ -113,7 +119,7 @@ public class GrantAccessToReportService implements GrantAccessToReportUseCase {
                                                                    LocalDateTime creationTime) {
         return new CreateAssessmentInvitePort.Param(param.getAssessmentId(),
             param.getEmail(),
-            REPORT_VIEWER.getId(),
+            REPORT_VIEWER,
             expirationTime,
             creationTime,
             param.getCurrentUserId());

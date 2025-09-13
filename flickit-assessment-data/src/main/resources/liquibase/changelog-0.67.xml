@@ -27,4 +27,5 @@
             <column name="last_modification_time" type="${datetime_with_time_zone_type}"/>
         </addColumn>
     </changeSet>
+
 </databaseChangeLog>
