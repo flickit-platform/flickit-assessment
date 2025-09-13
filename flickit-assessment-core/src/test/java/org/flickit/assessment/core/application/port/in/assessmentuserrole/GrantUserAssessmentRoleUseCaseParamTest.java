@@ -55,8 +55,9 @@ class GrantUserAssessmentRoleUseCaseParamTest {
         UUID assessmentId = UUID.randomUUID();
         UUID userId = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
+        int roleId = AssessmentUserRole.values().length;
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new GrantUserAssessmentRoleUseCase.Param(assessmentId, userId, AssessmentUserRole.values().length, currentUserId));
+            () -> new GrantUserAssessmentRoleUseCase.Param(assessmentId, userId, roleId, currentUserId));
         assertThat(throwable).hasMessage("roleIdValid: " + GRANT_ASSESSMENT_USER_ROLE_ROLE_ID_INVALID);
     }
 }
