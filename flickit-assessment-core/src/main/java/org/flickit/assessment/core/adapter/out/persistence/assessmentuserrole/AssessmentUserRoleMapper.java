@@ -17,11 +17,11 @@ public class AssessmentUserRoleMapper {
             item.getCreationTime());
     }
 
-    public static AssessmentUserRoleItem mapToRoleItem(AssessmentUserRoleJpaEntity jpaEntity) {
-        return new AssessmentUserRoleItem(jpaEntity.getAssessmentId(),
-            jpaEntity.getUserId(),
-            AssessmentUserRole.valueOfById(jpaEntity.getRoleId()),
-            jpaEntity.getCreatedBy(),
-            jpaEntity.getCreationTime());
+    public static AssessmentUserRoleItem mapToRoleItem(AssessmentUserRoleJpaEntity entity) {
+        return new AssessmentUserRoleItem(entity.getAssessmentId(),
+            entity.getUserId(),
+            AssessmentUserRole.valueOfById(entity.getRoleId()),
+            entity.getCreatedBy(),
+            entity.getCreationTime());
     }
 }
