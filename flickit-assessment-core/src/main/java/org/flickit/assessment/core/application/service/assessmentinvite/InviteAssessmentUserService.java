@@ -83,7 +83,7 @@ public class InviteAssessmentUserService implements InviteAssessmentUserUseCase 
     CreateAssessmentInvitePort.Param toCreateAssessmentInviteParam(Param param, LocalDateTime expirationTime, LocalDateTime creationTime) {
         return new CreateAssessmentInvitePort.Param(param.getAssessmentId(),
             param.getEmail(),
-            param.getRoleId(),
+            AssessmentUserRole.valueOfById(param.getRoleId()),
             expirationTime,
             creationTime,
             param.getCurrentUserId());

@@ -8,7 +8,6 @@ import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 import org.flickit.assessment.core.application.domain.AssessmentUserRoleItem;
 import org.flickit.assessment.core.application.domain.FullUser;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.*;
-import org.flickit.assessment.data.jpa.core.assessmentuserrole.AssessmentUserRoleJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentuserrole.AssessmentUserRoleJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessmentuserrole.AssessmentUserView;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
@@ -53,7 +52,7 @@ public class AssessmentUserRolePersistenceJpaAdapter implements
         if(assessmentUserRole.isPresent())
             throw new ResourceAlreadyExistsException(GRANT_ASSESSMENT_USER_ROLE_DUPLICATE_USER_ACCESS);
 
-        var entity = new AssessmentUserRoleJpaEntity(item.getAssessmentId(), item.getUserId(), item.getRole().getId(), item.getCreatedBy(), item.getCreationTime());
+        var entity = AssessmentUserRoleMapper.mapToJpEntity(item);
         repository.save(entity);
     }
 

@@ -169,7 +169,7 @@ class GrantAccessToReportServiceTest {
         assertEquals(param.getAssessmentId(), roleItemArgumentCaptor.getValue().getAssessmentId());
         assertEquals(accessGrantedUser.getId(), roleItemArgumentCaptor.getValue().getUserId());
         assertEquals(param.getCurrentUserId(), roleItemArgumentCaptor.getValue().getCreatedBy());
-        assertEquals(AssessmentUserRole.REPORT_VIEWER.getId(), roleItemArgumentCaptor.getValue().getRole().getId());
+        assertEquals(AssessmentUserRole.REPORT_VIEWER, roleItemArgumentCaptor.getValue().getRole());
         assertNotNull(roleItemArgumentCaptor.getValue().getCreationTime());
 
         verifyNoInteractions(createSpaceUserAccessPort,
@@ -324,7 +324,7 @@ class GrantAccessToReportServiceTest {
         assertNotNull(createAssessmentInviteParamCaptor.getValue());
         assertEquals(param.getAssessmentId(), createAssessmentInviteParamCaptor.getValue().assessmentId());
         assertEquals(param.getEmail(), createAssessmentInviteParamCaptor.getValue().email());
-        assertEquals(REPORT_VIEWER.getId(), createAssessmentInviteParamCaptor.getValue().roleId());
+        assertEquals(REPORT_VIEWER, createAssessmentInviteParamCaptor.getValue().role());
         creationTime = createAssessmentInviteParamCaptor.getValue().creationTime();
         assertNotNull(creationTime);
         expirationDate = createAssessmentInviteParamCaptor.getValue().expirationTime();
@@ -383,7 +383,7 @@ class GrantAccessToReportServiceTest {
         assertNotNull(createAssessmentInviteParamCaptor.getValue());
         assertEquals(param.getAssessmentId(), createAssessmentInviteParamCaptor.getValue().assessmentId());
         assertEquals(param.getEmail(), createAssessmentInviteParamCaptor.getValue().email());
-        assertEquals(REPORT_VIEWER.getId(), createAssessmentInviteParamCaptor.getValue().roleId());
+        assertEquals(REPORT_VIEWER, createAssessmentInviteParamCaptor.getValue().role());
         creationTime = createAssessmentInviteParamCaptor.getValue().creationTime();
         assertNotNull(creationTime);
         expirationDate = createAssessmentInviteParamCaptor.getValue().expirationTime();

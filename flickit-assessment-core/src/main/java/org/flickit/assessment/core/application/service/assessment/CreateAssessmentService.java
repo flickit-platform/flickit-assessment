@@ -159,14 +159,14 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
 
     private void grantAssessmentAccesses(UUID assessmentId, UUID spaceOwnerId, UUID currentUserId) {
         if (!Objects.equals(spaceOwnerId, currentUserId))
-            grantUserAssessmentRolePort.persist(toAssessmentUserRoleItem(assessmentId, spaceOwnerId, SPACE_OWNER_ROLE.getId(), currentUserId));
-        grantUserAssessmentRolePort.persist(toAssessmentUserRoleItem(assessmentId, currentUserId, ASSESSMENT_CREATOR_ROLE.getId(), currentUserId));
+            grantUserAssessmentRolePort.persist(toAssessmentUserRoleItem(assessmentId, spaceOwnerId, SPACE_OWNER_ROLE, currentUserId));
+        grantUserAssessmentRolePort.persist(toAssessmentUserRoleItem(assessmentId, currentUserId, ASSESSMENT_CREATOR_ROLE, currentUserId));
     }
 
-    private AssessmentUserRoleItem toAssessmentUserRoleItem(UUID assessmentId, UUID spaceOwnerId, int userRoleId, UUID createdBy) {
+    private AssessmentUserRoleItem toAssessmentUserRoleItem(UUID assessmentId, UUID userId, AssessmentUserRole role, UUID createdBy) {
         return new AssessmentUserRoleItem(assessmentId,
-            spaceOwnerId,
-            AssessmentUserRole.valueOfById(userRoleId),
+            userId,
+            role,
             createdBy,
             LocalDateTime.now());
     }

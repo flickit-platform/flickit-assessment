@@ -124,7 +124,7 @@ class InviteAssessmentUserServiceTest {
         verify(createAssessmentInvitePort).persist(assessmentInvitationParamCaptor.capture());
         assertEquals(param.getAssessmentId(), assessmentInvitationParamCaptor.getValue().assessmentId());
         assertEquals(param.getEmail(), assessmentInvitationParamCaptor.getValue().email());
-        assertEquals(param.getRoleId(), assessmentInvitationParamCaptor.getValue().roleId());
+        assertEquals(param.getRoleId(), assessmentInvitationParamCaptor.getValue().role().getId());
         assertNotNull(assessmentInvitationParamCaptor.getValue().creationTime());
         assertEquals(assessmentInvitationParamCaptor.getValue().creationTime().plusDays(7), assessmentInvitationParamCaptor.getValue().expirationTime());
         assertEquals(param.getCurrentUserId(), assessmentInvitationParamCaptor.getValue().createdBy());
