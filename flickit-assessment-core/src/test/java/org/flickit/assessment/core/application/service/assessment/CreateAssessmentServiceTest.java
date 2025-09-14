@@ -27,10 +27,7 @@ import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
 import org.flickit.assessment.core.test.fixture.application.SpaceMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Spy;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
@@ -38,11 +35,14 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import static org.assertj.core.api.Assertions.tuple;
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_SPACE_ID_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentKitMother.kit;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentKitMother.publicKit;
+import static org.flickit.assessment.core.test.fixture.application.SpaceMother.createBasicSpaceWithOwnerId;
 import static org.flickit.assessment.core.test.fixture.application.SpaceMother.createExpiredPremiumSpace;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -89,13 +89,16 @@ class CreateAssessmentServiceTest {
     @Mock
     private LoadMaturityLevelsPort loadMaturityLevelsPort;
 
+    @Captor
+    private ArgumentCaptor<AssessmentUserRoleItem> roleItemCaptor;
+
     @Spy
     AppSpecProperties appSpecProperties = appSpecProperties();
 
     private final AssessmentKit privateKit = kit();
     private final AssessmentKit publicKit = publicKit();
 
-    private final Space space = SpaceMother.createBasicSpace();
+    private Space space = SpaceMother.createBasicSpace();
     private Param param = createParam(Param.ParamBuilder::build);
 
 
@@ -264,9 +267,10 @@ class CreateAssessmentServiceTest {
     }
 
     @Test
-    void testCreateAssessment_whenParamsAreValid_thenCreateAssessmentAndAssessmentResult() {
+    void testCreateAssessment_whenCurrentUserIsSpaceOwner_thenCreateAssessmentAndAssessmentResult() {
         param = createParam(b -> b.lang("FA"));
         UUID expectedAssessmentId = UUID.randomUUID();
+        space = createBasicSpaceWithOwnerId(param.getCurrentUserId());
 
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
         when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.of(param.getKitId()));
@@ -285,9 +289,12 @@ class CreateAssessmentServiceTest {
         verify(createAssessmentPort).persist(createAssessmentPortCaptor.capture());
         assertCreateAssessmentPort(createAssessmentPortCaptor);
 
-        verify(grantUserAssessmentRolePort).persist(result.id(),
-            param.getCurrentUserId(),
-            AssessmentUserRole.MANAGER.getId());
+        verify(grantUserAssessmentRolePort, times(1)).persist(roleItemCaptor.capture());
+        assertEquals(result.id(), roleItemCaptor.getValue().getAssessmentId());
+        assertEquals(param.getCurrentUserId(), roleItemCaptor.getValue().getUserId());
+        assertEquals(param.getCurrentUserId(), roleItemCaptor.getValue().getCreatedBy());
+        assertEquals(AssessmentUserRole.MANAGER.getId(), roleItemCaptor.getValue().getRole().getId());
+        assertNotNull(roleItemCaptor.getValue().getCreationTime());
 
         ArgumentCaptor<CreateAssessmentResultPort.Param> createAssessmentResultPortCaptor = ArgumentCaptor.forClass(CreateAssessmentResultPort.Param.class);
         verify(createAssessmentResultPort).persist(createAssessmentResultPortCaptor.capture());
@@ -324,13 +331,23 @@ class CreateAssessmentServiceTest {
         assertNotNull(result);
         assertEquals(expectedAssessmentId, result.id());
 
-        verify(grantUserAssessmentRolePort).persist(result.id(),
-            param.getCurrentUserId(),
-            AssessmentUserRole.MANAGER.getId());
+        verify(grantUserAssessmentRolePort, times(2)).persist(roleItemCaptor.capture());
 
-        verify(grantUserAssessmentRolePort).persist(result.id(),
-            space.getOwnerId(),
-            AssessmentUserRole.MANAGER.getId());
+        assertThat(roleItemCaptor.getAllValues())
+            .map(item -> tuple(
+                item.getAssessmentId(),
+                item.getUserId(),
+                item.getCreatedBy(),
+                item.getRole()
+            ))
+            .containsExactly(
+                tuple(result.id(), space.getOwnerId(), param.getCurrentUserId(), AssessmentUserRole.MANAGER),
+                tuple(result.id(), param.getCurrentUserId(), param.getCurrentUserId(), AssessmentUserRole.MANAGER)
+            );
+
+        roleItemCaptor.getAllValues().forEach(item ->
+            assertThat(item.getCreationTime()).isNotNull()
+        );
 
         ArgumentCaptor<CreateAssessmentResultPort.Param> createAssessmentResultPortCaptor = ArgumentCaptor.forClass(CreateAssessmentResultPort.Param.class);
         verify(createAssessmentResultPort).persist(createAssessmentResultPortCaptor.capture());
