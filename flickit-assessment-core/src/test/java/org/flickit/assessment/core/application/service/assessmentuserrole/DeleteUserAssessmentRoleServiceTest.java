@@ -130,7 +130,7 @@ class DeleteUserAssessmentRoleServiceTest {
     }
 
     @Test
-    void testDeleteAssessmentUserRole_whenParametersAreValidAndCurrentUserIsSpaceMember_thenSuccessfulDelete() {
+    void testDeleteAssessmentUserRole_whenParametersAreValid_thenSuccessfulDelete() {
         when(assessmentPermissionChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), DELETE_USER_ASSESSMENT_ROLE))
             .thenReturn(false);
         when(loadUserRoleForAssessmentPort.loadRoleItem(param.getAssessmentId(), param.getUserId())).thenReturn(Optional.of(assessmentUserRoleItem));
