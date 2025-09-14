@@ -8,7 +8,6 @@ import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 import org.flickit.assessment.core.application.domain.AssessmentUserRoleItem;
 import org.flickit.assessment.core.application.domain.FullUser;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.*;
-import org.flickit.assessment.data.jpa.core.assessmentuserrole.AssessmentUserRoleJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentuserrole.AssessmentUserRoleJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessmentuserrole.AssessmentUserView;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
@@ -42,15 +41,12 @@ public class AssessmentUserRolePersistenceJpaAdapter implements
     }
 
     @Override
-    public void persist(UUID assessmentId, UUID userId, Integer roleId) {
-        if (!AssessmentUserRole.isValidId(roleId))
-            throw new ResourceNotFoundException(GRANT_ASSESSMENT_USER_ROLE_ROLE_ID_NOT_FOUND);
-
-        var assessmentUserRole = repository.findByAssessmentIdAndUserId(assessmentId, userId);
+    public void persist(AssessmentUserRoleItem item) {
+        var assessmentUserRole = repository.findByAssessmentIdAndUserId(item.getAssessmentId(), item.getUserId());
         if(assessmentUserRole.isPresent())
             throw new ResourceAlreadyExistsException(GRANT_ASSESSMENT_USER_ROLE_DUPLICATE_USER_ACCESS);
 
-        var entity = new AssessmentUserRoleJpaEntity(assessmentId, userId, roleId);
+        var entity = AssessmentUserRoleMapper.mapToJpEntity(item);
         repository.save(entity);
     }
 
@@ -70,8 +66,7 @@ public class AssessmentUserRolePersistenceJpaAdapter implements
         if (!repository.existsByAssessmentIdAndUserId(assessmentId, userId))
             throw new ResourceNotFoundException(UPDATE_ASSESSMENT_USER_ROLE_ASSESSMENT_ID_USER_ID_NOT_FOUND);
 
-        var entity = new AssessmentUserRoleJpaEntity(assessmentId, userId, roleId);
-        repository.update(entity.getAssessmentId(), entity.getUserId(), entity.getRoleId());
+        repository.update(assessmentId, userId, roleId);
     }
 
     @Override

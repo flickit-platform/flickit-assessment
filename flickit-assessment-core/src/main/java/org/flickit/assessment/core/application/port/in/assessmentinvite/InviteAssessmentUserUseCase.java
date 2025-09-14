@@ -1,5 +1,6 @@
 package org.flickit.assessment.core.application.port.in.assessmentinvite;
 
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
@@ -11,6 +12,7 @@ import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_EMAIL_FORMAT_NOT_VALID;
+import static org.flickit.assessment.core.application.domain.AssessmentUserRole.isValidId;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 public interface InviteAssessmentUserUseCase {
@@ -33,6 +35,12 @@ public interface InviteAssessmentUserUseCase {
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
+
+        @AssertTrue(message = INVITE_ASSESSMENT_USER_ROLE_ID_INVALID)
+        private boolean isRoleIdValid() {
+            if (roleId == null) return true; // Checked by @NotNull
+            return isValidId(roleId);
+        }
 
         @Builder
         public Param(UUID assessmentId, String email, Integer roleId, UUID currentUserId) {
