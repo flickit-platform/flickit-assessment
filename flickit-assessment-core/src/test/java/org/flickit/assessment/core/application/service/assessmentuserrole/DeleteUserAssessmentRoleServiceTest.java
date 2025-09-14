@@ -24,9 +24,12 @@ import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.DELETE_USER_ASSESSMENT_ROLE;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.core.application.domain.AssessmentUserRole.MANAGER;
+import static org.flickit.assessment.core.application.domain.AssessmentUserRole.REPORT_VIEWER;
 import static org.flickit.assessment.core.common.ErrorMessageKey.DELETE_ASSESSMENT_USER_ROLE_ASSESSMENT_ROLE_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.DELETE_ASSESSMENT_USER_ROLE_USER_ID_IS_SPACE_OWNER;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -51,17 +54,14 @@ class DeleteUserAssessmentRoleServiceTest {
     LoadUserRoleForAssessmentPort loadUserRoleForAssessmentPort;
 
     private final DeleteUserAssessmentRoleUseCase.Param param = createParam(p -> DeleteUserAssessmentRoleUseCase.Param.builder());
-    private AssessmentUserRoleItem assessmentUserRoleItem =
-        new AssessmentUserRoleItem(param.getAssessmentId(), param.getUserId(), AssessmentUserRole.REPORT_VIEWER, param.getCurrentUserId(), LocalDateTime.now());
 
     @Test
     void testDeleteAssessmentUserRole_whenCurrentUserDoesNotHaveRequiredPermissionAndUserRoleIsNotReportViewer_thenThrowAccessDenied() {
-        assessmentUserRoleItem =
-            new AssessmentUserRoleItem(param.getAssessmentId(), param.getUserId(), AssessmentUserRole.MANAGER, param.getCurrentUserId(), LocalDateTime.now());
+        var assessmentUserRoleItem = createAssessmentUserRoleItem(MANAGER, param.getCurrentUserId());
 
         when(assessmentPermissionChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), DELETE_USER_ASSESSMENT_ROLE))
             .thenReturn(false);
-        when(loadUserRoleForAssessmentPort.loadRoleItem(param.getAssessmentId(), param.getUserId())).thenReturn(Optional.ofNullable(assessmentUserRoleItem));
+        when(loadUserRoleForAssessmentPort.loadRoleItem(param.getAssessmentId(), param.getUserId())).thenReturn(Optional.of(assessmentUserRoleItem));
 
         var exception = assertThrows(AccessDeniedException.class, () -> service.deleteAssessmentUserRole(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
@@ -87,12 +87,11 @@ class DeleteUserAssessmentRoleServiceTest {
 
     @Test
     void testDeleteAssessmentUserRole_whenCurrentUserDoesNotHaveRequiredPermissionAndIsNotUserInviter_thenThrowAccessDenied() {
-        assessmentUserRoleItem =
-            new AssessmentUserRoleItem(param.getAssessmentId(), param.getUserId(), AssessmentUserRole.REPORT_VIEWER, UUID.randomUUID(), LocalDateTime.now());
+        var assessmentUserRoleItem = createAssessmentUserRoleItem(REPORT_VIEWER, UUID.randomUUID());
 
         when(assessmentPermissionChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), DELETE_USER_ASSESSMENT_ROLE))
             .thenReturn(false);
-        when(loadUserRoleForAssessmentPort.loadRoleItem(param.getAssessmentId(), param.getUserId())).thenReturn(Optional.ofNullable(assessmentUserRoleItem));
+        when(loadUserRoleForAssessmentPort.loadRoleItem(param.getAssessmentId(), param.getUserId())).thenReturn(Optional.of(assessmentUserRoleItem));
 
         var exception = assertThrows(AccessDeniedException.class, () -> service.deleteAssessmentUserRole(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
@@ -131,6 +130,8 @@ class DeleteUserAssessmentRoleServiceTest {
 
     @Test
     void testDeleteAssessmentUserRole_whenParametersAreValid_thenSuccessfulDelete() {
+        var assessmentUserRoleItem = createAssessmentUserRoleItem(REPORT_VIEWER, param.getCurrentUserId());
+
         when(assessmentPermissionChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), DELETE_USER_ASSESSMENT_ROLE))
             .thenReturn(false);
         when(loadUserRoleForAssessmentPort.loadRoleItem(param.getAssessmentId(), param.getUserId())).thenReturn(Optional.of(assessmentUserRoleItem));
@@ -140,6 +141,10 @@ class DeleteUserAssessmentRoleServiceTest {
         service.deleteAssessmentUserRole(param);
 
         verify(deleteUserAssessmentRolePort).delete(param.getAssessmentId(), param.getUserId());
+    }
+
+    private AssessmentUserRoleItem createAssessmentUserRoleItem(AssessmentUserRole role, UUID createdBy) {
+        return new AssessmentUserRoleItem(param.getAssessmentId(), param.getUserId(), role, createdBy, LocalDateTime.now());
     }
 
     private DeleteUserAssessmentRoleUseCase.Param createParam(Consumer<DeleteUserAssessmentRoleUseCase.Param.ParamBuilder> changer) {
