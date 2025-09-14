@@ -47,8 +47,8 @@ public class DeleteUserAssessmentRoleService implements DeleteUserAssessmentRole
     }
 
     void validatePermission(Param param) {
-        var hasAccess = permissionChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), DELETE_USER_ASSESSMENT_ROLE);
-        if (!hasAccess) {
+        var hasDeletePermission = permissionChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), DELETE_USER_ASSESSMENT_ROLE);
+        if (!hasDeletePermission) {
             var userRoleItem = loadUserRoleForAssessmentPort.loadRoleItem(param.getAssessmentId(), param.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException(DELETE_ASSESSMENT_USER_ROLE_ASSESSMENT_ROLE_NOT_FOUND));
             if (!userRoleItem.getCreatedBy().equals(param.getCurrentUserId()) || !userRoleItem.getRole().equals(AssessmentUserRole.REPORT_VIEWER))
