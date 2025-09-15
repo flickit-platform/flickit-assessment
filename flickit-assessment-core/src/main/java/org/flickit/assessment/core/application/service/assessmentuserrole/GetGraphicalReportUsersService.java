@@ -6,14 +6,21 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentPer
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.domain.AssessmentInvite;
 import org.flickit.assessment.core.application.domain.AssessmentUserRole;
+import org.flickit.assessment.core.application.domain.AssessmentUserRoleItem;
+import org.flickit.assessment.core.application.domain.FullUser;
 import org.flickit.assessment.core.application.port.in.assessmentuserrole.GetGraphicalReportUsersUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentinvite.LoadAssessmentInviteeListPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.LoadAssessmentUsersPort;
+import org.flickit.assessment.core.application.port.out.assessmentuserrole.LoadUserRoleForAssessmentPort;
 import org.flickit.assessment.core.application.port.out.minio.CreateFileDownloadLinkPort;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.GRANT_ACCESS_TO_REPORT;
@@ -30,6 +37,7 @@ public class GetGraphicalReportUsersService implements GetGraphicalReportUsersUs
     private final LoadAssessmentUsersPort loadAssessmentUsersPort;
     private final LoadAssessmentInviteeListPort loadAssessmentInviteeListPort;
     private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
+    private final LoadUserRoleForAssessmentPort loadUserRoleForAssessmentPort;
 
     @Override
     public Result getGraphicalReportUsers(Param param) {
@@ -44,20 +52,45 @@ public class GetGraphicalReportUsersService implements GetGraphicalReportUsersUs
         var fullUsers = loadAssessmentUsersPort.loadAll(param.getAssessmentId(), roleIds);
         var invitees = loadAssessmentInviteeListPort.loadAll(param.getAssessmentId(), roleIds);
 
-        var users = fullUsers.stream()
-            .map(e -> {
-                String pictureLink = null;
-                if (e.getPicturePath() != null && !e.getPicturePath().trim().isBlank()) {
-                    pictureLink = createFileDownloadLinkPort.createDownloadLink(e.getPicturePath(), EXPIRY_DURATION);
-                }
-                return new Result.GraphicalReportUser(e.getId(), e.getEmail(), e.getDisplayName(), pictureLink);
-            }).toList();
+        var fullUserIds = fullUsers.stream()
+            .map(FullUser::getId)
+            .toList();
 
-        var inviteeUsers = invitees.stream()
+        var users = fullUsers.isEmpty()
+            ? Collections.<Result.GraphicalReportUser>emptyList()
+            : fullUsers.stream()
+            .map(e -> toGraphicalReportUser(param, e, buildAssessmentIdToUserRoleItemMap(param, fullUserIds)))
+            .toList();
+
+        var inviteeUsers = invitees.isEmpty()
+            ? Collections.<Result.GraphicalReportInvitee>emptyList()
+            : invitees.stream()
             .filter(AssessmentInvite::isNotExpired)
-            .map(e -> new Result.GraphicalReportInvitee(e.getEmail()))
+            .map(e -> toGraphicalReportInvitee(param, e))
             .toList();
 
         return new Result(users, inviteeUsers);
+    }
+
+    private Map<UUID, AssessmentUserRoleItem> buildAssessmentIdToUserRoleItemMap(Param param, List<UUID> fullUserIds) {
+        var allUsersRoleItems = loadUserRoleForAssessmentPort.loadRoleItems(param.getAssessmentId(), fullUserIds);
+        return allUsersRoleItems.stream()
+            .collect(Collectors.toMap(AssessmentUserRoleItem::getUserId, Function.identity()));
+    }
+
+    private Result.GraphicalReportUser toGraphicalReportUser(Param param, FullUser e, Map<UUID, AssessmentUserRoleItem> userIdToAssessmentRoleItem) {
+        String pictureLink = null;
+        if (e.getPicturePath() != null && !e.getPicturePath().trim().isBlank())
+            pictureLink = createFileDownloadLinkPort.createDownloadLink(e.getPicturePath(), EXPIRY_DURATION);
+
+        var roleItem = userIdToAssessmentRoleItem.get(e.getId());
+        var deletable = roleItem.getCreatedBy().equals(param.getCurrentUserId())
+            && roleItem.getRole().equals(AssessmentUserRole.REPORT_VIEWER);
+        return new Result.GraphicalReportUser(e.getId(), e.getEmail(), e.getDisplayName(), pictureLink, deletable);
+    }
+
+    private static Result.GraphicalReportInvitee toGraphicalReportInvitee(Param param, AssessmentInvite e) {
+        var deletable = param.getCurrentUserId().equals(e.getCreatedBy()) && e.getRole().equals(AssessmentUserRole.REPORT_VIEWER);
+        return new Result.GraphicalReportInvitee(e.getEmail(), deletable);
     }
 }
