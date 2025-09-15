@@ -96,4 +96,12 @@ public interface AssessmentUserRoleJpaRepository extends JpaRepository<Assessmen
             ) THEN TRUE ELSE FALSE END
         """)
     boolean existsNonSpaceOwnerAccessByAssessmentId(@Param("assessmentId") UUID assessmentId);
+
+    @Query("""
+            SELECT a
+            FROM AssessmentUserRoleJpaEntity a
+            WHERE a.assessmentId = :assessmentId AND a.userId IN :userIds
+        """)
+    List<AssessmentUserRoleJpaEntity> findByAssessmentIdAndUserIds(@Param("assessmentId") UUID assessmentId,
+                                                                   @Param("userIds") List<UUID> userIds);
 }
