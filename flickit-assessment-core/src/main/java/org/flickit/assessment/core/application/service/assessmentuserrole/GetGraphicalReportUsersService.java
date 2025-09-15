@@ -45,9 +45,12 @@ public class GetGraphicalReportUsersService implements GetGraphicalReportUsersUs
         var reportUsers = loadAssessmentUsersPort.loadAll(param.getAssessmentId(), roleIds);
         var invitees = loadAssessmentInviteeListPort.loadAll(param.getAssessmentId(), roleIds);
 
-        if (reportUsers.isEmpty() && invitees.isEmpty())
-            return new Result(List.of(), List.of() );
+        return (reportUsers.isEmpty() && invitees.isEmpty())
+            ? new Result(List.of(), List.of())
+            : buildResult(param, reportUsers, invitees);
+    }
 
+    private Result buildResult(Param param, List<LoadAssessmentUsersPort.ReportUser> reportUsers, List<AssessmentInvite> invitees) {
         var isAuthorized = assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.DELETE_USER_ASSESSMENT_ROLE);
 
         var users = Collections.<Result.GraphicalReportUser>emptyList();
