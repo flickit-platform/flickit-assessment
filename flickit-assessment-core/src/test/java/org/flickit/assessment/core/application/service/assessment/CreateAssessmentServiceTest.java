@@ -35,6 +35,8 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import static org.assertj.core.api.Assertions.tuple;
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_SPACE_ID_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
@@ -88,7 +90,7 @@ class CreateAssessmentServiceTest {
     private LoadMaturityLevelsPort loadMaturityLevelsPort;
 
     @Captor
-    private ArgumentCaptor<AssessmentUserRoleItem> roleItemArgumentCaptor;
+    private ArgumentCaptor<AssessmentUserRoleItem> roleItemCaptor;
 
     @Spy
     AppSpecProperties appSpecProperties = appSpecProperties();
@@ -287,12 +289,12 @@ class CreateAssessmentServiceTest {
         verify(createAssessmentPort).persist(createAssessmentPortCaptor.capture());
         assertCreateAssessmentPort(createAssessmentPortCaptor);
 
-        verify(grantUserAssessmentRolePort, times(1)).persist(roleItemArgumentCaptor.capture());
-        assertEquals(result.id(), roleItemArgumentCaptor.getValue().getAssessmentId());
-        assertEquals(param.getCurrentUserId(), roleItemArgumentCaptor.getValue().getUserId());
-        assertEquals(param.getCurrentUserId(), roleItemArgumentCaptor.getValue().getCreatedBy());
-        assertEquals(AssessmentUserRole.MANAGER.getId(), roleItemArgumentCaptor.getValue().getRole().getId());
-        assertNotNull(roleItemArgumentCaptor.getValue().getCreationTime());
+        verify(grantUserAssessmentRolePort, times(1)).persist(roleItemCaptor.capture());
+        assertEquals(result.id(), roleItemCaptor.getValue().getAssessmentId());
+        assertEquals(param.getCurrentUserId(), roleItemCaptor.getValue().getUserId());
+        assertEquals(param.getCurrentUserId(), roleItemCaptor.getValue().getCreatedBy());
+        assertEquals(AssessmentUserRole.MANAGER.getId(), roleItemCaptor.getValue().getRole().getId());
+        assertNotNull(roleItemCaptor.getValue().getCreationTime());
 
         ArgumentCaptor<CreateAssessmentResultPort.Param> createAssessmentResultPortCaptor = ArgumentCaptor.forClass(CreateAssessmentResultPort.Param.class);
         verify(createAssessmentResultPort).persist(createAssessmentResultPortCaptor.capture());
@@ -329,18 +331,23 @@ class CreateAssessmentServiceTest {
         assertNotNull(result);
         assertEquals(expectedAssessmentId, result.id());
 
-        verify(grantUserAssessmentRolePort, times(2)).persist(roleItemArgumentCaptor.capture());
-        assertEquals(result.id(), roleItemArgumentCaptor.getAllValues().getFirst().getAssessmentId());
-        assertEquals(space.getOwnerId(), roleItemArgumentCaptor.getAllValues().getFirst().getUserId());
-        assertEquals(param.getCurrentUserId(), roleItemArgumentCaptor.getAllValues().getFirst().getCreatedBy());
-        assertEquals(AssessmentUserRole.MANAGER.getId(), roleItemArgumentCaptor.getAllValues().getFirst().getRole().getId());
-        assertNotNull(roleItemArgumentCaptor.getAllValues().getFirst().getCreationTime());
+        verify(grantUserAssessmentRolePort, times(2)).persist(roleItemCaptor.capture());
 
-        assertEquals(result.id(), roleItemArgumentCaptor.getAllValues().getLast().getAssessmentId());
-        assertEquals(param.getCurrentUserId(), roleItemArgumentCaptor.getAllValues().getLast().getUserId());
-        assertEquals(param.getCurrentUserId(), roleItemArgumentCaptor.getAllValues().getLast().getCreatedBy());
-        assertEquals(AssessmentUserRole.MANAGER.getId(), roleItemArgumentCaptor.getAllValues().getLast().getRole().getId());
-        assertNotNull(roleItemArgumentCaptor.getAllValues().getLast().getCreationTime());
+        assertThat(roleItemCaptor.getAllValues())
+            .map(item -> tuple(
+                item.getAssessmentId(),
+                item.getUserId(),
+                item.getCreatedBy(),
+                item.getRole()
+            ))
+            .containsExactly(
+                tuple(result.id(), space.getOwnerId(), param.getCurrentUserId(), AssessmentUserRole.MANAGER),
+                tuple(result.id(), param.getCurrentUserId(), param.getCurrentUserId(), AssessmentUserRole.MANAGER)
+            );
+
+        roleItemCaptor.getAllValues().forEach(item ->
+            assertThat(item.getCreationTime()).isNotNull()
+        );
 
         ArgumentCaptor<CreateAssessmentResultPort.Param> createAssessmentResultPortCaptor = ArgumentCaptor.forClass(CreateAssessmentResultPort.Param.class);
         verify(createAssessmentResultPort).persist(createAssessmentResultPortCaptor.capture());

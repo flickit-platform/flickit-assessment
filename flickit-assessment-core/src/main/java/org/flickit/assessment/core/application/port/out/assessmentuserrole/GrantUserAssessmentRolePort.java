@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface GrantUserAssessmentRolePort {
 
-    void persist(AssessmentUserRoleItem assessmentUserRoleItemList);
+    void persist(AssessmentUserRoleItem assessmentUserRoleItem);
 
-    void persistAll(List<AssessmentUserRoleItem> assessmentUserRoleItemList);
+    void persistAll(List<AssessmentUserRoleItem> assessmentUserRoleItems);
 }
