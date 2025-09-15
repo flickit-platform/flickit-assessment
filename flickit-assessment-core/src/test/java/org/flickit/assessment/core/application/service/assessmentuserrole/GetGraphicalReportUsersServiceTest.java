@@ -318,9 +318,9 @@ class GetGraphicalReportUsersServiceTest {
     }
 
     private GetGraphicalReportUsersUseCase.Param createParam(Consumer<GetGraphicalReportUsersUseCase.Param.ParamBuilder> changer) {
-        var param = paramBuilder();
-        changer.accept(param);
-        return param.build();
+        var paramBuilder = paramBuilder();
+        changer.accept(paramBuilder);
+        return paramBuilder.build();
     }
 
     private GetGraphicalReportUsersUseCase.Param.ParamBuilder paramBuilder() {

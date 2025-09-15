@@ -57,9 +57,9 @@ public class GetGraphicalReportUsersService implements GetGraphicalReportUsersUs
 
         var users = Collections.<Result.GraphicalReportUser>emptyList();
         if (!fullUsers.isEmpty()) {
-            var UserIdToUserRoleItemMap = buildUserIdToUserRoleItemMap(param, fullUserIds);
+            var userIdToUserRoleItemMap = buildUserIdToUserRoleItemMap(param, fullUserIds);
             users = fullUsers.stream()
-                .map(e -> toGraphicalReportUser(param, e, UserIdToUserRoleItemMap.get(e.getId())))
+                .map(e -> toGraphicalReportUser(param, e, userIdToUserRoleItemMap.get(e.getId())))
                 .toList();
         }
 
