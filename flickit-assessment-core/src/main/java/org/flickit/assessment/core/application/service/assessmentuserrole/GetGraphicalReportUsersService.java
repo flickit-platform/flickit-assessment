@@ -55,39 +55,41 @@ public class GetGraphicalReportUsersService implements GetGraphicalReportUsersUs
             .map(FullUser::getId)
             .toList();
 
-        var users = fullUsers.isEmpty()
-            ? Collections.<Result.GraphicalReportUser>emptyList()
-            : fullUsers.stream()
-            .map(e -> toGraphicalReportUser(param, e, buildAssessmentIdToUserRoleItemMap(param, fullUserIds)))
-            .toList();
+        var users = Collections.<Result.GraphicalReportUser>emptyList();
+        if (!fullUsers.isEmpty()) {
+            var UserIdToUserRoleItemMap = buildUserIdToUserRoleItemMap(param, fullUserIds);
+            users = fullUsers.stream()
+                .map(e -> toGraphicalReportUser(param, e, UserIdToUserRoleItemMap.get(e.getId())))
+                .toList();
+        }
 
-        var inviteeUsers = invitees.isEmpty()
-            ? Collections.<Result.GraphicalReportInvitee>emptyList()
-            : invitees.stream()
-            .filter(AssessmentInvite::isNotExpired)
-            .map(e -> toGraphicalReportInvitee(param, e))
-            .toList();
+        var inviteeUsers = Collections.<Result.GraphicalReportInvitee>emptyList();
+        if (!invitees.isEmpty()) {
+            inviteeUsers = invitees.stream()
+                .filter(AssessmentInvite::isNotExpired)
+                .map(e -> toGraphicalReportInvitee(param, e))
+                .toList();
+        }
 
         return new Result(users, inviteeUsers);
     }
 
-    private Map<UUID, AssessmentUserRoleItem> buildAssessmentIdToUserRoleItemMap(Param param, List<UUID> fullUserIds) {
+    private Map<UUID, AssessmentUserRoleItem> buildUserIdToUserRoleItemMap(Param param, List<UUID> fullUserIds) {
         var allUsersRoleItems = loadUserRoleForAssessmentPort.loadRoleItems(param.getAssessmentId(), fullUserIds);
         return allUsersRoleItems.stream()
             .collect(Collectors.toMap(AssessmentUserRoleItem::getUserId, Function.identity()));
     }
 
-    private Result.GraphicalReportUser toGraphicalReportUser(Param param, FullUser e, Map<UUID, AssessmentUserRoleItem> userIdToAssessmentRoleItem) {
+    private Result.GraphicalReportUser toGraphicalReportUser(Param param, FullUser e, AssessmentUserRoleItem assessmentUserRoleItem) {
         String pictureLink = null;
         if (e.getPicturePath() != null && !e.getPicturePath().trim().isBlank())
             pictureLink = createFileDownloadLinkPort.createDownloadLink(e.getPicturePath(), EXPIRY_DURATION);
 
-        var roleItem = userIdToAssessmentRoleItem.get(e.getId());
         return new Result.GraphicalReportUser(e.getId(),
             e.getEmail(),
             e.getDisplayName(),
             pictureLink,
-            isDeletable(param, roleItem.getCreatedBy(), roleItem.getRole()));
+            isDeletable(param, assessmentUserRoleItem.getCreatedBy(), assessmentUserRoleItem.getRole()));
     }
 
     private Result.GraphicalReportInvitee toGraphicalReportInvitee(Param param, AssessmentInvite invite) {
