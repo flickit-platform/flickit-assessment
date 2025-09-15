@@ -11,5 +11,7 @@ public interface LoadUserRoleForAssessmentPort {
 
     Optional<AssessmentUserRole> load(UUID assessmentId, UUID userId);
 
+    Optional<AssessmentUserRoleItem> loadRoleItem(UUID assessmentId, UUID userId);
+
     List<AssessmentUserRoleItem> loadRoleItems(UUID assessmentId, List<UUID> userId);
 }

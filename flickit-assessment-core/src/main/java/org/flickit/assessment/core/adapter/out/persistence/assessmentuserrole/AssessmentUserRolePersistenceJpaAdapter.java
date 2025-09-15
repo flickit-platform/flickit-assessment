@@ -41,6 +41,12 @@ public class AssessmentUserRolePersistenceJpaAdapter implements
     }
 
     @Override
+    public Optional<AssessmentUserRoleItem> loadRoleItem(UUID assessmentId, UUID userId) {
+        return repository.findByAssessmentIdAndUserId(assessmentId, userId)
+            .map(AssessmentUserRoleMapper::mapToRoleItem);
+    }
+
+    @Override
     public List<AssessmentUserRoleItem> loadRoleItems(UUID assessmentId, List<UUID> userIds) {
         return repository.findByAssessmentIdAndUserIds(assessmentId, userIds).stream()
             .map(AssessmentUserRoleMapper::mapToRoleItem)
