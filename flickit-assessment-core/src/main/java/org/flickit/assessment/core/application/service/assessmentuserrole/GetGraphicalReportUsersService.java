@@ -42,13 +42,18 @@ public class GetGraphicalReportUsersService implements GetGraphicalReportUsersUs
             .map(AssessmentUserRole::getId)
             .toList();
 
-        var reportUser = loadAssessmentUsersPort.loadAll(param.getAssessmentId(), roleIds);
+        var reportUsers = loadAssessmentUsersPort.loadAll(param.getAssessmentId(), roleIds);
         var invitees = loadAssessmentInviteeListPort.loadAll(param.getAssessmentId(), roleIds);
 
+        if (reportUsers.isEmpty() && invitees.isEmpty())
+            return new Result(List.of(), List.of() );
+
+        var isAuthorized = assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.DELETE_USER_ASSESSMENT_ROLE);
+
         var users = Collections.<Result.GraphicalReportUser>emptyList();
-        if (!reportUser.isEmpty()) {
-            users = reportUser.stream()
-                .map(e -> toGraphicalReportUser(param, e))
+        if (!reportUsers.isEmpty()) {
+            users = reportUsers.stream()
+                .map(e -> toGraphicalReportUser(e, param.getCurrentUserId(), isAuthorized))
                 .toList();
         }
 
@@ -56,14 +61,14 @@ public class GetGraphicalReportUsersService implements GetGraphicalReportUsersUs
         if (!invitees.isEmpty()) {
             inviteeUsers = invitees.stream()
                 .filter(AssessmentInvite::isNotExpired)
-                .map(e -> toGraphicalReportInvitee(param, e))
+                .map(e -> toGraphicalReportInvitee(e, param.getCurrentUserId(), isAuthorized))
                 .toList();
         }
 
         return new Result(users, inviteeUsers);
     }
 
-    private Result.GraphicalReportUser toGraphicalReportUser(Param param, LoadAssessmentUsersPort.ReportUser user) {
+    private Result.GraphicalReportUser toGraphicalReportUser(LoadAssessmentUsersPort.ReportUser user, UUID currentUserId, boolean isAuthorized) {
         String pictureLink = null;
         if (user.picturePath() != null && !user.picturePath().trim().isBlank())
             pictureLink = createFileDownloadLinkPort.createDownloadLink(user.picturePath(), EXPIRY_DURATION);
@@ -72,17 +77,16 @@ public class GetGraphicalReportUsersService implements GetGraphicalReportUsersUs
             user.email(),
             user.displayName(),
             pictureLink,
-            isDeletable(param, user.createdBy(), user.role()));
+            isDeletable(user.role(), user.createdBy(), currentUserId, isAuthorized));
     }
 
-    private Result.GraphicalReportInvitee toGraphicalReportInvitee(Param param, AssessmentInvite invite) {
+    private Result.GraphicalReportInvitee toGraphicalReportInvitee(AssessmentInvite invite, UUID currentUserId, boolean isAuthorized) {
         return new Result.GraphicalReportInvitee(invite.getEmail(),
-            isDeletable(param, invite.getCreatedBy(), invite.getRole()));
+            isDeletable(invite.getRole(), invite.getCreatedBy(), currentUserId, isAuthorized));
     }
 
-    private boolean isDeletable(Param param, UUID roleCreator, AssessmentUserRole role) {
+    private boolean isDeletable(AssessmentUserRole role, UUID roleCreator, UUID currentUserId, boolean isAuthorized) {
         return (role.equals(AssessmentUserRole.REPORT_VIEWER)
-            && (roleCreator.equals(param.getCurrentUserId())
-            || assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.DELETE_USER_ASSESSMENT_ROLE)));
+            && (roleCreator.equals(currentUserId) || isAuthorized));
     }
 }
