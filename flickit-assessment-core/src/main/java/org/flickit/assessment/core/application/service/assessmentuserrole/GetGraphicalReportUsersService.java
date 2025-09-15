@@ -13,7 +13,6 @@ import org.flickit.assessment.core.application.port.out.assessmentinvite.LoadAss
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.LoadAssessmentUsersPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.LoadUserRoleForAssessmentPort;
 import org.flickit.assessment.core.application.port.out.minio.CreateFileDownloadLinkPort;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -84,13 +83,21 @@ public class GetGraphicalReportUsersService implements GetGraphicalReportUsersUs
             pictureLink = createFileDownloadLinkPort.createDownloadLink(e.getPicturePath(), EXPIRY_DURATION);
 
         var roleItem = userIdToAssessmentRoleItem.get(e.getId());
-        var deletable = roleItem.getCreatedBy().equals(param.getCurrentUserId())
-            && roleItem.getRole().equals(AssessmentUserRole.REPORT_VIEWER);
-        return new Result.GraphicalReportUser(e.getId(), e.getEmail(), e.getDisplayName(), pictureLink, deletable);
+        return new Result.GraphicalReportUser(e.getId(),
+            e.getEmail(),
+            e.getDisplayName(),
+            pictureLink,
+            isDeletable(param, roleItem.getCreatedBy(), roleItem.getRole()));
     }
 
-    private static Result.GraphicalReportInvitee toGraphicalReportInvitee(Param param, AssessmentInvite e) {
-        var deletable = param.getCurrentUserId().equals(e.getCreatedBy()) && e.getRole().equals(AssessmentUserRole.REPORT_VIEWER);
-        return new Result.GraphicalReportInvitee(e.getEmail(), deletable);
+    private Result.GraphicalReportInvitee toGraphicalReportInvitee(Param param, AssessmentInvite invite) {
+        return new Result.GraphicalReportInvitee(invite.getEmail(),
+            isDeletable(param, invite.getCreatedBy(), invite.getRole()));
+    }
+
+    private boolean isDeletable(Param param, UUID roleCreator, AssessmentUserRole role) {
+        return (role.equals(AssessmentUserRole.REPORT_VIEWER)
+            && (roleCreator.equals(param.getCurrentUserId())
+            || assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.DELETE_USER_ASSESSMENT_ROLE)));
     }
 }

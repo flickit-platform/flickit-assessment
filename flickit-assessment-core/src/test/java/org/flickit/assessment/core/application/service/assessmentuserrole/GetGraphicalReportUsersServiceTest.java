@@ -30,6 +30,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.DELETE_USER_ASSESSMENT_ROLE;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.GRANT_ACCESS_TO_REPORT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentInviteMother.assessmentInviteWithRole;
@@ -134,6 +135,7 @@ class GetGraphicalReportUsersServiceTest {
         for (int i = 0; i < roleIds.size(); i++)
             assertEquals(roleIds.get(i), roleIdsCaptor.getValue().get(i));
 
+        verify(assessmentAccessChecker, times(1)).isAuthorized(any(), any(), any());
         verifyNoInteractions(createFileDownloadLinkPort);
     }
 
@@ -148,6 +150,8 @@ class GetGraphicalReportUsersServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_ACCESS_TO_REPORT))
             .thenReturn(true);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), DELETE_USER_ASSESSMENT_ROLE))
+            .thenReturn(true);
         when(loadAssessmentUsersPort.loadAll(any(UUID.class), anyList())).thenReturn(List.of(grantedUser));
         when(loadAssessmentInviteeListPort.loadAll(any(UUID.class), anyList())).thenReturn(new ArrayList<>());
         when(createFileDownloadLinkPort.createDownloadLink(grantedUser.getPicturePath(), EXPIRY_DURATION)).thenReturn("picture-link");
@@ -160,7 +164,7 @@ class GetGraphicalReportUsersServiceTest {
         assertEquals(grantedUser.getDisplayName(), result.users().getFirst().displayName());
         assertEquals(grantedUser.getEmail(), result.users().getFirst().email());
         assertNotNull(result.users().getFirst().pictureLink());
-        assertFalse(result.users().getFirst().deletable());
+        assertTrue(result.users().getFirst().deletable());
         assertEquals("picture-link", result.users().getFirst().pictureLink());
         assertTrue(result.invitees().isEmpty());
 
@@ -175,6 +179,8 @@ class GetGraphicalReportUsersServiceTest {
         assertFalse(roleIdsCaptor.getValue().isEmpty());
         for (int i = 0; i < roleIds.size(); i++)
             assertEquals(roleIds.get(i), roleIdsCaptor.getValue().get(i));
+
+        verify(assessmentAccessChecker, times(2)).isAuthorized(any(), any(), any());
     }
 
     @Test
@@ -209,6 +215,7 @@ class GetGraphicalReportUsersServiceTest {
         for (int i = 0; i < roleIds.size(); i++)
             assertEquals(roleIds.get(i), roleIdsCaptor.getValue().get(i));
 
+        verify(assessmentAccessChecker, times(1)).isAuthorized(any(), any(), any());
         verifyNoInteractions(loadUserRoleForAssessmentPort, createFileDownloadLinkPort);
     }
 
@@ -224,6 +231,8 @@ class GetGraphicalReportUsersServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_ACCESS_TO_REPORT))
             .thenReturn(true);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), DELETE_USER_ASSESSMENT_ROLE))
+            .thenReturn(false);
         when(loadAssessmentUsersPort.loadAll(any(UUID.class), anyList())).thenReturn(List.of(grantedUser));
         when(loadAssessmentInviteeListPort.loadAll(any(UUID.class), anyList())).thenReturn(List.of(invite));
         when(createFileDownloadLinkPort.createDownloadLink(grantedUser.getPicturePath(), EXPIRY_DURATION)).thenReturn("picture-link");
@@ -254,6 +263,8 @@ class GetGraphicalReportUsersServiceTest {
         assertFalse(roleIdsCaptor.getValue().isEmpty());
         for (int i = 0; i < roleIds.size(); i++)
             assertEquals(roleIds.get(i), roleIdsCaptor.getValue().get(i));
+
+        verify(assessmentAccessChecker, times(2)).isAuthorized(any(), any(), any());
     }
 
     @ParameterizedTest
@@ -299,6 +310,7 @@ class GetGraphicalReportUsersServiceTest {
             assertEquals(roleIds.get(i), roleIdsCaptor.getValue().get(i));
 
         verifyNoInteractions(createFileDownloadLinkPort);
+        verify(assessmentAccessChecker, times(1)).isAuthorized(any(), any(), any());
     }
 
     private AssessmentUserRoleItem createAssessmentUserRoleItem(AssessmentUserRole role, UUID userId, UUID createdBy) {
