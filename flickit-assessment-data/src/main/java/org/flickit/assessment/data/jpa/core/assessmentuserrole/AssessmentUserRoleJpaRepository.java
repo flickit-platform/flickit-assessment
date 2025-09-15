@@ -64,7 +64,9 @@ public interface AssessmentUserRoleJpaRepository extends JpaRepository<Assessmen
                 u.id AS userId,
                 u.email AS email,
                 u.displayName AS displayName,
-                u.picture AS picturePath
+                u.picture AS picturePath,
+                a.roleId AS roleId,
+                a.createdBy AS createdBy
             FROM UserJpaEntity u
             JOIN AssessmentUserRoleJpaEntity a ON u.id = a.userId
             JOIN AssessmentJpaEntity assessment ON assessment.id = a.assessmentId
@@ -96,12 +98,4 @@ public interface AssessmentUserRoleJpaRepository extends JpaRepository<Assessmen
             ) THEN TRUE ELSE FALSE END
         """)
     boolean existsNonSpaceOwnerAccessByAssessmentId(@Param("assessmentId") UUID assessmentId);
-
-    @Query("""
-            SELECT a
-            FROM AssessmentUserRoleJpaEntity a
-            WHERE a.assessmentId = :assessmentId AND a.userId IN :userIds
-        """)
-    List<AssessmentUserRoleJpaEntity> findByAssessmentIdAndUserIds(@Param("assessmentId") UUID assessmentId,
-                                                                   @Param("userIds") List<UUID> userIds);
 }
