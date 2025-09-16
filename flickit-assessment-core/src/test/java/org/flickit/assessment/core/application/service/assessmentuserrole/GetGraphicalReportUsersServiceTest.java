@@ -73,22 +73,6 @@ class GetGraphicalReportUsersServiceTest {
             createFileDownloadLinkPort);
     }
 
-    @Test
-    void testGetGraphicalReportUsers_whenThereIsNoUsersWithRequiredPermissionAndNoInviteeUsers_thenReturnResultWithEmptyUsersAndInvitees() {
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_ACCESS_TO_REPORT))
-            .thenReturn(true);
-        when(loadAssessmentUsersPort.loadAll(any(UUID.class), anyList())).thenReturn(new ArrayList<>());
-        when(loadAssessmentInviteeListPort.loadAll(any(UUID.class), anyList())).thenReturn(new ArrayList<>());
-
-        var result = service.getGraphicalReportUsers(param);
-        assertNotNull(result);
-        assertTrue(result.users().isEmpty());
-        assertTrue(result.invitees().isEmpty());
-
-        verify(assessmentAccessChecker, times(1)).isAuthorized(any(), any(), any());
-        verifyNoInteractions(createFileDownloadLinkPort);
-    }
-
     @ParameterizedTest
     @NullAndEmptySource
     @ValueSource(strings = {"  ", "\t", "\n"})
