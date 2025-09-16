@@ -14,11 +14,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
-import java.util.*;
+import java.util.UUID;
 import java.util.stream.Stream;
 
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.DELETE_USER_ASSESSMENT_ROLE;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.GRANT_ACCESS_TO_REPORT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.core.application.domain.AssessmentUserRole.REPORT_VIEWER;
 
 @Service
 @Transactional
@@ -42,31 +44,19 @@ public class GetGraphicalReportUsersService implements GetGraphicalReportUsersUs
             .map(AssessmentUserRole::getId)
             .toList();
 
-        var reportUsers = loadAssessmentUsersPort.loadAll(param.getAssessmentId(), roleIds);
-        var invitees = loadAssessmentInviteeListPort.loadAll(param.getAssessmentId(), roleIds);
+        var hasDeletePermission = assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), DELETE_USER_ASSESSMENT_ROLE);
 
-        return (reportUsers.isEmpty() && invitees.isEmpty())
-            ? new Result(List.of(), List.of())
-            : buildResult(param, reportUsers, invitees);
-    }
+        var users = loadAssessmentUsersPort.loadAll(param.getAssessmentId(), roleIds).stream()
+            .map(e -> toGraphicalReportUser(e, param.getCurrentUserId(), hasDeletePermission))
+            .toList();
 
-    private Result buildResult(Param param, List<LoadAssessmentUsersPort.ReportUser> reportUsers, List<AssessmentInvite> invitees) {
-        var isAuthorized = assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.DELETE_USER_ASSESSMENT_ROLE);
-
-        var users = Collections.<Result.GraphicalReportUser>emptyList();
-        if (!reportUsers.isEmpty()) {
-            users = reportUsers.stream()
-                .map(e -> toGraphicalReportUser(e, param.getCurrentUserId(), isAuthorized))
-                .toList();
-        }
-
-        var inviteeUsers = Collections.<Result.GraphicalReportInvitee>emptyList();
-        if (!invitees.isEmpty()) {
-            inviteeUsers = invitees.stream()
-                .filter(AssessmentInvite::isNotExpired)
-                .map(e -> toGraphicalReportInvitee(e, param.getCurrentUserId(), isAuthorized))
-                .toList();
-        }
+        var inviteeUsers = loadAssessmentInviteeListPort.loadAll(param.getAssessmentId(), roleIds).stream()
+            .filter(AssessmentInvite::isNotExpired)
+            .map(e -> {
+                boolean deletable = isDeletable(e.getRole(), e.getCreatedBy(), param.getCurrentUserId(), hasDeletePermission);
+                return new Result.GraphicalReportInvitee(e.getEmail(), deletable);
+            })
+            .toList();
 
         return new Result(users, inviteeUsers);
     }
@@ -83,13 +73,7 @@ public class GetGraphicalReportUsersService implements GetGraphicalReportUsersUs
             isDeletable(user.role(), user.createdBy(), currentUserId, isAuthorized));
     }
 
-    private Result.GraphicalReportInvitee toGraphicalReportInvitee(AssessmentInvite invite, UUID currentUserId, boolean isAuthorized) {
-        return new Result.GraphicalReportInvitee(invite.getEmail(),
-            isDeletable(invite.getRole(), invite.getCreatedBy(), currentUserId, isAuthorized));
-    }
-
     private boolean isDeletable(AssessmentUserRole role, UUID roleCreator, UUID currentUserId, boolean isAuthorized) {
-        return (role.equals(AssessmentUserRole.REPORT_VIEWER)
-            && (roleCreator.equals(currentUserId) || isAuthorized));
+        return (REPORT_VIEWER == role && (roleCreator.equals(currentUserId) || isAuthorized));
     }
 }
