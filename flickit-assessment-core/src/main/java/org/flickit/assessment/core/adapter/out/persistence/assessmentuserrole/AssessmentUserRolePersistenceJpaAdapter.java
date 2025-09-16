@@ -6,7 +6,6 @@ import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 import org.flickit.assessment.core.application.domain.AssessmentUserRoleItem;
-import org.flickit.assessment.core.application.domain.FullUser;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.*;
 import org.flickit.assessment.data.jpa.core.assessmentuserrole.AssessmentUserRoleJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessmentuserrole.AssessmentUserView;
@@ -115,9 +114,9 @@ public class AssessmentUserRolePersistenceJpaAdapter implements
     }
 
     @Override
-    public List<FullUser> loadAll(UUID assessmentId, List<Integer> roleIds) {
+    public List<LoadAssessmentUsersPort.ReportUser> loadAll(UUID assessmentId, List<Integer> roleIds) {
         return repository.findUsersByRoles(assessmentId, roleIds).stream()
-            .map(e -> new FullUser(e.getUserId(), e.getDisplayName(), e.getEmail(), e.getPicturePath()))
+            .map(AssessmentUserRoleMapper::mapToPortResult)
             .toList();
     }
 

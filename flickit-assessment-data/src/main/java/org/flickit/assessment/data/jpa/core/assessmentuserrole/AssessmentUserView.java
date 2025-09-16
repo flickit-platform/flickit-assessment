@@ -15,4 +15,6 @@ public interface AssessmentUserView {
     int getRoleId();
 
     boolean getEditable();
+
+    UUID getCreatedBy();
 }
