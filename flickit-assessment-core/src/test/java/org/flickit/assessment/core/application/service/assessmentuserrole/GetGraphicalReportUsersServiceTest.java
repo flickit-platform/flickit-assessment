@@ -173,6 +173,7 @@ class GetGraphicalReportUsersServiceTest {
         assertNotNull(result);
         assertNotNull(result.invitees());
         assertTrue(result.users().isEmpty());
+        assertEquals(invite.getId(), result.invitees().getFirst().id());
         assertEquals(invite.getEmail(), result.invitees().getFirst().email());
         assertTrue(result.invitees().getFirst().deletable());
 
@@ -219,6 +220,7 @@ class GetGraphicalReportUsersServiceTest {
         assertEquals("picture-link", result.users().getFirst().pictureLink());
         assertNotNull(result.invitees());
         assertFalse(result.invitees().isEmpty());
+        assertEquals(invite.getId(), result.invitees().getFirst().id());
         assertEquals(invite.getEmail(), result.invitees().getFirst().email());
         assertFalse(result.invitees().getFirst().deletable());
 
@@ -262,6 +264,7 @@ class GetGraphicalReportUsersServiceTest {
         assertFalse(result.users().getFirst().deletable());
         assertNotNull(result.invitees());
         assertFalse(result.invitees().isEmpty());
+        assertEquals(invite.getId(), result.invitees().getFirst().id());
         assertEquals(invite.getEmail(), result.invitees().getFirst().email());
         assertFalse(result.invitees().getFirst().deletable());
 

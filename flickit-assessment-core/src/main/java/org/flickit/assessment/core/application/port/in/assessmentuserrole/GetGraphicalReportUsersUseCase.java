@@ -38,6 +38,6 @@ public interface GetGraphicalReportUsersUseCase {
 
         public record GraphicalReportUser(UUID id, String email, String displayName, String pictureLink, boolean deletable) {}
 
-        public record GraphicalReportInvitee(String email, boolean deletable) {}
+        public record GraphicalReportInvitee(UUID id, String email, boolean deletable) {}
     }
 }
