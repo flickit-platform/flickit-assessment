@@ -54,7 +54,7 @@ public class GetGraphicalReportUsersService implements GetGraphicalReportUsersUs
             .filter(AssessmentInvite::isNotExpired)
             .map(e -> {
                 boolean deletable = isDeletable(e.getRole(), e.getCreatedBy(), param.getCurrentUserId(), hasDeletePermission);
-                return new Result.GraphicalReportInvitee(e.getEmail(), deletable);
+                return new Result.GraphicalReportInvitee(e.getId(), e.getEmail(), deletable);
             })
             .toList();
 
