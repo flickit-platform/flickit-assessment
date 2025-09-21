@@ -44,6 +44,6 @@ public interface CreateAiAdviceNarrationUseCase {
         }
     }
 
-    record Result(String content){
+    record Result(String content) {
     }
 }

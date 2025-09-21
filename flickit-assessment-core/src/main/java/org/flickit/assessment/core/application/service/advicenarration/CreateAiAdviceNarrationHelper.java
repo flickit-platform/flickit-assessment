@@ -37,14 +37,14 @@ import static org.flickit.assessment.core.common.MessageKey.ADVICE_NARRATION_AI_
 @RequiredArgsConstructor
 public class CreateAiAdviceNarrationHelper {
 
+    private final AppAiProperties appAiProperties;
+    private final CallAiPromptPort callAiPromptPort;
     private final LoadMaturityLevelsPort loadMaturityLevelsPort;
     private final LoadAttributesPort loadAttributesPort;
-    private final LoadAdviceNarrationPort loadAdviceNarrationPort;
-    private final CreateAdviceNarrationPort createAdviceNarrationPort;
-    private final CallAiPromptPort callAiPromptPort;
     private final CreateAdviceItemPort createAdviceItemPort;
-    private final AppAiProperties appAiProperties;
+    private final LoadAdviceNarrationPort loadAdviceNarrationPort;
     private final UpdateAdviceNarrationPort updateAdviceNarrationPort;
+    private final CreateAdviceNarrationPort createAdviceNarrationPort;
 
     public String createAiAdviceNarration(AssessmentResult assessmentResult,
                                           List<AdvicePlanItem> questionRecommendations,
@@ -131,7 +131,7 @@ public class CreateAiAdviceNarrationHelper {
     record TargetAttribute(String attribute, String targetMaturityLevel) {
     }
 
-    CreateAdviceNarrationPort.Param toCreateAiAdviceNarrationParam(String aiNarration) {
+    private CreateAdviceNarrationPort.Param toCreateAiAdviceNarrationParam(String aiNarration) {
         var creationTime = LocalDateTime.now();
         return new CreateAdviceNarrationPort.Param(aiNarration,
             null,
