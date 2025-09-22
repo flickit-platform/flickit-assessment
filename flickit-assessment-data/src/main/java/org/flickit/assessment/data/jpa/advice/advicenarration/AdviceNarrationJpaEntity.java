@@ -32,6 +32,9 @@ public class AdviceNarrationJpaEntity {
     @Column(name = "assessor_narration")
     private String assessorNarration;
 
+    @Column(name = "approved")
+    private boolean approved;
+
     @Column(name = "ai_narration_time")
     private LocalDateTime aiNarrationTime;
 
@@ -40,4 +43,7 @@ public class AdviceNarrationJpaEntity {
 
     @Column(name = "created_by")
     private UUID createdBy;
+
+    @Column(name = "last_modification_time", nullable = false)
+    private LocalDateTime lastModificationTime;
 }

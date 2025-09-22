@@ -1,5 +1,6 @@
 package org.flickit.assessment.kit.application.port.in.assessmentkit;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -51,9 +52,16 @@ public interface GetKitEditableInfoUseCase {
         boolean editable,
         boolean hasActiveVersion,
         Map<KitLanguage, KitTranslation> translations,
-        List<Language> languages) {
+        List<Language> languages,
+        Metadata metadata) {
         public record Language(String code,
                                String title) {
+        }
+
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        public record Metadata(String goal,
+                               String context) {
+
         }
     }
 }

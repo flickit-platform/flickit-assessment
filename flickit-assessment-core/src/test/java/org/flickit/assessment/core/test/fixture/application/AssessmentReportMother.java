@@ -2,6 +2,7 @@ package org.flickit.assessment.core.test.fixture.application;
 
 import org.flickit.assessment.core.application.domain.AssessmentReport;
 import org.flickit.assessment.core.application.domain.AssessmentReportMetadata;
+import org.flickit.assessment.core.application.domain.VisibilityType;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -14,6 +15,8 @@ public class AssessmentReportMother {
             UUID.randomUUID(),
             metadata,
             false,
+            VisibilityType.RESTRICTED,
+            UUID.randomUUID().toString(),
             LocalDateTime.now(),
             LocalDateTime.now(),
             userId,
@@ -26,6 +29,50 @@ public class AssessmentReportMother {
             UUID.randomUUID(),
             metadata,
             true,
+            VisibilityType.RESTRICTED,
+            UUID.randomUUID().toString(),
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            userId,
+            userId);
+    }
+
+    public static AssessmentReport publicAndPublishedReport() {
+        var userId = UUID.randomUUID();
+        return new AssessmentReport(UUID.randomUUID(),
+            UUID.randomUUID(),
+            AssessmentReportMetadataMother.fullMetadata(),
+            true,
+            VisibilityType.PUBLIC,
+            UUID.randomUUID().toString(),
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            userId,
+            userId);
+    }
+
+    public static AssessmentReport restrictedAndPublishedReport() {
+        var userId = UUID.randomUUID();
+        return new AssessmentReport(UUID.randomUUID(),
+            UUID.randomUUID(),
+            AssessmentReportMetadataMother.fullMetadata(),
+            true,
+            VisibilityType.RESTRICTED,
+            UUID.randomUUID().toString(),
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            userId,
+            userId);
+    }
+
+    public static AssessmentReport publicAndNotPublishedReport() {
+        var userId = UUID.randomUUID();
+        return new AssessmentReport(UUID.randomUUID(),
+            UUID.randomUUID(),
+            AssessmentReportMetadataMother.fullMetadata(),
+            false,
+            VisibilityType.PUBLIC,
+            UUID.randomUUID().toString(),
             LocalDateTime.now(),
             LocalDateTime.now(),
             userId,
@@ -37,9 +84,25 @@ public class AssessmentReportMother {
             null,
             new AssessmentReportMetadata(null, null, null, null),
             false,
+            VisibilityType.RESTRICTED,
+            null,
             null,
             null,
             null,
             null);
+    }
+
+    public static AssessmentReport withVisibility(VisibilityType visibility) {
+        var userId = UUID.randomUUID();
+        return new AssessmentReport(UUID.randomUUID(),
+            UUID.randomUUID(),
+            null,
+            true,
+            visibility,
+            UUID.randomUUID().toString(),
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            userId,
+            userId);
     }
 }

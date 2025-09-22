@@ -5,10 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
-import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
-import org.flickit.assessment.data.jpa.kit.assessmentkit.CountKitStatsView;
-import org.flickit.assessment.data.jpa.kit.assessmentkit.KitWithExpertGroupView;
+import org.flickit.assessment.data.jpa.kit.assessmentkit.*;
 import org.flickit.assessment.data.jpa.kit.kitlanguage.KitLanguageJpaEntity;
 import org.flickit.assessment.data.jpa.kit.kitlanguage.KitLanguageJpaRepository;
 import org.flickit.assessment.data.jpa.kit.kittagrelation.KitTagRelationJpaEntity;
@@ -26,6 +23,7 @@ import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitMinimalInfoUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.*;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.DeleteKitUserAccessPort;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -41,6 +39,7 @@ import java.util.stream.Collectors;
 import static java.util.stream.Collectors.toSet;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 import static org.flickit.assessment.kit.adapter.out.persistence.assessmentkit.AssessmentKitMapper.mapToDomainModel;
+import static org.flickit.assessment.kit.adapter.out.persistence.assessmentkit.AssessmentKitMapper.mapToDomainModelWithMetadata;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 @Component
@@ -192,12 +191,34 @@ public class AssessmentKitPersistenceJpaAdapter implements
     }
 
     @Override
-    public PaginatedResponse<LoadPublishedKitListPort.Result> loadPublicKits(@Nullable
-                                                                             Collection<KitLanguage> kitLanguages,
+    public AssessmentKit loadTranslated(long kitId) {
+        AssessmentKitJpaEntity kitEntity = repository.findById(kitId)
+            .orElseThrow(() -> new ResourceNotFoundException(KIT_ID_NOT_FOUND));
+
+        var language = KitLanguage.valueOf(LocaleContextHolder.getLocale().getLanguage().toUpperCase());
+        return mapToDomainModelWithMetadata(kitEntity, language);
+    }
+
+    @Override
+    public PaginatedResponse<LoadPublishedKitListPort.Result> loadPublicKits(@Nullable Collection<KitLanguage> kitLanguages,
                                                                              int page,
                                                                              int size) {
         var kitLanguageIds = resolveKitLanguages(kitLanguages);
-        var pageResult = repository.findAllPublishedAndNotPrivateOrderByTitle(kitLanguageIds, PageRequest.of(page, size));
+        var sort = Sort.by(Sort.Order.asc(AssessmentKitJpaEntity.Fields.title));
+        var pageResult = repository.findAllPublishedAndNotPrivate(kitLanguageIds, PageRequest.of(page, size, sort));
+
+        return toLoadPublishedKitsPortResult(pageResult);
+    }
+
+    @Override
+    public PaginatedResponse<LoadPublishedKitListPort.Result> loadPublicKits(UUID userId,
+                                                                             @Nullable Collection<KitLanguage> kitLanguages,
+                                                                             int page,
+                                                                             int size) {
+        var kitLanguageIds = resolveKitLanguages(kitLanguages);
+        var sort = Sort.by(Sort.Order.asc(AssessmentKitJpaEntity.Fields.title));
+        var pageResult = repository.findAllPublishedAndNotPrivateByUserId(userId, kitLanguageIds, PageRequest.of(page, size, sort));
+
         return toLoadPublishedKitsPortResult(pageResult);
     }
 
@@ -208,9 +229,9 @@ public class AssessmentKitPersistenceJpaAdapter implements
                                                                               int page,
                                                                               int size) {
         var kitLanguageIds = resolveKitLanguages(kitLanguages);
-        var pageResult = repository.findAllPublishedAndPrivateByUserIdOrderByTitle(userId,
-            kitLanguageIds,
-            PageRequest.of(page, size));
+        var sort = Sort.by(Sort.Order.asc(AssessmentKitJpaEntity.Fields.title));
+        var pageResult = repository.findAllPublishedAndPrivateByUserId(userId, kitLanguageIds, PageRequest.of(page, size, sort));
+
         return toLoadPublishedKitsPortResult(pageResult);
     }
 
@@ -221,9 +242,11 @@ public class AssessmentKitPersistenceJpaAdapter implements
                                                                                        int page,
                                                                                        int size) {
         var kitLanguageIds = resolveKitLanguages(kitLanguages);
-        var pageResult = repository.findAllPublishedOrderByTitle(currentUserId,
-            kitLanguageIds,
-            PageRequest.of(page, size));
+        var sort = Sort.by(
+            Sort.Order.desc(AssessmentKitJpaEntity.Fields.isPrivate),
+            Sort.Order.asc(AssessmentKitJpaEntity.Fields.title));
+        var pageResult = repository.findAllPublished(currentUserId, kitLanguageIds, PageRequest.of(page, size, sort));
+
         return toLoadPublishedKitsPortResult(pageResult);
     }
 
@@ -237,10 +260,12 @@ public class AssessmentKitPersistenceJpaAdapter implements
     }
 
     private PaginatedResponse<LoadPublishedKitListPort.Result> toLoadPublishedKitsPortResult(Page<KitWithExpertGroupView> pageResult) {
+        var language = KitLanguage.valueOf(LocaleContextHolder.getLocale().getLanguage().toUpperCase());
         var items = pageResult.getContent().stream()
             .map(v -> new LoadPublishedKitListPort.Result(
-                mapToDomainModel(v.getKit()),
-                ExpertGroupMapper.mapToDomainModel(v.getExpertGroup())))
+                mapToDomainModel(v.getKit(), language),
+                ExpertGroupMapper.mapToDomainModel(v.getExpertGroup()),
+                v.getKitUserAccess()))
             .toList();
 
         return new PaginatedResponse<>(
@@ -292,13 +317,14 @@ public class AssessmentKitPersistenceJpaAdapter implements
 
     @Override
     public PaginatedResponse<AssessmentKit> searchKitOptions(SearchKitOptionsPort.Param param) {
-        String query = param.query() == null ? "" : param.query();
-        Page<AssessmentKitJpaEntity> kitEntityPage = repository.findAllByTitleAndUserId(query,
-            param.currentUserId(),
+        var query = param.query() == null ? "" : param.query();
+        var specification = new AssessmentKitSearchSpecification(query, param.currentUserId());
+        var kitEntityPage = repository.findAll(specification,
             PageRequest.of(param.page(), param.size(), Sort.Direction.ASC, AssessmentKitJpaEntity.Fields.title));
 
-        List<AssessmentKit> kits = kitEntityPage.getContent().stream()
-            .map(AssessmentKitMapper::mapToDomainModel)
+        var translationLanguage = KitLanguage.valueOf(LocaleContextHolder.getLocale().getLanguage().toUpperCase());
+        var kits = kitEntityPage.getContent().stream()
+            .map(entity -> AssessmentKitMapper.mapToDomainModel(entity, translationLanguage))
             .toList();
 
         return new PaginatedResponse<>(kits,

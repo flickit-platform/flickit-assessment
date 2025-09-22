@@ -3,14 +3,15 @@ package org.flickit.assessment.kit.application.service.assessmentkit;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
+import org.flickit.assessment.kit.application.domain.AssessmentKit;
+import org.flickit.assessment.kit.application.domain.ExpertGroup;
+import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitListUseCase;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitListUseCase.Param;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CountKitListStatsPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadPublishedKitListPort;
 import org.flickit.assessment.kit.application.port.out.kitlanguage.LoadKitLanguagesPort;
-import org.flickit.assessment.kit.application.port.out.kittag.LoadKitTagListPort;
 import org.flickit.assessment.kit.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.flickit.assessment.kit.test.fixture.application.ExpertGroupMother;
-import org.flickit.assessment.kit.test.fixture.application.KitTagMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -24,8 +25,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.privateKit;
-import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
+import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -43,118 +43,104 @@ class GetKitListServiceTest {
     private CountKitListStatsPort countKitStatsPort;
 
     @Mock
-    private LoadKitTagListPort loadKitTagListPort;
-
-    @Mock
     private LoadKitLanguagesPort loadKitLanguagesPort;
 
     @Mock
     private CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
+    private static final ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
+    private static final String EXPERT_GROUP_PICTURE_URL = "https://picureLink";
+
     @Test
-    void testGetKitList_whenPublicKitsAreWanted_thenReturnPublicKits() {
+    void testGetKitList_whenPublicKitsAreWantedAndResultIsFreeKitAndUserDoesNotHaveAccess_thenReturnPublicKits() {
         var param = createParam(Param.ParamBuilder::build);
-        var assessmentKit = simpleKit();
+        var assessmentKit = simpleKitWithPrice(0);
         var kitId = assessmentKit.getId();
         var kitIds = List.of(kitId);
-        var expertGroup = ExpertGroupMother.createExpertGroup();
-        var expertGroupPictureUrl = "https://picureLink";
-        var expectedKitsPage = new PaginatedResponse<>(
-            List.of(new LoadPublishedKitListPort.Result(assessmentKit, expertGroup)),
-            0,
-            10,
-            AssessmentKitJpaEntity.Fields.title,
-            Sort.Direction.ASC.name().toLowerCase(),
-            1
-        );
-        var sampleTag = KitTagMother.createKitTag("sample tag");
 
-        when(loadPublishedKitListPort.loadPublicKits(Set.of(KitLanguage.EN), param.getPage(), param.getSize()))
+        var expectedKitsPage = getExpectedKitsPage(assessmentKit, true);
+
+        when(loadPublishedKitListPort.loadPublicKits(param.getCurrentUserId(), Set.of(KitLanguage.EN), param.getPage(), param.getSize()))
             .thenReturn(expectedKitsPage);
+        int kitLikes = 3, assessmentsCount = 15;
         when(countKitStatsPort.countKitsStats(kitIds))
-            .thenReturn(List.of(new CountKitListStatsPort.Result(kitId, 3, 15)));
-        when(loadKitTagListPort.loadByKitIds(kitIds)).thenReturn(
-            List.of(new LoadKitTagListPort.Result(kitId, List.of(sampleTag))));
+            .thenReturn(List.of(new CountKitListStatsPort.Result(kitId, kitLikes, assessmentsCount)));
         when(loadKitLanguagesPort.loadByKitIds(kitIds)).thenReturn(
             Map.of(kitId, List.of(KitLanguage.EN)));
         when(createFileDownloadLinkPort.createDownloadLink(any(), any()))
-            .thenReturn(expertGroupPictureUrl);
+            .thenReturn(EXPERT_GROUP_PICTURE_URL);
 
-        var kitList = service.getKitList(param);
-
-        assertEquals(expectedKitsPage.getPage(), kitList.getPage());
-        assertEquals(expectedKitsPage.getSize(), kitList.getSize());
-        assertEquals(expectedKitsPage.getSort(), kitList.getSort());
-        assertEquals(expectedKitsPage.getOrder(), kitList.getOrder());
-        assertEquals(expectedKitsPage.getTotal(), kitList.getTotal());
-        assertEquals(expectedKitsPage.getItems().size(), kitList.getItems().size());
-
-        var item = kitList.getItems().getFirst();
-        assertEquals(assessmentKit.getId(), item.id());
-        assertEquals(assessmentKit.getTitle(), item.title());
-        assertEquals(assessmentKit.getSummary(), item.summary());
-        assertFalse(item.isPrivate());
-        assertEquals(3, item.likes());
-        assertEquals(15, item.assessmentsCount());
+        var result = service.getKitList(param);
+        assertPage(expectedKitsPage, result);
+        var item = result.getItems().getFirst();
+        assertKit(assessmentKit, item, kitLikes, assessmentsCount);
         assertEquals(KitLanguage.EN.getTitle(), item.languages().getFirst());
-        assertEquals(expertGroup.getId(), item.expertGroup().id());
-        assertEquals(expertGroup.getTitle(), item.expertGroup().title());
-        assertEquals(expertGroupPictureUrl, item.expertGroup().picture());
+        assertExpertGroup(item);
+        assertTrue(item.isFree());
+        assertTrue(item.hasAccess());
 
         verify(loadPublishedKitListPort, never()).loadPrivateKits(any(), any(), anyInt(), anyInt());
     }
 
     @Test
-    void testGetKitList_whenPrivateKitsAreWanted_thenReturnPrivateKits() {
+    void testGetKitList_whenPublicKitsAreWantedAndResultIsPaidKitAndUserDoesNotHaveAccess_thenReturnPublicKits() {
+        var param = createParam(Param.ParamBuilder::build);
+        var assessmentKit = simpleKitWithPrice(1000);
+        var kitId = assessmentKit.getId();
+        var kitIds = List.of(kitId);
+
+        var expectedKitsPage = getExpectedKitsPage(assessmentKit, false);
+
+        when(loadPublishedKitListPort.loadPublicKits(param.getCurrentUserId(), Set.of(KitLanguage.EN), param.getPage(), param.getSize()))
+            .thenReturn(expectedKitsPage);
+        int kitLikes = 3, assessmentsCount = 15;
+        when(countKitStatsPort.countKitsStats(kitIds))
+            .thenReturn(List.of(new CountKitListStatsPort.Result(kitId, kitLikes, assessmentsCount)));
+        when(loadKitLanguagesPort.loadByKitIds(kitIds)).thenReturn(
+            Map.of(kitId, List.of(KitLanguage.EN)));
+        when(createFileDownloadLinkPort.createDownloadLink(any(), any()))
+            .thenReturn(EXPERT_GROUP_PICTURE_URL);
+
+        var result = service.getKitList(param);
+        assertPage(expectedKitsPage, result);
+        var item = result.getItems().getFirst();
+        assertKit(assessmentKit, item, kitLikes, assessmentsCount);
+        assertExpertGroup(item);
+        assertFalse(item.isFree());
+        assertFalse(item.hasAccess());
+
+        verify(loadPublishedKitListPort, never()).loadPrivateKits(any(), any(), anyInt(), anyInt());
+    }
+
+    @Test
+    void testGetKitList_whenPrivateKitsWithoutAccessAreWanted_thenReturnPrivateKits() {
         var param = createParam(p -> p
             .isPrivate(true)
             .langs(null));
         var assessmentKit = privateKit();
         var kitId = assessmentKit.getId();
         var kitIds = List.of(kitId);
-        var expertGroup = ExpertGroupMother.createExpertGroup();
-        var expertGroupPictureUrl = "https://picureLink";
-        var expectedKitsPage = new PaginatedResponse<>(
-            List.of(new LoadPublishedKitListPort.Result(assessmentKit, expertGroup)),
-            0,
-            10,
-            AssessmentKitJpaEntity.Fields.title,
-            Sort.Direction.ASC.name().toLowerCase(),
-            1
-        );
-        var sampleTag = KitTagMother.createKitTag("sample tag");
+        var expectedKitsPage = getExpectedKitsPage(assessmentKit, false);
 
         when(loadPublishedKitListPort.loadPrivateKits(param.getCurrentUserId(), null, param.getPage(), param.getSize()))
             .thenReturn(expectedKitsPage);
+        int kitLikes = 3, assessmentCount = 15;
         when(countKitStatsPort.countKitsStats(kitIds))
-            .thenReturn(List.of(new CountKitListStatsPort.Result(kitId, 3, 15)));
-        when(loadKitTagListPort.loadByKitIds(kitIds)).thenReturn(
-            List.of(new LoadKitTagListPort.Result(kitId, List.of(sampleTag))));
+            .thenReturn(List.of(new CountKitListStatsPort.Result(kitId, kitLikes, assessmentCount)));
         when(loadKitLanguagesPort.loadByKitIds(kitIds)).thenReturn(
             Map.of(kitId, List.of(KitLanguage.EN)));
         when(createFileDownloadLinkPort.createDownloadLink(any(), any()))
-            .thenReturn(expertGroupPictureUrl);
+            .thenReturn(EXPERT_GROUP_PICTURE_URL);
 
-        var kitList = service.getKitList(param);
-
-        assertEquals(expectedKitsPage.getPage(), kitList.getPage());
-        assertEquals(expectedKitsPage.getSize(), kitList.getSize());
-        assertEquals(expectedKitsPage.getSort(), kitList.getSort());
-        assertEquals(expectedKitsPage.getOrder(), kitList.getOrder());
-        assertEquals(expectedKitsPage.getTotal(), kitList.getTotal());
-        assertEquals(expectedKitsPage.getItems().size(), kitList.getItems().size());
-
-        var item = kitList.getItems().getFirst();
-        assertEquals(assessmentKit.getId(), item.id());
-        assertEquals(assessmentKit.getTitle(), item.title());
-        assertEquals(assessmentKit.getSummary(), item.summary());
+        var result = service.getKitList(param);
+        assertPage(expectedKitsPage, result);
+        var item = result.getItems().getFirst();
+        assertKit(assessmentKit, item, kitLikes, assessmentCount);
         assertTrue(item.isPrivate());
-        assertEquals(3, item.likes());
-        assertEquals(15, item.assessmentsCount());
         assertEquals(KitLanguage.EN.getTitle(), item.languages().getFirst());
-        assertEquals(expertGroup.getId(), item.expertGroup().id());
-        assertEquals(expertGroup.getTitle(), item.expertGroup().title());
-        assertEquals(expertGroupPictureUrl, item.expertGroup().picture());
+        assertExpertGroup(item);
+        assertTrue(item.isFree());
+        assertFalse(item.hasAccess());
 
         verify(loadPublishedKitListPort, never()).loadPublicKits(isNull(), anyInt(), anyInt());
     }
@@ -167,49 +153,26 @@ class GetKitListServiceTest {
         var assessmentKit = simpleKit();
         var kitId = assessmentKit.getId();
         var kitIds = List.of(kitId);
-        var expertGroup = ExpertGroupMother.createExpertGroup();
-        var expertGroupPictureUrl = "https://picureLink";
-        var expectedKitsPage = new PaginatedResponse<>(
-            List.of(new LoadPublishedKitListPort.Result(assessmentKit, expertGroup)),
-            0,
-            10,
-            AssessmentKitJpaEntity.Fields.title,
-            Sort.Direction.ASC.name().toLowerCase(),
-            1
-        );
-        var sampleTag = KitTagMother.createKitTag("sample tag");
+        var expectedKitsPage = getExpectedKitsPage(assessmentKit, false);
 
         when(loadPublishedKitListPort.loadPrivateAndPublicKits(param.getCurrentUserId(), null, param.getPage(), param.getSize()))
             .thenReturn(expectedKitsPage);
+        int kitLikes = 3, assessmentsCount = 15;
         when(countKitStatsPort.countKitsStats(kitIds))
-            .thenReturn(List.of(new CountKitListStatsPort.Result(kitId, 3, 15)));
-        when(loadKitTagListPort.loadByKitIds(kitIds)).thenReturn(
-            List.of(new LoadKitTagListPort.Result(kitId, List.of(sampleTag))));
+            .thenReturn(List.of(new CountKitListStatsPort.Result(kitId, kitLikes, assessmentsCount)));
         when(loadKitLanguagesPort.loadByKitIds(kitIds)).thenReturn(
             Map.of(kitId, List.of(KitLanguage.EN)));
         when(createFileDownloadLinkPort.createDownloadLink(any(), any()))
-            .thenReturn(expertGroupPictureUrl);
+            .thenReturn(EXPERT_GROUP_PICTURE_URL);
 
-        var kitList = service.getKitList(param);
-
-        assertEquals(expectedKitsPage.getPage(), kitList.getPage());
-        assertEquals(expectedKitsPage.getSize(), kitList.getSize());
-        assertEquals(expectedKitsPage.getSort(), kitList.getSort());
-        assertEquals(expectedKitsPage.getOrder(), kitList.getOrder());
-        assertEquals(expectedKitsPage.getTotal(), kitList.getTotal());
-        assertEquals(expectedKitsPage.getItems().size(), kitList.getItems().size());
-
-        var item = kitList.getItems().getFirst();
-        assertEquals(assessmentKit.getId(), item.id());
-        assertEquals(assessmentKit.getTitle(), item.title());
-        assertEquals(assessmentKit.getSummary(), item.summary());
-        assertEquals(assessmentKit.isPrivate(), item.isPrivate());
-        assertEquals(3, item.likes());
-        assertEquals(15, item.assessmentsCount());
+        var result = service.getKitList(param);
+        assertPage(expectedKitsPage, result);
+        var item = result.getItems().getFirst();
+        assertKit(assessmentKit, item, kitLikes, assessmentsCount);
         assertEquals(KitLanguage.EN.getTitle(), item.languages().getFirst());
-        assertEquals(expertGroup.getId(), item.expertGroup().id());
-        assertEquals(expertGroup.getTitle(), item.expertGroup().title());
-        assertEquals(expertGroupPictureUrl, item.expertGroup().picture());
+        assertExpertGroup(item);
+        assertTrue(item.isFree());
+        assertTrue(item.hasAccess());
 
         verify(loadPublishedKitListPort, never()).loadPublicKits(isNull(), anyInt(), anyInt());
     }
@@ -229,20 +192,47 @@ class GetKitListServiceTest {
         when(loadPublishedKitListPort.loadPrivateKits(param.getCurrentUserId(), Set.of(KitLanguage.EN), param.getPage(), param.getSize()))
             .thenReturn(expectedKitsPage);
         when(countKitStatsPort.countKitsStats(List.of())).thenReturn(List.of());
-        when(loadKitTagListPort.loadByKitIds(List.of())).thenReturn(List.of());
         when(loadKitLanguagesPort.loadByKitIds(List.of())).thenReturn(Map.of());
 
-        var kitList = service.getKitList(param);
+        var result = service.getKitList(param);
+        assertPage(expectedKitsPage, result);
 
+        verify(loadPublishedKitListPort, never()).loadPublicKits(any(), anyInt(), anyInt());
+        verify(createFileDownloadLinkPort, never()).createDownloadLink(anyString(), any());
+    }
+
+    private static PaginatedResponse<LoadPublishedKitListPort.Result> getExpectedKitsPage(AssessmentKit assessmentKit, boolean hasKitAccess) {
+        return new PaginatedResponse<>(
+            List.of(new LoadPublishedKitListPort.Result(assessmentKit, expertGroup, hasKitAccess)),
+            0,
+            10,
+            AssessmentKitJpaEntity.Fields.title,
+            Sort.Direction.ASC.name().toLowerCase(),
+            1
+        );
+    }
+
+    private static void assertPage(PaginatedResponse<LoadPublishedKitListPort.Result> expectedKitsPage, PaginatedResponse<GetKitListUseCase.KitListItem> kitList) {
         assertEquals(expectedKitsPage.getPage(), kitList.getPage());
         assertEquals(expectedKitsPage.getSize(), kitList.getSize());
         assertEquals(expectedKitsPage.getSort(), kitList.getSort());
         assertEquals(expectedKitsPage.getOrder(), kitList.getOrder());
         assertEquals(expectedKitsPage.getTotal(), kitList.getTotal());
         assertEquals(expectedKitsPage.getItems().size(), kitList.getItems().size());
+    }
 
-        verify(loadPublishedKitListPort, never()).loadPublicKits(any(), anyInt(), anyInt());
-        verify(createFileDownloadLinkPort, never()).createDownloadLink(anyString(), any());
+    private static void assertKit(AssessmentKit assessmentKit, GetKitListUseCase.KitListItem item, int kitLike, int assessmentCount) {
+        assertEquals(assessmentKit.getId(), item.id());
+        assertEquals(assessmentKit.getTitle(), item.title());
+        assertEquals(assessmentKit.getSummary(), item.summary());
+        assertEquals(kitLike, item.likes());
+        assertEquals(assessmentCount, item.assessmentsCount());
+    }
+
+    private static void assertExpertGroup(GetKitListUseCase.KitListItem item) {
+        assertEquals(expertGroup.getId(), item.expertGroup().id());
+        assertEquals(expertGroup.getTitle(), item.expertGroup().title());
+        assertEquals(EXPERT_GROUP_PICTURE_URL, item.expertGroup().picture());
     }
 
     private Param createParam(Consumer<Param.ParamBuilder> changer) {

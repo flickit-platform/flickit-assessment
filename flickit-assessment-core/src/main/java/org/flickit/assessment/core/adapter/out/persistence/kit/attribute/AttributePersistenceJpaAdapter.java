@@ -3,7 +3,9 @@ package org.flickit.assessment.core.adapter.out.persistence.kit.attribute;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.Order;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.application.domain.kitcustom.KitCustomData;
+import org.flickit.assessment.common.error.ErrorMessageKey;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.util.JsonUtils;
 import org.flickit.assessment.core.adapter.out.persistence.answer.AnswerMapper;
@@ -15,8 +17,10 @@ import org.flickit.assessment.core.application.port.in.attribute.GetAttributeSco
 import org.flickit.assessment.core.application.port.out.attribute.*;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaRepository;
+import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.core.attribute.AttributeMaturityLevelSubjectView;
+import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
 import org.flickit.assessment.data.jpa.kit.kitcustom.KitCustomJpaRepository;
 import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaEntity;
@@ -25,15 +29,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
+import static org.flickit.assessment.core.adapter.out.persistence.attributematurityscore.AttributeMaturityScoreMapper.mapToAttributeScoreDetail;
 import static org.flickit.assessment.core.adapter.out.persistence.kit.attribute.AttributeMapper.mapToDomainModel;
+import static org.flickit.assessment.core.adapter.out.persistence.kit.attribute.AttributeMapper.mapToResult;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 @Component("coreAttributePersistenceJpaAdapter")
@@ -50,11 +53,13 @@ public class AttributePersistenceJpaAdapter implements
     private final AssessmentResultJpaRepository assessmentResultRepository;
     private final KitCustomJpaRepository kitCustomRepository;
     private final AssessmentJpaRepository assessmentRepository;
+    private final AssessmentKitJpaRepository assessmentKitRepository;
 
     @Override
     public PaginatedResponse<LoadAttributeScoreDetailPort.Result> loadScoreDetail(LoadAttributeScoreDetailPort.Param param) {
         var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(param.assessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(GET_ATTRIBUTE_SCORE_DETAIL_ASSESSMENT_RESULT_NOT_FOUND));
+        var translationLanguage = resolveLanguage(assessmentResult);
 
         var pageRequest = buildPageRequest(param.page(), param.size(), param.sort(), param.order());
         var pageResult = repository.findImpactFullQuestionsScore(
@@ -66,19 +71,7 @@ public class AttributePersistenceJpaAdapter implements
             pageRequest);
 
         var items = pageResult.getContent().stream()
-            .map(view -> new LoadAttributeScoreDetailPort.Result(view.getQuestionnaireId(),
-                view.getQuestionnaireTitle(),
-                view.getQuestionId(),
-                view.getQuestionIndex(),
-                view.getQuestionTitle(),
-                view.getQuestionImpact().getWeight(),
-                view.getOptionIndex(),
-                view.getOptionTitle(),
-                view.getAnswer() == null ? null : view.getAnswer().getIsNotApplicable(),
-                view.getGainedScore(),
-                view.getMissedScore(),
-                view.getAnswer() != null && view.getAnswer().getConfidenceLevelId() != null ? view.getAnswer().getConfidenceLevelId() : null,
-                view.getEvidenceCount()))
+            .map(view -> mapToAttributeScoreDetail(view, translationLanguage))
             .toList();
 
         return new PaginatedResponse<>(
@@ -146,12 +139,16 @@ public class AttributePersistenceJpaAdapter implements
 
     @Override
     public List<LoadAttributesPort.Result> loadAll(UUID assessmentId) {
+        var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
+            .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
+        var translationLanguage = resolveLanguage(assessmentResult);
+
         var assessment = assessmentRepository.findByIdAndDeletedFalse(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND));
 
         var attributeViews = repository.findAllByAssessmentIdWithSubjectAndMaturityLevel(assessmentId);
         var attributes = attributeViews.stream()
-            .map(e -> AttributeMapper.mapToDomainModel(e.getAttribute()))
+            .map(e -> mapToDomainModel(e.getAttribute()))
             .toList();
 
         var attributeIdToWeight = getAttributeIdToWeightMap(attributes,
@@ -161,7 +158,7 @@ public class AttributePersistenceJpaAdapter implements
         return attributeViews.stream()
             .sorted(Comparator.comparingInt((AttributeMaturityLevelSubjectView v) -> v.getSubject().getIndex())
                 .thenComparingInt(v -> v.getAttribute().getIndex()))
-            .map(e -> AttributeMapper.mapToResult(e, attributeIdToWeight.get(e.getAttribute().getId())))
+            .map(e -> mapToResult(e, attributeIdToWeight.get(e.getAttribute().getId()), translationLanguage))
             .toList();
     }
 
@@ -206,7 +203,7 @@ public class AttributePersistenceJpaAdapter implements
                     .toList();
 
                 var firstView = views.getFirst();
-                var question = QuestionMapper.mapToDomainModel(firstView.getQuestion(), impacts);
+                var question = QuestionMapper.mapToDomainModelWithImpacts(firstView.getQuestion(), impacts);
                 var answerOption = firstView.getAnswerOption() != null
                     ? AnswerOptionMapper.mapToDomainModel(firstView.getAnswerOption())
                     : null;
@@ -216,5 +213,50 @@ public class AttributePersistenceJpaAdapter implements
                 return new LoadAttributeQuestionsPort.Result(question, answer);
             })
             .toList();
+    }
+
+    @Override
+    public List<LoadAttributeQuestionsPort.Result> loadApplicableMeasureQuestions(UUID assessmentId, long attributeId, long measureId) {
+        var questionIdToViewMap = repository.findApplicableQuestionsByAttributeIdAndMeasureId(assessmentId,
+                attributeId,
+                measureId).stream()
+            .collect(groupingBy(v -> v.getQuestion().getId()));
+
+        return questionIdToViewMap.values().stream()
+            .map(views -> {
+                var impacts = views.stream()
+                    .map(i -> QuestionImpactMapper.mapToDomainModel(i.getQuestionImpact()))
+                    .toList();
+
+                var firstView = views.getFirst();
+                var question = QuestionMapper.mapToDomainModelWithImpacts(firstView.getQuestion(), impacts);
+                var answerOption = firstView.getAnswerOption() != null
+                    ? AnswerOptionMapper.mapToDomainModel(firstView.getAnswerOption())
+                    : null;
+                var answer = firstView.getAnswer() != null
+                    ? AnswerMapper.mapToDomainModel(firstView.getAnswer(), answerOption)
+                    : null;
+                return new LoadAttributeQuestionsPort.Result(question, answer);
+            })
+            .toList();
+    }
+
+    @Override
+    public List<Attribute> loadByIdsAndAssessmentId(List<Long> attributeIds, UUID assessmentId) {
+        var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
+            .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
+
+        var translationLanguage = resolveLanguage(assessmentResult);
+        return repository.findAllByIdInAndKitVersionId(attributeIds, assessmentResult.getKitVersionId()).stream()
+            .map(entity -> mapToDomainModel(entity, translationLanguage))
+            .toList();
+    }
+
+    private KitLanguage resolveLanguage(AssessmentResultJpaEntity assessmentResult) {
+        var assessmentKit = assessmentKitRepository.findByKitVersionId(assessmentResult.getKitVersionId())
+            .orElseThrow(() -> new ResourceNotFoundException(ErrorMessageKey.COMMON_ASSESSMENT_KIT_NOT_FOUND));
+        return Objects.equals(assessmentResult.getLangId(), assessmentKit.getLanguageId())
+            ? null
+            : KitLanguage.valueOfById(assessmentResult.getLangId());
     }
 }

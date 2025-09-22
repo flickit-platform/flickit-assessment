@@ -15,6 +15,7 @@ import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAss
 import org.flickit.assessment.core.application.port.out.attributematurityscore.LoadAttributeMaturityScoresPort;
 import org.flickit.assessment.core.application.port.out.attributevalue.LoadAttributeValuePort;
 import org.flickit.assessment.core.application.port.out.maturitylevel.CountMaturityLevelsPort;
+import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelPort;
 import org.flickit.assessment.core.application.port.out.subjectvalue.LoadSubjectValuePort;
 import org.flickit.assessment.core.application.service.insight.assessment.GetAssessmentInsightHelper;
 import org.flickit.assessment.core.application.service.insight.attribute.GetAttributeInsightHelper;
@@ -73,6 +74,9 @@ class GetAssessmentInsightsServiceTest {
     private GetAttributeInsightHelper getAttributeInsightHelper;
 
     @Mock
+    private LoadMaturityLevelPort loadMaturityLevelPort;
+
+    @Mock
     private LoadAttributeMaturityScoresPort loadAttributeMaturityScoresPort;
 
     @Mock
@@ -97,6 +101,7 @@ class GetAssessmentInsightsServiceTest {
             getSubjectInsightHelper,
             loadAttributeValuePort,
             getAttributeInsightHelper,
+            loadMaturityLevelPort,
             countMaturityLevelsPort);
     }
 
@@ -117,6 +122,7 @@ class GetAssessmentInsightsServiceTest {
             getSubjectInsightHelper,
             loadAttributeValuePort,
             getAttributeInsightHelper,
+            loadMaturityLevelPort,
             countMaturityLevelsPort);
     }
 
@@ -149,6 +155,8 @@ class GetAssessmentInsightsServiceTest {
         when(loadAttributeMaturityScoresPort.loadAll(assessmentResult.getId())).thenReturn(attributeScoreMap);
         when(getAttributeInsightHelper.getAttributeInsights(assessmentResult, param.getCurrentUserId()))
             .thenReturn(Map.of());
+        when(loadMaturityLevelPort.load(assessmentResult.getMaturityLevel().getId(), assessmentResult.getAssessment().getId()))
+            .thenReturn(assessmentResult.getMaturityLevel());
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_SUBJECT_INSIGHT))
             .thenReturn(true);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT))
@@ -206,6 +214,8 @@ class GetAssessmentInsightsServiceTest {
             .thenReturn(attributeScoreMap);
         when(getAttributeInsightHelper.getAttributeInsights(assessmentResult, param.getCurrentUserId()))
             .thenReturn(Map.of());
+        when(loadMaturityLevelPort.load(assessmentResult.getMaturityLevel().getId(), assessmentResult.getAssessment().getId()))
+            .thenReturn(assessmentResult.getMaturityLevel());
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_SUBJECT_INSIGHT))
             .thenReturn(true);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT))
@@ -263,6 +273,8 @@ class GetAssessmentInsightsServiceTest {
             .thenReturn(attributeScoreMap);
         when(getAttributeInsightHelper.getAttributeInsights(assessmentResult, param.getCurrentUserId()))
             .thenReturn(Map.of());
+        when(loadMaturityLevelPort.load(assessmentResult.getMaturityLevel().getId(), assessmentResult.getAssessment().getId()))
+            .thenReturn(assessmentResult.getMaturityLevel());
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_SUBJECT_INSIGHT))
             .thenReturn(true);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT))
@@ -322,6 +334,8 @@ class GetAssessmentInsightsServiceTest {
             .thenReturn(Map.of(
                 attributeValues1.getFirst().getAttribute().getId(), defaultInsight,
                 attributeValues1.get(1).getAttribute().getId(), defaultInsight));
+        when(loadMaturityLevelPort.load(assessmentResult.getMaturityLevel().getId(), assessmentResult.getAssessment().getId()))
+            .thenReturn(assessmentResult.getMaturityLevel());
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_SUBJECT_INSIGHT))
             .thenReturn(true);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT))

@@ -4,12 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.domain.notification.SendNotification;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.domain.AssessmentUserRole;
+import org.flickit.assessment.core.application.domain.AssessmentUserRoleItem;
 import org.flickit.assessment.core.application.domain.notification.GrantAssessmentUserRoleNotificationCmd;
 import org.flickit.assessment.core.application.port.in.assessmentuserrole.GrantUserAssessmentRoleUseCase;
-import org.flickit.assessment.core.application.port.out.assessment.CheckAssessmentSpaceMembershipPort;
+import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.GrantUserAssessmentRolePort;
-import org.flickit.assessment.core.application.port.out.spaceuseraccess.CreateAssessmentSpaceUserAccessPort;
+import org.flickit.assessment.core.application.port.out.spaceuseraccess.CreateSpaceUserAccessPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +19,7 @@ import java.time.LocalDateTime;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.GRANT_USER_ASSESSMENT_ROLE;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.core.common.ErrorMessageKey.GRANT_ASSESSMENT_USER_ROLE_DEFAULT_SPACE_NOT_ALLOWED;
 
 @Service
 @Transactional
@@ -25,8 +28,8 @@ public class GrantUserAssessmentRoleService implements GrantUserAssessmentRoleUs
 
     private final GrantUserAssessmentRolePort grantUserAssessmentRolePort;
     private final AssessmentAccessChecker assessmentAccessChecker;
-    private final CheckAssessmentSpaceMembershipPort checkAssessmentSpaceMembershipPort;
-    private final CreateAssessmentSpaceUserAccessPort createSpaceUserAccessPort;
+    private final CreateSpaceUserAccessPort createSpaceUserAccessPort;
+    private final LoadAssessmentPort loadAssessmentPort;
 
     @Override
     @SendNotification
@@ -34,10 +37,13 @@ public class GrantUserAssessmentRoleService implements GrantUserAssessmentRoleUs
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_USER_ASSESSMENT_ROLE))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        if (!checkAssessmentSpaceMembershipPort.isAssessmentSpaceMember(param.getAssessmentId(), param.getUserId()))
-            createSpaceUserAccessPort.persist(toCreateSpaceAccessPortParam(param));
+        if (loadAssessmentPort.isInDefaultSpace(param.getAssessmentId()))
+            throw new ValidationException(GRANT_ASSESSMENT_USER_ROLE_DEFAULT_SPACE_NOT_ALLOWED);
 
-        grantUserAssessmentRolePort.persist(param.getAssessmentId(), param.getUserId(), param.getRoleId());
+        if (!loadAssessmentPort.isAssessmentSpaceMember(param.getAssessmentId(), param.getUserId()))
+            createSpaceUserAccessPort.persistByAssessmentId(toCreateSpaceAccessPortParam(param));
+
+        grantUserAssessmentRolePort.persist(toAssessmentUserRoleItem(param));
 
         return new Result(new GrantAssessmentUserRoleNotificationCmd(
             param.getUserId(),
@@ -47,9 +53,17 @@ public class GrantUserAssessmentRoleService implements GrantUserAssessmentRoleUs
         );
     }
 
-    private CreateAssessmentSpaceUserAccessPort.Param toCreateSpaceAccessPortParam(Param param) {
-        return new CreateAssessmentSpaceUserAccessPort.Param(param.getAssessmentId(),
+    private CreateSpaceUserAccessPort.CreateParam toCreateSpaceAccessPortParam(Param param) {
+        return new CreateSpaceUserAccessPort.CreateParam(param.getAssessmentId(),
             param.getUserId(),
+            param.getCurrentUserId(),
+            LocalDateTime.now());
+    }
+
+    private AssessmentUserRoleItem toAssessmentUserRoleItem(Param param) {
+        return new AssessmentUserRoleItem(param.getAssessmentId(),
+            param.getUserId(),
+            AssessmentUserRole.valueOfById(param.getRoleId()),
             param.getCurrentUserId(),
             LocalDateTime.now());
     }

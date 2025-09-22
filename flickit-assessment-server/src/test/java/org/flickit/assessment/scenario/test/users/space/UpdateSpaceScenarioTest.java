@@ -6,6 +6,8 @@ import org.flickit.assessment.scenario.test.AbstractScenarioTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.UUID;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.exception.api.ErrorCodes.ACCESS_DENIED;
 import static org.flickit.assessment.common.exception.api.ErrorCodes.INVALID_INPUT;
@@ -133,10 +135,38 @@ class UpdateSpaceScenarioTest extends AbstractScenarioTest {
         assertNotNull(error.message());
     }
 
+    @Test
+    void updateSpace_defaultSpace_title() {
+        // Get the default space of the user
+        var defaultSpace = loadDefaultSpaceByOwnerId(context.getCurrentUser().getUserId());
+
+        // Update the default space's title
+        var updateRequest = updateSpaceRequestDto(b -> b.title("new title"));
+        var error = spaceHelper.update(context, updateRequest, defaultSpace.getId()).then()
+            .statusCode(400)
+            .extract().as(ErrorResponseDto.class);
+
+        SpaceJpaEntity loadedSpace = jpaTemplate.load(defaultSpace.getId(), SpaceJpaEntity.class);
+
+        assertEquals(defaultSpace.getTitle(), loadedSpace.getTitle());
+        assertEquals(defaultSpace.getCreationTime(), loadedSpace.getLastModificationTime());
+        assertEquals(INVALID_INPUT, error.code());
+        assertNotNull(error.message());
+    }
+
     private long createSpace() {
         var request = createSpaceRequestDto();
         var response = spaceHelper.create(context, request);
         Number id = response.path("id");
         return id.longValue();
+    }
+
+    private SpaceJpaEntity loadDefaultSpaceByOwnerId(UUID ownerId) {
+        return jpaTemplate.findSingle(SpaceJpaEntity.class,
+            (root, query, cb) ->
+                cb.and(
+                    cb.equal(root.get(SpaceJpaEntity.Fields.ownerId), ownerId),
+                    cb.equal(root.get(SpaceJpaEntity.Fields.isDefault), true))
+        );
     }
 }

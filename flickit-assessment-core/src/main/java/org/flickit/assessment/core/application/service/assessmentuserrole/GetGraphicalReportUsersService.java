@@ -14,10 +14,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
+import java.util.UUID;
 import java.util.stream.Stream;
 
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.DELETE_USER_ASSESSMENT_ROLE;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.GRANT_ACCESS_TO_REPORT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.core.application.domain.AssessmentUserRole.REPORT_VIEWER;
 
 @Service
 @Transactional
@@ -41,23 +44,36 @@ public class GetGraphicalReportUsersService implements GetGraphicalReportUsersUs
             .map(AssessmentUserRole::getId)
             .toList();
 
-        var fullUsers = loadAssessmentUsersPort.loadAll(param.getAssessmentId(), roleIds);
-        var invitees = loadAssessmentInviteeListPort.loadAll(param.getAssessmentId(), roleIds);
+        var hasDeletePermission = assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), DELETE_USER_ASSESSMENT_ROLE);
 
-        var users = fullUsers.stream()
-            .map(e -> {
-                String pictureLink = null;
-                if (e.getPicturePath() != null && !e.getPicturePath().trim().isBlank()) {
-                    pictureLink = createFileDownloadLinkPort.createDownloadLink(e.getPicturePath(), EXPIRY_DURATION);
-                }
-                return new Result.GraphicalReportUser(e.getId(), e.getEmail(), e.getDisplayName(), pictureLink);
-            }).toList();
+        var users = loadAssessmentUsersPort.loadAll(param.getAssessmentId(), roleIds).stream()
+            .map(e -> toGraphicalReportUser(e, param.getCurrentUserId(), hasDeletePermission))
+            .toList();
 
-        var inviteeUsers = invitees.stream()
+        var inviteeUsers = loadAssessmentInviteeListPort.loadAll(param.getAssessmentId(), roleIds).stream()
             .filter(AssessmentInvite::isNotExpired)
-            .map(e -> new Result.GraphicalReportInvitee(e.getEmail()))
+            .map(e -> {
+                boolean deletable = isDeletable(e.getRole(), e.getCreatedBy(), param.getCurrentUserId(), hasDeletePermission);
+                return new Result.GraphicalReportInvitee(e.getId(), e.getEmail(), deletable);
+            })
             .toList();
 
         return new Result(users, inviteeUsers);
+    }
+
+    private Result.GraphicalReportUser toGraphicalReportUser(LoadAssessmentUsersPort.ReportUser user, UUID currentUserId, boolean isAuthorized) {
+        String pictureLink = null;
+        if (user.picturePath() != null && !user.picturePath().trim().isBlank())
+            pictureLink = createFileDownloadLinkPort.createDownloadLink(user.picturePath(), EXPIRY_DURATION);
+
+        return new Result.GraphicalReportUser(user.id(),
+            user.email(),
+            user.displayName(),
+            pictureLink,
+            isDeletable(user.role(), user.createdBy(), currentUserId, isAuthorized));
+    }
+
+    private boolean isDeletable(AssessmentUserRole role, UUID roleCreator, UUID currentUserId, boolean isAuthorized) {
+        return (REPORT_VIEWER == role && (roleCreator.equals(currentUserId) || isAuthorized));
     }
 }

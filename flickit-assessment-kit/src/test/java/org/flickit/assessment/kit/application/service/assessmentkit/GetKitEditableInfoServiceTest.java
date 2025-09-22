@@ -5,6 +5,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.ExpertGroup;
+import org.flickit.assessment.kit.application.domain.KitMetadata;
 import org.flickit.assessment.kit.application.domain.KitTag;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitEditableInfoUseCase;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitEditableInfoUseCase.Param;
@@ -55,7 +56,7 @@ class GetKitEditableInfoServiceTest {
     private CheckExpertGroupAccessPort checkExpertGroupAccessPort;
 
     @Test
-    void testGetKitEditableInfo_KitNotFound_ErrorMessage() {
+    void testGetKitEditableInfo_whenKitNotFound_thenErrorMessage() {
         long kitId = 123L;
         UUID currentUserId = UUID.randomUUID();
         Param param = new Param(kitId, currentUserId);
@@ -72,12 +73,13 @@ class GetKitEditableInfoServiceTest {
     }
 
     @Test
-    void testGetKitEditableInfo_ValidInput_ValidResults() {
+    void testGetKitEditableInfo_whenValidInput_thenValidResults() {
         long kitId = 123L;
         UUID currentUserId = UUID.randomUUID();
         Param param = new Param(kitId, currentUserId);
+        KitMetadata metadata = new KitMetadata("goal", "context");
 
-        AssessmentKit assessmentKit = AssessmentKitMother.simpleKit();
+        AssessmentKit assessmentKit = AssessmentKitMother.kitWithMetadata(metadata);
         List<KitTag> tags = List.of(KitTagMother.createKitTag("security"));
         ExpertGroup expertGroup = new ExpertGroup(1L, null, null, currentUserId);
         List<KitLanguage> languages = List.of(KitLanguage.EN, KitLanguage.FA);
@@ -102,6 +104,8 @@ class GetKitEditableInfoServiceTest {
         assertEquals(assessmentKit.getTranslations(), kitEditableInfo.translations());
         assertEquals(tags.size(), kitEditableInfo.tags().size());
         assertEquals(languages.size(), kitEditableInfo.languages().size());
+        assertEquals(metadata.goal(), kitEditableInfo.metadata().goal());
+        assertEquals(metadata.context(), kitEditableInfo.metadata().context());
         assertTrue(kitEditableInfo.editable());
     }
 

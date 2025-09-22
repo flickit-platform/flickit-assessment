@@ -15,17 +15,23 @@ public interface AdviceNarrationJpaRepository extends JpaRepository<AdviceNarrat
 
     Optional<AdviceNarrationJpaEntity> findByAssessmentResultId(UUID assessmentResultId);
 
+    boolean existsByAssessmentResultId(UUID assessmentResultId);
+
     @Modifying
     @Query("""
             UPDATE AdviceNarrationJpaEntity a
             SET a.assessorNarration = :assessorNarration,
                 a.assessorNarrationTime = :assessorNarrationTime,
-                a.createdBy = :createdBy
+                a.approved = :approved,
+                a.createdBy = :createdBy,
+                a.lastModificationTime = :lastModificationTime
             WHERE a.id = :id
         """)
     void updateAssessorNarration(@Param("id") UUID id,
                                  @Param("assessorNarration") String assessorNarration,
+                                 @Param("approved") boolean approved,
                                  @Param("assessorNarrationTime") LocalDateTime assessorNarrationTime,
+                                 @Param("lastModificationTime") LocalDateTime lastModificationTime,
                                  @Param("createdBy") UUID createdBy);
 
     @Modifying
@@ -33,10 +39,24 @@ public interface AdviceNarrationJpaRepository extends JpaRepository<AdviceNarrat
             UPDATE AdviceNarrationJpaEntity a
             SET a.aiNarration = :aiNarration,
                 a.aiNarrationTime = :aiNarrationTime,
-                a.createdBy = null
+                a.approved = :approved,
+                a.createdBy = null,
+                a.lastModificationTime = :lastModificationTime
             WHERE a.id = :id
         """)
     void updateAiNarration(@Param("id") UUID id,
                            @Param("aiNarration") String aiNarration,
-                           @Param("aiNarrationTime") LocalDateTime aiNarrationTime);
+                           @Param("approved") boolean approved,
+                           @Param("aiNarrationTime") LocalDateTime aiNarrationTime,
+                           @Param("lastModificationTime") LocalDateTime lastModificationTime);
+
+    @Modifying
+    @Query("""
+            UPDATE AdviceNarrationJpaEntity a
+            SET a.approved = true,
+                a.lastModificationTime = :lastModificationTime
+            WHERE a.assessmentResultId = :assessmentResultId
+        """)
+    void approveByAssessmentResultId(@Param("assessmentResultId") UUID assessmentResultId,
+                                     @Param("lastModificationTime") LocalDateTime lastModificationTime);
 }

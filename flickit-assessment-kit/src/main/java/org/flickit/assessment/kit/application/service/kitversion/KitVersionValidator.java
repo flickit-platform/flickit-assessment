@@ -1,6 +1,5 @@
 package org.flickit.assessment.kit.application.service.kitversion;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.kit.application.port.out.answerrange.LoadAnswerRangesPort;
@@ -10,6 +9,7 @@ import org.flickit.assessment.kit.application.port.out.question.LoadQuestionsPor
 import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairesPort;
 import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectsPort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -32,8 +32,8 @@ public class KitVersionValidator {
         List<String> errors = new LinkedList<>();
 
         var kitVersionCounts = countKitVersionStatsPort.countKitVersionStats(kitVersionId);
-        if (kitVersionCounts.maturityLevelCount() == 0)
-            errors.add(MessageBundle.message(VALIDATE_KIT_VERSION_MATURITY_LEVEL_NOT_NULL));
+        if (kitVersionCounts.maturityLevelCount() < 2)
+            errors.add(MessageBundle.message(VALIDATE_KIT_VERSION_MATURITY_LEVELS_MIN_SIZE));
 
         if (kitVersionCounts.subjectCount() == 0)
             errors.add(MessageBundle.message(VALIDATE_KIT_VERSION_SUBJECT_NOT_NULL));
@@ -52,6 +52,11 @@ public class KitVersionValidator {
         errors.addAll(loadAttributesPort.loadUnimpactedAttributes(kitVersionId)
             .stream()
             .map(e -> MessageBundle.message(VALIDATE_KIT_VERSION_ATTRIBUTE_QUESTION_IMPACT_NOT_NULL, e.getTitle()))
+            .toList());
+
+        errors.addAll(loadAttributesPort.loadWithoutMeasures(kitVersionId)
+            .stream()
+            .map(e -> MessageBundle.message(VALIDATE_KIT_VERSION_ATTRIBUTE_MEASURE_NOT_NULL, e.getTitle()))
             .toList());
 
         errors.addAll(loadAnswerRangesPort.loadAnswerRangesWithNotEnoughOptions(kitVersionId)

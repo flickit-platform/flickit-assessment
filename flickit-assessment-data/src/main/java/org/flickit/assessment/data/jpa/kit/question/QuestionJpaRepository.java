@@ -1,6 +1,5 @@
 package org.flickit.assessment.data.jpa.kit.question;
 
-import org.flickit.assessment.data.jpa.kit.question.advice.QuestionAdviceView;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -129,9 +128,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
 
     @Query("""
             SELECT
-                q.id AS id,
-                q.title AS title,
-                q.index AS index,
+                q AS question,
                 ao AS option,
                 atr AS attribute,
                 qsnnr AS questionnaire
@@ -166,6 +163,23 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
             ORDER BY qn.id
         """)
     List<FirstUnansweredQuestionView> findQuestionnairesFirstUnansweredQuestion(@Param("assessmentResultId") UUID assessmentResultId);
+
+    @Query("""
+            SELECT MIN(q.index)
+            FROM QuestionJpaEntity q JOIN QuestionnaireJpaEntity qn ON q.questionnaireId = qn.id AND q.kitVersionId = qn.kitVersionId
+            JOIN AssessmentResultJpaEntity ar ON ar.kitVersionId = qn.kitVersionId
+            WHERE ar.id = :assessmentResultId AND q.id NOT IN (
+                    SELECT fq.id
+                    FROM QuestionJpaEntity fq
+                    JOIN QuestionnaireJpaEntity qsn ON fq.questionnaireId = qsn.id AND fq.kitVersionId = qsn.kitVersionId
+                    JOIN AnswerJpaEntity ans ON ans.questionId = fq.id
+                    WHERE ans.assessmentResult.id = :assessmentResultId
+                        AND (ans.answerOptionId IS NOT NULL OR ans.isNotApplicable = TRUE)
+                        AND qsn.kitVersionId = ans.assessmentResult.kitVersionId)
+                        AND qn.id = :questionnaireId
+        """)
+    Integer findQuestionnaireFirstUnansweredQuestion(@Param("questionnaireId") Long questionnaireId,
+                                                     @Param("assessmentResultId") UUID assessmentResultId);
 
     @Query("""
             SELECT

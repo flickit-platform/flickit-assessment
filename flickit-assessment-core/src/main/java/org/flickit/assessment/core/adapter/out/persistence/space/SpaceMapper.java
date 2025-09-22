@@ -14,6 +14,7 @@ public class SpaceMapper {
             entity.getTitle(),
             entity.getOwnerId(),
             SpaceType.valueOfById(entity.getType()),
+            entity.isDefault(),
             entity.getSubscriptionExpiry());
     }
 }

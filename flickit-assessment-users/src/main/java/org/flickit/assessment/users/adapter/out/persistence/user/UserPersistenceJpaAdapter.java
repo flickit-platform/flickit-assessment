@@ -8,6 +8,7 @@ import org.flickit.assessment.users.application.domain.User;
 import org.flickit.assessment.users.application.port.out.user.*;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -59,8 +60,12 @@ public class UserPersistenceJpaAdapter implements
     }
 
     @Override
-    public UUID persist(UUID id, String displayName, String email) {
-        UserJpaEntity userEntity = UserMapper.mapToJpaEntity(id, email, displayName);
+    public UUID persist(CreateUserPort.Param param) {
+        UserJpaEntity userEntity = UserMapper.mapToJpaEntity(param.id(),
+            param.email(),
+            param.displayName(),
+            param.creationTime(),
+            param.lastModificationTime());
 
         return repository.save(userEntity).getId();
     }
@@ -70,14 +75,14 @@ public class UserPersistenceJpaAdapter implements
         if (!repository.existsById(param.userId()))
             throw new ResourceNotFoundException(USER_ID_NOT_FOUND);
 
-        repository.update(param.userId(), param.displayName(), param.bio(), param.linkedin());
+        repository.update(param.userId(), param.displayName(), param.bio(), param.linkedin(), param.lastModificationTime());
     }
 
     @Override
-    public void updatePicture(UUID userId, String picture) {
+    public void updatePicture(UUID userId, String picture, LocalDateTime lastModificationTime) {
         if (!repository.existsById(userId))
             throw new ResourceNotFoundException(USER_ID_NOT_FOUND);
-        repository.updatePicture(userId, picture);
+        repository.updatePicture(userId, picture, lastModificationTime);
     }
 }
 

@@ -1,6 +1,5 @@
 package org.flickit.assessment.users.application.service.user;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.FileProperties;
 import org.flickit.assessment.common.exception.ValidationException;
@@ -11,9 +10,11 @@ import org.flickit.assessment.users.application.port.out.user.LoadUserPort;
 import org.flickit.assessment.users.application.port.out.user.UpdateUserPicturePort;
 import org.flickit.assessment.users.application.port.out.user.UploadUserProfilePicturePort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.UPLOAD_FILE_FORMAT_NOT_VALID;
 import static org.flickit.assessment.common.error.ErrorMessageKey.UPLOAD_FILE_PICTURE_SIZE_MAX;
@@ -41,7 +42,7 @@ public class UpdateUserProfilePictureService implements UpdateUserProfilePicture
             deleteFilePort.deletePicture(user.getPicturePath());
 
         String filePath = uploadUserProfilePicturePort.uploadUserProfilePicture(param.getPicture());
-        updateUserPicturePort.updatePicture(param.getCurrentUserId(), filePath);
+        updateUserPicturePort.updatePicture(param.getCurrentUserId(), filePath, LocalDateTime.now());
 
         var pictureLink = createFileDownloadLinkPort.createDownloadLink(filePath, EXPIRY_DURATION);
         return new Result(pictureLink);

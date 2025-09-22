@@ -11,8 +11,6 @@ public interface LoadKitTagListPort {
 
     PaginatedResponse<KitTag> loadAll(int page, int size);
 
-    List<Result> loadByKitIds(List<Long> kitIds);
-
     record Result(long kitId, List<KitTag> kitTags) {
     }
 }

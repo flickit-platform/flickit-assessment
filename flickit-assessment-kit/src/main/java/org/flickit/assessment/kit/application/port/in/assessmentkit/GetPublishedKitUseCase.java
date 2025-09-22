@@ -1,6 +1,7 @@
 package org.flickit.assessment.kit.application.port.in.assessmentkit;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
@@ -9,7 +10,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_PUBLISHED_KIT_KIT_ID_NOT_NULL;
 
 public interface GetPublishedKitUseCase {
@@ -23,9 +23,9 @@ public interface GetPublishedKitUseCase {
         @NotNull(message = GET_PUBLISHED_KIT_KIT_ID_NOT_NULL)
         Long kitId;
 
-        @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
+        @Builder
         public Param(Long kitId, UUID currentUserId) {
             this.kitId = kitId;
             this.currentUserId = currentUserId;
@@ -42,14 +42,17 @@ public interface GetPublishedKitUseCase {
                   LocalDateTime creationTime,
                   LocalDateTime lastModificationTime,
                   Like like,
-                  Integer assessmentsCount,
                   Integer subjectsCount,
-                  Integer questionnairesCount,
                   long expertGroupId,
                   List<MinimalSubject> subjects,
-                  List<MinimalQuestionnaire> questionnaires,
-                  List<MinimalMaturityLevel> maturityLevels,
-                  List<MinimalKitTag> tags) {
+                  Metadata metadata,
+                  List<Language> languages,
+                  ExpertGroup expertGroup,
+                  boolean isFree,
+                  boolean hasAccess) {
+        public record Language(String code,
+                               String title) {
+        }
     }
 
     record Like(int count, boolean liked) {
@@ -61,12 +64,9 @@ public interface GetPublishedKitUseCase {
     record MinimalAttribute(Long id, String title, String description) {
     }
 
-    record MinimalQuestionnaire(Long id, String title, String description) {
+    record Metadata(String goal, String context) {
     }
 
-    record MinimalMaturityLevel(Long id, String title, String description, Integer value, Integer index) {
-    }
-
-    record MinimalKitTag(Long id, String title) {
+    record ExpertGroup(Long id, String title, String pictureLink) {
     }
 }

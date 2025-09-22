@@ -70,4 +70,31 @@ public class SpaceTestHelper {
             .extract()
             .response();
     }
+
+    public Response get(ScenarioContext context, Number spaceId) {
+        return given()
+            .contentType(JSON)
+            .auth().oauth2(context.getCurrentUser().getJwt())
+            .when()
+            .get("/assessment-core/api/spaces/" + spaceId)
+            .then()
+            .extract()
+            .response();
+    }
+
+    public Response getTopSpaces(ScenarioContext context, String lang) {
+        return given()
+            .header("Accept-Language", lang)
+            .contentType(JSON)
+            .auth().oauth2(context.getCurrentUser().getJwt())
+            .when()
+            .get("/assessment-core/api/top-spaces")
+            .then()
+            .extract()
+            .response();
+    }
+
+    public Response getTopSpaces(ScenarioContext context) {
+        return getTopSpaces(context, "en"); // default language
+    }
 }

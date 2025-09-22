@@ -6,9 +6,7 @@ import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 import org.flickit.assessment.core.application.domain.AssessmentUserRoleItem;
-import org.flickit.assessment.core.application.domain.FullUser;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.*;
-import org.flickit.assessment.data.jpa.core.assessmentuserrole.AssessmentUserRoleJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentuserrole.AssessmentUserRoleJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessmentuserrole.AssessmentUserView;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
@@ -42,15 +40,18 @@ public class AssessmentUserRolePersistenceJpaAdapter implements
     }
 
     @Override
-    public void persist(UUID assessmentId, UUID userId, Integer roleId) {
-        if (!AssessmentUserRole.isValidId(roleId))
-            throw new ResourceNotFoundException(GRANT_ASSESSMENT_USER_ROLE_ROLE_ID_NOT_FOUND);
+    public Optional<AssessmentUserRoleItem> loadRoleItem(UUID assessmentId, UUID userId) {
+        return repository.findByAssessmentIdAndUserId(assessmentId, userId)
+            .map(AssessmentUserRoleMapper::mapToRoleItem);
+    }
 
-        var assessmentUserRole = repository.findByAssessmentIdAndUserId(assessmentId, userId);
+    @Override
+    public void persist(AssessmentUserRoleItem item) {
+        var assessmentUserRole = repository.findByAssessmentIdAndUserId(item.getAssessmentId(), item.getUserId());
         if(assessmentUserRole.isPresent())
             throw new ResourceAlreadyExistsException(GRANT_ASSESSMENT_USER_ROLE_DUPLICATE_USER_ACCESS);
 
-        var entity = new AssessmentUserRoleJpaEntity(assessmentId, userId, roleId);
+        var entity = AssessmentUserRoleMapper.mapToJpEntity(item);
         repository.save(entity);
     }
 
@@ -70,8 +71,7 @@ public class AssessmentUserRolePersistenceJpaAdapter implements
         if (!repository.existsByAssessmentIdAndUserId(assessmentId, userId))
             throw new ResourceNotFoundException(UPDATE_ASSESSMENT_USER_ROLE_ASSESSMENT_ID_USER_ID_NOT_FOUND);
 
-        var entity = new AssessmentUserRoleJpaEntity(assessmentId, userId, roleId);
-        repository.update(entity.getAssessmentId(), entity.getUserId(), entity.getRoleId());
+        repository.update(assessmentId, userId, roleId);
     }
 
     @Override
@@ -114,9 +114,19 @@ public class AssessmentUserRolePersistenceJpaAdapter implements
     }
 
     @Override
-    public List<FullUser> loadAll(UUID assessmentId, List<Integer> roleIds) {
+    public List<LoadAssessmentUsersPort.ReportUser> loadAll(UUID assessmentId, List<Integer> roleIds) {
         return repository.findUsersByRoles(assessmentId, roleIds).stream()
-            .map(e -> new FullUser(e.getUserId(), e.getDisplayName(), e.getEmail(), e.getPicturePath()))
+            .map(AssessmentUserRoleMapper::mapToPortResult)
             .toList();
+    }
+
+    @Override
+    public List<UUID> loadAllUserIds(UUID assessmentId) {
+        return repository.findAllUserIds(assessmentId);
+    }
+
+    @Override
+    public boolean hasNonSpaceOwnerAccess(UUID assessmentId) {
+        return repository.existsNonSpaceOwnerAccessByAssessmentId(assessmentId);
     }
 }

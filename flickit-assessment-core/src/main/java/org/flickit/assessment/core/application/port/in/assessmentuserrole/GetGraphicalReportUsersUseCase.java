@@ -36,8 +36,8 @@ public interface GetGraphicalReportUsersUseCase {
 
     record Result(List<GraphicalReportUser> users, List<GraphicalReportInvitee> invitees) {
 
-        public record GraphicalReportUser(UUID id, String email, String displayName, String pictureLink) {}
+        public record GraphicalReportUser(UUID id, String email, String displayName, String pictureLink, boolean deletable) {}
 
-        public record GraphicalReportInvitee(String email) {}
+        public record GraphicalReportInvitee(UUID id, String email, boolean deletable) {}
     }
 }

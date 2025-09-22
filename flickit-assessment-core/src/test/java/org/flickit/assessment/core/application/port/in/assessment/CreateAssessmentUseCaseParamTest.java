@@ -1,6 +1,5 @@
 package org.flickit.assessment.core.application.port.in.assessment;
 
-
 import jakarta.validation.ConstraintViolationException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
@@ -60,6 +59,18 @@ class CreateAssessmentUseCaseParamTest {
     }
 
     @Test
+    void testCreateAssessmentUseCaseParam_langParamIsNotValid_ErrorMessage() {
+        var throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.lang("FR")));
+        assertThat(throwable).hasMessage("lang: " + CREATE_ASSESSMENT_LANGUAGE_INVALID);
+    }
+
+    @Test
+    void testCreateAssessmentUseCaseParam_langParamIsNull_Success() {
+        assertDoesNotThrow(() -> createParam(b -> b.lang(null)));
+    }
+
+    @Test
     void testCreateAssessmentUseCaseParam_currentUserIdParamViolatesConstraint_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.currentUserId(null)));
@@ -78,6 +89,7 @@ class CreateAssessmentUseCaseParamTest {
             .shortTitle("shortTitle")
             .spaceId(123L)
             .kitId(234L)
+            .lang("EN")
             .currentUserId(UUID.randomUUID());
     }
 }

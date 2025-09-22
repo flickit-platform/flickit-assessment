@@ -32,6 +32,6 @@ public interface GetKitSliderBannersUseCase {
         }
     }
 
-    record Result(long kitId, String banner) {
+    record Result(long kitId, String smallBanner, String largeBanner) {
     }
 }

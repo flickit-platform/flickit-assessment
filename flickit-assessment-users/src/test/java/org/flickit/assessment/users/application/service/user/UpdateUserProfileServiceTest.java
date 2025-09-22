@@ -4,14 +4,15 @@ import org.flickit.assessment.users.application.port.in.user.UpdateUserProfileUs
 import org.flickit.assessment.users.application.port.out.user.UpdateUserPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.doNothing;
 
 @ExtendWith(MockitoExtension.class)
@@ -23,8 +24,11 @@ class UpdateUserProfileServiceTest {
     @Mock
     private UpdateUserPort updateUserPort;
 
+    @Captor
+    private ArgumentCaptor<UpdateUserPort.Param> updateUserCaptor;
+
     @Test
-    void testUpdateUserProfile_ValidInput_ValidResult() {
+    void testUpdateUserProfile_whenParamsAreValid_thenValidResult() {
         UUID userId = UUID.randomUUID();
         String displayName = "Flickit Admin";
         String bio = "Admin bio";
@@ -34,8 +38,15 @@ class UpdateUserProfileServiceTest {
             bio,
             linkedin);
 
-        doNothing().when(updateUserPort).updateUser(any());
+        doNothing().when(updateUserPort).updateUser(updateUserCaptor.capture());
 
-        assertDoesNotThrow(() -> service.updateUserProfile(param));
+        service.updateUserProfile(param);
+
+        var updateUserParam = updateUserCaptor.getValue();
+        assertEquals(param.getCurrentUserId(), updateUserParam.userId());
+        assertEquals(param.getDisplayName(), updateUserParam.displayName());
+        assertEquals(param.getBio(), updateUserParam.bio());
+        assertEquals(param.getLinkedin(), updateUserParam.linkedin());
+        assertNotNull(updateUserParam.lastModificationTime());
     }
 }

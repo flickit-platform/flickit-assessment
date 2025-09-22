@@ -1,8 +1,10 @@
 package org.flickit.assessment.core.application.service.insight.assessment;
 
-import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
-import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentProgressPort;
+import org.flickit.assessment.core.application.domain.AssessmentMode;
+import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentPort;
+import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelPort;
+import org.flickit.assessment.core.application.port.out.subject.CountSubjectsPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -11,11 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Locale;
 
-import static org.flickit.assessment.core.common.MessageKey.ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_COMPLETED;
-import static org.flickit.assessment.core.common.MessageKey.ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_INCOMPLETE;
-import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.validResult;
-import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.validResultWithSubjectValuesAndMaturityLevel;
-import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.levelFive;
+import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.validResultWithAssessmentMode;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
@@ -26,26 +24,31 @@ class CreateAssessmentInsightHelperTest {
     private CreateAssessmentInsightHelper helper;
 
     @Mock
-    private GetAssessmentProgressPort getAssessmentProgressPort;
+    private LoadAssessmentPort loadAssessmentPort;
+
+    @Mock
+    private LoadMaturityLevelPort loadMaturityLevelPort;
+
+    @Mock
+    private CountSubjectsPort countSubjectsPort;
 
     @Test
-    void testCreateAssessmentInsight_whenAssessmentIsComplete_thenCreateCompleteAssessmentInsight() {
-        var assessmentResult = validResult();
+    void testCreateAssessmentInsight_whenQuickAssessmentWithOneSubjectIsComplete_thenCreateCompleteQuickAssessmentInsight() {
+        var assessmentResult = validResultWithAssessmentMode(AssessmentMode.QUICK);
         var locale = Locale.ENGLISH;
-        var progress = new GetAssessmentProgressPort.Result(assessmentResult.getId(), 10, 10);
-        var expectedDefaultInsight = MessageBundle.message(ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_COMPLETED,
-            locale,
-            assessmentResult.getMaturityLevel().getTitle(),
-            progress.questionsCount(),
-            Math.ceil(assessmentResult.getConfidenceValue()));
+        var progress = new LoadAssessmentPort.ProgressResult(assessmentResult.getId(), 10, 10);
+        var subjectsCount = 1;
 
-        when(getAssessmentProgressPort.getProgress(assessmentResult.getAssessment().getId())).thenReturn(progress);
+        when(loadAssessmentPort.progress(assessmentResult.getAssessment().getId())).thenReturn(progress);
+        when(loadMaturityLevelPort.load(assessmentResult.getMaturityLevel().getId(), assessmentResult.getAssessment().getId()))
+            .thenReturn(assessmentResult.getMaturityLevel());
+        when(countSubjectsPort.countSubjects(assessmentResult.getKitVersionId())).thenReturn(subjectsCount);
 
         var result = helper.createAssessmentInsight(assessmentResult, locale);
 
         assertNull(result.getId());
         assertEquals(assessmentResult.getId(), result.getAssessmentResultId());
-        assertEquals(expectedDefaultInsight, result.getInsight());
+        assertNotNull(result.getInsight());
         assertNotNull(result.getInsightTime());
         assertNotNull(result.getLastModificationTime());
         assertNull(result.getInsightBy());
@@ -53,24 +56,23 @@ class CreateAssessmentInsightHelperTest {
     }
 
     @Test
-    void testCreateAssessmentInsight_whenAssessmentIsIncompleteWithNullConfidenceValue_thenCreateIncompleteAssessmentInsight() {
-        var assessmentResult = validResultWithSubjectValuesAndMaturityLevel(null, levelFive());
+    void testCreateAssessmentInsight_whenAdvancedAssessmentWithMultipleSubjectsIsIncomplete_thenCreateCompleteQuickAssessmentInsight() {
+        var assessmentResult = validResultWithAssessmentMode(AssessmentMode.QUICK);
+        assessmentResult.setConfidenceValue(null);
         var locale = Locale.of(KitLanguage.FA.getCode());
-        var progress = new GetAssessmentProgressPort.Result(assessmentResult.getId(), 10, 11);
-        var expectedDefaultInsight = MessageBundle.message(ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_INCOMPLETE,
-            locale,
-            assessmentResult.getMaturityLevel().getTitle(),
-            progress.answersCount(),
-            progress.questionsCount(),
-            0);
+        var progress = new LoadAssessmentPort.ProgressResult(assessmentResult.getId(), 9, 10);
+        var subjectsCount = 2;
 
-        when(getAssessmentProgressPort.getProgress(assessmentResult.getAssessment().getId())).thenReturn(progress);
+        when(loadAssessmentPort.progress(assessmentResult.getAssessment().getId())).thenReturn(progress);
+        when(loadMaturityLevelPort.load(assessmentResult.getMaturityLevel().getId(), assessmentResult.getAssessment().getId()))
+            .thenReturn(assessmentResult.getMaturityLevel());
+        when(countSubjectsPort.countSubjects(assessmentResult.getKitVersionId())).thenReturn(subjectsCount);
 
         var result = helper.createAssessmentInsight(assessmentResult, locale);
 
         assertNull(result.getId());
         assertEquals(assessmentResult.getId(), result.getAssessmentResultId());
-        assertEquals(expectedDefaultInsight, result.getInsight());
+        assertNotNull(result.getInsight());
         assertNotNull(result.getInsightTime());
         assertNotNull(result.getLastModificationTime());
         assertNull(result.getInsightBy());

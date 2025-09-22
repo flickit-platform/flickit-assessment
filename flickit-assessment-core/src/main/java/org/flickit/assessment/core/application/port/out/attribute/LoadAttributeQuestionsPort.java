@@ -10,6 +10,8 @@ public interface LoadAttributeQuestionsPort {
 
     List<Result> loadApplicableQuestions(UUID assessmentId, long attributeId);
 
+    List<Result> loadApplicableMeasureQuestions(UUID assessmentId, long attributeId, long measureId);
+
     record Result(Question question, Answer answer) {
     }
 }

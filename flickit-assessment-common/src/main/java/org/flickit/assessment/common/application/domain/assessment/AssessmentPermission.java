@@ -10,11 +10,12 @@ public enum AssessmentPermission {
     CREATE_ASSESSMENT("createAssessment"),
     VIEW_ASSESSMENT("viewAssessment"),
     UPDATE_ASSESSMENT("updateAssessment"),
+    UPDATE_ASSESSMENT_MODE("updateAssessmentMode"),
+    PREPARE_ASSESSMENT_REPORT("prepareAssessmentReport"),
     DELETE_ASSESSMENT("deleteAssessment"),
     VIEW_ASSESSMENT_LIST("viewAssessmentList"),
     VIEW_ASSESSMENT_PROGRESS("viewAssessmentProgress"),
     VIEW_ASSESSMENT_REPORT("viewAssessmentReport"),
-    EXPORT_ASSESSMENT_REPORT("exportAssessmentReport"),
     CREATE_ATTRIBUTE_INSIGHT("createAttributeInsight"),
     CALCULATE_ASSESSMENT("calculateAssessment"),
     MIGRATE_KIT_VERSION("migrateKitVersion"),
@@ -41,6 +42,7 @@ public enum AssessmentPermission {
     VIEW_ASSESSMENT_INVITEE_LIST("viewAssessmentInviteeList"),
     VIEW_EVIDENCE("viewEvidence"),
     DELETE_ASSESSMENT_INVITE("deleteAssessmentInvite"),
+    MOVE_ASSESSMENT("moveAssessment"),
     MANAGE_ADVICE_ITEM("manageAdviceItem"),
     CREATE_ASSESSMENT_INSIGHT("createAssessmentInsight"),
     CREATE_SUBJECT_INSIGHT("createSubjectInsight"),
@@ -56,6 +58,7 @@ public enum AssessmentPermission {
     VIEW_GRAPHICAL_REPORT("viewGraphicalReport"),
     MANAGE_REPORT_METADATA("manageReportMetadata"),
     PUBLISH_ASSESSMENT_REPORT("publishAssessmentReport"),
+    MANAGE_ASSESSMENT_REPORT_VISIBILITY("manageAssessmentReportVisibility"),
     VIEW_REPORT_PREVIEW("viewReportPreview"),
     VIEW_ASSESSMENT_ATTRIBUTES("viewAssessmentAttributes"),
     VIEW_ASSESSMENT_MATURITY_LEVELS("viewAssessmentMaturityLevels"),
@@ -66,7 +69,11 @@ public enum AssessmentPermission {
     RESOLVE_ALL_COMMENTS("resolveAllComments"),
     VIEW_ASSESSMENT_INSIGHTS("viewAssessmentInsights"),
     APPROVE_ALL_ANSWERS("approveAllAnswers"),
-    VIEW_ATTRIBUTE_MEASURES("viewAttributeMeasures");
+    VIEW_ATTRIBUTE_MEASURES("viewAttributeMeasures"),
+    REFRESH_ASSESSMENT_ADVICE("refreshAssessmentAdvice"),
+    VIEW_ASSESSMENT_NEXT_QUESTIONNAIRE("viewAssessmentNextQuestionnaire"),
+    VIEW_ATTRIBUTE_MEASURE_QUESTIONS("viewAttributeMeasureQuestions"),
+    APPROVE_ADVICE_NARRATION("approveAdviceNarration"),;
 
     private final String code;
 }

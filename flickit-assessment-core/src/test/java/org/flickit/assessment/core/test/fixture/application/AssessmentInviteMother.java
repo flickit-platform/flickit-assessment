@@ -31,4 +31,16 @@ public class AssessmentInviteMother {
             UUID.randomUUID()
         );
     }
+
+    public static AssessmentInvite assessmentInviteWithRole(AssessmentUserRole assessmentUserRole, UUID createdBy) {
+        return new AssessmentInvite(
+            UUID.randomUUID(),
+            UUID.randomUUID(),
+            "admin@flickit.org",
+            assessmentUserRole,
+            LocalDateTime.now().plusDays(2),
+            LocalDateTime.now(),
+            createdBy
+        );
+    }
 }

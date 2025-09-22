@@ -11,6 +11,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.domain.Assessment;
+import org.flickit.assessment.core.application.domain.AssessmentUserRoleItem;
 import org.flickit.assessment.core.application.domain.notification.GrantAccessToReportNotificationCmd;
 import org.flickit.assessment.core.application.port.in.assessment.GrantAccessToReportUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentPort;
@@ -19,7 +20,7 @@ import org.flickit.assessment.core.application.port.out.assessmentuserrole.Grant
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.LoadUserRoleForAssessmentPort;
 import org.flickit.assessment.core.application.port.out.space.CreateSpaceInvitePort;
 import org.flickit.assessment.core.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
-import org.flickit.assessment.core.application.port.out.spaceuseraccess.CreateAssessmentSpaceUserAccessPort;
+import org.flickit.assessment.core.application.port.out.spaceuseraccess.CreateSpaceUserAccessPort;
 import org.flickit.assessment.core.application.port.out.user.LoadUserPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,13 +28,13 @@ import org.springframework.transaction.annotation.Transactional;
 import java.text.MessageFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.GRANT_ACCESS_TO_REPORT;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_GRAPHICAL_REPORT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.application.domain.AssessmentUserRole.REPORT_VIEWER;
-import static org.flickit.assessment.core.common.ErrorMessageKey.GRANT_ACCESS_TO_REPORT_NOT_ALLOWED_CONTACT_ASSESSMENT_MANAGER;
-import static org.flickit.assessment.core.common.ErrorMessageKey.GRANT_ACCESS_TO_REPORT_USER_ALREADY_GRANTED;
+import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 import static org.flickit.assessment.core.common.MessageKey.*;
 
 @Slf4j
@@ -52,7 +53,7 @@ public class GrantAccessToReportService implements GrantAccessToReportUseCase {
     private final AppSpecProperties appSpecProperties;
     private final SendEmailPort sendEmailPort;
     private final CheckSpaceAccessPort checkSpaceAccessPort;
-    private final CreateAssessmentSpaceUserAccessPort createAssessmentSpaceUserAccessPort;
+    private final CreateSpaceUserAccessPort createSpaceUserAccessPort;
 
     private static final Duration EXPIRY_DURATION = Duration.ofDays(7);
 
@@ -62,8 +63,11 @@ public class GrantAccessToReportService implements GrantAccessToReportUseCase {
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_ACCESS_TO_REPORT))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
+        if (loadAssessmentPort.isInDefaultSpace(param.getAssessmentId()))
+            throw new ValidationException(GRANT_ACCESS_TO_REPORT_DEFAULT_SPACE_NOT_ALLOWED);
+
         var userOptional = loadUserPort.loadByEmail(param.getEmail());
-        Assessment assessment = loadAssessmentPort.getAssessmentById(param.getAssessmentId()).orElseThrow();
+        Assessment assessment = loadAssessmentPort.loadById(param.getAssessmentId()).orElseThrow();
         var creationTime = LocalDateTime.now();
 
         if (userOptional.isPresent()) {
@@ -76,11 +80,11 @@ public class GrantAccessToReportService implements GrantAccessToReportUseCase {
                     throw new ResourceAlreadyExistsException(GRANT_ACCESS_TO_REPORT_USER_ALREADY_GRANTED);
             } else {
                 if (!checkSpaceAccessPort.checkIsMember(assessment.getSpace().getId(), user.getId())) {
-                    var createSpaceAccessParam = new CreateAssessmentSpaceUserAccessPort.Param(
+                    var createSpaceAccessParam = new CreateSpaceUserAccessPort.CreateParam(
                         assessment.getId(), user.getId(), param.getCurrentUserId(), creationTime);
-                    createAssessmentSpaceUserAccessPort.persist(createSpaceAccessParam);
+                    createSpaceUserAccessPort.persistByAssessmentId(createSpaceAccessParam);
                 }
-                grantUserAssessmentRolePort.persist(param.getAssessmentId(), user.getId(), REPORT_VIEWER.getId());
+                grantUserAssessmentRolePort.persist(toAssessmentUserRole(param.getAssessmentId(), user.getId(), param.getCurrentUserId()));
             }
 
             return new Result(new GrantAccessToReportNotificationCmd(assessment, user, param.getCurrentUserId()));
@@ -93,6 +97,10 @@ public class GrantAccessToReportService implements GrantAccessToReportUseCase {
         }
 
         return null;
+    }
+
+    private AssessmentUserRoleItem toAssessmentUserRole(UUID assessmentId, UUID spaceOwnerId, UUID createdBy) {
+        return new AssessmentUserRoleItem(assessmentId, spaceOwnerId, REPORT_VIEWER, createdBy, LocalDateTime.now());
     }
 
     CreateSpaceInvitePort.Param toCreateSpaceInviteParam(long spaceId,
@@ -111,7 +119,7 @@ public class GrantAccessToReportService implements GrantAccessToReportUseCase {
                                                                    LocalDateTime creationTime) {
         return new CreateAssessmentInvitePort.Param(param.getAssessmentId(),
             param.getEmail(),
-            REPORT_VIEWER.getId(),
+            REPORT_VIEWER,
             expirationTime,
             creationTime,
             param.getCurrentUserId());

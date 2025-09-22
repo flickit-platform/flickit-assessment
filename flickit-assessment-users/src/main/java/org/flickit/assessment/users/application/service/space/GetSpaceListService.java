@@ -2,7 +2,7 @@ package org.flickit.assessment.users.application.service.space;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
-import org.flickit.assessment.users.application.domain.SpaceStatus;
+import org.flickit.assessment.common.application.domain.space.SpaceStatus;
 import org.flickit.assessment.users.application.port.in.space.GetSpaceListUseCase;
 import org.flickit.assessment.users.application.port.out.space.LoadSpaceListPort;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ public class GetSpaceListService implements GetSpaceListUseCase {
 
     @Override
     public PaginatedResponse<SpaceListItem> getSpaceList(Param param) {
-        var portResult = loadSpaceListPort.loadSpaceList(param.getCurrentUserId(), param.getPage(), param.getSize());
+        var portResult = loadSpaceListPort.loadNonDefaultSpaceList(param.getCurrentUserId(), param.getPage(), param.getSize());
 
         return new PaginatedResponse<>(
             mapToSpaceListItems(portResult.getItems(), param.getCurrentUserId()),

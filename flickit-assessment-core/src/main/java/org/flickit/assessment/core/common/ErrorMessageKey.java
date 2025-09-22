@@ -22,6 +22,8 @@ public class ErrorMessageKey {
     public static final String ASSESSMENT_INSIGHT_ID_NOT_FOUND = "assessment-insight.id.notFound";
     public static final String SUBJECT_VALUE_NOT_FOUND = "subjectValue.subjectIdAssessmentResultId.notFound";
     public static final String SUBJECT_NOT_FOUND = "subjectId.notFound";
+    public static final String ASSESSMENT_REPORT_LINK_HASH_NOT_FOUND = "assessmentReport.linkHash.notFound";
+    public static final String ADVICE_ITEM_ID_NOT_FOUND = "advice-item-id.notFound";
 
     public static final String CREATE_ASSESSMENT_TITLE_NOT_BLANK = "create-assessment.title.notBlank";
     public static final String CREATE_ASSESSMENT_TITLE_SIZE_MIN = "create-assessment.title.size.min";
@@ -30,11 +32,12 @@ public class ErrorMessageKey {
     public static final String CREATE_ASSESSMENT_SHORT_TITLE_SIZE_MAX = "create-assessment.shortTitle.size.max";
     public static final String CREATE_ASSESSMENT_ASSESSMENT_KIT_ID_NOT_NULL = "create-assessment.assessmentKitId.notNull";
     public static final String CREATE_ASSESSMENT_SPACE_ID_NOT_NULL = "create-assessment.spaceId.notNull";
-    public static final String CREATE_ASSESSMENT_DUPLICATE_TITLE_AND_SPACE_ID = "create-assessment.duplicate.titleAndSpaceId";
     public static final String CREATE_ASSESSMENT_KIT_NOT_ALLOWED = "create-assessment.kit.notAllowed";
     public static final String CREATE_ASSESSMENT_BASIC_SPACE_ASSESSMENTS_MAX = "create-assessment.basicSpaceAssessments.max";
     public static final String CREATE_ASSESSMENT_BASIC_SPACE_PRIVATE_KIT_NOT_ALLOWED = "create-assessment.basicSpacePrivateKits.notAllowed";
     public static final String CREATE_ASSESSMENT_PREMIUM_SPACE_EXPIRED = "create-assessment.premiumSpace.expired";
+    public static final String CREATE_ASSESSMENT_LANGUAGE_INVALID = "create-assessment.language.invalid";
+    public static final String CREATE_ASSESSMENT_LANGUAGE_NOT_SUPPORTED = "create-assessment.language.notSupported";
 
     public static final String CREATE_ASSESSMENT_RESULT_ASSESSMENT_ID_NOT_FOUND = "create-assessmentresult.assessmentId.notFound";
 
@@ -59,6 +62,7 @@ public class ErrorMessageKey {
     public static final String GET_SPACE_ASSESSMENT_LIST_SIZE_MIN = "get-space-assessment-list.size.min";
     public static final String GET_SPACE_ASSESSMENT_LIST_SIZE_MAX = "get-space-assessment-list.size.max";
     public static final String GET_SPACE_ASSESSMENT_LIST_PAGE_MIN = "get-space-assessment-list.page.min";
+    public static final String GET_SPACE_ASSESSMENT_LIST_SPACE_ID_NOT_FOUND = "get-space-assessment-list.spaceId.notFound";
 
     public static final String ADD_EVIDENCE_ASSESSMENT_ID_NOT_FOUND = "add-evidence.assessmentId.notFound";
     public static final String ADD_EVIDENCE_DESC_NOT_BLANK = "add-evidence.desc.notBlank";
@@ -146,8 +150,9 @@ public class ErrorMessageKey {
     public static final String GRANT_ASSESSMENT_USER_ROLE_USER_ID_NOT_NULL = "grant-assessment-user-role.userId.notNull";
     public static final String GRANT_ASSESSMENT_USER_ROLE_USER_ROLE_DUPLICATE = "grant-assessment-user-role.user.role.duplicate";
     public static final String GRANT_ASSESSMENT_USER_ROLE_ROLE_ID_NOT_NULL = "grant-assessment-user-role.roleId.notNull";
-    public static final String GRANT_ASSESSMENT_USER_ROLE_ROLE_ID_NOT_FOUND = "grant-assessment-user-role.roleId.notFound";
+    public static final String GRANT_ASSESSMENT_USER_ROLE_ROLE_ID_INVALID = "grant-assessment-user-role.roleId.invalid";
     public static final String GRANT_ASSESSMENT_USER_ROLE_DUPLICATE_USER_ACCESS = "grant-assessment-user-role.duplicateUserAccess";
+    public static final String GRANT_ASSESSMENT_USER_ROLE_DEFAULT_SPACE_NOT_ALLOWED = "grant-assessment-user-role.defaultSpace.notAllowed";
 
     public static final String UPDATE_ASSESSMENT_USER_ROLE_ASSESSMENT_ID_NOT_NULL = "update-assessment-user-role.assessmentId.notNull";
     public static final String UPDATE_ASSESSMENT_USER_ROLE_USER_ID_NOT_NULL = "update-assessment-user-role.userId.notNull";
@@ -161,6 +166,7 @@ public class ErrorMessageKey {
     public static final String DELETE_ASSESSMENT_USER_ROLE_USER_ID_NOT_NULL = "delete-assessment-user-role.userId.notNull";
     public static final String DELETE_ASSESSMENT_USER_ROLE_ASSESSMENT_ID_USER_ID_NOT_FOUND = "delete-assessment-user-role.assessmentId.userId.notFound";
     public static final String DELETE_ASSESSMENT_USER_ROLE_USER_ID_IS_SPACE_OWNER = "delete-assessment-user-role.assessmentId.userId.isSpaceOwner";
+    public static final String DELETE_ASSESSMENT_USER_ROLE_ASSESSMENT_ROLE_NOT_FOUND = "delete-assessment-user-role.assessmentRole.notFound";
 
     public static final String GET_ASSESSMENT_USERS_ASSESSMENT_ID_NOT_NULL = "get-assessment-users.assessmentId.notNull";
     public static final String GET_ASSESSMENT_USERS_SIZE_MIN = "get-assessment-users.size.min";
@@ -183,7 +189,7 @@ public class ErrorMessageKey {
     public static final String INVITE_ASSESSMENT_USER_ASSESSMENT_ID_NOT_NULL = "invite-assessment-user.assessmentId.notNull";
     public static final String INVITE_ASSESSMENT_USER_EMAIL_NOT_NULL = "invite-assessment-user.email.notNull";
     public static final String INVITE_ASSESSMENT_USER_ROLE_ID_NOT_NULL = "invite-assessment-user.roleId.notNull";
-    public static final String INVITE_ASSESSMENT_USER_ROLE_ID_NOT_FOUND = "invite-assessment-user.roleId.notFound";
+    public static final String INVITE_ASSESSMENT_USER_ROLE_ID_INVALID = "invite-assessment-user.roleId.invalid";
 
     public static final String DELETE_EVIDENCE_ATTACHMENT_EVIDENCE_ID_NOT_NULL = "delete-evidence-attachment.evidenceId.notNull";
     public static final String DELETE_EVIDENCE_ATTACHMENT_ATTACHMENT_ID_NOT_NULL = "delete-evidence-attachment.attachmentId.notNull";
@@ -288,6 +294,7 @@ public class ErrorMessageKey {
     public static final String GRANT_ACCESS_TO_REPORT_ASSESSMENT_ID_NOT_NULL = "grant-access-to-report.assessmentId.notNull";
     public static final String GRANT_ACCESS_TO_REPORT_NOT_ALLOWED_CONTACT_ASSESSMENT_MANAGER = "grant-access-to-report.not-allowed.contact-assessment-manager";
     public static final String GRANT_ACCESS_TO_REPORT_USER_ALREADY_GRANTED = "grant-access-to-report.user-already-granted";
+    public static final String GRANT_ACCESS_TO_REPORT_DEFAULT_SPACE_NOT_ALLOWED = "grant-access-to-report.defaultSpace.notAllowed";
 
     public static final String GET_GRAPHICAL_REPORT_USERS_ASSESSMENT_ID_NOT_NULL = "get-graphical-report-users.assessmentId.notNull";
 
@@ -348,4 +355,97 @@ public class ErrorMessageKey {
     public static final String GET_ASSESSMENT_ATTRIBUTE_MEASURES_ATTRIBUTE_ID_NOT_NULL = "get-assessment-attribute-measures.attributeId.notNull";
     public static final String GET_ASSESSMENT_ATTRIBUTE_MEASURES_SORT_INVALID = "get-assessment-attribute-measures.sort.invalid";
     public static final String GET_ASSESSMENT_ATTRIBUTE_MEASURES_INVALID = "get-assessment-attribute-measures.order.invalid";
+
+    public static final String UPDATE_ASSESSMENT_REPORT_VISIBILITY_ASSESSMENT_ID_NOT_NULL = "update-assessment-report-visibility.assessmentId.notNull";
+    public static final String UPDATE_ASSESSMENT_REPORT_VISIBILITY_VISIBILITY_NOT_NULL = "update-assessment-report-visibility.visibility.notFound";
+    public static final String UPDATE_ASSESSMENT_REPORT_VISIBILITY_ASSESSMENT_REPORT_NOT_FOUND = "update-assessment-report-visibility.assessmentReport.notFound";
+    public static final String UPDATE_ASSESSMENT_REPORT_VISIBILITY_VISIBILITY_INVALID = "update-assessment-report-visibility.visibility.invalid";
+    public static final String UPDATE_ASSESSMENT_REPORT_VISIBILITY_ASSESSMENT_REPORT_NOT_PUBLISHED = "update-assessment-report-visibility.assessmentReport.notPublished";
+
+    public static final String GET_ASSESSMENT_PUBLIC_REPORT_LINK_HASH_NOT_NULL = "get-assessment-public-report.linkHash.notNull";
+
+    public static final String UPDATE_ASSESSMENT_MODE_ID_NOT_NULL = "update-assessment-mode.assessmentId.notNull";
+    public static final String UPDATE_ASSESSMENT_MODE_MODE_NOT_NULL = "update-assessment-mode.mode.notNull";
+    public static final String UPDATE_ASSESSMENT_MODE_MODE_INVALID = "update-assessment-mode.mode.invalid";
+
+    public static final String PREPARE_REPORT_ASSESSMENT_ID_NOT_NULL = "prepare-report.assessmentId.notNull";
+
+    public static final String GET_ASSESSMENT_NEXT_QUESTIONNAIRE_ASSESSMENT_ID_NOT_NULL = "get-assessment-next-questionnaire.assessmentId.notNull";
+    public static final String GET_ASSESSMENT_NEXT_QUESTIONNAIRE_QUESTIONNAIRE_ID_NOT_NULL = "get-assessment-next-questionnaire.questionnaireId.notNull";
+    public static final String GET_ASSESSMENT_NEXT_QUESTIONNAIRE_ASSESSMENT_RESULT_NOT_FOUND = "get-assessment-next-questionnaire.assessmentResult.notFound";
+
+    public static final String MOVE_ASSESSMENT_ASSESSMENT_ID_NOT_NULL = "move-assessment.assessmentId.notNull";
+    public static final String MOVE_ASSESSMENT_TARGET_SPACE_ID_NOT_NULL = "move-assessment.targetSpaceId.notNull";
+    public static final String MOVE_ASSESSMENT_TARGET_SPACE_NOT_FOUND = "move-assessment.targetSpace.notFound";
+    public static final String MOVE_ASSESSMENT_TARGET_SPACE_INVALID = "move-assessment.targetSpace.invalid";
+    public static final String MOVE_ASSESSMENT_TARGET_SPACE_ASSESSMENTS_MAX = "move-assessment.targetSpaceAssessments.max";
+    public static final String MOVE_ASSESSMENT_ASSESSMENT_NON_OWNER_ACCESS_NOT_ALLOWED = "move-assessment.assessmentAccessibleByOthers.notAllowed";
+
+    public static final String GET_ASSESSMENT_MOVE_TARGETS_ASSESSMENT_ID_NOT_NULL = "get-assessment-move-targets.assessmentId.notNull";
+    public static final String GET_ASSESSMENT_MOVE_TARGETS_SPACE_NOT_FOUND = "get-assessment-move-targets.space.notFound";
+
+    public static final String GET_ATTRIBUTE_MEASURE_QUESTIONS_ASSESSMENT_ID_NOT_NULL = "get-attribute-measure-questions.assessmentId.notNull";
+    public static final String GET_ATTRIBUTE_MEASURE_QUESTIONS_ATTRIBUTE_ID_NOT_NULL = "get-attribute-measure-questions.attributeId.notNull";
+    public static final String GET_ATTRIBUTE_MEASURE_QUESTIONS_MEASURE_ID_NOT_NULL = "get-attribute-measure-questions.measureId.notNull";
+
+    public static final String CREATE_ADVICE_ITEM_ASSESSMENT_ID_NOT_NULL = "create-advice-item.assessmentId.notNull";
+    public static final String CREATE_ADVICE_ITEM_TITLE_NOT_NULL = "create-advice-item.title.notNull";
+    public static final String CREATE_ADVICE_ITEM_TITLE_SIZE_MIN = "create-advice-item.title.size.min";
+    public static final String CREATE_ADVICE_ITEM_TITLE_SIZE_MAX = "create-advice-item.title.size.max";
+    public static final String CREATE_ADVICE_ITEM_DESCRIPTION_NOT_NULL = "create-advice-item.description.notNull";
+    public static final String CREATE_ADVICE_ITEM_DESCRIPTION_SIZE_MIN = "create-advice-item.description.size.min";
+    public static final String CREATE_ADVICE_ITEM_DESCRIPTION_SIZE_MAX = "create-advice-item.description.size.max";
+    public static final String CREATE_ADVICE_ITEM_COST_NOT_NULL = "create-advice-item.cost.notNull";
+    public static final String CREATE_ADVICE_ITEM_COST_INVALID = "create-advice-item.cost.invalid";
+    public static final String CREATE_ADVICE_ITEM_PRIORITY_NOT_NULL = "create-advice-item.priority.notNull";
+    public static final String CREATE_ADVICE_ITEM_PRIORITY_INVALID = "create-advice-item.priority.invalid";
+    public static final String CREATE_ADVICE_ITEM_IMPACT_NOT_NULL = "create-advice-item.impact.notNull";
+    public static final String CREATE_ADVICE_ITEM_IMPACT_INVALID = "create-advice-item.impact.invalid";
+    public static final String CREATE_ADVICE_ITEM_ASSESSMENT_RESULT_NOT_FOUND = "create-advice-item.assessmentResult.notFound";
+
+    public static final String GET_ADVICE_ITEM_LIST_ASSESSMENT_ID_NOT_NULL = "get-advice-item-list.assessmentId.notNull";
+    public static final String GET_ADVICE_ITEM_LIST_SIZE_MIN = "get-advice-item-list.size.min";
+    public static final String GET_ADVICE_ITEM_LIST_SIZE_MAX = "get-advice-item-list.size.max";
+    public static final String GET_ADVICE_ITEM_LIST_PAGE_MIN = "get-advice-item-list.page.min";
+    public static final String GET_ADVICE_ITEM_LIST_ASSESSMENT_RESULT_NOT_FOUND = "get-advice-item-list.assessmentResult.notFound";
+
+    public static final String UPDATE_ADVICE_ITEM_ID_NOT_NULL = "update-advice-item.id.notNull";
+    public static final String UPDATE_ADVICE_ITEM_TITLE_NOT_NULL = "update-advice-item.title.notNull";
+    public static final String UPDATE_ADVICE_ITEM_TITLE_SIZE_MIN = "update-advice-item.title.size.min";
+    public static final String UPDATE_ADVICE_ITEM_TITLE_SIZE_MAX = "update-advice-item.title.size.max";
+    public static final String UPDATE_ADVICE_ITEM_DESCRIPTION_NOT_NULL = "update-advice-item.description.notNull";
+    public static final String UPDATE_ADVICE_ITEM_DESCRIPTION_SIZE_MIN = "update-advice-item.description.size.min";
+    public static final String UPDATE_ADVICE_ITEM_DESCRIPTION_SIZE_MAX = "update-advice-item.description.size.max";
+    public static final String UPDATE_ADVICE_ITEM_COST_NOT_NULL = "update-advice-item.cost.notNull";
+    public static final String UPDATE_ADVICE_ITEM_COST_INVALID = "update-advice-item.cost.invalid";
+    public static final String UPDATE_ADVICE_ITEM_PRIORITY_NOT_NULL = "update-advice-item.priority.notNull";
+    public static final String UPDATE_ADVICE_ITEM_PRIORITY_INVALID = "update-advice-item.priority.invalid";
+    public static final String UPDATE_ADVICE_ITEM_IMPACT_NOT_NULL = "update-advice-item.impact.notNull";
+    public static final String UPDATE_ADVICE_ITEM_IMPACT_INVALID = "update-advice-item.impact.invalid";
+    public static final String UPDATE_ADVICE_ITEM_ASSESSMENT_NOT_FOUND = "update-advice-item.assessment.notFound";
+
+    public static final String DELETE_ADVICE_ITEM_ID_NOT_NULL = "delete-advice-item.id.notNull";
+    public static final String DELETE_ADVICE_ITEM_ASSESSMENT_NOT_FOUND = "delete-advice-item.assessment.notFound";
+
+    public static final String CREATE_AI_ADVICE_NARRATION_ADVICE_LIST_ITEMS_NOT_NULL = "create-ai-advice-narration.adviceListItems.notNull";
+    public static final String CREATE_AI_ADVICE_NARRATION_ATTRIBUTE_LEVEL_TARGETS_NOT_NULL = "create-ai-advice-narration.attributeLevelTargets.notNull";
+    public static final String CREATE_AI_ADVICE_NARRATION_ASSESSMENT_ID_NOT_NULL = "create-ai-advice-narration.assessmentId.notNull";
+    public static final String CREATE_AI_ADVICE_NARRATION_ASSESSMENT_RESULT_NOT_FOUND = "create-ai-advice-narration.assessmentResult.notFound";
+    public static final String CREATE_AI_ADVICE_NARRATION_ATTRIBUTE_LEVEL_TARGETS_SIZE_MIN = "create-ai-advice-narration.attributeLevelTargets.size.min";
+
+
+    public static final String GET_ADVICE_NARRATION_ASSESSMENT_ID_NOT_NULL = "get-advice-narration.assessmentId.notNull";
+    public static final String GET_ADVICE_NARRATION_ASSESSMENT_RESULT_NOT_FOUND = "get-advice-narration.assessmentResult.notFound";
+
+    public static final String CREATE_ASSESSOR_ADVICE_NARRATION_ASSESSMENT_ID_NOT_NULL = "create-assessor-advice-narration.assessmentId.notNull";
+    public static final String CREATE_ASSESSOR_ADVICE_NARRATION_ASSESSOR_NARRATION_SIZE_MIN = "create-assessor-advice-narration.assessorNarration.size.min";
+    public static final String CREATE_ASSESSOR_ADVICE_NARRATION_ASSESSOR_NARRATION_SIZE_MAX = "create-assessor-advice-narration.assessorNarration.size.max";
+    public static final String CREATE_ASSESSOR_ADVICE_NARRATION_ASSESSMENT_RESULT_NOT_FOUND = "create-assessor-advice-narration.assessmentResult.notFound";
+
+    public static final String REFRESH_ASSESSMENT_ADVICE_ASSESSMENT_ID_NOT_NULL = "refresh-assessment-advice.assessmentId.notNull";
+    public static final String REFRESH_ASSESSMENT_ADVICE_FORCE_REGENERATE_NOT_NULL = "refresh-assessment-advice.forceRegenerate.notNull";
+    public static final String REFRESH_ASSESSMENT_ADVICE_MEDIAN_MATURITY_LEVEL_NOT_FOUND = "refresh-assessment-advice.median-maturityLevel.notFound";
+
+    public static final String APPROVE_ADVICE_NARRATION_ASSESSMENT_ID_NOT_NULL = "approve-advice-narration.assessmentId.notNull";
+    public static final String APPROVE_ADVICE_NARRATION_ASSESSMENT_RESULT_NOT_FOUND = "approve-advice-narration.assessmentResult.notFound";
 }

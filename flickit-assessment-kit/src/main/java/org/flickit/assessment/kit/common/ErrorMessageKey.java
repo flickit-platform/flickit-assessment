@@ -106,6 +106,12 @@ public class ErrorMessageKey {
     public static final String UPDATE_KIT_INFO_TAG_ID_NOT_FOUND = "update-kit-info.tagId.notFound";
     public static final String UPDATE_KIT_INFO_KIT_LANGUAGE_INVALID = "update-kit-info.kitLanguage.invalid";
     public static final String UPDATE_KIT_INFO_TRANSLATIONS_INCORRECT = "update-kit-info.translations.incorrect";
+    public static final String UPDATE_KIT_INFO_METADATA_INCORRECT = "update-kit-info.metadata.incorrect";
+
+    public static final String KIT_METADATA_GOAL_SIZE_MIN = "kit-metadata-goal.size.min";
+    public static final String KIT_METADATA_GOAL_SIZE_MAX = "kit-metadata-goal.size.max";
+    public static final String KIT_METADATA_CONTEXT_SIZE_MIN = "kit-metadata-context.size.min";
+    public static final String KIT_METADATA_CONTEXT_SIZE_MAX = "kit-metadata-context.size.max";
 
     public static final String GET_KIT_DETAIL_KIT_ID_NOT_NULL = "get-kit-detail.kitId.notNull";
 
@@ -475,8 +481,9 @@ public class ErrorMessageKey {
     public static final String VALIDATE_KIT_VERSION_QUESTIONNAIRE_QUESTION_NOT_NULL = "validate-kit-version.questionnaire-question.notNull";
     public static final String VALIDATE_KIT_VERSION_SUBJECT_NOT_NULL = "validate-kit-version.subject.notNull";
     public static final String VALIDATE_KIT_VERSION_QUESTION_NOT_NULL = "validate-kit-version.question.notNull";
+    public static final String VALIDATE_KIT_VERSION_ATTRIBUTE_MEASURE_NOT_NULL = "validate-kit-version.attribute-measure.notNull";
     public static final String VALIDATE_KIT_VERSION_QUESTIONNAIRE_NOT_NULL = "validate-kit-version.questionnaire.notNull";
-    public static final String VALIDATE_KIT_VERSION_MATURITY_LEVEL_NOT_NULL = "validate-kit-version.maturityLevel.notNull";
+    public static final String VALIDATE_KIT_VERSION_MATURITY_LEVELS_MIN_SIZE = "validate-kit-version.maturityLevels.size.min";
     public static final String VALIDATE_KIT_VERSION_QUESTION_MEASURE_NOT_NULL = "validate-kit-version.question-measure.notNull";
 
     public static final String UPDATE_KIT_CUSTOM_KIT_CUSTOM_ID_NOT_NULL = "update-kit-custom.kitCustomId.notNull";
@@ -541,6 +548,11 @@ public class ErrorMessageKey {
     public static final String ADD_LANGUAGE_TO_KIT_KIT_ID_NOT_NULL = "add-language-to-kit.kitId.notNull";
     public static final String ADD_LANGUAGE_TO_KIT_LANG_NOT_NULL = "add-language-to-kit.lang.notNull";
     public static final String ADD_LANGUAGE_TO_KIT_LANGUAGE_INVALID = "add-language-to-kit.lang.invalid";
+
+    public static final String GET_PUBLIC_KIT_LIST_LANGS_INVALID = "get-public-kit-list.langs.invalid";
+    public static final String GET_PUBLIC_KIT_LIST_PAGE_MIN = "get-public-kit-list.page.min";
+    public static final String GET_PUBLIC_KIT_LIST_SIZE_MIN = "get-public-kit-list.size.min";
+    public static final String GET_PUBLIC_KIT_LIST_SIZE_MAX = "get-public-kit-list.size.max";
 
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);

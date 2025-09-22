@@ -5,7 +5,7 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentAcc
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentProgressUseCase.Param;
-import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentProgressPort;
+import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentPort;
 import org.flickit.assessment.core.test.fixture.application.AssessmentMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,7 +31,7 @@ class GetAssessmentProgressServiceTest {
     private GetAssessmentProgressService service;
 
     @Mock
-    private GetAssessmentProgressPort getAssessmentProgressPort;
+    private LoadAssessmentPort loadAssessmentPort;
 
     @Mock
     private AssessmentAccessChecker assessmentAccessChecker;
@@ -44,16 +44,16 @@ class GetAssessmentProgressServiceTest {
         Param param = new Param(assessmentId, currentUserId);
 
         when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_ASSESSMENT_PROGRESS)).thenReturn(true);
-        when(getAssessmentProgressPort.getProgress(assessmentId))
-            .thenReturn(new GetAssessmentProgressPort.Result(assessmentId, 5, 10));
+        when(loadAssessmentPort.progress(assessmentId))
+            .thenReturn(new LoadAssessmentPort.ProgressResult(assessmentId, 5, 10));
 
         var result = service.getAssessmentProgress(param);
 
         ArgumentCaptor<UUID> answerPortAssessmentId = ArgumentCaptor.forClass(UUID.class);
-        verify(getAssessmentProgressPort).getProgress(answerPortAssessmentId.capture());
+        verify(loadAssessmentPort).progress(answerPortAssessmentId.capture());
 
         assertEquals(assessmentId, answerPortAssessmentId.getValue());
-        verify(getAssessmentProgressPort, times(1)).getProgress(any());
+        verify(loadAssessmentPort, times(1)).progress(any());
 
         assertEquals(assessmentId, result.id());
         assertEquals(5, result.answersCount());
@@ -68,7 +68,7 @@ class GetAssessmentProgressServiceTest {
         Param param = new Param(assessmentId, currentUserId);
 
         when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_ASSESSMENT_PROGRESS)).thenReturn(true);
-        when(getAssessmentProgressPort.getProgress(assessmentId))
+        when(loadAssessmentPort.progress(assessmentId))
             .thenThrow(new ResourceNotFoundException(GET_ASSESSMENT_PROGRESS_ASSESSMENT_NOT_FOUND));
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.getAssessmentProgress(param));

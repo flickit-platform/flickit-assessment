@@ -1,6 +1,7 @@
 package org.flickit.assessment.core.application.service.assessment;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.application.domain.notification.SendNotification;
 import org.flickit.assessment.common.application.domain.space.SpaceType;
 import org.flickit.assessment.common.config.AppSpecProperties;
@@ -8,10 +9,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.exception.UpgradeRequiredException;
 import org.flickit.assessment.common.exception.ValidationException;
-import org.flickit.assessment.core.application.domain.AssessmentUserRole;
-import org.flickit.assessment.core.application.domain.Attribute;
-import org.flickit.assessment.core.application.domain.Space;
-import org.flickit.assessment.core.application.domain.Subject;
+import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.domain.notification.CreateAssessmentNotificationCmd;
 import org.flickit.assessment.core.application.port.in.assessment.CreateAssessmentUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.CountAssessmentsPort;
@@ -21,6 +19,7 @@ import org.flickit.assessment.core.application.port.out.assessmentkit.LoadAssess
 import org.flickit.assessment.core.application.port.out.assessmentresult.CreateAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.GrantUserAssessmentRolePort;
 import org.flickit.assessment.core.application.port.out.attributevalue.CreateAttributeValuePort;
+import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.core.application.port.out.space.LoadSpacePort;
 import org.flickit.assessment.core.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectsPort;
@@ -29,10 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -49,6 +45,7 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
 
     private static final AssessmentUserRole SPACE_OWNER_ROLE = MANAGER;
     private static final AssessmentUserRole ASSESSMENT_CREATOR_ROLE = MANAGER;
+    private static final Double CONFIDENCE_INITIAL_VALUE = 0.0;
 
     private final CheckSpaceAccessPort checkSpaceAccessPort;
     private final CheckKitAccessPort checkKitAccessPort;
@@ -56,6 +53,7 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
     private final CreateAssessmentResultPort createAssessmentResultPort;
     private final CreateSubjectValuePort createSubjectValuePort;
     private final CreateAttributeValuePort createAttributeValuePort;
+    private final LoadMaturityLevelsPort loadMaturityLevelsPort;
     private final LoadSubjectsPort loadSubjectsPort;
     private final LoadSpacePort loadSpacePort;
     private final GrantUserAssessmentRolePort grantUserAssessmentRolePort;
@@ -66,13 +64,13 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
     @Override
     @SendNotification
     public Result createAssessment(Param param) {
-        var space = loadSpacePort.loadSpace(param.getSpaceId())
+        var space = loadSpacePort.loadById(param.getSpaceId())
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_SPACE_ID_NOT_FOUND));
 
         if (!checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        var assessmentKit = loadAssessmentKitPort.loadAssessmentKit(param.getKitId())
+        var assessmentKit = loadAssessmentKitPort.loadAssessmentKit(param.getKitId(), null)
             .orElseThrow(() -> new ResourceNotFoundException(ASSESSMENT_KIT_ID_NOT_FOUND));
 
         if (checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId()).isEmpty())
@@ -80,8 +78,10 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
 
         validateSpace(param, space, assessmentKit.getIsPrivate());
 
+        var assessmentLangId = resolveAssessmentLanguage(assessmentKit, param.getLang()).getId();
+
         UUID id = createAssessmentPort.persist(toParam(param));
-        createAssessmentResult(id, assessmentKit.getKitVersion(), assessmentKit.getLanguage().getId());
+        createAssessmentResult(id, assessmentKit.getKitVersion(), assessmentLangId);
 
         grantAssessmentAccesses(id, space.getOwnerId(), param.getCurrentUserId());
 
@@ -107,6 +107,17 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
         }
     }
 
+    private KitLanguage resolveAssessmentLanguage(AssessmentKit kit, String langParam) {
+        KitLanguage assessmentLanguage = langParam == null
+            ? kit.getLanguage()
+            : KitLanguage.valueOf(langParam);
+
+        if (!kit.getSupportedLanguages().contains(assessmentLanguage))
+            throw new ValidationException(CREATE_ASSESSMENT_LANGUAGE_NOT_SUPPORTED);
+
+        return assessmentLanguage;
+    }
+
     private CreateAssessmentPort.Param toParam(Param param) {
         String code = generateSlugCode(param.getTitle());
         LocalDateTime creationTime = LocalDateTime.now();
@@ -116,6 +127,7 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
             param.getShortTitle(),
             param.getKitId(),
             param.getSpaceId(),
+            AssessmentMode.QUICK,
             creationTime,
             NOT_DELETED_DELETION_TIME,
             false,
@@ -124,8 +136,9 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
 
     private void createAssessmentResult(UUID assessmentId, Long kitVersionId, int langId) {
         LocalDateTime lastModificationTime = LocalDateTime.now();
+        MaturityLevel maturityLevel = resolveInitialMaturityLevel(kitVersionId);
         CreateAssessmentResultPort.Param param = new CreateAssessmentResultPort.Param(assessmentId, kitVersionId,
-            lastModificationTime, false, false, langId);
+            maturityLevel.getId(), CONFIDENCE_INITIAL_VALUE, lastModificationTime, false, false, langId);
         UUID assessmentResultId = createAssessmentResultPort.persist(param);
 
         List<Subject> subjects = loadSubjectsPort.loadByKitVersionIdWithAttributes(kitVersionId);
@@ -137,9 +150,24 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
         createAttributeValuePort.persistAll(attributeIds, assessmentResultId);
     }
 
+    private MaturityLevel resolveInitialMaturityLevel(Long kitVersionId) {
+        return loadMaturityLevelsPort.loadAllByKitVersion(kitVersionId).stream()
+            .sorted(Comparator.comparingInt(MaturityLevel::getValue))
+            .toList()
+            .getFirst();
+    }
+
     private void grantAssessmentAccesses(UUID assessmentId, UUID spaceOwnerId, UUID currentUserId) {
         if (!Objects.equals(spaceOwnerId, currentUserId))
-            grantUserAssessmentRolePort.persist(assessmentId, spaceOwnerId, SPACE_OWNER_ROLE.getId());
-        grantUserAssessmentRolePort.persist(assessmentId, currentUserId, ASSESSMENT_CREATOR_ROLE.getId());
+            grantUserAssessmentRolePort.persist(toAssessmentUserRoleItem(assessmentId, spaceOwnerId, SPACE_OWNER_ROLE, currentUserId));
+        grantUserAssessmentRolePort.persist(toAssessmentUserRoleItem(assessmentId, currentUserId, ASSESSMENT_CREATOR_ROLE, currentUserId));
+    }
+
+    private AssessmentUserRoleItem toAssessmentUserRoleItem(UUID assessmentId, UUID userId, AssessmentUserRole role, UUID createdBy) {
+        return new AssessmentUserRoleItem(assessmentId,
+            userId,
+            role,
+            createdBy,
+            LocalDateTime.now());
     }
 }

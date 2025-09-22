@@ -2,6 +2,7 @@ package org.flickit.assessment.users.application.domain;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.domain.space.SpaceStatus;
 import org.flickit.assessment.common.application.domain.space.SpaceType;
 
 import java.time.LocalDateTime;
@@ -18,6 +19,7 @@ public class Space {
     private final UUID ownerId;
     private final SpaceStatus status;
     private final LocalDateTime subscriptionExpiry;
+    private final boolean isDefault;
     private final LocalDateTime creationTime;
     private final LocalDateTime lastModificationTime;
     private final UUID createdBy;

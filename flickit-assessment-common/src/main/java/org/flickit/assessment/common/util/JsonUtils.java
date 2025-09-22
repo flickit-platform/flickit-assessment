@@ -26,6 +26,8 @@ public class JsonUtils {
 
     @SneakyThrows
     public static <T> T fromJson(String value, Class<T> valueType) {
+        if (value == null)
+            return null;
         return objectMapper.readValue(value, valueType);
     }
 

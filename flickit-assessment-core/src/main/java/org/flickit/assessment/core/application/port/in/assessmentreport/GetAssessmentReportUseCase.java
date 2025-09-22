@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
+import org.flickit.assessment.core.application.domain.Space;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -40,7 +41,10 @@ public interface GetAssessmentReportUseCase {
                   Advice advice,
                   AssessmentProcess assessmentProcess,
                   Permissions permissions,
-                  Language lang) {
+                  Language lang,
+                  String visibility,
+                  String linkHash,
+                  boolean isAdvisable) {
     }
 
     record Assessment(String title,
@@ -50,6 +54,8 @@ public interface GetAssessmentReportUseCase {
                       AssessmentKit assessmentKit,
                       MaturityLevel maturityLevel,
                       double confidenceValue,
+                      Mode mode,
+                      SpaceResult space,
                       LocalDateTime creationTime) {
     }
 
@@ -90,7 +96,8 @@ public interface GetAssessmentReportUseCase {
                      List<AttributeMeasure> attributeMeasures) {
     }
 
-    record AttributeMeasure(String title,
+    record AttributeMeasure(long id,
+                            String title,
                             Double impactPercentage,
                             Double maxPossibleScore,
                             Double gainedScore,
@@ -100,6 +107,9 @@ public interface GetAssessmentReportUseCase {
     }
 
     record Advice(String narration, List<AdviceItem> adviceItems) {
+        public static Advice of(String narration, List<AdviceItem> adviceItems) {
+            return new Advice(narration, adviceItems);
+        }
     }
 
     record Questionnaire(long id,
@@ -113,7 +123,10 @@ public interface GetAssessmentReportUseCase {
                              String participant) {
     }
 
-    record Permissions(boolean canViewDashboard) {
+    record Permissions(boolean canViewDashboard,
+                       boolean canShareReport,
+                       boolean canManageVisibility,
+                       boolean canViewMeasureQuestions) {
     }
 
     record AdviceItem(UUID id,
@@ -128,5 +141,19 @@ public interface GetAssessmentReportUseCase {
     }
 
     record Language(String code) {
+    }
+
+    record Mode(String code) {
+    }
+
+    record SpaceResult(long id,
+                       String title,
+                       boolean isDefault){
+
+        public static SpaceResult of(Space space) {
+            return new SpaceResult(space.getId(),
+                space.getTitle(),
+                space.isDefault());
+        }
     }
 }

@@ -1,7 +1,7 @@
 package org.flickit.assessment.core.application.port.out.assessmentuserrole;
 
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
-import org.flickit.assessment.core.application.domain.FullUser;
+import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 
 import java.util.List;
 import java.util.UUID;
@@ -24,5 +24,16 @@ public interface LoadAssessmentUsersPort {
         }
     }
 
-    List<FullUser> loadAll(UUID assessmentId, List<Integer> roleIds);
+    List<ReportUser> loadAll(UUID assessmentId, List<Integer> roleIds);
+
+    record ReportUser(UUID id,
+                      String displayName,
+                      String email,
+                      String picturePath,
+                      UUID createdBy,
+                      AssessmentUserRole role) {}
+
+    List<UUID> loadAllUserIds(UUID assessmentId);
+
+    boolean hasNonSpaceOwnerAccess(UUID assessmentId);
 }

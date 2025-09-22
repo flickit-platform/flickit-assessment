@@ -52,7 +52,7 @@ public class QuestionPersistenceJpaAdapter implements
     @Override
     public List<Question> loadQuestionsBySubject(long subjectId, long kitVersionId) {
         return repository.findBySubjectId(subjectId, kitVersionId).stream()
-            .map(q -> QuestionMapper.mapToDomainModel(q.getId(), null))
+            .map(q -> QuestionMapper.mapToDomainModelWithImpacts(q.getId(), null))
             .toList();
     }
 
@@ -112,6 +112,11 @@ public class QuestionPersistenceJpaAdapter implements
             .orElseThrow(() -> new ResourceNotFoundException(QUESTIONNAIRE_ID_NOT_FOUND));
 
         return QuestionMapper.mapToDomainWithQuestionnaire(questionEntity.get(), questionnaire);
+    }
+
+    @Override
+    public int loadFirstUnansweredQuestionIndex(long questionnaireId, UUID assessmentResultId) {
+        return repository.findQuestionnaireFirstUnansweredQuestion(questionnaireId, assessmentResultId);
     }
 
     private @Nullable KitLanguage resolveLanguage(AssessmentResultJpaEntity assessmentResult) {

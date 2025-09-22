@@ -3,76 +3,68 @@ package org.flickit.assessment.users.application.port.in.spaceuseraccess;
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_EMAIL_FORMAT_NOT_VALID;
 import static org.flickit.assessment.users.common.ErrorMessageKey.ADD_SPACE_MEMBER_EMAIL_NOT_NULL;
 import static org.flickit.assessment.users.common.ErrorMessageKey.ADD_SPACE_MEMBER_SPACE_ID_NOT_NULL;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class AddSpaceMemberUseCaseParamTest {
 
     @Test
-    void testAddSpaceMember_spaceIdIsNull_ErrorMessage() {
-        UUID currentUserId = UUID.randomUUID();
-        String email = "admin@asta.com";
+    void testAddSpaceMember_spaceIdParamIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new AddSpaceMemberUseCase.Param(null, email, currentUserId));
+            () -> createParam(b -> b.spaceId(null)));
         assertThat(throwable).hasMessage("spaceId: " + ADD_SPACE_MEMBER_SPACE_ID_NOT_NULL);
     }
 
     @Test
-    void testAddSpaceMember_emailIsNull_ErrorMessage() {
-        UUID currentUserId = UUID.randomUUID();
-        long spaceId = 0L;
+    void testAddSpaceMember_emailParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new AddSpaceMemberUseCase.Param(spaceId, null, currentUserId));
+            () -> createParam(b -> b.email(null)));
         assertThat(throwable).hasMessage("email: " + ADD_SPACE_MEMBER_EMAIL_NOT_NULL);
-    }
 
-    @Test
-    void testAddSpaceMember_EmailIsNotValid_ErrorMessage() {
-        long spaceId = 0L;
-        String email = "test.com";
-        UUID currentUserId = UUID.randomUUID();
-        var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new AddSpaceMemberUseCase.Param(spaceId, email, currentUserId));
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.email("  ")));
+        assertThat(throwable).hasMessage("email: " + ADD_SPACE_MEMBER_EMAIL_NOT_NULL);
+
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.email("test.com")));
         assertThat(throwable).hasMessage("email: " + COMMON_EMAIL_FORMAT_NOT_VALID);
     }
 
-    @Test
-    void testAddSpaceMember_EmailIsBlank_ErrorMessage() {
-        long spaceId = 0L;
-        String email = " ";
-        UUID currentUserId = UUID.randomUUID();
-        var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new AddSpaceMemberUseCase.Param(spaceId, email, currentUserId));
-        assertThat(throwable).hasMessage("email: " + ADD_SPACE_MEMBER_EMAIL_NOT_NULL);
+    @ParameterizedTest
+    @ValueSource(strings = {"test@test.com", " Test@test.com    "})
+    void testAddSpaceMember_Email_SuccessfulStripAndIgnoreCase(String email) {
+        assertDoesNotThrow(() -> createParam(b -> b.email(email)));
     }
 
     @Test
-    void testAddSpaceMember_Email_SuccessfulStripAndIgnoreCase() {
-        long spaceId = 0L;
-        String email1 = "test@test.com";
-        String email2 = " Test@test.com    ";
-        UUID currentUserId = UUID.randomUUID();
-        var param1 = new AddSpaceMemberUseCase.Param(spaceId, email1, currentUserId);
-        var param2 = new AddSpaceMemberUseCase.Param(spaceId, email2, currentUserId);
-        assertEquals(param1.getEmail(), param2.getEmail(), "The input email should be stripped, and the case should be ignored.");
-    }
-
-    @Test
-    void testAddSpaceMember_currentUserIdIsNull_ErrorMessage() {
-        long spaceId = 0L;
-        String email = "admin@asta.com";
+    void testAddSpaceMember_currentUserIdParamIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new AddSpaceMemberUseCase.Param(spaceId, email, null));
+            () -> createParam(b -> b.currentUserId(null)));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
+    }
+
+    private void createParam(Consumer<AddSpaceMemberUseCase.Param.ParamBuilder> changer) {
+        var paramBuilder = paramBuilder();
+        changer.accept(paramBuilder);
+        paramBuilder.build();
+    }
+
+    private AddSpaceMemberUseCase.Param.ParamBuilder paramBuilder() {
+        return AddSpaceMemberUseCase.Param.builder()
+            .spaceId(0L)
+            .email("admin@flickit.org")
+            .currentUserId(UUID.randomUUID());
     }
 }
