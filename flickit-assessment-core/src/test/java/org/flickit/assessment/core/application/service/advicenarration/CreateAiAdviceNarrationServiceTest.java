@@ -108,7 +108,7 @@ class CreateAiAdviceNarrationServiceTest {
                 1, 3)));
 
         String aiNarration = "aiNarration";
-        when(createAiAdviceNarrationHelper.createAiAdviceNarration(assessmentResult, param.getAdviceListItems(), param.getAttributeLevelTargets())).thenReturn(aiNarration);
+        when(createAiAdviceNarrationHelper.createAiAdviceNarration(assessmentResult, param.getAdvicePlanItems(), param.getAttributeLevelTargets())).thenReturn(aiNarration);
 
         var result = service.createAiAdviceNarration(param);
         assertNotNull(result);
@@ -126,7 +126,7 @@ class CreateAiAdviceNarrationServiceTest {
     private CreateAiAdviceNarrationUseCase.Param.ParamBuilder paramBuilder() {
         return CreateAiAdviceNarrationUseCase.Param.builder()
             .assessmentId(UUID.randomUUID())
-            .adviceListItems(List.of(AdvicePlanItemMother.createSimpleAdvicePlanItem()))
+            .advicePlanItems(List.of(AdvicePlanItemMother.createSimpleAdvicePlanItem()))
             .attributeLevelTargets(List.of(AttributeLevelTargetMother.createAttributeLevelTarget()))
             .currentUserId(UUID.randomUUID());
     }

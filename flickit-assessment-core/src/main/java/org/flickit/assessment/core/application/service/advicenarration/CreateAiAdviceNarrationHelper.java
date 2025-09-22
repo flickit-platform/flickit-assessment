@@ -47,12 +47,12 @@ public class CreateAiAdviceNarrationHelper {
     private final CreateAdviceNarrationPort createAdviceNarrationPort;
 
     public String createAiAdviceNarration(AssessmentResult assessmentResult,
-                                          List<AdvicePlanItem> questionRecommendations,
+                                          List<AdvicePlanItem> advicePlanItems,
                                           List<AttributeLevelTarget> attributeLevelTargets) {
         if (!appAiProperties.isEnabled())
             return MessageBundle.message(ADVICE_NARRATION_AI_IS_DISABLED);
 
-        var prompt = createPrompt(questionRecommendations, attributeLevelTargets, assessmentResult.getAssessment().getId(), assessmentResult.getLanguage());
+        var prompt = createPrompt(advicePlanItems, attributeLevelTargets, assessmentResult.getAssessment().getId(), assessmentResult.getLanguage());
         AdviceDto aiAdvice = callAiPromptPort.call(prompt, AdviceDto.class);
 
         var adviceItems = aiAdvice.adviceItems().stream()

@@ -82,7 +82,7 @@ class CreateAiAdviceNarrationHelperTest {
     @Spy
     private AppAiProperties appAiProperties = appAiProperties();
 
-    private final List<AdvicePlanItem> questionRecommendations = List.of(AdvicePlanItemMother.createSimpleAdvicePlanItem());
+    private final List<AdvicePlanItem> advicePlanItems = List.of(AdvicePlanItemMother.createSimpleAdvicePlanItem());
 
     private final String aiNarration = "aiNarration";
     private final AssessmentResult assessmentResult = AssessmentResultMother.validResult();
@@ -100,7 +100,7 @@ class CreateAiAdviceNarrationHelperTest {
     void testCreateAiAdviceNarration_whenAiIsDisabled_thenReturnAiIsDisabledMessage() {
         when(appAiProperties.isEnabled()).thenReturn(false);
 
-        var result = helper.createAiAdviceNarration(assessmentResult, questionRecommendations, attributeLevelTargets);
+        var result = helper.createAiAdviceNarration(assessmentResult, advicePlanItems, attributeLevelTargets);
         assertEquals(MessageBundle.message(ADVICE_NARRATION_AI_IS_DISABLED), result);
 
         verifyNoInteractions(
@@ -124,7 +124,7 @@ class CreateAiAdviceNarrationHelperTest {
         when(loadAttributesPort.loadByIdsAndAssessmentId(List.of(attributeLevelTargets.getFirst().getAttributeId()), assessmentId)).thenReturn(attributes);
         when(callAiPromptPort.call(promptArgumentCaptor.capture(), classCaptor.capture())).thenReturn(aiAdvice);
 
-        helper.createAiAdviceNarration(assessmentResult, questionRecommendations, attributeLevelTargets);
+        helper.createAiAdviceNarration(assessmentResult, advicePlanItems, attributeLevelTargets);
 
         verify(createAdviceNarrationPort).persist(createAdviceNarrationCaptor.capture(), eq(assessmentResult.getId()));
         verify(createAdviceItemPort).persistAll(adviceItemsCaptor.capture(), eq(assessmentResult.getId()));
@@ -159,7 +159,7 @@ class CreateAiAdviceNarrationHelperTest {
         when(loadAttributesPort.loadByIdsAndAssessmentId(List.of(attributes.getFirst().getId()), assessmentId)).thenReturn(attributes);
         when(callAiPromptPort.call(promptArgumentCaptor.capture(), classCaptor.capture())).thenReturn(aiAdvice);
 
-        helper.createAiAdviceNarration(assessmentResult, questionRecommendations, attributeLevelTargets);
+        helper.createAiAdviceNarration(assessmentResult, advicePlanItems, attributeLevelTargets);
 
         verify(updateAdviceNarrationPort).updateAiNarration(updateNarrationCaptor.capture());
         verify(createAdviceItemPort).persistAll(adviceItemsCaptor.capture(), eq(assessmentResult.getId()));
@@ -190,7 +190,7 @@ class CreateAiAdviceNarrationHelperTest {
         when(loadAttributesPort.loadByIdsAndAssessmentId(List.of(attributeLevelTargets.getFirst().getAttributeId()), assessmentId)).thenReturn(attributes);
         when(callAiPromptPort.call(promptArgumentCaptor.capture(), classCaptor.capture())).thenReturn(aiAdvice);
 
-        helper.createAiAdviceNarration(assessmentResult, questionRecommendations, attributeLevelTargets);
+        helper.createAiAdviceNarration(assessmentResult, advicePlanItems, attributeLevelTargets);
 
         verify(createAdviceItemPort).persistAll(adviceItemsCaptor.capture(), eq(assessmentResult.getId()));
         verify(updateAdviceNarrationPort).updateAiNarration(updateNarrationCaptor.capture());

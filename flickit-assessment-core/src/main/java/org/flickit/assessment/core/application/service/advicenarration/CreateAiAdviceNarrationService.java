@@ -45,7 +45,7 @@ public class CreateAiAdviceNarrationService implements CreateAiAdviceNarrationUs
 
         var attributeLevelTargets = filterValidAttributeLevelTargets(param.getAssessmentId(), param.getAttributeLevelTargets());
 
-        var narration = createAiAdviceNarrationHelper.createAiAdviceNarration(assessmentResult, param.getAdviceListItems(), attributeLevelTargets);
+        var narration = createAiAdviceNarrationHelper.createAiAdviceNarration(assessmentResult, param.getAdvicePlanItems(), attributeLevelTargets);
         return new Result(narration);
     }
 
