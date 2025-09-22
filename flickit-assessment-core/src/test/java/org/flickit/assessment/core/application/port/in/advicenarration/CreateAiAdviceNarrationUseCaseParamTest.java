@@ -26,8 +26,8 @@ class CreateAiAdviceNarrationUseCaseParamTest {
     @Test
     void testCreateAiAdviceNarrationParam_adviceAiListItemsParamViolatesConstraint_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.adviceListItems(null)));
-        assertThat(throwable).hasMessage("adviceListItems: " + CREATE_AI_ADVICE_NARRATION_ADVICE_LIST_ITEMS_NOT_NULL);
+            () -> createParam(b -> b.advicePlanItems(null)));
+        assertThat(throwable).hasMessage("advicePlanItems: " + CREATE_AI_ADVICE_NARRATION_ADVICE_LIST_ITEMS_NOT_NULL);
     }
 
     @Test
@@ -53,7 +53,7 @@ class CreateAiAdviceNarrationUseCaseParamTest {
     private CreateAiAdviceNarrationUseCase.Param.ParamBuilder paramBuilder() {
         return CreateAiAdviceNarrationUseCase.Param.builder()
             .assessmentId(UUID.randomUUID())
-            .adviceListItems(List.of(AdvicePlanItemMother.createSimpleAdvicePlanItem()))
+            .advicePlanItems(List.of(AdvicePlanItemMother.createSimpleAdvicePlanItem()))
             .attributeLevelTargets(List.of(AttributeLevelTargetMother.createAttributeLevelTarget()))
             .currentUserId(UUID.randomUUID());
     }
