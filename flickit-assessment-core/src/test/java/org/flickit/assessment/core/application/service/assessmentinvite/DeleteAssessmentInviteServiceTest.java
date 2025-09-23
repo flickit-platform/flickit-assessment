@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.DELETE_ASSESSMENT_INVITE;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -36,15 +37,13 @@ class DeleteAssessmentInviteServiceTest {
     @Mock
     private LoadAssessmentInvitePort loadAssessmentInvitePort;
 
+    private final AssessmentInvite assessmentInvite = AssessmentInviteMother.notExpiredAssessmentInvite("user@mail.com");
+    private final DeleteAssessmentInviteUseCase.Param param = createParam(DeleteAssessmentInviteUseCase.Param.ParamBuilder::build);
+
     @Test
     void testDeleteAssessmentInvite_whenUserDoesNotHaveRequiredPermission_thenThrowException() {
-        AssessmentInvite assessmentInvite = AssessmentInviteMother.notExpiredAssessmentInvite("user@mail.com");
-        UUID id = assessmentInvite.getId();
-        UUID currentUserId = UUID.randomUUID();
-        var param = new DeleteAssessmentInviteUseCase.Param(id, currentUserId);
-
-        when(loadAssessmentInvitePort.load(id)).thenReturn(assessmentInvite);
-        when(assessmentAccessChecker.isAuthorized(assessmentInvite.getAssessmentId(), currentUserId, DELETE_ASSESSMENT_INVITE)).thenReturn(false);
+        when(loadAssessmentInvitePort.load(param.getId())).thenReturn(assessmentInvite);
+        when(assessmentAccessChecker.isAuthorized(assessmentInvite.getAssessmentId(), param.getCurrentUserId(), DELETE_ASSESSMENT_INVITE)).thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.deleteInvite(param), COMMON_CURRENT_USER_NOT_ALLOWED);
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
@@ -54,17 +53,24 @@ class DeleteAssessmentInviteServiceTest {
 
     @Test
     void testDeleteAssessmentInvite_whenParametersAreValid_thenDelete() {
-        var assessmentInvite = AssessmentInviteMother.notExpiredAssessmentInvite("user@mail.com");
-        UUID id = assessmentInvite.getId();
-        UUID currentUserId = UUID.randomUUID();
-        var param = new DeleteAssessmentInviteUseCase.Param(id, currentUserId);
-
-        when(loadAssessmentInvitePort.load(id)).thenReturn(assessmentInvite);
-        when(assessmentAccessChecker.isAuthorized(assessmentInvite.getAssessmentId(), currentUserId, DELETE_ASSESSMENT_INVITE)).thenReturn(true);
-        doNothing().when(deleteAssessmentInvitePort).delete(id);
+        when(loadAssessmentInvitePort.load(param.getId())).thenReturn(assessmentInvite);
+        when(assessmentAccessChecker.isAuthorized(assessmentInvite.getAssessmentId(), param.getCurrentUserId(), DELETE_ASSESSMENT_INVITE)).thenReturn(true);
+        doNothing().when(deleteAssessmentInvitePort).delete(param.getId());
 
         service.deleteInvite(param);
 
-        verify(deleteAssessmentInvitePort, times(1)).delete(id);
+        verify(deleteAssessmentInvitePort, times(1)).delete(param.getId());
+    }
+
+    private DeleteAssessmentInviteUseCase.Param createParam(Consumer<DeleteAssessmentInviteUseCase.Param.ParamBuilder> changer) {
+        var paramBuilder = paramBuilder();
+        changer.accept(paramBuilder);
+        return paramBuilder.build();
+    }
+
+    private DeleteAssessmentInviteUseCase.Param.ParamBuilder paramBuilder() {
+        return DeleteAssessmentInviteUseCase.Param.builder()
+            .id(UUID.randomUUID())
+            .currentUserId(UUID.randomUUID());
     }
 }
