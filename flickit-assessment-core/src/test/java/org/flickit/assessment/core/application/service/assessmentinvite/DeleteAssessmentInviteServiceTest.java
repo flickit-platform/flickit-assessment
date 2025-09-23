@@ -42,7 +42,7 @@ class DeleteAssessmentInviteServiceTest {
 
     @Test
     void testDeleteAssessmentInvite_whenCurrentUserDoesNotHaveRequiredPermissionAndUserRoleIsNotReportViewer_thenThrowException() {
-        var assessmentInvite = AssessmentInviteMother.assessmentInviteWithRole(AssessmentUserRole.ASSESSOR, param.getCurrentUserId());
+        AssessmentInvite assessmentInvite = AssessmentInviteMother.assessmentInviteWithRole(AssessmentUserRole.ASSESSOR, param.getCurrentUserId());
 
         when(loadAssessmentInvitePort.load(param.getId())).thenReturn(assessmentInvite);
         when(assessmentAccessChecker.isAuthorized(assessmentInvite.getAssessmentId(), param.getCurrentUserId(), DELETE_ASSESSMENT_INVITE)).thenReturn(false);
