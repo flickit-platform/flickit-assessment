@@ -31,9 +31,8 @@ public class DeleteAssessmentInviteService implements DeleteAssessmentInviteUseC
 
     void validatePermission(Param param) {
         var assessmentInvite = loadAssessmentInvitePort.load(param.getId());
-        var hasDeletePermission = assessmentAccessChecker.isAuthorized(assessmentInvite.getAssessmentId(), param.getCurrentUserId(), DELETE_ASSESSMENT_INVITE);
-        if (!hasDeletePermission)
-            if (!assessmentInvite.getCreatedBy().equals(param.getCurrentUserId()) || !assessmentInvite.getRole().equals(AssessmentUserRole.REPORT_VIEWER))
-                throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
+        if (!assessmentAccessChecker.isAuthorized(assessmentInvite.getAssessmentId(), param.getCurrentUserId(), DELETE_ASSESSMENT_INVITE) &&
+            (!assessmentInvite.getCreatedBy().equals(param.getCurrentUserId()) || !assessmentInvite.getRole().equals(AssessmentUserRole.REPORT_VIEWER)))
+            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
     }
 }
