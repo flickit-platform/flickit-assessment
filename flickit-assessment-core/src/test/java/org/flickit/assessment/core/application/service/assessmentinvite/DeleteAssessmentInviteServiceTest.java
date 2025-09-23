@@ -37,7 +37,7 @@ class DeleteAssessmentInviteServiceTest {
     private LoadAssessmentInvitePort loadAssessmentInvitePort;
 
     @Test
-    void testDeleteAssessmentInvite_WhenUserDoesNotHaveRequiredPermission_ThenThrowException() {
+    void testDeleteAssessmentInvite_whenUserDoesNotHaveRequiredPermission_thenThrowException() {
         AssessmentInvite assessmentInvite = AssessmentInviteMother.notExpiredAssessmentInvite("user@mail.com");
         UUID id = assessmentInvite.getId();
         UUID currentUserId = UUID.randomUUID();
@@ -53,7 +53,7 @@ class DeleteAssessmentInviteServiceTest {
     }
 
     @Test
-    void testDeleteAssessmentInvite_WhenValidInput_ThenDelete() {
+    void testDeleteAssessmentInvite_whenParametersAreValid_thenDelete() {
         var assessmentInvite = AssessmentInviteMother.notExpiredAssessmentInvite("user@mail.com");
         UUID id = assessmentInvite.getId();
         UUID currentUserId = UUID.randomUUID();
