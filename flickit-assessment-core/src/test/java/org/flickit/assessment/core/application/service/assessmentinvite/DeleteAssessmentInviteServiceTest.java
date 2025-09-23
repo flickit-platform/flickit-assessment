@@ -3,6 +3,7 @@ package org.flickit.assessment.core.application.service.assessmentinvite;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.domain.AssessmentInvite;
+import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 import org.flickit.assessment.core.application.port.in.assessmentinvite.DeleteAssessmentInviteUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentinvite.DeleteAssessmentInvitePort;
 import org.flickit.assessment.core.application.port.out.assessmentinvite.LoadAssessmentInvitePort;
@@ -37,11 +38,12 @@ class DeleteAssessmentInviteServiceTest {
     @Mock
     private LoadAssessmentInvitePort loadAssessmentInvitePort;
 
-    private final AssessmentInvite assessmentInvite = AssessmentInviteMother.notExpiredAssessmentInvite("user@mail.com");
     private final DeleteAssessmentInviteUseCase.Param param = createParam(DeleteAssessmentInviteUseCase.Param.ParamBuilder::build);
 
     @Test
-    void testDeleteAssessmentInvite_whenUserDoesNotHaveRequiredPermission_thenThrowException() {
+    void testDeleteAssessmentInvite_whenCurrentUserDoesNotHaveRequiredPermissionAndUserRoleIsNotReportViewer_thenThrowException() {
+        var assessmentInvite = AssessmentInviteMother.assessmentInviteWithRole(AssessmentUserRole.ASSESSOR, param.getCurrentUserId());
+
         when(loadAssessmentInvitePort.load(param.getId())).thenReturn(assessmentInvite);
         when(assessmentAccessChecker.isAuthorized(assessmentInvite.getAssessmentId(), param.getCurrentUserId(), DELETE_ASSESSMENT_INVITE)).thenReturn(false);
 
@@ -52,10 +54,35 @@ class DeleteAssessmentInviteServiceTest {
     }
 
     @Test
+    void testDeleteAssessmentInvite_whenUserDoesNotHaveRequiredPermissionAndIsNotUseInviter_thenThrowException() {
+        var assessmentInvite = AssessmentInviteMother.assessmentInviteWithRole(AssessmentUserRole.REPORT_VIEWER, UUID.randomUUID());
+
+        when(loadAssessmentInvitePort.load(param.getId())).thenReturn(assessmentInvite);
+        when(assessmentAccessChecker.isAuthorized(assessmentInvite.getAssessmentId(), param.getCurrentUserId(), DELETE_ASSESSMENT_INVITE)).thenReturn(false);
+
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.deleteInvite(param), COMMON_CURRENT_USER_NOT_ALLOWED);
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+
+        verifyNoInteractions(deleteAssessmentInvitePort);
+    }
+
+
+    @Test
     void testDeleteAssessmentInvite_whenParametersAreValid_thenDelete() {
+        AssessmentInvite assessmentInvite = AssessmentInviteMother.assessmentInviteWithRole(AssessmentUserRole.COMMENTER, param.getCurrentUserId());
         when(loadAssessmentInvitePort.load(param.getId())).thenReturn(assessmentInvite);
         when(assessmentAccessChecker.isAuthorized(assessmentInvite.getAssessmentId(), param.getCurrentUserId(), DELETE_ASSESSMENT_INVITE)).thenReturn(true);
-        doNothing().when(deleteAssessmentInvitePort).delete(param.getId());
+
+        service.deleteInvite(param);
+
+        verify(deleteAssessmentInvitePort, times(1)).delete(param.getId());
+    }
+
+    @Test
+    void testDeleteAssessmentInvite_whenParametersAreValidWithoutPermissionButInviter_thenDelete() {
+        AssessmentInvite assessmentInvite = AssessmentInviteMother.assessmentInviteWithRole(AssessmentUserRole.REPORT_VIEWER, param.getCurrentUserId());
+        when(loadAssessmentInvitePort.load(param.getId())).thenReturn(assessmentInvite);
+        when(assessmentAccessChecker.isAuthorized(assessmentInvite.getAssessmentId(), param.getCurrentUserId(), DELETE_ASSESSMENT_INVITE)).thenReturn(false);
 
         service.deleteInvite(param);
 
