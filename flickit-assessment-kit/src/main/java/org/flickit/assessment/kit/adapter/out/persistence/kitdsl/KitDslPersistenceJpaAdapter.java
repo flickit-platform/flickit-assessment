@@ -14,8 +14,6 @@ import org.flickit.assessment.kit.application.port.out.kitdsl.UpdateKitDslPort;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -42,30 +40,7 @@ public class KitDslPersistenceJpaAdapter implements
 
     @Override
     public AssessmentKitDslModel convert(MultipartFile excelFile) {
-        ExcelToDslModelConverter converter = new ExcelToDslModelConverter();
-        try (InputStream is = excelFile.getInputStream();
-             Workbook workbook = WorkbookFactory.create(is)) {
-
-            var qualityAttributes = workbook.getSheet("QualityAttributes");
-
-            var subjects = converter.convertSubjects(qualityAttributes);
-            System.out.println(subjects);
-            var attributes = converter.convertAttributes(qualityAttributes);
-            System.out.println(attributes);
-            var Questionnaires = converter.convertQuestionnaires(workbook.getSheet("Questionnaires"));
-            System.out.println(Questionnaires);
-            var questions = converter.convertQuestions(workbook.getSheet("Questions"));
-            System.out.println(questions);
-            var sheet2 = workbook.getSheet("sheet2");
-            var sheet3 = workbook.getSheet("sheet3");
-            var sheet4 = workbook.getSheet("sheet4");
-
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        return null;
+        return ExcelToDslModelConverter.convert(excelFile);
     }
 
     @Override
