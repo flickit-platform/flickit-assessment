@@ -3,6 +3,7 @@ package org.flickit.assessment.core.application.service.assessmentinvite;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.core.application.domain.AssessmentInvite;
 import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 import org.flickit.assessment.core.application.port.in.assessmentinvite.DeleteAssessmentInviteUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentinvite.DeleteAssessmentInvitePort;
@@ -24,7 +25,7 @@ public class DeleteAssessmentInviteService implements DeleteAssessmentInviteUseC
 
     @Override
     public void deleteInvite(Param param) {
-        var assessmentInvite = loadAssessmentInvitePort.load(param.getId());
+        AssessmentInvite assessmentInvite = loadAssessmentInvitePort.load(param.getId());
         if (!assessmentAccessChecker.isAuthorized(assessmentInvite.getAssessmentId(), param.getCurrentUserId(), DELETE_ASSESSMENT_INVITE) &&
             (!assessmentInvite.getCreatedBy().equals(param.getCurrentUserId()) || !assessmentInvite.getRole().equals(AssessmentUserRole.REPORT_VIEWER)))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
