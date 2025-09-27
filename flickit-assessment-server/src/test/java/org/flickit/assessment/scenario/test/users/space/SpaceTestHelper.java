@@ -49,7 +49,7 @@ public class SpaceTestHelper {
             .response();
     }
 
-    public Response getList(ScenarioContext context, Map<String, Integer> queryParams) {
+    public Response getUserSpaces(ScenarioContext context, Map<String, Integer> queryParams) {
         return given()
             .auth().oauth2(context.getCurrentUser().getJwt())
             .queryParams(queryParams)
