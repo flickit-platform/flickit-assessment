@@ -2,10 +2,14 @@ package org.flickit.assessment.core.application.service.assessment;
 
 import org.flickit.assessment.common.application.domain.assessment.AssessmentPermissionChecker;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.application.domain.space.SpaceStatus;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentListItem;
+import org.flickit.assessment.core.application.domain.AssessmentMode;
 import org.flickit.assessment.core.application.port.in.assessment.GetSpaceAssessmentListUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentListPort;
+import org.flickit.assessment.core.application.port.out.space.LoadSpacePort;
 import org.flickit.assessment.core.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
 import org.junit.jupiter.api.Test;
@@ -16,15 +20,18 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Sort;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.core.common.ErrorMessageKey.GET_SPACE_ASSESSMENT_LIST_SPACE_ID_NOT_FOUND;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentKitMother.kit;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentMother.assessmentListItem;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -42,20 +49,44 @@ class GetSpaceAssessmentListServiceTest {
     @Mock
     private AssessmentPermissionChecker assessmentPermissionChecker;
 
+    @Mock
+    private LoadSpacePort loadSpacePort;
+
+    private final GetSpaceAssessmentListUseCase.Param param = createParam(GetSpaceAssessmentListUseCase.Param.ParamBuilder::build);
+
+    @Test
+    void testGetSpaceAssessmentList_whenSpaceNotFound_thenThrowResourceNotFoundException() {
+        when(loadSpacePort.loadStatusById(param.getSpaceId())).thenReturn(Optional.empty());
+
+        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.getAssessmentList(param));
+        assertEquals(GET_SPACE_ASSESSMENT_LIST_SPACE_ID_NOT_FOUND, throwable.getMessage());
+
+        verifyNoInteractions(loadAssessmentPort, assessmentPermissionChecker, checkSpaceAccessPort);
+    }
+
+    @Test
+    void testGetSpaceAssessmentList_whenSpaceIsInactive_thenThrowAccessDeniedException() {
+        when(loadSpacePort.loadStatusById(param.getSpaceId())).thenReturn(Optional.of(SpaceStatus.INACTIVE));
+
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.getAssessmentList(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+
+        verifyNoInteractions(loadAssessmentPort, assessmentPermissionChecker, checkSpaceAccessPort);
+    }
+
     @Test
     void testGetSpaceAssessmentList_whenCurrentUserIsNotSpaceMember_thenThrowAccessDeniedException() {
-        var param = createParam(GetSpaceAssessmentListUseCase.Param.ParamBuilder::build);
-
+        when(loadSpacePort.loadStatusById(param.getSpaceId())).thenReturn(Optional.of(SpaceStatus.ACTIVE));
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.getAssessmentList(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+
+        verifyNoInteractions(assessmentPermissionChecker, loadAssessmentPort);
     }
 
     @Test
-    void testGetSpaceAssessmentList_NoResultsFound_NoItemReturned() {
-        var param = createParam(GetSpaceAssessmentListUseCase.Param.ParamBuilder::build);
-
+    void testGetSpaceAssessmentList_whenNoResultFound_thenReturnEmptyPaginatedResponse() {
         PaginatedResponse<AssessmentListItem> paginatedResponse = new PaginatedResponse<>(
             List.of(),
             param.getPage(),
@@ -66,6 +97,7 @@ class GetSpaceAssessmentListServiceTest {
 
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
         when(loadAssessmentPort.loadSpaceAssessments(param.getSpaceId(), param.getCurrentUserId(), param.getPage(), param.getSize())).thenReturn(paginatedResponse);
+        when(loadSpacePort.loadStatusById(param.getSpaceId())).thenReturn(Optional.of(SpaceStatus.ACTIVE));
 
         var result = service.getAssessmentList(param);
 
@@ -76,9 +108,9 @@ class GetSpaceAssessmentListServiceTest {
     void testGetSpaceAssessmentList_ResultsFoundForSpaceId_ItemsReturned() {
         var param = createParam(GetSpaceAssessmentListUseCase.Param.ParamBuilder::build);
 
-        var assessment1 = assessmentListItem(param.getSpaceId(), kit().getId(), false);
-        var assessment2 = assessmentListItem(param.getSpaceId(), kit().getId(), true);
-        var assessment3 = assessmentListItem(param.getSpaceId(), kit().getId(), true);
+        var assessment1 = assessmentListItem(param.getSpaceId(), kit().getId(), false, AssessmentMode.ADVANCED);
+        var assessment2 = assessmentListItem(param.getSpaceId(), kit().getId(), true, AssessmentMode.QUICK);
+        var assessment3 = assessmentListItem(param.getSpaceId(), kit().getId(), true, AssessmentMode.QUICK);
 
         var paginatedRes = new PaginatedResponse<>(
             List.of(assessment1, assessment2, assessment3),
@@ -89,6 +121,7 @@ class GetSpaceAssessmentListServiceTest {
             3
         );
 
+        when(loadSpacePort.loadStatusById(param.getSpaceId())).thenReturn(Optional.of(SpaceStatus.ACTIVE));
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
         when(loadAssessmentPort.loadSpaceAssessments(param.getSpaceId(), param.getCurrentUserId(), param.getPage(), param.getSize()))
             .thenReturn(paginatedRes);
@@ -118,17 +151,7 @@ class GetSpaceAssessmentListServiceTest {
 
         assertPaginationProperties(paginatedRes, result);
 
-        assertThat(result.getItems())
-            .zipSatisfy(paginatedRes.getItems(), (actual, expected) -> {
-                assertEquals(expected.id(), actual.id());
-                assertEquals(expected.title(), actual.title());
-                assertEquals(expected.kit(), actual.kit());
-                assertEquals(expected.lastModificationTime(), actual.lastModificationTime());
-                assertTrue(actual.isCalculateValid());
-                assertTrue(actual.isConfidenceValid());
-                assertFalse(actual.hasReport());
-                assertNotNull(actual.permissions());
-            });
+        assertThat(result.getItems()).zipSatisfy(paginatedRes.getItems(), this::assertAssessmentListItem);
 
         // for first assessment
         var firstAssessment = result.getItems().getFirst();
@@ -138,6 +161,7 @@ class GetSpaceAssessmentListServiceTest {
         assertFalse(firstAssessment.permissions().canViewReport());
         assertFalse(firstAssessment.permissions().canViewDashboard());
         assertTrue(firstAssessment.permissions().canViewQuestionnaires());
+        assertEquals(assessment1.mode().getCode(), firstAssessment.mode().code());
 
         // for second assessment
         var secondAssessment = result.getItems().get(1);
@@ -147,6 +171,7 @@ class GetSpaceAssessmentListServiceTest {
         assertTrue(secondAssessment.permissions().canViewReport());
         assertFalse(secondAssessment.permissions().canViewDashboard());
         assertTrue(secondAssessment.permissions().canViewQuestionnaires());
+        assertEquals(assessment2.mode().getCode(), secondAssessment.mode().code());
 
         // for third assessment
         var thirdAssessment = result.getItems().getLast();
@@ -156,6 +181,7 @@ class GetSpaceAssessmentListServiceTest {
         assertTrue(thirdAssessment.permissions().canViewReport());
         assertTrue(thirdAssessment.permissions().canViewDashboard());
         assertTrue(thirdAssessment.permissions().canViewQuestionnaires());
+        assertEquals(assessment3.mode().getCode(), thirdAssessment.mode().code());
     }
 
     private static void assertPaginationProperties(PaginatedResponse<AssessmentListItem> expected,
@@ -164,6 +190,19 @@ class GetSpaceAssessmentListServiceTest {
         assertEquals(expected.getSize(), result.getSize());
         assertEquals(expected.getPage(), result.getPage());
         assertEquals(expected.getTotal(), result.getTotal());
+    }
+
+    private void assertAssessmentListItem(GetSpaceAssessmentListUseCase.SpaceAssessmentListItem actual, AssessmentListItem expected) {
+        assertEquals(expected.id(), actual.id());
+        assertEquals(expected.title(), actual.title());
+        assertEquals(expected.kit(), actual.kit());
+        assertEquals(expected.lastModificationTime(), actual.lastModificationTime());
+        assertTrue(actual.isCalculateValid());
+        assertTrue(actual.isConfidenceValid());
+        assertFalse(actual.hasReport());
+        assertNotNull(actual.permissions());
+        assertEquals(expected.language().getCode(), actual.language().code());
+        assertEquals(expected.language().getTitle(), actual.language().title());
     }
 
     private GetSpaceAssessmentListUseCase.Param createParam(Consumer<GetSpaceAssessmentListUseCase.Param.ParamBuilder> changer) {

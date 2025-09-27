@@ -2,6 +2,7 @@ package org.flickit.assessment.data.jpa.users.space;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldNameConstants;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -12,6 +13,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@FieldNameConstants
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class SpaceJpaEntity {
 
@@ -39,6 +41,9 @@ public class SpaceJpaEntity {
 
     @Column(name = "subscription_expiry")
     private LocalDateTime subscriptionExpiry;
+
+    @Column(name = "is_default")
+    private boolean isDefault;
 
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;

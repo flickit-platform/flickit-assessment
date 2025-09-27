@@ -15,5 +15,6 @@ public class Space {
     private final String title;
     private final UUID ownerId;
     private final SpaceType type;
+    private final boolean isDefault;
     private final LocalDateTime subscriptionExpiry;
 }

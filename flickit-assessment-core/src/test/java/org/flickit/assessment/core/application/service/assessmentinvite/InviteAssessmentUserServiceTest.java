@@ -6,6 +6,7 @@ import org.flickit.assessment.common.application.port.out.SendEmailPort;
 import org.flickit.assessment.common.config.AppSpecProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.domain.AssessmentUserRoleItem;
 import org.flickit.assessment.core.application.domain.User;
 import org.flickit.assessment.core.application.port.in.assessmentinvite.InviteAssessmentUserUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentPort;
@@ -13,15 +14,12 @@ import org.flickit.assessment.core.application.port.out.assessmentinvite.CreateA
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.GrantUserAssessmentRolePort;
 import org.flickit.assessment.core.application.port.out.space.CreateSpaceInvitePort;
 import org.flickit.assessment.core.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
-import org.flickit.assessment.core.application.port.out.spaceuseraccess.CreateAssessmentSpaceUserAccessPort;
+import org.flickit.assessment.core.application.port.out.spaceuseraccess.CreateSpaceUserAccessPort;
 import org.flickit.assessment.core.application.port.out.user.LoadUserPort;
 import org.flickit.assessment.core.test.fixture.application.AssessmentMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Spy;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
@@ -65,7 +63,10 @@ class InviteAssessmentUserServiceTest {
     CheckSpaceAccessPort checkSpaceAccessPort;
 
     @Mock
-    CreateAssessmentSpaceUserAccessPort createAssessmentSpaceUserAccessPort;
+    CreateSpaceUserAccessPort createSpaceUserAccessPort;
+
+    @Captor
+    private ArgumentCaptor<AssessmentUserRoleItem> roleItemArgumentCaptor;
 
     @Spy // @Spy added for injecting this field in #service
     AppSpecProperties appSpecProperties = appSpecProperties();
@@ -75,7 +76,7 @@ class InviteAssessmentUserServiceTest {
         var param = createParam(InviteAssessmentUserUseCase.Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_USER_ASSESSMENT_ROLE)).thenReturn(true);
-        when(loadAssessmentPort.getAssessmentById(param.getAssessmentId())).thenThrow(new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND));
+        when(loadAssessmentPort.loadById(param.getAssessmentId())).thenThrow(new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND));
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.inviteUser(param));
         assertEquals(ASSESSMENT_ID_NOT_FOUND, throwable.getMessage());
@@ -102,7 +103,7 @@ class InviteAssessmentUserServiceTest {
         var assessment = AssessmentMother.assessment();
         var param = createParam(b -> b.assessmentId(assessment.getId()));
 
-        when(loadAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
+        when(loadAssessmentPort.loadById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
         when(loadUserPort.loadByEmail(param.getEmail())).thenReturn(Optional.empty());
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_USER_ASSESSMENT_ROLE)).thenReturn(true);
         doNothing().when(createSpaceInvitePort).persist(any());
@@ -123,7 +124,7 @@ class InviteAssessmentUserServiceTest {
         verify(createAssessmentInvitePort).persist(assessmentInvitationParamCaptor.capture());
         assertEquals(param.getAssessmentId(), assessmentInvitationParamCaptor.getValue().assessmentId());
         assertEquals(param.getEmail(), assessmentInvitationParamCaptor.getValue().email());
-        assertEquals(param.getRoleId(), assessmentInvitationParamCaptor.getValue().roleId());
+        assertEquals(param.getRoleId(), assessmentInvitationParamCaptor.getValue().role().getId());
         assertNotNull(assessmentInvitationParamCaptor.getValue().creationTime());
         assertEquals(assessmentInvitationParamCaptor.getValue().creationTime().plusDays(7), assessmentInvitationParamCaptor.getValue().expirationTime());
         assertEquals(param.getCurrentUserId(), assessmentInvitationParamCaptor.getValue().createdBy());
@@ -141,7 +142,7 @@ class InviteAssessmentUserServiceTest {
         var assessment = AssessmentMother.assessment();
         var param = createParam(b -> b.assessmentId(assessment.getId()));
 
-        when(loadAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
+        when(loadAssessmentPort.loadById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
         when(loadUserPort.loadByEmail(param.getEmail())).thenReturn(Optional.empty());
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_USER_ASSESSMENT_ROLE)).thenReturn(true);
         doNothing().when(createSpaceInvitePort).persist(any());
@@ -165,16 +166,22 @@ class InviteAssessmentUserServiceTest {
         var param = createParam(b -> b.assessmentId(assessment.getId()));
         var user = new User(UUID.randomUUID(), "Display Name", "user@mail.com");
 
-        when(loadAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
+        when(loadAssessmentPort.loadById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
         when(loadUserPort.loadByEmail(param.getEmail())).thenReturn(Optional.of(user));
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_USER_ASSESSMENT_ROLE)).thenReturn(true);
         when(checkSpaceAccessPort.checkIsMember(assessment.getSpace().getId(), user.getId())).thenReturn(true);
-        doNothing().when(grantUserAssessmentRolePort).persist(assessment.getId(), user.getId(), param.getRoleId());
 
         service.inviteUser(param);
 
+        verify(grantUserAssessmentRolePort, times(1)).persist(roleItemArgumentCaptor.capture());
+        assertEquals(param.getAssessmentId(), roleItemArgumentCaptor.getValue().getAssessmentId());
+        assertEquals(user.getId(), roleItemArgumentCaptor.getValue().getUserId());
+        assertEquals(param.getRoleId(), roleItemArgumentCaptor.getValue().getRole().getId());
+        assertEquals(param.getCurrentUserId(), roleItemArgumentCaptor.getValue().getCreatedBy());
+        assertNotNull(roleItemArgumentCaptor.getValue().getCreationTime());
+
         verifyNoInteractions(sendEmailPort, createAssessmentInvitePort, createSpaceInvitePort,
-            createAssessmentSpaceUserAccessPort);
+            createSpaceUserAccessPort);
     }
 
     @Test
@@ -183,22 +190,34 @@ class InviteAssessmentUserServiceTest {
         var param = createParam(b -> b.assessmentId(assessment.getId()));
         var user = new User(UUID.randomUUID(), "Display Name", "user@mail.com");
 
-        when(loadAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
+        when(loadAssessmentPort.loadById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
         when(loadUserPort.loadByEmail(param.getEmail())).thenReturn(Optional.of(user));
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_USER_ASSESSMENT_ROLE)).thenReturn(true);
         when(checkSpaceAccessPort.checkIsMember(assessment.getSpace().getId(), user.getId())).thenReturn(false);
-        doNothing().when(grantUserAssessmentRolePort).persist(assessment.getId(), user.getId(), param.getRoleId());
-        doNothing().when(createAssessmentSpaceUserAccessPort).persist(any(CreateAssessmentSpaceUserAccessPort.Param.class));
-
         service.inviteUser(param);
 
-        ArgumentCaptor<CreateAssessmentSpaceUserAccessPort.Param> spaceAccessParamCaptor =
-            ArgumentCaptor.forClass(CreateAssessmentSpaceUserAccessPort.Param.class);
-        verify(createAssessmentSpaceUserAccessPort).persist(spaceAccessParamCaptor.capture());
+        ArgumentCaptor<CreateSpaceUserAccessPort.CreateParam> spaceAccessParamCaptor =
+            ArgumentCaptor.forClass(CreateSpaceUserAccessPort.CreateParam.class);
+        verify(createSpaceUserAccessPort).persistByAssessmentId(spaceAccessParamCaptor.capture());
         assertEquals(param.getAssessmentId(), spaceAccessParamCaptor.getValue().assessmentId());
         assertEquals(user.getId(), spaceAccessParamCaptor.getValue().userId());
         assertEquals(param.getCurrentUserId(), spaceAccessParamCaptor.getValue().createdBy());
         assertNotNull(spaceAccessParamCaptor.getValue().creationTime());
+
+        verify(grantUserAssessmentRolePort, times(1)).persist(roleItemArgumentCaptor.capture());
+        assertEquals(param.getAssessmentId(), roleItemArgumentCaptor.getValue().getAssessmentId());
+        assertEquals(user.getId(), roleItemArgumentCaptor.getValue().getUserId());
+        assertEquals(param.getRoleId(), roleItemArgumentCaptor.getValue().getRole().getId());
+        assertEquals(param.getCurrentUserId(), roleItemArgumentCaptor.getValue().getCreatedBy());
+        assertNotNull(roleItemArgumentCaptor.getValue().getCreationTime());
+
+        ArgumentCaptor<CreateSpaceUserAccessPort.CreateParam> createSpaceParamCaptor =
+            ArgumentCaptor.forClass(CreateSpaceUserAccessPort.CreateParam.class);
+        verify(createSpaceUserAccessPort, times(1)).persistByAssessmentId(createSpaceParamCaptor.capture());
+        assertEquals(param.getAssessmentId(), createSpaceParamCaptor.getValue().assessmentId());
+        assertEquals(user.getId(), createSpaceParamCaptor.getValue().userId());
+        assertEquals(param.getCurrentUserId(), createSpaceParamCaptor.getValue().createdBy());
+        assertNotNull(createSpaceParamCaptor.getValue().creationTime());
 
         verifyNoInteractions(sendEmailPort, createAssessmentInvitePort, createSpaceInvitePort);
     }

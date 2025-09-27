@@ -2,7 +2,9 @@ package org.flickit.assessment.kit.adapter.out.persistence.attribute;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.util.JsonUtils;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity.Fields;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
@@ -11,8 +13,10 @@ import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.flickit.assessment.kit.adapter.out.persistence.subject.SubjectMapper;
 import org.flickit.assessment.kit.application.domain.Attribute;
+import org.flickit.assessment.kit.application.domain.AttributeMini;
 import org.flickit.assessment.kit.application.domain.AttributeWithSubject;
 import org.flickit.assessment.kit.application.port.out.attribute.*;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
@@ -21,8 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static org.flickit.assessment.kit.adapter.out.persistence.attribute.AttributeMapper.mapToDomainModel;
-import static org.flickit.assessment.kit.adapter.out.persistence.attribute.AttributeMapper.mapToJpaEntity;
+import static org.flickit.assessment.kit.adapter.out.persistence.attribute.AttributeMapper.*;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 @Component
@@ -44,6 +47,7 @@ public class AttributePersistenceJpaAdapter implements
         if (!repository.existsByIdAndKitVersionId(param.id(), param.kitVersionId()))
             throw new ResourceNotFoundException(ATTRIBUTE_ID_NOT_FOUND);
 
+        var translations = JsonUtils.toJson(param.translations());
         repository.update(param.id(),
             param.kitVersionId(),
             param.code(),
@@ -51,6 +55,7 @@ public class AttributePersistenceJpaAdapter implements
             param.index(),
             param.description(),
             param.weight(),
+            translations,
             param.lastModificationTime(),
             param.lastModifiedBy(),
             param.subjectId());
@@ -84,7 +89,7 @@ public class AttributePersistenceJpaAdapter implements
     @Override
     public Long persist(Attribute attribute, Long subjectId, Long kitVersionId) {
         var subjectEntityId = new SubjectJpaEntity.EntityId(subjectId, kitVersionId);
-        SubjectJpaEntity subjectJpaEntity = subjectRepository.findById(subjectEntityId)
+        var subjectJpaEntity = subjectRepository.findById(subjectEntityId)
             .orElseThrow(() -> new ResourceNotFoundException(CREATE_ATTRIBUTE_SUBJECT_ID_NOT_FOUND));
 
         var entity = mapToJpaEntity(attribute, subjectJpaEntity);
@@ -100,10 +105,20 @@ public class AttributePersistenceJpaAdapter implements
     }
 
     @Override
-    public List<Attribute> loadUnimpactedAttributes(long kitVersionId) {
+    public List<AttributeMini> loadUnimpactedAttributes(long kitVersionId) {
+        var language = KitLanguage.valueOf(LocaleContextHolder.getLocale().getLanguage().toUpperCase());
         return repository.findAllByKitVersionIdAndWithoutImpact(kitVersionId)
             .stream()
-            .map(AttributeMapper::mapToDomainModel)
+            .map(e -> mapToAttributeMiniDomainModel(e, language))
+            .toList();
+    }
+
+    @Override
+    public List<AttributeMini> loadWithoutMeasures(long kitVersionId) {
+        var language = KitLanguage.valueOf(LocaleContextHolder.getLocale().getLanguage().toUpperCase());
+        return repository.findAllByKitVersionIdAndWithoutMeasures(kitVersionId)
+            .stream()
+            .map(e -> mapToAttributeMiniDomainModel(e, language))
             .toList();
     }
 
@@ -113,9 +128,10 @@ public class AttributePersistenceJpaAdapter implements
     }
 
     @Override
-    public List<Attribute> loadAllByIdsAndKitVersionId(List<Long> attributeIds, long kitVersionId) {
+    public List<AttributeMini> loadAllByIdsAndKitVersionId(List<Long> attributeIds, long kitVersionId) {
+        var language = KitLanguage.valueOf(LocaleContextHolder.getLocale().getLanguage().toUpperCase());
         return repository.findAllByIdInAndKitVersionId(attributeIds, kitVersionId).stream()
-            .map(AttributeMapper::mapToDomainModel)
+            .map(e -> mapToAttributeMiniDomainModel(e, language))
             .toList();
     }
 
@@ -132,7 +148,9 @@ public class AttributePersistenceJpaAdapter implements
         var pageResult = repository.findAllByKitVersionId(kitVersionId, PageRequest.of(page, size));
 
         var items = pageResult.getContent().stream()
-            .map(x -> new AttributeWithSubject(mapToDomainModel(x.getAttribute()), SubjectMapper.mapToDomainModel(x.getSubject(), null)))
+            .map(x -> new AttributeWithSubject(
+                mapToDomainModel(x.getAttribute()),
+                SubjectMapper.mapToDomainModel(x.getSubject(), null)))
             .toList();
 
         return new PaginatedResponse<>(items,

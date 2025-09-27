@@ -8,7 +8,10 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.common.application.domain.kit.translation.MaturityLevelTranslation;
 
+import java.util.Map;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
@@ -45,6 +48,11 @@ public interface GetKitMaturityLevelsUseCase {
         }
     }
 
-    record MaturityLevelListItem(long id, int index, String title, String description, int value) {
+    record MaturityLevelListItem(long id,
+                                 int index,
+                                 String title,
+                                 String description,
+                                 int value,
+                                 Map<KitLanguage, MaturityLevelTranslation> translations) {
     }
 }

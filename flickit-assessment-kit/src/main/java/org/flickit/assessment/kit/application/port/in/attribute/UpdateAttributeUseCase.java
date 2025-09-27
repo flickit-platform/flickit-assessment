@@ -1,5 +1,7 @@
 package org.flickit.assessment.kit.application.port.in.attribute;
 
+import jakarta.annotation.Nullable;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -7,10 +9,15 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.common.application.domain.kit.translation.AttributeTranslation;
 
+import java.util.Map;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_KIT_LANGUAGE_NOT_VALID;
+import static org.flickit.assessment.common.validation.EnumValidateUtils.validateAndConvert;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 public interface UpdateAttributeUseCase {
@@ -46,6 +53,10 @@ public interface UpdateAttributeUseCase {
         @NotNull(message = UPDATE_ATTRIBUTE_SUBJECT_ID_NOT_NULL)
         Long subjectId;
 
+        @Valid
+        @Nullable
+        Map<KitLanguage, AttributeTranslation> translations;
+
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
@@ -57,6 +68,7 @@ public interface UpdateAttributeUseCase {
                      String description,
                      Integer weight,
                      Long subjectId,
+                     Map<String, AttributeTranslation> translations,
                      UUID currentUserId) {
             this.attributeId = attributeId;
             this.kitVersionId = kitVersionId;
@@ -65,6 +77,7 @@ public interface UpdateAttributeUseCase {
             this.description = description;
             this.weight = weight;
             this.subjectId = subjectId;
+            this.translations = validateAndConvert(translations, KitLanguage.class, COMMON_KIT_LANGUAGE_NOT_VALID);
             this.currentUserId = currentUserId;
             this.validateSelf();
         }

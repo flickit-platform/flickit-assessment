@@ -5,11 +5,16 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentAcc
 import org.flickit.assessment.common.application.domain.assessment.AssessmentPermissionChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.domain.User;
 import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentUseCase;
+import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentUseCase.Result.Language;
+import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentUseCase.Result.Mode;
 import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentPort;
+import org.flickit.assessment.core.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.LoadUserRoleForAssessmentPort;
+import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelPort;
 import org.flickit.assessment.core.application.port.out.user.LoadUserPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,13 +36,15 @@ public class GetAssessmentService implements GetAssessmentUseCase {
     private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final LoadUserRoleForAssessmentPort loadUserRoleForAssessmentPort;
     private final AssessmentPermissionChecker assessmentPermissionChecker;
+    private final LoadMaturityLevelPort loadMaturityLevelPort;
+    private final LoadAssessmentKitPort loadAssessmentKitPort;
 
     @Override
     public Result getAssessment(Param param) {
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        var assessment = loadAssessmentPort.getAssessmentById(param.getAssessmentId())
+        var assessment = loadAssessmentPort.loadById(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_ASSESSMENT_ID_NOT_FOUND));
 
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
@@ -50,18 +57,27 @@ public class GetAssessmentService implements GetAssessmentUseCase {
 
         boolean viewable = assessmentPermissionChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT);
 
+        var assessmentKit = loadAssessmentKitPort.loadAssessmentKit(assessment.getAssessmentKit().getId(), assessmentResult.getLanguage())
+            .orElseThrow(() -> new ResourceNotFoundException(ASSESSMENT_KIT_ID_NOT_FOUND));
+
+        MaturityLevel maturityLevel = null;
+        if (viewable)
+            maturityLevel = loadMaturityLevelPort.load(assessmentResult.getMaturityLevel().getId(), assessmentResult.getAssessment().getId());
+
         return new Result(
             assessment.getId(),
             assessment.getTitle(),
             assessment.getShortTitle(),
             assessment.getSpace(),
             assessment.getKitCustomId(),
-            assessment.getAssessmentKit(),
+            new Result.AssessmentKit(assessmentKit.getId(), assessmentKit.getTitle()),
+            Mode.of(assessment.getMode()),
             assessment.getCreationTime(),
             assessment.getLastModificationTime(),
             new User(createdBy.getId(), createdBy.getDisplayName(), null),
-            viewable ? assessmentResult.getMaturityLevel() : null,
+            maturityLevel,
             assessmentResult.getIsCalculateValid(),
+            Language.of(assessmentResult.getLanguage()),
             userRole.map(role -> role.equals(MANAGER)).orElse(false),
             viewable);
     }

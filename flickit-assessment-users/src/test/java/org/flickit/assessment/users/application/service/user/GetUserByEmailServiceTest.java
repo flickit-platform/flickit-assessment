@@ -26,7 +26,7 @@ class GetUserByEmailServiceTest {
     private LoadUserPort loadUserPort;
 
     @Test
-    void testGetUserByEmail_WhenEmailIsValid_ReturnsUser() {
+    void testGetUserByEmail_whenEmailIsValid_thenReturnsUser() {
         String mail = "admin@flickit.org";
         User user = new User(UUID.randomUUID(),
             mail,
@@ -54,5 +54,4 @@ class GetUserByEmailServiceTest {
         assertTrue(actual.isActive());
         assertEquals(result.password(), actual.password());
     }
-
 }

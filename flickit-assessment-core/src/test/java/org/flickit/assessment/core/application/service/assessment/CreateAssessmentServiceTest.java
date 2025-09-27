@@ -1,5 +1,6 @@
 package org.flickit.assessment.core.application.service.assessment;
 
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.config.AppSpecProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
@@ -16,18 +17,17 @@ import org.flickit.assessment.core.application.port.out.assessmentkit.LoadAssess
 import org.flickit.assessment.core.application.port.out.assessmentresult.CreateAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.GrantUserAssessmentRolePort;
 import org.flickit.assessment.core.application.port.out.attributevalue.CreateAttributeValuePort;
+import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.core.application.port.out.space.LoadSpacePort;
 import org.flickit.assessment.core.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectsPort;
 import org.flickit.assessment.core.application.port.out.subjectvalue.CreateSubjectValuePort;
 import org.flickit.assessment.core.test.fixture.application.AttributeMother;
+import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
 import org.flickit.assessment.core.test.fixture.application.SpaceMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Spy;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
@@ -35,11 +35,14 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import static org.assertj.core.api.Assertions.tuple;
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_SPACE_ID_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentKitMother.kit;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentKitMother.publicKit;
+import static org.flickit.assessment.core.test.fixture.application.SpaceMother.createBasicSpaceWithOwnerId;
 import static org.flickit.assessment.core.test.fixture.application.SpaceMother.createExpiredPremiumSpace;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -83,18 +86,25 @@ class CreateAssessmentServiceTest {
     @Mock
     private LoadAssessmentKitPort loadAssessmentKitPort;
 
+    @Mock
+    private LoadMaturityLevelsPort loadMaturityLevelsPort;
+
+    @Captor
+    private ArgumentCaptor<AssessmentUserRoleItem> roleItemCaptor;
+
     @Spy
     AppSpecProperties appSpecProperties = appSpecProperties();
 
     private final AssessmentKit privateKit = kit();
     private final AssessmentKit publicKit = publicKit();
 
-    private final Space space = SpaceMother.createBasicSpace();
+    private Space space = SpaceMother.createBasicSpace();
     private Param param = createParam(Param.ParamBuilder::build);
+
 
     @Test
     void testCreateAssessment_whenSpaceNotFound_thenThrowResourceNotFoundException() {
-        when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(Optional.empty());
+        when(loadSpacePort.loadById(param.getSpaceId())).thenReturn(Optional.empty());
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.createAssessment(param));
         assertEquals(COMMON_SPACE_ID_NOT_FOUND, throwable.getMessage());
@@ -107,12 +117,13 @@ class CreateAssessmentServiceTest {
             checkSpaceAccessPort,
             checkKitAccessPort,
             grantUserAssessmentRolePort,
-            loadSubjectsPort);
+            loadSubjectsPort,
+            loadMaturityLevelsPort);
     }
 
     @Test
     void testCreateAssessment_whenCurrentUserIsNotSpaceMember_thenThrowUpgradeRequiredException() {
-        when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(Optional.of(space));
+        when(loadSpacePort.loadById(param.getSpaceId())).thenReturn(Optional.of(space));
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.createAssessment(param));
@@ -126,14 +137,15 @@ class CreateAssessmentServiceTest {
             checkKitAccessPort,
             grantUserAssessmentRolePort,
             loadSubjectsPort,
-            countAssessmentsPort);
+            countAssessmentsPort,
+            loadMaturityLevelsPort);
     }
 
     @Test
     void testCreateAssessment_whenAssessmentKitNotFound_thenThrowResourceNotFoundException() {
-        when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(Optional.of(space));
+        when(loadSpacePort.loadById(param.getSpaceId())).thenReturn(Optional.of(space));
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
-        when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId())).thenReturn(Optional.empty());
+        when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId(), null)).thenReturn(Optional.empty());
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.createAssessment(param));
         assertEquals(ASSESSMENT_KIT_ID_NOT_FOUND, throwable.getMessage());
@@ -145,14 +157,15 @@ class CreateAssessmentServiceTest {
             checkKitAccessPort,
             grantUserAssessmentRolePort,
             loadSubjectsPort,
-            countAssessmentsPort);
+            countAssessmentsPort,
+            loadMaturityLevelsPort);
     }
 
     @Test
     void testCreateAssessment_whenCurrentUserDoesNotHaveAccessToKit_thenThrowValidationException() {
-        when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(Optional.of(space));
+        when(loadSpacePort.loadById(param.getSpaceId())).thenReturn(Optional.of(space));
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
-        when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId())).thenReturn(Optional.of(publicKit));
+        when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId(), null)).thenReturn(Optional.of(publicKit));
         when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.empty());
 
         var throwable = assertThrows(ValidationException.class, () -> service.createAssessment(param));
@@ -164,15 +177,16 @@ class CreateAssessmentServiceTest {
             createSubjectValuePort,
             grantUserAssessmentRolePort,
             loadSubjectsPort,
-            countAssessmentsPort);
+            countAssessmentsPort,
+            loadMaturityLevelsPort);
     }
 
     @Test
     void testCreateAssessment_whenSpaceIsBasicAndExceedsMaxAssessmentLimits_thenThrowUpgradeRequiredException() {
-        when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(Optional.of(space));
+        when(loadSpacePort.loadById(param.getSpaceId())).thenReturn(Optional.of(space));
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
         when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.of(param.getKitId()));
-        when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId())).thenReturn(Optional.of(publicKit));
+        when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId(), null)).thenReturn(Optional.of(publicKit));
         when(countAssessmentsPort.countSpaceAssessments(param.getSpaceId())).thenReturn(2);
 
         var throwable = assertThrows(UpgradeRequiredException.class, () -> service.createAssessment(param));
@@ -183,15 +197,16 @@ class CreateAssessmentServiceTest {
             createAttributeValuePort,
             createSubjectValuePort,
             grantUserAssessmentRolePort,
-            loadSubjectsPort);
+            loadSubjectsPort,
+            loadMaturityLevelsPort);
     }
 
     @Test
     void testCreateAssessment_whenSpaceIsBasicAndAssessmentKitIsPrivate_thenThrowUpgradeRequiredException() {
-        when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(Optional.of(space));
+        when(loadSpacePort.loadById(param.getSpaceId())).thenReturn(Optional.of(space));
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
         when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.of(param.getKitId()));
-        when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId())).thenReturn(Optional.of(privateKit));
+        when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId(), null)).thenReturn(Optional.of(privateKit));
         when(countAssessmentsPort.countSpaceAssessments(param.getSpaceId())).thenReturn(0);
 
         var throwable = assertThrows(UpgradeRequiredException.class, () -> service.createAssessment(param));
@@ -204,17 +219,18 @@ class CreateAssessmentServiceTest {
             createAttributeValuePort,
             createSubjectValuePort,
             grantUserAssessmentRolePort,
-            loadSubjectsPort);
+            loadSubjectsPort,
+            loadMaturityLevelsPort);
     }
 
     @Test
     void testCreateAssessment_whenSpaceIsPremiumAndSubscriptionIsExpired_thenThrowUpgradeRequiredException() {
         var premiumExpiredSpace = createExpiredPremiumSpace(UUID.randomUUID());
 
-        when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(Optional.of(premiumExpiredSpace));
+        when(loadSpacePort.loadById(param.getSpaceId())).thenReturn(Optional.of(premiumExpiredSpace));
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
         when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.of(param.getKitId()));
-        when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId())).thenReturn(Optional.of(publicKit));
+        when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId(), null)).thenReturn(Optional.of(publicKit));
 
         var throwable = assertThrows(UpgradeRequiredException.class, () -> service.createAssessment(param));
         assertEquals(CREATE_ASSESSMENT_PREMIUM_SPACE_EXPIRED, throwable.getMessage());
@@ -224,21 +240,46 @@ class CreateAssessmentServiceTest {
             createAttributeValuePort,
             createSubjectValuePort,
             grantUserAssessmentRolePort,
-            loadSubjectsPort);
+            loadSubjectsPort,
+            loadMaturityLevelsPort);
     }
 
+    @Test
+    void testCreateAssessment_whenLangIsNotSupportedInKit_thenThrowValidationException() {
+        param = createParam(b -> b.lang("FA"));
+        publicKit.setSupportedLanguages(List.of(KitLanguage.EN));
+
+        when(loadSpacePort.loadById(param.getSpaceId())).thenReturn(Optional.of(space));
+        when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
+        when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.of(param.getKitId()));
+        when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId(), null)).thenReturn(Optional.of(publicKit));
+
+        var throwable = assertThrows(ValidationException.class, () -> service.createAssessment(param));
+        assertNotNull(CREATE_ASSESSMENT_LANGUAGE_NOT_SUPPORTED, throwable.getMessage());
+
+        verifyNoInteractions(createAssessmentPort,
+            createAssessmentResultPort,
+            createAttributeValuePort,
+            createSubjectValuePort,
+            grantUserAssessmentRolePort,
+            loadSubjectsPort,
+            loadMaturityLevelsPort);
+    }
 
     @Test
-    void testCreateAssessment_whenParamsAreValid_thenCreateAssessmentAndAssessmentResult() {
+    void testCreateAssessment_whenCurrentUserIsSpaceOwner_thenCreateAssessmentAndAssessmentResult() {
+        param = createParam(b -> b.lang("FA"));
         UUID expectedAssessmentId = UUID.randomUUID();
+        space = createBasicSpaceWithOwnerId(param.getCurrentUserId());
 
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
         when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.of(param.getKitId()));
         when(createAssessmentPort.persist(any(CreateAssessmentPort.Param.class))).thenReturn(expectedAssessmentId);
         when(createAssessmentResultPort.persist(any(CreateAssessmentResultPort.Param.class))).thenReturn(UUID.randomUUID());
         when(loadSubjectsPort.loadByKitVersionIdWithAttributes(publicKit.getKitVersion())).thenReturn(createSubjects());
-        when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(Optional.of(space));
-        when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId())).thenReturn(Optional.of(publicKit));
+        when(loadSpacePort.loadById(param.getSpaceId())).thenReturn(Optional.of(space));
+        when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId(), null)).thenReturn(Optional.of(publicKit));
+        when(loadMaturityLevelsPort.loadAllByKitVersion(publicKit.getKitVersion())).thenReturn(MaturityLevelMother.allLevels());
 
         var result = service.createAssessment(param);
         assertNotNull(result);
@@ -248,17 +289,23 @@ class CreateAssessmentServiceTest {
         verify(createAssessmentPort).persist(createAssessmentPortCaptor.capture());
         assertCreateAssessmentPort(createAssessmentPortCaptor);
 
-        verify(grantUserAssessmentRolePort).persist(result.id(),
-            param.getCurrentUserId(),
-            AssessmentUserRole.MANAGER.getId());
+        verify(grantUserAssessmentRolePort, times(1)).persist(roleItemCaptor.capture());
+        assertEquals(result.id(), roleItemCaptor.getValue().getAssessmentId());
+        assertEquals(param.getCurrentUserId(), roleItemCaptor.getValue().getUserId());
+        assertEquals(param.getCurrentUserId(), roleItemCaptor.getValue().getCreatedBy());
+        assertEquals(AssessmentUserRole.MANAGER.getId(), roleItemCaptor.getValue().getRole().getId());
+        assertNotNull(roleItemCaptor.getValue().getCreationTime());
 
         ArgumentCaptor<CreateAssessmentResultPort.Param> createAssessmentResultPortCaptor = ArgumentCaptor.forClass(CreateAssessmentResultPort.Param.class);
         verify(createAssessmentResultPort).persist(createAssessmentResultPortCaptor.capture());
         assertEquals(expectedAssessmentId, createAssessmentResultPortCaptor.getValue().assessmentId());
         assertEquals(publicKit.getKitVersion(), createAssessmentResultPortCaptor.getValue().kitVersionId());
+        assertEquals(MaturityLevelMother.levelOne().getId(), createAssessmentResultPortCaptor.getValue().maturityLevelId());
+        assertEquals(0.0, createAssessmentResultPortCaptor.getValue().confidenceValue());
         assertNotNull(createAssessmentResultPortCaptor.getValue().lastModificationTime());
         assertFalse(createAssessmentResultPortCaptor.getValue().isCalculateValid());
         assertFalse(createAssessmentResultPortCaptor.getValue().isConfidenceValid());
+        assertEquals(KitLanguage.valueOf(param.getLang()).getId(), createAssessmentResultPortCaptor.getValue().langId());
 
         verify(createSubjectValuePort, times(1)).persistAll(anyList(), any());
         verify(createAttributeValuePort, times(1)).persistAll(anySet(), any());
@@ -268,7 +315,7 @@ class CreateAssessmentServiceTest {
 
     @Test
     void testCreateAssessment_whenCurrentUserIsNotSpaceOwner_thenGrantAccessToSpaceOwnerToo() {
-        param = createParam(b -> b.currentUserId(UUID.randomUUID()));
+        param = createParam(b -> b.currentUserId(UUID.randomUUID()).lang(null));
         UUID expectedAssessmentId = UUID.randomUUID();
 
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
@@ -276,20 +323,45 @@ class CreateAssessmentServiceTest {
         when(createAssessmentPort.persist(any(CreateAssessmentPort.Param.class))).thenReturn(expectedAssessmentId);
         List<Subject> expectedResponse = List.of();
         when(loadSubjectsPort.loadByKitVersionIdWithAttributes(publicKit.getKitVersion())).thenReturn(expectedResponse);
-        when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(Optional.of(space));
-        when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId())).thenReturn(Optional.of(publicKit));
+        when(loadSpacePort.loadById(param.getSpaceId())).thenReturn(Optional.of(space));
+        when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId(), null)).thenReturn(Optional.of(publicKit));
+        when(loadMaturityLevelsPort.loadAllByKitVersion(publicKit.getKitVersion())).thenReturn(MaturityLevelMother.allLevels());
 
         CreateAssessmentUseCase.Result result = service.createAssessment(param);
         assertNotNull(result);
         assertEquals(expectedAssessmentId, result.id());
 
-        verify(grantUserAssessmentRolePort).persist(result.id(),
-            param.getCurrentUserId(),
-            AssessmentUserRole.MANAGER.getId());
+        verify(grantUserAssessmentRolePort, times(2)).persist(roleItemCaptor.capture());
 
-        verify(grantUserAssessmentRolePort).persist(result.id(),
-            space.getOwnerId(),
-            AssessmentUserRole.MANAGER.getId());
+        assertThat(roleItemCaptor.getAllValues())
+            .map(item -> tuple(
+                item.getAssessmentId(),
+                item.getUserId(),
+                item.getCreatedBy(),
+                item.getRole()
+            ))
+            .containsExactly(
+                tuple(result.id(), space.getOwnerId(), param.getCurrentUserId(), AssessmentUserRole.MANAGER),
+                tuple(result.id(), param.getCurrentUserId(), param.getCurrentUserId(), AssessmentUserRole.MANAGER)
+            );
+
+        roleItemCaptor.getAllValues().forEach(item ->
+            assertThat(item.getCreationTime()).isNotNull()
+        );
+
+        ArgumentCaptor<CreateAssessmentResultPort.Param> createAssessmentResultPortCaptor = ArgumentCaptor.forClass(CreateAssessmentResultPort.Param.class);
+        verify(createAssessmentResultPort).persist(createAssessmentResultPortCaptor.capture());
+        assertEquals(expectedAssessmentId, createAssessmentResultPortCaptor.getValue().assessmentId());
+        assertEquals(publicKit.getKitVersion(), createAssessmentResultPortCaptor.getValue().kitVersionId());
+        assertEquals(MaturityLevelMother.levelOne().getId(), createAssessmentResultPortCaptor.getValue().maturityLevelId());
+        assertEquals(0.0, createAssessmentResultPortCaptor.getValue().confidenceValue());
+        assertNotNull(createAssessmentResultPortCaptor.getValue().lastModificationTime());
+        assertFalse(createAssessmentResultPortCaptor.getValue().isCalculateValid());
+        assertFalse(createAssessmentResultPortCaptor.getValue().isConfidenceValid());
+        assertEquals(publicKit.getLanguage().getId(), createAssessmentResultPortCaptor.getValue().langId());
+
+        verify(createSubjectValuePort, times(1)).persistAll(anyList(), any());
+        verify(createAttributeValuePort, times(1)).persistAll(anySet(), any());
 
         verify(appSpecProperties).getSpace();
     }
@@ -322,6 +394,7 @@ class CreateAssessmentServiceTest {
         assertEquals(param.getShortTitle(), createPortParam.getValue().shortTitle());
         assertEquals(param.getKitId(), createPortParam.getValue().assessmentKitId());
         assertEquals(param.getSpaceId(), createPortParam.getValue().spaceId());
+        assertEquals(AssessmentMode.QUICK, createPortParam.getValue().mode());
         assertNotNull(createPortParam.getValue().creationTime());
         assertEquals(0, createPortParam.getValue().deletionTime());
         assertFalse(createPortParam.getValue().deleted());
@@ -340,6 +413,7 @@ class CreateAssessmentServiceTest {
             .shortTitle("Short Title")
             .spaceId(space.getId())
             .kitId(publicKit.getId())
+            .lang("EN")
             .currentUserId(UUID.randomUUID());
     }
 }

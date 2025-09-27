@@ -49,4 +49,15 @@
     <include file="classpath:liquibase/changelog-0.49.xml"/>
     <include file="classpath:liquibase/changelog-0.50.xml"/>
     <include file="classpath:liquibase/changelog-0.53.xml"/>
+    <include file="classpath:liquibase/changelog-0.55.xml"/>
+    <include file="classpath:liquibase/changelog-0.56.xml"/>
+    <include file="classpath:liquibase/changelog-0.57.xml"/>
+    <include file="classpath:liquibase/changelog-0.58.xml"/>
+    <include file="classpath:liquibase/changelog-0.59.xml"/>
+    <include file="classpath:liquibase/changelog-0.60.xml"/>
+    <include file="classpath:liquibase/changelog-0.61.xml"/>
+    <include file="classpath:liquibase/changelog-0.63.xml"/>
+    <include file="classpath:liquibase/changelog-0.65.xml"/>
+    <include file="classpath:liquibase/changelog-0.67.xml"/>
+    <include file="classpath:liquibase/changelog-0.68.xml"/>
 </databaseChangeLog>

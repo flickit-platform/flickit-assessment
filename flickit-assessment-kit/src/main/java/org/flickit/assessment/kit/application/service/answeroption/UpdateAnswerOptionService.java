@@ -31,27 +31,18 @@ public class UpdateAnswerOptionService implements UpdateAnswerOptionUseCase {
         if (!ownerId.equals(param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        UpdateAnswerOptionPort.Param updatePortParam = toParam(param.getAnswerOptionId(),
-                param.getKitVersionId(),
-                param.getIndex(),
-                param.getTitle(),
-                param.getValue(),
-                param.getCurrentUserId());
+        UpdateAnswerOptionPort.Param updatePortParam = toParam(param);
         updateAnswerOptionPort.update(updatePortParam);
     }
 
-    private UpdateAnswerOptionPort.Param toParam(long answerOptionId,
-                                                 long kitVersionId,
-                                                 int index,
-                                                 String title,
-                                                 double value,
-                                                 UUID currentUserId) {
-        return new UpdateAnswerOptionPort.Param(answerOptionId,
-                kitVersionId,
-                index,
-                title,
-                value,
-                LocalDateTime.now(),
-                currentUserId);
+    private UpdateAnswerOptionPort.Param toParam(Param param) {
+        return new UpdateAnswerOptionPort.Param(param.getAnswerOptionId(),
+            param.getKitVersionId(),
+            param.getIndex(),
+            param.getTitle(),
+            param.getValue(),
+            param.getTranslations(),
+            LocalDateTime.now(),
+            param.getCurrentUserId());
     }
 }

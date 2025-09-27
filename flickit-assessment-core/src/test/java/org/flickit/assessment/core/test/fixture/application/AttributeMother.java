@@ -20,4 +20,9 @@ public class AttributeMother {
     public static Attribute withIdQuestionsAndWeight(long id, List<Question> questions, int weight) {
         return new Attribute(id, (int) id, "attribute", "description", weight, questions);
     }
+
+    public static Attribute createWithWeight(int weight) {
+        id++;
+        return new Attribute(id++, (int) id, "attribute", "description", weight, null);
+    }
 }

@@ -3,7 +3,7 @@ package org.flickit.assessment.users.application.service.space;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.data.jpa.users.spaceuseraccess.SpaceUserAccessJpaEntity;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
-import org.flickit.assessment.users.application.domain.SpaceStatus;
+import org.flickit.assessment.common.application.domain.space.SpaceStatus;
 import org.flickit.assessment.users.application.port.in.space.GetSpaceListUseCase;
 import org.flickit.assessment.users.application.port.out.space.LoadSpaceListPort;
 import org.flickit.assessment.users.application.port.out.space.LoadSpaceListPort.Result;
@@ -53,7 +53,7 @@ class GetSpaceListServiceTest {
             Sort.Direction.DESC.name().toLowerCase(),
             spacePortList.size());
 
-        when(loadSpaceListPort.loadSpaceList(param.getCurrentUserId(), paginatedResponse.getPage(), param.getSize())).thenReturn(paginatedResponse);
+        when(loadSpaceListPort.loadNonDefaultSpaceList(param.getCurrentUserId(), paginatedResponse.getPage(), param.getSize())).thenReturn(paginatedResponse);
 
         var result = service.getSpaceList(param);
 
@@ -93,7 +93,7 @@ class GetSpaceListServiceTest {
             Sort.Direction.ASC.name().toLowerCase(),
             0);
 
-        when(loadSpaceListPort.loadSpaceList(param.getCurrentUserId(), paginatedResponse.getPage(), param.getSize())).thenReturn(paginatedResponse);
+        when(loadSpaceListPort.loadNonDefaultSpaceList(param.getCurrentUserId(), paginatedResponse.getPage(), param.getSize())).thenReturn(paginatedResponse);
 
         var result = service.getSpaceList(param);
 

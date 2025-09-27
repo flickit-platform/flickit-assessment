@@ -23,6 +23,7 @@ public class QuestionMother {
             mayNotBeApplicable,
             advisable,
             answerRangeId,
+            20L,
             questionnaireId,
             LocalDateTime.now(),
             LocalDateTime.now()
@@ -47,6 +48,7 @@ public class QuestionMother {
             true,
             true,
             answerRangeId,
+            20L,
             questionnaireId,
             LocalDateTime.now(),
             LocalDateTime.now()
@@ -63,6 +65,7 @@ public class QuestionMother {
             true,
             true,
             27L,
+            20L,
             1L,
             LocalDateTime.now(),
             LocalDateTime.now()
@@ -89,6 +92,7 @@ public class QuestionMother {
             true,
             true,
             27L,
+            20L,
             1L,
             LocalDateTime.now(),
             LocalDateTime.now()

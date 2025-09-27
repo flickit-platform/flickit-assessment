@@ -5,6 +5,7 @@ import lombok.*;
 import org.flickit.assessment.data.jpa.AbstractEntity;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -29,6 +30,12 @@ public class AssessmentUserRoleJpaEntity extends AbstractEntity<AssessmentUserRo
 
     @Column(name = "role_id", nullable = false)
     private Integer roleId;
+
+    @Column(name = "created_by", nullable = false)
+    private UUID createdBy;
+
+    @Column(name = "creation_time", nullable = false)
+    private LocalDateTime creationTime;
 
     @Override
     public EntityId getId() {

@@ -2,7 +2,9 @@ package org.flickit.assessment.kit.adapter.out.persistence.subject;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.util.JsonUtils;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
 import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
@@ -13,6 +15,7 @@ import org.flickit.assessment.kit.adapter.out.persistence.attribute.AttributeMap
 import org.flickit.assessment.kit.application.domain.Attribute;
 import org.flickit.assessment.kit.application.domain.Subject;
 import org.flickit.assessment.kit.application.port.out.subject.*;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -99,7 +102,7 @@ public class SubjectPersistenceJpaAdapter implements
 
     @Override
     public Subject load(long subjectId, long kitVersionId) {
-        var subjectEntity = repository.findByIdAndKitVersionId (subjectId, kitVersionId)
+        var subjectEntity = repository.findByIdAndKitVersionId(subjectId, kitVersionId)
             .orElseThrow(() -> new ResourceNotFoundException(GET_KIT_SUBJECT_DETAIL_SUBJECT_ID_NOT_FOUND));
         List<AttributeJpaEntity> attributeEntities = attributeRepository.findAllBySubjectIdAndKitVersionId(subjectId, kitVersionId);
         return mapToDomainModel(subjectEntity,
@@ -141,6 +144,26 @@ public class SubjectPersistenceJpaAdapter implements
     }
 
     @Override
+    public List<Subject> loadAllTranslated(long kitVersionId) {
+        List<SubjectJpaEntity> subjectEntities = repository.findAllByKitVersionIdOrderByIndex(kitVersionId);
+        List<Long> subjectEntityIds = subjectEntities.stream().map(SubjectJpaEntity::getId).toList();
+        List<AttributeJpaEntity> attributeEntities = attributeRepository.findAllBySubjectIdInAndKitVersionId(subjectEntityIds, kitVersionId);
+        Map<Long, List<AttributeJpaEntity>> subjectIdToAttrEntities = attributeEntities.stream()
+            .collect(Collectors.groupingBy(AttributeJpaEntity::getSubjectId));
+
+        var language = KitLanguage.valueOf(LocaleContextHolder.getLocale().getLanguage().toUpperCase());
+        return subjectEntities.stream()
+            .map(s -> {
+                var attributes = Optional.ofNullable(subjectIdToAttrEntities.get(s.getId()))
+                    .orElse(Collections.emptyList()).stream()
+                    .map(entity -> AttributeMapper.mapToDomainModel(entity, language))
+                    .toList();
+                return SubjectMapper.mapToDomainModel(s, attributes, language);
+            })
+            .toList();
+    }
+
+    @Override
     public void delete(long subjectId, long kitVersionId) {
         if (!repository.existsByIdAndKitVersionId(subjectId, kitVersionId))
             throw new ResourceNotFoundException(SUBJECT_ID_NOT_FOUND);
@@ -153,6 +176,7 @@ public class SubjectPersistenceJpaAdapter implements
         if (!repository.existsByIdAndKitVersionId(param.id(), param.kitVersionId()))
             throw new ResourceNotFoundException(SUBJECT_ID_NOT_FOUND);
 
+        var translations = JsonUtils.toJson(param.translations());
         repository.update(param.id(),
             param.kitVersionId(),
             param.code(),
@@ -160,6 +184,7 @@ public class SubjectPersistenceJpaAdapter implements
             param.index(),
             param.description(),
             param.weight(),
+            translations,
             param.lastModificationTime(),
             param.lastModifiedBy());
     }

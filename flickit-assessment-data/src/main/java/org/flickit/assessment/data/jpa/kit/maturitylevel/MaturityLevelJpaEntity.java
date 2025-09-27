@@ -44,6 +44,9 @@ public class MaturityLevelJpaEntity {
     @Column(name = "value", nullable = false)
     private Integer value;
 
+    @Column(name = "translations")
+    private String translations;
+
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
 

@@ -193,7 +193,7 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
             long attributeId = qavEntity.getAttributeId();
             List<Question> impactfulQuestions = questionsWithImpact(context.impactfulQuestions.get(attributeId));
             List<Answer> impactfulAnswers = answersOfImpactfulQuestions(impactfulQuestions, context);
-            Attribute attribute = AttributeMapper.mapToDomainModel(attributeIdToEntityMap.get(attributeId), impactfulQuestions);
+            Attribute attribute = AttributeMapper.mapToDomainWithQuestions(attributeIdToEntityMap.get(attributeId), impactfulQuestions);
             var attributeValue = new AttributeValue(qavEntity.getId(), attribute, impactfulAnswers);
 
             attributeIdToValueMap.put(attribute.getId(), attributeValue);
@@ -211,7 +211,7 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
 
         return impactfulQuestions.entrySet().stream()
             .filter(q -> q.getValue() != null)
-            .map(q -> QuestionMapper.mapToDomainModel(q.getKey(),
+            .map(q -> QuestionMapper.mapToDomainModelWithImpacts(q.getKey(),
                 q.getValue().stream()
                     .map(QuestionImpactMapper::mapToDomainModel)
                     .toList()))

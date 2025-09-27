@@ -5,11 +5,13 @@ import lombok.SneakyThrows;
 import org.flickit.assessment.scenario.test.ScenarioContext;
 import org.flickit.assessment.users.adapter.in.rest.expertgroup.CreateExpertGroupRequestDto;
 import org.flickit.assessment.users.adapter.in.rest.expertgroup.CreateExpertGroupRequestDto.Fields;
+import org.flickit.assessment.users.adapter.in.rest.expertgroup.UpdateExpertGroupRequestDto;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
 import static io.restassured.RestAssured.given;
+import static io.restassured.http.ContentType.JSON;
 
 @Component
 public class ExpertGroupTestHelper {
@@ -34,6 +36,18 @@ public class ExpertGroupTestHelper {
         return requestSpec
             .when()
             .post("/assessment-core/api/expert-groups")
+            .then()
+            .extract()
+            .response();
+    }
+
+    public Response update(ScenarioContext context, UpdateExpertGroupRequestDto request, long id) {
+        return given()
+            .contentType(JSON)
+            .auth().oauth2(context.getCurrentUser().getJwt())
+            .body(request)
+            .when()
+            .put("/assessment-core/api/expert-groups/" + id)
             .then()
             .extract()
             .response();

@@ -1,7 +1,9 @@
 package org.flickit.assessment.core.adapter.out.persistence.answerhistory;
 
+import jakarta.annotation.Nullable;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.core.adapter.out.persistence.kit.answeroption.AnswerOptionMapper;
 import org.flickit.assessment.core.adapter.out.persistence.user.UserMapper;
 import org.flickit.assessment.core.application.domain.Answer;
@@ -37,20 +39,25 @@ public class AnswerHistoryMapper {
         );
     }
 
-    public static AnswerHistory mapToDomainModel(AnswerHistoryJpaEntity entity, UserJpaEntity createdBy, AnswerOptionJpaEntity selectedOption) {
+    public static AnswerHistory mapToDomainModel(AnswerHistoryJpaEntity entity,
+                                                 UserJpaEntity createdBy,
+                                                 AnswerOptionJpaEntity selectedOption,
+                                                 @Nullable KitLanguage language) {
         return new AnswerHistory(
             entity.getId(),
-            mapToAnswer(entity, selectedOption),
+            mapToAnswer(entity, selectedOption, language),
             entity.getAssessmentResult().getId(),
             UserMapper.mapToFullDomain(createdBy),
             entity.getCreationTime(),
             HistoryType.values()[entity.getType()]);
     }
 
-    private static Answer mapToAnswer(AnswerHistoryJpaEntity entity, AnswerOptionJpaEntity selectedOption) {
+    private static Answer mapToAnswer(AnswerHistoryJpaEntity entity,
+                                      AnswerOptionJpaEntity selectedOption,
+                                      @Nullable KitLanguage language) {
         return new Answer(
             entity.getAnswer().getId(),
-            selectedOption != null ? AnswerOptionMapper.mapToDomainModel(selectedOption) : null,
+            selectedOption != null ? AnswerOptionMapper.mapToDomainModel(selectedOption, language) : null,
             entity.getQuestionId(),
             entity.getConfidenceLevelId(),
             entity.getIsNotApplicable(),

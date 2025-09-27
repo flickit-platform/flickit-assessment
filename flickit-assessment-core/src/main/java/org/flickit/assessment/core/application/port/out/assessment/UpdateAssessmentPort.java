@@ -1,6 +1,7 @@
 package org.flickit.assessment.core.application.port.out.assessment;
 
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.domain.AssessmentMode;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -8,6 +9,13 @@ import java.util.UUID;
 public interface UpdateAssessmentPort {
 
     Result update(AllParam param);
+
+    void updateMode(UpdateModeParam param);
+
+    record UpdateModeParam(UUID assessmentId,
+                           AssessmentMode mode,
+                           LocalDateTime lastModificationTime,
+                           UUID lastModifiedBy) {}
 
     record AllParam(UUID id,
                     String title,
@@ -28,4 +36,6 @@ public interface UpdateAssessmentPort {
      * @throws ResourceNotFoundException if the related kit of the given kitCustom is not equal to the kit that the assessment is created on
      */
     void updateKitCustomId(UUID id, long kitCustomId);
+
+    void updateSpace(UUID assessmentId, long spaceId);
 }

@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.adapter.out.persistence.maturitylevel;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.util.JsonUtils;
 import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaRepository;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity.EntityId;
@@ -15,10 +16,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.kit.adapter.out.persistence.maturitylevel.MaturityLevelMapper.mapToDomainModel;
 import static org.flickit.assessment.kit.adapter.out.persistence.maturitylevel.MaturityLevelMapper.mapToJpaEntityToPersist;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.MATURITY_LEVEL_ID_NOT_FOUND;
@@ -69,6 +73,7 @@ public class MaturityLevelPersistenceJpaAdapter implements
             x.setTitle(newLevel.getTitle());
             x.setValue(newLevel.getValue());
             x.setDescription(newLevel.getDescription());
+            x.setTranslations(JsonUtils.toJson(newLevel.getTranslations()));
             x.setLastModificationTime(LocalDateTime.now());
             x.setLastModifiedBy(lastModifiedBy);
         });
@@ -81,8 +86,16 @@ public class MaturityLevelPersistenceJpaAdapter implements
         if (!repository.existsByIdAndKitVersionId(maturityLevel.getId(), kitVersionId))
             throw new ResourceNotFoundException(MATURITY_LEVEL_ID_NOT_FOUND);
 
-        repository.update(maturityLevel.getId(), kitVersionId, maturityLevel.getCode(), maturityLevel.getIndex(), maturityLevel.getTitle(),
-            maturityLevel.getDescription(), maturityLevel.getValue(), lastModificationTime, lastModifiedBy);
+        repository.update(maturityLevel.getId(),
+            kitVersionId,
+            maturityLevel.getCode(),
+            maturityLevel.getIndex(),
+            maturityLevel.getTitle(),
+            maturityLevel.getDescription(),
+            maturityLevel.getValue(),
+            JsonUtils.toJson(maturityLevel.getTranslations()),
+            lastModificationTime,
+            lastModifiedBy);
     }
 
     @Override
@@ -148,12 +161,5 @@ public class MaturityLevelPersistenceJpaAdapter implements
             sort,
             sortDirection.name().toLowerCase(),
             (int) pageResult.getTotalElements());
-    }
-
-    @Override
-    public List<MaturityLevel> loadByKitVersionId(long kitVersionId, Collection<Long> ids) {
-        return repository.findAllByIdInAndKitVersionId(ids, kitVersionId).stream()
-            .map(MaturityLevelMapper::mapToDomainModel)
-            .toList();
     }
 }

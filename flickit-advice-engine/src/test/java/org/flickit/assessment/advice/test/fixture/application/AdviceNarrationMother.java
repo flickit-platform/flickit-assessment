@@ -8,22 +8,28 @@ import java.util.UUID;
 public class AdviceNarrationMother {
 
     public static AdviceNarration aiNarration() {
+        return aiNarrationWithNarrationTime(LocalDateTime.now());
+    }
+
+    public static AdviceNarration aiNarrationWithNarrationTime(LocalDateTime narrationTime) {
         return new AdviceNarration(UUID.randomUUID(),
             UUID.randomUUID(),
             "aiNarration",
             null,
-            LocalDateTime.now(),
+            false,
+            narrationTime,
             null,
             null);
     }
 
-    public static AdviceNarration assessorNarration() {
+    public static AdviceNarration assessorNarrationWithNarrationTime(LocalDateTime narrationTime) {
         return new AdviceNarration(UUID.randomUUID(),
             UUID.randomUUID(),
             "aiNarration",
             "assessorNarration",
-            LocalDateTime.now(),
-            LocalDateTime.now(),
+            true,
+            narrationTime,
+            narrationTime,
             UUID.randomUUID());
     }
 }

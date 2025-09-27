@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.lang3.mutable.MutableDouble;
 import org.apache.commons.lang3.mutable.MutableInt;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -37,6 +38,9 @@ public class AssessmentResult {
     private Boolean isConfidenceValid;
 
     @Setter
+    private KitLanguage language;
+
+    @Setter
     private LocalDateTime lastModificationTime;
 
     @Setter
@@ -51,6 +55,18 @@ public class AssessmentResult {
         this.assessment = assessment;
         this.kitVersionId = kitVersionId;
         this.subjectValues = subjectValues;
+        this.lastCalculationTime = lastCalculationTime;
+        this.lastConfidenceCalculationTime = lastConfidenceCalculationTime;
+    }
+
+    public AssessmentResult(UUID assessmentResultId, Assessment assessment, long kitVersionId, List<SubjectValue> subjectValues,
+                            Boolean isCalculateValid, MaturityLevel maturityLevel, LocalDateTime lastCalculationTime, LocalDateTime lastConfidenceCalculationTime) {
+        this.id = assessmentResultId;
+        this.assessment = assessment;
+        this.kitVersionId = kitVersionId;
+        this.subjectValues = subjectValues;
+        this.isCalculateValid = isCalculateValid;
+        this.maturityLevel = maturityLevel;
         this.lastCalculationTime = lastCalculationTime;
         this.lastConfidenceCalculationTime = lastConfidenceCalculationTime;
     }
@@ -88,7 +104,7 @@ public class AssessmentResult {
         Map<Long, Double> mLevelIdToScoreWeightedMean = new HashMap<>();
         levelIdToSubjectsWeightedScoreSum.forEach((mLevelId, weightedScoreSum) -> {
             if (subjectsTotalWeight.intValue() > 0)
-                mLevelIdToScoreWeightedMean.put(mLevelId, weightedScoreSum/ subjectsTotalWeight.intValue());
+                mLevelIdToScoreWeightedMean.put(mLevelId, weightedScoreSum / subjectsTotalWeight.intValue());
             else
                 mLevelIdToScoreWeightedMean.put(mLevelId, 0d);
         });

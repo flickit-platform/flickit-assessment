@@ -1,0 +1,213 @@
+package org.flickit.assessment.core.application.service.advicenarration;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.flickit.assessment.common.application.domain.advice.AdvicePlanItem;
+import org.flickit.assessment.common.application.domain.advice.AttributeLevelTarget;
+import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
+import org.flickit.assessment.common.application.module.adviceengine.GenerateAdvicePlanInternalApi;
+import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.domain.AssessmentResult;
+import org.flickit.assessment.core.application.domain.Attribute;
+import org.flickit.assessment.core.application.domain.AttributeValue;
+import org.flickit.assessment.core.application.domain.MaturityLevel;
+import org.flickit.assessment.core.application.port.in.advicenarration.RefreshAssessmentAdviceUseCase;
+import org.flickit.assessment.core.application.port.out.adviceitem.DeleteAdviceItemPort;
+import org.flickit.assessment.core.application.port.out.adviceitem.LoadAdviceItemPort;
+import org.flickit.assessment.core.application.port.out.advicenarration.LoadAdviceNarrationPort;
+import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
+import org.flickit.assessment.core.application.port.out.attribute.LoadAttributesPort;
+import org.flickit.assessment.core.application.port.out.attributevalue.LoadAttributeValuePort;
+import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.*;
+import java.util.function.Function;
+
+import static java.lang.Math.ceilDiv;
+import static java.util.Comparator.comparingInt;
+import static java.util.stream.Collectors.toMap;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.REFRESH_ASSESSMENT_ADVICE;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.core.common.ErrorMessageKey.REFRESH_ASSESSMENT_ADVICE_MEDIAN_MATURITY_LEVEL_NOT_FOUND;
+
+@Slf4j
+@Service
+@Transactional
+@RequiredArgsConstructor
+public class RefreshAssessmentAdviceService implements RefreshAssessmentAdviceUseCase {
+
+    private final AssessmentAccessChecker assessmentAccessChecker;
+    private final LoadAssessmentResultPort loadAssessmentResultPort;
+    private final LoadMaturityLevelsPort loadMaturityLevelsPort;
+    private final LoadAttributeValuePort loadAttributeValuesPort;
+    private final GenerateAdvicePlanInternalApi generateAdvicePlanInternalApi;
+    private final CreateAiAdviceNarrationHelper createAiAdviceNarrationHelper;
+    private final DeleteAdviceItemPort deleteAdviceItemPort;
+    private final LoadAdviceItemPort loadAdviceItemPort;
+    private final LoadAdviceNarrationPort loadAdviceNarrationPort;
+    private final LoadAttributesPort loadAttributesPort;
+
+    private static final int MIN_REQUIRED_TARGET_ATTRIBUTES_SIZE = 2;
+    private static final int MAX_FURTHEST_TARGET_ATTRIBUTES_SIZE = 2;
+    private static final int MIN_REQUIRED_IMPROVABLE_QUESTIONS_SIZE = 10;
+
+    @Override
+    public void refreshAssessmentAdvice(Param param) {
+        if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), REFRESH_ASSESSMENT_ADVICE))
+            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
+
+        var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
+            .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
+
+        if (param.getForceRegenerate() || !loadAdviceItemPort.existsByAssessmentResultId(assessmentResult.getId())
+            || !loadAdviceNarrationPort.existsByAssessmentResultId(assessmentResult.getId()))
+            regenerateAdviceIfNecessary(assessmentResult);
+    }
+
+    private void regenerateAdviceIfNecessary(AssessmentResult assessmentResult) {
+        var targets = prepareAttributeLevelTargets(assessmentResult);
+        if (!targets.isEmpty()) {
+            log.info("Regenerating advice for [assessmentId={} and assessmentResultId={}]", assessmentResult.getAssessment().getId(), assessmentResult.getId());
+            deleteAdviceItemPort.deleteAllAiGenerated(assessmentResult.getId());
+            generateAdvice(assessmentResult, targets);
+        }
+    }
+
+    private AttributeTargetsDto prepareAttributeLevelTargets(AssessmentResult result) {
+        var attributeValues = loadAttributeValuesPort.loadAll(result.getId());
+        var maturityLevels = loadMaturityLevelsPort.loadAllByAssessment(result.getAssessment().getId());
+
+        List<MaturityLevel> sortedLevels = maturityLevels.stream()
+            .sorted(comparingInt(MaturityLevel::getIndex))
+            .toList();
+
+        MaturityLevel midLevel = extractMidLevel(sortedLevels);
+        MaturityLevel maxLevel = sortedLevels.getLast();
+
+        var levelIdToIndexMap = maturityLevels.stream()
+            .collect(toMap(MaturityLevel::getId, MaturityLevel::getIndex));
+
+        Set<Long> weakAttributeIds = new HashSet<>();
+        List<AttributeValue> nonWeakAttributes = new ArrayList<>();
+
+        for (AttributeValue attributeValue : attributeValues) {
+            if (attributeValue.getMaturityLevel().getId() == maxLevel.getId())
+                continue;
+            if (levelIdToIndexMap.get(attributeValue.getMaturityLevel().getId()) < midLevel.getIndex())
+                weakAttributeIds.add(attributeValue.getAttribute().getId());
+            else
+                nonWeakAttributes.add(attributeValue);
+        }
+
+        var weakAttributeTargets = buildWeakAttributeTargets(weakAttributeIds, midLevel);
+
+        var nonWeakAttributeTargets = buildNonWeakAttributeTargets(sortedLevels, nonWeakAttributes, maxLevel, result.getAssessment().getId());
+
+        return AttributeTargetsDto.of(weakAttributeTargets, nonWeakAttributeTargets);
+    }
+
+    private MaturityLevel extractMidLevel(List<MaturityLevel> maturityLevels) {
+        int midLevelIndex = ceilDiv(maturityLevels.size(), 2);
+        return maturityLevels.stream()
+            .filter(m -> m.getIndex() == midLevelIndex)
+            .findFirst()
+            .orElseThrow(() ->
+                new ResourceNotFoundException(REFRESH_ASSESSMENT_ADVICE_MEDIAN_MATURITY_LEVEL_NOT_FOUND)); // Can't happen
+    }
+
+    List<AttributeLevelTarget> buildWeakAttributeTargets(Set<Long> weakAttributeIds,
+                                                         MaturityLevel midLevel) {
+        return weakAttributeIds.stream()
+            .map(value -> new AttributeLevelTarget(value, midLevel.getId()))
+            .toList();
+    }
+
+    private List<AttributeLevelTarget> buildNonWeakAttributeTargets(List<MaturityLevel> maturityLevels,
+                                                                    List<AttributeValue> attributeValues,
+                                                                    MaturityLevel maxLevel,
+                                                                    UUID assessmentId) {
+        List<Long> attributeIds = attributeValues.stream().map(av -> av.getAttribute().getId()).toList();
+        var attributes = loadAttributesPort.loadByIdsAndAssessmentId(attributeIds, assessmentId);
+        var attributeIdToWeightMap = attributes.stream()
+            .collect(toMap(Attribute::getId, Attribute::getWeight));
+        var maturityLevelIdToIndexMap = maturityLevels.stream()
+            .collect(toMap(MaturityLevel::getId, MaturityLevel::getIndex));
+
+        var mostImportantAttributes = attributeValues.stream()
+            .map(v -> {
+                var score = attributeIdToWeightMap.getOrDefault(v.getAttribute().getId(), 1) *
+                    (maxLevel.getIndex() - maturityLevelIdToIndexMap.get(v.getMaturityLevel().getId()));
+                return Map.entry(v.getAttribute().getId(), score);
+            })
+            .sorted(Map.Entry.<Long, Integer>comparingByValue().reversed())
+            .map(Map.Entry::getKey)
+            .toList();
+
+        var attrIdToValueMap = attributeValues.stream()
+            .collect(toMap(av -> av.getAttribute().getId(), Function.identity()));
+
+        return mostImportantAttributes.stream()
+            .map(attrIdToValueMap::get)
+            .flatMap(value -> toTarget(
+                value.getAttribute().getId(),
+                maturityLevelIdToIndexMap.get(value.getMaturityLevel().getId()),
+                    maturityLevels
+                ).stream()
+            )
+            .toList();
+    }
+
+    private Optional<AttributeLevelTarget> toTarget(long attributeId,
+                                                    int currentLevelIndex,
+                                                    List<MaturityLevel> sortedLevels) {
+        return sortedLevels.stream()
+            .dropWhile(level -> level.getIndex() <= currentLevelIndex)
+            .findFirst()
+            .map(nextLevel -> new AttributeLevelTarget(attributeId, nextLevel.getId()));
+    }
+
+    private void generateAdvice(AssessmentResult result, AttributeTargetsDto targets) {
+        var weakAttributeTargets = targets.weakAttributeTargets;
+        var nonWeakAttributeTargets = targets.nonWeakAttributeTargets;
+        var attributeTargets = new ArrayList<>(weakAttributeTargets);
+
+        if (attributeTargets.size() < MIN_REQUIRED_TARGET_ATTRIBUTES_SIZE && !nonWeakAttributeTargets.isEmpty()) {
+            for (int i = 0; i < MAX_FURTHEST_TARGET_ATTRIBUTES_SIZE; i++) {
+                AttributeLevelTarget next = nonWeakAttributeTargets.pollFirst();
+                if (next == null) break;
+                attributeTargets.add(next);
+            }
+        }
+
+        var generateAdvicePlanParam = new GenerateAdvicePlanInternalApi.Param(result.getAssessment().getId(), List.copyOf(attributeTargets));
+        List<AdvicePlanItem> improvableQuestions = generateAdvicePlanInternalApi.generate(generateAdvicePlanParam).advicePlanItems();
+        log.debug("Advice engine returns [{}] questions for targets [{}", improvableQuestions.size(), attributeTargets);
+
+        while (improvableQuestions.size() < MIN_REQUIRED_IMPROVABLE_QUESTIONS_SIZE && !nonWeakAttributeTargets.isEmpty()) {
+            AttributeLevelTarget next = nonWeakAttributeTargets.pollFirst();
+            attributeTargets.add(next);
+            generateAdvicePlanParam = new GenerateAdvicePlanInternalApi.Param(result.getAssessment().getId(), List.copyOf(attributeTargets));
+            improvableQuestions = generateAdvicePlanInternalApi.generate(generateAdvicePlanParam).advicePlanItems();
+            log.debug("Advice engine returns [{}] questions for targets [{}", improvableQuestions.size(), attributeTargets);
+        }
+
+        createAiAdviceNarrationHelper.createAiAdviceNarration(result, improvableQuestions, List.copyOf(attributeTargets));
+    }
+
+    record AttributeTargetsDto(List<AttributeLevelTarget> weakAttributeTargets,
+                               Deque<AttributeLevelTarget> nonWeakAttributeTargets) {
+
+        public boolean isEmpty() {
+            return weakAttributeTargets.isEmpty() && nonWeakAttributeTargets.isEmpty();
+        }
+
+        public static AttributeTargetsDto of(List<AttributeLevelTarget> weakAttributeTargets,
+                                             List<AttributeLevelTarget> nonWeakAttributeTargets) {
+            return new AttributeTargetsDto(new ArrayList<>(weakAttributeTargets), new ArrayDeque<>(nonWeakAttributeTargets));
+        }
+    }
+}

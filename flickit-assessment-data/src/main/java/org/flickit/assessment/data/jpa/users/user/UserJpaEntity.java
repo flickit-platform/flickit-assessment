@@ -55,8 +55,14 @@ public class UserJpaEntity {
     @Column(name = "password", length = 128, nullable = false)
     private String password;
 
+    @Column(name = "creation_time", nullable = false)
+    private LocalDateTime creationTime;
+
+    @Column(name = "last_modification_time", nullable = false)
+    private LocalDateTime lastModificationTime;
+
     public UserJpaEntity(UUID id, String email, String displayName, Boolean isSuperUser, Boolean isStaff,
-                         Boolean isActive, String password) {
+                         Boolean isActive, String password, LocalDateTime creationTime, LocalDateTime lastModificationTime) {
         this.id = id;
         this.email = email;
         this.displayName = displayName;
@@ -64,5 +70,7 @@ public class UserJpaEntity {
         this.isStaff = isStaff;
         this.isActive = isActive;
         this.password = password;
+        this.creationTime = creationTime;
+        this.lastModificationTime = lastModificationTime;
     }
 }

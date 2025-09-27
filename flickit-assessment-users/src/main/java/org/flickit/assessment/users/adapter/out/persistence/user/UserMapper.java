@@ -6,6 +6,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 import org.flickit.assessment.users.application.domain.User;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -20,7 +21,7 @@ public class UserMapper {
             userEntity.getPicture());
     }
 
-    public static UserJpaEntity mapToJpaEntity(UUID id, String email, String displayName) {
+    public static UserJpaEntity mapToJpaEntity(UUID id, String email, String displayName, LocalDateTime creationTime, LocalDateTime lastModificationTime) {
         return new UserJpaEntity(
             id,
             email,
@@ -28,6 +29,8 @@ public class UserMapper {
             false,
             false,
             true,
-            "!" + RandomStringUtils.randomAlphanumeric(40));
+            "!" + RandomStringUtils.randomAlphanumeric(40),
+            creationTime,
+            lastModificationTime);
     }
 }

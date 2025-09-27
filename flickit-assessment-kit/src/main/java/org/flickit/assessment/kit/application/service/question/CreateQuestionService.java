@@ -7,9 +7,7 @@ import org.flickit.assessment.kit.application.domain.Question;
 import org.flickit.assessment.kit.application.port.in.question.CreateQuestionUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
-import org.flickit.assessment.kit.application.port.out.measure.LoadMeasurePort;
 import org.flickit.assessment.kit.application.port.out.question.CreateQuestionPort;
-import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairePort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,8 +22,6 @@ public class CreateQuestionService implements CreateQuestionUseCase {
 
     private final LoadKitVersionPort loadKitVersionPort;
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
-    private final LoadQuestionnairePort loadQuestionnairePort;
-    private final LoadMeasurePort loadMeasurePort;
     private final CreateQuestionPort createQuestionPort;
 
     @Override
@@ -39,8 +35,6 @@ public class CreateQuestionService implements CreateQuestionUseCase {
     }
 
     private CreateQuestionPort.Param toParam(Param param) {
-        var questionnaire = loadQuestionnairePort.load(param.getQuestionnaireId(), param.getKitVersionId());
-        var measure = loadMeasurePort.loadByCode(questionnaire.getCode(), param.getKitVersionId());
         return new CreateQuestionPort.Param(Question.generateCode(param.getIndex()),
             param.getTitle(),
             param.getIndex(),
@@ -49,8 +43,9 @@ public class CreateQuestionService implements CreateQuestionUseCase {
             param.getAdvisable(),
             param.getKitVersionId(),
             param.getQuestionnaireId(),
-            measure.getId(),
             null,
+            null,
+            param.getTranslations(),
             param.getCurrentUserId());
     }
 }

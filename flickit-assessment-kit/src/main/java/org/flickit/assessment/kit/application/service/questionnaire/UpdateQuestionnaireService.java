@@ -39,6 +39,7 @@ public class UpdateQuestionnaireService implements UpdateQuestionnaireUseCase {
             code,
             param.getIndex(),
             param.getDescription(),
+            param.getTranslations(),
             LocalDateTime.now(),
             param.getCurrentUserId()));
     }

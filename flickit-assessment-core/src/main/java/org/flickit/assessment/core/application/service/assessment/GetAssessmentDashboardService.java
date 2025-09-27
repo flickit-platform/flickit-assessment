@@ -6,18 +6,16 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentAcc
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.util.ClassUtils;
-import org.flickit.assessment.core.application.domain.AssessmentReport;
-import org.flickit.assessment.core.application.domain.AssessmentReportMetadata;
-import org.flickit.assessment.core.application.domain.AssessmentResult;
-import org.flickit.assessment.core.application.domain.ConfidenceLevel;
+import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.domain.insight.AssessmentInsight;
 import org.flickit.assessment.core.application.domain.insight.AttributeInsight;
 import org.flickit.assessment.core.application.domain.insight.SubjectInsight;
 import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentDashboardUseCase;
 import org.flickit.assessment.core.application.port.out.adviceitem.CountAdviceItemsPort;
+import org.flickit.assessment.core.application.port.out.advicenarration.LoadAdviceNarrationPort;
 import org.flickit.assessment.core.application.port.out.answer.CountAnswersPort;
 import org.flickit.assessment.core.application.port.out.answer.CountLowConfidenceAnswersPort;
-import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentProgressPort;
+import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.attribute.CountAttributesPort;
@@ -47,16 +45,17 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
     private final AssessmentAccessChecker assessmentAccessChecker;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final LoadAttributeInsightsPort loadAttributeInsightsPort;
-    private final CountAdviceItemsPort loadAdvicesDashboardPort;
+    private final CountAdviceItemsPort countAdviceItemsPort;
     private final CountEvidencesPort countEvidencesPort;
     private final CountAttributesPort countAttributesPort;
     private final CountSubjectsPort countSubjectsPort;
-    private final GetAssessmentProgressPort getAssessmentProgressPort;
+    private final LoadAssessmentPort loadAssessmentPort;
     private final CountLowConfidenceAnswersPort countLowConfidenceAnswersPort;
     private final LoadSubjectInsightsPort loadSubjectInsightsPort;
     private final LoadAssessmentInsightPort loadAssessmentInsightPort;
     private final LoadAssessmentReportPort loadAssessmentReportPort;
     private final CountAnswersPort countAnswersPort;
+    private final LoadAdviceNarrationPort loadAdviceNarrationPort;
 
     @Override
     public Result getAssessmentDashboard(Param param) {
@@ -71,13 +70,13 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
         return new Result(
             buildQuestionsResult(param.getAssessmentId(), assessmentResult.getId()),
             buildInsightsResult(assessmentResult),
-            buildAdvices(assessmentResult.getId()),
+            buildAdvices(assessmentResult.getId(), assessmentResult.getLastCalculationTime()),
             buildReport(assessmentReport)
         );
     }
 
     private Result.Questions buildQuestionsResult(UUID assessmentId, UUID assessmentResultId) {
-        var progress = getAssessmentProgressPort.getProgress(assessmentId);
+        var progress = loadAssessmentPort.progress(assessmentId);
         var questionsCount = progress.questionsCount();
         var answersCount = progress.answersCount();
         var lowConfidenceAnswersCount = countLowConfidenceAnswersPort.countWithConfidenceLessThan(assessmentResultId, ConfidenceLevel.SOMEWHAT_UNSURE);
@@ -156,9 +155,16 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
         return expiredAttributeInsightsCount + expiredSubjectsInsightsCount + assessmentInsightExpired;
     }
 
-    private Result.Advices buildAdvices(UUID assessmentResultId) {
-        var adviceItemsCount = loadAdvicesDashboardPort.countAdviceItems(assessmentResultId);
-        return new Result.Advices(adviceItemsCount);
+    private Result.Advices buildAdvices(UUID assessmentResultId, LocalDateTime lastCalculationTime) {
+        int adviceItemsCount = countAdviceItemsPort.countByAssessmentResultId(assessmentResultId);
+
+        return loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResultId)
+            .map(narration -> {
+                int expired = narration.getLastModificationTime().isBefore(lastCalculationTime) ? 1 : 0;
+                int unapproved = narration.isApproved() ? 0 : 1;
+                return new Result.Advices(adviceItemsCount, unapproved, expired);
+            })
+            .orElseGet(() -> new Result.Advices(adviceItemsCount, 0, 0));
     }
 
     private Result.Report buildReport(AssessmentReport assessmentReport) {

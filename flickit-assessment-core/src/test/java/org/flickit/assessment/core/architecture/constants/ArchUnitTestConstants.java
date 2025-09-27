@@ -45,12 +45,12 @@ public class ArchUnitTestConstants {
     public static final String SERVICE_TEST_SUFFIX = "ServiceTest";
     public static final String SERVICE_SUFFIX = "Service";
     public static final String ENUM_SERVICE = "(.*)(GetConfidenceLevelsService|GetEvidenceTypesService|GetAssessmentUserRolesService)";
-    public static final String ENUM_SERVICE_TEST = "(.*)(GetConfidenceLevelsServiceTest|GetEvidenceTypesServiceTest|GetAssessmentUserRolesServiceTest)";
+    public static final String ENUM_SERVICE_TEST = "(.*)(GetConfidenceLevelsServiceTest|GetEvidenceTypesServiceTest|GetAssessmentUserRolesServiceTest|GetAdviceItemCostLevelsServiceTest)";
     public static final String USE_CASE_SUFFIX = "UseCase";
     public static final String PORT_SUFFIX = "Port";
     public static final String TEST_CLASS_SUFFIX = "Test";
     public static final String MOTHER_SUFFIX = "Mother";
     public static final String NOT_ARCH_UNIT_TEST_OR_MOTHER = "(.*)(ArchUnitTest|Mother)";
     public static final String TEST_METHOD_SUFFIX = "test";
-    public static final String HELPER_SERVICE = "(.*)(CreateAttributeAiInsightHelper|CreateSubjectInsightsHelper|CreateAssessmentInsightHelper|GetAssessmentInsightHelper|GetAttributeInsightHelper|GetSubjectInsightHelper)";
+    public static final String HELPER_SERVICE = "(.*)(CreateAttributeAiInsightHelper|CreateSubjectInsightsHelper|CreateAssessmentInsightHelper|GetAssessmentInsightHelper|GetAttributeInsightHelper|GetSubjectInsightHelper|InitAssessmentInsightsHelper|RegenerateExpiredInsightsHelper|CreateAiAdviceNarrationHelper)";
 }

@@ -13,6 +13,7 @@ import org.flickit.assessment.core.application.port.out.user.LoadUserEmailByUser
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -35,7 +36,7 @@ public class AcceptAssessmentInvitationsService implements AcceptAssessmentInvit
 
         List<AssessmentUserRoleItem> validInvitations = invitations.stream()
             .filter(AssessmentInvite::isNotExpired)
-            .map(i -> toAssessmentUserRoleItem(i, param.getUserId()))
+            .map(i -> toAssessmentUserRoleItem(i, param.getUserId(), i.getCreatedBy()))
             .toList();
 
         if (!validInvitations.isEmpty())
@@ -51,7 +52,12 @@ public class AcceptAssessmentInvitationsService implements AcceptAssessmentInvit
         return new Result(new AcceptAssessmentInvitationNotificationsCmd(inviterUserIds, param.getUserId()));
     }
 
-    private AssessmentUserRoleItem toAssessmentUserRoleItem(AssessmentInvite invitation, UUID userId) {
-        return new AssessmentUserRoleItem(invitation.getAssessmentId(), userId, invitation.getRole());
+    private AssessmentUserRoleItem toAssessmentUserRoleItem(AssessmentInvite invitation, UUID userId, UUID createdBy) {
+        return new AssessmentUserRoleItem(invitation.getAssessmentId(),
+            userId,
+            invitation.getRole(),
+            createdBy,
+            LocalDateTime.now()
+        );
     }
 }

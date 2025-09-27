@@ -1,6 +1,5 @@
 package org.flickit.assessment.kit.application.service.subject;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.KitVersion;
@@ -9,6 +8,7 @@ import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGro
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.subject.UpdateSubjectPort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -40,6 +40,7 @@ public class UpdateSubjectService implements UpdateSubjectUseCase {
             param.getIndex(),
             param.getDescription(),
             param.getWeight(),
+            param.getTranslations(),
             LocalDateTime.now(),
             param.getCurrentUserId()));
     }

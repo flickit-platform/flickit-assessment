@@ -6,6 +6,7 @@ import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.InvalidStateException;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.util.MathUtils;
 import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.domain.report.AssessmentReportItem;
@@ -20,6 +21,7 @@ import org.flickit.assessment.core.application.port.out.advicenarration.LoadAdvi
 import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentQuestionsPort;
 import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
+import org.flickit.assessment.core.application.port.out.space.LoadSpacePort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,8 +31,10 @@ import java.util.function.Function;
 import static java.util.stream.Collectors.*;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_SPACE_ID_NOT_FOUND;
 import static org.flickit.assessment.common.exception.api.ErrorCodes.REPORT_UNPUBLISHED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_REPORT_REPORT_NOT_PUBLISHED;
+import static org.flickit.assessment.core.common.ErrorMessageKey.MATURITY_LEVEL_ID_NOT_FOUND;
 
 @Service
 @Transactional(readOnly = true)
@@ -44,6 +48,7 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
     private final LoadAssessmentQuestionsPort loadAssessmentQuestionsPort;
     private final LoadAdviceNarrationPort loadAdviceNarrationPort;
     private final LoadAdviceItemsPort loadAdviceItemsPort;
+    private final LoadSpacePort loadSpacePort;
 
     @Override
     public Result getAssessmentReport(Param param) {
@@ -53,10 +58,8 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
         validateAssessmentResultPort.validate(param.getAssessmentId());
 
         var assessmentReport = loadAssessmentReportPort.load(param.getAssessmentId());
-        var published = assessmentReport.map(AssessmentReport::isPublished)
+        boolean published = assessmentReport.map(AssessmentReport::isPublished)
             .orElse(false);
-        var reportMetadata = assessmentReport.map(AssessmentReport::getMetadata)
-            .orElse(new AssessmentReportMetadata(null, null, null, null));
 
         validateReportPublication(param, published);
 
@@ -64,7 +67,7 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
 
         var attributeMeasuresMap = buildAttributeMeasures(param.getAssessmentId(), assessmentReportInfo);
 
-        return buildResult(assessmentReportInfo, attributeMeasuresMap, reportMetadata, param);
+        return buildResult(assessmentReportInfo, attributeMeasuresMap, assessmentReport.orElse(null), param, published);
     }
 
     private void validateReportPublication(Param param, boolean published) {
@@ -75,8 +78,9 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
 
     private Result buildResult(LoadAssessmentReportInfoPort.Result assessmentReportInfo,
                                Map<Long, List<AttributeMeasure>> attributeMeasuresMap,
-                               AssessmentReportMetadata metadata,
-                               Param param) {
+                               AssessmentReport assessmentReport,
+                               Param param,
+                               boolean published) {
         var assessment = assessmentReportInfo.assessment();
         var assessmentKitItem = assessment.assessmentKit();
 
@@ -85,12 +89,35 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
         var maturityLevelMap = maturityLevels.stream()
             .collect(toMap(MaturityLevel::id, Function.identity()));
 
-        return new Result(toAssessment(assessment, assessmentKitItem, metadata, maturityLevels, attributesCount, maturityLevelMap),
-            toSubjects(assessmentReportInfo.subjects(), maturityLevelMap, attributeMeasuresMap),
-            toAdvice(assessment.assessmentResultId(), Locale.of(assessmentKitItem.language().name())),
-            toAssessmentProcess(metadata),
-            toPermissions(param),
-            toLanguage(assessmentKitItem.language()));
+        Optional<AssessmentReport> optionalReport = Optional.ofNullable(assessmentReport);
+        var reportMetadata = optionalReport.map(AssessmentReport::getMetadata)
+            .orElse(new AssessmentReportMetadata(null, null, null, null));
+        var reportVisibility = optionalReport.map(AssessmentReport::getVisibility)
+            .orElse(VisibilityType.RESTRICTED);
+        var linkHash = optionalReport.map(AssessmentReport::getLinkHash)
+            .orElse(null);
+
+        var maxMaturityLevel = maturityLevels.stream()
+            .max(Comparator.comparingInt(MaturityLevel::index))
+            .orElseThrow(()-> new ResourceNotFoundException(MATURITY_LEVEL_ID_NOT_FOUND));
+
+        var subjects = toSubjects(assessmentReportInfo.subjects(), maturityLevelMap, attributeMeasuresMap);
+        boolean isAdvisable = subjects.stream()
+            .flatMap(s -> s.attributes().stream())
+            .anyMatch(a -> a.maturityLevel().id() != maxMaturityLevel.id());
+
+        var advice = toAdvice(assessment.assessmentResultId(), Locale.of(assessment.language().name()));
+        var space = loadSpacePort.loadByAssessmentId(param.getAssessmentId())
+            .orElseThrow(()-> new ResourceNotFoundException(COMMON_SPACE_ID_NOT_FOUND)); //Can't happen
+        return new Result(toAssessment(assessment, assessmentKitItem, reportMetadata, maturityLevels, attributesCount, maturityLevelMap, space),
+            subjects,
+            advice,
+            toAssessmentProcess(reportMetadata),
+            toPermissions(param.getAssessmentId(), published, param.getCurrentUserId()),
+            toLanguage(assessment.language()),
+            reportVisibility.name(),
+            linkHash,
+            isAdvisable);
     }
 
     private List<MaturityLevel> toMaturityLevels(AssessmentKitItem assessmentKitItem) {
@@ -115,7 +142,8 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
                                     AssessmentReportMetadata metadata,
                                     List<MaturityLevel> levels,
                                     int attributesCount,
-                                    Map<Long, MaturityLevel> maturityLevelMap) {
+                                    Map<Long, MaturityLevel> maturityLevelMap,
+                                    Space space) {
         return new Assessment(
             assessment.title(),
             metadata.intro(),
@@ -124,6 +152,8 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
             toAssessmentKit(assessmentKitItem, attributesCount, levels),
             maturityLevelMap.get(assessment.maturityLevel().getId()),
             assessment.confidenceValue(),
+            toMode(assessment.mode()),
+            SpaceResult.of(space),
             assessment.creationTime());
     }
 
@@ -160,7 +190,7 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
     private Subject toSubject(AssessmentSubjectReportItem subject, Map<Long, MaturityLevel> maturityLevelMap,
                               Map<Long, List<AttributeMeasure>> attributeMeasuresMap) {
         var attributes = subject.attributes().stream()
-            .map(attribute -> toAttribute(attribute, maturityLevelMap, attributeMeasuresMap.get(attribute.id())))
+            .map(attribute -> toAttribute(attribute, maturityLevelMap, attributeMeasuresMap.getOrDefault(attribute.id(), List.of())))
             .sorted(Comparator.comparingInt(Attribute::index))
             .toList();
         return new Subject(subject.id(),
@@ -190,9 +220,10 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
     }
 
     private Advice toAdvice(UUID assessmentResultId, Locale locale) {
-        var narration = loadAdviceNarrationPort.load(assessmentResultId);
+        var narration = loadAdviceNarrationPort.loadNarration(assessmentResultId);
         var adviceItems = loadAdviceItemsPort.loadAll(assessmentResultId);
-        return new Advice(narration, toAdviceItems(adviceItems, locale));
+
+        return Advice.of(narration, toAdviceItems(adviceItems, locale));
     }
 
     private List<AdviceItem> toAdviceItems(List<org.flickit.assessment.core.application.domain.AdviceItem> adviceItems, Locale locale) {
@@ -210,13 +241,20 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
         return new AssessmentProcess(metadata.steps(), metadata.participants());
     }
 
-    private Permissions toPermissions(Param param) {
-        var canViewDashboard = assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_DASHBOARD);
-        return new Permissions(canViewDashboard);
+    private Permissions toPermissions(UUID assessmentId, boolean published, UUID currentUserId) {
+        var canViewDashboard = assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_DASHBOARD);
+        var canShareReport = published && assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, GRANT_ACCESS_TO_REPORT);
+        var canManageVisibility = published && assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, MANAGE_ASSESSMENT_REPORT_VISIBILITY);
+        var canViewMeasureQuestions = published && assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_ATTRIBUTE_MEASURE_QUESTIONS);
+        return new Permissions(canViewDashboard, canShareReport, canManageVisibility, canViewMeasureQuestions);
     }
 
     private Language toLanguage(KitLanguage language) {
         return new Language(language.getCode());
+    }
+
+    private Mode toMode(AssessmentMode mode) {
+        return new Mode(mode.getCode());
     }
 
     private Map<Long, List<AttributeMeasure>> buildAttributeMeasures(UUID assessmentId, LoadAssessmentReportInfoPort.Result reportInfo) {
@@ -295,7 +333,8 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
 
         var missedScore = measureMaxPossibleScore - gainedScore;
 
-        return new AttributeMeasure(measure.getTitle(),
+        return new AttributeMeasure(measure.getId(),
+            measure.getTitle(),
             MathUtils.round(impactPercentage, 2),
             MathUtils.round(measureMaxPossibleScore, 2),
             MathUtils.round(gainedScore, 2),

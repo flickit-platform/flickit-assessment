@@ -1,6 +1,7 @@
 package org.flickit.assessment.core.adapter.out.persistence.subjectvalue;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.SubjectValue;
 import org.flickit.assessment.core.application.port.out.subjectvalue.CreateSubjectValuePort;
@@ -9,6 +10,7 @@ import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpa
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
+import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
@@ -19,11 +21,13 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Function;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_KIT_NOT_FOUND;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.core.adapter.out.persistence.subjectvalue.SubjectValueMapper.mapToDomainModel;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
@@ -39,6 +43,7 @@ public class SubjectValuePersistenceJpaAdapter implements
     private final AssessmentResultJpaRepository assessmentResultRepository;
     private final MaturityLevelJpaRepository maturityLevelRepository;
     private final AttributeJpaRepository attributeRepository;
+    private final AssessmentKitJpaRepository assessmentKitRepository;
 
     @Override
     public List<SubjectValue> persistAll(List<Long> subjectIds, UUID assessmentResultId) {
@@ -75,7 +80,9 @@ public class SubjectValuePersistenceJpaAdapter implements
             .orElseThrow(() -> new ResourceNotFoundException(MATURITY_LEVEL_ID_NOT_FOUND));
         var attributesEntity = attributeRepository.findAllBySubjectIdAndKitVersionId(subjectId, assessmentResult.getKitVersionId());
 
-        return SubjectValueMapper.mapToDomainModel(subjectValueWithSubjectView, maturityLevelEntity, attributesEntity);
+        var translationLanguage = resolveLanguage(assessmentResult);
+
+        return mapToDomainModel(subjectValueWithSubjectView, maturityLevelEntity, attributesEntity, translationLanguage);
     }
 
     @Override
@@ -88,10 +95,13 @@ public class SubjectValuePersistenceJpaAdapter implements
         var subjectIdToAttributesMap = attributeRepository.findAllByKitVersionId(assessmentResult.getKitVersionId()).stream()
             .collect(groupingBy(AttributeJpaEntity::getSubjectId));
 
+        var translationLanguage = resolveLanguage(assessmentResult);
+
         return subjectValues.stream()
-            .map(sv -> SubjectValueMapper.mapToDomainModel(sv,
+            .map(sv -> mapToDomainModel(sv,
                 maturityLevelIdToEntityMap.get(sv.getSubjectValue().getMaturityLevelId()),
-                subjectIdToAttributesMap.get(sv.getSubject().getId())))
+                subjectIdToAttributesMap.get(sv.getSubject().getId()),
+                translationLanguage))
             .toList();
     }
 
@@ -105,10 +115,20 @@ public class SubjectValuePersistenceJpaAdapter implements
         var subjectIdToAttributesMap = attributeRepository.findAllByKitVersionId(assessmentResult.getKitVersionId()).stream()
             .collect(groupingBy(AttributeJpaEntity::getSubjectId));
 
+        var translationLanguage = resolveLanguage(assessmentResult);
+
         return subjectValues.stream()
-            .map(sv -> SubjectValueMapper.mapToDomainModel(sv,
+            .map(sv -> mapToDomainModel(sv,
                 maturityLevelIdToEntityMap.get(sv.getSubjectValue().getMaturityLevelId()),
-                subjectIdToAttributesMap.get(sv.getSubject().getId())))
+                subjectIdToAttributesMap.get(sv.getSubject().getId()),
+                translationLanguage))
             .toList();
+    }
+
+    private KitLanguage resolveLanguage(AssessmentResultJpaEntity assessmentResult) {
+        var kit = assessmentKitRepository.findByKitVersionId(assessmentResult.getKitVersionId())
+            .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_KIT_NOT_FOUND));
+        return Objects.equals(assessmentResult.getLangId(), kit.getLanguageId()) ? null
+            : KitLanguage.valueOfById(assessmentResult.getLangId());
     }
 }

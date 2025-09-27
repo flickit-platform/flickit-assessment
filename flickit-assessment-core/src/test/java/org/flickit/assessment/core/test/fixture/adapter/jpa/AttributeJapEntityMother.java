@@ -18,6 +18,7 @@ public class AttributeJapEntityMother {
             "title" + id,
             "description" + id,
             1,
+            null,
             creationTime,
             creationTime,
             createdBy,

@@ -3,6 +3,7 @@ package org.flickit.assessment.advice.adapter.out.persistence.attributevalue;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.advice.application.domain.AttributeLevelTarget;
 import org.flickit.assessment.advice.application.port.out.attributevalue.LoadAttributeCurrentAndTargetLevelIndexPort;
+import org.flickit.assessment.advice.application.port.out.attributevalue.LoadAttributeValuesPort;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.core.attributevalue.AttributeValueJpaEntity;
@@ -22,14 +23,16 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSM
 
 @Component("adviceAttributeValuePersistenceJpaAdapter")
 @RequiredArgsConstructor
-public class AttributeValuePersistenceJpaAdapter implements LoadAttributeCurrentAndTargetLevelIndexPort {
+public class AttributeValuePersistenceJpaAdapter implements
+    LoadAttributeCurrentAndTargetLevelIndexPort,
+    LoadAttributeValuesPort {
 
     private final AttributeValueJpaRepository repository;
     private final AssessmentResultJpaRepository assessmentResultRepository;
     private final MaturityLevelJpaRepository maturityLevelRepository;
 
     @Override
-    public List<Result> load(UUID assessmentId, List<AttributeLevelTarget> attributeLevelTargets) {
+    public List<LoadAttributeCurrentAndTargetLevelIndexPort.Result> load(UUID assessmentId, List<AttributeLevelTarget> attributeLevelTargets) {
         var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
         var maturityLevels = maturityLevelRepository.findAllByKitVersionId(assessmentResult.getKitVersionId());
@@ -46,7 +49,7 @@ public class AttributeValuePersistenceJpaAdapter implements LoadAttributeCurrent
         Map<Long, AttributeValueJpaEntity> attributeIdToAttributeValueMap = attrValueEntities.stream()
             .collect(toMap(AttributeValueJpaEntity::getAttributeId, Function.identity()));
 
-        List<Result> result = new ArrayList<>();
+        List<LoadAttributeCurrentAndTargetLevelIndexPort.Result> result = new ArrayList<>();
         for (AttributeLevelTarget attributeLevelTarget : attributeLevelTargets) {
             var attributeId = attributeLevelTarget.getAttributeId();
             Long currentMaturityLevelId = attributeIdToAttributeValueMap.get(attributeId).getMaturityLevelId();
@@ -62,5 +65,12 @@ public class AttributeValuePersistenceJpaAdapter implements LoadAttributeCurrent
             ));
         }
         return result;
+    }
+
+    @Override
+    public List<LoadAttributeValuesPort.Result> loadAll(UUID assessmentResultId) {
+        return repository.findByAssessmentResultId(assessmentResultId).stream()
+            .map(i -> new LoadAttributeValuesPort.Result(i.getAttributeId(), i.getMaturityLevelId()))
+            .toList();
     }
 }
