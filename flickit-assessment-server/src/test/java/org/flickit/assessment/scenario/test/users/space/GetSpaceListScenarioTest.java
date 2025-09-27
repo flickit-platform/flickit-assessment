@@ -31,10 +31,7 @@ import static org.flickit.assessment.scenario.fixture.request.CreateKitByDslRequ
 import static org.flickit.assessment.scenario.fixture.request.CreateSpaceRequestDtoMother.createSpaceRequestDto;
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * System / scenario tests for GetSpaceList (covers mapping, filtering, ordering and pagination).
- */
-public class GetSpaceListScenarioTest extends AbstractScenarioTest {
+class GetSpaceListScenarioTest extends AbstractScenarioTest {
 
     @Autowired
     SpaceTestHelper spaceHelper;
@@ -58,7 +55,7 @@ public class GetSpaceListScenarioTest extends AbstractScenarioTest {
     ExpertGroupTestHelper expertGroupHelper;
 
     @Test
-    void getSpaceList_basicMapping_andOwnerFlag_andCounts() {
+    void getSpaceList_withoutDeletedAndDefaultSpace() {
         // create a space owned by current user
         var mySpaceTitle = "my-space";
         var mySpaceId = createBasicSpace(mySpaceTitle);
@@ -87,17 +84,12 @@ public class GetSpaceListScenarioTest extends AbstractScenarioTest {
             .as(new TypeRef<>() {
             });
 
-        assertEquals(0, paginatedResponse.getPage());
-        assertEquals(10, paginatedResponse.getSize());
-        assertEquals(SpaceUserAccessJpaEntity.Fields.lastSeen, paginatedResponse.getSort());
-        assertEquals(Sort.Direction.DESC.name().toLowerCase(), paginatedResponse.getOrder());
+        assertPaginationParam(0, 10, 2, paginatedResponse);
         assertEquals(2, paginatedResponse.getTotal());
         assertEquals(2, paginatedResponse.getItems().size());
 
         GetSpaceListUseCase.SpaceListItem firstItem = paginatedResponse.getItems().getFirst();
         GetSpaceListUseCase.SpaceListItem secondItem = paginatedResponse.getItems().getLast();
-        assertNotNull(firstItem);
-        assertNotNull(secondItem);
 
         assertEquals(otherSpaceId, firstItem.id());
         assertNotEquals(userDefaultSpace.getId(), firstItem.id());
@@ -152,23 +144,23 @@ public class GetSpaceListScenarioTest extends AbstractScenarioTest {
             .as(new TypeRef<>() {
             });
 
-        assertEquals(0, firstPage.getPage());
-        assertEquals(3, firstPage.getSize());
-        assertEquals(SpaceUserAccessJpaEntity.Fields.lastSeen, firstPage.getSort());
-        assertEquals(Sort.Direction.DESC.name().toLowerCase(), firstPage.getOrder());
-        assertEquals(4, firstPage.getTotal());
+        assertPaginationParam(0, 3, 4, firstPage);
         assertEquals(3, firstPage.getItems().size());
         assertEquals(createdSpaceIds.getFirst(), firstPage.getItems().getFirst().id());
         assertEquals(createdSpaceIds.getLast(), firstPage.getItems().get(1).id());
         assertEquals(createdSpaceIds.get(3), firstPage.getItems().getLast().id());
 
-        assertEquals(1, secondPage.getPage());
-        assertEquals(3, secondPage.getSize());
-        assertEquals(SpaceUserAccessJpaEntity.Fields.lastSeen, secondPage.getSort());
-        assertEquals(Sort.Direction.DESC.name().toLowerCase(), secondPage.getOrder());
-        assertEquals(4, secondPage.getTotal());
+        assertPaginationParam(1, 3, 4, secondPage);
         assertEquals(1, secondPage.getItems().size());
         assertEquals(createdSpaceIds.get(2), secondPage.getItems().getFirst().id());
+    }
+
+    private void assertPaginationParam(int page, int size, int total, PaginatedResponse<GetSpaceListUseCase.SpaceListItem> actualPage) {
+        assertEquals(page, actualPage.getPage());
+        assertEquals(size, actualPage.getSize());
+        assertEquals(SpaceUserAccessJpaEntity.Fields.lastSeen, actualPage.getSort());
+        assertEquals(Sort.Direction.DESC.name().toLowerCase(), actualPage.getOrder());
+        assertEquals(total, actualPage.getTotal());
     }
 
     private Long createBasicSpace(String title) {
