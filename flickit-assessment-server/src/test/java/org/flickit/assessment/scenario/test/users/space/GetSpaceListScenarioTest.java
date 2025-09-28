@@ -155,6 +155,20 @@ class GetSpaceListScenarioTest extends AbstractScenarioTest {
         assertEquals(createdSpaceIds.get(2), secondPage.getItems().getFirst().id());
     }
 
+    @Test
+    void getExpertGroupList_emptyWhenNoGroups() {
+        var response = expertGroupHelper.getList(context, Map.of("page", 0, "size", 10))
+            .then()
+            .statusCode(200)
+            .extract()
+            .body()
+            .as(new TypeRef<PaginatedResponse<GetSpaceListUseCase.SpaceListItem>>() {
+            });
+
+        assertPaginationParam(0, 10, 0, response);
+        assertTrue(response.getItems().isEmpty());
+    }
+
     private void assertPaginationParam(int page, int size, int total, PaginatedResponse<GetSpaceListUseCase.SpaceListItem> actualPage) {
         assertEquals(page, actualPage.getPage());
         assertEquals(size, actualPage.getSize());
