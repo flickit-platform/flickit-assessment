@@ -38,6 +38,10 @@ public class QuestionsConvertor {
                 Row row = sheet.getRow(i);
                 String options = getCellString(row, columnMap.get(QUESTION_OPTIONS));
                 List<QuestionImpactDslModel> questionImpacts = new ArrayList<>();
+                var answerRangeCode = getCellString(row, columnMap.get(QUESTION_OPTIONS));
+                var optionsIndexToValueMap = answerRangeCodeToAnswerOptionsMap.get(answerRangeCode)
+                    .stream()
+                    .collect(Collectors.toMap(AnswerOptionDslModel::getIndex, AnswerOptionDslModel::getValue));
 
                 for (int j = 0; j < attributeDslModels.size(); j++) {
                     Integer weight = getCellInteger(row, HEADER_END_COL + j);
@@ -53,6 +57,7 @@ public class QuestionsConvertor {
                             .attributeCode(attributeCode)
                             .maturityLevel(maturityLevel)
                             .weight(weight)
+                            .optionsIndextoValueMap(optionsIndexToValueMap)
                             .build();
                     }
                     if (questionImpact != null)
@@ -63,7 +68,7 @@ public class QuestionsConvertor {
                     .title(getCellString(row, columnMap.get(QUESTION_QUESTION)))
                     .questionnaireCode(getCellString(row, columnMap.get(QUESTION_QUESTIONNAIRES)))
                     .code(getCellString(row, columnMap.get(QUESTION_CODE)))
-                    .answerRangeCode(options)
+                    .answerRangeCode(answerRangeCode)
                     .answerOptions(answerRangeCodeToAnswerOptionsMap.get(options))
                     .index(i - 1)
                     .questionImpacts(questionImpacts)

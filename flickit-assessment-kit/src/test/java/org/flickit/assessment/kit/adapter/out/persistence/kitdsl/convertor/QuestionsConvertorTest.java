@@ -62,6 +62,7 @@ class QuestionsConvertorTest {
         assertEquals("UsageRange", question.getAnswerRangeCode());
         assertEquals("Question Development 1 Description", question.getDescription());
         assertEquals(1, question.getQuestionImpacts().size());
+        //Question 1 : QuestionImpacts
         assertEquals("AttributeTwo", question.getQuestionImpacts().getFirst().getAttributeCode());
         assertEquals(1, question.getQuestionImpacts().getFirst().getWeight());
         assertEquals("Prepared Title", question.getQuestionImpacts().getFirst().getMaturityLevel().getTitle());
@@ -77,7 +78,7 @@ class QuestionsConvertorTest {
         assertEquals("UsageRange", question.getAnswerRangeCode());
         assertEquals("Question Development 2 Description", question.getDescription());
         assertEquals(1, question.getQuestionImpacts().size());
-
+        //Question 2 : QuestionImpacts
         assertEquals("AttributeTwo", question.getQuestionImpacts().getFirst().getAttributeCode());
         assertEquals(1, question.getQuestionImpacts().getFirst().getWeight());
         assertEquals("Prepared Title", question.getQuestionImpacts().getFirst().getMaturityLevel().getTitle());
@@ -93,7 +94,7 @@ class QuestionsConvertorTest {
         assertEquals("UsageRange", question.getAnswerRangeCode());
         assertEquals("Question DevOps 1 Description", question.getDescription());
         assertEquals(1, question.getQuestionImpacts().size());
-
+        //Question 3 : QuestionImpacts
         assertEquals("AttributeTwo", question.getQuestionImpacts().getFirst().getAttributeCode());
         assertEquals(2, question.getQuestionImpacts().getFirst().getWeight());
         assertEquals("Well Equipped Title", question.getQuestionImpacts().getFirst().getMaturityLevel().getTitle());
@@ -109,7 +110,7 @@ class QuestionsConvertorTest {
         assertEquals("UsageRange", question.getAnswerRangeCode());
         assertEquals("Question TeamCollaboration 1 Description", question.getDescription());
         assertEquals(2, question.getQuestionImpacts().size());
-
+        //Question 4 : QuestionImpacts
         assertEquals("AttributeOne", question.getQuestionImpacts().getFirst().getAttributeCode());
         assertEquals(1, question.getQuestionImpacts().getFirst().getWeight());
         assertEquals("Well Equipped Title", question.getQuestionImpacts().getFirst().getMaturityLevel().getTitle());
@@ -132,7 +133,7 @@ class QuestionsConvertorTest {
         assertTrue(question.isMayNotBeApplicable());
         assertFalse(question.isAdvisable());
         assertEquals(3, question.getQuestionImpacts().size());
-
+        //Question 4 : QuestionImpacts
         assertEquals("AttributeOne", question.getQuestionImpacts().getFirst().getAttributeCode());
         assertEquals(1, question.getQuestionImpacts().getFirst().getWeight());
         assertEquals("Well Equipped Title", question.getQuestionImpacts().getFirst().getMaturityLevel().getTitle());
@@ -150,7 +151,6 @@ class QuestionsConvertorTest {
     }
 
     private Workbook createWorkbook() throws IOException {
-
         File file = new File("src/test/resources/correct-excel-kit.xlsx");
         FileInputStream input = new FileInputStream(file);
         MultipartFile multipartFile = new MockMultipartFile("file",
