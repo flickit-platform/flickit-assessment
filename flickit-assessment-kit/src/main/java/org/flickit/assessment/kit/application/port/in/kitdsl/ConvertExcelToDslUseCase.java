@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
+import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
@@ -14,7 +15,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.CONVERT_EXCEL_TO
 
 public interface ConvertExcelToDslUseCase {
 
-    void convertExcelToDsl(Param param);
+    AssessmentKitDslModel convertExcelToDsl(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
