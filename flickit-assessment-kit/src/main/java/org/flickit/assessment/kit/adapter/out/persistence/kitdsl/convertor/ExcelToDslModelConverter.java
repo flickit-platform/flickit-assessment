@@ -28,7 +28,7 @@ public class ExcelToDslModelConverter {
             var questionnaires = QuestionnairesConvertor.convert(workbook.getSheet(SHEET_QUESTIONNAIRES));
             var attributes = QualityAttributesConvertor.convertAttributes(qualityAttributes);
             var subjects = QualityAttributesConvertor.convertSubjects(qualityAttributes);
-            var answerRangeCodeToAnswerOptionsMap = AnswerOptionsConvertor.convertAnswerOptions(workbook.getSheet(SHEET_ANSWER_OPTIONS));
+            var answerRangeCodeToAnswerOptionsMap = AnswerOptionsConvertor.convert(workbook.getSheet(SHEET_ANSWER_OPTIONS));
             var levels = MaturityLevelsConvertor.convert(workbook.getSheet(SHEET_MATURITY_LEVELS));
             var maturityLevelsCodeToMaturityLevelDslModel = levels.stream()
                 .collect(Collectors.toMap(MaturityLevelDslModel::getCode, Function.identity()));
