@@ -30,8 +30,6 @@ public class QuestionsConvertor {
 
     static List<QuestionDslModel> convert(Sheet sheet, Map<String, List<AnswerOptionDslModel>> answerRangeCodeToAnswerOptionsMap,
                                           Map<String, MaturityLevelDslModel> maturityLevelCodeToMaturityLevelDslMap, List<AttributeDslModel> attributeDslModels) {
-
-
         var columnMap = getSheetHeader(sheet, HEADER_ROW_NUM, HEADER_START_COL, HEADER_END_COL);
 
         return IntStream.rangeClosed(DATA_START_ROW, sheet.getLastRowNum())
@@ -39,22 +37,26 @@ public class QuestionsConvertor {
             .mapToObj(i -> {
                 Row row = sheet.getRow(i);
                 String options = getCellString(row, columnMap.get(QUESTION_OPTIONS));
-                String attributeCode;
-                QuestionImpactDslModel questionImpact = null;
                 List<QuestionImpactDslModel> questionImpacts = new ArrayList<>();
 
                 for (int j = 0; j < attributeDslModels.size(); j++) {
                     Integer weight = getCellInteger(row, HEADER_END_COL + j);
+                    QuestionImpactDslModel questionImpact = null;
                     if (weight != null) {
-                        attributeCode = attributeDslModels.get(j).getCode();
+                        MaturityLevelDslModel maturityLevelDslModel = maturityLevelCodeToMaturityLevelDslMap.get(getCellString(row, columnMap.get(QUESTION_MATURITY)));
+                        var maturityLevel = MaturityLevelDslModel.builder()
+                            .title(maturityLevelDslModel.getTitle())
+                            .code(maturityLevelDslModel.getCode()).build();
+
+                        String attributeCode = attributeDslModels.get(j).getCode();
                         questionImpact = QuestionImpactDslModel.builder()
                             .attributeCode(attributeCode)
-                            .maturityLevel(maturityLevelCodeToMaturityLevelDslMap.get(getCellString(row, columnMap.get(QUESTION_MATURITY))))
+                            .maturityLevel(maturityLevel)
                             .weight(weight)
                             .build();
                     }
-                    questionImpacts.add(questionImpact);
-
+                    if (questionImpact != null)
+                        questionImpacts.add(questionImpact);
                 }
 
                 return QuestionDslModel.builder()

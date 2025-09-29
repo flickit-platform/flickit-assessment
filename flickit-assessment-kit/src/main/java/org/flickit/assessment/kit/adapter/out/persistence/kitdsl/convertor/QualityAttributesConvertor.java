@@ -3,7 +3,6 @@ package org.flickit.assessment.kit.adapter.out.persistence.kitdsl.convertor;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.flickit.assessment.kit.application.domain.dsl.AttributeDslModel;
-import org.flickit.assessment.kit.application.domain.dsl.QuestionnaireDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.SubjectDslModel;
 
 import java.util.ArrayList;
