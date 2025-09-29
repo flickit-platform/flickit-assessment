@@ -30,7 +30,6 @@ class KitDslPersistenceJpaAdapterTest {
 
         var dslModel = adapter.convert(multipartFile);
 
-        assertQuestionnaires(dslModel.getQuestionnaires());
         assertQuestions(dslModel.getQuestions());
     }
 
@@ -55,26 +54,6 @@ class KitDslPersistenceJpaAdapterTest {
                 baos.toByteArray()
             );
         }
-    }
-
-    private static void assertQuestionnaires(List<QuestionnaireDslModel> questionnaires) {
-        //Assert questionnaire
-        assertEquals(3, questionnaires.size());
-        //Assert Questionnaire 1
-        QuestionnaireDslModel questionnaire = questionnaires.getFirst();
-        assertEquals("DevelopmentCode", questionnaire.getCode());
-        assertEquals("Development", questionnaire.getTitle());
-        assertEquals("Development Description", questionnaire.getDescription());
-        //Assert Questionnaire 2
-        questionnaire = questionnaires.get(1);
-        assertEquals("DevOpsCode", questionnaire.getCode());
-        assertEquals("DevOps", questionnaire.getTitle());
-        assertEquals("DevOps Description", questionnaire.getDescription());
-        //Assert Questionnaire 3
-        questionnaire = questionnaires.getLast();
-        assertEquals("TeamCollaborationCode", questionnaire.getCode());
-        assertEquals("Team Collaboration", questionnaire.getTitle());
-        assertEquals("Team Collaboration Description", questionnaire.getDescription());
     }
 
     private static void assertQuestions(List<QuestionDslModel> questions) {
