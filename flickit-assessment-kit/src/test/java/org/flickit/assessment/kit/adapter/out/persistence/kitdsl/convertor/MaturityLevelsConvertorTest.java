@@ -18,7 +18,6 @@ class MaturityLevelsConvertorTest {
 
     @Test
     void testMaturityLevelsConvertor() throws IOException {
-
         var maturityLevelsSheet = createWorkbook().getSheet("MaturityLevels");
         var maturityLevels = MaturityLevelsConvertor.convert(maturityLevelsSheet);
 

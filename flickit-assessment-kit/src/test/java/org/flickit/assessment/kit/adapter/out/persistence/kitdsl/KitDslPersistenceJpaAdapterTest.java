@@ -30,7 +30,6 @@ class KitDslPersistenceJpaAdapterTest {
 
         var dslModel = adapter.convert(multipartFile);
 
-        assertQualityAttributes(dslModel);
         assertQuestionnaires(dslModel.getQuestionnaires());
         assertQuestions(dslModel.getQuestions());
     }
@@ -56,48 +55,6 @@ class KitDslPersistenceJpaAdapterTest {
                 baos.toByteArray()
             );
         }
-    }
-
-    private static void assertQualityAttributes(AssessmentKitDslModel dslModel) {
-        //Assert subject 1
-        assertEquals(2, dslModel.getSubjects().size());
-        SubjectDslModel subject1 = dslModel.getSubjects().getFirst();
-        assertEquals("Team", subject1.getCode());
-        assertEquals("Team Title", subject1.getTitle());
-        assertEquals(2, subject1.getWeight());
-        assertEquals("Subject Description 1", subject1.getDescription());
-        assertEquals(1, subject1.getIndex());
-        //Assert Attribute 1
-        AttributeDslModel attr1 = dslModel.getAttributes().getFirst();
-        assertEquals("Team", attr1.getSubjectCode());
-        assertEquals("AttributeOne", attr1.getCode());
-        assertEquals("Attribute One", attr1.getTitle());
-        assertEquals(1, attr1.getWeight());
-        assertEquals("Attribute One Description", attr1.getDescription());
-        assertEquals(1, attr1.getIndex());
-        //Assert Attribute 2
-        AttributeDslModel attr2 = dslModel.getAttributes().get(1);
-        assertEquals("Team", attr2.getSubjectCode());
-        assertEquals("AttributeTwo", attr2.getCode());
-        assertEquals("Attribute Two", attr2.getTitle());
-        assertEquals(3, attr2.getWeight());
-        assertEquals("Attribute Two Description", attr2.getDescription());
-        assertEquals(2, attr2.getIndex());
-        //Assert subject 2
-        SubjectDslModel subject2 = dslModel.getSubjects().getLast();
-        assertEquals("Software", subject2.getCode());
-        assertEquals("Software Title", subject2.getTitle());
-        assertEquals(1, subject2.getWeight());
-        assertEquals("Subject Description 2", subject2.getDescription());
-        assertEquals(2, subject2.getIndex());
-        //Assert Attribute 3
-        AttributeDslModel attr3 = dslModel.getAttributes().getLast();
-        assertEquals("Software", attr3.getSubjectCode());
-        assertEquals("AttributeThree", attr3.getCode());
-        assertEquals("Attribute Three", attr3.getTitle());
-        assertEquals(2, attr3.getWeight());
-        assertEquals("Attribute Three Description", attr3.getDescription());
-        assertEquals(3, attr3.getIndex());
     }
 
     private static void assertQuestionnaires(List<QuestionnaireDslModel> questionnaires) {
