@@ -212,7 +212,7 @@ class GetAssessmentReportServiceTest {
         assertNull(result.linkHash());
         assertTrue(result.isAdvisable());
 
-        verify(assessmentAccessChecker, times(3))
+        verify(assessmentAccessChecker, times(5))
             .isAuthorized(eq(param.getAssessmentId()), eq(param.getCurrentUserId()), any(AssessmentPermission.class));
     }
 
