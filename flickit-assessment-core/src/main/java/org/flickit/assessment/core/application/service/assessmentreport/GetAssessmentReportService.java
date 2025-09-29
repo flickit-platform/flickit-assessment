@@ -246,7 +246,8 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
         var canShareReport = published && assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, GRANT_ACCESS_TO_REPORT);
         var canManageVisibility = published && assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, MANAGE_ASSESSMENT_REPORT_VISIBILITY);
         var canViewMeasureQuestions = published && assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_ATTRIBUTE_MEASURE_QUESTIONS);
-        return new Permissions(canViewDashboard, canShareReport, canManageVisibility, canViewMeasureQuestions);
+        var canViewQuestionnaires = published && assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_ASSESSMENT_QUESTIONNAIRE_LIST);
+        return new Permissions(canViewDashboard, canShareReport, canManageVisibility, canViewMeasureQuestions, canViewQuestionnaires);
     }
 
     private Language toLanguage(KitLanguage language) {
