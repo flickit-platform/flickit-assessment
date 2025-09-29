@@ -207,11 +207,12 @@ class GetAssessmentReportServiceTest {
         assertFalse(result.permissions().canShareReport());
         assertFalse(result.permissions().canManageVisibility());
         assertFalse(result.permissions().canViewMeasureQuestions());
+        assertFalse(result.permissions().canViewQuestionnaires());
         assertEquals(VisibilityType.RESTRICTED.name(), result.visibility());
         assertNull(result.linkHash());
         assertTrue(result.isAdvisable());
 
-        verify(assessmentAccessChecker, times(3))
+        verify(assessmentAccessChecker, times(5))
             .isAuthorized(eq(param.getAssessmentId()), eq(param.getCurrentUserId()), any(AssessmentPermission.class));
     }
 
@@ -254,6 +255,8 @@ class GetAssessmentReportServiceTest {
             .thenReturn(false);
         when(loadAssessmentQuestionsPort.loadApplicableQuestions(param.getAssessmentId()))
             .thenReturn(questionAnswers);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_QUESTIONNAIRE_LIST))
+            .thenReturn(false);
         when(loadAdviceItemsPort.loadAll(assessmentReport.assessmentResultId())).thenReturn(adviceItems);
         when(loadAdviceNarrationPort.loadNarration(assessmentReport.assessmentResultId())).thenReturn(adviceNarration);
         when(loadSpacePort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(space));
@@ -275,11 +278,12 @@ class GetAssessmentReportServiceTest {
         assertFalse(result.permissions().canShareReport());
         assertTrue(result.permissions().canManageVisibility());
         assertFalse(result.permissions().canViewMeasureQuestions());
+        assertFalse(result.permissions().canViewQuestionnaires());
         assertEquals(report.getVisibility().name(), result.visibility());
         assertEquals(report.getLinkHash(), result.linkHash());
         assertFalse(result.isAdvisable());
 
-        verify(assessmentAccessChecker, times(5))
+        verify(assessmentAccessChecker, times(6))
             .isAuthorized(eq(param.getAssessmentId()), eq(param.getCurrentUserId()), any(AssessmentPermission.class));
     }
 
@@ -320,6 +324,8 @@ class GetAssessmentReportServiceTest {
             .thenReturn(questionAnswers);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ATTRIBUTE_MEASURE_QUESTIONS))
             .thenReturn(true);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_QUESTIONNAIRE_LIST))
+            .thenReturn(true);
         when(loadAdviceItemsPort.loadAll(assessmentReport.assessmentResultId())).thenReturn(List.of());
         when(loadAdviceNarrationPort.loadNarration(assessmentReport.assessmentResultId())).thenReturn(null);
         when(loadSpacePort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(space));
@@ -341,11 +347,12 @@ class GetAssessmentReportServiceTest {
         assertFalse(result.permissions().canShareReport());
         assertTrue(result.permissions().canManageVisibility());
         assertTrue(result.permissions().canViewMeasureQuestions());
+        assertTrue(result.permissions().canViewQuestionnaires());
         assertEquals(report.getVisibility().name(), result.visibility());
         assertEquals(report.getLinkHash(), result.linkHash());
         assertFalse(result.isAdvisable());
 
-        verify(assessmentAccessChecker, times(5))
+        verify(assessmentAccessChecker, times(6))
             .isAuthorized(eq(param.getAssessmentId()), eq(param.getCurrentUserId()), any(AssessmentPermission.class));
     }
 
@@ -384,6 +391,8 @@ class GetAssessmentReportServiceTest {
             .thenReturn(true);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ATTRIBUTE_MEASURE_QUESTIONS))
             .thenReturn(true);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_QUESTIONNAIRE_LIST))
+            .thenReturn(true);
         when(loadAssessmentQuestionsPort.loadApplicableQuestions(param.getAssessmentId()))
             .thenReturn(questionAnswers);
         when(loadAdviceItemsPort.loadAll(assessmentReport.assessmentResultId())).thenReturn(List.of());
@@ -407,11 +416,12 @@ class GetAssessmentReportServiceTest {
         assertFalse(result.permissions().canShareReport());
         assertTrue(result.permissions().canManageVisibility());
         assertTrue(result.permissions().canViewMeasureQuestions());
+        assertTrue(result.permissions().canViewQuestionnaires());
         assertEquals(report.getVisibility().name(), result.visibility());
         assertEquals(report.getLinkHash(), result.linkHash());
         assertTrue(result.isAdvisable());
 
-        verify(assessmentAccessChecker, times(5))
+        verify(assessmentAccessChecker, times(6))
             .isAuthorized(eq(param.getAssessmentId()), eq(param.getCurrentUserId()), any(AssessmentPermission.class));
     }
 
