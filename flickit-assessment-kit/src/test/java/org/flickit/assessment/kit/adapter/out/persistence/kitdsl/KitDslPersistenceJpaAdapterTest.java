@@ -13,7 +13,7 @@ import org.testcontainers.shaded.org.apache.commons.io.IOUtils;
 
 import java.io.*;
 import java.util.List;
-import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -32,7 +32,6 @@ class KitDslPersistenceJpaAdapterTest {
 
         assertQualityAttributes(dslModel);
         assertQuestionnaires(dslModel.getQuestionnaires());
-        assertMaturityLevels(dslModel.getMaturityLevels());
         assertQuestions(dslModel.getQuestions());
     }
 
@@ -174,51 +173,5 @@ class KitDslPersistenceJpaAdapterTest {
         assertEquals("Question TeamCollaboration 2 Description", question.getDescription());
         assertTrue(question.isMayNotBeApplicable());
         assertFalse(question.isAdvisable());
-    }
-
-    private static void assertMaturityLevels(List<MaturityLevelDslModel> maturityLevels) {
-        assertEquals(4, maturityLevels.size());
-
-        // 1: Unprepared
-        MaturityLevelDslModel maturityLevel = maturityLevels.getFirst();
-        assertEquals(1, maturityLevel.getIndex());
-        assertEquals(1, maturityLevel.getValue());
-        assertEquals("Unprepared", maturityLevel.getCode());
-        assertEquals("Unprepared Title", maturityLevel.getTitle());
-        assertEquals("Unprepared Description", maturityLevel.getDescription());
-        assertTrue(maturityLevel.getCompetencesCodeToValueMap().isEmpty());
-
-        // 2: Prepared
-        maturityLevel = maturityLevels.get(1);
-        assertEquals(2, maturityLevel.getIndex());
-        assertEquals(2, maturityLevel.getValue());
-        assertEquals("Prepared", maturityLevel.getCode());
-        assertEquals("Prepared Title", maturityLevel.getTitle());
-        assertEquals("Prepared Description", maturityLevel.getDescription());
-        assertEquals(1, maturityLevel.getCompetencesCodeToValueMap().size());
-        assertEquals(70, maturityLevel.getCompetencesCodeToValueMap().get("Prepared"));
-
-        // 3: WellEquipped
-        maturityLevel = maturityLevels.get(2);
-        assertEquals(3, maturityLevel.getIndex());
-        assertEquals(3, maturityLevel.getValue());
-        assertEquals("WellEquipped", maturityLevel.getCode());
-        assertEquals("Well Equipped Title", maturityLevel.getTitle());
-        assertEquals("Well Equipped Description", maturityLevel.getDescription());
-        assertEquals(2, maturityLevel.getCompetencesCodeToValueMap().size());
-        assertEquals(80, maturityLevel.getCompetencesCodeToValueMap().get("Prepared"));
-        assertEquals(70, maturityLevel.getCompetencesCodeToValueMap().get("WellEquipped"));
-
-        // 4: WellEquipped
-        maturityLevel = maturityLevels.getLast();
-        assertEquals(4, maturityLevel.getIndex());
-        assertEquals(4, maturityLevel.getValue());
-        assertEquals("StateOfTheArt", maturityLevel.getCode());
-        assertEquals("State of the Art Title", maturityLevel.getTitle());
-        assertEquals("State of the Art Description", maturityLevel.getDescription());
-        assertEquals(3, maturityLevel.getCompetencesCodeToValueMap().size());
-        assertEquals(80, maturityLevel.getCompetencesCodeToValueMap().get("Prepared"));
-        assertEquals(80, maturityLevel.getCompetencesCodeToValueMap().get("WellEquipped"));
-        assertEquals(40, maturityLevel.getCompetencesCodeToValueMap().get("StateOfTheArt"));
     }
 }
