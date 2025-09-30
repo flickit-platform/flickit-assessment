@@ -555,6 +555,7 @@ public class ErrorMessageKey {
     public static final String GET_PUBLIC_KIT_LIST_SIZE_MAX = "get-public-kit-list.size.max";
 
     public static final String CONVERT_EXCEL_TO_DSL_EXCEL_FILE_NOT_NULL = "convert-excel-to-dsl.excelFile.notNull";
+    public static final String CONVERT_EXCEL_TO_DSL_EXCEL_FILE_INVALID = "convert-excel-to-dsl.excelFile.invalid";
 
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
