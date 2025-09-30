@@ -8,6 +8,7 @@ import org.flickit.assessment.kit.application.domain.dsl.SubjectDslModel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -68,13 +69,12 @@ public class QualityAttributesConverter {
             .mapToObj(sheet::getRow)
             .filter(row -> !ExcelToDslModelConverter.isBlankRow(row))
             .collect(ArrayList::new, (list, row) -> {
-                String subjectCode = getCellString(row, columnMap.get(SUBJECT_NAME));
-                String effectiveSubjectCode = (subjectCode != null && !subjectCode.isBlank())
-                    ? subjectCode
-                    : list.isEmpty() ? null : list.getLast().getSubjectCode();
+                String subjectCode = Optional.ofNullable(getCellString(row, columnMap.get(SUBJECT_NAME)))
+                    .filter(c -> !c.isBlank())
+                    .orElseGet(() -> !list.isEmpty() ? list.getLast().getSubjectCode() : null);
 
                 AttributeDslModel attribute = AttributeDslModel.builder()
-                    .subjectCode(effectiveSubjectCode)
+                    .subjectCode(subjectCode)
                     .code(getCellString(row, columnMap.get(ATTRIBUTE_NAME)))
                     .weight(getCellInteger(row, columnMap.get(ATTRIBUTE_WEIGHT)))
                     .title(getCellString(row, columnMap.get(ATTRIBUTE_TITLE)))
