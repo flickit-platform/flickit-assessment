@@ -16,10 +16,10 @@ import static org.flickit.assessment.kit.adapter.out.persistence.kitdsl.converte
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AnswerOptionsConverter {
 
-    static final int START_ROW = 1;
-    static final int RANGE_NAME_COL = 0;
-    static final int CAPTION_COL = 1;
-    static final int VALUE_COL = 2;
+    private static final int START_ROW = 1;
+    private static final int RANGE_NAME_COL = 0;
+    private static final int CAPTION_COL = 1;
+    private static final int VALUE_COL = 2;
 
     static Map<String, List<AnswerOptionDslModel>> convert(Sheet sheet) {
         Map<String, List<AnswerOptionDslModel>> result = new LinkedHashMap<>();
