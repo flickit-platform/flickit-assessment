@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.adapter.out.persistence.kitdsl.converter;
+package org.flickit.assessment.kit.adapter.out.persistence.kitdsl.convertor;
 
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -18,7 +18,6 @@ class QuestionnairesConvertorTest {
 
     @Test
     void testQuestionnairesConvertor() throws IOException {
-
         var questionnairesSheet = createWorkbook().getSheet("Questionnaires");
         var questionnaires = QuestionnairesConvertor.convert(questionnairesSheet);
 

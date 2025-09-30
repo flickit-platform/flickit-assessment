@@ -5,7 +5,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.assessmentkitdsl.KitDslJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkitdsl.KitDslJpaRepository;
 import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
-import org.flickit.assessment.kit.adapter.out.persistence.kitdsl.converter.ExcelToDslModelConverter;
+import org.flickit.assessment.kit.adapter.out.persistence.kitdsl.convertor.ExcelToDslModelConverter;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.port.out.kitdsl.CreateKitDslPort;
 import org.flickit.assessment.kit.application.port.out.kitdsl.LoadDslFilePathPort;
