@@ -13,13 +13,7 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.util.unit.DataSize;
-import org.springframework.web.multipart.MultipartFile;
-import org.testcontainers.shaded.org.apache.commons.io.IOUtils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -82,16 +76,16 @@ class ConvertExcelToDslServiceTest {
     }
 
     FileProperties fileProperties() {
-        var fileProperties = new FileProperties();
-        fileProperties.setExcelKitContentType(xlsxContentType);
-        fileProperties.setDslMaxSize(DataSize.ofMegabytes(5));
-        return fileProperties;
+        var properties = new FileProperties();
+        properties.setExcelKitContentType(xlsxContentType);
+        properties.setDslMaxSize(DataSize.ofMegabytes(5));
+        return properties;
     }
 
     private ConvertExcelToDslUseCase.Param createParam(Consumer<ConvertExcelToDslUseCase.Param.ParamBuilder> changer) {
-        var param = paramBuilder();
-        changer.accept(param);
-        return param.build();
+        var paramBuilder = paramBuilder();
+        changer.accept(paramBuilder);
+        return paramBuilder.build();
     }
 
     private ConvertExcelToDslUseCase.Param.ParamBuilder paramBuilder() {
