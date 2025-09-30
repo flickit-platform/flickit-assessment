@@ -1,5 +1,7 @@
 package org.flickit.assessment.kit.adapter.out.persistence.kitdsl.converter;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import lombok.experimental.UtilityClass;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -13,16 +15,17 @@ import java.util.stream.IntStream;
 import static org.flickit.assessment.kit.adapter.out.persistence.kitdsl.converter.ExcelToDslModelConverter.*;
 
 @UtilityClass
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MaturityLevelsConverter {
 
     private static final String TITLE = "Title";
     private static final String DESCRIPTION = "Description";
 
-    private final static int HEADER_ROW_NUM = 1;
-    private final static int HEADER_START_COL = 1;
-    private final static int HEADER_END_COL = 2;
-    private final static int DATA_START_ROW = 2;
-    private final static int DATA_START_COL = 3;
+    private static final int HEADER_ROW_NUM = 1;
+    private static final int HEADER_START_COL = 1;
+    private static final int HEADER_END_COL = 2;
+    private static final int DATA_START_ROW = 2;
+    private static final int DATA_START_COL = 3;
 
     static List<MaturityLevelDslModel> convert(Sheet sheet) {
         var columnMap = getSheetHeader(sheet, HEADER_ROW_NUM, HEADER_START_COL, HEADER_END_COL);
