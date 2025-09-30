@@ -1,7 +1,5 @@
 package org.flickit.assessment.kit.adapter.out.persistence.kitdsl.converter;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import lombok.experimental.UtilityClass;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -16,7 +14,6 @@ import java.util.stream.IntStream;
 import static org.flickit.assessment.kit.adapter.out.persistence.kitdsl.converter.ExcelToDslModelConverter.*;
 
 @UtilityClass
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class QualityAttributesConverter {
 
     private static final String SUBJECT_NAME = "Subject Name";

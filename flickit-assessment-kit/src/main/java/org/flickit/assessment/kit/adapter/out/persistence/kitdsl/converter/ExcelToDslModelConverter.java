@@ -1,7 +1,5 @@
 package org.flickit.assessment.kit.adapter.out.persistence.kitdsl.converter;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import lombok.experimental.UtilityClass;
 import org.apache.poi.ss.usermodel.*;
 import org.flickit.assessment.common.exception.ValidationException;
@@ -18,7 +16,6 @@ import java.util.stream.StreamSupport;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.CONVERT_EXCEL_TO_DSL_EXCEL_FILE_INVALID;
 
 @UtilityClass
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ExcelToDslModelConverter {
 
     private static final String SHEET_QUALITY_ATTRIBUTES = "QualityAttributes";
