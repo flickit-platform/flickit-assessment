@@ -16,11 +16,11 @@ public class MaturityLevelsConvertor {
     private static final String TITLE = "Title";
     private static final String DESCRIPTION = "Description";
 
-    final static int HEADER_ROW_NUM = 1;
-    final static int HEADER_START_COL = 1;
-    final static int HEADER_END_COL = 2;
-    final static int DATA_START_ROW = 2;
-    final static int DATA_START_COL = 3;
+    private final static int HEADER_ROW_NUM = 1;
+    private final static int HEADER_START_COL = 1;
+    private final static int HEADER_END_COL = 2;
+    private final static int DATA_START_ROW = 2;
+    private final static int DATA_START_COL = 3;
 
     static List<MaturityLevelDslModel> convert(Sheet sheet) {
         var columnMap = getSheetHeader(sheet, HEADER_ROW_NUM, HEADER_START_COL, HEADER_END_COL);

@@ -14,10 +14,10 @@ import static org.flickit.assessment.kit.adapter.out.persistence.kitdsl.converto
 
 public class QuestionsConvertor {
 
-    static final int HEADER_ROW_NUM = 1;
-    static final int HEADER_START_COL = 0;
-    static final int HEADER_END_COL = 8;
-    static final int DATA_START_ROW = 2;
+    private static final int HEADER_ROW_NUM = 1;
+    private static final int HEADER_START_COL = 0;
+    private static final int HEADER_END_COL = 8;
+    private static final int DATA_START_ROW = 2;
 
     private static final String QUESTION_QUESTION = "Question";
     private static final String QUESTION_QUESTIONNAIRES = "Questionnaires";

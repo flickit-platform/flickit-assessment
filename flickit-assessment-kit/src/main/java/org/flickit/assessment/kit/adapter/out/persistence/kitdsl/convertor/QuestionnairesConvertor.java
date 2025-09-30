@@ -17,10 +17,10 @@ public class QuestionnairesConvertor {
     private static final String TITLE = "Title";
     private static final String DESCRIPTION = "Description";
 
-    static final int HEADER_ROW_NUM = 0;
-    static final int HEADER_START_COL = 0;
-    static final int HEADER_END_COL = 2;
-    static final int DATA_START_ROW = 1;
+    private static final int HEADER_ROW_NUM = 0;
+    private static final int HEADER_START_COL = 0;
+    private static final int HEADER_END_COL = 2;
+    private static final int DATA_START_ROW = 1;
 
     static List<QuestionnaireDslModel> convert(Sheet sheet) {
         var columnMap = getSheetHeader(sheet, HEADER_ROW_NUM, HEADER_START_COL, HEADER_END_COL);

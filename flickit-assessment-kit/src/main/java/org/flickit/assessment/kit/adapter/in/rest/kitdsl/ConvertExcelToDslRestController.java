@@ -20,7 +20,6 @@ public class ConvertExcelToDslRestController {
     @PostMapping("/assessment-kits/excel-to-dsl")
     ResponseEntity<ConvertExcelToDslResponseDto> convertExcelToDsl(@RequestParam MultipartFile excelFile) {
         var currentUserId = userContext.getUser().id();
-
         var result = useCase.convertExcelToDsl(toParam(excelFile, currentUserId));
 
         return new ResponseEntity<>(new ConvertExcelToDslResponseDto(result), HttpStatus.OK);

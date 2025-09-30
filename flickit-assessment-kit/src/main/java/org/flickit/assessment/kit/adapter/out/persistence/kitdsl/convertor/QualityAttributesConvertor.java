@@ -19,20 +19,20 @@ public class QualityAttributesConvertor {
     private static final String SUBJECT_WEIGHT = "Subject Weight";
     private static final String SUBJECT_DESCRIPTION = "Subject Description";
 
-    static final int SUBJECT_HEADER_ROW_NUM = 0;
-    static final int SUBJECT_HEADER_START_COL = 0;
-    static final int SUBJECT_HEADER_END_COL = 3;
-    static final int SUBJECT_DATA_START_ROW = 1;
+    private static final int SUBJECT_HEADER_ROW_NUM = 0;
+    private static final int SUBJECT_HEADER_START_COL = 0;
+    private static final int SUBJECT_HEADER_END_COL = 3;
+    private static final int SUBJECT_DATA_START_ROW = 1;
 
     private static final String ATTRIBUTE_NAME = "Attribute Name";
     private static final String ATTRIBUTE_TITLE = "Attribute Title";
     private static final String ATTRIBUTE_WEIGHT = "Attribute Weight";
     private static final String ATTRIBUTE_DESCRIPTION = "Attribute Description";
 
-    static final int ATTRIBUTE_HEADER_ROW_NUM = 0;
-    static final int ATTRIBUTE_HEADER_START_COL = 0;
-    static final int ATTRIBUTE_HEADER_END_COL = 7;
-    static final int ATTRIBUTE_DATA_START_ROW = 1;
+    private static final int ATTRIBUTE_HEADER_ROW_NUM = 0;
+    private static final int ATTRIBUTE_HEADER_START_COL = 0;
+    private static final int ATTRIBUTE_HEADER_END_COL = 7;
+    private static final int ATTRIBUTE_DATA_START_ROW = 1;
 
     static List<SubjectDslModel> convertSubjects(Sheet sheet) {
         var columnMap = getSheetHeader(sheet, SUBJECT_HEADER_ROW_NUM, SUBJECT_HEADER_START_COL, SUBJECT_HEADER_END_COL);
@@ -57,7 +57,6 @@ public class QualityAttributesConvertor {
                     .build();
             })
             .collect(Collectors.toList());
-
     }
 
     static List<AttributeDslModel> convertAttributes(Sheet sheet) {
