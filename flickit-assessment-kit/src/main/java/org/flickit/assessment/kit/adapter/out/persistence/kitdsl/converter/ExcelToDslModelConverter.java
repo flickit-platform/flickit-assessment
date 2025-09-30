@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.adapter.out.persistence.kitdsl.convertor;
+package org.flickit.assessment.kit.adapter.out.persistence.kitdsl.converter;
 
 import org.apache.poi.ss.usermodel.*;
 import org.flickit.assessment.kit.application.domain.dsl.*;

@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.adapter.out.persistence.kitdsl.convertor;
+package org.flickit.assessment.kit.adapter.out.persistence.kitdsl.converter;
 
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -40,7 +40,7 @@ class QuestionsConverterTest {
     Map<String, List<AnswerOptionDslModel>> answerRangeCodeToAnswerOptionsMap = new HashMap<>();
 
     @Test
-    void testQuestionsConvertor() throws IOException {
+    void testQuestionsConverter() throws IOException {
         maturityLevelCodeToMaturityLevelDslMap.put("Unprepared", level1);
         maturityLevelCodeToMaturityLevelDslMap.put("Prepared", level2);
         maturityLevelCodeToMaturityLevelDslMap.put("WellEquipped", level3);

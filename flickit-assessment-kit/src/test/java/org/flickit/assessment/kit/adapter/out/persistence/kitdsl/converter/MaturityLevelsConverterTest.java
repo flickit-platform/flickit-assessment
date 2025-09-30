@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.adapter.out.persistence.kitdsl.convertor;
+package org.flickit.assessment.kit.adapter.out.persistence.kitdsl.converter;
 
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class MaturityLevelsConverterTest {
 
     @Test
-    void testMaturityLevelsConvertor() throws IOException {
+    void testMaturityLevelsConverter() throws IOException {
         var maturityLevelsSheet = createWorkbook().getSheet("MaturityLevels");
         var maturityLevels = MaturityLevelsConverter.convert(maturityLevelsSheet);
 

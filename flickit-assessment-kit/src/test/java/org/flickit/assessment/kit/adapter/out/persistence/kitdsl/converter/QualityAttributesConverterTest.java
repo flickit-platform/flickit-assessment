@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.adapter.out.persistence.kitdsl.convertor;
+package org.flickit.assessment.kit.adapter.out.persistence.kitdsl.converter;
 
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class QualityAttributesConverterTest {
 
     @Test
-    void testQualityAttributesConvertor() throws IOException {
+    void testQualityAttributesConverter() throws IOException {
         var qualityAttributesSheet = createWorkbook().getSheet("QualityAttributes");
         var subjectDslModels = QualityAttributesConverter.convertSubjects(qualityAttributesSheet);
         var attributeDslModels = QualityAttributesConverter.convertAttributes(qualityAttributesSheet);
