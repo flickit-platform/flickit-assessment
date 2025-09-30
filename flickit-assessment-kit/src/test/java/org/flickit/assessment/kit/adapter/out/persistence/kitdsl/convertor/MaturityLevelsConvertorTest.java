@@ -29,7 +29,7 @@ class MaturityLevelsConvertorTest {
         assertEquals("Unprepared", maturityLevel.getCode());
         assertEquals("Unprepared Title", maturityLevel.getTitle());
         assertEquals("Unprepared Description", maturityLevel.getDescription());
-        assertTrue(maturityLevel.getCompetencesCodeToValueMap().isEmpty());
+        assertNull(maturityLevel.getCompetencesCodeToValueMap());
         // 2: Prepared
         maturityLevel = maturityLevels.get(1);
         assertEquals(2, maturityLevel.getIndex());
