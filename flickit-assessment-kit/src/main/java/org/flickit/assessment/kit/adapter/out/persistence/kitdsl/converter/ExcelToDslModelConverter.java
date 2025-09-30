@@ -1,5 +1,6 @@
 package org.flickit.assessment.kit.adapter.out.persistence.kitdsl.converter;
 
+import lombok.experimental.UtilityClass;
 import org.apache.poi.ss.usermodel.*;
 import org.flickit.assessment.kit.application.domain.dsl.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,6 +12,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+@UtilityClass
 public class ExcelToDslModelConverter {
 
     private static final String SHEET_QUALITY_ATTRIBUTES = "QualityAttributes";

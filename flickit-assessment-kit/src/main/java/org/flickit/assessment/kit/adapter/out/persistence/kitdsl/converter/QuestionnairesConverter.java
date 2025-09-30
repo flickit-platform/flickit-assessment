@@ -1,5 +1,6 @@
 package org.flickit.assessment.kit.adapter.out.persistence.kitdsl.converter;
 
+import lombok.experimental.UtilityClass;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.flickit.assessment.kit.application.domain.dsl.QuestionnaireDslModel;
@@ -11,6 +12,7 @@ import java.util.stream.IntStream;
 
 import static org.flickit.assessment.kit.adapter.out.persistence.kitdsl.converter.ExcelToDslModelConverter.*;
 
+@UtilityClass
 public class QuestionnairesConverter {
 
     private static final String NAME = "Name";

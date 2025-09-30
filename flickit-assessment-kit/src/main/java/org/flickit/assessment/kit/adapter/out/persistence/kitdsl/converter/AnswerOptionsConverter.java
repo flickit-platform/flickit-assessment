@@ -1,5 +1,6 @@
 package org.flickit.assessment.kit.adapter.out.persistence.kitdsl.converter;
 
+import lombok.experimental.UtilityClass;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.flickit.assessment.kit.application.domain.dsl.AnswerOptionDslModel;
@@ -9,6 +10,7 @@ import java.util.*;
 import static org.flickit.assessment.kit.adapter.out.persistence.kitdsl.converter.ExcelToDslModelConverter.getCellDouble;
 import static org.flickit.assessment.kit.adapter.out.persistence.kitdsl.converter.ExcelToDslModelConverter.getCellString;
 
+@UtilityClass
 public class AnswerOptionsConverter {
 
     static final int START_ROW = 1;
