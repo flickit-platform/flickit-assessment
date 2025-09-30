@@ -56,7 +56,7 @@ public class ExcelToDslModelConverter {
         Row headerRow = sheet.getRow(rowNum);
         return StreamSupport.stream(headerRow.spliterator(), false)
             .skip(start)
-            .limit(end - start + 1)
+            .limit((long) end - start + 1)
             .collect(Collectors.toMap(
                 cell -> getCellStringValue(cell).trim(),
                 Cell::getColumnIndex
