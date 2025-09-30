@@ -14,12 +14,12 @@ import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class QuestionnairesConvertorTest {
+class QuestionnairesConverterTest {
 
     @Test
     void testQuestionnairesConvertor() throws IOException {
         var questionnairesSheet = createWorkbook().getSheet("Questionnaires");
-        var questionnaires = QuestionnairesConvertor.convert(questionnairesSheet);
+        var questionnaires = QuestionnairesConverter.convert(questionnairesSheet);
 
         assertEquals(3, questionnaires.size());
         //Assert Questionnaire 1

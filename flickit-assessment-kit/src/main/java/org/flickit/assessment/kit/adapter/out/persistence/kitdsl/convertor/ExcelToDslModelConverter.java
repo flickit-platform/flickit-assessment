@@ -25,14 +25,14 @@ public class ExcelToDslModelConverter {
 
             var qualityAttributes = workbook.getSheet(SHEET_QUALITY_ATTRIBUTES);
 
-            var questionnaires = QuestionnairesConvertor.convert(workbook.getSheet(SHEET_QUESTIONNAIRES));
-            var attributes = QualityAttributesConvertor.convertAttributes(qualityAttributes);
-            var subjects = QualityAttributesConvertor.convertSubjects(qualityAttributes);
-            var answerRangeCodeToAnswerOptionsMap = AnswerOptionsConvertor.convert(workbook.getSheet(SHEET_ANSWER_OPTIONS));
-            var levels = MaturityLevelsConvertor.convert(workbook.getSheet(SHEET_MATURITY_LEVELS));
+            var questionnaires = QuestionnairesConverter.convert(workbook.getSheet(SHEET_QUESTIONNAIRES));
+            var attributes = QualityAttributesConverter.convertAttributes(qualityAttributes);
+            var subjects = QualityAttributesConverter.convertSubjects(qualityAttributes);
+            var answerRangeCodeToAnswerOptionsMap = AnswerOptionsConverter.convert(workbook.getSheet(SHEET_ANSWER_OPTIONS));
+            var levels = MaturityLevelsConverter.convert(workbook.getSheet(SHEET_MATURITY_LEVELS));
             var maturityLevelsCodeToMaturityLevelDslModel = levels.stream()
                 .collect(Collectors.toMap(MaturityLevelDslModel::getCode, Function.identity()));
-            var questions = QuestionsConvertor.convert(workbook.getSheet(SHEET_QUESTIONS), answerRangeCodeToAnswerOptionsMap, maturityLevelsCodeToMaturityLevelDslModel, attributes);
+            var questions = QuestionsConverter.convert(workbook.getSheet(SHEET_QUESTIONS), answerRangeCodeToAnswerOptionsMap, maturityLevelsCodeToMaturityLevelDslModel, attributes);
 
             return AssessmentKitDslModel.builder()
                 .questionnaires(questionnaires)

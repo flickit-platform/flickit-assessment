@@ -12,7 +12,7 @@ import java.util.stream.IntStream;
 
 import static org.flickit.assessment.kit.adapter.out.persistence.kitdsl.convertor.ExcelToDslModelConverter.*;
 
-public class QualityAttributesConvertor {
+public class QualityAttributesConverter {
 
     private static final String SUBJECT_NAME = "Subject Name";
     private static final String SUBJECT_TITLE = "Subject Title";

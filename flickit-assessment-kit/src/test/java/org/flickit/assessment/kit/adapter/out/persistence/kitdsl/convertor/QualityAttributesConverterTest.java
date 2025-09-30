@@ -15,13 +15,13 @@ import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class QualityAttributesConvertorTest {
+class QualityAttributesConverterTest {
 
     @Test
     void testQualityAttributesConvertor() throws IOException {
         var qualityAttributesSheet = createWorkbook().getSheet("QualityAttributes");
-        var subjectDslModels = QualityAttributesConvertor.convertSubjects(qualityAttributesSheet);
-        var attributeDslModels = QualityAttributesConvertor.convertAttributes(qualityAttributesSheet);
+        var subjectDslModels = QualityAttributesConverter.convertSubjects(qualityAttributesSheet);
+        var attributeDslModels = QualityAttributesConverter.convertAttributes(qualityAttributesSheet);
 
         //Assert subject 1
         assertEquals(2, subjectDslModels.size());

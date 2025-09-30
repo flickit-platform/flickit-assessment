@@ -14,12 +14,12 @@ import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class MaturityLevelsConvertorTest {
+class MaturityLevelsConverterTest {
 
     @Test
     void testMaturityLevelsConvertor() throws IOException {
         var maturityLevelsSheet = createWorkbook().getSheet("MaturityLevels");
-        var maturityLevels = MaturityLevelsConvertor.convert(maturityLevelsSheet);
+        var maturityLevels = MaturityLevelsConverter.convert(maturityLevelsSheet);
 
         assertEquals(4, maturityLevels.size());
         // 1: Unprepared

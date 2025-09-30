@@ -9,7 +9,7 @@ import java.util.*;
 import static org.flickit.assessment.kit.adapter.out.persistence.kitdsl.convertor.ExcelToDslModelConverter.getCellDouble;
 import static org.flickit.assessment.kit.adapter.out.persistence.kitdsl.convertor.ExcelToDslModelConverter.getCellString;
 
-public class AnswerOptionsConvertor {
+public class AnswerOptionsConverter {
 
     static final int START_ROW = 1;
     static final int RANGE_NAME_COL = 0;

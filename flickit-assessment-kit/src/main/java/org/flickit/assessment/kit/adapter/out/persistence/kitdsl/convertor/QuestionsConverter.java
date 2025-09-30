@@ -12,7 +12,7 @@ import java.util.stream.IntStream;
 
 import static org.flickit.assessment.kit.adapter.out.persistence.kitdsl.convertor.ExcelToDslModelConverter.*;
 
-public class QuestionsConvertor {
+public class QuestionsConverter {
 
     private static final int HEADER_ROW_NUM = 1;
     private static final int HEADER_START_COL = 0;

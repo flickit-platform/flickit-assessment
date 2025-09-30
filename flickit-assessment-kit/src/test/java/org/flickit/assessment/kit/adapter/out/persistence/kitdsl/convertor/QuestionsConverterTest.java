@@ -20,7 +20,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class QuestionsConvertorTest {
+class QuestionsConverterTest {
     AttributeDslModel attributeDsl1 = AttributeDslModel.builder().subjectCode("Team").weight(1).code("AttributeOne").index(1).title("Attribute One").description("Attribute One Description").build();
     AttributeDslModel attributeDsl2 = AttributeDslModel.builder().subjectCode("Team").weight(3).code("AttributeTwo").index(2).title("Attribute Two").description("Attribute Two Description").build();
     AttributeDslModel attributeDsl3 = AttributeDslModel.builder().subjectCode("Software").weight(2).code("AttributeThree").index(3).title("Attribute Three").description("Attribute Three Description").build();
@@ -50,7 +50,7 @@ class QuestionsConvertorTest {
         answerRangeCodeToAnswerOptionsMap.put("YesNo", List.of(option4, option5));
 
         var questionsSheet = createWorkbook().getSheet("Questions");
-        var questions = QuestionsConvertor.convert(questionsSheet, answerRangeCodeToAnswerOptionsMap, maturityLevelCodeToMaturityLevelDslMap, attributes);
+        var questions = QuestionsConverter.convert(questionsSheet, answerRangeCodeToAnswerOptionsMap, maturityLevelCodeToMaturityLevelDslMap, attributes);
 
         assertEquals(5, questions.size());
         //Assert Question 1

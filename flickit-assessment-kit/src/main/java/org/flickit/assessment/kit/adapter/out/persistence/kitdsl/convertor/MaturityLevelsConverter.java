@@ -11,7 +11,7 @@ import java.util.stream.IntStream;
 
 import static org.flickit.assessment.kit.adapter.out.persistence.kitdsl.convertor.ExcelToDslModelConverter.*;
 
-public class MaturityLevelsConvertor {
+public class MaturityLevelsConverter {
 
     private static final String TITLE = "Title";
     private static final String DESCRIPTION = "Description";

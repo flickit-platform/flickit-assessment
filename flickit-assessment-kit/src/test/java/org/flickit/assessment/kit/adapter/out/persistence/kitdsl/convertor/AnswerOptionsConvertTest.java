@@ -20,7 +20,7 @@ class AnswerOptionsConvertTest {
     @Test
     void tesAnswerOptionsConvert() throws IOException {
         var answerOptionsSheet = createWorkbook().getSheet("AnswerOptions");
-        var answerOptions = AnswerOptionsConvertor.convert(answerOptionsSheet);
+        var answerOptions = AnswerOptionsConverter.convert(answerOptionsSheet);
 
         assertEquals(2, answerOptions.size());
 
