@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static org.flickit.assessment.kit.adapter.out.excel.converter.ExcelToDslModelConverter.*;
+import static org.flickit.assessment.common.util.ExcelUtils.*;
 
 @UtilityClass
 public class MaturityLevelsConverter {
@@ -29,7 +29,7 @@ public class MaturityLevelsConverter {
 
         List<String> levels = IntStream.range(DATA_START_ROW, sheet.getLastRowNum() + 1)
             .mapToObj(sheet::getRow)
-            .filter(row -> !ExcelToDslModelConverter.isBlankRow(row))
+            .filter(row -> !isBlankRow(row))
             .map(row -> row.getCell(0).toString().trim())
             .toList();
 

@@ -12,7 +12,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static org.flickit.assessment.kit.adapter.out.excel.converter.ExcelToDslModelConverter.*;
+import static org.flickit.assessment.common.util.ExcelUtils.*;
 
 @UtilityClass
 public class QualityAttributesConverter {
@@ -44,7 +44,7 @@ public class QualityAttributesConverter {
             .mapToObj(sheet::getRow)
             .filter(row -> {
                 String code = getCellString(row, columnMap.get(SUBJECT_NAME));
-                return !ExcelToDslModelConverter.isBlankRow(row) && code != null && !code.isBlank();
+                return !isBlankRow(row) && code != null && !code.isBlank();
             })
             .toList();
 
@@ -67,7 +67,7 @@ public class QualityAttributesConverter {
 
         return IntStream.rangeClosed(ATTRIBUTE_DATA_START_ROW, sheet.getLastRowNum())
             .mapToObj(sheet::getRow)
-            .filter(row -> !ExcelToDslModelConverter.isBlankRow(row))
+            .filter(row -> !isBlankRow(row))
             .collect(ArrayList::new, (list, row) -> {
                 String subjectCode = Optional.ofNullable(getCellString(row, columnMap.get(SUBJECT_NAME)))
                     .filter(c -> !c.isBlank())

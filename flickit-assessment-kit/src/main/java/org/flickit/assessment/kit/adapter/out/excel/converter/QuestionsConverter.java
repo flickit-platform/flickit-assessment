@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static org.flickit.assessment.kit.adapter.out.excel.converter.ExcelToDslModelConverter.*;
+import static org.flickit.assessment.common.util.ExcelUtils.*;
 
 @UtilityClass
 public class QuestionsConverter {

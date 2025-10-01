@@ -10,8 +10,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.flickit.assessment.kit.adapter.out.excel.converter.ExcelToDslModelConverter.getCellDouble;
-import static org.flickit.assessment.kit.adapter.out.excel.converter.ExcelToDslModelConverter.getCellString;
+import static org.flickit.assessment.common.util.ExcelUtils.getCellDouble;
+import static org.flickit.assessment.common.util.ExcelUtils.getCellString;
 
 @UtilityClass
 public class AnswerOptionsConverter {
