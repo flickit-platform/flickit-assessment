@@ -9,10 +9,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import static org.flickit.assessment.kit.common.ErrorMessageKey.CONVERT_EXCEL_TO_DSL_EXCEL_FILE_INVALID;
 
@@ -51,94 +49,5 @@ public class ExcelToDslModelConverter {
         } catch (IOException e) {
             throw new ValidationException(CONVERT_EXCEL_TO_DSL_EXCEL_FILE_INVALID);
         }
-    }
-
-    static Map<String, Integer> getSheetHeader(Sheet sheet, int rowNum, int start, int end) {
-        Row headerRow = sheet.getRow(rowNum);
-        return StreamSupport.stream(headerRow.spliterator(), false)
-            .skip(start)
-            .limit((long) end - start + 1)
-            .collect(Collectors.toMap(
-                cell -> getCellStringValue(cell).trim(),
-                Cell::getColumnIndex
-            ));
-    }
-
-    static boolean isBlankRow(Row row) {
-        if (row == null)
-            return true;
-        for (Cell cell : row)
-            if (cell != null && cell.getCellType() != CellType.BLANK) {
-                String value = cell.toString().trim();
-                if (!value.isEmpty())
-                    return false;
-            }
-        return true;
-    }
-
-    static String getCellString(Row row, Integer idx) {
-        if (idx == null || idx < 0) return null;
-        Cell cell = row.getCell(idx);
-        return (cell != null) ? cell.toString().trim() : null;
-    }
-
-    static Integer getCellInteger(Row row, Integer idx) {
-        if (idx == null || idx < 0) return null;
-        Cell cell = row.getCell(idx);
-        if (cell == null) return null;
-        switch (cell.getCellType()) {
-            case NUMERIC:
-                return (int) cell.getNumericCellValue();
-            case STRING:
-                try {
-                    return Integer.parseInt(cell.getStringCellValue().trim());
-                } catch (NumberFormatException e) {
-                    return null;
-                }
-            default:
-                return null;
-        }
-    }
-
-    static Double getCellDouble(Row row, int columnIndex) {
-        if (row == null) return null;
-        Cell cell = row.getCell(columnIndex);
-        if (cell == null) return null;
-
-        switch (cell.getCellType()) {
-            case NUMERIC:
-                return cell.getNumericCellValue();
-            case STRING:
-                try {
-                    return Double.parseDouble(cell.getStringCellValue().trim());
-                } catch (NumberFormatException e) {
-                    return null;
-                }
-            case FORMULA:
-                try {
-                    return cell.getNumericCellValue();
-                } catch (IllegalStateException e) {
-                    return null;
-                }
-            case BLANK:
-            default:
-                return null;
-        }
-    }
-
-    private static String getCellStringValue(Cell cell) {
-        if (cell == null) return "";
-
-        return switch (cell.getCellType()) {
-            case STRING -> cell.getStringCellValue();
-            case NUMERIC -> String.valueOf(cell.getNumericCellValue());
-            case FORMULA -> switch (cell.getCachedFormulaResultType()) {
-                case STRING -> cell.getStringCellValue();
-                case NUMERIC -> String.valueOf(cell.getNumericCellValue());
-                default -> "";
-            };
-            case BOOLEAN -> String.valueOf(cell.getBooleanCellValue());
-            default -> "";
-        };
     }
 }
