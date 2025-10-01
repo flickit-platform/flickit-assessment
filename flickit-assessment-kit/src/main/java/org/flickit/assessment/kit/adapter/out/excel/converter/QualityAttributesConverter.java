@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.adapter.out.persistence.kitdsl.converter;
+package org.flickit.assessment.kit.adapter.out.excel.converter;
 
 import lombok.experimental.UtilityClass;
 import org.apache.poi.ss.usermodel.Row;
@@ -12,7 +12,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static org.flickit.assessment.kit.adapter.out.persistence.kitdsl.converter.ExcelToDslModelConverter.*;
+import static org.flickit.assessment.kit.adapter.out.excel.converter.ExcelToDslModelConverter.*;
 
 @UtilityClass
 public class QualityAttributesConverter {

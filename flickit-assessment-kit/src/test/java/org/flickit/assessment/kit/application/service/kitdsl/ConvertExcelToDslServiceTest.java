@@ -3,7 +3,7 @@ package org.flickit.assessment.kit.application.service.kitdsl;
 import org.flickit.assessment.common.config.FileProperties;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.kit.application.port.in.kitdsl.ConvertExcelToDslUseCase;
-import org.flickit.assessment.kit.application.port.out.kitdsl.CreateKitDslPort;
+import org.flickit.assessment.kit.application.port.out.kitdsl.ConvertExcelToDslModelPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -29,7 +29,7 @@ class ConvertExcelToDslServiceTest {
     private ConvertExcelToDslService service;
 
     @Mock
-    private CreateKitDslPort createKitDslPort;
+    private ConvertExcelToDslModelPort convertExcelToDslModelPort;
 
     @Spy
     private FileProperties fileProperties = fileProperties();
@@ -46,7 +46,7 @@ class ConvertExcelToDslServiceTest {
         assertEquals(UPLOAD_FILE_SIZE_MAX, throwable.getMessageKey());
 
         verify(fileProperties, times(1)).getExcelKitMaxSize();
-        verifyNoInteractions(createKitDslPort);
+        verifyNoInteractions(convertExcelToDslModelPort);
     }
 
     @Test
@@ -59,7 +59,7 @@ class ConvertExcelToDslServiceTest {
 
         verify(fileProperties, times(1)).getExcelKitContentType();
         verify(fileProperties, times(1)).getExcelKitMaxSize();
-        verifyNoInteractions(createKitDslPort);
+        verifyNoInteractions(convertExcelToDslModelPort);
     }
 
     @Test
@@ -71,7 +71,7 @@ class ConvertExcelToDslServiceTest {
 
         verify(fileProperties, times(1)).getExcelKitContentType();
         verify(fileProperties, times(1)).getExcelKitMaxSize();
-        verify(createKitDslPort).convert(param.getExcelFile());
+        verify(convertExcelToDslModelPort).convert(param.getExcelFile());
     }
 
     FileProperties fileProperties() {

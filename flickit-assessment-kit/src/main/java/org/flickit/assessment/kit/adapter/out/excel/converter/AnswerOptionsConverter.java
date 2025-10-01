@@ -1,14 +1,17 @@
-package org.flickit.assessment.kit.adapter.out.persistence.kitdsl.converter;
+package org.flickit.assessment.kit.adapter.out.excel.converter;
 
 import lombok.experimental.UtilityClass;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.flickit.assessment.kit.application.domain.dsl.AnswerOptionDslModel;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
-import static org.flickit.assessment.kit.adapter.out.persistence.kitdsl.converter.ExcelToDslModelConverter.getCellDouble;
-import static org.flickit.assessment.kit.adapter.out.persistence.kitdsl.converter.ExcelToDslModelConverter.getCellString;
+import static org.flickit.assessment.kit.adapter.out.excel.converter.ExcelToDslModelConverter.getCellDouble;
+import static org.flickit.assessment.kit.adapter.out.excel.converter.ExcelToDslModelConverter.getCellString;
 
 @UtilityClass
 public class AnswerOptionsConverter {

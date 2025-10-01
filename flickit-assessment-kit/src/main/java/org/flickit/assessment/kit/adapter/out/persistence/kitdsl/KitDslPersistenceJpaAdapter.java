@@ -5,17 +5,15 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.assessmentkitdsl.KitDslJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkitdsl.KitDslJpaRepository;
 import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
-import org.flickit.assessment.kit.adapter.out.persistence.kitdsl.converter.ExcelToDslModelConverter;
-import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.port.out.kitdsl.CreateKitDslPort;
 import org.flickit.assessment.kit.application.port.out.kitdsl.LoadDslFilePathPort;
 import org.flickit.assessment.kit.application.port.out.kitdsl.LoadDslJsonPathPort;
 import org.flickit.assessment.kit.application.port.out.kitdsl.UpdateKitDslPort;
 import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Optional;
+import java.util.UUID;
 
 import static org.flickit.assessment.kit.adapter.out.persistence.kitdsl.KitDslMapper.toJpaEntity;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.CREATE_KIT_BY_DSL_KIT_DSL_NOT_FOUND;
@@ -36,11 +34,6 @@ public class KitDslPersistenceJpaAdapter implements
         var entity = toJpaEntity(dslFilePath, jsonFilePath, createdBy);
         entity.setId(sequenceGenerators.generateKitDslId());
         return repository.save(entity).getId();
-    }
-
-    @Override
-    public AssessmentKitDslModel convert(MultipartFile excelFile) {
-        return ExcelToDslModelConverter.convert(excelFile);
     }
 
     @Override

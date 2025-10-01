@@ -1,8 +1,8 @@
-package org.flickit.assessment.kit.adapter.out.persistence.kitdsl;
+package org.flickit.assessment.kit.adapter.out.excel;
 
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.flickit.assessment.kit.application.domain.dsl.*;
+import org.flickit.assessment.kit.application.domain.dsl.QuestionDslModel;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -11,16 +11,19 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 import org.testcontainers.shaded.org.apache.commons.io.IOUtils;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
-class KitDslPersistenceJpaAdapterTest {
+class ExcelAdapterTest {
 
     @InjectMocks
-    KitDslPersistenceJpaAdapter adapter;
+    ExcelAdapter adapter;
 
     @Test
     void testExcelToDslModelConverterTest_testConvertSubjects() throws IOException {
