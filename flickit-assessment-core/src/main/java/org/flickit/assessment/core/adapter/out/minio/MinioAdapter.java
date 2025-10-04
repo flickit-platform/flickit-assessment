@@ -5,6 +5,7 @@ import io.minio.errors.ErrorResponseException;
 import io.minio.http.Method;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.port.out.evidenceattachment.UploadEvidenceAttachmentPort;
 import org.flickit.assessment.core.application.port.out.minio.CreateFileDownloadLinkPort;
@@ -22,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.FILE_STORAGE_FILE_NOT_FOUND;
 
+@Slf4j
 @Component("coreMinioAdapter")
 @AllArgsConstructor
 public class MinioAdapter implements
@@ -58,6 +60,16 @@ public class MinioAdapter implements
             .build());
 
         return downloadUrl.replace(properties.getUrl(), properties.getApi());
+    }
+
+    @Override
+    public String createDownloadLinkSafe(String filePath, Duration expiryDuration) {
+        try {
+            return createDownloadLink(filePath, expiryDuration);
+        } catch (Exception e) {
+            log.error("Failed to create download link for filePath={}", filePath, e);
+            return null;
+        }
     }
 
     @SneakyThrows

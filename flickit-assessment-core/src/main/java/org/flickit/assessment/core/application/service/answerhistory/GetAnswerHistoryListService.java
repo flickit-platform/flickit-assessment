@@ -39,7 +39,7 @@ public class GetAnswerHistoryListService implements GetAnswerHistoryListUseCase 
             param.getQuestionId(),
             param.getPage(),
             param.getSize());
-        
+
         List<AnswerHistoryListItem> items = paginatedResponse.getItems().stream()
             .map(e -> new AnswerHistoryListItem(Answer.of(e.getAnswer()),
                 e.getCreationTime(),
@@ -57,6 +57,6 @@ public class GetAnswerHistoryListService implements GetAnswerHistoryListUseCase 
     private GetAnswerHistoryListUseCase.User getAnswerUserInfo(FullUser user) {
         return new GetAnswerHistoryListUseCase.User(user.getId(),
             user.getDisplayName(),
-            createFileDownloadLinkPort.createDownloadLink(user.getPicturePath(), EXPIRY_DURATION));
+            createFileDownloadLinkPort.createDownloadLinkSafe(user.getPicturePath(), EXPIRY_DURATION));
     }
 }

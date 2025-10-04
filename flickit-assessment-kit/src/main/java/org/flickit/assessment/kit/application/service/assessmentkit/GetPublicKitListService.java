@@ -93,6 +93,6 @@ public class GetPublicKitListService implements GetPublicKitListUseCase {
     private KitListItem.ExpertGroup toExpertGroup(ExpertGroup expertGroup) {
         return new KitListItem.ExpertGroup(expertGroup.getId(),
             expertGroup.getTitle(),
-            createFileDownloadLinkPort.createDownloadLink(expertGroup.getPicture(), EXPIRY_DURATION));
+            createFileDownloadLinkPort.createDownloadLinkSafe(expertGroup.getPicture(), EXPIRY_DURATION));
     }
 }

@@ -30,7 +30,7 @@ public class GetUsersMeService implements GetUsersMeUseCase {
 
         String pictureLink = null;
         if (user.getPicturePath() != null && !user.getPicturePath().trim().isBlank())
-            pictureLink = createFileDownloadLinkPort.createDownloadLink(user.getPicturePath(), EXPIRY_DURATION);
+            pictureLink = createFileDownloadLinkPort.createDownloadLinkSafe(user.getPicturePath(), EXPIRY_DURATION);
 
         long defaultSpaceId = loadSpacePort.loadDefaultSpaceId(param.getCurrentUserId());
 

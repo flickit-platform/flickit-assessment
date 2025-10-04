@@ -38,7 +38,7 @@ public class GetKitUserListService implements GetKitUserListUseCase {
             .map(e -> {
                 String pictureLink = null;
                 if (e.picturePath() != null && !e.picturePath().trim().isBlank()) {
-                    pictureLink = createFileDownloadLinkPort.createDownloadLink(e.picturePath(), EXPIRY_DURATION);
+                    pictureLink = createFileDownloadLinkPort.createDownloadLinkSafe(e.picturePath(), EXPIRY_DURATION);
                 }
                 return new UserListItem(e.id(),
                     e.displayName(),
