@@ -25,7 +25,7 @@ public class MaturityLevelsConverter {
     private static final int DATA_START_COL = 3;
 
     public static List<MaturityLevelDslModel> convert(Sheet sheet) {
-        var columnMap = getSheetHeader(sheet, HEADER_ROW_NUM, HEADER_START_COL, HEADER_END_COL);
+        var columnMap = getSheetHeaderWithoutFormula(sheet, HEADER_ROW_NUM, HEADER_START_COL, HEADER_END_COL);
 
         List<String> levels = IntStream.range(DATA_START_ROW, sheet.getLastRowNum() + 1)
             .mapToObj(sheet::getRow)

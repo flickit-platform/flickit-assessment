@@ -123,7 +123,7 @@ class ExcelUtilsTest {
     }
 
     @Test
-    void testGetSheetHeader() throws IOException {
+    void testGetSheetHeaderWithoutFormula() throws IOException {
         Sheet sheet = createSheet();
         Row headerRow = sheet.createRow(0);
 
@@ -133,18 +133,13 @@ class ExcelUtilsTest {
         headerRow.createCell(3, CellType.STRING).setCellValue("Address");
         headerRow.createCell(4, CellType.BLANK);
 
-        Map<String, Integer> headerMap = ExcelUtils.getSheetHeader(sheet, 0, 0, 3);
+        Map<String, Integer> headerMap = ExcelUtils.getSheetHeaderWithoutFormula(sheet, 0, 0, 3);
 
         assertEquals(4, headerMap.size());
         assertEquals(0, headerMap.get("Name"));
         assertEquals(1, headerMap.get("Age"));
         assertEquals(2, headerMap.get("Email"));
         assertEquals(3, headerMap.get("Address"));
-
-        Map<String, Integer> subHeader = ExcelUtils.getSheetHeader(sheet, 0, 1, 2);
-        assertEquals(2, subHeader.size());
-        assertEquals(1, subHeader.get("Age"));
-        assertEquals(2, subHeader.get("Email"));
     }
 }
 

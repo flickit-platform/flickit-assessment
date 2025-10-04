@@ -26,7 +26,7 @@ public class QuestionnairesConverter {
     private static final int DATA_START_ROW = 1;
 
     public static List<QuestionnaireDslModel> convert(Sheet sheet) {
-        var columnMap = getSheetHeader(sheet, HEADER_ROW_NUM, HEADER_START_COL, HEADER_END_COL);
+        var columnMap = getSheetHeaderWithoutFormula(sheet, HEADER_ROW_NUM, HEADER_START_COL, HEADER_END_COL);
 
         return IntStream.rangeClosed(DATA_START_ROW, sheet.getLastRowNum())
             .mapToObj(i -> {

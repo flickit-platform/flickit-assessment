@@ -79,7 +79,7 @@ public class ExcelUtils {
         }
     }
 
-    public static Map<String, Integer> getSheetHeader(Sheet sheet, int rowNum, int start, int end) {
+    public static Map<String, Integer> getSheetHeaderWithoutFormula(Sheet sheet, int rowNum, int start, int end) {
         Row headerRow = sheet.getRow(rowNum);
 
         Predicate<Cell> cellIsValid = cell ->
