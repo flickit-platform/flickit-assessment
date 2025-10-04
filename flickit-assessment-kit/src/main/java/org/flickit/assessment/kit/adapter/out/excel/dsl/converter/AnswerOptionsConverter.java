@@ -20,30 +20,37 @@ public class AnswerOptionsConverter {
     private static final String VALUE = "Option Value";
 
     public static Map<String, List<AnswerOptionDslModel>> convert(Sheet sheet) {
-        Map<String, List<AnswerOptionDslModel>> rangeCodeToOptionsMap = new LinkedHashMap<>();
         var columnMap = getSheetHeaderWithoutFormula(sheet, HEADER_ROW_INDEX, HEADER_START_COLUMN_INDEX);
+        var rangeCodeToOptionsMap = new LinkedHashMap<String, List<AnswerOptionDslModel>>();
+
+        String currentRange = null;
         int index = 1;
 
-        for (int i = HEADER_ROW_INDEX + 1; i <= sheet.getLastRowNum(); i++) {
-            Row row = sheet.getRow(i);
-            if (row == null) continue;
+        for (Row row : sheet) {
+            if (row.getRowNum() == HEADER_ROW_INDEX) continue;
+            var rangeCode = getCellString(row, columnMap.get(RANGE_NAME));
+            var title = getCellString(row, columnMap.get(TITLE));
 
-            String rangeName = Optional.ofNullable(getCellString(row, columnMap.get(RANGE_NAME)))
-                .map(String::trim)
-                .orElse("");
-            if (!rangeName.isBlank()) {
-                rangeCodeToOptionsMap.putIfAbsent(rangeName, new ArrayList<>());
+            if (isNotBlank(rangeCode)) {
+                currentRange = rangeCode.trim();
+                rangeCodeToOptionsMap.putIfAbsent(currentRange, new ArrayList<>());
+                index = 1;
+            }
 
-                rangeCodeToOptionsMap.get(rangeName).add(
+            if (isNotBlank(currentRange) && isNotBlank(title))
+                rangeCodeToOptionsMap.get(currentRange).add(
                     AnswerOptionDslModel.builder()
                         .index(index++)
-                        .caption(getCellString(row, columnMap.get(TITLE)))
+                        .caption(title.trim())
                         .value(getCellDouble(row, columnMap.get(VALUE)))
                         .build()
                 );
-            }
         }
 
         return rangeCodeToOptionsMap;
+    }
+
+    private static boolean isNotBlank(String s) {
+        return s != null && !s.isBlank();
     }
 }
