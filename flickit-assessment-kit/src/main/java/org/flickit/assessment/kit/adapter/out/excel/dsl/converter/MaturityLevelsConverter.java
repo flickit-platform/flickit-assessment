@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.adapter.out.excel.converter;
+package org.flickit.assessment.kit.adapter.out.excel.dsl.converter;
 
 import lombok.experimental.UtilityClass;
 import org.apache.poi.ss.usermodel.Row;
@@ -24,7 +24,7 @@ public class MaturityLevelsConverter {
     private static final int DATA_START_ROW = 2;
     private static final int DATA_START_COL = 3;
 
-    static List<MaturityLevelDslModel> convert(Sheet sheet) {
+    public static List<MaturityLevelDslModel> convert(Sheet sheet) {
         var columnMap = getSheetHeader(sheet, HEADER_ROW_NUM, HEADER_START_COL, HEADER_END_COL);
 
         List<String> levels = IntStream.range(DATA_START_ROW, sheet.getLastRowNum() + 1)

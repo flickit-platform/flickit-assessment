@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.adapter.out.excel.converter;
+package org.flickit.assessment.kit.adapter.out.excel.dsl.converter;
 
 import lombok.experimental.UtilityClass;
 import org.apache.poi.ss.usermodel.Row;
@@ -30,8 +30,10 @@ public class QuestionsConverter {
     private static final String QUESTION_ADVISABLE = "Advisable";
     private static final String QUESTION_MATURITY = "Maturity";
 
-    static List<QuestionDslModel> convert(Sheet sheet, Map<String, List<AnswerOptionDslModel>> answerRangeCodeToAnswerOptionsMap,
-                                          Map<String, MaturityLevelDslModel> maturityLevelCodeToMaturityLevelDslMap, List<AttributeDslModel> attributeDslModels) {
+    public static List<QuestionDslModel> convert(Sheet sheet,
+                                                 Map<String, List<AnswerOptionDslModel>> answerRangeCodeToAnswerOptionsMap,
+                                                 Map<String, MaturityLevelDslModel> maturityLevelCodeToMaturityLevelDslMap,
+                                                 List<AttributeDslModel> attributeDslModels) {
         var columnMap = getSheetHeader(sheet, HEADER_ROW_NUM, HEADER_START_COL, HEADER_END_COL);
 
         return IntStream.rangeClosed(DATA_START_ROW, sheet.getLastRowNum())

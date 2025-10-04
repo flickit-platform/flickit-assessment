@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.adapter.out.excel.converter;
+package org.flickit.assessment.kit.adapter.out.excel.dsl.converter;
 
 
 import lombok.experimental.UtilityClass;
@@ -25,7 +25,7 @@ public class QuestionnairesConverter {
     private static final int HEADER_END_COL = 2;
     private static final int DATA_START_ROW = 1;
 
-    static List<QuestionnaireDslModel> convert(Sheet sheet) {
+    public static List<QuestionnaireDslModel> convert(Sheet sheet) {
         var columnMap = getSheetHeader(sheet, HEADER_ROW_NUM, HEADER_START_COL, HEADER_END_COL);
 
         return IntStream.rangeClosed(DATA_START_ROW, sheet.getLastRowNum())

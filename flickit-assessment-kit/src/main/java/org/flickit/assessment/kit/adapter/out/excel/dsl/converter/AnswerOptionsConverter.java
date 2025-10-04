@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.adapter.out.excel.converter;
+package org.flickit.assessment.kit.adapter.out.excel.dsl.converter;
 
 import lombok.experimental.UtilityClass;
 import org.apache.poi.ss.usermodel.Row;
@@ -21,8 +21,8 @@ public class AnswerOptionsConverter {
     private static final int CAPTION_COL = 1;
     private static final int VALUE_COL = 2;
 
-    static Map<String, List<AnswerOptionDslModel>> convert(Sheet sheet) {
-        Map<String, List<AnswerOptionDslModel>> result = new LinkedHashMap<>();
+    public static Map<String, List<AnswerOptionDslModel>> convert(Sheet sheet) {
+        Map<String, List<AnswerOptionDslModel>> rangeCodeToOptionsMap = new LinkedHashMap<>();
         String currentRange = null;
         int index = 1;
 
@@ -36,12 +36,12 @@ public class AnswerOptionsConverter {
 
             if (rangeName != null && !rangeName.isBlank()) {
                 currentRange = rangeName.trim();
-                result.putIfAbsent(currentRange, new ArrayList<>());
+                rangeCodeToOptionsMap.putIfAbsent(currentRange, new ArrayList<>());
                 index = 1;
             }
 
             if (currentRange != null && caption != null && !caption.isBlank())
-                result.get(currentRange).add(
+                rangeCodeToOptionsMap.get(currentRange).add(
                     AnswerOptionDslModel.builder()
                         .index(index++)
                         .caption(caption.trim())
@@ -50,6 +50,6 @@ public class AnswerOptionsConverter {
                 );
             }
 
-        return result;
+        return rangeCodeToOptionsMap;
     }
 }

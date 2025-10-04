@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.adapter.out.excel.converter;
+package org.flickit.assessment.kit.adapter.out.excel.dsl.converter;
 
 import lombok.experimental.UtilityClass;
 import org.apache.poi.ss.usermodel.Row;
@@ -37,7 +37,7 @@ public class QualityAttributesConverter {
     private static final int ATTRIBUTE_HEADER_END_COL = 7;
     private static final int ATTRIBUTE_DATA_START_ROW = 1;
 
-    static List<SubjectDslModel> convertSubjects(Sheet sheet) {
+    public static List<SubjectDslModel> convertSubjects(Sheet sheet) {
         var columnMap = getSheetHeader(sheet, SUBJECT_HEADER_ROW_NUM, SUBJECT_HEADER_START_COL, SUBJECT_HEADER_END_COL);
 
         List<Row> validRows = IntStream.range(SUBJECT_DATA_START_ROW, sheet.getLastRowNum() + SUBJECT_DATA_START_ROW)
@@ -62,7 +62,7 @@ public class QualityAttributesConverter {
             .collect(Collectors.toList());
     }
 
-    static List<AttributeDslModel> convertAttributes(Sheet sheet) {
+    public static List<AttributeDslModel> convertAttributes(Sheet sheet) {
         var columnMap = getSheetHeader(sheet, ATTRIBUTE_HEADER_ROW_NUM, ATTRIBUTE_HEADER_START_COL, ATTRIBUTE_HEADER_END_COL);
 
         return IntStream.rangeClosed(ATTRIBUTE_DATA_START_ROW, sheet.getLastRowNum())
