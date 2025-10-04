@@ -8,7 +8,9 @@ import org.apache.poi.ss.usermodel.Sheet;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.StreamSupport;
 
 @UtilityClass
@@ -79,9 +81,16 @@ public class ExcelUtils {
 
     public static Map<String, Integer> getSheetHeader(Sheet sheet, int rowNum, int start, int end) {
         Row headerRow = sheet.getRow(rowNum);
-        return StreamSupport.stream(headerRow.spliterator(), false)
-            .skip(start)
-            .limit((long) end - start + 1)
+
+        Predicate<Cell> cellIsValid = cell ->
+            cell != null
+                && cell.getCellType() != CellType.BLANK
+                && cell.getCellType() != CellType.FORMULA;
+
+        int last = headerRow.getLastCellNum();
+        return IntStream.range(start, last)
+            .mapToObj(headerRow::getCell)
+            .filter(cellIsValid)
             .collect(Collectors.toMap(
                 cell -> getCellStringValue(cell).trim(),
                 Cell::getColumnIndex
