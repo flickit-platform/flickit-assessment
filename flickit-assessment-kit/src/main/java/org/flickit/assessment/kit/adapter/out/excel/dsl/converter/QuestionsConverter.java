@@ -34,7 +34,7 @@ public class QuestionsConverter {
                                                  Map<String, List<AnswerOptionDslModel>> answerRangeCodeToAnswerOptionsMap,
                                                  Map<String, MaturityLevelDslModel> maturityLevelCodeToMaturityLevelDslMap,
                                                  List<AttributeDslModel> attributeDslModels) {
-        var columnMap = getSheetHeaderWithoutFormula(sheet, HEADER_ROW_NUM, HEADER_START_COL, HEADER_END_COL);
+        var columnMap = getSheetHeaderWithoutFormula(sheet, HEADER_ROW_NUM, HEADER_START_COL);
 
         return IntStream.rangeClosed(DATA_START_ROW, sheet.getLastRowNum())
             .filter(i -> !isBlankRow(sheet.getRow(i)))

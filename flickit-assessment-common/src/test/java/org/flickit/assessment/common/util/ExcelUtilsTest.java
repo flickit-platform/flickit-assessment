@@ -133,7 +133,7 @@ class ExcelUtilsTest {
         headerRow.createCell(3, CellType.STRING).setCellValue("Address");
         headerRow.createCell(4, CellType.BLANK);
 
-        Map<String, Integer> headerMap = ExcelUtils.getSheetHeaderWithoutFormula(sheet, 0, 0, 3);
+        Map<String, Integer> headerMap = ExcelUtils.getSheetHeaderWithoutFormula(sheet, 0, 0);
 
         assertEquals(4, headerMap.size());
         assertEquals(0, headerMap.get("Name"));

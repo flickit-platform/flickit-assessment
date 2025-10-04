@@ -24,7 +24,6 @@ public class QualityAttributesConverter {
 
     private static final int SUBJECT_HEADER_ROW_NUM = 0;
     private static final int SUBJECT_HEADER_START_COL = 0;
-    private static final int SUBJECT_HEADER_END_COL = 3;
     private static final int SUBJECT_DATA_START_ROW = 1;
 
     private static final String ATTRIBUTE_NAME = "Attribute Name";
@@ -34,11 +33,10 @@ public class QualityAttributesConverter {
 
     private static final int ATTRIBUTE_HEADER_ROW_NUM = 0;
     private static final int ATTRIBUTE_HEADER_START_COL = 0;
-    private static final int ATTRIBUTE_HEADER_END_COL = 7;
     private static final int ATTRIBUTE_DATA_START_ROW = 1;
 
     public static List<SubjectDslModel> convertSubjects(Sheet sheet) {
-        var columnMap = getSheetHeaderWithoutFormula(sheet, SUBJECT_HEADER_ROW_NUM, SUBJECT_HEADER_START_COL, SUBJECT_HEADER_END_COL);
+        var columnMap = getSheetHeaderWithoutFormula(sheet, SUBJECT_HEADER_ROW_NUM, SUBJECT_HEADER_START_COL);
 
         List<Row> validRows = IntStream.range(SUBJECT_DATA_START_ROW, sheet.getLastRowNum() + SUBJECT_DATA_START_ROW)
             .mapToObj(sheet::getRow)
@@ -63,7 +61,7 @@ public class QualityAttributesConverter {
     }
 
     public static List<AttributeDslModel> convertAttributes(Sheet sheet) {
-        var columnMap = getSheetHeaderWithoutFormula(sheet, ATTRIBUTE_HEADER_ROW_NUM, ATTRIBUTE_HEADER_START_COL, ATTRIBUTE_HEADER_END_COL);
+        var columnMap = getSheetHeaderWithoutFormula(sheet, ATTRIBUTE_HEADER_ROW_NUM, ATTRIBUTE_HEADER_START_COL);
 
         return IntStream.rangeClosed(ATTRIBUTE_DATA_START_ROW, sheet.getLastRowNum())
             .mapToObj(sheet::getRow)
