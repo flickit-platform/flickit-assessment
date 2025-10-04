@@ -50,7 +50,7 @@ public class GetExpertGroupListService implements GetExpertGroupListUseCase {
                 item.id(),
                 item.title(),
                 item.bio(),
-                createFileDownloadLinkPort.createDownloadLink(item.picture(), EXPIRY_DURATION),
+                createFileDownloadLinkPort.createDownloadLinkSafe(item.picture(), EXPIRY_DURATION),
                 item.publishedKitsCount(),
                 item.membersCount(),
                 item.members(),

@@ -37,7 +37,7 @@ public class GetAssessmentUsersService implements GetAssessmentUsersUseCase {
             .map(e -> {
                 String pictureLink = null;
                 if (e.picturePath() != null && !e.picturePath().trim().isBlank()) {
-                    pictureLink = createFileDownloadLinkPort.createDownloadLink(e.picturePath(), EXPIRY_DURATION);
+                    pictureLink = createFileDownloadLinkPort.createDownloadLinkSafe(e.picturePath(), EXPIRY_DURATION);
                 }
                 AssessmentUser.Role role = new AssessmentUser.Role(e.role().id(), e.role().title());
                 return new AssessmentUser(e.id(),

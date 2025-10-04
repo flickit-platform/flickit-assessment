@@ -34,6 +34,6 @@ public class GetExpertGroupService implements GetExpertGroupUseCase {
     private String getPictureDownloadLink(String filePath) {
         if (isBlank(filePath))
             return null;
-        return createFileDownloadLinkPort.createDownloadLink(filePath, EXPIRY_DURATION);
+        return createFileDownloadLinkPort.createDownloadLinkSafe(filePath, EXPIRY_DURATION);
     }
 }

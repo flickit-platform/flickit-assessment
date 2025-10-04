@@ -142,7 +142,7 @@ class GetPublishedKitServiceTest {
         when(checkKitLikeExistencePort.exist(param.getKitId(), param.getCurrentUserId())).thenReturn(false);
         when(loadKitLanguagesPort.loadByKitId(param.getKitId())).thenReturn(languages);
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
-        when(createFileDownloadLinkPort.createDownloadLink(any(String.class), any(Duration.class)))
+        when(createFileDownloadLinkPort.createDownloadLinkSafe(any(String.class), any(Duration.class)))
             .thenReturn(pictureLink);
 
         GetPublishedKitUseCase.Result result = service.getPublishedKit(param);
@@ -175,7 +175,7 @@ class GetPublishedKitServiceTest {
                 assertEquals(expected.getTitle(), actual.title());
             });
 
-        verify(createFileDownloadLinkPort).createDownloadLink(expertGroup.getPicture(), EXPIRY_DURATION);
+        verify(createFileDownloadLinkPort).createDownloadLinkSafe(expertGroup.getPicture(), EXPIRY_DURATION);
     }
 
     @ParameterizedTest
@@ -266,7 +266,7 @@ class GetPublishedKitServiceTest {
         when(loadSubjectsPort.loadAllTranslated(kit.getActiveVersionId())).thenReturn(List.of(subject));
         when(checkKitLikeExistencePort.exist(param.getKitId(), param.getCurrentUserId())).thenReturn(true);
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
-        when(createFileDownloadLinkPort.createDownloadLink(any(String.class), any(Duration.class)))
+        when(createFileDownloadLinkPort.createDownloadLinkSafe(any(String.class), any(Duration.class)))
             .thenReturn(pictureLink);
 
         var result = service.getPublishedKit(param);
@@ -293,7 +293,7 @@ class GetPublishedKitServiceTest {
         assertEquals(expertGroup.getTitle(), result.expertGroup().title());
         assertEquals(pictureLink, result.expertGroup().pictureLink());
 
-        verify(createFileDownloadLinkPort).createDownloadLink(expertGroup.getPicture(), EXPIRY_DURATION);
+        verify(createFileDownloadLinkPort).createDownloadLinkSafe(expertGroup.getPicture(), EXPIRY_DURATION);
         verifyNoInteractions(checkKitUserAccessPort);
     }
 
@@ -307,7 +307,7 @@ class GetPublishedKitServiceTest {
         when(loadSubjectsPort.loadAllTranslated(kit.getActiveVersionId())).thenReturn(List.of(subject));
         when(checkKitLikeExistencePort.exist(param.getKitId(), param.getCurrentUserId())).thenReturn(true);
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
-        when(createFileDownloadLinkPort.createDownloadLink(any(String.class), any(Duration.class)))
+        when(createFileDownloadLinkPort.createDownloadLinkSafe(any(String.class), any(Duration.class)))
             .thenReturn(pictureLink);
 
         var result = service.getPublishedKit(param);
@@ -334,7 +334,7 @@ class GetPublishedKitServiceTest {
         assertEquals(expertGroup.getTitle(), result.expertGroup().title());
         assertEquals(pictureLink, result.expertGroup().pictureLink());
 
-        verify(createFileDownloadLinkPort).createDownloadLink(expertGroup.getPicture(), EXPIRY_DURATION);
+        verify(createFileDownloadLinkPort).createDownloadLinkSafe(expertGroup.getPicture(), EXPIRY_DURATION);
         verifyNoInteractions(checkKitUserAccessPort);
     }
 

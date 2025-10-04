@@ -53,7 +53,7 @@ class GetUserProfileServiceTest {
         String pictureLink = "cdn.flickit.org" + expectedUser.getPicturePath();
 
         when(loadUserPort.loadUser(param.getCurrentUserId())).thenReturn(expectedUser);
-        when(createFileDownloadLinkPort.createDownloadLink(expectedUser.getPicturePath(), EXPIRY_DURATION)).thenReturn(pictureLink);
+        when(createFileDownloadLinkPort.createDownloadLinkSafe(expectedUser.getPicturePath(), EXPIRY_DURATION)).thenReturn(pictureLink);
 
         GetUserProfileUseCase.UserProfile actualUser = service.getUserProfile(param);
 

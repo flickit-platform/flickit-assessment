@@ -63,9 +63,9 @@ class GetExpertGroupListServiceTest {
 
         when(loadExpertGroupListPort.loadExpertGroupList(any(LoadExpertGroupListPort.Param.class)))
             .thenReturn(paginatedResponse);
-        when(createFileDownloadLinkPort.createDownloadLink(expertGroup1.picture(), Duration.ofDays(1)))
+        when(createFileDownloadLinkPort.createDownloadLinkSafe(expertGroup1.picture(), Duration.ofDays(1)))
             .thenReturn(expertGroup1.picture());
-        when(createFileDownloadLinkPort.createDownloadLink(expertGroup2.picture(), Duration.ofDays(1)))
+        when(createFileDownloadLinkPort.createDownloadLinkSafe(expertGroup2.picture(), Duration.ofDays(1)))
             .thenReturn(expertGroup2.picture());
 
         var result = service.getExpertGroupList(param);
