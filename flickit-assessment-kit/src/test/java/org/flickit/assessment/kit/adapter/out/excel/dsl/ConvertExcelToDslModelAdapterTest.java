@@ -20,10 +20,10 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
-class ExcelAdapterTest {
+class ConvertExcelToDslModelAdapterTest {
 
     @InjectMocks
-    ExcelAdapter adapter;
+    ConvertExcelToDslModelAdapter adapter;
 
     @Test
     void testExcelToDslModelConverterTest_testConvertSubjects() throws IOException {
