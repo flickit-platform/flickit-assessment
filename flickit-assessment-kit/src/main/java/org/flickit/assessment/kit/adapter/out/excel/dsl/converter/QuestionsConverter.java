@@ -47,7 +47,7 @@ public class QuestionsConverter {
                 int attributesStartColumn = columnMap.get(DESCRIPTION) + 1;
                 for (int j = 0; j < attributeDslModels.size(); j++) {
                     Integer weight = getCellInteger(row, attributesStartColumn + j);
-                    QuestionImpactDslModel questionImpact = null;
+                    QuestionImpactDslModel questionImpact;
                     if (weight != null) {
                         MaturityLevelDslModel maturityLevelDslModel = maturityLevelCodeToMaturityLevelDslMap.get(getCellString(row, columnMap.get(MATURITY)));
                         var maturityLevel = MaturityLevelDslModel.builder()
