@@ -20,13 +20,12 @@ public class MaturityLevelsConverter {
 
     private static final int HEADER_ROW_NUM = 1;
     private static final int HEADER_START_COL = 1;
-    private static final int DATA_START_ROW = 2;
     private static final int DATA_START_COL = 3;
 
     public static List<MaturityLevelDslModel> convert(Sheet sheet) {
         var columnMap = getSheetHeaderWithoutFormula(sheet, HEADER_ROW_NUM, HEADER_START_COL);
 
-        List<String> levels = IntStream.range(DATA_START_ROW, sheet.getLastRowNum() + 1)
+        List<String> levels = IntStream.range(HEADER_ROW_NUM + 1, sheet.getLastRowNum() + 1)
             .mapToObj(sheet::getRow)
             .filter(row -> !isBlankRow(row))
             .map(row -> row.getCell(0).toString().trim())
@@ -34,7 +33,7 @@ public class MaturityLevelsConverter {
 
         return IntStream.range(0, levels.size())
             .mapToObj(idx -> {
-                Row row = sheet.getRow(DATA_START_ROW + idx);
+                Row row = sheet.getRow(HEADER_ROW_NUM + 1 + idx);
                 Map<String, Integer> competence = buildCompetenceMap(row, levels);
 
                 int index = idx + 1;

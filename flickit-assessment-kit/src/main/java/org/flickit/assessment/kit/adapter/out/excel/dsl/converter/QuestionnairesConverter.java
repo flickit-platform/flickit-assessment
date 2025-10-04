@@ -22,12 +22,11 @@ public class QuestionnairesConverter {
 
     private static final int HEADER_ROW_NUM = 0;
     private static final int HEADER_START_COL = 0;
-    private static final int DATA_START_ROW = 1;
 
     public static List<QuestionnaireDslModel> convert(Sheet sheet) {
         var columnMap = getSheetHeaderWithoutFormula(sheet, HEADER_ROW_NUM, HEADER_START_COL);
 
-        return IntStream.rangeClosed(DATA_START_ROW, sheet.getLastRowNum())
+        return IntStream.rangeClosed(HEADER_ROW_NUM + 1, sheet.getLastRowNum())
             .mapToObj(i -> {
                 Row row = sheet.getRow(i);
                 if (isBlankRow(row)) return null;

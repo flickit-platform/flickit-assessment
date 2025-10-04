@@ -19,7 +19,6 @@ public class QuestionsConverter {
     private static final int HEADER_ROW_NUM = 1;
     private static final int HEADER_START_COL = 0;
     private static final int HEADER_END_COL = 8;
-    private static final int DATA_START_ROW = 2;
 
     private static final String QUESTION_QUESTION = "Question";
     private static final String QUESTION_QUESTIONNAIRES = "Questionnaires";
@@ -36,7 +35,7 @@ public class QuestionsConverter {
                                                  List<AttributeDslModel> attributeDslModels) {
         var columnMap = getSheetHeaderWithoutFormula(sheet, HEADER_ROW_NUM, HEADER_START_COL);
 
-        return IntStream.rangeClosed(DATA_START_ROW, sheet.getLastRowNum())
+        return IntStream.rangeClosed(HEADER_ROW_NUM + 1, sheet.getLastRowNum())
             .filter(i -> !isBlankRow(sheet.getRow(i)))
             .mapToObj(i -> {
                 Row row = sheet.getRow(i);

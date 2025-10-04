@@ -22,23 +22,18 @@ public class QualityAttributesConverter {
     private static final String SUBJECT_WEIGHT = "Subject Weight";
     private static final String SUBJECT_DESCRIPTION = "Subject Description";
 
-    private static final int SUBJECT_HEADER_ROW_NUM = 0;
-    private static final int SUBJECT_HEADER_START_COL = 0;
-    private static final int SUBJECT_DATA_START_ROW = 1;
+    private static final int HEADER_ROW_NUM = 0;
+    private static final int HEADER_START_COL = 0;
 
     private static final String ATTRIBUTE_NAME = "Attribute Name";
     private static final String ATTRIBUTE_TITLE = "Attribute Title";
     private static final String ATTRIBUTE_WEIGHT = "Attribute Weight";
     private static final String ATTRIBUTE_DESCRIPTION = "Attribute Description";
 
-    private static final int ATTRIBUTE_HEADER_ROW_NUM = 0;
-    private static final int ATTRIBUTE_HEADER_START_COL = 0;
-    private static final int ATTRIBUTE_DATA_START_ROW = 1;
-
     public static List<SubjectDslModel> convertSubjects(Sheet sheet) {
-        var columnMap = getSheetHeaderWithoutFormula(sheet, SUBJECT_HEADER_ROW_NUM, SUBJECT_HEADER_START_COL);
+        var columnMap = getSheetHeaderWithoutFormula(sheet, HEADER_ROW_NUM, HEADER_START_COL);
 
-        List<Row> validRows = IntStream.range(SUBJECT_DATA_START_ROW, sheet.getLastRowNum() + SUBJECT_DATA_START_ROW)
+        List<Row> validRows = IntStream.range(HEADER_ROW_NUM + 1, sheet.getLastRowNum() + HEADER_ROW_NUM + 1)
             .mapToObj(sheet::getRow)
             .filter(row -> {
                 String code = getCellString(row, columnMap.get(SUBJECT_NAME));
@@ -61,9 +56,9 @@ public class QualityAttributesConverter {
     }
 
     public static List<AttributeDslModel> convertAttributes(Sheet sheet) {
-        var columnMap = getSheetHeaderWithoutFormula(sheet, ATTRIBUTE_HEADER_ROW_NUM, ATTRIBUTE_HEADER_START_COL);
+        var columnMap = getSheetHeaderWithoutFormula(sheet, HEADER_ROW_NUM, HEADER_START_COL);
 
-        return IntStream.rangeClosed(ATTRIBUTE_DATA_START_ROW, sheet.getLastRowNum())
+        return IntStream.rangeClosed(HEADER_ROW_NUM + 1, sheet.getLastRowNum())
             .mapToObj(sheet::getRow)
             .filter(row -> !isBlankRow(row))
             .collect(ArrayList::new, (list, row) -> {
