@@ -10,45 +10,41 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.flickit.assessment.common.util.ExcelUtils.getCellDouble;
-import static org.flickit.assessment.common.util.ExcelUtils.getCellString;
+import static org.flickit.assessment.common.util.ExcelUtils.*;
 
 @UtilityClass
 public class AnswerOptionsConverter {
 
+    private static final int HEADER_ROW_NUM = 0;
+    private static final int HEADER_START_COL = 0;
     private static final int START_ROW = 1;
-    private static final int RANGE_NAME_COL = 0;
-    private static final int CAPTION_COL = 1;
-    private static final int VALUE_COL = 2;
+
+    private static final String RANGE_NAME = "Range Name";
+    private static final String TITLE = "Option Title";
+    private static final String VALUE = "Option Value";
 
     public static Map<String, List<AnswerOptionDslModel>> convert(Sheet sheet) {
         Map<String, List<AnswerOptionDslModel>> rangeCodeToOptionsMap = new LinkedHashMap<>();
-        String currentRange = null;
+        var columnMap = getSheetHeaderWithoutFormula(sheet, HEADER_ROW_NUM, HEADER_START_COL);
         int index = 1;
 
         for (int i = START_ROW; i <= sheet.getLastRowNum(); i++) {
             Row row = sheet.getRow(i);
             if (row == null) continue;
 
-            String rangeName = getCellString(row, RANGE_NAME_COL);
-            String caption = getCellString(row, CAPTION_COL);
-            Double value = getCellDouble(row, VALUE_COL);
+            String rangeName = getCellString(row, columnMap.get(RANGE_NAME)).trim();
+            if (!rangeName.isBlank()) {
+                rangeCodeToOptionsMap.putIfAbsent(rangeName, new ArrayList<>());
 
-            if (rangeName != null && !rangeName.isBlank()) {
-                currentRange = rangeName.trim();
-                rangeCodeToOptionsMap.putIfAbsent(currentRange, new ArrayList<>());
-                index = 1;
-            }
-
-            if (currentRange != null && caption != null && !caption.isBlank())
-                rangeCodeToOptionsMap.get(currentRange).add(
+                rangeCodeToOptionsMap.get(rangeName).add(
                     AnswerOptionDslModel.builder()
                         .index(index++)
-                        .caption(caption.trim())
-                        .value(value)
+                        .caption(getCellString(row, columnMap.get(TITLE)))
+                        .value(getCellDouble(row, columnMap.get(VALUE)))
                         .build()
                 );
             }
+        }
 
         return rangeCodeToOptionsMap;
     }
