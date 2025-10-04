@@ -44,7 +44,7 @@ public class QuestionsConverter {
                     .stream()
                     .collect(Collectors.toMap(AnswerOptionDslModel::getIndex, AnswerOptionDslModel::getValue));
 
-                int attributesStartColumn = columnMap.get(DESCRIPTION) + 1;
+                int attributesStartColumn = columnMap.get(MATURITY) + 1;
                 for (int j = 0; j < attributeDslModels.size(); j++) {
                     Integer weight = getCellInteger(row, attributesStartColumn + j);
                     QuestionImpactDslModel questionImpact;
