@@ -16,41 +16,41 @@ import static org.flickit.assessment.common.util.ExcelUtils.*;
 @UtilityClass
 public class QuestionsConverter {
 
-    private static final int HEADER_ROW_NUM = 1;
-    private static final int HEADER_START_COL = 0;
-    private static final int HEADER_END_COL = 8;
+    private static final int HEADER_ROW_INDEX = 1;
+    private static final int HEADER_START_COLUMN_INDEX = 0;
 
-    private static final String QUESTION_QUESTION = "Question";
-    private static final String QUESTION_QUESTIONNAIRES = "Questionnaires";
-    private static final String QUESTION_CODE = "Code";
-    private static final String QUESTION_OPTIONS = "Options";
-    private static final String QUESTION_DESCRIPTION = "Description";
-    private static final String QUESTION_NOT_APPLICABLE = "Not Applicable";
-    private static final String QUESTION_ADVISABLE = "Advisable";
-    private static final String QUESTION_MATURITY = "Maturity";
+    private static final String TITLE = "Question";
+    private static final String QUESTIONNAIRES = "Questionnaires";
+    private static final String CODE = "Code";
+    private static final String OPTIONS = "Options";
+    private static final String DESCRIPTION = "Description";
+    private static final String NOT_APPLICABLE = "Not Applicable";
+    private static final String ADVISABLE = "Advisable";
+    private static final String MATURITY = "Maturity";
 
     public static List<QuestionDslModel> convert(Sheet sheet,
                                                  Map<String, List<AnswerOptionDslModel>> answerRangeCodeToAnswerOptionsMap,
                                                  Map<String, MaturityLevelDslModel> maturityLevelCodeToMaturityLevelDslMap,
                                                  List<AttributeDslModel> attributeDslModels) {
-        var columnMap = getSheetHeaderWithoutFormula(sheet, HEADER_ROW_NUM, HEADER_START_COL);
+        var columnMap = getSheetHeaderWithoutFormula(sheet, HEADER_ROW_INDEX, HEADER_START_COLUMN_INDEX);
 
-        return IntStream.rangeClosed(HEADER_ROW_NUM + 1, sheet.getLastRowNum())
+        return IntStream.rangeClosed(HEADER_ROW_INDEX + 1, sheet.getLastRowNum())
             .filter(i -> !isBlankRow(sheet.getRow(i)))
             .mapToObj(i -> {
                 Row row = sheet.getRow(i);
-                String options = getCellString(row, columnMap.get(QUESTION_OPTIONS));
+                String options = getCellString(row, columnMap.get(OPTIONS));
                 List<QuestionImpactDslModel> questionImpacts = new ArrayList<>();
-                var answerRangeCode = getCellString(row, columnMap.get(QUESTION_OPTIONS));
+                var answerRangeCode = getCellString(row, columnMap.get(OPTIONS));
                 var optionsIndexToValueMap = answerRangeCodeToAnswerOptionsMap.get(answerRangeCode)
                     .stream()
                     .collect(Collectors.toMap(AnswerOptionDslModel::getIndex, AnswerOptionDslModel::getValue));
 
+                int attributesStartColumn = columnMap.get(DESCRIPTION) + 1;
                 for (int j = 0; j < attributeDslModels.size(); j++) {
-                    Integer weight = getCellInteger(row, HEADER_END_COL + j);
+                    Integer weight = getCellInteger(row, attributesStartColumn + j);
                     QuestionImpactDslModel questionImpact = null;
                     if (weight != null) {
-                        MaturityLevelDslModel maturityLevelDslModel = maturityLevelCodeToMaturityLevelDslMap.get(getCellString(row, columnMap.get(QUESTION_MATURITY)));
+                        MaturityLevelDslModel maturityLevelDslModel = maturityLevelCodeToMaturityLevelDslMap.get(getCellString(row, columnMap.get(MATURITY)));
                         var maturityLevel = MaturityLevelDslModel.builder()
                             .title(maturityLevelDslModel.getTitle())
                             .code(maturityLevelDslModel.getCode()).build();
@@ -68,16 +68,16 @@ public class QuestionsConverter {
                 }
 
                 return QuestionDslModel.builder()
-                    .title(getCellString(row, columnMap.get(QUESTION_QUESTION)))
-                    .questionnaireCode(getCellString(row, columnMap.get(QUESTION_QUESTIONNAIRES)))
-                    .code(getCellString(row, columnMap.get(QUESTION_CODE)))
+                    .title(getCellString(row, columnMap.get(TITLE)))
+                    .questionnaireCode(getCellString(row, columnMap.get(QUESTIONNAIRES)))
+                    .code(getCellString(row, columnMap.get(CODE)))
                     .answerRangeCode(answerRangeCode)
                     .answerOptions(answerRangeCodeToAnswerOptionsMap.get(options))
                     .index(i - 1)
                     .questionImpacts(questionImpacts)
-                    .description(getCellString(row, columnMap.get(QUESTION_DESCRIPTION)))
-                    .mayNotBeApplicable(getCellInteger(row, columnMap.get(QUESTION_NOT_APPLICABLE)) == 1)
-                    .advisable(getCellInteger(row, columnMap.get(QUESTION_ADVISABLE)) == 1)
+                    .description(getCellString(row, columnMap.get(DESCRIPTION)))
+                    .mayNotBeApplicable(getCellInteger(row, columnMap.get(NOT_APPLICABLE)) == 1)
+                    .advisable(getCellInteger(row, columnMap.get(ADVISABLE)) == 1)
                     .build();
             })
             .collect(Collectors.toList());

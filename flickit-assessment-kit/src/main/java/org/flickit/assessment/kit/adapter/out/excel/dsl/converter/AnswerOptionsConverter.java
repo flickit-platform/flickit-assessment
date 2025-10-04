@@ -12,8 +12,8 @@ import static org.flickit.assessment.common.util.ExcelUtils.*;
 @UtilityClass
 public class AnswerOptionsConverter {
 
-    private static final int HEADER_ROW_NUM = 0;
-    private static final int HEADER_START_COL = 0;
+    private static final int HEADER_ROW_INDEX = 0;
+    private static final int HEADER_START_COLUMN_INDEX = 0;
 
     private static final String RANGE_NAME = "Range Name";
     private static final String TITLE = "Option Title";
@@ -21,10 +21,10 @@ public class AnswerOptionsConverter {
 
     public static Map<String, List<AnswerOptionDslModel>> convert(Sheet sheet) {
         Map<String, List<AnswerOptionDslModel>> rangeCodeToOptionsMap = new LinkedHashMap<>();
-        var columnMap = getSheetHeaderWithoutFormula(sheet, HEADER_ROW_NUM, HEADER_START_COL);
+        var columnMap = getSheetHeaderWithoutFormula(sheet, HEADER_ROW_INDEX, HEADER_START_COLUMN_INDEX);
         int index = 1;
 
-        for (int i = HEADER_ROW_NUM + 1; i <= sheet.getLastRowNum(); i++) {
+        for (int i = HEADER_ROW_INDEX + 1; i <= sheet.getLastRowNum(); i++) {
             Row row = sheet.getRow(i);
             if (row == null) continue;
 

@@ -16,17 +16,17 @@ import static org.flickit.assessment.common.util.ExcelUtils.*;
 @UtilityClass
 public class QuestionnairesConverter {
 
+    private static final int HEADER_ROW_INDEX = 0;
+    private static final int HEADER_START_COLUMN_INDEX = 0;
+
     private static final String NAME = "Name";
     private static final String TITLE = "Title";
     private static final String DESCRIPTION = "Description";
 
-    private static final int HEADER_ROW_NUM = 0;
-    private static final int HEADER_START_COL = 0;
-
     public static List<QuestionnaireDslModel> convert(Sheet sheet) {
-        var columnMap = getSheetHeaderWithoutFormula(sheet, HEADER_ROW_NUM, HEADER_START_COL);
+        var columnMap = getSheetHeaderWithoutFormula(sheet, HEADER_ROW_INDEX, HEADER_START_COLUMN_INDEX);
 
-        return IntStream.rangeClosed(HEADER_ROW_NUM + 1, sheet.getLastRowNum())
+        return IntStream.rangeClosed(HEADER_ROW_INDEX + 1, sheet.getLastRowNum())
             .mapToObj(i -> {
                 Row row = sheet.getRow(i);
                 if (isBlankRow(row)) return null;

@@ -15,17 +15,18 @@ import static org.flickit.assessment.common.util.ExcelUtils.*;
 @UtilityClass
 public class MaturityLevelsConverter {
 
+    private static final int HEADER_ROW_INDEX = 1;
+    private static final int HEADER_START_COLUMN_INDEX = 1;
+
     private static final String TITLE = "Title";
     private static final String DESCRIPTION = "Description";
 
-    private static final int HEADER_ROW_NUM = 1;
-    private static final int HEADER_START_COL = 1;
     private static final int DATA_START_COL = 3;
 
     public static List<MaturityLevelDslModel> convert(Sheet sheet) {
-        var columnMap = getSheetHeaderWithoutFormula(sheet, HEADER_ROW_NUM, HEADER_START_COL);
+        var columnMap = getSheetHeaderWithoutFormula(sheet, HEADER_ROW_INDEX, HEADER_START_COLUMN_INDEX);
 
-        List<String> levels = IntStream.range(HEADER_ROW_NUM + 1, sheet.getLastRowNum() + 1)
+        List<String> levels = IntStream.range(HEADER_ROW_INDEX + 1, sheet.getLastRowNum() + 1)
             .mapToObj(sheet::getRow)
             .filter(row -> !isBlankRow(row))
             .map(row -> row.getCell(0).toString().trim())
@@ -33,7 +34,7 @@ public class MaturityLevelsConverter {
 
         return IntStream.range(0, levels.size())
             .mapToObj(idx -> {
-                Row row = sheet.getRow(HEADER_ROW_NUM + 1 + idx);
+                Row row = sheet.getRow(HEADER_ROW_INDEX + 1 + idx);
                 Map<String, Integer> competence = buildCompetenceMap(row, levels);
 
                 int index = idx + 1;
