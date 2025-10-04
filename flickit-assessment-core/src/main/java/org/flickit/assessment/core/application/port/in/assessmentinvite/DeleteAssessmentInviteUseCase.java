@@ -1,6 +1,7 @@
 package org.flickit.assessment.core.application.port.in.assessmentinvite;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
@@ -24,6 +25,7 @@ public interface DeleteAssessmentInviteUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
+        @Builder
         public Param(UUID id, UUID currentUserId) {
             this.id = id;
             this.currentUserId = currentUserId;
