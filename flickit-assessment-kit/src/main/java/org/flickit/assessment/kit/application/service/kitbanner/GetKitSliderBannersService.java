@@ -43,7 +43,7 @@ public class GetKitSliderBannersService implements GetKitSliderBannersUseCase {
                     createFileDownloadLinkPort.createDownloadLinkSafe(smallBanner, EXPIRY_DURATION),
                     createFileDownloadLinkPort.createDownloadLinkSafe(largeBanner, EXPIRY_DURATION));
             })
-            .filter(b -> b.largeBanner() != null && b.smallBanner() != null)
+            .filter(b -> b.largeBanner() != null || b.smallBanner() != null)
             .toList();
     }
 

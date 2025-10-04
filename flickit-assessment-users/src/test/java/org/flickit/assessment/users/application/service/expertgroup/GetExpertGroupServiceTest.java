@@ -40,7 +40,7 @@ class GetExpertGroupServiceTest {
         long expertGroupId = expertGroup.getId();
 
         String pictureLink = "cdn.flickit.org" + expertGroup.getPicture();
-        when(createFileDownloadLinkPort.createDownloadLink(any(String.class), any(Duration.class)))
+        when(createFileDownloadLinkPort.createDownloadLinkSafe(any(String.class), any(Duration.class)))
             .thenReturn(pictureLink);
 
         when(loadExpertGroupPort.loadExpertGroup(anyLong()))

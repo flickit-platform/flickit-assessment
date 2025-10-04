@@ -125,7 +125,7 @@ class GetAssessmentUsersServiceTest {
 
         when(assessmentPermissionChecker.isAuthorized(assessmentId, currentUserId, VIEW_ASSESSMENT_USER_LIST)).thenReturn(true);
         when(port.loadAssessmentUsers(portParam)).thenReturn(paginatedResponse);
-        when(createFileDownloadLinkPort.createDownloadLink(expectedAssessmentUser.picturePath(), Duration.ofDays(1))).thenReturn("cdn.flickit.org/profile.jpg");
+        when(createFileDownloadLinkPort.createDownloadLinkSafe(expectedAssessmentUser.picturePath(), Duration.ofDays(1))).thenReturn("cdn.flickit.org/profile.jpg");
 
         var response = service.getAssessmentUsers(useCaseParam);
 

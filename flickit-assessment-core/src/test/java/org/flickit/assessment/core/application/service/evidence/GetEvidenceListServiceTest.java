@@ -59,7 +59,7 @@ class GetEvidenceListServiceTest {
                 "lastModificationTime",
                 "DESC",
                 2));
-        when(createFileDownloadLinkPort.createDownloadLink(any(), any())).thenReturn("pictureLink");
+        when(createFileDownloadLinkPort.createDownloadLinkSafe(any(), any())).thenReturn("pictureLink");
 
         var result = service.getEvidenceList(new Param(question1Id, assessmentId, 10, 0, currentUserId));
 
@@ -80,7 +80,7 @@ class GetEvidenceListServiceTest {
         assertEquals(evidence2Q1.attachmentsCount(), result.getItems().get(1).attachmentsCount());
         assertFalse(result.getItems().get(1).editable());
         assertFalse(result.getItems().get(1).deletable());
-        verify(createFileDownloadLinkPort, times(2)).createDownloadLink(anyString(), any(Duration.class));
+        verify(createFileDownloadLinkPort, times(2)).createDownloadLinkSafe(anyString(), any(Duration.class));
     }
 
     @Test
