@@ -58,6 +58,7 @@ public class ConvertExcelToDslModelAdapter implements ConvertExcelToDslModelPort
                 .questions(questions)
                 .subjects(subjects)
                 .maturityLevels(levels)
+                .answerRanges(answerRanges)
                 .hasError(false)
                 .build();
         } catch (IOException e) {
