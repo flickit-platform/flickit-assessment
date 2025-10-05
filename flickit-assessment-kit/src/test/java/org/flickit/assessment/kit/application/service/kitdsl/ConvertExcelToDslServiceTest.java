@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.application.service.kitdsl;
 import org.flickit.assessment.common.config.FileProperties;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.kit.application.port.in.kitdsl.ConvertExcelToDslUseCase;
+import org.flickit.assessment.kit.application.port.out.kitdsl.ConvertAssessmentKitDslModelPort;
 import org.flickit.assessment.kit.application.port.out.kitdsl.ConvertExcelToDslModelPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,6 +14,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.util.unit.DataSize;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -20,6 +23,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.UPLOAD_FILE_FO
 import static org.flickit.assessment.common.error.ErrorMessageKey.UPLOAD_FILE_SIZE_MAX;
 import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -30,6 +34,9 @@ class ConvertExcelToDslServiceTest {
 
     @Mock
     private ConvertExcelToDslModelPort convertExcelToDslModelPort;
+
+    @Mock
+    private ConvertAssessmentKitDslModelPort convertAssessmentKitDslModelPort;
 
     @Spy
     private FileProperties fileProperties = fileProperties();
@@ -63,11 +70,20 @@ class ConvertExcelToDslServiceTest {
     }
 
     @Test
-    void convertExcelToDslService_whenParametersAreValid_thenConvertExcelToDslSuccess(){
+    void convertExcelToDslService_whenParametersAreValid_thenConvertExcelToDslSuccess() {
         var file = new MockMultipartFile("file", "test.txt", xlsxContentType, new byte[3 * 1024 * 124]);
+        Map<String, String> fileNameToContentMap = new HashMap<>();
+        fileNameToContentMap.put("file1.ak", "test 1");
+        fileNameToContentMap.put("file2.ak", "test 2");
         param = createParam(b -> b.excelFile(file));
 
-        service.convertExcelToDsl(param);
+        when(convertAssessmentKitDslModelPort.toDsl(any()))
+            .thenReturn(fileNameToContentMap);
+
+        var result = service.convertExcelToDsl(param);
+
+        assertEquals("dsl-test.zip", result.fileName());
+        assertNotNull(result.file());
 
         verify(fileProperties, times(1)).getExcelKitContentType();
         verify(fileProperties, times(1)).getExcelKitMaxSize();

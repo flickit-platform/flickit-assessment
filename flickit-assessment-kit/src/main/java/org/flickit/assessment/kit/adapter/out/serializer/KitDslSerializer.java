@@ -48,7 +48,7 @@ public class KitDslSerializer implements ConvertAssessmentKitDslModelPort {
             }
             return sb.toString();
         };
-        
+
         Map<String, String> dslFiles = new LinkedHashMap<>();
         dslFiles.put(SUBJECTS_FILE_NAME, listToDsl.apply(dslModel.getSubjects()));
         dslFiles.put(QUALITY_ATTRIBUTES_FILE_NAME, listToDsl.apply(dslModel.getAttributes()));
