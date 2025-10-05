@@ -60,7 +60,7 @@ class GetExpertGroupMembersServiceTest {
 
         when(loadExpertGroupOwnerPort.loadOwnerId(param.getId())).thenReturn(expertGroup.getOwnerId());
         when(loadExpertGroupMembersPort.loadExpertGroupMembers(param.getId(), ACTIVE, param.getPage(), param.getSize())).thenReturn(paginatedResult);
-        when(createFileDownloadLinkPort.createDownloadLink(any(String.class), any(Duration.class))).thenReturn(expectedDownloadLink);
+        when(createFileDownloadLinkPort.createDownloadLinkSafe(any(String.class), any(Duration.class))).thenReturn(expectedDownloadLink);
 
         var result = service.getExpertGroupMembers(param);
 
@@ -84,8 +84,8 @@ class GetExpertGroupMembersServiceTest {
                 assertNotNull(actual.pictureLink());
             });
 
-        verify(createFileDownloadLinkPort).createDownloadLink(member1.picture(), Duration.ofDays(1));
-        verify(createFileDownloadLinkPort).createDownloadLink(member2.picture(), Duration.ofDays(1));
+        verify(createFileDownloadLinkPort).createDownloadLinkSafe(member1.picture(), Duration.ofDays(1));
+        verify(createFileDownloadLinkPort).createDownloadLinkSafe(member2.picture(), Duration.ofDays(1));
     }
 
     @Test
@@ -100,7 +100,7 @@ class GetExpertGroupMembersServiceTest {
 
         when(loadExpertGroupOwnerPort.loadOwnerId(param.getId())).thenReturn(expertGroup.getOwnerId());
         when(loadExpertGroupMembersPort.loadExpertGroupMembers(param.getId(), ACTIVE, param.getPage(), param.getSize())).thenReturn(paginatedResult);
-        when(createFileDownloadLinkPort.createDownloadLink(any(String.class), any(Duration.class))).thenReturn(expectedDownloadLink);
+        when(createFileDownloadLinkPort.createDownloadLinkSafe(any(String.class), any(Duration.class))).thenReturn(expectedDownloadLink);
 
         var result = service.getExpertGroupMembers(param);
 
@@ -123,8 +123,8 @@ class GetExpertGroupMembersServiceTest {
                 assertNotNull(actual.pictureLink());
             });
 
-        verify(createFileDownloadLinkPort).createDownloadLink(member1.picture(), Duration.ofDays(1));
-        verify(createFileDownloadLinkPort).createDownloadLink(member2.picture(), Duration.ofDays(1));
+        verify(createFileDownloadLinkPort).createDownloadLinkSafe(member1.picture(), Duration.ofDays(1));
+        verify(createFileDownloadLinkPort).createDownloadLinkSafe(member2.picture(), Duration.ofDays(1));
     }
 
     @Test
@@ -158,7 +158,7 @@ class GetExpertGroupMembersServiceTest {
 
         when(loadExpertGroupOwnerPort.loadOwnerId(param.getId())).thenReturn(expertGroup.getOwnerId());
         when(loadExpertGroupMembersPort.loadExpertGroupMembers(param.getId(), PENDING, param.getPage(), param.getSize())).thenReturn(paginatedResult);
-        when(createFileDownloadLinkPort.createDownloadLink(any(String.class), any(Duration.class))).thenReturn(expectedDownloadLink);
+        when(createFileDownloadLinkPort.createDownloadLinkSafe(any(String.class), any(Duration.class))).thenReturn(expectedDownloadLink);
 
         var result = service.getExpertGroupMembers(param);
 
@@ -178,8 +178,8 @@ class GetExpertGroupMembersServiceTest {
                 assertEquals(expected.status(), actual.status().ordinal());
                 assertNotNull(actual.pictureLink());
             });
-        verify(createFileDownloadLinkPort).createDownloadLink(pendingMember1.picture(), Duration.ofDays(1));
-        verify(createFileDownloadLinkPort).createDownloadLink(pendingMember2.picture(), Duration.ofDays(1));
+        verify(createFileDownloadLinkPort).createDownloadLinkSafe(pendingMember1.picture(), Duration.ofDays(1));
+        verify(createFileDownloadLinkPort).createDownloadLinkSafe(pendingMember2.picture(), Duration.ofDays(1));
     }
 
     private LoadExpertGroupMembersPort.Member createMember(UUID memberId, ExpertGroupAccessStatus status) {

@@ -75,7 +75,7 @@ class GetAnswerHistoryListServiceTest {
         when(loadAnswerHistoryListPort.load(assessmentId, questionId, page, size)).thenReturn(expected);
 
         String picDownloadLink = "downloadLink";
-        when(createFileDownloadLinkPort.createDownloadLink(anyString(), any())).thenReturn(picDownloadLink);
+        when(createFileDownloadLinkPort.createDownloadLinkSafe(anyString(), any())).thenReturn(picDownloadLink);
 
         var result = getAnswerHistoryListService.getAnswerHistoryList(param);
 

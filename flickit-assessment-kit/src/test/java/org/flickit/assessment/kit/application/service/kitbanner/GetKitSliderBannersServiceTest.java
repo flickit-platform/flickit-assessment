@@ -15,7 +15,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -41,7 +42,7 @@ class GetKitSliderBannersServiceTest {
             KitBannerMother.createWithKitIdIdAndSize(2L, ImageSize.SMALL));
 
         when(loadKitBannersPort.loadSliderBanners(KitLanguage.valueOf(param.getLang()))).thenReturn(sliderBanners);
-        when(createDownloadLinkPort.createDownloadLink(anyString(), any())).thenReturn(pathToMinio);
+        when(createDownloadLinkPort.createDownloadLinkSafe(anyString(), any())).thenReturn(pathToMinio);
 
         var result = service.getSliderBanners(param);
 
@@ -58,7 +59,7 @@ class GetKitSliderBannersServiceTest {
         assertEquals(pathToMinio, banner2.smallBanner());
         assertNull(banner2.largeBanner());
 
-        verify(createDownloadLinkPort, times(sliderBanners.size())).createDownloadLink(anyString(), any());
+        verify(createDownloadLinkPort, times(sliderBanners.size())).createDownloadLinkSafe(anyString(), any());
     }
 
     private GetKitSliderBannersUseCase.Param createParam(Consumer<GetKitSliderBannersUseCase.Param.ParamBuilder> changer) {

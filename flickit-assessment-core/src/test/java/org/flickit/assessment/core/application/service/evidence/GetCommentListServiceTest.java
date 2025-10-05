@@ -92,7 +92,7 @@ class GetCommentListServiceTest {
                 "lastModificationTime",
                 "DESC",
                 2));
-        when(createFileDownloadLinkPort.createDownloadLink(any(), any())).thenReturn("pictureLink");
+        when(createFileDownloadLinkPort.createDownloadLinkSafe(any(), any())).thenReturn("pictureLink");
 
         var result = service.getCommentList(param);
 
@@ -114,7 +114,7 @@ class GetCommentListServiceTest {
         assertFalse(result.getItems().get(1).editable());
         assertFalse(result.getItems().get(1).deletable());
         assertFalse(result.getItems().get(1).resolvable());
-        verify(createFileDownloadLinkPort, times(2)).createDownloadLink(anyString(), any(Duration.class));
+        verify(createFileDownloadLinkPort, times(2)).createDownloadLinkSafe(anyString(), any(Duration.class));
     }
 
     private EvidenceListItem createComment(UUID createdBy) {

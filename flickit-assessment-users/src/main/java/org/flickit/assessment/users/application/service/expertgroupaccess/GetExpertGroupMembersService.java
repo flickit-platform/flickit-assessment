@@ -53,7 +53,7 @@ public class GetExpertGroupMembersService implements GetExpertGroupMembersUseCas
                 userIsOwner ? item.email() : null,
                 item.displayName(),
                 item.bio(),
-                createFileDownloadLinkPort.createDownloadLink(item.picture(), EXPIRY_DURATION),
+                createFileDownloadLinkPort.createDownloadLinkSafe(item.picture(), EXPIRY_DURATION),
                 item.linkedin(),
                 ExpertGroupAccessStatus.values()[item.status()],
                 item.inviteExpirationDate(),

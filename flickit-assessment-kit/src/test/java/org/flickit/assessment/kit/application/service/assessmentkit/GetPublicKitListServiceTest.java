@@ -64,7 +64,7 @@ class GetPublicKitListServiceTest {
             .thenReturn(List.of(new CountKitListStatsPort.Result(kitId, likes, assessmentsCount)));
         when(loadKitLanguagesPort.loadByKitIds(kitIds)).thenReturn(
             Map.of(kitId, List.of(KitLanguage.EN)));
-        when(createFileDownloadLinkPort.createDownloadLink(any(), any()))
+        when(createFileDownloadLinkPort.createDownloadLinkSafe(any(), any()))
             .thenReturn(expertGroupPictureUrl);
 
         var kitList = service.getPublicKitList(param);
@@ -92,7 +92,7 @@ class GetPublicKitListServiceTest {
             .thenReturn(List.of(new CountKitListStatsPort.Result(kitId, likes, assessmentsCount)));
         when(loadKitLanguagesPort.loadByKitIds(kitIds)).thenReturn(
             Map.of(kitId, List.of(KitLanguage.EN)));
-        when(createFileDownloadLinkPort.createDownloadLink(any(), any()))
+        when(createFileDownloadLinkPort.createDownloadLinkSafe(any(), any()))
             .thenReturn(expertGroupPictureUrl);
 
         var kitList = service.getPublicKitList(param);

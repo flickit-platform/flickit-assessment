@@ -76,6 +76,6 @@ public class GetCommentListService implements GetCommentListUseCase {
     private User addPictureLinkToUser(LoadEvidencesPort.User user) {
         return new User(user.id(),
             user.displayName(),
-            createFileDownloadLinkPort.createDownloadLink(user.pictureLink(), EXPIRY_DURATION));
+            createFileDownloadLinkPort.createDownloadLinkSafe(user.pictureLink(), EXPIRY_DURATION));
     }
 }

@@ -40,9 +40,10 @@ public class GetKitSliderBannersService implements GetKitSliderBannersUseCase {
                 String largeBanner = findPathBySize(banners, ImageSize.LARGE);
 
                 return new Result(kitId,
-                    createFileDownloadLinkPort.createDownloadLink(smallBanner, EXPIRY_DURATION),
-                    createFileDownloadLinkPort.createDownloadLink(largeBanner, EXPIRY_DURATION));
+                    createFileDownloadLinkPort.createDownloadLinkSafe(smallBanner, EXPIRY_DURATION),
+                    createFileDownloadLinkPort.createDownloadLinkSafe(largeBanner, EXPIRY_DURATION));
             })
+            .filter(b -> b.largeBanner() != null || b.smallBanner() != null)
             .toList();
     }
 

@@ -52,7 +52,7 @@ public class GetSpaceMembersService implements GetSpaceMembersUseCase {
                 item.displayName(),
                 item.bio(),
                 item.isOwner(),
-                createFileDownloadLinkPort.createDownloadLink(item.picture(), EXPIRY_DURATION),
+                createFileDownloadLinkPort.createDownloadLinkSafe(item.picture(), EXPIRY_DURATION),
                 item.linkedin()
             ))
             .toList();

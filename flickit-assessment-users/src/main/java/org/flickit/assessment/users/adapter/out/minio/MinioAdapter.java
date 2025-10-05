@@ -6,6 +6,7 @@ import io.minio.http.Method;
 import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.FileNameUtils;
 import org.flickit.assessment.data.config.MinioConfigProperties;
 import org.flickit.assessment.users.application.port.out.expertgroup.UploadExpertGroupPicturePort;
@@ -22,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.flickit.assessment.users.adapter.out.minio.MinioConstants.PIC_FILE_NAME;
 
+@Slf4j
 @Component("usersMinioAdapter")
 @AllArgsConstructor
 public class MinioAdapter implements
@@ -82,6 +84,16 @@ public class MinioAdapter implements
             .build());
 
         return downloadUrl.replace(properties.getUrl(), properties.getApi());
+    }
+
+    @Override
+    public String createDownloadLinkSafe(String filePath, Duration expiryDuration) {
+        try {
+            return createDownloadLink(filePath, expiryDuration);
+        } catch (Exception e) {
+            log.error("Failed to create download link for filePath={}", filePath, e);
+            return null;
+        }
     }
 
     @SneakyThrows

@@ -66,7 +66,7 @@ class GetUsersMeServiceTest {
         String pictureLink = "cdn.flickit.org" + expectedUser.getPicturePath();
 
         when(loadUserPort.loadUser(param.getCurrentUserId())).thenReturn(expectedUser);
-        when(createFileDownloadLinkPort.createDownloadLink(expectedUser.getPicturePath(), EXPIRY_DURATION)).thenReturn(pictureLink);
+        when(createFileDownloadLinkPort.createDownloadLinkSafe(expectedUser.getPicturePath(), EXPIRY_DURATION)).thenReturn(pictureLink);
         when(loadSpacePort.loadDefaultSpaceId(param.getCurrentUserId())).thenReturn(defaultSpaceId);
         when(loadUserSurveyPort.loadByUserId(param.getCurrentUserId())).thenReturn(Optional.empty());
 

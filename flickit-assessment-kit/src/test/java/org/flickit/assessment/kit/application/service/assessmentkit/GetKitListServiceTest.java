@@ -67,7 +67,7 @@ class GetKitListServiceTest {
             .thenReturn(List.of(new CountKitListStatsPort.Result(kitId, kitLikes, assessmentsCount)));
         when(loadKitLanguagesPort.loadByKitIds(kitIds)).thenReturn(
             Map.of(kitId, List.of(KitLanguage.EN)));
-        when(createFileDownloadLinkPort.createDownloadLink(any(), any()))
+        when(createFileDownloadLinkPort.createDownloadLinkSafe(any(), any()))
             .thenReturn(EXPERT_GROUP_PICTURE_URL);
 
         var result = service.getKitList(param);
@@ -98,7 +98,7 @@ class GetKitListServiceTest {
             .thenReturn(List.of(new CountKitListStatsPort.Result(kitId, kitLikes, assessmentsCount)));
         when(loadKitLanguagesPort.loadByKitIds(kitIds)).thenReturn(
             Map.of(kitId, List.of(KitLanguage.EN)));
-        when(createFileDownloadLinkPort.createDownloadLink(any(), any()))
+        when(createFileDownloadLinkPort.createDownloadLinkSafe(any(), any()))
             .thenReturn(EXPERT_GROUP_PICTURE_URL);
 
         var result = service.getKitList(param);
@@ -129,7 +129,7 @@ class GetKitListServiceTest {
             .thenReturn(List.of(new CountKitListStatsPort.Result(kitId, kitLikes, assessmentCount)));
         when(loadKitLanguagesPort.loadByKitIds(kitIds)).thenReturn(
             Map.of(kitId, List.of(KitLanguage.EN)));
-        when(createFileDownloadLinkPort.createDownloadLink(any(), any()))
+        when(createFileDownloadLinkPort.createDownloadLinkSafe(any(), any()))
             .thenReturn(EXPERT_GROUP_PICTURE_URL);
 
         var result = service.getKitList(param);
@@ -162,7 +162,7 @@ class GetKitListServiceTest {
             .thenReturn(List.of(new CountKitListStatsPort.Result(kitId, kitLikes, assessmentsCount)));
         when(loadKitLanguagesPort.loadByKitIds(kitIds)).thenReturn(
             Map.of(kitId, List.of(KitLanguage.EN)));
-        when(createFileDownloadLinkPort.createDownloadLink(any(), any()))
+        when(createFileDownloadLinkPort.createDownloadLinkSafe(any(), any()))
             .thenReturn(EXPERT_GROUP_PICTURE_URL);
 
         var result = service.getKitList(param);
@@ -198,7 +198,7 @@ class GetKitListServiceTest {
         assertPage(expectedKitsPage, result);
 
         verify(loadPublishedKitListPort, never()).loadPublicKits(any(), anyInt(), anyInt());
-        verify(createFileDownloadLinkPort, never()).createDownloadLink(anyString(), any());
+        verify(createFileDownloadLinkPort, never()).createDownloadLinkSafe(anyString(), any());
     }
 
     private static PaginatedResponse<LoadPublishedKitListPort.Result> getExpectedKitsPage(AssessmentKit assessmentKit, boolean hasKitAccess) {

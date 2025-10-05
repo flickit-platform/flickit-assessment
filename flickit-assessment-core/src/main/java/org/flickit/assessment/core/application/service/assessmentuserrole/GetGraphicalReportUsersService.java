@@ -64,7 +64,7 @@ public class GetGraphicalReportUsersService implements GetGraphicalReportUsersUs
     private Result.GraphicalReportUser toGraphicalReportUser(LoadAssessmentUsersPort.ReportUser user, UUID currentUserId, boolean isAuthorized) {
         String pictureLink = null;
         if (user.picturePath() != null && !user.picturePath().trim().isBlank())
-            pictureLink = createFileDownloadLinkPort.createDownloadLink(user.picturePath(), EXPIRY_DURATION);
+            pictureLink = createFileDownloadLinkPort.createDownloadLinkSafe(user.picturePath(), EXPIRY_DURATION);
 
         return new Result.GraphicalReportUser(user.id(),
             user.email(),
