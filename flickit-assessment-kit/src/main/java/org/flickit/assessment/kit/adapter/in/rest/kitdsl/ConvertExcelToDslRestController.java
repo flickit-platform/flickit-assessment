@@ -17,12 +17,12 @@ public class ConvertExcelToDslRestController {
     private final UserContext userContext;
 
     @PostMapping("/assessment-kits/excel-to-dsl")
-    ResponseEntity<ConvertExcelToDslResponseDto> convertExcelToDsl(@RequestParam MultipartFile excelFile) {
+    ResponseEntity<byte[]> convertExcelToDsl(@RequestParam MultipartFile excelFile) {
         var currentUserId = userContext.getUser().id();
         var result = useCase.convertExcelToDsl(toParam(excelFile, currentUserId));
-        HttpHeaders headers = createHttpHeaders(result.fileName());
 
-        return new ResponseEntity<>(toResponse(result.file()), headers, HttpStatus.OK);
+        HttpHeaders headers = createHttpHeaders(result.fileName());
+        return new ResponseEntity<>(result.file(), headers, HttpStatus.OK);
     }
 
     private ConvertExcelToDslUseCase.Param toParam(MultipartFile excelFile, UUID currentUserId) {
@@ -37,9 +37,5 @@ public class ConvertExcelToDslRestController {
             .build();
         headers.setContentDisposition(contentDisposition);
         return headers;
-    }
-
-    private ConvertExcelToDslResponseDto toResponse(byte[] file) {
-        return new ConvertExcelToDslResponseDto(file);
     }
 }
