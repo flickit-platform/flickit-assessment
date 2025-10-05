@@ -5,6 +5,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.kit.adapter.out.excel.dsl.converter.*;
+import org.flickit.assessment.kit.application.domain.dsl.AnswerRangeDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.MaturityLevelDslModel;
 import org.flickit.assessment.kit.application.port.out.kitdsl.ConvertExcelToDslModelPort;
@@ -37,10 +38,13 @@ public class ConvertExcelToDslModelAdapter implements ConvertExcelToDslModelPort
             var questionnaires = QuestionnairesConverter.convert(workbook.getSheet(SHEET_QUESTIONNAIRES));
             var attributes = QualityAttributesConverter.convertAttributes(qualityAttributes);
             var subjects = QualityAttributesConverter.convertSubjects(qualityAttributes);
-            var answerRangeCodeToAnswerOptionsMap = AnswerOptionsConverter.convert(workbook.getSheet(SHEET_ANSWER_OPTIONS));
+            var answerRanges = AnswerRangeConverter.convert(workbook.getSheet(SHEET_ANSWER_OPTIONS));
             var levels = MaturityLevelsConverter.convert(workbook.getSheet(SHEET_MATURITY_LEVELS));
             var maturityLevelsCodeToMaturityLevelDslModel = levels.stream()
                 .collect(Collectors.toMap(MaturityLevelDslModel::getCode, Function.identity()));
+
+            var answerRangeCodeToAnswerOptionsMap = answerRanges.stream()
+                .collect(Collectors.toMap(AnswerRangeDslModel::getCode, AnswerRangeDslModel::getAnswerOptions));
             var questions = QuestionsConverter.convert(
                 workbook.getSheet(SHEET_QUESTIONS),
                 answerRangeCodeToAnswerOptionsMap,

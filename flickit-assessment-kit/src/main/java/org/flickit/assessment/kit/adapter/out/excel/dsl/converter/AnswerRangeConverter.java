@@ -8,6 +8,7 @@ import org.flickit.assessment.kit.application.domain.dsl.AnswerRangeDslModel;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.flickit.assessment.common.util.ExcelUtils.*;
 
@@ -50,11 +51,16 @@ public class AnswerRangeConverter {
             }
         }
 
-        return rangeCodeToOptionsMap.entrySet().stream()
-            .map(entry -> AnswerRangeDslModel.builder()
-                .code(entry.getKey())
-                .answerOptions(entry.getValue())
-                .build())
+        var entries = new ArrayList<>(rangeCodeToOptionsMap.entrySet());
+        return IntStream.range(0, entries.size())
+            .mapToObj(i -> {
+                var entry = entries.get(i);
+                return AnswerRangeDslModel.builder()
+                    .index(i + 1)
+                    .code(entry.getKey())
+                    .answerOptions(entry.getValue())
+                    .build();
+            })
             .collect(Collectors.toList());
     }
 
