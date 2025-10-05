@@ -13,7 +13,7 @@ public class QuestionnaireDslSerializer extends JsonSerializer<QuestionnaireDslM
     public void serialize(QuestionnaireDslModel questionnaire, JsonGenerator gen, SerializerProvider serializers) throws IOException {
         String s = "questionnaire " + questionnaire.getCode() + " {\n" +
             "    title: \"" + questionnaire.getTitle() + "\"\n" +
-            "    description: \"" + questionnaire.getDescription() + "\n" +
+            "    description: \"" + questionnaire.getDescription() + "\"\n" +
             "}\n";
 
         gen.writeRawValue(s);

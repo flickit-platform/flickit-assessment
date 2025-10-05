@@ -22,8 +22,9 @@ public class QuestionDslSerializer extends JsonSerializer<QuestionDslModel> {
             "question " + question.getCode() + " {\n" +
                 "    questionnaire: " + question.getQuestionnaireCode() + "\n" +
                 "    hint: \"" + (question.getDescription() == null ? " " : question.getDescription()) + "\"\n" +
-                "    title: \"" + question.getTitle() + "\"\n" + impacts + "\n" +
-                "    advisable: " + question.isAdvisable() + "\n" +
+                "    title: \"" + question.getTitle() + "\"\n" +
+                "    answerRange: " + question.getAnswerRangeCode() + "\n" +
+                impacts + "\n" +
                 "}\n";
 
         gen.writeRawValue(s);

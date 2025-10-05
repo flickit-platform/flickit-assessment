@@ -21,7 +21,7 @@ public class MaturityLevelDslSerializer extends JsonSerializer<MaturityLevelDslM
 
         if (level.getCompetencesCodeToValueMap() != null && !level.getCompetencesCodeToValueMap().isEmpty()) {
             String competencesStr = level.getCompetencesCodeToValueMap().entrySet().stream()
-                .map(e -> e.getKey() + ":" + e.getValue())
+                .map(e -> e.getKey() + ":" + e.getValue() + "%")
                 .collect(Collectors.joining(", "));
             sb.append("    competence: [").append(competencesStr).append("]\n");
         }
