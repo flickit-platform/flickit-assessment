@@ -18,7 +18,7 @@ public class QuestionnairesConverter {
 
     private static final int HEADER_ROW_INDEX = 0;
 
-    private static final String NAME = "Name";
+    private static final String CODE = "Name";
     private static final String TITLE = "Title";
     private static final String DESCRIPTION = "Description";
 
@@ -31,7 +31,7 @@ public class QuestionnairesConverter {
                 if (isBlankRow(row)) return null;
 
                 return QuestionnaireDslModel.builder()
-                    .code(getCellString(row, columnMap.get(NAME)))
+                    .code(getCellString(row, columnMap.get(CODE)))
                     .title(getCellString(row, columnMap.get(TITLE)))
                     .description(getCellString(row, columnMap.get(DESCRIPTION)))
                     .index(i)
