@@ -25,6 +25,8 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.UPLOAD_FILE_SI
 @RequiredArgsConstructor
 public class ConvertExcelToDslService implements ConvertExcelToDslUseCase {
 
+    private static final String DSL_ZIP_FILE_NAME = "dsl-test.zip";
+
     private final FileProperties fileProperties;
     private final ConvertExcelToDslModelPort convertExcelToDslModelPort;
     private final ConvertAssessmentKitDslModelPort convertAssessmentKitDslModelPort;
@@ -42,7 +44,7 @@ public class ConvertExcelToDslService implements ConvertExcelToDslUseCase {
             inMemoryFiles.put(key, contentBytes);
         });
 
-        return new Result(createZip(inMemoryFiles), "dsl-test.zip");
+        return new Result(createZip(inMemoryFiles), DSL_ZIP_FILE_NAME);
     }
 
     private void validateFile(MultipartFile excelFile) {
