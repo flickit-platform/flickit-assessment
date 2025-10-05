@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.adapter.out.excel.converter;
+package org.flickit.assessment.kit.adapter.out.excel.dsl.converter;
 
 import lombok.experimental.UtilityClass;
 import org.apache.poi.ss.usermodel.Row;
@@ -15,19 +15,17 @@ import static org.flickit.assessment.common.util.ExcelUtils.*;
 @UtilityClass
 public class MaturityLevelsConverter {
 
+    private static final int HEADER_ROW_INDEX = 1;
+
     private static final String TITLE = "Title";
     private static final String DESCRIPTION = "Description";
 
-    private static final int HEADER_ROW_NUM = 1;
-    private static final int HEADER_START_COL = 1;
-    private static final int HEADER_END_COL = 2;
-    private static final int DATA_START_ROW = 2;
     private static final int DATA_START_COL = 3;
 
-    static List<MaturityLevelDslModel> convert(Sheet sheet) {
-        var columnMap = getSheetHeader(sheet, HEADER_ROW_NUM, HEADER_START_COL, HEADER_END_COL);
+    public static List<MaturityLevelDslModel> convert(Sheet sheet) {
+        var columnMap = getSheetHeaderWithoutFormula(sheet, HEADER_ROW_INDEX);
 
-        List<String> levels = IntStream.range(DATA_START_ROW, sheet.getLastRowNum() + 1)
+        List<String> levels = IntStream.range(HEADER_ROW_INDEX + 1, sheet.getLastRowNum() + 1)
             .mapToObj(sheet::getRow)
             .filter(row -> !isBlankRow(row))
             .map(row -> row.getCell(0).toString().trim())
@@ -35,7 +33,7 @@ public class MaturityLevelsConverter {
 
         return IntStream.range(0, levels.size())
             .mapToObj(idx -> {
-                Row row = sheet.getRow(DATA_START_ROW + idx);
+                Row row = sheet.getRow(HEADER_ROW_INDEX + 1 + idx);
                 Map<String, Integer> competence = buildCompetenceMap(row, levels);
 
                 int index = idx + 1;

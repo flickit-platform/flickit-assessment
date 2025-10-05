@@ -8,7 +8,9 @@ import org.apache.poi.ss.usermodel.Sheet;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.StreamSupport;
 
 @UtilityClass
@@ -24,13 +26,12 @@ public class ExcelUtils {
     }
 
     public static String getCellString(Row row, Integer idx) {
-        return Optional.ofNullable(idx)
-            .filter(i -> i >= 0)
-            .flatMap(i -> Optional.ofNullable(row)
-                .map(r -> r.getCell(i))
-                .map(Cell::toString)
-                .map(String::trim))
-            .orElse(null);
+        if (idx == null || idx < 0) return null;
+
+        var result = getCellStringValue(row.getCell(idx));
+        if (result == null || result.isEmpty())
+            return null;
+        return result.trim();
     }
 
     public static Integer getCellInteger(Row row, Integer idx) {
@@ -77,11 +78,18 @@ public class ExcelUtils {
         }
     }
 
-    public static Map<String, Integer> getSheetHeader(Sheet sheet, int rowNum, int start, int end) {
+    public static Map<String, Integer> getSheetHeaderWithoutFormula(Sheet sheet, int rowNum) {
         Row headerRow = sheet.getRow(rowNum);
-        return StreamSupport.stream(headerRow.spliterator(), false)
-            .skip(start)
-            .limit((long) end - start + 1)
+
+        Predicate<Cell> cellIsValid = cell ->
+            cell != null
+                && cell.getCellType() != CellType.BLANK
+                && cell.getCellType() != CellType.FORMULA;
+
+        int last = headerRow.getLastCellNum();
+        return IntStream.range(0, last)
+            .mapToObj(headerRow::getCell)
+            .filter(cellIsValid)
             .collect(Collectors.toMap(
                 cell -> getCellStringValue(cell).trim(),
                 Cell::getColumnIndex
@@ -89,7 +97,7 @@ public class ExcelUtils {
     }
 
     public static String getCellStringValue(Cell cell) {
-        if (cell == null) return "";
+        if (cell == null) return null;
 
         return switch (cell.getCellType()) {
             case STRING -> cell.getStringCellValue();
@@ -97,11 +105,10 @@ public class ExcelUtils {
             case FORMULA -> switch (cell.getCachedFormulaResultType()) {
                 case STRING -> cell.getStringCellValue();
                 case NUMERIC -> String.valueOf(cell.getNumericCellValue());
-                default -> "";
+                default -> null;
             };
             case BOOLEAN -> String.valueOf(cell.getBooleanCellValue());
-            default -> "";
+            default -> null;
         };
     }
-
 }

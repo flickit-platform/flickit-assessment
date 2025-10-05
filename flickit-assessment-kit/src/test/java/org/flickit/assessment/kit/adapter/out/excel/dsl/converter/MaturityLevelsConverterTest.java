@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.adapter.out.excel.converter;
+package org.flickit.assessment.kit.adapter.out.excel.dsl.converter;
 
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;

@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.adapter.out.excel.converter;
+package org.flickit.assessment.kit.adapter.out.excel.dsl.converter;
 
 import lombok.experimental.UtilityClass;
 import org.apache.poi.ss.usermodel.Row;
@@ -17,30 +17,22 @@ import static org.flickit.assessment.common.util.ExcelUtils.*;
 @UtilityClass
 public class QualityAttributesConverter {
 
+    private static final int HEADER_ROW_INDEX = 0;
+
     private static final String SUBJECT_NAME = "Subject Name";
     private static final String SUBJECT_TITLE = "Subject Title";
     private static final String SUBJECT_WEIGHT = "Subject Weight";
     private static final String SUBJECT_DESCRIPTION = "Subject Description";
-
-    private static final int SUBJECT_HEADER_ROW_NUM = 0;
-    private static final int SUBJECT_HEADER_START_COL = 0;
-    private static final int SUBJECT_HEADER_END_COL = 3;
-    private static final int SUBJECT_DATA_START_ROW = 1;
 
     private static final String ATTRIBUTE_NAME = "Attribute Name";
     private static final String ATTRIBUTE_TITLE = "Attribute Title";
     private static final String ATTRIBUTE_WEIGHT = "Attribute Weight";
     private static final String ATTRIBUTE_DESCRIPTION = "Attribute Description";
 
-    private static final int ATTRIBUTE_HEADER_ROW_NUM = 0;
-    private static final int ATTRIBUTE_HEADER_START_COL = 0;
-    private static final int ATTRIBUTE_HEADER_END_COL = 7;
-    private static final int ATTRIBUTE_DATA_START_ROW = 1;
+    public static List<SubjectDslModel> convertSubjects(Sheet sheet) {
+        var columnMap = getSheetHeaderWithoutFormula(sheet, HEADER_ROW_INDEX);
 
-    static List<SubjectDslModel> convertSubjects(Sheet sheet) {
-        var columnMap = getSheetHeader(sheet, SUBJECT_HEADER_ROW_NUM, SUBJECT_HEADER_START_COL, SUBJECT_HEADER_END_COL);
-
-        List<Row> validRows = IntStream.range(SUBJECT_DATA_START_ROW, sheet.getLastRowNum() + SUBJECT_DATA_START_ROW)
+        List<Row> validRows = IntStream.range(HEADER_ROW_INDEX + 1, sheet.getLastRowNum() + HEADER_ROW_INDEX + 1)
             .mapToObj(sheet::getRow)
             .filter(row -> {
                 String code = getCellString(row, columnMap.get(SUBJECT_NAME));
@@ -62,10 +54,10 @@ public class QualityAttributesConverter {
             .collect(Collectors.toList());
     }
 
-    static List<AttributeDslModel> convertAttributes(Sheet sheet) {
-        var columnMap = getSheetHeader(sheet, ATTRIBUTE_HEADER_ROW_NUM, ATTRIBUTE_HEADER_START_COL, ATTRIBUTE_HEADER_END_COL);
+    public static List<AttributeDslModel> convertAttributes(Sheet sheet) {
+        var columnMap = getSheetHeaderWithoutFormula(sheet, HEADER_ROW_INDEX);
 
-        return IntStream.rangeClosed(ATTRIBUTE_DATA_START_ROW, sheet.getLastRowNum())
+        return IntStream.rangeClosed(HEADER_ROW_INDEX + 1, sheet.getLastRowNum())
             .mapToObj(sheet::getRow)
             .filter(row -> !isBlankRow(row))
             .collect(ArrayList::new, (list, row) -> {

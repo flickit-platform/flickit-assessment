@@ -57,7 +57,7 @@ class ExcelUtilsTest {
         assertEquals("123.45", ExcelUtils.getCellString(row, 1));
 
         row.createCell(2, CellType.BLANK);
-        assertEquals("", ExcelUtils.getCellString(row, 2));
+        assertNull(ExcelUtils.getCellString(row, 2));
 
         assertNull(ExcelUtils.getCellString(row, 3));
     }
@@ -123,28 +123,24 @@ class ExcelUtilsTest {
     }
 
     @Test
-    void testGetSheetHeader() throws IOException {
+    void testGetSheetHeaderWithoutFormula() throws IOException {
         Sheet sheet = createSheet();
         Row headerRow = sheet.createRow(0);
 
         headerRow.createCell(0, CellType.STRING).setCellValue(" Name ");
         headerRow.createCell(1, CellType.STRING).setCellValue("Age");
         headerRow.createCell(2, CellType.STRING).setCellValue("  Email");
-        headerRow.createCell(3, CellType.STRING).setCellValue("Address");
-        headerRow.createCell(4, CellType.BLANK);
+        headerRow.createCell(3);
+        headerRow.createCell(4, CellType.STRING).setCellValue("Address");
+        headerRow.createCell(5, CellType.BLANK);
 
-        Map<String, Integer> headerMap = ExcelUtils.getSheetHeader(sheet, 0, 0, 3);
+        Map<String, Integer> headerMap = ExcelUtils.getSheetHeaderWithoutFormula(sheet, 0);
 
         assertEquals(4, headerMap.size());
         assertEquals(0, headerMap.get("Name"));
         assertEquals(1, headerMap.get("Age"));
         assertEquals(2, headerMap.get("Email"));
-        assertEquals(3, headerMap.get("Address"));
-
-        Map<String, Integer> subHeader = ExcelUtils.getSheetHeader(sheet, 0, 1, 2);
-        assertEquals(2, subHeader.size());
-        assertEquals(1, subHeader.get("Age"));
-        assertEquals(2, subHeader.get("Email"));
+        assertEquals(4, headerMap.get("Address"));
     }
 }
 
