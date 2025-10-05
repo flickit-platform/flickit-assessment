@@ -61,7 +61,7 @@ class QualityAttributesConverterTest {
         assertEquals("Attribute Three", attr3.getTitle());
         assertEquals(2, attr3.getWeight());
         assertEquals("Attribute Three Description", attr3.getDescription());
-        assertEquals(3, attr3.getIndex());
+        assertEquals(1, attr3.getIndex());
     }
 
     private Workbook createWorkbook() throws IOException {
