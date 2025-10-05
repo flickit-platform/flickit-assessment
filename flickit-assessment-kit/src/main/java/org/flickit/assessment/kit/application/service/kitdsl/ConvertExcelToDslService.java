@@ -1,19 +1,22 @@
 package org.flickit.assessment.kit.application.service.kitdsl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.flickit.assessment.common.config.FileProperties;
 import org.flickit.assessment.common.exception.ValidationException;
-import org.flickit.assessment.kit.adapter.out.serializer.MaturityLevelDslSerializer;
-import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
-import org.flickit.assessment.kit.application.domain.dsl.MaturityLevelDslModel;
 import org.flickit.assessment.kit.application.port.in.kitdsl.ConvertExcelToDslUseCase;
 import org.flickit.assessment.kit.application.port.out.kitdsl.ConvertAssessmentKitDslModelPort;
 import org.flickit.assessment.kit.application.port.out.kitdsl.ConvertExcelToDslModelPort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.UPLOAD_FILE_FORMAT_NOT_VALID;
 import static org.flickit.assessment.common.error.ErrorMessageKey.UPLOAD_FILE_SIZE_MAX;
@@ -26,28 +29,20 @@ public class ConvertExcelToDslService implements ConvertExcelToDslUseCase {
     private final ConvertExcelToDslModelPort convertExcelToDslModelPort;
     private final ConvertAssessmentKitDslModelPort convertAssessmentKitDslModelPort;
 
+    @SneakyThrows
     @Override
-    public AssessmentKitDslModel convertExcelToDsl(Param param) {
+    public Result convertExcelToDsl(Param param) {
         validateFile(param.getExcelFile());
-        var assessmentKitDslModel=  convertExcelToDslModelPort.convert(param.getExcelFile());
+        var assessmentKitDslModel = convertExcelToDslModelPort.convert(param.getExcelFile());
         var fileNameToContent = convertAssessmentKitDslModelPort.toDsl(assessmentKitDslModel);
 
-        ObjectMapper mapper = new ObjectMapper();
-        SimpleModule module = new SimpleModule();
-        module.addSerializer(MaturityLevelDslModel.class, new MaturityLevelDslSerializer());
-        mapper.registerModule(module);
+        Map<String, byte[]> inMemoryFiles = new HashMap<>();
+        fileNameToContent.forEach((key, value) -> {
+            byte[] contentBytes = value.getBytes(StandardCharsets.UTF_8);
+            inMemoryFiles.put(key, contentBytes);
+        });
 
-        for (MaturityLevelDslModel level : assessmentKitDslModel.getMaturityLevels()) {
-            String dsl = null;
-            try {
-                dsl = mapper.writeValueAsString(level);
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
-            }
-            System.out.print(dsl);
-        }
-
-        return null;
+        return new Result(createZip(inMemoryFiles), "dsl-test.zip");
     }
 
     private void validateFile(MultipartFile excelFile) {
@@ -56,5 +51,21 @@ public class ConvertExcelToDslService implements ConvertExcelToDslUseCase {
 
         if (!fileProperties.getExcelKitContentType().equals(excelFile.getContentType()))
             throw new ValidationException(UPLOAD_FILE_FORMAT_NOT_VALID);
+    }
+
+    public static byte[] createZip(Map<String, byte[]> inMemoryFiles) throws IOException {
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+             ZipOutputStream zipOut = new ZipOutputStream(baos)) {
+
+            for (Map.Entry<String, byte[]> entry : inMemoryFiles.entrySet()) {
+                ZipEntry zipEntry = new ZipEntry(entry.getKey());
+                zipOut.putNextEntry(zipEntry);
+                zipOut.write(entry.getValue());
+                zipOut.closeEntry();
+            }
+
+            zipOut.finish();
+            return baos.toByteArray();
+        }
     }
 }
