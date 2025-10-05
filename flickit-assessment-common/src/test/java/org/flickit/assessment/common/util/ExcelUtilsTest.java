@@ -57,7 +57,7 @@ class ExcelUtilsTest {
         assertEquals("123.45", ExcelUtils.getCellString(row, 1));
 
         row.createCell(2, CellType.BLANK);
-        assertEquals("", ExcelUtils.getCellString(row, 2));
+        assertNull(ExcelUtils.getCellString(row, 2));
 
         assertNull(ExcelUtils.getCellString(row, 3));
     }

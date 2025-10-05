@@ -26,13 +26,12 @@ public class ExcelUtils {
     }
 
     public static String getCellString(Row row, Integer idx) {
-        return Optional.ofNullable(idx)
-            .filter(i -> i >= 0)
-            .flatMap(i -> Optional.ofNullable(row)
-                .map(r -> r.getCell(i))
-                .map(Cell::toString)
-                .map(String::trim))
-            .orElse(null);
+        if (idx == null || idx < 0) return null;
+
+        var result = getCellStringValue(row.getCell(idx));
+        if (result == null || result.isEmpty())
+            return null;
+        return result.trim();
     }
 
     public static Integer getCellInteger(Row row, Integer idx) {
