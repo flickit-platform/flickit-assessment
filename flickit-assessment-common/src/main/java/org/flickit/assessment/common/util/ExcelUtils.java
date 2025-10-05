@@ -98,7 +98,7 @@ public class ExcelUtils {
     }
 
     public static String getCellStringValue(Cell cell) {
-        if (cell == null) return "";
+        if (cell == null) return null;
 
         return switch (cell.getCellType()) {
             case STRING -> cell.getStringCellValue();
@@ -106,11 +106,10 @@ public class ExcelUtils {
             case FORMULA -> switch (cell.getCachedFormulaResultType()) {
                 case STRING -> cell.getStringCellValue();
                 case NUMERIC -> String.valueOf(cell.getNumericCellValue());
-                default -> "";
+                default -> null;
             };
             case BOOLEAN -> String.valueOf(cell.getBooleanCellValue());
-            default -> "";
+            default -> null;
         };
     }
-
 }
