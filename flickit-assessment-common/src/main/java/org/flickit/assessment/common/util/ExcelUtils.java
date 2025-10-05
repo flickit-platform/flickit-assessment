@@ -79,7 +79,7 @@ public class ExcelUtils {
         }
     }
 
-    public static Map<String, Integer> getSheetHeaderWithoutFormula(Sheet sheet, int rowNum, int start) {
+    public static Map<String, Integer> getSheetHeaderWithoutFormula(Sheet sheet, int rowNum) {
         Row headerRow = sheet.getRow(rowNum);
 
         Predicate<Cell> cellIsValid = cell ->
@@ -88,7 +88,7 @@ public class ExcelUtils {
                 && cell.getCellType() != CellType.FORMULA;
 
         int last = headerRow.getLastCellNum();
-        return IntStream.range(start, last)
+        return IntStream.range(0, last)
             .mapToObj(headerRow::getCell)
             .filter(cellIsValid)
             .collect(Collectors.toMap(

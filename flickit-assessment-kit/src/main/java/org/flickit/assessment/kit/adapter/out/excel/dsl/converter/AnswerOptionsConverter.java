@@ -13,14 +13,13 @@ import static org.flickit.assessment.common.util.ExcelUtils.*;
 public class AnswerOptionsConverter {
 
     private static final int HEADER_ROW_INDEX = 0;
-    private static final int HEADER_START_COLUMN_INDEX = 0;
 
     private static final String RANGE_NAME = "Range Name";
     private static final String TITLE = "Option Title";
     private static final String VALUE = "Option Value";
 
     public static Map<String, List<AnswerOptionDslModel>> convert(Sheet sheet) {
-        var columnMap = getSheetHeaderWithoutFormula(sheet, HEADER_ROW_INDEX, HEADER_START_COLUMN_INDEX);
+        var columnMap = getSheetHeaderWithoutFormula(sheet, HEADER_ROW_INDEX);
         var rangeCodeToOptionsMap = new LinkedHashMap<String, List<AnswerOptionDslModel>>();
 
         String currentRange = null;

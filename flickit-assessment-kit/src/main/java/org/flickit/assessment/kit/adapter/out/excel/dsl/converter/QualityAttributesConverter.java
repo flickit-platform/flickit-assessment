@@ -18,7 +18,6 @@ import static org.flickit.assessment.common.util.ExcelUtils.*;
 public class QualityAttributesConverter {
 
     private static final int HEADER_ROW_INDEX = 0;
-    private static final int HEADER_START_COLUMN_INDEX = 0;
 
     private static final String SUBJECT_NAME = "Subject Name";
     private static final String SUBJECT_TITLE = "Subject Title";
@@ -31,7 +30,7 @@ public class QualityAttributesConverter {
     private static final String ATTRIBUTE_DESCRIPTION = "Attribute Description";
 
     public static List<SubjectDslModel> convertSubjects(Sheet sheet) {
-        var columnMap = getSheetHeaderWithoutFormula(sheet, HEADER_ROW_INDEX, HEADER_START_COLUMN_INDEX);
+        var columnMap = getSheetHeaderWithoutFormula(sheet, HEADER_ROW_INDEX);
 
         List<Row> validRows = IntStream.range(HEADER_ROW_INDEX + 1, sheet.getLastRowNum() + HEADER_ROW_INDEX + 1)
             .mapToObj(sheet::getRow)
@@ -56,7 +55,7 @@ public class QualityAttributesConverter {
     }
 
     public static List<AttributeDslModel> convertAttributes(Sheet sheet) {
-        var columnMap = getSheetHeaderWithoutFormula(sheet, HEADER_ROW_INDEX, HEADER_START_COLUMN_INDEX);
+        var columnMap = getSheetHeaderWithoutFormula(sheet, HEADER_ROW_INDEX);
 
         return IntStream.rangeClosed(HEADER_ROW_INDEX + 1, sheet.getLastRowNum())
             .mapToObj(sheet::getRow)

@@ -16,7 +16,6 @@ import static org.flickit.assessment.common.util.ExcelUtils.*;
 public class MaturityLevelsConverter {
 
     private static final int HEADER_ROW_INDEX = 1;
-    private static final int HEADER_START_COLUMN_INDEX = 1;
 
     private static final String TITLE = "Title";
     private static final String DESCRIPTION = "Description";
@@ -24,7 +23,7 @@ public class MaturityLevelsConverter {
     private static final int DATA_START_COL = 3;
 
     public static List<MaturityLevelDslModel> convert(Sheet sheet) {
-        var columnMap = getSheetHeaderWithoutFormula(sheet, HEADER_ROW_INDEX, HEADER_START_COLUMN_INDEX);
+        var columnMap = getSheetHeaderWithoutFormula(sheet, HEADER_ROW_INDEX);
 
         List<String> levels = IntStream.range(HEADER_ROW_INDEX + 1, sheet.getLastRowNum() + 1)
             .mapToObj(sheet::getRow)

@@ -17,7 +17,6 @@ import static org.flickit.assessment.common.util.ExcelUtils.*;
 public class QuestionsConverter {
 
     private static final int HEADER_ROW_INDEX = 1;
-    private static final int HEADER_START_COLUMN_INDEX = 0;
 
     private static final String TITLE = "Question";
     private static final String QUESTIONNAIRES = "Questionnaires";
@@ -32,7 +31,7 @@ public class QuestionsConverter {
                                                  Map<String, List<AnswerOptionDslModel>> answerRangeCodeToAnswerOptionsMap,
                                                  Map<String, MaturityLevelDslModel> maturityLevelCodeToMaturityLevelDslMap,
                                                  List<AttributeDslModel> attributeDslModels) {
-        var columnMap = getSheetHeaderWithoutFormula(sheet, HEADER_ROW_INDEX, HEADER_START_COLUMN_INDEX);
+        var columnMap = getSheetHeaderWithoutFormula(sheet, HEADER_ROW_INDEX);
 
         return IntStream.rangeClosed(HEADER_ROW_INDEX + 1, sheet.getLastRowNum())
             .filter(i -> !isBlankRow(sheet.getRow(i)))

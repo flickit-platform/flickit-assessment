@@ -130,16 +130,17 @@ class ExcelUtilsTest {
         headerRow.createCell(0, CellType.STRING).setCellValue(" Name ");
         headerRow.createCell(1, CellType.STRING).setCellValue("Age");
         headerRow.createCell(2, CellType.STRING).setCellValue("  Email");
-        headerRow.createCell(3, CellType.STRING).setCellValue("Address");
-        headerRow.createCell(4, CellType.BLANK);
+        headerRow.createCell(3);
+        headerRow.createCell(4, CellType.STRING).setCellValue("Address");
+        headerRow.createCell(5, CellType.BLANK);
 
-        Map<String, Integer> headerMap = ExcelUtils.getSheetHeaderWithoutFormula(sheet, 0, 0);
+        Map<String, Integer> headerMap = ExcelUtils.getSheetHeaderWithoutFormula(sheet, 0);
 
         assertEquals(4, headerMap.size());
         assertEquals(0, headerMap.get("Name"));
         assertEquals(1, headerMap.get("Age"));
         assertEquals(2, headerMap.get("Email"));
-        assertEquals(3, headerMap.get("Address"));
+        assertEquals(4, headerMap.get("Address"));
     }
 }
 
