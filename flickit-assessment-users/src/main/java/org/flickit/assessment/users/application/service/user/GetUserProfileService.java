@@ -26,7 +26,7 @@ public class GetUserProfileService implements GetUserProfileUseCase {
 
         String pictureLink = null;
         if (user.getPicturePath() != null && !user.getPicturePath().trim().isBlank())
-            pictureLink = createFileDownloadLinkPort.createDownloadLink(user.getPicturePath(), EXPIRY_DURATION);
+            pictureLink = createFileDownloadLinkPort.createDownloadLinkSafe(user.getPicturePath(), EXPIRY_DURATION);
 
         return mapToUserProfile(user,
             pictureLink);

@@ -6,6 +6,8 @@ import org.flickit.assessment.users.adapter.in.rest.space.CreateSpaceRequestDto;
 import org.flickit.assessment.users.adapter.in.rest.space.UpdateSpaceRequestDto;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+
 import static io.restassured.RestAssured.given;
 import static io.restassured.http.ContentType.JSON;
 
@@ -42,6 +44,17 @@ public class SpaceTestHelper {
             .body(request)
             .when()
             .put("/assessment-core/api/spaces/" + spaceId)
+            .then()
+            .extract()
+            .response();
+    }
+
+    public Response getUserSpaces(ScenarioContext context, Map<String, Integer> queryParams) {
+        return given()
+            .auth().oauth2(context.getCurrentUser().getJwt())
+            .queryParams(queryParams)
+            .when()
+            .get("/assessment-core/api/spaces")
             .then()
             .extract()
             .response();

@@ -128,7 +128,7 @@ class GetGraphicalReportUsersServiceTest {
             .thenReturn(true);
         when(loadAssessmentUsersPort.loadAll(any(UUID.class), anyList())).thenReturn(List.of(reportUser));
         when(loadAssessmentInviteeListPort.loadAll(any(UUID.class), anyList())).thenReturn(new ArrayList<>());
-        when(createFileDownloadLinkPort.createDownloadLink(reportUser.picturePath(), EXPIRY_DURATION)).thenReturn("picture-link");
+        when(createFileDownloadLinkPort.createDownloadLinkSafe(reportUser.picturePath(), EXPIRY_DURATION)).thenReturn("picture-link");
 
         var result = service.getGraphicalReportUsers(param);
         assertNotNull(result);
@@ -207,7 +207,7 @@ class GetGraphicalReportUsersServiceTest {
             .thenReturn(true);
         when(loadAssessmentUsersPort.loadAll(any(UUID.class), anyList())).thenReturn(List.of(reportUser));
         when(loadAssessmentInviteeListPort.loadAll(any(UUID.class), anyList())).thenReturn(List.of(invite));
-        when(createFileDownloadLinkPort.createDownloadLink(reportUser.picturePath(), EXPIRY_DURATION)).thenReturn("picture-link");
+        when(createFileDownloadLinkPort.createDownloadLinkSafe(reportUser.picturePath(), EXPIRY_DURATION)).thenReturn("picture-link");
 
         var result = service.getGraphicalReportUsers(param);
         assertNotNull(result);

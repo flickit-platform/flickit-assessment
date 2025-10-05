@@ -22,4 +22,15 @@ public class SpaceUserAccessTestHelper {
             .extract()
             .response();
     }
+
+    public Response updateLastSeen(ScenarioContext context, long spaceId) {
+        return given()
+            .contentType(JSON)
+            .auth().oauth2(context.getCurrentUser().getJwt())
+            .when()
+            .put("/assessment-core/api/spaces/{id}/seen", spaceId)
+            .then()
+            .extract()
+            .response();
+    }
 }

@@ -75,7 +75,7 @@ class GetKitUserListServiceTest {
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(loadKitUsersPort.loadKitUsers(any(LoadKitUsersPort.Param.class))).thenReturn(paginatedResponse);
         String pictureLink = "cdn.flickit.org" + kitUserListItems.getFirst().picturePath();
-        when(createFileDownloadLinkPort.createDownloadLink(any(String.class), any(Duration.class)))
+        when(createFileDownloadLinkPort.createDownloadLinkSafe(any(String.class), any(Duration.class)))
             .thenReturn(pictureLink);
 
         var result = service.getKitUserList(param);

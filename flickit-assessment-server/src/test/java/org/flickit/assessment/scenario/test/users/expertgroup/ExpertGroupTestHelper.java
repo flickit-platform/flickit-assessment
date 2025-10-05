@@ -8,6 +8,8 @@ import org.flickit.assessment.users.adapter.in.rest.expertgroup.CreateExpertGrou
 import org.flickit.assessment.users.adapter.in.rest.expertgroup.UpdateExpertGroupRequestDto;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+
 import static io.restassured.RestAssured.given;
 import static io.restassured.http.ContentType.JSON;
 
@@ -56,6 +58,17 @@ public class ExpertGroupTestHelper {
             .auth().oauth2(context.getCurrentUser().getJwt())
             .when()
             .delete("/assessment-core/api/expert-groups/" + id)
+            .then()
+            .extract()
+            .response();
+    }
+
+    public Response getList(ScenarioContext context, Map<String, Integer> queryParams) {
+        return given()
+            .auth().oauth2(context.getCurrentUser().getJwt())
+            .queryParams(queryParams)
+            .when()
+            .get("/assessment-core/api/expert-groups")
             .then()
             .extract()
             .response();

@@ -78,12 +78,13 @@ public class GetAssessmentPublicReportService implements GetAssessmentPublicRepo
 
     private Permissions buildPermissions(UUID assessmentId, boolean published, UUID currentUserId) {
         if (currentUserId == null)
-            return new Permissions(false, false, false, false);
+            return new Permissions(false, false, false, false, false);
         var canViewDashboard = assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_DASHBOARD);
         var canShareReport = published && assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, GRANT_ACCESS_TO_REPORT);
         var canManageVisibility = published && assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, MANAGE_ASSESSMENT_REPORT_VISIBILITY);
-        var canViewMeasureQuestions = published && assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_ATTRIBUTE_MEASURE_QUESTIONS);
-        return new Permissions(canViewDashboard, canShareReport, canManageVisibility, canViewMeasureQuestions);
+        var canViewMeasureQuestions = assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_ATTRIBUTE_MEASURE_QUESTIONS);
+        var canViewQuestionnaires = assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_ASSESSMENT_QUESTIONNAIRE_LIST);
+        return new Permissions(canViewDashboard, canShareReport, canManageVisibility, canViewMeasureQuestions, canViewQuestionnaires);
     }
 
     private Result buildResult(LoadAssessmentReportInfoPort.Result assessmentReportInfo,

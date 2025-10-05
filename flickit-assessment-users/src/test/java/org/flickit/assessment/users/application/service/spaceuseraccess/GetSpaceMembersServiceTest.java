@@ -77,7 +77,7 @@ class GetSpaceMembersServiceTest {
 
         when(checkSpaceAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(true);
         when(loadSpaceMembersPort.loadSpaceMembers(spaceId, page, size)).thenReturn(paginatedResponse);
-        when(createFileDownloadLinkPort.createDownloadLink(anyString(), any())).thenReturn("pictureLink");
+        when(createFileDownloadLinkPort.createDownloadLinkSafe(anyString(), any())).thenReturn("pictureLink");
 
         var result = service.getSpaceMembers(param);
         assertEquals(2, result.getItems().size());
@@ -89,6 +89,6 @@ class GetSpaceMembersServiceTest {
 
         verify(checkSpaceAccessPort).checkIsMember(spaceId,currentUserId);
         verify(loadSpaceMembersPort).loadSpaceMembers(spaceId, page, size);
-        verify(createFileDownloadLinkPort, times(2)).createDownloadLink(any(String.class), any(Duration.class));
+        verify(createFileDownloadLinkPort, times(2)).createDownloadLinkSafe(any(String.class), any(Duration.class));
     }
 }
