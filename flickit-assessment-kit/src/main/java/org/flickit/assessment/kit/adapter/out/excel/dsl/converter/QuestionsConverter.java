@@ -71,7 +71,6 @@ public class QuestionsConverter {
                     .questionnaireCode(getCellString(row, columnMap.get(QUESTIONNAIRE)))
                     .code(getCellString(row, columnMap.get(CODE)))
                     .answerRangeCode(answerRangeCode)
-                    .answerOptions(answerRangeCodeToAnswerOptionsMap.get(answerRangeCode))
                     .index(i - 1)
                     .questionImpacts(questionImpacts)
                     .description(getCellString(row, columnMap.get(DESCRIPTION)))
