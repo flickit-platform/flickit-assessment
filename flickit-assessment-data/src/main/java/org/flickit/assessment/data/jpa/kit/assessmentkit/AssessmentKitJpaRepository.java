@@ -71,7 +71,8 @@ public interface AssessmentKitJpaRepository extends
                 (SELECT COUNT(DISTINCT id) FROM QuestionJpaEntity WHERE kitVersionId = k.kitVersionId) AS questionCount,
                 (SELECT COUNT(DISTINCT id) FROM MaturityLevelJpaEntity WHERE kitVersionId = k.kitVersionId) AS maturityLevelCount,
                 (SELECT COUNT(DISTINCT userId) FROM KitLikeJpaEntity WHERE kitId = k.id) AS likeCount,
-                (SELECT COUNT(DISTINCT id) FROM AssessmentJpaEntity WHERE assessmentKitId = k.id) AS assessmentCount
+                (SELECT COUNT(DISTINCT id) FROM AssessmentJpaEntity WHERE assessmentKitId = k.id) AS assessmentCount,
+                (SELECT COUNT(DISTINCT id) FROM MeasureJpaEntity WHERE kitVersionId = k.kitVersionId) AS measuresCount
             FROM AssessmentKitJpaEntity k
             WHERE k.id = :kitId
         """)
