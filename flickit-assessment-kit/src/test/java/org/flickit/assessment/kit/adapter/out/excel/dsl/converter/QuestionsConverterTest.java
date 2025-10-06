@@ -63,6 +63,7 @@ class QuestionsConverterTest {
         assertEquals("UsageRange", question.getAnswerRangeCode());
         assertEquals("Question Development 1 Description", question.getDescription());
         assertEquals(1, question.getQuestionImpacts().size());
+        assertNull(question.getAnswerOptions());
         //Question 1 : QuestionImpacts
         assertEquals("AttributeTwo", question.getQuestionImpacts().getFirst().getAttributeCode());
         assertEquals(1, question.getQuestionImpacts().getFirst().getWeight());
@@ -79,6 +80,7 @@ class QuestionsConverterTest {
         assertEquals("UsageRange", question.getAnswerRangeCode());
         assertEquals("Question Development 2 Description", question.getDescription());
         assertEquals(1, question.getQuestionImpacts().size());
+        assertNull(question.getAnswerOptions());
         //Question 2 : QuestionImpacts
         assertEquals("AttributeTwo", question.getQuestionImpacts().getFirst().getAttributeCode());
         assertEquals(1, question.getQuestionImpacts().getFirst().getWeight());
@@ -95,6 +97,7 @@ class QuestionsConverterTest {
         assertEquals("UsageRange", question.getAnswerRangeCode());
         assertEquals("Question DevOps 1 Description", question.getDescription());
         assertEquals(1, question.getQuestionImpacts().size());
+        assertNull(question.getAnswerOptions());
         //Question 3 : QuestionImpacts
         assertEquals("AttributeTwo", question.getQuestionImpacts().getFirst().getAttributeCode());
         assertEquals(2, question.getQuestionImpacts().getFirst().getWeight());
@@ -111,6 +114,7 @@ class QuestionsConverterTest {
         assertEquals("UsageRange", question.getAnswerRangeCode());
         assertEquals("Question TeamCollaboration 1 Description", question.getDescription());
         assertEquals(2, question.getQuestionImpacts().size());
+        assertNull(question.getAnswerOptions());
         //Question 4 : QuestionImpacts
         assertEquals("AttributeOne", question.getQuestionImpacts().getFirst().getAttributeCode());
         assertEquals(1, question.getQuestionImpacts().getFirst().getWeight());
@@ -134,6 +138,7 @@ class QuestionsConverterTest {
         assertTrue(question.isMayNotBeApplicable());
         assertFalse(question.isAdvisable());
         assertEquals(3, question.getQuestionImpacts().size());
+        assertNull(question.getAnswerOptions());
         //Question 4 : QuestionImpacts
         assertEquals("AttributeOne", question.getQuestionImpacts().getFirst().getAttributeCode());
         assertEquals(1, question.getQuestionImpacts().getFirst().getWeight());
