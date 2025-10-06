@@ -30,4 +30,12 @@ public interface KitVersionJpaRepository extends JpaRepository<KitVersionJpaEnti
             WHERE k.id = :id
         """)
     CountKitVersionStatsView countKitVersionStat(@Param("id") long id);
+
+    @Query("""
+       SELECT k.id
+       FROM KitVersionJpaEntity k
+       WHERE k.kit.id = :kitId
+         AND k.statusVersion = :statusVersion
+       """)
+    Long findIdByKitIdAndStatusVersion(long kitId, long statusVersion);
 }

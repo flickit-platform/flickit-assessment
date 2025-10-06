@@ -35,6 +35,11 @@ public class KitVersionPersistenceJpaAdapter implements
     }
 
     @Override
+    public Long loadKitVersionIdByStatus(long kitId, KitVersionStatus status) {
+        return repository.findIdByKitIdAndStatusVersion(kitId, status.getId());
+    }
+
+    @Override
     public long persist(CreateKitVersionPort.Param param) {
         var kitEntity = kitRepository.findById(param.kitId())
             .orElseThrow(() -> new ResourceNotFoundException(KIT_ID_NOT_FOUND));
