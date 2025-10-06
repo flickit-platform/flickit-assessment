@@ -42,6 +42,7 @@ public interface GetKitStatsUseCase {
         Integer maturityLevelsCount,
         Integer likes,
         Integer assessmentCounts,
+        Integer measuresCount,
         List<KitStatSubject> subjects,
         KitStatExpertGroup expertGroup) {
     }

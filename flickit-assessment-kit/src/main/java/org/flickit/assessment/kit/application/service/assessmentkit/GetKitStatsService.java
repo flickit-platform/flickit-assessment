@@ -54,6 +54,7 @@ public class GetKitStatsService implements GetKitStatsUseCase {
             counts.maturityLevelsCount(),
             counts.likes(),
             counts.assessmentCounts(),
+            counts.measuresCount(),
             subjects,
             new GetKitStatsUseCase.KitStatExpertGroup(expertGroup.getId(), expertGroup.getTitle())
         );
@@ -63,6 +64,7 @@ public class GetKitStatsService implements GetKitStatsUseCase {
         return new GetKitStatsUseCase.Result(
             kit.getCreationTime(),
             kit.getLastModificationTime(),
+            null,
             null,
             null,
             null,

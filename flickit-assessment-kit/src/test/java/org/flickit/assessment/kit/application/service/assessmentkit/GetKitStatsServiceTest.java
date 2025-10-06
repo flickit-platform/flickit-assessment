@@ -55,7 +55,7 @@ class GetKitStatsServiceTest {
     private LoadSubjectsPort loadSubjectsPort;
 
     @Test
-    void testGetKitStats_KitNotFound_ErrorMessage() {
+    void testGetKitStats_whenKitNotFound_thenThrowResourceNotFoundException() {
         long kitId = 1L;
         Param param = new Param(kitId, UUID.randomUUID());
 
@@ -67,7 +67,7 @@ class GetKitStatsServiceTest {
     }
 
     @Test
-    void testGetKitStats_ValidInput_ValidResults() {
+    void testGetKitStats_whenParametersAreValid_thenReturnValidResults() {
         ExpertGroup expertGroup = createExpertGroup();
         AssessmentKit assessmentKit = AssessmentKitMother.simpleKit();
         Param param = new Param(assessmentKit.getId(), UUID.randomUUID());
@@ -77,7 +77,7 @@ class GetKitStatsServiceTest {
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
 
         CountKitStatsPort.Result counts = new CountKitStatsPort.Result(20, 35, 115,
-            5, 3, 5);
+            5, 3, 5, 2);
 
         when(countKitStatsPort.countKitStats(assessmentKit.getId())).thenReturn(counts);
         when(loadAssessmentKitPort.load(assessmentKit.getId())).thenReturn(assessmentKit);
@@ -93,13 +93,14 @@ class GetKitStatsServiceTest {
         assertEquals(counts.maturityLevelsCount(), kitStats.maturityLevelsCount());
         assertEquals(counts.likes(), kitStats.likes());
         assertEquals(counts.assessmentCounts(), kitStats.assessmentCounts());
+        assertEquals(counts.measuresCount(), kitStats.measuresCount());
         assertEquals(subjects.size(), kitStats.subjects().size());
         assertEquals(expertGroup.getId(), kitStats.expertGroup().id());
         assertEquals(expertGroup.getTitle(), kitStats.expertGroup().title());
     }
 
     @Test
-    void testGetKitStats_ExpertGroupNotFound_ErrorMessage() {
+    void testGetKitStats_whenExpertGroupNotFound_thenThrowResourceNotFoundException() {
         long kitId = 1L;
         Param param = new Param(kitId, UUID.randomUUID());
 
@@ -111,7 +112,7 @@ class GetKitStatsServiceTest {
     }
 
     @Test
-    void testGetKitStats_WhenActiveKitNotExist_ThrowsException() {
+    void testGetKitStats_whenActiveKitNotExist_thenReturnValidResults() {
         ExpertGroup expertGroup = createExpertGroup();
         AssessmentKit assessmentKit = kitWithKitVersionId(null);
         Param param = new Param(assessmentKit.getId(), UUID.randomUUID());
@@ -131,12 +132,13 @@ class GetKitStatsServiceTest {
         assertNull(result.likes());
         assertNull(result.assessmentCounts());
         assertNull(result.subjects());
+        assertNull(result.measuresCount());
         assertEquals(expertGroup.getId(), result.expertGroup().id());
         assertEquals(expertGroup.getTitle(), result.expertGroup().title());
     }
 
     @Test
-    void testGetKitStats_WhenUserIsNotMember_ThrowsException() {
+    void testGetKitStats_whenUserIsNotMember_thenThrowsAccessDeniedException() {
         ExpertGroup expertGroup = createExpertGroup();
         long kitId = 1L;
         Param param = new Param(kitId, UUID.randomUUID());
