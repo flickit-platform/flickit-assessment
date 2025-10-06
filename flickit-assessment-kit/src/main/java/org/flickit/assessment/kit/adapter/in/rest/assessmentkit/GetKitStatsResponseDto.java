@@ -14,6 +14,7 @@ public record GetKitStatsResponseDto(
     Integer maturityLevelsCount,
     Integer likes,
     Integer assessmentCounts,
+    Integer measuresCount,
     List<GetKitStatsUseCase.KitStatSubject> subjects,
     GetKitStatsUseCase.KitStatExpertGroup expertGroup
 ) {
