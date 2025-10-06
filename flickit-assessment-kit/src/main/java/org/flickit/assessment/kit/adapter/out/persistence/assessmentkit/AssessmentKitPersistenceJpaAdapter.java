@@ -147,7 +147,8 @@ public class AssessmentKitPersistenceJpaAdapter implements
             kitStats.getQuestionCount(),
             kitStats.getMaturityLevelCount(),
             kitStats.getLikeCount(),
-            kitStats.getAssessmentCount());
+            kitStats.getAssessmentCount(),
+            kitStats.getMeasuresCount());
     }
 
     @Override
