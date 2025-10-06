@@ -19,13 +19,13 @@ public class QuestionsConverter {
     private static final int HEADER_ROW_INDEX = 1;
 
     private static final String TITLE = "Question";
-    private static final String QUESTIONNAIRES = "Questionnaires";
+    private static final String QUESTIONNAIRE = "Questionnaires";
     private static final String CODE = "Code";
-    private static final String OPTIONS = "Options";
+    private static final String ANSWER_RANGE = "Options";
     private static final String DESCRIPTION = "Description";
     private static final String NOT_APPLICABLE = "Not Applicable";
     private static final String ADVISABLE = "Advisable";
-    private static final String MATURITY = "Maturity";
+    private static final String MATURITY_LEVEL = "Maturity";
 
     public static List<QuestionDslModel> convert(Sheet sheet,
                                                  Map<String, List<AnswerOptionDslModel>> answerRangeCodeToAnswerOptionsMap,
@@ -38,17 +38,17 @@ public class QuestionsConverter {
             .mapToObj(i -> {
                 Row row = sheet.getRow(i);
                 List<QuestionImpactDslModel> questionImpacts = new ArrayList<>();
-                var answerRangeCode = getCellString(row, columnMap.get(OPTIONS));
+                var answerRangeCode = getCellString(row, columnMap.get(ANSWER_RANGE));
                 var optionsIndexToValueMap = answerRangeCodeToAnswerOptionsMap.get(answerRangeCode)
                     .stream()
                     .collect(Collectors.toMap(AnswerOptionDslModel::getIndex, AnswerOptionDslModel::getValue));
 
-                int attributesStartColumn = columnMap.get(MATURITY) + 1;
+                int attributesStartColumn = columnMap.get(MATURITY_LEVEL) + 1;
                 for (int j = 0; j < attributeDslModels.size(); j++) {
                     Integer weight = getCellInteger(row, attributesStartColumn + j);
                     QuestionImpactDslModel questionImpact;
                     if (weight != null) {
-                        MaturityLevelDslModel maturityLevelDslModel = maturityLevelCodeToMaturityLevelDslMap.get(getCellString(row, columnMap.get(MATURITY)));
+                        MaturityLevelDslModel maturityLevelDslModel = maturityLevelCodeToMaturityLevelDslMap.get(getCellString(row, columnMap.get(MATURITY_LEVEL)));
                         var maturityLevel = MaturityLevelDslModel.builder()
                             .title(maturityLevelDslModel.getTitle())
                             .code(maturityLevelDslModel.getCode()).build();
@@ -68,10 +68,9 @@ public class QuestionsConverter {
 
                 return QuestionDslModel.builder()
                     .title(getCellString(row, columnMap.get(TITLE)))
-                    .questionnaireCode(getCellString(row, columnMap.get(QUESTIONNAIRES)))
+                    .questionnaireCode(getCellString(row, columnMap.get(QUESTIONNAIRE)))
                     .code(getCellString(row, columnMap.get(CODE)))
                     .answerRangeCode(answerRangeCode)
-                    .answerOptions(answerRangeCodeToAnswerOptionsMap.get(answerRangeCode))
                     .index(i - 1)
                     .questionImpacts(questionImpacts)
                     .description(getCellString(row, columnMap.get(DESCRIPTION)))

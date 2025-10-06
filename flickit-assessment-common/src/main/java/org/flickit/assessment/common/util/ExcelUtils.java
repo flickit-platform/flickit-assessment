@@ -96,7 +96,7 @@ public class ExcelUtils {
             ));
     }
 
-    public static String getCellStringValue(Cell cell) {
+    private static String getCellStringValue(Cell cell) {
         if (cell == null) return null;
 
         return switch (cell.getCellType()) {

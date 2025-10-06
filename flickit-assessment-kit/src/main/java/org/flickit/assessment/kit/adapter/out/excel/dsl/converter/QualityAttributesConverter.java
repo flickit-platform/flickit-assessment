@@ -8,7 +8,6 @@ import org.flickit.assessment.kit.application.domain.dsl.SubjectDslModel;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -19,12 +18,12 @@ public class QualityAttributesConverter {
 
     private static final int HEADER_ROW_INDEX = 0;
 
-    private static final String SUBJECT_NAME = "Subject Name";
+    private static final String SUBJECT_CODE = "Subject Name";
     private static final String SUBJECT_TITLE = "Subject Title";
     private static final String SUBJECT_WEIGHT = "Subject Weight";
     private static final String SUBJECT_DESCRIPTION = "Subject Description";
 
-    private static final String ATTRIBUTE_NAME = "Attribute Name";
+    private static final String ATTRIBUTE_CODE = "Attribute Name";
     private static final String ATTRIBUTE_TITLE = "Attribute Title";
     private static final String ATTRIBUTE_WEIGHT = "Attribute Weight";
     private static final String ATTRIBUTE_DESCRIPTION = "Attribute Description";
@@ -35,7 +34,7 @@ public class QualityAttributesConverter {
         List<Row> validRows = IntStream.range(HEADER_ROW_INDEX + 1, sheet.getLastRowNum() + HEADER_ROW_INDEX + 1)
             .mapToObj(sheet::getRow)
             .filter(row -> {
-                String code = getCellString(row, columnMap.get(SUBJECT_NAME));
+                String code = getCellString(row, columnMap.get(SUBJECT_CODE));
                 return !isBlankRow(row) && code != null && !code.isBlank();
             })
             .toList();
@@ -44,7 +43,7 @@ public class QualityAttributesConverter {
             .mapToObj(idx -> {
                 Row row = validRows.get(idx);
                 return SubjectDslModel.builder()
-                    .code(getCellString(row, columnMap.get(SUBJECT_NAME)))
+                    .code(getCellString(row, columnMap.get(SUBJECT_CODE)))
                     .title(getCellString(row, columnMap.get(SUBJECT_TITLE)))
                     .weight(getCellInteger(row, columnMap.get(SUBJECT_WEIGHT)))
                     .description(getCellString(row, columnMap.get(SUBJECT_DESCRIPTION)))
@@ -57,24 +56,30 @@ public class QualityAttributesConverter {
     public static List<AttributeDslModel> convertAttributes(Sheet sheet) {
         var columnMap = getSheetHeaderWithoutFormula(sheet, HEADER_ROW_INDEX);
 
-        return IntStream.rangeClosed(HEADER_ROW_INDEX + 1, sheet.getLastRowNum())
-            .mapToObj(sheet::getRow)
-            .filter(row -> !isBlankRow(row))
-            .collect(ArrayList::new, (list, row) -> {
-                String subjectCode = Optional.ofNullable(getCellString(row, columnMap.get(SUBJECT_NAME)))
-                    .filter(c -> !c.isBlank())
-                    .orElseGet(() -> !list.isEmpty() ? list.getLast().getSubjectCode() : null);
+        List<AttributeDslModel> attributes = new ArrayList<>();
+        String subjectCode = null;
+        int attributeIndex = 0;
 
-                AttributeDslModel attribute = AttributeDslModel.builder()
-                    .subjectCode(subjectCode)
-                    .code(getCellString(row, columnMap.get(ATTRIBUTE_NAME)))
-                    .weight(getCellInteger(row, columnMap.get(ATTRIBUTE_WEIGHT)))
-                    .title(getCellString(row, columnMap.get(ATTRIBUTE_TITLE)))
-                    .description(getCellString(row, columnMap.get(ATTRIBUTE_DESCRIPTION)))
-                    .index(list.size() + 1)
-                    .build();
+        for (int i = HEADER_ROW_INDEX + 1; i <= sheet.getLastRowNum(); i++) {
+            Row row = sheet.getRow(i);
+            if (isBlankRow(row)) continue;
 
-                list.add(attribute);
-            }, List::addAll);
+            String newSubjectCode = getCellString(row, columnMap.get(SUBJECT_CODE));
+            if (newSubjectCode != null && !newSubjectCode.isBlank()) {
+                subjectCode = newSubjectCode;
+                attributeIndex = 1;
+            }
+
+            attributes.add(AttributeDslModel.builder()
+                .subjectCode(subjectCode)
+                .code(getCellString(row, columnMap.get(ATTRIBUTE_CODE)))
+                .weight(getCellInteger(row, columnMap.get(ATTRIBUTE_WEIGHT)))
+                .title(getCellString(row, columnMap.get(ATTRIBUTE_TITLE)))
+                .description(getCellString(row, columnMap.get(ATTRIBUTE_DESCRIPTION)))
+                .index(attributeIndex++)
+                .build());
+        }
+
+        return attributes;
     }
 }

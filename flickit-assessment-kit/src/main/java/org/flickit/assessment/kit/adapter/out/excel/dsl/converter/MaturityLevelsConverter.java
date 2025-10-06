@@ -43,7 +43,7 @@ public class MaturityLevelsConverter {
                     .title(getCellString(row, columnMap.get(TITLE)))
                     .description(getCellString(row, columnMap.get(DESCRIPTION)))
                     .value(index)
-                    .competencesCodeToValueMap(competence.isEmpty() ? null  : competence)
+                    .competencesCodeToValueMap(competence.isEmpty() ? null : competence)
                     .build();
             })
             .collect(Collectors.toList());

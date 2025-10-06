@@ -6,7 +6,9 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.flickit.assessment.kit.application.domain.dsl.AnswerOptionDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.AnswerRangeDslModel;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -18,8 +20,8 @@ public class AnswerRangeConverter {
     private static final int HEADER_ROW_INDEX = 0;
 
     private static final String RANGE_NAME = "Range Name";
-    private static final String TITLE = "Option Title";
-    private static final String VALUE = "Option Value";
+    private static final String OPTION_TITLE = "Option Title";
+    private static final String OPTION_VALUE = "Option Value";
 
     public static List<AnswerRangeDslModel> convert(Sheet sheet) {
         var columnMap = getSheetHeaderWithoutFormula(sheet, HEADER_ROW_INDEX);
@@ -28,11 +30,12 @@ public class AnswerRangeConverter {
         String currentRange = null;
         int index = 1;
 
-        for (Row row : sheet) {
-            if (row.getRowNum() == HEADER_ROW_INDEX) continue;
+        for (int i = HEADER_ROW_INDEX + 1; i <= sheet.getLastRowNum(); i++) {
+            Row row = sheet.getRow(i);
+            if (row == null) continue;
 
             var rangeCode = getCellString(row, columnMap.get(RANGE_NAME));
-            var title = getCellString(row, columnMap.get(TITLE));
+            var title = getCellString(row, columnMap.get(OPTION_TITLE));
 
             if (isNotBlank(rangeCode)) {
                 currentRange = rangeCode.trim();
@@ -45,7 +48,7 @@ public class AnswerRangeConverter {
                     AnswerOptionDslModel.builder()
                         .index(index++)
                         .caption(title.trim())
-                        .value(getCellDouble(row, columnMap.get(VALUE)))
+                        .value(getCellDouble(row, columnMap.get(OPTION_VALUE)))
                         .build()
                 );
             }
