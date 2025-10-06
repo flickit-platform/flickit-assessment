@@ -3,10 +3,7 @@ package org.flickit.assessment.kit.application.service.assessmentkit;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.kit.application.domain.AssessmentKit;
-import org.flickit.assessment.kit.application.domain.ExpertGroup;
-import org.flickit.assessment.kit.application.domain.KitMetadata;
-import org.flickit.assessment.kit.application.domain.KitTag;
+import org.flickit.assessment.kit.application.domain.*;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitEditableInfoUseCase;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitEditableInfoUseCase.Param;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
@@ -14,11 +11,15 @@ import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpert
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.kitlanguage.LoadKitLanguagesPort;
 import org.flickit.assessment.kit.application.port.out.kittag.LoadKitTagListPort;
+import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
 import org.flickit.assessment.kit.test.fixture.application.ExpertGroupMother;
 import org.flickit.assessment.kit.test.fixture.application.KitTagMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -55,6 +56,9 @@ class GetKitEditableInfoServiceTest {
     @Mock
     private CheckExpertGroupAccessPort checkExpertGroupAccessPort;
 
+    @Mock
+    private LoadKitVersionPort loadKitVersionPort;
+
     @Test
     void testGetKitEditableInfo_whenKitNotFound_thenErrorMessage() {
         long kitId = 123L;
@@ -69,11 +73,15 @@ class GetKitEditableInfoServiceTest {
         var throwable = assertThrows(ResourceNotFoundException.class,
             () -> service.getKitEditableInfo(param));
         assertThat(throwable).hasMessage(KIT_ID_NOT_FOUND);
-        verifyNoInteractions(loadKitTagListPort, loadKitLanguagesPort);
+        verifyNoInteractions(loadKitTagListPort,
+            loadKitLanguagesPort,
+            loadKitVersionPort);
     }
 
-    @Test
-    void testGetKitEditableInfo_whenValidInput_thenValidResults() {
+    @ParameterizedTest
+    @ValueSource(longs = {456})
+    @NullSource
+    void testGetKitEditableInfo_whenValidInput_thenValidResults(Long kitVersionId) {
         long kitId = 123L;
         UUID currentUserId = UUID.randomUUID();
         Param param = new Param(kitId, currentUserId);
@@ -89,6 +97,7 @@ class GetKitEditableInfoServiceTest {
         when(loadAssessmentKitPort.load(kitId)).thenReturn(assessmentKit);
         when(loadKitTagListPort.loadByKitId(kitId)).thenReturn(tags);
         when(loadKitLanguagesPort.loadByKitId(kitId)).thenReturn(languages);
+        when(loadKitVersionPort.loadKitVersionIdByStatus(param.getKitId(), KitVersionStatus.UPDATING)).thenReturn(kitVersionId);
 
         GetKitEditableInfoUseCase.KitEditableInfo kitEditableInfo = service.getKitEditableInfo(param);
 
@@ -101,6 +110,7 @@ class GetKitEditableInfoServiceTest {
         assertEquals(assessmentKit.isPrivate(), kitEditableInfo.isPrivate());
         assertEquals(0, kitEditableInfo.price());
         assertEquals(assessmentKit.getAbout(), kitEditableInfo.about());
+        assertEquals(kitVersionId, kitEditableInfo.draftVersionId());
         assertEquals(assessmentKit.getTranslations(), kitEditableInfo.translations());
         assertEquals(tags.size(), kitEditableInfo.tags().size());
         assertEquals(languages.size(), kitEditableInfo.languages().size());
@@ -120,6 +130,11 @@ class GetKitEditableInfoServiceTest {
         var throwable = assertThrows(AccessDeniedException.class,
             () -> service.getKitEditableInfo(param));
         assertThat(throwable).hasMessage(COMMON_CURRENT_USER_NOT_ALLOWED);
+
+        verifyNoInteractions(loadAssessmentKitPort,
+            loadKitTagListPort,
+            loadKitLanguagesPort,
+            loadKitVersionPort);
     }
 
     private Param createParam(Consumer<Param.ParamBuilder> changer) {
