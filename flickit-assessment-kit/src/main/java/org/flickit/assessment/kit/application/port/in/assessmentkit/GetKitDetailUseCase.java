@@ -4,7 +4,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
-import org.flickit.assessment.kit.application.domain.Measure;
 
 import java.util.List;
 import java.util.UUID;
@@ -53,9 +52,5 @@ public interface GetKitDetailUseCase {
     }
 
     record KitDetailMeasure(long id, String title, int index) {
-
-        public static KitDetailMeasure of(Measure measure) {
-            return new KitDetailMeasure(measure.getId(), measure.getTitle(), measure.getIndex());
-        }
     }
 }
