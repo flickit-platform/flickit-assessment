@@ -14,6 +14,7 @@ import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectsPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -59,7 +60,15 @@ public class GetKitDetailService implements GetKitDetailUseCase {
             .toList();
 
         var kitDetailSubjects = subjects.stream()
-            .map(s -> new KitDetailSubject(s.getId(), s.getTitle(), s.getIndex()))
+            .map(s -> new KitDetailSubject(
+                s.getId(),
+                s.getTitle(),
+                s.getIndex(),
+                s.getAttributes().stream()
+                    .sorted(Comparator.comparing(Attribute::getIndex))
+                    .map(KitDetailAttribute::of)
+                    .toList()
+            ))
             .toList();
 
         var kitDetailQuestionnaires = questionnaires.stream()
