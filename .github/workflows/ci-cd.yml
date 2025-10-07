@@ -165,9 +165,8 @@ jobs:
     needs: [ test ]
     name: tag and release
     runs-on: ubuntu-latest
-    if: ${{ ((github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/releases-'))) ||
-      (github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true)) }}
-
+    if: ${{ (github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/releases-'))) ||
+      (github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true) }}
     permissions:
       contents: write
 
@@ -182,9 +181,19 @@ jobs:
 
       - name: Extract Maven project version
         id: project
-        run: echo version=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec) >> $GITHUB_OUTPUT
+        run: |
+          VERSION=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
 
-      - uses: ncipollo/release-action@v1
+      - name: Skip if version is SNAPSHOT
+        if: ${{ contains(steps.project.outputs.version, 'SNAPSHOT') }}
+        run: |
+          echo "Skipping release — SNAPSHOT version detected: ${{ steps.project.outputs.version }}"
+          exit 0
+
+      - name: Create GitHub Release
+        if: ${{ !contains(steps.project.outputs.version, 'SNAPSHOT') }}
+        uses: ncipollo/release-action@v1
         with:
           tag: v${{ steps.project.outputs.version }}
           name: Release ${{ steps.project.outputs.version }}
@@ -203,16 +212,7 @@ jobs:
       project_version: ${{ steps.project.outputs.version }}
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        id: vars
-
-      - name: login to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: flickit-platform
-          password: ${{ secrets.GH_PACKAGES_TOKEN }}
+      - uses: actions/checkout@v4
 
       - name: Set up JDK 21
         uses: actions/setup-java@v4
@@ -226,7 +226,22 @@ jobs:
           VERSION=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
+      - name: Skip if version is SNAPSHOT
+        if: ${{ contains(steps.project.outputs.version, 'SNAPSHOT') }}
+        run: |
+          echo "Skipping image build — SNAPSHOT version detected: ${{ steps.project.outputs.version }}"
+          exit 0
+
+      - name: login to GitHub Container Registry
+        if: ${{ !contains(steps.project.outputs.version, 'SNAPSHOT') }}
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: flickit-platform
+          password: ${{ secrets.GH_PACKAGES_TOKEN }}
+
       - name: Build and push image
+        if: ${{ !contains(steps.project.outputs.version, 'SNAPSHOT') }}
         run: |
           mvn ${{ env.JIB_OPT }} \
             -Djib.to.image="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.project.outputs.version }}" \
@@ -238,13 +253,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Deploy service on Webhook
+      - name: Extract Maven project version
+        id: project
         run: |
-          status_code=$(curl --silent --output /dev/null --write-out "%{http_code}" -X POST "${{ secrets.DEPLOY_WEBHOOK_URL }}?ASSESSMENT_VERSION=${PROJECT_VERSION}")
+          VERSION=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Skip if version is SNAPSHOT
+        if: ${{ contains(steps.project.outputs.version, 'SNAPSHOT') }}
+        run: |
+          echo "Skipping deploy — SNAPSHOT version detected: ${{ steps.project.outputs.version }}"
+          exit 0
+
+      - name: Deploy service on Webhook
+        if: ${{ !contains(steps.project.outputs.version, 'SNAPSHOT') }}
+        run: |
+          status_code=$(curl --silent --output /dev/null --write-out "%{http_code}" \
+            -X POST "${{ secrets.DEPLOY_WEBHOOK_URL }}?ASSESSMENT_VERSION=${{ steps.project.outputs.version }}")
           if [ "$status_code" -ne 204 ]; then
             echo "Unexpected status code: $status_code"
             exit 1
           fi
-        env:
-          PROJECT_VERSION: ${{ needs.build-and-push-image.outputs.project_version }}
+
 
