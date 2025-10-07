@@ -50,7 +50,7 @@ public interface GetKitDetailUseCase {
 
     record KitDetailAttribute(long id, String title, int index) {
 
-        public static KitDetailAttribute of(Attribute attribute){
+        public static KitDetailAttribute of(Attribute attribute) {
             return new KitDetailAttribute(attribute.getId(), attribute.getTitle(), attribute.getIndex());
         }
     }
