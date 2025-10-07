@@ -35,7 +35,8 @@ public interface GetKitDetailUseCase {
     record Result(
         List<KitDetailMaturityLevel> maturityLevels,
         List<KitDetailSubject> subjects,
-        List<KitDetailQuestionnaire> questionnaires) {
+        List<KitDetailQuestionnaire> questionnaires,
+        List<KitDetailMeasure> measures) {
     }
 
     record KitDetailMaturityLevel(long id, String title, int index, List<Competences> competences) {
@@ -48,5 +49,8 @@ public interface GetKitDetailUseCase {
     }
 
     record KitDetailQuestionnaire(long id, String title, int index) {
+    }
+
+    record KitDetailMeasure(long id, String title, int index) {
     }
 }
