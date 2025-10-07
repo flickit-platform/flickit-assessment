@@ -64,9 +64,9 @@ class GetKitDetailServiceTest {
         List<MaturityLevel> maturityLevels = List.of(
             MaturityLevelMother.levelOne(),
             MaturityLevelMother.levelTwo());
-        Attribute attributeWithIndex1 = AttributeMother.attributeWithTitle("attributeWithIndex1");
-        Attribute attributeWithIndex2 = AttributeMother.attributeWithTitle("attributeWithIndex2");
-        List<Attribute> attributes = List.of(attributeWithIndex2, attributeWithIndex1);
+        var attribute1 = AttributeMother.attributeWithTitle("attribute1");
+        var attribute2 = AttributeMother.attributeWithTitle("attribute2");
+        List<Attribute> attributes = List.of(attribute2, attribute1);
         List<Subject> subjects = List.of(SubjectMother.subjectWithAttributes("subject1", attributes));
         List<Questionnaire> questionnaires = List.of(QuestionnaireMother.questionnaireWithTitle("questionnaire1"));
 
@@ -86,8 +86,8 @@ class GetKitDetailServiceTest {
         assertEquals(questionnaires.size(), result.questionnaires().size());
         var resultAttributes = result.subjects().getFirst().attributes();
         assertEquals(2, resultAttributes.size());
-        assertEquals(1, resultAttributes.getFirst().index());
-        assertEquals(2, resultAttributes.getLast().index());
+        assertEquals(attribute1.getId(), resultAttributes.getFirst().id());
+        assertEquals(attribute2.getId(), resultAttributes.getLast().id());
     }
 
     @Test
