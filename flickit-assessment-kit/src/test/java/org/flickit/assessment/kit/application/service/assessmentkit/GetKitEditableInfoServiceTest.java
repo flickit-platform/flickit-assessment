@@ -14,6 +14,7 @@ import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpert
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.kitlanguage.LoadKitLanguagesPort;
 import org.flickit.assessment.kit.application.port.out.kittag.LoadKitTagListPort;
+import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
 import org.flickit.assessment.kit.test.fixture.application.ExpertGroupMother;
 import org.flickit.assessment.kit.test.fixture.application.KitTagMother;
@@ -24,6 +25,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -55,6 +57,9 @@ class GetKitEditableInfoServiceTest {
     @Mock
     private CheckExpertGroupAccessPort checkExpertGroupAccessPort;
 
+    @Mock
+    private LoadKitVersionPort loadKitVersionPort;
+
     @Test
     void testGetKitEditableInfo_whenKitNotFound_thenErrorMessage() {
         long kitId = 123L;
@@ -69,11 +74,53 @@ class GetKitEditableInfoServiceTest {
         var throwable = assertThrows(ResourceNotFoundException.class,
             () -> service.getKitEditableInfo(param));
         assertThat(throwable).hasMessage(KIT_ID_NOT_FOUND);
-        verifyNoInteractions(loadKitTagListPort, loadKitLanguagesPort);
+        verifyNoInteractions(loadKitTagListPort,
+            loadKitLanguagesPort,
+            loadKitVersionPort);
     }
 
     @Test
-    void testGetKitEditableInfo_whenValidInput_thenValidResults() {
+    void testGetKitEditableInfo_whenValidInput_thenReturnValidResults() {
+        long kitId = 123L;
+        UUID currentUserId = UUID.randomUUID();
+        long kitVersionId = 423L;
+        Param param = new Param(kitId, currentUserId);
+        KitMetadata metadata = new KitMetadata("goal", "context");
+
+        AssessmentKit assessmentKit = AssessmentKitMother.kitWithMetadata(metadata);
+        List<KitTag> tags = List.of(KitTagMother.createKitTag("security"));
+        ExpertGroup expertGroup = new ExpertGroup(1L, null, null, currentUserId);
+        List<KitLanguage> languages = List.of(KitLanguage.EN, KitLanguage.FA);
+
+        when(loadKitExpertGroupPort.loadKitExpertGroup(kitId)).thenReturn(expertGroup);
+        when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), currentUserId)).thenReturn(true);
+        when(loadAssessmentKitPort.load(kitId)).thenReturn(assessmentKit);
+        when(loadKitTagListPort.loadByKitId(kitId)).thenReturn(tags);
+        when(loadKitLanguagesPort.loadByKitId(kitId)).thenReturn(languages);
+        when(loadKitVersionPort.loadKitVersionIdWithUpdatingStatus(param.getKitId())).thenReturn(Optional.of(kitVersionId));
+
+        GetKitEditableInfoUseCase.KitEditableInfo kitEditableInfo = service.getKitEditableInfo(param);
+
+        assertEquals(assessmentKit.getId(), kitEditableInfo.id());
+        assertEquals(assessmentKit.getTitle(), kitEditableInfo.title());
+        assertEquals(assessmentKit.getSummary(), kitEditableInfo.summary());
+        assertEquals(assessmentKit.getLanguage().getCode(), kitEditableInfo.mainLanguage().code());
+        assertEquals(assessmentKit.getLanguage().getTitle(), kitEditableInfo.mainLanguage().title());
+        assertEquals(assessmentKit.isPublished(), kitEditableInfo.published());
+        assertEquals(assessmentKit.isPrivate(), kitEditableInfo.isPrivate());
+        assertEquals(0, kitEditableInfo.price());
+        assertEquals(assessmentKit.getAbout(), kitEditableInfo.about());
+        assertEquals(kitVersionId, kitEditableInfo.draftVersionId());
+        assertEquals(assessmentKit.getTranslations(), kitEditableInfo.translations());
+        assertEquals(tags.size(), kitEditableInfo.tags().size());
+        assertEquals(languages.size(), kitEditableInfo.languages().size());
+        assertEquals(metadata.goal(), kitEditableInfo.metadata().goal());
+        assertEquals(metadata.context(), kitEditableInfo.metadata().context());
+        assertTrue(kitEditableInfo.editable());
+    }
+
+    @Test
+    void testGetKitEditableInfo_whenKitDoesNotHaveDraftVersion_thenReturnDraftVersionAsNull() {
         long kitId = 123L;
         UUID currentUserId = UUID.randomUUID();
         Param param = new Param(kitId, currentUserId);
@@ -89,28 +136,15 @@ class GetKitEditableInfoServiceTest {
         when(loadAssessmentKitPort.load(kitId)).thenReturn(assessmentKit);
         when(loadKitTagListPort.loadByKitId(kitId)).thenReturn(tags);
         when(loadKitLanguagesPort.loadByKitId(kitId)).thenReturn(languages);
+        when(loadKitVersionPort.loadKitVersionIdWithUpdatingStatus(param.getKitId())).thenReturn(Optional.empty());
 
         GetKitEditableInfoUseCase.KitEditableInfo kitEditableInfo = service.getKitEditableInfo(param);
 
-        assertEquals(assessmentKit.getId(), kitEditableInfo.id());
-        assertEquals(assessmentKit.getTitle(), kitEditableInfo.title());
-        assertEquals(assessmentKit.getSummary(), kitEditableInfo.summary());
-        assertEquals(assessmentKit.getLanguage().getCode(), kitEditableInfo.mainLanguage().code());
-        assertEquals(assessmentKit.getLanguage().getTitle(), kitEditableInfo.mainLanguage().title());
-        assertEquals(assessmentKit.isPublished(), kitEditableInfo.published());
-        assertEquals(assessmentKit.isPrivate(), kitEditableInfo.isPrivate());
-        assertEquals(0, kitEditableInfo.price());
-        assertEquals(assessmentKit.getAbout(), kitEditableInfo.about());
-        assertEquals(assessmentKit.getTranslations(), kitEditableInfo.translations());
-        assertEquals(tags.size(), kitEditableInfo.tags().size());
-        assertEquals(languages.size(), kitEditableInfo.languages().size());
-        assertEquals(metadata.goal(), kitEditableInfo.metadata().goal());
-        assertEquals(metadata.context(), kitEditableInfo.metadata().context());
-        assertTrue(kitEditableInfo.editable());
+        assertNull(kitEditableInfo.draftVersionId());
     }
 
     @Test
-    void testGetKitEditableInfo_CurrentUserIsNotExpertGroupMember_ErrorMessage() {
+    void testGetKitEditableInfo_whenCurrentUserIsNotExpertGroupMember_thenThrowAccessDeniedException() {
         ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
         var param = createParam(Param.ParamBuilder::build);
 
@@ -120,6 +154,11 @@ class GetKitEditableInfoServiceTest {
         var throwable = assertThrows(AccessDeniedException.class,
             () -> service.getKitEditableInfo(param));
         assertThat(throwable).hasMessage(COMMON_CURRENT_USER_NOT_ALLOWED);
+
+        verifyNoInteractions(loadAssessmentKitPort,
+            loadKitTagListPort,
+            loadKitLanguagesPort,
+            loadKitVersionPort);
     }
 
     private Param createParam(Consumer<Param.ParamBuilder> changer) {
