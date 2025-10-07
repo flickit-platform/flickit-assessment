@@ -10,6 +10,8 @@ import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.port.out.kitversion.*;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_VERSION_ID_NOT_FOUND;
 
@@ -35,8 +37,8 @@ public class KitVersionPersistenceJpaAdapter implements
     }
 
     @Override
-    public Long loadKitVersionIdByStatus(long kitId, KitVersionStatus status) {
-        return repository.findIdByKitIdAndStatusVersion(kitId, status.getId());
+    public Optional<Long> loadKitVersionIdWithUpdatingStatus(long kitId) {
+        return repository.findIdByKitIdAndStatus(kitId, KitVersionStatus.UPDATING.getId());
     }
 
     @Override

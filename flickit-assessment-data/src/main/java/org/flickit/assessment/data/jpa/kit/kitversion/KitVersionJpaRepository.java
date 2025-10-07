@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Optional;
+
 public interface KitVersionJpaRepository extends JpaRepository<KitVersionJpaEntity, Long> {
 
     boolean existsByKitIdAndStatus(long kitId, int status);
@@ -32,10 +34,10 @@ public interface KitVersionJpaRepository extends JpaRepository<KitVersionJpaEnti
     CountKitVersionStatsView countKitVersionStat(@Param("id") long id);
 
     @Query("""
-       SELECT k.id
-       FROM KitVersionJpaEntity k
-       WHERE k.kit.id = :kitId
-         AND k.statusVersion = :statusVersion
-       """)
-    Long findIdByKitIdAndStatusVersion(long kitId, long statusVersion);
+           SELECT k.id
+           FROM KitVersionJpaEntity k
+           WHERE k.kit.id = :kitId
+             AND k.status = :status
+        """)
+    Optional<Long> findIdByKitIdAndStatus(long kitId, long status);
 }

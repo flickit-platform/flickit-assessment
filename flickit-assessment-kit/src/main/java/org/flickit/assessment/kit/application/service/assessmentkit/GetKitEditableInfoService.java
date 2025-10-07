@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.KitMetadata;
-import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitEditableInfoUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
@@ -36,7 +35,9 @@ public class GetKitEditableInfoService implements GetKitEditableInfoUseCase {
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         var assessmentKit = loadAssessmentKitPort.load(param.getKitId());
-        var draftVersionId = loadKitVersionPort.loadKitVersionIdByStatus(param.getKitId(), KitVersionStatus.UPDATING);
+        var draftVersionId = loadKitVersionPort.loadKitVersionIdWithUpdatingStatus(param.getKitId())
+            .orElse(null);
+
         var tags = loadKitTagListPort.loadByKitId(param.getKitId());
         var languages = loadKitLanguagesPort.loadByKitId(param.getKitId()).stream()
             .map(this::toLanguage)

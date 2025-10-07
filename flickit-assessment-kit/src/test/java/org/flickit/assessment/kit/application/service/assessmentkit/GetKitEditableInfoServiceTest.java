@@ -3,7 +3,10 @@ package org.flickit.assessment.kit.application.service.assessmentkit;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.kit.application.domain.*;
+import org.flickit.assessment.kit.application.domain.AssessmentKit;
+import org.flickit.assessment.kit.application.domain.ExpertGroup;
+import org.flickit.assessment.kit.application.domain.KitMetadata;
+import org.flickit.assessment.kit.application.domain.KitTag;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitEditableInfoUseCase;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitEditableInfoUseCase.Param;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
@@ -17,14 +20,12 @@ import org.flickit.assessment.kit.test.fixture.application.ExpertGroupMother;
 import org.flickit.assessment.kit.test.fixture.application.KitTagMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.NullSource;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -78,12 +79,11 @@ class GetKitEditableInfoServiceTest {
             loadKitVersionPort);
     }
 
-    @ParameterizedTest
-    @ValueSource(longs = {456})
-    @NullSource
-    void testGetKitEditableInfo_whenValidInput_thenValidResults(Long kitVersionId) {
+    @Test
+    void testGetKitEditableInfo_whenValidInput_thenReturnValidResults() {
         long kitId = 123L;
         UUID currentUserId = UUID.randomUUID();
+        long kitVersionId = 423L;
         Param param = new Param(kitId, currentUserId);
         KitMetadata metadata = new KitMetadata("goal", "context");
 
@@ -97,7 +97,7 @@ class GetKitEditableInfoServiceTest {
         when(loadAssessmentKitPort.load(kitId)).thenReturn(assessmentKit);
         when(loadKitTagListPort.loadByKitId(kitId)).thenReturn(tags);
         when(loadKitLanguagesPort.loadByKitId(kitId)).thenReturn(languages);
-        when(loadKitVersionPort.loadKitVersionIdByStatus(param.getKitId(), KitVersionStatus.UPDATING)).thenReturn(kitVersionId);
+        when(loadKitVersionPort.loadKitVersionIdWithUpdatingStatus(param.getKitId())).thenReturn(Optional.of(kitVersionId));
 
         GetKitEditableInfoUseCase.KitEditableInfo kitEditableInfo = service.getKitEditableInfo(param);
 
@@ -120,7 +120,31 @@ class GetKitEditableInfoServiceTest {
     }
 
     @Test
-    void testGetKitEditableInfo_CurrentUserIsNotExpertGroupMember_ErrorMessage() {
+    void testGetKitEditableInfo_whenKitDoesNotHaveDraftVersion_thenReturnDraftVersionAsNull() {
+        long kitId = 123L;
+        UUID currentUserId = UUID.randomUUID();
+        Param param = new Param(kitId, currentUserId);
+        KitMetadata metadata = new KitMetadata("goal", "context");
+
+        AssessmentKit assessmentKit = AssessmentKitMother.kitWithMetadata(metadata);
+        List<KitTag> tags = List.of(KitTagMother.createKitTag("security"));
+        ExpertGroup expertGroup = new ExpertGroup(1L, null, null, currentUserId);
+        List<KitLanguage> languages = List.of(KitLanguage.EN, KitLanguage.FA);
+
+        when(loadKitExpertGroupPort.loadKitExpertGroup(kitId)).thenReturn(expertGroup);
+        when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), currentUserId)).thenReturn(true);
+        when(loadAssessmentKitPort.load(kitId)).thenReturn(assessmentKit);
+        when(loadKitTagListPort.loadByKitId(kitId)).thenReturn(tags);
+        when(loadKitLanguagesPort.loadByKitId(kitId)).thenReturn(languages);
+        when(loadKitVersionPort.loadKitVersionIdWithUpdatingStatus(param.getKitId())).thenReturn(Optional.empty());
+
+        GetKitEditableInfoUseCase.KitEditableInfo kitEditableInfo = service.getKitEditableInfo(param);
+
+        assertNull(kitEditableInfo.draftVersionId());
+    }
+
+    @Test
+    void testGetKitEditableInfo_whenCurrentUserIsNotExpertGroupMember_thenThrowAccessDeniedException() {
         ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
         var param = createParam(Param.ParamBuilder::build);
 
