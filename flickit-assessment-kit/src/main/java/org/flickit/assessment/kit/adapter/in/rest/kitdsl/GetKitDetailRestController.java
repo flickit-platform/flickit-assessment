@@ -30,6 +30,9 @@ public class GetKitDetailRestController {
     }
 
     private GetKitDetailResponseDto toResponseDto(GetKitDetailUseCase.Result result) {
-        return new GetKitDetailResponseDto(result.maturityLevels(), result.subjects(), result.questionnaires());
+        return new GetKitDetailResponseDto(result.maturityLevels(),
+            result.subjects(),
+            result.questionnaires(),
+            result.measures());
     }
 }
