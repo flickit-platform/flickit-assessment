@@ -4,6 +4,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.domain.Attribute;
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
+import org.flickit.assessment.kit.application.domain.Measure;
 import org.flickit.assessment.kit.application.domain.Questionnaire;
 import org.flickit.assessment.kit.application.domain.Subject;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitDetailUseCase;
@@ -12,6 +13,7 @@ import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadActiveK
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelsPort;
+import org.flickit.assessment.kit.application.port.out.measure.LoadMeasurePort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairesPort;
 import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectsPort;
 import org.flickit.assessment.kit.test.fixture.application.*;
@@ -54,6 +56,9 @@ class GetKitDetailServiceTest {
     @Mock
     private LoadActiveKitVersionIdPort loadActiveKitVersionIdPort;
 
+    @Mock
+    private LoadMeasurePort loadMeasurePort;
+
     @Test
     void testGetKitDetail_whenKitExist_thenShouldReturnKitDetails() {
         var expertGroup = ExpertGroupMother.createExpertGroup();
@@ -69,6 +74,7 @@ class GetKitDetailServiceTest {
         List<Attribute> attributes = List.of(attribute2, attribute1);
         List<Subject> subjects = List.of(SubjectMother.subjectWithAttributes("subject1", attributes));
         List<Questionnaire> questionnaires = List.of(QuestionnaireMother.questionnaireWithTitle("questionnaire1"));
+        List<Measure> measures = List.of(MeasureMother.measureWithTitle("measure1"), MeasureMother.measureWithTitle("measure2"));
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
@@ -76,6 +82,7 @@ class GetKitDetailServiceTest {
         when(loadSubjectsPort.loadByKitVersionId(kitVersionId)).thenReturn(subjects);
         when(loadQuestionnairesPort.loadByKitId(param.getKitId())).thenReturn(questionnaires);
         when(loadActiveKitVersionIdPort.loadKitVersionId(param.getKitId())).thenReturn(kitVersionId);
+        when(loadMeasurePort.loadAll(kitVersionId)).thenReturn(measures);
 
         Result result = service.getKitDetail(param);
 
@@ -88,6 +95,7 @@ class GetKitDetailServiceTest {
         assertEquals(2, resultAttributes.size());
         assertEquals(attribute1.getId(), resultAttributes.getFirst().id());
         assertEquals(attribute2.getId(), resultAttributes.getLast().id());
+        assertEquals(2, result.measures().size());
     }
 
     @Test
