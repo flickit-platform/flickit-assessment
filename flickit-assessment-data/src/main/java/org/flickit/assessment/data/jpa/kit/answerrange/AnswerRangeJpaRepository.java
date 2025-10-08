@@ -2,6 +2,7 @@ package org.flickit.assessment.data.jpa.kit.answerrange;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -17,6 +18,8 @@ public interface AnswerRangeJpaRepository extends JpaRepository<AnswerRangeJpaEn
     List<AnswerRangeJpaEntity> findAllByKitVersionId(long kitVersionId);
 
     Page<AnswerRangeJpaEntity> findByKitVersionIdAndReusableTrue(long kitVersionId, Pageable pageable);
+
+    List<AnswerRangeJpaEntity> findByKitVersionIdAndReusableTrue(long kitVersionId, Sort sort);
 
     boolean existsByIdAndKitVersionId(long id, long kitVersionId);
 
