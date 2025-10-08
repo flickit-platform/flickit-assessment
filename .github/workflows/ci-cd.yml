@@ -69,9 +69,7 @@ jobs:
   sonar:
     needs: [ test ]
     runs-on: ubuntu-latest
-
-    outputs:
-      project_version: ${{ steps.project.outputs.version }}
+    if: ${{ contains(needs.test.outputs.project_version, 'SNAPSHOT') }}
 
     steps:
       - name: Checkout Repository
@@ -85,22 +83,7 @@ jobs:
           java-version: 21
           distribution: temurin
 
-      - name: Extract Maven project version
-        id: project
-        run: |
-          VERSION=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "Detected version: $VERSION"
-
-      # Skip this job entirely for release versions (no "-SNAPSHOT" in version)
-      - name: Skip Sonar for release versions
-        if: ${{ !contains(steps.project.outputs.version, 'SNAPSHOT') }}
-        run: |
-          echo "Skipping SonarCloud analysis for release version ${{ steps.project.outputs.version }}"
-          exit 0
-
       - name: Cache Maven packages
-        if: ${{ contains(steps.project.outputs.version, 'SNAPSHOT') }}
         uses: actions/cache@v4
         with:
           path: ~/.m2
@@ -108,7 +91,6 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
 
       - name: Build and analyze
-        if: ${{ contains(steps.project.outputs.version, 'SNAPSHOT') }}
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
