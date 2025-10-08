@@ -108,7 +108,7 @@ jobs:
 
       - name: Skip Sonar analysis for release version
         if: ${{ !contains(steps.project.outputs.version, 'SNAPSHOT') }}
-        run:
+        run: |
           echo "Skipping Sonar analysis for release version: ${{ steps.project.outputs.version }}"
 
   build-and-push-latest-image:
