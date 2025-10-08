@@ -11,12 +11,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ExcelUtilsTest {
 
-    private Sheet createSheet() throws IOException {
-        try (Workbook wb = WorkbookFactory.create(false)) {
-            return wb.createSheet();
-        }
-    }
-
     @Test
     void testExcelUtils_IsBlankRow() throws IOException {
         Sheet sheet = createSheet();
@@ -145,10 +139,9 @@ class ExcelUtilsTest {
     }
 
     @Test
-    void testGetSheetHeader() throws IOException {
+    void testGetSheetHeaderWithFormula() throws IOException {
         try (Workbook workbook = new XSSFWorkbook()) {
             FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
-            evaluator.evaluateAll();
 
             // First sheet with data for formula reference
             Sheet firstSheet = workbook.createSheet("FirstSheet");
@@ -167,12 +160,18 @@ class ExcelUtilsTest {
             headerRow.createCell(4, CellType.FORMULA)
                 .setCellFormula("FirstSheet!A1 & \" \" & FirstSheet!B1");
 
-            Map<String, Integer> headerMap = ExcelUtils.getSheetHeader(evaluator, secondSheet, 0);
+            Map<String, Integer> headerMap = ExcelUtils.getSheetHeaderWithFormula(secondSheet, evaluator, 0);
 
             assertEquals(3, headerMap.size());
             assertEquals(0, headerMap.get("Email"));
             assertEquals(2, headerMap.get("Address"));
             assertEquals(4, headerMap.get("First Last"));
+        }
+    }
+
+    private Sheet createSheet() throws IOException {
+        try (Workbook wb = WorkbookFactory.create(false)) {
+            return wb.createSheet();
         }
     }
 }

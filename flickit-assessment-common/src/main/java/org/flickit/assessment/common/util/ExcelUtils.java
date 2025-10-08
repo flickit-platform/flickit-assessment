@@ -93,15 +93,15 @@ public class ExcelUtils {
             ));
     }
 
-    public static Map<String, Integer> getSheetHeader(FormulaEvaluator evaluator, Sheet sheet, int rowNum) {
+    public static Map<String, Integer> getSheetHeaderWithFormula(Sheet sheet, FormulaEvaluator evaluator, int rowNum) {
         Row headerRow = sheet.getRow(rowNum);
         int last = headerRow.getLastCellNum();
 
         return IntStream.range(0, last)
             .mapToObj(headerRow::getCell)
-            .filter(cell -> cell != null && cell.getCellType() != CellType.BLANK)
+            .filter(cell -> cell != null && cell.getCellType() != CellType.BLANK  && !getCellStringValue(cell).isBlank())
             .collect(Collectors.toMap(
-                cell -> evaluator.evaluate(cell).getStringValue(),
+                cell -> getCellStringValue(evaluator.evaluateInCell(cell)).trim(),
                 Cell::getColumnIndex
             ));
     }
