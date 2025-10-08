@@ -83,12 +83,12 @@ public class GetKitDetailService implements GetKitDetailUseCase {
             .toList();
 
         var kitDetailAnswerRanges = answerRanges.stream()
-            .map(answerRange -> new KitDetailAnswerRange(answerRange.getId(),
-                answerRange.getTitle(),
-                answerRange.getAnswerOptions().stream()
+            .map(a -> new KitDetailAnswerRange(a.getId(),
+                a.getTitle(),
+                a.getAnswerOptions().stream()
                     .map(KitDetailAnswer::of)
                     .toList(),
-                null
+                a.getTranslations()
                 ))
             .toList();
 

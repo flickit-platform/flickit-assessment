@@ -68,7 +68,7 @@ public interface GetKitDetailUseCase {
     record KitDetailMeasure(long id, String title, int index) {
     }
 
-    record KitDetailAnswerRange(long id, String title,  List<KitDetailAnswer> answers, Map<String, AnswerRangeTranslation> translations) {
+    record KitDetailAnswerRange(long id, String title, List<KitDetailAnswer> answers, Map<KitLanguage, AnswerRangeTranslation> translations) {
     }
 
     record KitDetailAnswer(int index, String title, double value, Map<KitLanguage, AnswerOptionTranslation> translations) {
