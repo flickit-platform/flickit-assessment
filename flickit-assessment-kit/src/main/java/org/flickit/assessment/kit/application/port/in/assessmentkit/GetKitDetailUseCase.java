@@ -68,13 +68,13 @@ public interface GetKitDetailUseCase {
     record KitDetailMeasure(long id, String title, int index) {
     }
 
-    record KitDetailAnswerRange(long id, String title, List<KitDetailAnswer> answers, Map<KitLanguage, AnswerRangeTranslation> translations) {
+    record KitDetailAnswerRange(long id, String title, List<KitDetailAnswerOption> answerOptions, Map<KitLanguage, AnswerRangeTranslation> translations) {
     }
 
-    record KitDetailAnswer(int index, String title, double value, Map<KitLanguage, AnswerOptionTranslation> translations) {
+    record KitDetailAnswerOption(int index, String title, double value, Map<KitLanguage, AnswerOptionTranslation> translations) {
 
-        public static KitDetailAnswer of(AnswerOption answerOption) {
-            return new KitDetailAnswer(answerOption.getIndex(), answerOption.getTitle(), answerOption.getValue(), answerOption.getTranslations());
+        public static KitDetailAnswerOption of(AnswerOption answerOption) {
+            return new KitDetailAnswerOption(answerOption.getIndex(), answerOption.getTitle(), answerOption.getValue(), answerOption.getTranslations());
         }
     }
 }

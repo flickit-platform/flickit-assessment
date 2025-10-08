@@ -113,7 +113,7 @@ class GetKitDetailServiceTest {
         assertNotNull(actual.translations());
 
         var expectedAnswers = expected.getAnswerOptions();
-        var actualAnswers = actual.answers();
+        var actualAnswers = actual.answerOptions();
 
         assertEquals(expectedAnswers.size(), actualAnswers.size());
         for (int i = 0; i < expectedAnswers.size(); i++) {

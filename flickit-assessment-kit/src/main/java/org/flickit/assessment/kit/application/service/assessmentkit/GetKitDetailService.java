@@ -86,7 +86,7 @@ public class GetKitDetailService implements GetKitDetailUseCase {
             .map(a -> new KitDetailAnswerRange(a.getId(),
                 a.getTitle(),
                 a.getAnswerOptions().stream()
-                    .map(KitDetailAnswer::of)
+                    .map(KitDetailAnswerOption::of)
                     .toList(),
                 a.getTranslations()
                 ))
