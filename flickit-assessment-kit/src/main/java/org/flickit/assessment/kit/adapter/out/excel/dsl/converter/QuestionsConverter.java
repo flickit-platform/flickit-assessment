@@ -1,6 +1,7 @@
 package org.flickit.assessment.kit.adapter.out.excel.dsl.converter;
 
 import lombok.experimental.UtilityClass;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.flickit.assessment.kit.application.domain.dsl.*;
@@ -29,10 +30,11 @@ public class QuestionsConverter {
     private static final String MATURITY_LEVEL = "Maturity";
 
     public static List<QuestionDslModel> convert(Sheet sheet,
+                                                 FormulaEvaluator formulaEvaluator,
                                                  Map<String, List<AnswerOptionDslModel>> answerRangeCodeToAnswerOptionsMap,
                                                  Map<String, MaturityLevelDslModel> maturityLevelCodeToMaturityLevelDslMap,
                                                  List<AttributeDslModel> attributeDslModels) {
-        var columnMap = getSheetHeaderWithoutFormula(sheet, HEADER_ROW_INDEX);
+        var columnMap = getSheetHeaderWithFormula(sheet, formulaEvaluator, HEADER_ROW_INDEX);
 
         return IntStream.rangeClosed(HEADER_ROW_INDEX + 1, sheet.getLastRowNum())
             .filter(i -> !isBlankRow(sheet.getRow(i)))
