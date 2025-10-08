@@ -2,7 +2,9 @@ package org.flickit.assessment.kit.application.service.assessmentkit;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.kit.application.domain.Attribute;
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
+import org.flickit.assessment.kit.application.domain.Measure;
 import org.flickit.assessment.kit.application.domain.Questionnaire;
 import org.flickit.assessment.kit.application.domain.Subject;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitDetailUseCase;
@@ -11,12 +13,10 @@ import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadActiveK
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelsPort;
+import org.flickit.assessment.kit.application.port.out.measure.LoadMeasurePort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairesPort;
 import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectsPort;
-import org.flickit.assessment.kit.test.fixture.application.ExpertGroupMother;
-import org.flickit.assessment.kit.test.fixture.application.MaturityLevelMother;
-import org.flickit.assessment.kit.test.fixture.application.QuestionnaireMother;
-import org.flickit.assessment.kit.test.fixture.application.SubjectMother;
+import org.flickit.assessment.kit.test.fixture.application.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -56,8 +56,11 @@ class GetKitDetailServiceTest {
     @Mock
     private LoadActiveKitVersionIdPort loadActiveKitVersionIdPort;
 
+    @Mock
+    private LoadMeasurePort loadMeasurePort;
+
     @Test
-    void testGetKitDetail_WhenKitExist_shouldReturnKitDetails() {
+    void testGetKitDetail_whenKitExist_thenShouldReturnKitDetails() {
         var expertGroup = ExpertGroupMother.createExpertGroup();
         var currentUserId = expertGroup.getOwnerId();
         var kitVersionId = 1L;
@@ -66,8 +69,12 @@ class GetKitDetailServiceTest {
         List<MaturityLevel> maturityLevels = List.of(
             MaturityLevelMother.levelOne(),
             MaturityLevelMother.levelTwo());
-        List<Subject> subjects = List.of(SubjectMother.subjectWithTitle("subject1"));
+        var attribute1 = AttributeMother.attributeWithTitle("attribute1");
+        var attribute2 = AttributeMother.attributeWithTitle("attribute2");
+        List<Attribute> attributes = List.of(attribute2, attribute1);
+        List<Subject> subjects = List.of(SubjectMother.subjectWithAttributes("subject1", attributes));
         List<Questionnaire> questionnaires = List.of(QuestionnaireMother.questionnaireWithTitle("questionnaire1"));
+        List<Measure> measures = List.of(MeasureMother.measureWithTitle("measure1"), MeasureMother.measureWithTitle("measure2"));
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
@@ -75,6 +82,7 @@ class GetKitDetailServiceTest {
         when(loadSubjectsPort.loadByKitVersionId(kitVersionId)).thenReturn(subjects);
         when(loadQuestionnairesPort.loadByKitId(param.getKitId())).thenReturn(questionnaires);
         when(loadActiveKitVersionIdPort.loadKitVersionId(param.getKitId())).thenReturn(kitVersionId);
+        when(loadMeasurePort.loadAll(kitVersionId)).thenReturn(measures);
 
         Result result = service.getKitDetail(param);
 
@@ -83,10 +91,15 @@ class GetKitDetailServiceTest {
             result.maturityLevels().get(1).competences().size());
         assertEquals(subjects.size(), result.subjects().size());
         assertEquals(questionnaires.size(), result.questionnaires().size());
+        var resultAttributes = result.subjects().getFirst().attributes();
+        assertEquals(2, resultAttributes.size());
+        assertEquals(attribute1.getId(), resultAttributes.getFirst().id());
+        assertEquals(attribute2.getId(), resultAttributes.getLast().id());
+        assertEquals(2, result.measures().size());
     }
 
     @Test
-    void testGetKitDetail_WhenKitDoesNotExist_ThrowsException() {
+    void testGetKitDetail_whenKitDoesNotExist_thenThrowsException() {
         GetKitDetailUseCase.Param param = new GetKitDetailUseCase.Param(12L, UUID.randomUUID());
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId()))
@@ -97,7 +110,7 @@ class GetKitDetailServiceTest {
     }
 
     @Test
-    void testGetKitDetail_WhenUserIsNotMember_ThrowsException() {
+    void testGetKitDetail_whenUserIsNotMember_thenThrowsException() {
         var expertGroup = ExpertGroupMother.createExpertGroup();
         GetKitDetailUseCase.Param param = new GetKitDetailUseCase.Param(12L, UUID.randomUUID());
 

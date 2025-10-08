@@ -8,11 +8,13 @@ import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadActiveK
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelsPort;
+import org.flickit.assessment.kit.application.port.out.measure.LoadMeasurePort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairesPort;
 import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectsPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -32,6 +34,7 @@ public class GetKitDetailService implements GetKitDetailUseCase {
     private final LoadSubjectsPort loadSubjectsPort;
     private final LoadQuestionnairesPort loadQuestionnairesPort;
     private final LoadActiveKitVersionIdPort loadActiveKitVersionIdPort;
+    private final LoadMeasurePort loadMeasurePort;
 
     @Override
     public Result getKitDetail(Param param) {
@@ -43,11 +46,12 @@ public class GetKitDetailService implements GetKitDetailUseCase {
         var maturityLevels = loadMaturityLevelsPort.loadAllByKitVersionId(kitVersionId);
         var subjects = loadSubjectsPort.loadByKitVersionId(kitVersionId);
         var questionnaires = loadQuestionnairesPort.loadByKitId(param.getKitId());
+        var measures = loadMeasurePort.loadAll(kitVersionId);
 
-        return mapToResult(maturityLevels, subjects, questionnaires);
+        return mapToResult(maturityLevels, subjects, questionnaires, measures);
     }
 
-    private Result mapToResult(List<MaturityLevel> maturityLevels, List<Subject> subjects, List<Questionnaire> questionnaires) {
+    private Result mapToResult(List<MaturityLevel> maturityLevels, List<Subject> subjects, List<Questionnaire> questionnaires, List<Measure> measures) {
         var maturityLevelIdMap = maturityLevels.stream()
             .collect(Collectors.toMap(MaturityLevel::getId, Function.identity()));
 
@@ -56,14 +60,26 @@ public class GetKitDetailService implements GetKitDetailUseCase {
             .toList();
 
         var kitDetailSubjects = subjects.stream()
-            .map(s -> new KitDetailSubject(s.getId(), s.getTitle(), s.getIndex()))
+            .map(s -> new KitDetailSubject(
+                s.getId(),
+                s.getTitle(),
+                s.getIndex(),
+                s.getAttributes().stream()
+                    .sorted(Comparator.comparing(Attribute::getIndex))
+                    .map(KitDetailAttribute::of)
+                    .toList()
+            ))
             .toList();
 
         var kitDetailQuestionnaires = questionnaires.stream()
             .map(q -> new KitDetailQuestionnaire(q.getId(), q.getTitle(), q.getIndex()))
             .toList();
 
-        return new Result(kitDetailMaturityLevels, kitDetailSubjects, kitDetailQuestionnaires);
+        var kitDetailMeasures = measures.stream()
+            .map(m -> new KitDetailMeasure(m.getId(), m.getTitle(), m.getIndex()))
+            .toList();
+
+        return new Result(kitDetailMaturityLevels, kitDetailSubjects, kitDetailQuestionnaires, kitDetailMeasures);
     }
 
     private KitDetailMaturityLevel toKitDetailMaturityLevel(MaturityLevel maturityLevel, Map<Long, MaturityLevel> maturityLevelIdMap) {

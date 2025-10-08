@@ -10,6 +10,7 @@ import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpert
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.kitlanguage.LoadKitLanguagesPort;
 import org.flickit.assessment.kit.application.port.out.kittag.LoadKitTagListPort;
+import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +26,7 @@ public class GetKitEditableInfoService implements GetKitEditableInfoUseCase {
     private final CheckExpertGroupAccessPort checkExpertGroupAccessPort;
     private final LoadKitLanguagesPort loadKitLanguagesPort;
     private final LoadKitExpertGroupPort loadKitExpertGroupPort;
+    private final LoadKitVersionPort loadKitVersionPort;
 
     @Override
     public KitEditableInfo getKitEditableInfo(Param param) {
@@ -33,6 +35,9 @@ public class GetKitEditableInfoService implements GetKitEditableInfoUseCase {
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         var assessmentKit = loadAssessmentKitPort.load(param.getKitId());
+        var draftVersionId = loadKitVersionPort.loadKitVersionIdWithUpdatingStatus(param.getKitId())
+            .orElse(null);
+
         var tags = loadKitTagListPort.loadByKitId(param.getKitId());
         var languages = loadKitLanguagesPort.loadByKitId(param.getKitId()).stream()
             .map(this::toLanguage)
@@ -50,6 +55,7 @@ public class GetKitEditableInfoService implements GetKitEditableInfoUseCase {
             assessmentKit.isPrivate(),
             0D,
             assessmentKit.getAbout(),
+            draftVersionId,
             tags,
             expertGroup.getOwnerId().equals(param.getCurrentUserId()),
             assessmentKit.getActiveVersionId() != null,

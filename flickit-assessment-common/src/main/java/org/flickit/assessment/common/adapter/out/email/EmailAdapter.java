@@ -39,7 +39,12 @@ public class EmailAdapter implements SendEmailPort {
         helper.setSubject(subject);
         helper.setText(body, true);
 
-        mailSender.send(message);
+        try {
+            mailSender.send(message);
+        } catch (Exception e) {
+            log.error("Error in sending email to {}", sendTo, e);
+            throw e;
+        }
     }
 
     private String getFrom() {
