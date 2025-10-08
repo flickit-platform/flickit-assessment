@@ -95,6 +95,28 @@ public class AnswerRangePersistenceJpaAdapter implements
     }
 
     @Override
+    public List<AnswerRange> loadAll(long kitVersionId) {
+        var order = AnswerRangeJpaEntity.Fields.lastModificationTime;
+        var sort = Sort.Direction.DESC;
+        var result = repository.findByKitVersionIdAndReusableTrue(kitVersionId, Sort.by(sort, order));
+        List<Long> answerRangeEntityIds = result.stream().map(AnswerRangeJpaEntity::getId).toList();
+        var answerRangeIdToAnswerOptionsMap = answerOptionRepository.findAllByAnswerRangeIdInAndKitVersionId(answerRangeEntityIds, kitVersionId,
+                Sort.by(AnswerOptionJpaEntity.Fields.index)).stream()
+            .collect(groupingBy(AnswerOptionJpaEntity::getAnswerRangeId, toList()));
+
+        return result.stream()
+            .map(entity -> {
+                List<AnswerOption> options = Optional.ofNullable(answerRangeIdToAnswerOptionsMap.get(entity.getId()))
+                    .orElse(Collections.emptyList())
+                    .stream()
+                    .map(AnswerOptionMapper::mapToDomainModel)
+                    .toList();
+                return toDomainModel(entity, options);
+            })
+            .toList();
+    }
+
+    @Override
     public List<AnswerRange> loadAnswerRangesWithNotEnoughOptions(long kitVersionId) {
         var rangeViews = repository.findAllReusableWithOptionsByKitVersionId(kitVersionId);
 
