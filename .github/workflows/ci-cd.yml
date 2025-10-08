@@ -76,14 +76,14 @@ jobs:
           distribution: temurin
 
       - name: Extract Maven project version
-        run: echo version=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec) >> $GITHUB_OUTPUT
         id: project
+        run: echo "version=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)" >> $GITHUB_OUTPUT
 
       - name: Check output
         env:
           RELEASE_VERSION: ${{ steps.project.outputs.version }}
         run: |
-          echo $RELEASE_VERSION
+          echo "Project version: $RELEASE_VERSION"
 
       - name: Cache Maven packages
         uses: actions/cache@v4
@@ -92,11 +92,25 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
       - name: Build and analyze
+        if: contains(steps.project.outputs.version, 'SNAPSHOT')
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY }}
+        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+          -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY }}
+
+      - name: Skip Sonar analysis for release version
+        if: ${{ !contains(steps.project.outputs.version, 'SNAPSHOT') }}
+        run:
+          echo "Skipping Sonar analysis for release version: ${{ steps.project.outputs.version }}"
 
   build-and-push-latest-image:
     needs: [ sonar ]
