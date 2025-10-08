@@ -4,6 +4,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.domain.*;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitDetailUseCase;
+import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitDetailUseCase.KitDetailAnswerRange;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitDetailUseCase.Result;
 import org.flickit.assessment.kit.application.port.out.answerrange.LoadAnswerRangesPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadActiveKitVersionIdPort;
@@ -25,8 +26,7 @@ import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -75,7 +75,8 @@ class GetKitDetailServiceTest {
         List<Subject> subjects = List.of(SubjectMother.subjectWithAttributes("subject1", attributes));
         List<Questionnaire> questionnaires = List.of(QuestionnaireMother.questionnaireWithTitle("questionnaire1"));
         List<Measure> measures = List.of(MeasureMother.measureWithTitle("measure1"), MeasureMother.measureWithTitle("measure2"));
-        var answerRange = AnswerRangeMother.createReusableAnswerRangeWithTwoOptions();
+        List<AnswerRange> answerRanges = List.of(AnswerRangeMother.createReusableAnswerRangeWithTwoOptions(),
+            AnswerRangeMother.createReusableAnswerRangeWithTwoOptions());
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
@@ -84,7 +85,7 @@ class GetKitDetailServiceTest {
         when(loadQuestionnairesPort.loadByKitId(param.getKitId())).thenReturn(questionnaires);
         when(loadActiveKitVersionIdPort.loadKitVersionId(param.getKitId())).thenReturn(kitVersionId);
         when(loadMeasurePort.loadAll(kitVersionId)).thenReturn(measures);
-        when(loadAnswerRangesPort.loadAll(kitVersionId)).thenReturn(List.of(answerRange));
+        when(loadAnswerRangesPort.loadAll(kitVersionId)).thenReturn(answerRanges);
 
         Result result = service.getKitDetail(param);
 
@@ -98,8 +99,29 @@ class GetKitDetailServiceTest {
         assertEquals(attribute1.getId(), resultAttributes.getFirst().id());
         assertEquals(attribute2.getId(), resultAttributes.getLast().id());
         assertEquals(2, result.measures().size());
-        assertEquals(1, result.answerRanges().size());
-        assertEquals(2, result.answerRanges().getFirst().answers().size());
+        assertEquals(2, result.answerRanges().size());
+
+        var actualAnswerRanges = result.answerRanges();
+        for (int i = 0; i < answerRanges.size(); i++) {
+            assertAnswers(answerRanges.get(i), actualAnswerRanges.get(i));
+        }
+    }
+
+    private void assertAnswers(AnswerRange expected, KitDetailAnswerRange actual) {
+        assertEquals(expected.getId(), actual.id());
+        assertEquals(expected.getTitle(), actual.title());
+        assertNotNull(actual.translations());
+
+        var expectedAnswers = expected.getAnswerOptions();
+        var actualAnswers = actual.answers();
+
+        assertEquals(expectedAnswers.size(), actualAnswers.size());
+        for (int i = 0; i < expectedAnswers.size(); i++) {
+            assertEquals(expectedAnswers.get(i).getIndex(), actualAnswers.get(i).index());
+            assertEquals(expectedAnswers.get(i).getTitle(), actualAnswers.get(i).title());
+            assertEquals(expectedAnswers.get(i).getValue(), actualAnswers.get(i).value());
+            assertNotNull(actual.translations());
+        }
     }
 
     @Test
