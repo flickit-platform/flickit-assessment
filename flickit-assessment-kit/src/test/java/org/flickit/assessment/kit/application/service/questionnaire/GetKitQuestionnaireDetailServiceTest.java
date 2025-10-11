@@ -1,5 +1,7 @@
 package org.flickit.assessment.kit.application.service.questionnaire;
 
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.common.application.domain.kit.translation.QuestionnaireTranslation;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.domain.ExpertGroup;
@@ -18,6 +20,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.flickit.assessment.kit.common.ErrorMessageKey.QUESTIONNAIRE_ID_NOT_FOUND;
@@ -64,9 +67,9 @@ class GetKitQuestionnaireDetailServiceTest {
             1L);
 
         var expectedResult = new LoadKitQuestionnaireDetailPort.Result(5,
-            List.of("team"),
             "desc",
-            List.of(question));
+            List.of(question),
+            Map.of(KitLanguage.FA, new QuestionnaireTranslation("persian title", "persian description")));
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(loadActiveKitVersionIdPort.loadKitVersionId(kitId)).thenReturn(kitVersionId);
@@ -79,7 +82,7 @@ class GetKitQuestionnaireDetailServiceTest {
         assertEquals(expectedResult.description(), actualResult.description());
         assertEquals(expectedResult.questionsCount(), actualResult.questionsCount());
         assertEquals(expectedResult.questions(), actualResult.questions());
-        assertEquals(expectedResult.relatedSubjects(), actualResult.relatedSubjects());
+        assertEquals(expectedResult.translations(), actualResult.translations());
     }
 
     @Test

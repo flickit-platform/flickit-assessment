@@ -2,6 +2,8 @@ package org.flickit.assessment.kit.adapter.out.persistence.questionnaire;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.common.application.domain.kit.translation.QuestionnaireTranslation;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.util.JsonUtils;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
@@ -10,8 +12,6 @@ import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaEntity;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaRepository;
 import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
-import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
-import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.flickit.assessment.kit.adapter.out.persistence.question.QuestionMapper;
 import org.flickit.assessment.kit.application.domain.Question;
 import org.flickit.assessment.kit.application.domain.Questionnaire;
@@ -40,7 +40,6 @@ public class QuestionnairePersistenceJpaAdapter implements
     private final QuestionnaireJpaRepository repository;
     private final AssessmentKitJpaRepository assessmentKitRepository;
     private final QuestionJpaRepository questionRepository;
-    private final SubjectJpaRepository subjectRepository;
     private final KitDbSequenceGenerators sequenceGenerators;
 
     @Override
@@ -129,20 +128,15 @@ public class QuestionnairePersistenceJpaAdapter implements
 
         List<QuestionJpaEntity> questionEntities = questionRepository.findAllByQuestionnaireIdAndKitVersionIdOrderByIndex(questionnaireId, kitVersionId, null)
             .getContent();
-        List<SubjectJpaEntity> subjectEntities = subjectRepository.findAllByQuestionnaireIdAndKitVersionId(questionnaireId, kitVersionId);
-
-        List<String> relatedSubjects = subjectEntities.stream()
-            .map(SubjectJpaEntity::getTitle)
-            .toList();
 
         List<Question> questions = questionEntities.stream()
             .map(QuestionMapper::mapToDomainModel)
             .toList();
 
         return new LoadKitQuestionnaireDetailPort.Result(questionEntities.size(),
-            relatedSubjects,
             questionnaireEntity.getDescription(),
-            questions);
+            questions,
+            JsonUtils.fromJsonToMap(questionnaireEntity.getTranslations(), KitLanguage.class, QuestionnaireTranslation.class));
     }
 
     @Override
