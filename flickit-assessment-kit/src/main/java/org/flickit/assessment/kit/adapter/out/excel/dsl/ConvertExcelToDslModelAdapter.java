@@ -33,6 +33,7 @@ public class ConvertExcelToDslModelAdapter implements ConvertExcelToDslModelPort
         try (InputStream is = excelFile.getInputStream();
              Workbook workbook = WorkbookFactory.create(is)) {
 
+            var formulaEvaluator = workbook.getCreationHelper().createFormulaEvaluator();
             var qualityAttributes = workbook.getSheet(SHEET_QUALITY_ATTRIBUTES);
 
             var questionnaires = QuestionnairesConverter.convert(workbook.getSheet(SHEET_QUESTIONNAIRES));
@@ -47,6 +48,7 @@ public class ConvertExcelToDslModelAdapter implements ConvertExcelToDslModelPort
                 .collect(Collectors.toMap(AnswerRangeDslModel::getCode, AnswerRangeDslModel::getAnswerOptions));
             var questions = QuestionsConverter.convert(
                 workbook.getSheet(SHEET_QUESTIONS),
+                formulaEvaluator,
                 answerRangeCodeToAnswerOptionsMap,
                 maturityLevelsCodeToMaturityLevelDslModel,
                 attributes

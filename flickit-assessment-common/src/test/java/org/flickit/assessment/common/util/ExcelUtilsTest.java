@@ -1,6 +1,7 @@
 package org.flickit.assessment.common.util;
 
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -9,12 +10,6 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ExcelUtilsTest {
-
-    private Sheet createSheet() throws IOException {
-        try (Workbook wb = WorkbookFactory.create(false)) {
-            return wb.createSheet();
-        }
-    }
 
     @Test
     void testExcelUtils_IsBlankRow() throws IOException {
@@ -141,6 +136,43 @@ class ExcelUtilsTest {
         assertEquals(1, headerMap.get("Age"));
         assertEquals(2, headerMap.get("Email"));
         assertEquals(4, headerMap.get("Address"));
+    }
+
+    @Test
+    void testGetSheetHeaderWithFormula() throws IOException {
+        try (Workbook workbook = new XSSFWorkbook()) {
+            FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
+
+            // First sheet with data for formula reference
+            Sheet firstSheet = workbook.createSheet("FirstSheet");
+            Row dataRow = firstSheet.createRow(0);
+            dataRow.createCell(0).setCellValue("First");
+            dataRow.createCell(1).setCellValue("Last");
+
+            // Second sheet with header calculated from the first sheet
+            Sheet secondSheet = workbook.createSheet("SecondSheet");
+            Row headerRow = secondSheet.createRow(0);
+
+            headerRow.createCell(0, CellType.STRING).setCellValue("Email");
+            headerRow.createCell(1);
+            headerRow.createCell(2, CellType.STRING).setCellValue("Address");
+            headerRow.createCell(3, CellType.BLANK);
+            headerRow.createCell(4, CellType.FORMULA)
+                .setCellFormula("FirstSheet!A1 & \" \" & FirstSheet!B1");
+
+            Map<String, Integer> headerMap = ExcelUtils.getSheetHeaderWithFormula(secondSheet, evaluator, 0);
+
+            assertEquals(3, headerMap.size());
+            assertEquals(0, headerMap.get("Email"));
+            assertEquals(2, headerMap.get("Address"));
+            assertEquals(4, headerMap.get("First Last"));
+        }
+    }
+
+    private Sheet createSheet() throws IOException {
+        try (Workbook wb = WorkbookFactory.create(false)) {
+            return wb.createSheet();
+        }
     }
 }
 

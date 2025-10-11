@@ -1,10 +1,7 @@
 package org.flickit.assessment.common.util;
 
 import lombok.experimental.UtilityClass;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.*;
 
 import java.util.Map;
 import java.util.Optional;
@@ -92,6 +89,19 @@ public class ExcelUtils {
             .filter(cellIsValid)
             .collect(Collectors.toMap(
                 cell -> getCellStringValue(cell).trim(),
+                Cell::getColumnIndex
+            ));
+    }
+
+    public static Map<String, Integer> getSheetHeaderWithFormula(Sheet sheet, FormulaEvaluator evaluator, int rowNum) {
+        Row headerRow = sheet.getRow(rowNum);
+        int last = headerRow.getLastCellNum();
+
+        return IntStream.range(0, last)
+            .mapToObj(headerRow::getCell)
+            .filter(cell -> cell != null && cell.getCellType() != CellType.BLANK  && !getCellStringValue(cell).isBlank())
+            .collect(Collectors.toMap(
+                cell -> getCellStringValue(evaluator.evaluateInCell(cell)).trim(),
                 Cell::getColumnIndex
             ));
     }

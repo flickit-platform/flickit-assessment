@@ -1,6 +1,7 @@
 package org.flickit.assessment.kit.adapter.out.excel.dsl.converter;
 
 import lombok.experimental.UtilityClass;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.flickit.assessment.kit.application.domain.dsl.*;
@@ -11,6 +12,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.common.util.ExcelUtils.*;
 
 @UtilityClass
@@ -28,43 +30,24 @@ public class QuestionsConverter {
     private static final String MATURITY_LEVEL = "Maturity";
 
     public static List<QuestionDslModel> convert(Sheet sheet,
+                                                 FormulaEvaluator formulaEvaluator,
                                                  Map<String, List<AnswerOptionDslModel>> answerRangeCodeToAnswerOptionsMap,
                                                  Map<String, MaturityLevelDslModel> maturityLevelCodeToMaturityLevelDslMap,
                                                  List<AttributeDslModel> attributeDslModels) {
-        var columnMap = getSheetHeaderWithoutFormula(sheet, HEADER_ROW_INDEX);
+        var columnMap = getSheetHeaderWithFormula(sheet, formulaEvaluator, HEADER_ROW_INDEX);
 
         return IntStream.rangeClosed(HEADER_ROW_INDEX + 1, sheet.getLastRowNum())
             .filter(i -> !isBlankRow(sheet.getRow(i)))
             .mapToObj(i -> {
                 Row row = sheet.getRow(i);
-                List<QuestionImpactDslModel> questionImpacts = new ArrayList<>();
                 var answerRangeCode = getCellString(row, columnMap.get(ANSWER_RANGE));
-                var optionsIndexToValueMap = answerRangeCodeToAnswerOptionsMap.get(answerRangeCode)
-                    .stream()
-                    .collect(Collectors.toMap(AnswerOptionDslModel::getIndex, AnswerOptionDslModel::getValue));
+                var answerOptions = answerRangeCodeToAnswerOptionsMap.get(answerRangeCode);
 
-                int attributesStartColumn = columnMap.get(MATURITY_LEVEL) + 1;
-                for (int j = 0; j < attributeDslModels.size(); j++) {
-                    Integer weight = getCellInteger(row, attributesStartColumn + j);
-                    QuestionImpactDslModel questionImpact;
-                    if (weight != null) {
-                        MaturityLevelDslModel maturityLevelDslModel = maturityLevelCodeToMaturityLevelDslMap.get(getCellString(row, columnMap.get(MATURITY_LEVEL)));
-                        var maturityLevel = MaturityLevelDslModel.builder()
-                            .title(maturityLevelDslModel.getTitle())
-                            .code(maturityLevelDslModel.getCode()).build();
-
-                        String attributeCode = attributeDslModels.get(j).getCode();
-                        questionImpact = QuestionImpactDslModel.builder()
-                            .attributeCode(attributeCode)
-                            .maturityLevel(maturityLevel)
-                            .weight(weight)
-                            .optionsIndextoValueMap(optionsIndexToValueMap)
-                            .build();
-
-                        if (questionImpact != null)
-                            questionImpacts.add(questionImpact);
-                    }
-                }
+                List<QuestionImpactDslModel> questionImpacts = createImpacts(row,
+                        columnMap,
+                        answerOptions,
+                        attributeDslModels,
+                        maturityLevelCodeToMaturityLevelDslMap.get(getCellString(row, columnMap.get(MATURITY_LEVEL))));
 
                 return QuestionDslModel.builder()
                     .title(getCellString(row, columnMap.get(TITLE)))
@@ -79,5 +62,37 @@ public class QuestionsConverter {
                     .build();
             })
             .collect(Collectors.toList());
+    }
+
+    List<QuestionImpactDslModel> createImpacts(Row row,
+                                               Map<String, Integer> columnMap,
+                                               List<AnswerOptionDslModel> answerOptions,
+                                               List<AttributeDslModel> attributeDslModels,
+                                               MaturityLevelDslModel maturityLevelDslModel) {
+        var optionsIndexToValueMap = answerOptions.stream()
+                .collect(toMap(AnswerOptionDslModel::getIndex, AnswerOptionDslModel::getValue));
+
+        List<QuestionImpactDslModel> questionImpacts = new ArrayList<>();
+
+        for (AttributeDslModel attribute : attributeDslModels) {
+            String attributeCode = attribute.getCode();
+            int attributeColumn = columnMap.get(attributeCode);
+            Integer weight = getCellInteger(row, attributeColumn);
+            if (weight != null) {
+                var maturityLevel = MaturityLevelDslModel.builder()
+                        .title(maturityLevelDslModel.getTitle())
+                        .code(maturityLevelDslModel.getCode()).build();
+
+                QuestionImpactDslModel questionImpact = QuestionImpactDslModel.builder()
+                        .attributeCode(attributeCode)
+                        .maturityLevel(maturityLevel)
+                        .weight(weight)
+                        .optionsIndextoValueMap(optionsIndexToValueMap)
+                        .build();
+
+                questionImpacts.add(questionImpact);
+            }
+        }
+        return questionImpacts;
     }
 }

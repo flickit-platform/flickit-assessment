@@ -50,8 +50,9 @@ class QuestionsConverterTest {
         answerRangeCodeToAnswerOptionsMap.put("UsageRange", List.of(option1, option2, option3));
         answerRangeCodeToAnswerOptionsMap.put("YesNo", List.of(option4, option5));
 
-        var questionsSheet = createWorkbook().getSheet("Questions");
-        var questions = QuestionsConverter.convert(questionsSheet, answerRangeCodeToAnswerOptionsMap, maturityLevelCodeToMaturityLevelDslMap, attributes);
+        Workbook workbook = createWorkbook();
+        var questionsSheet = workbook.getSheet("Questions");
+        var questions = QuestionsConverter.convert(questionsSheet, workbook.getCreationHelper().createFormulaEvaluator(), answerRangeCodeToAnswerOptionsMap, maturityLevelCodeToMaturityLevelDslMap, attributes);
 
         assertEquals(5, questions.size());
         //Assert Question 1
