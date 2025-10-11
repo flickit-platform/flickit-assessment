@@ -34,11 +34,11 @@ public class AssessmentInvitePersistenceJpaAdapter implements
 
     @Override
     public PaginatedResponse<AssessmentInvite> loadByAssessmentId(UUID assessmentId, int size, int page) {
-        var order = AssessmentInviteeJpaEntity.Fields.creationTime;
-        var sort = Sort.Direction.DESC;
+        var sort = AssessmentInviteeJpaEntity.Fields.creationTime;
+        var order = Sort.Direction.DESC;
 
         var pageResult = repository.findByAssessmentId(assessmentId,
-            PageRequest.of(page, size, sort, order));
+            PageRequest.of(page, size, order, sort));
 
         var items = pageResult.getContent().stream()
             .map(AssessmentInviteMapper::mapToDomainModel)
@@ -48,8 +48,8 @@ public class AssessmentInvitePersistenceJpaAdapter implements
             items,
             pageResult.getNumber(),
             pageResult.getSize(),
-            order,
-            sort.name().toLowerCase(),
+            sort,
+            order.name().toLowerCase(),
             (int) pageResult.getTotalElements());
     }
 

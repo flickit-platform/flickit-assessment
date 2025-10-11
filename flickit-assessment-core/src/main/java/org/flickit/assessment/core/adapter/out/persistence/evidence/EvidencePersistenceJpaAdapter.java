@@ -84,9 +84,9 @@ public class EvidencePersistenceJpaAdapter implements
         if (!assessmentRepository.existsByIdAndDeletedFalse(assessmentId))
             throw new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND);
 
-        var order = EvidenceJpaEntity.Fields.lastModificationTime;
-        var sort = Sort.Direction.DESC;
-        var pageResult = repository.findByQuestionIdAndAssessmentId(questionId, assessmentId, hasType, PageRequest.of(page, size, sort, order));
+        var sort = EvidenceJpaEntity.Fields.lastModificationTime;
+        var order = Sort.Direction.DESC;
+        var pageResult = repository.findByQuestionIdAndAssessmentId(questionId, assessmentId, hasType, PageRequest.of(page, size, order, sort));
         var userIds = pageResult.getContent().stream()
             .map(EvidenceWithAttachmentsCountView::getCreatedBy)
             .toList();
@@ -99,8 +99,8 @@ public class EvidencePersistenceJpaAdapter implements
             items,
             pageResult.getNumber(),
             pageResult.getSize(),
-            order,
-            sort.name().toLowerCase(),
+            sort,
+            order.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );
     }
