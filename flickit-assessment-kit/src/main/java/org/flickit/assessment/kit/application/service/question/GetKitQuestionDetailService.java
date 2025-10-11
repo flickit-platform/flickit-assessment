@@ -2,13 +2,16 @@ package org.flickit.assessment.kit.application.service.question;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.domain.*;
 import org.flickit.assessment.kit.application.port.in.question.GetKitQuestionDetailUseCase;
+import org.flickit.assessment.kit.application.port.out.answerrange.LoadAnswerRangePort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadActiveKitVersionIdPort;
 import org.flickit.assessment.kit.application.port.out.attribute.LoadAttributesPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelsPort;
+import org.flickit.assessment.kit.application.port.out.measure.LoadMeasurePort;
 import org.flickit.assessment.kit.application.port.out.question.LoadQuestionPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +22,7 @@ import java.util.Map;
 import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.MEASURE_ID_NOT_FOUND;
 
 
 @Service
@@ -32,6 +36,8 @@ public class GetKitQuestionDetailService implements GetKitQuestionDetailUseCase 
     private final LoadQuestionPort loadQuestionPort;
     private final LoadMaturityLevelsPort loadMaturityLevelsPort;
     private final LoadActiveKitVersionIdPort loadActiveKitVersionIdPort;
+    private final LoadAnswerRangePort loadAnswerRangePort;
+    private final LoadMeasurePort loadMeasurePort;
 
     @Override
     public Result getKitQuestionDetail(Param param) {
@@ -52,7 +58,10 @@ public class GetKitQuestionDetailService implements GetKitQuestionDetailUseCase 
 
         List<Impact> attributeImpacts = loadAttributeImpacts(kitVersionId, question, maturityLevelsMap);
 
-        return new Result(question.getHint(), options, attributeImpacts);
+        var answerRange = loadAnswerRangePort.load(question.getAnswerRangeId(), kitVersionId);
+        var measure = loadMeasurePort.load(question.getMeasureId(), kitVersionId)
+            .orElseThrow(() -> new ResourceNotFoundException(MEASURE_ID_NOT_FOUND)); //Can't happen
+        return new Result(question.getHint(), options, attributeImpacts, QuestionDetailAnswerRange.of(answerRange), QuestionDetailMeasure.of(measure), question.getTranslations());
     }
 
     private List<Impact> loadAttributeImpacts(long kitVersionId, Question question, Map<Long, MaturityLevel> maturityLevelsMap) {
