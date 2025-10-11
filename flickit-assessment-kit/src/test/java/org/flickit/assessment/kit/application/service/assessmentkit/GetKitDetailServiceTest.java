@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatList;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.*;
@@ -95,6 +94,14 @@ class GetKitDetailServiceTest {
                 assertEquals(expected.title(), actual.getTitle());
                 assertEquals(expected.description(), actual.getDescription());
                 assertEquals(expected.competences().size(), actual.getCompetences().size());
+                assertEquals(expected.translations(), actual.getTranslations());
+            });
+        assertThat(subjects)
+            .zipSatisfy(result.subjects(), (actual, expected) -> {
+                assertEquals(expected.id(), actual.getId());
+                assertEquals(expected.title(), actual.getTitle());
+                assertEquals(expected.index(), actual.getIndex());
+                assertEquals(expected.attributes().size(), actual.getAttributes().size());
                 assertEquals(expected.translations(), actual.getTranslations());
             });
         assertEquals(subjects.size(), result.subjects().size());

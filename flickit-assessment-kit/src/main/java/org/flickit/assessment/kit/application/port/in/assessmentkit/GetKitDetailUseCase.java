@@ -6,6 +6,7 @@ import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.application.domain.kit.translation.MaturityLevelTranslation;
+import org.flickit.assessment.common.application.domain.kit.translation.SubjectTranslation;
 import org.flickit.assessment.kit.application.domain.Attribute;
 
 import java.util.List;
@@ -54,7 +55,7 @@ public interface GetKitDetailUseCase {
     record Competences(String title, int value, long maturityLevelId) {
     }
 
-    record KitDetailSubject(long id, String title, int index, List<KitDetailAttribute> attributes) {
+    record KitDetailSubject(long id, String title, int index, List<KitDetailAttribute> attributes, Map<KitLanguage, SubjectTranslation> translations) {
     }
 
     record KitDetailAttribute(long id, String title, int index) {

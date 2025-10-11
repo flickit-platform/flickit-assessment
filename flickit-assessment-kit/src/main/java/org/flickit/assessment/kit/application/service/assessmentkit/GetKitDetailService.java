@@ -67,7 +67,8 @@ public class GetKitDetailService implements GetKitDetailUseCase {
                 s.getAttributes().stream()
                     .sorted(Comparator.comparing(Attribute::getIndex))
                     .map(KitDetailAttribute::of)
-                    .toList()
+                    .toList(),
+                s.getTranslations()
             ))
             .toList();
 
