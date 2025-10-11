@@ -33,7 +33,6 @@ public class GetKitQuestionnaireDetailService implements GetKitQuestionnaireDeta
         var kitQuestionnaireDetail = loadKitQuestionnaireDetailPort.loadKitQuestionnaireDetail(param.getQuestionnaireId(), kitVersionId);
 
         return new Result(kitQuestionnaireDetail.questionsCount(),
-            kitQuestionnaireDetail.relatedSubjects(),
             kitQuestionnaireDetail.description(),
             kitQuestionnaireDetail.questions());
     }

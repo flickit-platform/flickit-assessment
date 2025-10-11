@@ -79,7 +79,6 @@ class GetKitQuestionnaireDetailServiceTest {
         assertEquals(expectedResult.description(), actualResult.description());
         assertEquals(expectedResult.questionsCount(), actualResult.questionsCount());
         assertEquals(expectedResult.questions(), actualResult.questions());
-        assertEquals(expectedResult.relatedSubjects(), actualResult.relatedSubjects());
     }
 
     @Test

@@ -37,5 +37,5 @@ public interface GetKitQuestionnaireDetailUseCase {
         }
     }
 
-    record Result(int questionsCount, List<String> relatedSubjects, String description, List<Question> questions) {}
+    record Result(int questionsCount, String description, List<Question> questions) {}
 }

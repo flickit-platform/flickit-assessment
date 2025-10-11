@@ -13,7 +13,6 @@ public record GetKitQuestionnaireDetailResponseDto(
         long id,
         String title,
         int index,
-        boolean mayNotBeApplicable,
         boolean advisable
     ) {}
 }
