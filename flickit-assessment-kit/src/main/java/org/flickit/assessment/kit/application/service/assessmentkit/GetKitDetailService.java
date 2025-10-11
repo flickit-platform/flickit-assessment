@@ -88,7 +88,7 @@ public class GetKitDetailService implements GetKitDetailUseCase {
             .sorted(comparingLong(MaturityLevelCompetence::getValue)) // sort by value
             .map(c -> {
                 long id = c.getEffectiveLevelId();
-                return new Competences(maturityLevelIdMap.get(id).getTitle(), c.getValue(), id);
+                return new Competences(maturityLevelIdMap.get(id).getTitle(), c.getValue(), id, maturityLevelIdMap.get(id).getTranslations());
             })
             .toList();
         return new KitDetailMaturityLevel(maturityLevel.getId(),
