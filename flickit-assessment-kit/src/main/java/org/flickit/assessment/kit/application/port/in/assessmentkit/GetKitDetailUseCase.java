@@ -55,8 +55,7 @@ public interface GetKitDetailUseCase {
                                   Map<KitLanguage, MaturityLevelTranslation> translations) {
     }
 
-    record Competences(String title, int value, long maturityLevelId,
-                       Map<KitLanguage, MaturityLevelTranslation> translations) {
+    record Competences(String title, int value, long maturityLevelId) {
     }
 
     record KitDetailSubject(long id, String title, int index, List<KitDetailAttribute> attributes,
