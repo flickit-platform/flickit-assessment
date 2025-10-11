@@ -4,9 +4,12 @@ import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.common.application.domain.kit.translation.QuestionnaireTranslation;
 import org.flickit.assessment.kit.application.domain.Question;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
@@ -37,5 +40,6 @@ public interface GetKitQuestionnaireDetailUseCase {
         }
     }
 
-    record Result(int questionsCount, String description, List<Question> questions) {}
+    record Result(int questionsCount, String description, List<Question> questions,
+                  Map<KitLanguage, QuestionnaireTranslation> translations) {}
 }

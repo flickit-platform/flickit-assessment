@@ -34,6 +34,7 @@ public class GetKitQuestionnaireDetailService implements GetKitQuestionnaireDeta
 
         return new Result(kitQuestionnaireDetail.questionsCount(),
             kitQuestionnaireDetail.description(),
-            kitQuestionnaireDetail.questions());
+            kitQuestionnaireDetail.questions(),
+            kitQuestionnaireDetail.translations());
     }
 }
