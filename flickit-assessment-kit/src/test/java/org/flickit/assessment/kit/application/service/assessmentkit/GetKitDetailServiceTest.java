@@ -87,16 +87,14 @@ class GetKitDetailServiceTest {
 
         Result result = service.getKitDetail(param);
 
-        assertEquals(maturityLevels.size(), result.maturityLevels().size());
         assertEquals(maturityLevels.get(1).getCompetences().size(),
             result.maturityLevels().get(1).competences().size());
-        assertNotNull(result.maturityLevels().getFirst().translations());
-        assertNull(result.maturityLevels().getLast().translations());
         assertThat(maturityLevels)
             .zipSatisfy(result.maturityLevels(), (actual, expected) -> {
                 assertEquals(expected.id(), actual.getId());
                 assertEquals(expected.title(), actual.getTitle());
                 assertEquals(expected.description(), actual.getDescription());
+                assertEquals(expected.competences().size(), actual.getCompetences().size());
                 assertEquals(expected.translations(), actual.getTranslations());
             });
         assertEquals(subjects.size(), result.subjects().size());
