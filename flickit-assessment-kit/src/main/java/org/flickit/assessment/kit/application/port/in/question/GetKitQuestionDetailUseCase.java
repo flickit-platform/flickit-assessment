@@ -6,6 +6,9 @@ import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.application.domain.kit.translation.AnswerOptionTranslation;
+import org.flickit.assessment.common.application.domain.kit.translation.QuestionTranslation;
+import org.flickit.assessment.kit.application.domain.AnswerRange;
+import org.flickit.assessment.kit.application.domain.Measure;
 
 import java.util.List;
 import java.util.Map;
@@ -40,7 +43,8 @@ public interface GetKitQuestionDetailUseCase {
         }
     }
 
-    record Result(String hint, List<Option> options, List<Impact> attributeImpacts) {
+    record Result(String hint, List<Option> options, List<Impact> attributeImpacts, QuestionDetailAnswerRange answerRange,
+                  QuestionDetailMeasure measure, Map<KitLanguage, QuestionTranslation> translations) {
     }
 
     record Option(int index, String title, double value, Map<KitLanguage, AnswerOptionTranslation> translations) {
@@ -51,6 +55,20 @@ public interface GetKitQuestionDetailUseCase {
 
     record AffectedLevel(MaturityLevel maturityLevel, int weight) {
         public record MaturityLevel(long id, int index, String title) {
+        }
+    }
+
+    record QuestionDetailAnswerRange(long id, String title) {
+
+        public static QuestionDetailAnswerRange of(AnswerRange answerRange) {
+            return new QuestionDetailAnswerRange(answerRange.getId(), answerRange.getTitle());
+        }
+    }
+
+    record QuestionDetailMeasure(long id, String title) {
+
+        public static QuestionDetailMeasure of(Measure measure) {
+            return new QuestionDetailMeasure(measure.getId(), measure.getTitle());
         }
     }
 }
