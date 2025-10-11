@@ -4,9 +4,12 @@ import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.common.application.domain.kit.translation.MaturityLevelTranslation;
 import org.flickit.assessment.kit.application.domain.Attribute;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
@@ -40,7 +43,7 @@ public interface GetKitDetailUseCase {
         List<KitDetailMeasure> measures) {
     }
 
-    record KitDetailMaturityLevel(long id, String title, int index, List<Competences> competences) {
+    record KitDetailMaturityLevel(long id, String title, int index, List<Competences> competences, Map<KitLanguage, MaturityLevelTranslation> translations) {
     }
 
     record Competences(String title, int value, long maturityLevelId) {

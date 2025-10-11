@@ -93,6 +93,7 @@ public class GetKitDetailService implements GetKitDetailUseCase {
         return new KitDetailMaturityLevel(maturityLevel.getId(),
             maturityLevel.getTitle(),
             maturityLevel.getIndex(),
-            competences);
+            competences,
+            maturityLevel.getTranslations());
     }
 }

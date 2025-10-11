@@ -28,8 +28,7 @@ import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -67,7 +66,7 @@ class GetKitDetailServiceTest {
         GetKitDetailUseCase.Param param = new GetKitDetailUseCase.Param(12L, currentUserId);
 
         List<MaturityLevel> maturityLevels = List.of(
-            MaturityLevelMother.levelOne(),
+            MaturityLevelMother.levelOneWithTranslations(),
             MaturityLevelMother.levelTwo());
         var attribute1 = AttributeMother.attributeWithTitle("attribute1");
         var attribute2 = AttributeMother.attributeWithTitle("attribute2");
@@ -89,6 +88,8 @@ class GetKitDetailServiceTest {
         assertEquals(maturityLevels.size(), result.maturityLevels().size());
         assertEquals(maturityLevels.get(1).getCompetences().size(),
             result.maturityLevels().get(1).competences().size());
+        assertNotNull(result.maturityLevels().getFirst().translations());
+        assertNull(result.maturityLevels().getLast().translations());
         assertEquals(subjects.size(), result.subjects().size());
         assertEquals(questionnaires.size(), result.questionnaires().size());
         var resultAttributes = result.subjects().getFirst().attributes();
