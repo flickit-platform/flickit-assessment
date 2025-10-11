@@ -104,8 +104,14 @@ class GetKitQuestionDetailServiceTest {
         assertThat(idListCaptor.getValue()).containsExactlyInAnyOrderElementsOf(List.of(attr1.getId(), attr2.getId()));
 
         assertEquals(kitVersionId, kitVersionIdCaptor.getValue());
+        assertThat(answerOptions)
+            .zipSatisfy(result.options(), (expected, actual) -> {
+                assertEquals(expected.getIndex(), actual.index());
+                assertEquals(expected.getTitle(), actual.title());
+                assertEquals(expected.getValue(), actual.value());
+                assertEquals(expected.getTranslations(), actual.translations());
 
-        assertEquals(answerOptions.size(), result.options().size());
+            });
         assertEquals(2, result.attributeImpacts().size());
 
         result.attributeImpacts().forEach(im -> {

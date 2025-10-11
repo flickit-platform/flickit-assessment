@@ -46,7 +46,7 @@ public class GetKitQuestionDetailService implements GetKitQuestionDetailUseCase 
         var maturityLevelsMap = loadMaturityLevelsPort.loadAllByKitVersionId(kitVersionId).stream()
             .collect(toMap(MaturityLevel::getId, e -> e));
         var options = question.getOptions().stream()
-            .map(opt -> new Option(opt.getIndex(), opt.getTitle()))
+            .map(opt -> new Option(opt.getIndex(), opt.getTitle(), opt.getValue(), opt.getTranslations()))
             .sorted(comparingInt(Option::index))
             .toList();
 

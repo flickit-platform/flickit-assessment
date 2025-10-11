@@ -4,6 +4,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.common.application.domain.kit.translation.AnswerOptionTranslation;
 
 import java.util.List;
 import java.util.Map;
@@ -41,7 +43,7 @@ public interface GetKitQuestionDetailUseCase {
     record Result(String hint, List<Option> options, List<Impact> attributeImpacts) {
     }
 
-    record Option(int index, String title) {
+    record Option(int index, String title, double value, Map<KitLanguage, AnswerOptionTranslation> translations) {
     }
 
     record Impact(long id, String title, List<AffectedLevel> affectedLevels) {
