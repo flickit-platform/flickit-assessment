@@ -43,7 +43,12 @@ public interface GetKitDetailUseCase {
         List<KitDetailMeasure> measures) {
     }
 
-    record KitDetailMaturityLevel(long id, String title, int index, List<Competences> competences, Map<KitLanguage, MaturityLevelTranslation> translations) {
+    record KitDetailMaturityLevel(long id,
+                                  String title,
+                                  int index,
+                                  String description,
+                                  List<Competences> competences,
+                                  Map<KitLanguage, MaturityLevelTranslation> translations) {
     }
 
     record Competences(String title, int value, long maturityLevelId) {

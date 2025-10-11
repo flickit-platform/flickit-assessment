@@ -26,6 +26,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatList;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.*;
@@ -90,6 +92,13 @@ class GetKitDetailServiceTest {
             result.maturityLevels().get(1).competences().size());
         assertNotNull(result.maturityLevels().getFirst().translations());
         assertNull(result.maturityLevels().getLast().translations());
+        assertThat(maturityLevels)
+            .zipSatisfy(result.maturityLevels(), (actual, expected) -> {
+                assertEquals(expected.id(), actual.getId());
+                assertEquals(expected.title(), actual.getTitle());
+                assertEquals(expected.description(), actual.getDescription());
+                assertEquals(expected.translations(), actual.getTranslations());
+            });
         assertEquals(subjects.size(), result.subjects().size());
         assertEquals(questionnaires.size(), result.questionnaires().size());
         var resultAttributes = result.subjects().getFirst().attributes();
