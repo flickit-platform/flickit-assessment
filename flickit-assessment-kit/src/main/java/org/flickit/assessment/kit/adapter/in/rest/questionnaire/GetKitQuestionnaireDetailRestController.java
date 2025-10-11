@@ -43,8 +43,8 @@ public class GetKitQuestionnaireDetailRestController {
             .toList();
 
         return new GetKitQuestionnaireDetailResponseDto(result.questionsCount(),
-            result.relatedSubjects(),
             result.description(),
-            questions);
+            questions,
+            result.translations());
     }
 }
