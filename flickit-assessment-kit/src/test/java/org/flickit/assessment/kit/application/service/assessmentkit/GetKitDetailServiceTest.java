@@ -67,7 +67,7 @@ class GetKitDetailServiceTest {
         GetKitDetailUseCase.Param param = new GetKitDetailUseCase.Param(12L, currentUserId);
 
         List<MaturityLevel> maturityLevels = List.of(
-            MaturityLevelMother.levelOneWithTranslations(),
+            MaturityLevelMother.levelOne(),
             MaturityLevelMother.levelTwo());
         var attribute1 = AttributeMother.attributeWithTitle("attribute1");
         var attribute2 = AttributeMother.attributeWithTitle("attribute2");

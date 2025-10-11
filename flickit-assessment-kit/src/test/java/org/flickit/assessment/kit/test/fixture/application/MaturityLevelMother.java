@@ -32,18 +32,6 @@ public class MaturityLevelMother {
         return List.of(levelOne(), levelTwo(), levelThree(), levelFour(), levelFive());
     }
 
-    public static MaturityLevel levelOneWithTranslations() {
-        return new MaturityLevel(
-            LEVEL_ONE_ID,
-            LEVEL_ONE_CODE,
-            LEVEL_ONE_CODE,
-            1,
-            LEVEL_ONE_CODE,
-            1,
-            Map.of(KitLanguage.FA, new MaturityLevelTranslation("title", "description")),
-            List.of());
-    }
-
     public static MaturityLevel levelOne() {
         return new MaturityLevel(
             LEVEL_ONE_ID,
@@ -52,7 +40,7 @@ public class MaturityLevelMother {
             1,
             LEVEL_ONE_CODE,
             1,
-            null,
+            Map.of(KitLanguage.FA, new MaturityLevelTranslation("title", "description")),
             List.of());
     }
 
