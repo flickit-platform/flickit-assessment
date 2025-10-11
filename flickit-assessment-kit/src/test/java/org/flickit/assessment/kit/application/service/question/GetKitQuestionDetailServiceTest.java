@@ -3,15 +3,15 @@ package org.flickit.assessment.kit.application.service.question;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.port.in.question.GetKitQuestionDetailUseCase.Param;
+import org.flickit.assessment.kit.application.port.out.answerrange.LoadAnswerRangePort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadActiveKitVersionIdPort;
 import org.flickit.assessment.kit.application.port.out.attribute.LoadAttributesPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelsPort;
+import org.flickit.assessment.kit.application.port.out.measure.LoadMeasurePort;
 import org.flickit.assessment.kit.application.port.out.question.LoadQuestionPort;
-import org.flickit.assessment.kit.test.fixture.application.ExpertGroupMother;
-import org.flickit.assessment.kit.test.fixture.application.MaturityLevelMother;
-import org.flickit.assessment.kit.test.fixture.application.QuestionMother;
+import org.flickit.assessment.kit.test.fixture.application.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -20,6 +20,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -56,6 +57,12 @@ class GetKitQuestionDetailServiceTest {
     @Mock
     private LoadActiveKitVersionIdPort loadActiveKitVersionIdPort;
 
+    @Mock
+    private LoadAnswerRangePort loadAnswerRangePort;
+
+    @Mock
+    private LoadMeasurePort loadMeasurePort;
+
     @Test
     void testGetKitQuestionDetail_whenQuestionExists_thenReturnQuestionDetails() {
         long kitId = 123L;
@@ -69,18 +76,15 @@ class GetKitQuestionDetailServiceTest {
         var answerOption1 = createAnswerOption(question.getAnswerRangeId(), "1st option", 0);
         var answerOption2 = createAnswerOption(question.getAnswerRangeId(), "2nd option", 1);
         var answerOption3 = createAnswerOption(question.getAnswerRangeId(), "3rd option", 2);
-
-        var answerOptions = List.of(
-            answerOption1,
-            answerOption2,
-            answerOption3
-        );
+        var answerOptions = List.of(answerOption1, answerOption2, answerOption3);
 
         var impact1 = createQuestionImpact(attr1.getId(), maturityLevels.get(3).getId(), 1, question.getId());
         var impact2 = createQuestionImpact(attr1.getId(), maturityLevels.get(4).getId(), 1, question.getId());
         var impact3 = createQuestionImpact(attr2.getId(), maturityLevels.get(3).getId(), 3, question.getId());
-
         var impacts = List.of(impact1, impact2, impact3);
+
+        var answerRange = AnswerRangeMother.createReusableAnswerRangeWithTwoOptions();
+        var measure = MeasureMother.measureWithTitle("title");
 
         var param = new Param(kitId, question.getId(), UUID.randomUUID());
 
@@ -93,6 +97,8 @@ class GetKitQuestionDetailServiceTest {
         when(loadAttributesPort.loadAllByIdsAndKitVersionId(anyList(), anyLong())).thenReturn(List.of(attr1, attr2));
         when(loadMaturityLevelsPort.loadAllByKitVersionId(kitVersionId)).thenReturn(maturityLevels);
         when(loadActiveKitVersionIdPort.loadKitVersionId(kitId)).thenReturn(kitVersionId);
+        when(loadAnswerRangePort.load(question.getAnswerRangeId(), kitVersionId)).thenReturn(answerRange);
+        when(loadMeasurePort.load(question.getMeasureId(), kitVersionId)).thenReturn(Optional.of(measure));
 
         var result = service.getKitQuestionDetail(param);
 
@@ -102,7 +108,6 @@ class GetKitQuestionDetailServiceTest {
         verify(loadAttributesPort).loadAllByIdsAndKitVersionId(idListCaptor.capture(), kitVersionIdCaptor.capture());
 
         assertThat(idListCaptor.getValue()).containsExactlyInAnyOrderElementsOf(List.of(attr1.getId(), attr2.getId()));
-
         assertEquals(kitVersionId, kitVersionIdCaptor.getValue());
         assertThat(answerOptions)
             .zipSatisfy(result.options(), (expected, actual) -> {
@@ -113,7 +118,6 @@ class GetKitQuestionDetailServiceTest {
 
             });
         assertEquals(2, result.attributeImpacts().size());
-
         result.attributeImpacts().forEach(im -> {
             if (attr1.getId() == im.id()) {
                 assertEquals(attr1.getId(), im.id());
@@ -133,6 +137,11 @@ class GetKitQuestionDetailServiceTest {
                 assertEquals(impact3.getMaturityLevelId(), attr2AffectedLevel1.maturityLevel().id());
             } else fail();
         });
+        assertEquals(answerRange.getId(), result.answerRange().id());
+        assertEquals(answerRange.getTitle(), result.answerRange().title());
+        assertEquals(measure.getId(), result.measure().id());
+        assertEquals(measure.getTitle(), result.measure().title());
+        assertEquals(question.getTranslations() ,result.translations());
     }
 
     @Test
