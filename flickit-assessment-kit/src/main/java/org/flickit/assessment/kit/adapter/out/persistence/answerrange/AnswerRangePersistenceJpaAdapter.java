@@ -65,9 +65,9 @@ public class AnswerRangePersistenceJpaAdapter implements
 
     @Override
     public PaginatedResponse<AnswerRange> loadByKitVersionId(long kitVersionId, int page, int size) {
-        var order = AnswerRangeJpaEntity.Fields.lastModificationTime;
-        var sort = Sort.Direction.DESC;
-        var pageResult = repository.findByKitVersionIdAndReusableTrue(kitVersionId, PageRequest.of(page, size, sort, order));
+        var sort = AnswerRangeJpaEntity.Fields.lastModificationTime;
+        var order = Sort.Direction.DESC;
+        var pageResult = repository.findByKitVersionIdAndReusableTrue(kitVersionId, PageRequest.of(page, size, order, sort));
         List<Long> answerRangeEntityIds = pageResult.getContent().stream().map(AnswerRangeJpaEntity::getId).toList();
         var answerRangeIdToAnswerOptionsMap = answerOptionRepository.findAllByAnswerRangeIdInAndKitVersionId(answerRangeEntityIds, kitVersionId,
                 Sort.by(AnswerOptionJpaEntity.Fields.index)).stream()
@@ -88,10 +88,32 @@ public class AnswerRangePersistenceJpaAdapter implements
             answerRanges,
             pageResult.getNumber(),
             pageResult.getSize(),
-            order,
-            sort.name().toLowerCase(),
+            sort,
+            order.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );
+    }
+
+    @Override
+    public List<AnswerRange> loadAll(long kitVersionId) {
+        var sort = AnswerRangeJpaEntity.Fields.lastModificationTime;
+        var order = Sort.Direction.DESC;
+        var result = repository.findByKitVersionIdAndReusableTrue(kitVersionId, Sort.by(order, sort));
+        List<Long> answerRangeEntityIds = result.stream().map(AnswerRangeJpaEntity::getId).toList();
+        var answerRangeIdToAnswerOptionsMap = answerOptionRepository.findAllByAnswerRangeIdInAndKitVersionId(answerRangeEntityIds, kitVersionId,
+                Sort.by(AnswerOptionJpaEntity.Fields.index)).stream()
+            .collect(groupingBy(AnswerOptionJpaEntity::getAnswerRangeId, toList()));
+
+        return result.stream()
+            .map(entity -> {
+                List<AnswerOption> options = Optional.ofNullable(answerRangeIdToAnswerOptionsMap.get(entity.getId()))
+                    .orElse(Collections.emptyList())
+                    .stream()
+                    .map(AnswerOptionMapper::mapToDomainModel)
+                    .toList();
+                return toDomainModel(entity, options);
+            })
+            .toList();
     }
 
     @Override

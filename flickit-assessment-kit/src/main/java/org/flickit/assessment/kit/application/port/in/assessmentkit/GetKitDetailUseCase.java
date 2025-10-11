@@ -4,9 +4,14 @@ import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.common.application.domain.kit.translation.AnswerOptionTranslation;
+import org.flickit.assessment.common.application.domain.kit.translation.AnswerRangeTranslation;
+import org.flickit.assessment.kit.application.domain.AnswerOption;
 import org.flickit.assessment.kit.application.domain.Attribute;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
@@ -37,7 +42,8 @@ public interface GetKitDetailUseCase {
         List<KitDetailMaturityLevel> maturityLevels,
         List<KitDetailSubject> subjects,
         List<KitDetailQuestionnaire> questionnaires,
-        List<KitDetailMeasure> measures) {
+        List<KitDetailMeasure> measures,
+        List<KitDetailAnswerRange> answerRanges) {
     }
 
     record KitDetailMaturityLevel(long id, String title, int index, List<Competences> competences) {
@@ -60,5 +66,15 @@ public interface GetKitDetailUseCase {
     }
 
     record KitDetailMeasure(long id, String title, int index) {
+    }
+
+    record KitDetailAnswerRange(long id, String title, List<KitDetailAnswerOption> answerOptions, Map<KitLanguage, AnswerRangeTranslation> translations) {
+    }
+
+    record KitDetailAnswerOption(int index, String title, double value, Map<KitLanguage, AnswerOptionTranslation> translations) {
+
+        public static KitDetailAnswerOption of(AnswerOption answerOption) {
+            return new KitDetailAnswerOption(answerOption.getIndex(), answerOption.getTitle(), answerOption.getValue(), answerOption.getTranslations());
+        }
     }
 }

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.*;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitDetailUseCase;
+import org.flickit.assessment.kit.application.port.out.answerrange.LoadAnswerRangesPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadActiveKitVersionIdPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
@@ -35,6 +36,7 @@ public class GetKitDetailService implements GetKitDetailUseCase {
     private final LoadQuestionnairesPort loadQuestionnairesPort;
     private final LoadActiveKitVersionIdPort loadActiveKitVersionIdPort;
     private final LoadMeasurePort loadMeasurePort;
+    private final LoadAnswerRangesPort loadAnswerRangesPort;
 
     @Override
     public Result getKitDetail(Param param) {
@@ -47,11 +49,12 @@ public class GetKitDetailService implements GetKitDetailUseCase {
         var subjects = loadSubjectsPort.loadByKitVersionId(kitVersionId);
         var questionnaires = loadQuestionnairesPort.loadByKitId(param.getKitId());
         var measures = loadMeasurePort.loadAll(kitVersionId);
+        var answerRanges = loadAnswerRangesPort.loadAll(kitVersionId);
 
-        return mapToResult(maturityLevels, subjects, questionnaires, measures);
+        return mapToResult(maturityLevels, subjects, questionnaires, measures, answerRanges);
     }
 
-    private Result mapToResult(List<MaturityLevel> maturityLevels, List<Subject> subjects, List<Questionnaire> questionnaires, List<Measure> measures) {
+    private Result mapToResult(List<MaturityLevel> maturityLevels, List<Subject> subjects, List<Questionnaire> questionnaires, List<Measure> measures, List<AnswerRange> answerRanges) {
         var maturityLevelIdMap = maturityLevels.stream()
             .collect(Collectors.toMap(MaturityLevel::getId, Function.identity()));
 
@@ -79,7 +82,17 @@ public class GetKitDetailService implements GetKitDetailUseCase {
             .map(m -> new KitDetailMeasure(m.getId(), m.getTitle(), m.getIndex()))
             .toList();
 
-        return new Result(kitDetailMaturityLevels, kitDetailSubjects, kitDetailQuestionnaires, kitDetailMeasures);
+        var kitDetailAnswerRanges = answerRanges.stream()
+            .map(a -> new KitDetailAnswerRange(a.getId(),
+                a.getTitle(),
+                a.getAnswerOptions().stream()
+                    .map(KitDetailAnswerOption::of)
+                    .toList(),
+                a.getTranslations()
+                ))
+            .toList();
+
+        return new Result(kitDetailMaturityLevels, kitDetailSubjects, kitDetailQuestionnaires, kitDetailMeasures, kitDetailAnswerRanges);
     }
 
     private KitDetailMaturityLevel toKitDetailMaturityLevel(MaturityLevel maturityLevel, Map<Long, MaturityLevel> maturityLevelIdMap) {

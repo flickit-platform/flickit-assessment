@@ -9,5 +9,7 @@ public interface LoadAnswerRangesPort {
 
     PaginatedResponse<AnswerRange> loadByKitVersionId(long kitVersionId, int page, int size);
 
+    List<AnswerRange> loadAll(long kitVersionId);
+
     List<AnswerRange> loadAnswerRangesWithNotEnoughOptions(long kitVersionId);
 }

@@ -33,6 +33,7 @@ public class GetKitDetailRestController {
         return new GetKitDetailResponseDto(result.maturityLevels(),
             result.subjects(),
             result.questionnaires(),
-            result.measures());
+            result.measures(),
+            result.answerRanges());
     }
 }
