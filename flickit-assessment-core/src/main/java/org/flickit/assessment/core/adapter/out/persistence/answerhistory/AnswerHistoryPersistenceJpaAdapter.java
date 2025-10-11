@@ -85,10 +85,10 @@ public class AnswerHistoryPersistenceJpaAdapter implements
             .orElseThrow(() -> new ResourceNotFoundException(GET_ANSWER_HISTORY_LIST_ASSESSMENT_RESULT_NOT_FOUND));
         var translationLanguage = resolveLanguage(assessmentResult);
 
-        var sort = Sort.Direction.DESC;
-        var order = AnswerHistoryJpaEntity.Fields.creationTime;
+        var order = Sort.Direction.DESC;
+        var sort = AnswerHistoryJpaEntity.Fields.creationTime;
         var pageResult = repository.findAllByAssessmentResultAndQuestionId(assessmentResult, questionId,
-            PageRequest.of(page, size, sort, order));
+            PageRequest.of(page, size, order, sort));
 
         Set<UUID> userIds = pageResult.getContent().stream()
             .map(AnswerHistoryJpaEntity::getCreatedBy)
@@ -109,8 +109,8 @@ public class AnswerHistoryPersistenceJpaAdapter implements
         return new PaginatedResponse<>(items,
             pageResult.getNumber(),
             pageResult.getSize(),
-            order,
-            sort.name().toLowerCase(),
+            sort,
+            order.name().toLowerCase(),
             (int) pageResult.getTotalElements());
     }
 
