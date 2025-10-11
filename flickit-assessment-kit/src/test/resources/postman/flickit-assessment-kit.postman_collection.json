@@ -1054,6 +1054,46 @@
 					"response": []
 				},
 				{
+					"name": "Convert Excel to DSL",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "excelFile",
+									"type": "file",
+									"src": "/home/maziyar/Work/Github/flickit/flickit-assessment/flickit-assessment-kit/src/test/resources/correct-excel-kit.xlsx"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessment-kits/excel-to-dsl",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessment-kits",
+								"excel-to-dsl"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Get Kit Dsl",
 					"request": {
 						"method": "GET",
