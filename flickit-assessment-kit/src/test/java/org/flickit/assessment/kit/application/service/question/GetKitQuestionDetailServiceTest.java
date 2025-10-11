@@ -64,7 +64,75 @@ class GetKitQuestionDetailServiceTest {
     private LoadMeasurePort loadMeasurePort;
 
     @Test
-    void testGetKitQuestionDetail_whenQuestionExists_thenReturnQuestionDetails() {
+    void testGetKitQuestionDetail_whenQuestionExistsAndAnswerRangeIsReusable_thenReturnQuestionDetails() {
+        long kitId = 123L;
+        long kitVersionId = 456L;
+        var expertGroup = ExpertGroupMother.createExpertGroup();
+        var attr1 = createAttributeMini();
+        var attr2 = createAttributeMini();
+        var maturityLevels = MaturityLevelMother.allLevels();
+        var question = QuestionMother.createQuestion();
+
+        var impact1 = createQuestionImpact(attr1.getId(), maturityLevels.get(3).getId(), 1, question.getId());
+        var impact2 = createQuestionImpact(attr1.getId(), maturityLevels.get(4).getId(), 1, question.getId());
+        var impact3 = createQuestionImpact(attr2.getId(), maturityLevels.get(3).getId(), 3, question.getId());
+        var impacts = List.of(impact1, impact2, impact3);
+
+        var answerRange = AnswerRangeMother.createReusableAnswerRangeWithTwoOptions();
+        var measure = MeasureMother.measureWithTitle("title");
+
+        var param = new Param(kitId, question.getId(), UUID.randomUUID());
+
+        question.setImpacts(impacts);
+
+        when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
+        when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
+        when(loadQuestionPort.load(question.getId(), kitVersionId)).thenReturn(question);
+        when(loadAttributesPort.loadAllByIdsAndKitVersionId(anyList(), anyLong())).thenReturn(List.of(attr1, attr2));
+        when(loadMaturityLevelsPort.loadAllByKitVersionId(kitVersionId)).thenReturn(maturityLevels);
+        when(loadActiveKitVersionIdPort.loadKitVersionId(kitId)).thenReturn(kitVersionId);
+        when(loadAnswerRangePort.load(question.getAnswerRangeId(), kitVersionId)).thenReturn(answerRange);
+        when(loadMeasurePort.load(question.getMeasureId(), kitVersionId)).thenReturn(Optional.of(measure));
+
+        var result = service.getKitQuestionDetail(param);
+
+        ArgumentCaptor<List<Long>> idListCaptor = ArgumentCaptor.forClass(List.class);
+        ArgumentCaptor<Long> kitVersionIdCaptor = ArgumentCaptor.forClass(Long.class);
+
+        verify(loadAttributesPort).loadAllByIdsAndKitVersionId(idListCaptor.capture(), kitVersionIdCaptor.capture());
+
+        assertThat(idListCaptor.getValue()).containsExactlyInAnyOrderElementsOf(List.of(attr1.getId(), attr2.getId()));
+        assertEquals(kitVersionId, kitVersionIdCaptor.getValue());
+        assertNull(result.options());
+        assertEquals(2, result.attributeImpacts().size());
+        result.attributeImpacts().forEach(im -> {
+            if (attr1.getId() == im.id()) {
+                assertEquals(attr1.getId(), im.id());
+                assertEquals(attr1.getTitle(), im.title());
+                assertEquals(2, im.affectedLevels().size());
+
+                var attr1AffectedLevel1 = im.affectedLevels().getFirst();
+                assertEquals(impact1.getAttributeId(), im.id());
+                assertEquals(impact1.getMaturityLevelId(), attr1AffectedLevel1.maturityLevel().id());
+
+                var attr1AffectedLevel2 = im.affectedLevels().get(1);
+                assertEquals(impact2.getAttributeId(), im.id());
+                assertEquals(impact2.getMaturityLevelId(), attr1AffectedLevel2.maturityLevel().id());
+            } else if (attr2.getId() == im.id()) {
+                var attr2AffectedLevel1 = im.affectedLevels().getFirst();
+                assertEquals(impact3.getAttributeId(), im.id());
+                assertEquals(impact3.getMaturityLevelId(), attr2AffectedLevel1.maturityLevel().id());
+            } else fail();
+        });
+        assertEquals(answerRange.getId(), result.answerRange().id());
+        assertEquals(answerRange.getTitle(), result.answerRange().title());
+        assertEquals(measure.getId(), result.measure().id());
+        assertEquals(measure.getTitle(), result.measure().title());
+        assertEquals(question.getTranslations() ,result.translations());
+    }
+
+    @Test
+    void testGetKitQuestionDetail_whenQuestionExistsAndAnswerRangeIsNotReusable_thenReturnQuestionDetails() {
         long kitId = 123L;
         long kitVersionId = 456L;
         var expertGroup = ExpertGroupMother.createExpertGroup();
@@ -83,7 +151,7 @@ class GetKitQuestionDetailServiceTest {
         var impact3 = createQuestionImpact(attr2.getId(), maturityLevels.get(3).getId(), 3, question.getId());
         var impacts = List.of(impact1, impact2, impact3);
 
-        var answerRange = AnswerRangeMother.createReusableAnswerRangeWithTwoOptions();
+        var answerRange = AnswerRangeMother.createNonReusableAnswerRangeWithTwoOptions();
         var measure = MeasureMother.measureWithTitle("title");
 
         var param = new Param(kitId, question.getId(), UUID.randomUUID());
@@ -137,13 +205,11 @@ class GetKitQuestionDetailServiceTest {
                 assertEquals(impact3.getMaturityLevelId(), attr2AffectedLevel1.maturityLevel().id());
             } else fail();
         });
-        assertEquals(answerRange.getId(), result.answerRange().id());
-        assertEquals(answerRange.getTitle(), result.answerRange().title());
+        assertNull(result.answerRange());
         assertEquals(measure.getId(), result.measure().id());
         assertEquals(measure.getTitle(), result.measure().title());
         assertEquals(question.getTranslations() ,result.translations());
     }
-
     @Test
     void testGetKitQuestionDetail_whenKitDoesNotExist_thenThrowResourceNotFoundException() {
         var param = new Param(2000L, 2L, UUID.randomUUID());

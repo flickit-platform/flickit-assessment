@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.*;
@@ -51,17 +52,15 @@ public class GetKitQuestionDetailService implements GetKitQuestionDetailUseCase 
 
         var maturityLevelsMap = loadMaturityLevelsPort.loadAllByKitVersionId(kitVersionId).stream()
             .collect(toMap(MaturityLevel::getId, e -> e));
-        var options = question.getOptions().stream()
-            .map(opt -> new Option(opt.getIndex(), opt.getTitle(), opt.getValue(), opt.getTranslations()))
-            .sorted(comparingInt(Option::index))
-            .toList();
+
 
         List<Impact> attributeImpacts = loadAttributeImpacts(kitVersionId, question, maturityLevelsMap);
-
         var answerRange = loadAnswerRangePort.load(question.getAnswerRangeId(), kitVersionId);
+
         var measure = loadMeasurePort.load(question.getMeasureId(), kitVersionId)
             .orElseThrow(() -> new ResourceNotFoundException(MEASURE_ID_NOT_FOUND)); //Can't happen
-        return new Result(question.getHint(), options, attributeImpacts, QuestionDetailAnswerRange.of(answerRange), QuestionDetailMeasure.of(measure), question.getTranslations());
+
+        return buildResult(answerRange, question, attributeImpacts, measure);
     }
 
     private List<Impact> loadAttributeImpacts(long kitVersionId, Question question, Map<Long, MaturityLevel> maturityLevelsMap) {
@@ -103,4 +102,33 @@ public class GetKitQuestionDetailService implements GetKitQuestionDetailUseCase 
             attributeImpact.getWeight()
         );
     }
+
+    private static Result buildResult(AnswerRange answerRange,
+                                      Question question,
+                                      List<Impact> attributeImpacts,
+                                      Measure measure) {
+
+        List<Option> options = Optional.of(answerRange)
+            .filter(ar -> !ar.isReusable())
+            .map(ar -> question.getOptions().stream()
+                .map(opt -> new Option(opt.getIndex(), opt.getTitle(), opt.getValue(), opt.getTranslations()))
+                .sorted(comparingInt(Option::index))
+                .toList())
+            .orElse(null);
+
+        QuestionDetailAnswerRange questionDetailAnswerRange = Optional.of(answerRange)
+            .filter(AnswerRange::isReusable)
+            .map(QuestionDetailAnswerRange::of)
+            .orElse(null);
+
+        return new Result(
+            question.getHint(),
+            options,
+            attributeImpacts,
+            questionDetailAnswerRange,
+            QuestionDetailMeasure.of(measure),
+            question.getTranslations()
+        );
+    }
+
 }
