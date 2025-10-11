@@ -15,4 +15,6 @@ public interface CountKitStatsView {
     Integer getLikeCount();
 
     Integer getAssessmentCount();
+
+    Integer getMeasuresCount();
 }

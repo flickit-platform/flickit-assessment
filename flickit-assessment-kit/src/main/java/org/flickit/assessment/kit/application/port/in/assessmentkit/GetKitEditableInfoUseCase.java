@@ -48,6 +48,7 @@ public interface GetKitEditableInfoUseCase {
         Boolean isPrivate,
         Double price,
         String about,
+        Long draftVersionId,
         List<KitTag> tags,
         boolean editable,
         boolean hasActiveVersion,

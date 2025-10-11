@@ -73,7 +73,7 @@ class GetPublishedKitServiceTest {
 
     private GetPublishedKitUseCase.Param param = createParam(GetPublishedKitUseCase.Param.ParamBuilder::build);
     private final Subject subject = SubjectMother.subjectWithAttributes("subject", List.of(AttributeMother.attributeWithTitle("attribute")));
-    private final CountKitStatsPort.Result counts = new CountKitStatsPort.Result(1, 1, 115, 1, 3, 1);
+    private final CountKitStatsPort.Result counts = new CountKitStatsPort.Result(1, 1, 115, 1, 3, 1, 2);
     private ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
     private final String pictureLink = "link/to/picture" + expertGroup.getPicture();
     private static final Duration EXPIRY_DURATION = Duration.ofDays(1);

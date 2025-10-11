@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.UUID;
 
 import static java.util.stream.Collectors.toMap;
@@ -74,6 +75,13 @@ public class MeasurePersistenceJpaAdapter implements
             x.setLastModifiedBy(param.lastModifiedBy());
         });
         repository.saveAll(entities);
+    }
+
+    @Override
+    public List<Measure> loadAll(long kitVersionId) {
+        return repository.findAllByKitVersionId(kitVersionId).stream()
+            .map(MeasureMapper::mapToDomainModel)
+            .toList();
     }
 
     @Override

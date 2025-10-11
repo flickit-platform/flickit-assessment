@@ -5,6 +5,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -19,21 +20,26 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
     private final UserContext context;
 
+    private static final String MDC_USER_ID = "userId";
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
         throws ServletException, IOException {
         try {
-            String jwt = request.getHeader(AUTHORIZATION);
-
-            if (jwt != null) {
-                UserDetail user = getUserFromJwtToken(jwt);
-                context.setUser(user);
+            try {
+                String jwt = request.getHeader(AUTHORIZATION);
+                if (jwt != null) {
+                    UserDetail user = getUserFromJwtToken(jwt);
+                    context.setUser(user);
+                    putLoggerMDC(user);
+                }
+            } catch (Exception e) {
+                logger.error("Cannot set user UserContext", e);
             }
-        } catch (Exception e) {
-            logger.error("Cannot set user UserContext", e);
+            filterChain.doFilter(request, response);
+        } finally {
+            removeLoggerMDC();
         }
-
-        filterChain.doFilter(request, response);
     }
 
     private UserDetail getUserFromJwtToken(String jwt) {
@@ -42,5 +48,14 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         Base64.Decoder decoder = Base64.getUrlDecoder();
         String payload = new String(decoder.decode(chunks[1]));
         return JwtTranslator.parseJson(payload);
+    }
+
+    private static void putLoggerMDC(UserDetail user) {
+        if (user != null && user.id() != null)
+            MDC.put(MDC_USER_ID, user.id().toString());
+    }
+
+    private static void removeLoggerMDC() {
+        MDC.remove(MDC_USER_ID);
     }
 }
