@@ -90,16 +90,6 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Su
     @Query("""
             SELECT s
             FROM SubjectJpaEntity s
-            JOIN SubjectQuestionnaireJpaEntity sq ON s.id = sq.subjectId
-            WHERE sq.questionnaireId = :questionnaireId AND s.kitVersionId = :kitVersionId
-            ORDER BY s.index
-        """)
-    List<SubjectJpaEntity> findAllByQuestionnaireIdAndKitVersionId(@Param("questionnaireId") long questionnaireId,
-                                                                   @Param("kitVersionId") long kitVersionId);
-
-    @Query("""
-            SELECT s
-            FROM SubjectJpaEntity s
             LEFT JOIN AttributeJpaEntity a ON a.subjectId = s.id AND a.kitVersionId = s.kitVersionId
             WHERE s.kitVersionId = :kitVersionId AND a.id IS NULL
         """)
