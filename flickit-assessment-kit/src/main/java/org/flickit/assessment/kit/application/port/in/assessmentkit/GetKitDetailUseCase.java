@@ -70,6 +70,6 @@ public interface GetKitDetailUseCase {
     record KitDetailQuestionnaire(long id, String title, int index, Map<KitLanguage, QuestionnaireTranslation> translations) {
     }
 
-    record KitDetailMeasure(long id, String title, int index) {
+    record KitDetailMeasure(long id, String title, int index, Map<KitLanguage, MeasureTranslation> translations) {
     }
 }

@@ -110,15 +110,15 @@ class GetKitDetailServiceTest {
                         assertEquals(expectedAttributes.translations(), actualAttributes.translations());
                     });
             });
-        assertEquals(subjects.size(), result.subjects().size());
-        assertEquals(questionnaires.size(), result.questionnaires().size());
-        var resultAttributes = result.subjects().getFirst().attributes();
-        assertEquals(2, resultAttributes.size());
-        assertEquals(attribute1.getId(), resultAttributes.getFirst().id());
-        assertEquals(attribute2.getId(), resultAttributes.getLast().id());
-        assertEquals(2, result.measures().size());
         assertThat(questionnaires)
             .zipSatisfy(result.questionnaires(), (actual, expected) -> {
+                assertEquals(expected.id(), actual.getId());
+                assertEquals(expected.title(), actual.getTitle());
+                assertEquals(expected.index(), actual.getIndex());
+                assertEquals(expected.translations(), actual.getTranslations());
+            });
+        assertThat(measures)
+            .zipSatisfy(result.measures(), (actual, expected) -> {
                 assertEquals(expected.id(), actual.getId());
                 assertEquals(expected.title(), actual.getTitle());
                 assertEquals(expected.index(), actual.getIndex());
