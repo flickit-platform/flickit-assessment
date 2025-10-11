@@ -58,9 +58,6 @@ public class GetKitQuestionDetailService implements GetKitQuestionDetailUseCase 
     private List<Impact> loadAttributeImpacts(long kitVersionId, Question question, Map<Long, MaturityLevel> maturityLevelsMap) {
         var impacts = question.getImpacts();
 
-        var answerIdToIndexMap = question.getOptions().stream()
-            .collect(toMap(AnswerOption::getId, AnswerOption::getIndex));
-
         Map<Long, List<QuestionImpact>> attributeIdToImpacts = impacts.stream()
             .collect(groupingBy(QuestionImpact::getAttributeId,
                 mapping(e -> e, toList())));
@@ -72,21 +69,18 @@ public class GetKitQuestionDetailService implements GetKitQuestionDetailUseCase 
         return attributeIds.stream()
             .map(attributeId -> toAttributeImpact(
                 attributeId,
-                answerIdToIndexMap,
                 attributeIdToTitleMap.get(attributeId),
                 attributeIdToImpacts.get(attributeId),
-                maturityLevelsMap,
-                question))
+                maturityLevelsMap))
             .toList();
     }
 
-    private Impact toAttributeImpact(long attributeId, Map<Long, Integer> answerIdToIndexMap, String attributeTitle,
-                                     List<QuestionImpact> attributeImpacts, Map<Long, MaturityLevel> maturityLevelsMap, Question question) {
+    private Impact toAttributeImpact(long attributeId, String attributeTitle,
+                                     List<QuestionImpact> attributeImpacts, Map<Long, MaturityLevel> maturityLevelsMap) {
         var affectedLevels = attributeImpacts.stream()
             .map(impact -> toAffectedLevel(
-                answerIdToIndexMap,
                 impact,
-                maturityLevelsMap.get(impact.getMaturityLevelId()), question))
+                maturityLevelsMap.get(impact.getMaturityLevelId())))
             .toList();
         return new Impact(attributeId,
             attributeTitle,
@@ -94,16 +88,10 @@ public class GetKitQuestionDetailService implements GetKitQuestionDetailUseCase 
         );
     }
 
-    private AffectedLevel toAffectedLevel(Map<Long, Integer> answerIdToIndexMap, QuestionImpact attributeImpact,
-                                          MaturityLevel maturityLevel, Question question) {
-        List<AffectedLevel.OptionValue> optionValues = question.getOptions().stream()
-            .map(answer -> new AffectedLevel.OptionValue(answer.getId(), answerIdToIndexMap.get(answer.getId()), answer.getValue()))
-            .toList();
-
+    private AffectedLevel toAffectedLevel(QuestionImpact attributeImpact, MaturityLevel maturityLevel) {
         return new AffectedLevel(
             new AffectedLevel.MaturityLevel(maturityLevel.getId(), maturityLevel.getIndex(), maturityLevel.getTitle()),
-            attributeImpact.getWeight(),
-            optionValues
+            attributeImpact.getWeight()
         );
     }
 }
