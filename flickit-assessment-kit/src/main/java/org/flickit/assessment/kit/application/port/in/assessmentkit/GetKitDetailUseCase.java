@@ -8,6 +8,7 @@ import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.application.domain.kit.translation.AnswerOptionTranslation;
 import org.flickit.assessment.common.application.domain.kit.translation.AnswerRangeTranslation;
 import org.flickit.assessment.kit.application.domain.AnswerOption;
+import org.flickit.assessment.common.application.domain.kit.translation.*;
 import org.flickit.assessment.kit.application.domain.Attribute;
 
 import java.util.List;
@@ -46,32 +47,45 @@ public interface GetKitDetailUseCase {
         List<KitDetailAnswerRange> answerRanges) {
     }
 
-    record KitDetailMaturityLevel(long id, String title, int index, List<Competences> competences) {
+    record KitDetailMaturityLevel(long id,
+                                  String title,
+                                  int index,
+                                  String description,
+                                  List<Competences> competences,
+                                  Map<KitLanguage, MaturityLevelTranslation> translations) {
     }
 
     record Competences(String title, int value, long maturityLevelId) {
     }
 
-    record KitDetailSubject(long id, String title, int index, List<KitDetailAttribute> attributes) {
+    record KitDetailSubject(long id, String title, int index, List<KitDetailAttribute> attributes,
+                            Map<KitLanguage, SubjectTranslation> translations) {
     }
 
-    record KitDetailAttribute(long id, String title, int index) {
+    record KitDetailAttribute(long id, String title, int index, Map<KitLanguage, AttributeTranslation> translations) {
 
         public static KitDetailAttribute of(Attribute attribute) {
-            return new KitDetailAttribute(attribute.getId(), attribute.getTitle(), attribute.getIndex());
+            return new KitDetailAttribute(attribute.getId(),
+                attribute.getTitle(),
+                attribute.getIndex(),
+                attribute.getTranslations());
         }
     }
 
-    record KitDetailQuestionnaire(long id, String title, int index) {
+    record KitDetailQuestionnaire(long id, String title, int index,
+                                  Map<KitLanguage, QuestionnaireTranslation> translations) {
     }
 
-    record KitDetailMeasure(long id, String title, int index) {
+    record KitDetailMeasure(long id, String title, int index,
+                            Map<KitLanguage, MeasureTranslation> translations) {
     }
 
-    record KitDetailAnswerRange(long id, String title, List<KitDetailAnswerOption> answerOptions, Map<KitLanguage, AnswerRangeTranslation> translations) {
+    record KitDetailAnswerRange(long id, String title, List<KitDetailAnswerOption> answerOptions,
+                                Map<KitLanguage, AnswerRangeTranslation> translations) {
     }
 
-    record KitDetailAnswerOption(int index, String title, double value, Map<KitLanguage, AnswerOptionTranslation> translations) {
+    record KitDetailAnswerOption(int index, String title, double value,
+                                 Map<KitLanguage, AnswerOptionTranslation> translations) {
 
         public static KitDetailAnswerOption of(AnswerOption answerOption) {
             return new KitDetailAnswerOption(answerOption.getIndex(), answerOption.getTitle(), answerOption.getValue(), answerOption.getTranslations());

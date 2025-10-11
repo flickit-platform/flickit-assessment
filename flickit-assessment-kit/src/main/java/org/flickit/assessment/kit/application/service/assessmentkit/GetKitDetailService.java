@@ -70,16 +70,17 @@ public class GetKitDetailService implements GetKitDetailUseCase {
                 s.getAttributes().stream()
                     .sorted(Comparator.comparing(Attribute::getIndex))
                     .map(KitDetailAttribute::of)
-                    .toList()
+                    .toList(),
+                s.getTranslations()
             ))
             .toList();
 
         var kitDetailQuestionnaires = questionnaires.stream()
-            .map(q -> new KitDetailQuestionnaire(q.getId(), q.getTitle(), q.getIndex()))
+            .map(q -> new KitDetailQuestionnaire(q.getId(), q.getTitle(), q.getIndex(), q.getTranslations()))
             .toList();
 
         var kitDetailMeasures = measures.stream()
-            .map(m -> new KitDetailMeasure(m.getId(), m.getTitle(), m.getIndex()))
+            .map(m -> new KitDetailMeasure(m.getId(), m.getTitle(), m.getIndex(), m.getTranslations()))
             .toList();
 
         var kitDetailAnswerRanges = answerRanges.stream()
@@ -106,6 +107,8 @@ public class GetKitDetailService implements GetKitDetailUseCase {
         return new KitDetailMaturityLevel(maturityLevel.getId(),
             maturityLevel.getTitle(),
             maturityLevel.getIndex(),
-            competences);
+            maturityLevel.getDescription(),
+            competences,
+            maturityLevel.getTranslations());
     }
 }

@@ -24,6 +24,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.*;
@@ -89,17 +90,42 @@ class GetKitDetailServiceTest {
 
         Result result = service.getKitDetail(param);
 
-        assertEquals(maturityLevels.size(), result.maturityLevels().size());
-        assertEquals(maturityLevels.get(1).getCompetences().size(),
-            result.maturityLevels().get(1).competences().size());
-        assertEquals(subjects.size(), result.subjects().size());
-        assertEquals(questionnaires.size(), result.questionnaires().size());
-        var resultAttributes = result.subjects().getFirst().attributes();
-        assertEquals(2, resultAttributes.size());
-        assertEquals(attribute1.getId(), resultAttributes.getFirst().id());
-        assertEquals(attribute2.getId(), resultAttributes.getLast().id());
-        assertEquals(2, result.measures().size());
-        assertEquals(2, result.answerRanges().size());
+        assertThat(maturityLevels)
+            .zipSatisfy(result.maturityLevels(), (actual, expected) -> {
+                assertEquals(expected.id(), actual.getId());
+                assertEquals(expected.title(), actual.getTitle());
+                assertEquals(expected.description(), actual.getDescription());
+                assertEquals(expected.competences().size(), actual.getCompetences().size());
+                assertEquals(expected.translations(), actual.getTranslations());
+            });
+        assertThat(subjects)
+            .zipSatisfy(result.subjects(), (actual, expected) -> {
+                assertEquals(expected.id(), actual.getId());
+                assertEquals(expected.title(), actual.getTitle());
+                assertEquals(expected.index(), actual.getIndex());
+                assertEquals(expected.translations(), actual.getTranslations());
+                assertThat(expected.attributes())
+                    .zipSatisfy(expected.attributes(), (actualAttributes, expectedAttributes) -> {
+                        assertEquals(expectedAttributes.id(), actualAttributes.id());
+                        assertEquals(expectedAttributes.index(), actualAttributes.index());
+                        assertEquals(expectedAttributes.title(), actualAttributes.title());
+                        assertEquals(expectedAttributes.translations(), actualAttributes.translations());
+                    });
+            });
+        assertThat(questionnaires)
+            .zipSatisfy(result.questionnaires(), (actual, expected) -> {
+                assertEquals(expected.id(), actual.getId());
+                assertEquals(expected.title(), actual.getTitle());
+                assertEquals(expected.index(), actual.getIndex());
+                assertEquals(expected.translations(), actual.getTranslations());
+            });
+        assertThat(measures)
+            .zipSatisfy(result.measures(), (actual, expected) -> {
+                assertEquals(expected.id(), actual.getId());
+                assertEquals(expected.title(), actual.getTitle());
+                assertEquals(expected.index(), actual.getIndex());
+                assertEquals(expected.translations(), actual.getTranslations());
+            });
 
         var actualAnswerRanges = result.answerRanges();
         for (int i = 0; i < answerRanges.size(); i++) {

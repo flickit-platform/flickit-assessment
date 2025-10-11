@@ -1,5 +1,7 @@
 package org.flickit.assessment.kit.test.fixture.application;
 
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.common.application.domain.kit.translation.MaturityLevelTranslation;
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
 
 import java.util.List;
@@ -38,7 +40,7 @@ public class MaturityLevelMother {
             1,
             LEVEL_ONE_CODE,
             1,
-            null,
+            Map.of(KitLanguage.FA, new MaturityLevelTranslation("title", "description")),
             List.of());
     }
 
