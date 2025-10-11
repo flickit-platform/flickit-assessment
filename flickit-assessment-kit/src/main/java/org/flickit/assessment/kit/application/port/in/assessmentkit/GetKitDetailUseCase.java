@@ -5,9 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
-import org.flickit.assessment.common.application.domain.kit.translation.AttributeTranslation;
-import org.flickit.assessment.common.application.domain.kit.translation.MaturityLevelTranslation;
-import org.flickit.assessment.common.application.domain.kit.translation.SubjectTranslation;
+import org.flickit.assessment.common.application.domain.kit.translation.*;
 import org.flickit.assessment.kit.application.domain.Attribute;
 
 import java.util.List;
@@ -69,7 +67,7 @@ public interface GetKitDetailUseCase {
         }
     }
 
-    record KitDetailQuestionnaire(long id, String title, int index) {
+    record KitDetailQuestionnaire(long id, String title, int index, Map<KitLanguage, QuestionnaireTranslation> translations) {
     }
 
     record KitDetailMeasure(long id, String title, int index) {

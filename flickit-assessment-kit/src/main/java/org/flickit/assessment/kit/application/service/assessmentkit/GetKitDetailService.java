@@ -73,7 +73,7 @@ public class GetKitDetailService implements GetKitDetailUseCase {
             .toList();
 
         var kitDetailQuestionnaires = questionnaires.stream()
-            .map(q -> new KitDetailQuestionnaire(q.getId(), q.getTitle(), q.getIndex()))
+            .map(q -> new KitDetailQuestionnaire(q.getId(), q.getTitle(), q.getIndex(), q.getTranslations()))
             .toList();
 
         var kitDetailMeasures = measures.stream()
