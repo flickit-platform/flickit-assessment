@@ -90,38 +90,6 @@ class GetKitDetailServiceTest {
 
         Result result = service.getKitDetail(param);
 
-        assertEquals(maturityLevels.get(1).getCompetences().size(),
-            result.maturityLevels().get(1).competences().size());
-        assertEquals(subjects.size(), result.subjects().size());
-        assertEquals(questionnaires.size(), result.questionnaires().size());
-        var resultAttributes = result.subjects().getFirst().attributes();
-        assertEquals(2, resultAttributes.size());
-        assertEquals(attribute1.getId(), resultAttributes.getFirst().id());
-        assertEquals(attribute2.getId(), resultAttributes.getLast().id());
-        assertEquals(2, result.measures().size());
-        assertEquals(2, result.answerRanges().size());
-
-        var actualAnswerRanges = result.answerRanges();
-        for (int i = 0; i < answerRanges.size(); i++) {
-            assertAnswers(answerRanges.get(i), actualAnswerRanges.get(i));
-        }
-    }
-
-    private void assertAnswers(AnswerRange expected, KitDetailAnswerRange actual) {
-        assertEquals(expected.getId(), actual.id());
-        assertEquals(expected.getTitle(), actual.title());
-        assertNotNull(actual.translations());
-
-        var expectedAnswers = expected.getAnswerOptions();
-        var actualAnswers = actual.answerOptions();
-
-        assertEquals(expectedAnswers.size(), actualAnswers.size());
-        for (int i = 0; i < expectedAnswers.size(); i++) {
-            assertEquals(expectedAnswers.get(i).getIndex(), actualAnswers.get(i).index());
-            assertEquals(expectedAnswers.get(i).getTitle(), actualAnswers.get(i).title());
-            assertEquals(expectedAnswers.get(i).getValue(), actualAnswers.get(i).value());
-            assertNotNull(actual.translations());
-        }
         assertThat(maturityLevels)
             .zipSatisfy(result.maturityLevels(), (actual, expected) -> {
                 assertEquals(expected.id(), actual.getId());
@@ -158,6 +126,28 @@ class GetKitDetailServiceTest {
                 assertEquals(expected.index(), actual.getIndex());
                 assertEquals(expected.translations(), actual.getTranslations());
             });
+
+        var actualAnswerRanges = result.answerRanges();
+        for (int i = 0; i < answerRanges.size(); i++) {
+            assertAnswers(answerRanges.get(i), actualAnswerRanges.get(i));
+        }
+    }
+
+    private void assertAnswers(AnswerRange expected, KitDetailAnswerRange actual) {
+        assertEquals(expected.getId(), actual.id());
+        assertEquals(expected.getTitle(), actual.title());
+        assertNotNull(actual.translations());
+
+        var expectedAnswers = expected.getAnswerOptions();
+        var actualAnswers = actual.answerOptions();
+
+        assertEquals(expectedAnswers.size(), actualAnswers.size());
+        for (int i = 0; i < expectedAnswers.size(); i++) {
+            assertEquals(expectedAnswers.get(i).getIndex(), actualAnswers.get(i).index());
+            assertEquals(expectedAnswers.get(i).getTitle(), actualAnswers.get(i).title());
+            assertEquals(expectedAnswers.get(i).getValue(), actualAnswers.get(i).value());
+            assertNotNull(actual.translations());
+        }
     }
 
     @Test
