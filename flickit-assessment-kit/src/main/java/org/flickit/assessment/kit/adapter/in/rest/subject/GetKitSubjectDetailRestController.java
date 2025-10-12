@@ -33,6 +33,9 @@ public class GetKitSubjectDetailRestController {
     }
 
     private GetKitSubjectDetailResponseDto toResponseDto(Result result) {
-        return new GetKitSubjectDetailResponseDto(result.questionsCount(), result.description(), result.attributes());
+        return new GetKitSubjectDetailResponseDto(result.questionsCount(),
+            result.description(),
+            result.attributes(),
+            result.translations());
     }
 }
