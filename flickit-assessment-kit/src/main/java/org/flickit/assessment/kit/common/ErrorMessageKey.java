@@ -554,6 +554,9 @@ public class ErrorMessageKey {
     public static final String GET_PUBLIC_KIT_LIST_SIZE_MIN = "get-public-kit-list.size.min";
     public static final String GET_PUBLIC_KIT_LIST_SIZE_MAX = "get-public-kit-list.size.max";
 
+    public static final String GET_KIT_MEASURE_KIT_ID_NOT_NULL = "get-kit-measure.kitId.notNull";
+    public static final String GET_KIT_MEASURE_MEASURE_ID_NOT_NULL = "get-kit-measure.measureId.notNull";
+
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
     }
