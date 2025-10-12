@@ -50,12 +50,12 @@ public class GetKitMeasureDetailService implements GetKitMeasureDetailUseCase {
         return new Result(measure.getTitle(),
             measure.getDescription(),
             questions.size(),
-            toKitMeasureQuestions(kitVersionId, questions),
+            toKitMeasureQuestions(param.getKitId(), kitVersionId, questions),
             measure.getTranslations());
     }
 
-    private List<MeasureDetailQuestion> toKitMeasureQuestions(long kitVersionId, List<Question> questions) {
-        var questionnaireIdToQuestionnaireMap = loadQuestionnairesPort.loadAllByKitVersionId(kitVersionId).stream()
+    private List<MeasureDetailQuestion> toKitMeasureQuestions(long kitId, long kitVersionId, List<Question> questions) {
+        var questionnaireIdToQuestionnaireMap = loadQuestionnairesPort.loadByKitId(kitId).stream()
             .collect(Collectors.toMap(Questionnaire::getId, Function.identity()));
         var answerRangeIdToAnswerRangeMap = loadAnswerRangesPort.loadAll(kitVersionId).stream()
             .collect(Collectors.toMap(AnswerRange::getId, Function.identity()));

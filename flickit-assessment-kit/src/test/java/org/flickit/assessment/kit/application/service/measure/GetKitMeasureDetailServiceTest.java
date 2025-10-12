@@ -111,7 +111,7 @@ class GetKitMeasureDetailServiceTest {
         when(loadActiveKitVersionIdPort.loadKitVersionId(param.getKitId())).thenReturn(kitVersionId);
         when(loadMeasurePort.load(param.getMeasureId(), kitVersionId)).thenReturn(Optional.of(measure));
         when(loadQuestionsPort.loadAllByMeasureIdAndKitVersionId(measure.getId(), kitVersionId)).thenReturn(questions);
-        when(loadQuestionnairesPort.loadAllByKitVersionId(kitVersionId)).thenReturn(questionnaires);
+        when(loadQuestionnairesPort.loadByKitId(param.getKitId())).thenReturn(questionnaires);
         when(loadAnswerRangesPort.loadAll(kitVersionId)).thenReturn(answerRanges);
 
         var result = service.getKitMeasureDetail(param);
