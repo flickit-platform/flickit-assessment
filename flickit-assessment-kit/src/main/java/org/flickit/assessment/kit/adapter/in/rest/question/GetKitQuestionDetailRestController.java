@@ -33,6 +33,11 @@ public class GetKitQuestionDetailRestController {
     }
 
     private GetKitQuestionDetailResponseDto toResponseDto(Result result) {
-        return new GetKitQuestionDetailResponseDto(result.hint(), result.options(), result.attributeImpacts());
+        return new GetKitQuestionDetailResponseDto(result.hint(),
+            result.options(),
+            result.attributeImpacts(),
+            result.answerRange(),
+            result.measure(),
+            result.translations());
     }
 }

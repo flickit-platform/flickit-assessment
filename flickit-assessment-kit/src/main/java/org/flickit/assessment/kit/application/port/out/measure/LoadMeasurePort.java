@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface LoadMeasurePort {
 
-    Optional<Measure> load(long id,  long kitVersionId);
+    Optional<Measure> load(long id, long kitVersionId);
 
     List<Measure> loadAll(long kitVersionId);
 

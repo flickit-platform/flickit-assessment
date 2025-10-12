@@ -25,7 +25,7 @@ public interface MeasureJpaRepository extends JpaRepository<MeasureJpaEntity, Me
 
     List<MeasureJpaEntity> findAllByIdInAndKitVersionId(Collection<Long> ids, long kitVersionId);
 
-    Optional<MeasureJpaEntity> findByIdAndKitVersionId(long id, long kitVersionId);
+    Optional<MeasureJpaEntity> findByIdAndKitVersionId(Long id, Long kitVersionId);
 
     @Modifying
     @Query("""

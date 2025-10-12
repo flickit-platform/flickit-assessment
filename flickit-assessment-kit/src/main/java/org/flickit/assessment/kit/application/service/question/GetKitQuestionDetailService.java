@@ -2,13 +2,16 @@ package org.flickit.assessment.kit.application.service.question;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.domain.*;
 import org.flickit.assessment.kit.application.port.in.question.GetKitQuestionDetailUseCase;
+import org.flickit.assessment.kit.application.port.out.answerrange.LoadAnswerRangePort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadActiveKitVersionIdPort;
 import org.flickit.assessment.kit.application.port.out.attribute.LoadAttributesPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelsPort;
+import org.flickit.assessment.kit.application.port.out.measure.LoadMeasurePort;
 import org.flickit.assessment.kit.application.port.out.question.LoadQuestionPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,10 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Map;
 
-import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-
+import static org.flickit.assessment.kit.common.ErrorMessageKey.MEASURE_ID_NOT_FOUND;
 
 @Service
 @Transactional(readOnly = true)
@@ -32,6 +34,8 @@ public class GetKitQuestionDetailService implements GetKitQuestionDetailUseCase 
     private final LoadQuestionPort loadQuestionPort;
     private final LoadMaturityLevelsPort loadMaturityLevelsPort;
     private final LoadActiveKitVersionIdPort loadActiveKitVersionIdPort;
+    private final LoadAnswerRangePort loadAnswerRangePort;
+    private final LoadMeasurePort loadMeasurePort;
 
     @Override
     public Result getKitQuestionDetail(Param param) {
@@ -45,21 +49,18 @@ public class GetKitQuestionDetailService implements GetKitQuestionDetailUseCase 
 
         var maturityLevelsMap = loadMaturityLevelsPort.loadAllByKitVersionId(kitVersionId).stream()
             .collect(toMap(MaturityLevel::getId, e -> e));
-        var options = question.getOptions().stream()
-            .map(opt -> new Option(opt.getIndex(), opt.getTitle()))
-            .sorted(comparingInt(Option::index))
-            .toList();
 
         List<Impact> attributeImpacts = loadAttributeImpacts(kitVersionId, question, maturityLevelsMap);
+        var answerRange = loadAnswerRangePort.load(question.getAnswerRangeId(), kitVersionId);
 
-        return new Result(question.getHint(), options, attributeImpacts);
+        var measure = loadMeasurePort.load(question.getMeasureId(), kitVersionId)
+            .orElseThrow(() -> new ResourceNotFoundException(MEASURE_ID_NOT_FOUND)); //Can't happen
+
+        return buildResult(answerRange, question, attributeImpacts, measure);
     }
 
     private List<Impact> loadAttributeImpacts(long kitVersionId, Question question, Map<Long, MaturityLevel> maturityLevelsMap) {
         var impacts = question.getImpacts();
-
-        var answerIdToIndexMap = question.getOptions().stream()
-            .collect(toMap(AnswerOption::getId, AnswerOption::getIndex));
 
         Map<Long, List<QuestionImpact>> attributeIdToImpacts = impacts.stream()
             .collect(groupingBy(QuestionImpact::getAttributeId,
@@ -72,21 +73,18 @@ public class GetKitQuestionDetailService implements GetKitQuestionDetailUseCase 
         return attributeIds.stream()
             .map(attributeId -> toAttributeImpact(
                 attributeId,
-                answerIdToIndexMap,
                 attributeIdToTitleMap.get(attributeId),
                 attributeIdToImpacts.get(attributeId),
-                maturityLevelsMap,
-                question))
+                maturityLevelsMap))
             .toList();
     }
 
-    private Impact toAttributeImpact(long attributeId, Map<Long, Integer> answerIdToIndexMap, String attributeTitle,
-                                     List<QuestionImpact> attributeImpacts, Map<Long, MaturityLevel> maturityLevelsMap, Question question) {
+    private Impact toAttributeImpact(long attributeId, String attributeTitle,
+                                     List<QuestionImpact> attributeImpacts, Map<Long, MaturityLevel> maturityLevelsMap) {
         var affectedLevels = attributeImpacts.stream()
             .map(impact -> toAffectedLevel(
-                answerIdToIndexMap,
                 impact,
-                maturityLevelsMap.get(impact.getMaturityLevelId()), question))
+                maturityLevelsMap.get(impact.getMaturityLevelId())))
             .toList();
         return new Impact(attributeId,
             attributeTitle,
@@ -94,16 +92,39 @@ public class GetKitQuestionDetailService implements GetKitQuestionDetailUseCase 
         );
     }
 
-    private AffectedLevel toAffectedLevel(Map<Long, Integer> answerIdToIndexMap, QuestionImpact attributeImpact,
-                                          MaturityLevel maturityLevel, Question question) {
-        List<AffectedLevel.OptionValue> optionValues = question.getOptions().stream()
-            .map(answer -> new AffectedLevel.OptionValue(answer.getId(), answerIdToIndexMap.get(answer.getId()), answer.getValue()))
-            .toList();
-
+    private AffectedLevel toAffectedLevel(QuestionImpact attributeImpact, MaturityLevel maturityLevel) {
         return new AffectedLevel(
             new AffectedLevel.MaturityLevel(maturityLevel.getId(), maturityLevel.getIndex(), maturityLevel.getTitle()),
-            attributeImpact.getWeight(),
-            optionValues
+            attributeImpact.getWeight()
+        );
+    }
+
+    private static Result buildResult(AnswerRange answerRange,
+                                      Question question,
+                                      List<Impact> attributeImpacts,
+                                      Measure measure) {
+        if (answerRange.isReusable()) {
+            return new Result(
+                question.getHint(),
+                null,
+                attributeImpacts,
+                QuestionDetailAnswerRange.of(answerRange),
+                QuestionDetailMeasure.of(measure),
+                question.getTranslations()
+            );
+        }
+
+        List<Option> options = question.getOptions().stream()
+            .map(opt -> new Option(opt.getIndex(), opt.getTitle(), opt.getValue(), opt.getTranslations()))
+            .toList();
+
+        return new Result(
+            question.getHint(),
+            options,
+            attributeImpacts,
+            null,
+            QuestionDetailMeasure.of(measure),
+            question.getTranslations()
         );
     }
 }
