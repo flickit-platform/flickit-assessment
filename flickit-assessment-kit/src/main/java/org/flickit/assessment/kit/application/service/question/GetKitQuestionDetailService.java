@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.MEASURE_ID_NOT_FOUND;
@@ -112,7 +111,6 @@ public class GetKitQuestionDetailService implements GetKitQuestionDetailUseCase 
             .filter(ar -> !ar.isReusable())
             .map(ar -> question.getOptions().stream()
                 .map(opt -> new Option(opt.getIndex(), opt.getTitle(), opt.getValue(), opt.getTranslations()))
-                .sorted(comparingInt(Option::index))
                 .toList())
             .orElse(null);
 
