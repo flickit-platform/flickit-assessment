@@ -54,7 +54,7 @@ class GetKitAttributeDetailServiceTest {
     private LoadActiveKitVersionIdPort loadActiveKitVersionIdPort;
 
     @Test
-    void testGetKitAttributeDetail_whenAttributeExist_thenReturnAttributeDetails() {
+    void testGetKitAttributeDetail_whenAttributeExists_thenReturnAttributeDetails() {
         Param param = new Param(2000L, 2L, UUID.randomUUID());
         var expertGroup = ExpertGroupMother.createExpertGroup();
         var expectedQuestionCount = 14;
@@ -86,7 +86,7 @@ class GetKitAttributeDetailServiceTest {
     }
 
     @Test
-    void testGetKitAttributeDetail_whenKitDoesNotExist_thenThrowResourceNotFoundException() {
+    void testGetKitAttributeDetail_whenKitDoesNotExists_thenThrowResourceNotFoundException() {
         Param param = new Param(2000L, 2L, UUID.randomUUID());
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId()))
