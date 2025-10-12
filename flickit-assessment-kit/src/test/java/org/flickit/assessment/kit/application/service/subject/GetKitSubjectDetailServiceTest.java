@@ -24,6 +24,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND
 import static org.flickit.assessment.kit.test.fixture.application.ExpertGroupMother.createExpertGroup;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -48,7 +49,7 @@ class GetKitSubjectDetailServiceTest {
     private CountSubjectQuestionsPort countSubjectQuestionsPort;
 
     @Test
-    void testGetKitSubjectDetail_WhenSubjectExist_ShouldReturnSubjectDetails() {
+    void testGetKitSubjectDetail_whenSubjectExist_thenReturnSubjectDetails() {
         var param = new Param(2000L, 2L, UUID.randomUUID());
         var expertGroup = createExpertGroup();
         var questionsCount = 14;
@@ -67,6 +68,7 @@ class GetKitSubjectDetailServiceTest {
         assertEquals(questionsCount, result.questionsCount());
         assertEquals(subject.getDescription(), result.description());
         assertEquals(1, result.attributes().size());
+        assertEquals(subject.getTranslations(), result.translations());
 
         var resultAttribute = result.attributes().getFirst();
         assertEquals(attribute.getId(), resultAttribute.id());
@@ -75,7 +77,7 @@ class GetKitSubjectDetailServiceTest {
     }
 
     @Test
-    void testGetKitSubjectDetail_WhenKitDoesNotExist_ThrowsException() {
+    void testGetKitSubjectDetail_whenKitDoesNotExist_thenThrowsException() {
         Param param = new Param(2000L, 2L, UUID.randomUUID());
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId()))
@@ -83,10 +85,15 @@ class GetKitSubjectDetailServiceTest {
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> service.getKitSubjectDetail(param));
         assertEquals(KIT_ID_NOT_FOUND, exception.getMessage());
+
+        verifyNoInteractions(checkExpertGroupAccessPort,
+            loadActiveKitVersionIdPort,
+            loadSubjectPort,
+            countSubjectQuestionsPort);
     }
 
     @Test
-    void testGetKitSubjectDetail_WhenUserIsNotMember_ThrowsException() {
+    void testGetKitSubjectDetail_whenUserIsNotMember_thenThrowsException() {
         var param = new Param(2000L, 2L, UUID.randomUUID());
         var expertGroup = createExpertGroup();
 
@@ -95,5 +102,9 @@ class GetKitSubjectDetailServiceTest {
 
         AccessDeniedException exception = assertThrows(AccessDeniedException.class, () -> service.getKitSubjectDetail(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
+
+        verifyNoInteractions(loadActiveKitVersionIdPort,
+            loadSubjectPort,
+            countSubjectQuestionsPort);
     }
 }
