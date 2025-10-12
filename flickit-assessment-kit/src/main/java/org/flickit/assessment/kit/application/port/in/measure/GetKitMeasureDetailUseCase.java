@@ -7,6 +7,9 @@ import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.application.domain.kit.translation.MeasureTranslation;
+import org.flickit.assessment.kit.application.domain.AnswerOption;
+import org.flickit.assessment.kit.application.domain.AnswerRange;
+import org.flickit.assessment.kit.application.domain.Questionnaire;
 
 import java.util.List;
 import java.util.Map;
@@ -23,10 +26,10 @@ public interface GetKitMeasureDetailUseCase {
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = GET_KIT_MEASURE_KIT_ID_NOT_NULL)
+        @NotNull(message = GET_KIT_MEASURE_DETAIL_KIT_ID_NOT_NULL)
         Long kitId;
 
-        @NotNull(message = GET_KIT_MEASURE_MEASURE_ID_NOT_NULL)
+        @NotNull(message = GET_KIT_MEASURE_DETAIL_MEASURE_ID_NOT_NULL)
         Long measureId;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
