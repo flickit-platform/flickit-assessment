@@ -24,7 +24,6 @@ import static java.util.stream.Collectors.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.MEASURE_ID_NOT_FOUND;
 
-
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -127,5 +126,4 @@ public class GetKitQuestionDetailService implements GetKitQuestionDetailUseCase 
             question.getTranslations()
         );
     }
-
 }
