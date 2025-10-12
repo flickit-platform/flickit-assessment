@@ -119,7 +119,6 @@ class GetKitMeasureDetailServiceTest {
         assertEquals(measure.getDescription(), result.description());
         assertEquals(questions.size(), result.questionsCount());
         assertEquals(measure.getTranslations(), result.translations());
-
         assertThat(result.questions())
             .zipSatisfy(questions, (actual, expected) -> {
                 assertEquals(expected.getTitle(), actual.title());
