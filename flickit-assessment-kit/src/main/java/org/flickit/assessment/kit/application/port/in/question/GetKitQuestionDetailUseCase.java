@@ -43,8 +43,12 @@ public interface GetKitQuestionDetailUseCase {
         }
     }
 
-    record Result(String hint, List<Option> options, List<Impact> attributeImpacts, QuestionDetailAnswerRange answerRange,
-                  QuestionDetailMeasure measure, Map<KitLanguage, QuestionTranslation> translations) {
+    record Result(String hint,
+                  List<Option> options,
+                  List<Impact> attributeImpacts,
+                  QuestionDetailAnswerRange answerRange,
+                  QuestionDetailMeasure measure,
+                  Map<KitLanguage, QuestionTranslation> translations) {
     }
 
     record Option(int index, String title, double value, Map<KitLanguage, AnswerOptionTranslation> translations) {

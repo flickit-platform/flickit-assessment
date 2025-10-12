@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import static java.util.stream.Collectors.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -104,24 +103,26 @@ public class GetKitQuestionDetailService implements GetKitQuestionDetailUseCase 
                                       Question question,
                                       List<Impact> attributeImpacts,
                                       Measure measure) {
+        if (answerRange.isReusable()) {
+            return new Result(
+                question.getHint(),
+                null,
+                attributeImpacts,
+                QuestionDetailAnswerRange.of(answerRange),
+                QuestionDetailMeasure.of(measure),
+                question.getTranslations()
+            );
+        }
 
-        List<Option> options = Optional.of(answerRange)
-            .filter(ar -> !ar.isReusable())
-            .map(ar -> question.getOptions().stream()
-                .map(opt -> new Option(opt.getIndex(), opt.getTitle(), opt.getValue(), opt.getTranslations()))
-                .toList())
-            .orElse(null);
-
-        QuestionDetailAnswerRange questionDetailAnswerRange = Optional.of(answerRange)
-            .filter(AnswerRange::isReusable)
-            .map(QuestionDetailAnswerRange::of)
-            .orElse(null);
+        List<Option> options = question.getOptions().stream()
+            .map(opt -> new Option(opt.getIndex(), opt.getTitle(), opt.getValue(), opt.getTranslations()))
+            .toList();
 
         return new Result(
             question.getHint(),
             options,
             attributeImpacts,
-            questionDetailAnswerRange,
+            null,
             QuestionDetailMeasure.of(measure),
             question.getTranslations()
         );
