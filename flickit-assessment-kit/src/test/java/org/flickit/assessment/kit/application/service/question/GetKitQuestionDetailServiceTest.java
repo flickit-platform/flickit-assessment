@@ -128,7 +128,7 @@ class GetKitQuestionDetailServiceTest {
         assertEquals(answerRange.getTitle(), result.answerRange().title());
         assertEquals(measure.getId(), result.measure().id());
         assertEquals(measure.getTitle(), result.measure().title());
-        assertEquals(question.getTranslations() ,result.translations());
+        assertEquals(question.getTranslations(), result.translations());
     }
 
     @Test
@@ -183,7 +183,6 @@ class GetKitQuestionDetailServiceTest {
                 assertEquals(expected.getTitle(), actual.title());
                 assertEquals(expected.getValue(), actual.value());
                 assertEquals(expected.getTranslations(), actual.translations());
-
             });
         assertEquals(2, result.attributeImpacts().size());
         result.attributeImpacts().forEach(im -> {
@@ -208,8 +207,9 @@ class GetKitQuestionDetailServiceTest {
         assertNull(result.answerRange());
         assertEquals(measure.getId(), result.measure().id());
         assertEquals(measure.getTitle(), result.measure().title());
-        assertEquals(question.getTranslations() ,result.translations());
+        assertEquals(question.getTranslations(), result.translations());
     }
+
     @Test
     void testGetKitQuestionDetail_whenKitDoesNotExist_thenThrowResourceNotFoundException() {
         var param = new Param(2000L, 2L, UUID.randomUUID());
@@ -222,7 +222,10 @@ class GetKitQuestionDetailServiceTest {
         verifyNoInteractions(
             loadActiveKitVersionIdPort,
             checkExpertGroupAccessPort,
-            loadAttributesPort
+            loadQuestionPort,
+            loadAttributesPort,
+            loadAnswerRangePort,
+            loadMeasurePort
         );
     }
 
@@ -242,7 +245,9 @@ class GetKitQuestionDetailServiceTest {
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> service.getKitQuestionDetail(param));
         assertEquals(QUESTION_ID_NOT_FOUND, exception.getMessage());
         verifyNoInteractions(
-            loadAttributesPort
+            loadAttributesPort,
+            loadAnswerRangePort,
+            loadMeasurePort
         );
     }
 
@@ -257,7 +262,10 @@ class GetKitQuestionDetailServiceTest {
         var exception = assertThrows(AccessDeniedException.class, () -> service.getKitQuestionDetail(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
         verifyNoInteractions(
-            loadAttributesPort
+            loadAttributesPort,
+            loadQuestionPort,
+            loadAnswerRangePort,
+            loadMeasurePort
         );
     }
 }
