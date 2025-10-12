@@ -77,7 +77,7 @@ class GetKitSubjectDetailServiceTest {
     }
 
     @Test
-    void testGetKitSubjectDetail_whenKitDoesNotExist_thenThrowsException() {
+    void testGetKitSubjectDetail_whenKitDoesNotExist_thenThrowResourceNotFoundException() {
         Param param = new Param(2000L, 2L, UUID.randomUUID());
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId()))
@@ -93,7 +93,7 @@ class GetKitSubjectDetailServiceTest {
     }
 
     @Test
-    void testGetKitSubjectDetail_whenUserIsNotMember_thenThrowsException() {
+    void testGetKitSubjectDetail_whenUserIsNotMember_thenThrowAccessDeniedException() {
         var param = new Param(2000L, 2L, UUID.randomUUID());
         var expertGroup = createExpertGroup();
 
