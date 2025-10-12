@@ -52,7 +52,6 @@ public class GetKitQuestionDetailService implements GetKitQuestionDetailUseCase 
         var maturityLevelsMap = loadMaturityLevelsPort.loadAllByKitVersionId(kitVersionId).stream()
             .collect(toMap(MaturityLevel::getId, e -> e));
 
-
         List<Impact> attributeImpacts = loadAttributeImpacts(kitVersionId, question, maturityLevelsMap);
         var answerRange = loadAnswerRangePort.load(question.getAnswerRangeId(), kitVersionId);
 
