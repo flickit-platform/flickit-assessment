@@ -44,7 +44,10 @@ public interface GetKitMeasureDetailUseCase {
         }
     }
 
-    record Result(String title, String description, int questionsCount, List<MeasureDetailQuestion> questions,
+    record Result(String title,
+                  String description,
+                  int questionsCount,
+                  List<MeasureDetailQuestion> questions,
                   Map<KitLanguage, MeasureTranslation> translations) {
     }
 
