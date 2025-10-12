@@ -31,11 +31,10 @@ public class GetKitMeasureDetailService implements GetKitMeasureDetailUseCase {
     private final LoadKitExpertGroupPort loadKitExpertGroupPort;
     private final CheckExpertGroupAccessPort checkExpertGroupAccessPort;
     private final LoadActiveKitVersionIdPort loadActiveKitVersionIdPort;
+    private final LoadMeasurePort loadMeasurePort;
     private final LoadQuestionsPort loadQuestionsPort;
     private final LoadQuestionnairesPort loadQuestionnairesPort;
-    private final LoadMeasurePort loadMeasurePort;
     private final LoadAnswerRangesPort loadAnswerRangesPort;
-    private final LoadAnswerOptionsPort loadAnswerOptionsPort;
 
     @Override
     public Result getKitMeasureDetail(Param param) {
@@ -60,14 +59,12 @@ public class GetKitMeasureDetailService implements GetKitMeasureDetailUseCase {
             .collect(Collectors.toMap(Questionnaire::getId, Function.identity()));
         var answerRangeIdToAnswerRangeMap = loadAnswerRangesPort.loadAll(kitVersionId).stream()
             .collect(Collectors.toMap(AnswerRange::getId, Function.identity()));
-        var answerRangeIdToAnswerOptionsMap = loadAnswerOptionsPort.loadByRangeIds(answerRangeIdToAnswerRangeMap.keySet(), kitVersionId).stream()
-            .collect(Collectors.groupingBy(AnswerOption::getAnswerRangeId));
 
         return questions.stream()
             .map(question -> new MeasureDetailQuestion(question.getTitle(),
                 MeasureDetailAnswerRange.of(answerRangeIdToAnswerRangeMap.get(question.getAnswerRangeId())),
                 MeasureDetailQuestionnaire.of(questionnaireIdToQuestionnaireMap.get(question.getQuestionnaireId())),
-                answerRangeIdToAnswerOptionsMap.get(question.getAnswerRangeId()).stream()
+                answerRangeIdToAnswerRangeMap.get(question.getAnswerRangeId()).getAnswerOptions().stream()
                     .map(Option::of)
                     .toList())
             )
