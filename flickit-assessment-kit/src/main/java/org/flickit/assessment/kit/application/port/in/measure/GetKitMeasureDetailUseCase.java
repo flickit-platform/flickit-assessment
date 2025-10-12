@@ -51,7 +51,7 @@ public interface GetKitMeasureDetailUseCase {
     record MeasureDetailQuestion(String title,
                                  MeasureDetailAnswerRange answerRange,
                                  MeasureDetailQuestionnaire questionnaire,
-                                 List<MeasureDetailOption> options) {
+                                 List<MeasureDetailAnswerOption> options) {
     }
 
     record MeasureDetailAnswerRange(long id, String title) {
@@ -68,10 +68,10 @@ public interface GetKitMeasureDetailUseCase {
         }
     }
 
-    record MeasureDetailOption(long id, String title, int index, double value) {
+    record MeasureDetailAnswerOption(long id, String title, int index, double value) {
 
-        public static MeasureDetailOption of(AnswerOption answerOption) {
-            return new MeasureDetailOption(answerOption.getId(),
+        public static MeasureDetailAnswerOption of(AnswerOption answerOption) {
+            return new MeasureDetailAnswerOption(answerOption.getId(),
                 answerOption.getTitle(),
                 answerOption.getIndex(),
                 answerOption.getValue());
