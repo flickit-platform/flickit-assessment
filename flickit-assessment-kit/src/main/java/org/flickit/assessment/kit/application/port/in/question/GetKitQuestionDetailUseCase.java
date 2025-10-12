@@ -4,8 +4,14 @@ import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.common.application.domain.kit.translation.AnswerOptionTranslation;
+import org.flickit.assessment.common.application.domain.kit.translation.QuestionTranslation;
+import org.flickit.assessment.kit.application.domain.AnswerRange;
+import org.flickit.assessment.kit.application.domain.Measure;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
@@ -37,20 +43,36 @@ public interface GetKitQuestionDetailUseCase {
         }
     }
 
-    record Result(String hint, List<Option> options, List<Impact> attributeImpacts) {
+    record Result(String hint,
+                  List<Option> options,
+                  List<Impact> attributeImpacts,
+                  QuestionDetailAnswerRange answerRange,
+                  QuestionDetailMeasure measure,
+                  Map<KitLanguage, QuestionTranslation> translations) {
     }
 
-    record Option(int index, String title) {
+    record Option(int index, String title, double value, Map<KitLanguage, AnswerOptionTranslation> translations) {
     }
 
     record Impact(long id, String title, List<AffectedLevel> affectedLevels) {
     }
 
-    record AffectedLevel(MaturityLevel maturityLevel, int weight, List<OptionValue> optionValues) {
+    record AffectedLevel(MaturityLevel maturityLevel, int weight) {
         public record MaturityLevel(long id, int index, String title) {
         }
+    }
 
-        public record OptionValue(long id, int index, double value) {
+    record QuestionDetailAnswerRange(long id, String title) {
+
+        public static QuestionDetailAnswerRange of(AnswerRange answerRange) {
+            return new QuestionDetailAnswerRange(answerRange.getId(), answerRange.getTitle());
+        }
+    }
+
+    record QuestionDetailMeasure(long id, String title) {
+
+        public static QuestionDetailMeasure of(Measure measure) {
+            return new QuestionDetailMeasure(measure.getId(), measure.getTitle());
         }
     }
 }
