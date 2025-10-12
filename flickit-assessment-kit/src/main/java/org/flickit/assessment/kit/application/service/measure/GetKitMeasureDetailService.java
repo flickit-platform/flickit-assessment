@@ -64,7 +64,7 @@ public class GetKitMeasureDetailService implements GetKitMeasureDetailUseCase {
                 MeasureDetailAnswerRange.of(answerRangeIdToAnswerRangeMap.get(question.getAnswerRangeId())),
                 MeasureDetailQuestionnaire.of(questionnaireIdToQuestionnaireMap.get(question.getQuestionnaireId())),
                 answerRangeIdToAnswerRangeMap.get(question.getAnswerRangeId()).getAnswerOptions().stream()
-                    .map(Option::of)
+                    .map(MeasureDetailOption::of)
                     .toList())
             )
             .toList();
