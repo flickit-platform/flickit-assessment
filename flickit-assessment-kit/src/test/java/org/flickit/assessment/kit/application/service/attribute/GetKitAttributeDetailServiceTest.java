@@ -82,6 +82,7 @@ class GetKitAttributeDetailServiceTest {
         assertEquals(expectedAttribute.getWeight(), result.weight());
         assertEquals(expectedAttribute.getDescription(), result.description());
         assertEquals(expectedMaturityLevels.size(), result.maturityLevels().size());
+        assertEquals(expectedAttribute.getTranslations(), result.translations());
     }
 
     @Test
