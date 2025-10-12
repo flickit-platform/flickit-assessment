@@ -55,11 +55,26 @@ public interface GetKitMeasureDetailUseCase {
     }
 
     record MeasureDetailAnswerRange(long id, String title) {
+
+        public static MeasureDetailAnswerRange of(AnswerRange answerRange) {
+            return new MeasureDetailAnswerRange(answerRange.getId(), answerRange.getTitle());
+        }
     }
 
     record MeasureDetailQuestionnaire(long id, String title) {
+
+        public static MeasureDetailQuestionnaire of(Questionnaire questionnaire) {
+            return new MeasureDetailQuestionnaire(questionnaire.getId(), questionnaire.getTitle());
+        }
     }
 
     record Option(long id, String title, int index, double value) {
+
+        public static Option of(AnswerOption answerOption) {
+            return new Option(answerOption.getId(),
+                answerOption.getTitle(),
+                answerOption.getIndex(),
+                answerOption.getValue());
+        }
     }
 }
