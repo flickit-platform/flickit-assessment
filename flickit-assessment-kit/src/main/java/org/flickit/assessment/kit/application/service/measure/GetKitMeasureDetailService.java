@@ -15,6 +15,7 @@ import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestio
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -60,6 +61,7 @@ public class GetKitMeasureDetailService implements GetKitMeasureDetailUseCase {
             .collect(Collectors.toMap(AnswerRange::getId, Function.identity()));
 
         return questions.stream()
+            .sorted(Comparator.comparingInt(Question::getIndex))
             .map(question -> new MeasureDetailQuestion(question.getTitle(),
                 MeasureDetailAnswerRange.of(answerRangeIdToAnswerRangeMap.get(question.getAnswerRangeId())),
                 MeasureDetailQuestionnaire.of(questionnaireIdToQuestionnaireMap.get(question.getQuestionnaireId())),
