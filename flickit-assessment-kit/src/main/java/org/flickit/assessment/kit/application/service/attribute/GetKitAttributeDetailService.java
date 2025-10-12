@@ -46,7 +46,8 @@ public class GetKitAttributeDetailService implements GetKitAttributeDetailUseCas
             questionCount,
             attribute.getWeight(),
             attribute.getDescription(),
-            maturityLevels
+            maturityLevels,
+            attribute.getTranslations()
         );
     }
 }
