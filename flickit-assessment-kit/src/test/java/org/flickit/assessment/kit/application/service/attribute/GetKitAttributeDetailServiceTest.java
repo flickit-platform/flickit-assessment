@@ -26,6 +26,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -53,7 +54,7 @@ class GetKitAttributeDetailServiceTest {
     private LoadActiveKitVersionIdPort loadActiveKitVersionIdPort;
 
     @Test
-    void testGetKitAttributeDetail_WhenAttributeExist_shouldReturnAttributeDetails() {
+    void testGetKitAttributeDetail_whenAttributeExist_thenReturnAttributeDetails() {
         Param param = new Param(2000L, 2L, UUID.randomUUID());
         var expertGroup = ExpertGroupMother.createExpertGroup();
         var expectedQuestionCount = 14;
@@ -84,7 +85,7 @@ class GetKitAttributeDetailServiceTest {
     }
 
     @Test
-    void testGetKitAttributeDetail_WhenKitDoesNotExist_ThrowsException() {
+    void testGetKitAttributeDetail_whenKitDoesNotExist_thenThrowResourceNotFoundException() {
         Param param = new Param(2000L, 2L, UUID.randomUUID());
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId()))
@@ -92,10 +93,16 @@ class GetKitAttributeDetailServiceTest {
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> service.getKitAttributeDetail(param));
         assertEquals(KIT_ID_NOT_FOUND, exception.getMessage());
+
+        verifyNoInteractions(checkExpertGroupAccessPort,
+            loadAttributePort,
+            countAttributeImpactfulQuestionsPort,
+            loadAttributeMaturityLevelsPort,
+            loadActiveKitVersionIdPort);
     }
 
     @Test
-    void testGetKitAttributeDetail_WhenUserIsNotMember_ThrowsException() {
+    void testGetKitAttributeDetail_whenUserIsNotMember_thenThrowAccessDeniedException() {
         Param param = new Param(2000L, 2L, UUID.randomUUID());
         var expertGroup = ExpertGroupMother.createExpertGroup();
 
@@ -104,5 +111,10 @@ class GetKitAttributeDetailServiceTest {
 
         AccessDeniedException exception = assertThrows(AccessDeniedException.class, () -> service.getKitAttributeDetail(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
+
+        verifyNoInteractions(loadAttributePort,
+            countAttributeImpactfulQuestionsPort,
+            loadAttributeMaturityLevelsPort,
+            loadActiveKitVersionIdPort);
     }
 }
