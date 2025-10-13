@@ -75,6 +75,7 @@ class GetKitSubjectDetailServiceTest {
         assertEquals(attribute.getId(), resultAttribute.id());
         assertEquals(attribute.getTitle(), resultAttribute.title());
         assertEquals(attribute.getIndex(), resultAttribute.index());
+        assertEquals(attribute.getWeight(), resultAttribute.weight());
     }
 
     @Test

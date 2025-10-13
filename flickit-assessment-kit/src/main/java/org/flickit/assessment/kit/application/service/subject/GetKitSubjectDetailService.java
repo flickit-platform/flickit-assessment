@@ -39,6 +39,6 @@ public class GetKitSubjectDetailService implements GetKitSubjectDetailUseCase {
     }
 
     private Attribute toAttribute(org.flickit.assessment.kit.application.domain.Attribute attribute) {
-        return new Attribute(attribute.getId(), attribute.getIndex(), attribute.getTitle());
+        return new Attribute(attribute.getId(), attribute.getIndex(), attribute.getTitle(), attribute.getWeight());
     }
 }

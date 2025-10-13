@@ -47,6 +47,6 @@ public interface GetKitSubjectDetailUseCase {
                   Map<KitLanguage, SubjectTranslation> translations) {
     }
 
-    record Attribute(long id, int index, String title) {
+    record Attribute(long id, int index, String title, int weight) {
     }
 }
