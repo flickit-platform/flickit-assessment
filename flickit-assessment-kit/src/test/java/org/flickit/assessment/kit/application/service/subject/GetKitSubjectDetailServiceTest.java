@@ -67,6 +67,7 @@ class GetKitSubjectDetailServiceTest {
 
         assertEquals(questionsCount, result.questionsCount());
         assertEquals(subject.getDescription(), result.description());
+        assertEquals(subject.getWeight(), result.weight());
         assertEquals(1, result.attributes().size());
         assertEquals(subject.getTranslations(), result.translations());
 

@@ -42,6 +42,7 @@ public interface GetKitSubjectDetailUseCase {
 
     record Result(int questionsCount,
                   String description,
+                  int weight,
                   List<Attribute> attributes,
                   Map<KitLanguage, SubjectTranslation> translations) {
     }
