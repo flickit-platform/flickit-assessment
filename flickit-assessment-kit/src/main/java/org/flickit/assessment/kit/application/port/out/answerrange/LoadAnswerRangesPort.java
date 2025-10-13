@@ -11,5 +11,7 @@ public interface LoadAnswerRangesPort {
 
     List<AnswerRange> loadAllReusable(long kitVersionId);
 
+    List<AnswerRange> loadAll(long kitVersionId);
+
     List<AnswerRange> loadAnswerRangesWithNotEnoughOptions(long kitVersionId);
 }
