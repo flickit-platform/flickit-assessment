@@ -86,7 +86,7 @@ class GetKitDetailServiceTest {
         when(loadQuestionnairesPort.loadByKitId(param.getKitId())).thenReturn(questionnaires);
         when(loadActiveKitVersionIdPort.loadKitVersionId(param.getKitId())).thenReturn(kitVersionId);
         when(loadMeasurePort.loadAll(kitVersionId)).thenReturn(measures);
-        when(loadAnswerRangesPort.loadAll(kitVersionId)).thenReturn(answerRanges);
+        when(loadAnswerRangesPort.loadAllReusable(kitVersionId)).thenReturn(answerRanges);
 
         Result result = service.getKitDetail(param);
 

@@ -95,7 +95,7 @@ public class AnswerRangePersistenceJpaAdapter implements
     }
 
     @Override
-    public List<AnswerRange> loadAll(long kitVersionId) {
+    public List<AnswerRange> loadAllReusable(long kitVersionId) {
         var sort = AnswerRangeJpaEntity.Fields.lastModificationTime;
         var order = Sort.Direction.DESC;
         var result = repository.findByKitVersionIdAndReusableTrue(kitVersionId, Sort.by(order, sort));
