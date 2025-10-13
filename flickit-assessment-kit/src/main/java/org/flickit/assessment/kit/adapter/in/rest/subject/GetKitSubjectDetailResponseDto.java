@@ -9,6 +9,7 @@ import java.util.Map;
 
 public record GetKitSubjectDetailResponseDto(int questionsCount,
                                              String description,
+                                             int weight,
                                              List<Attribute> attributes,
                                              Map<KitLanguage, SubjectTranslation> translations) {
 }
