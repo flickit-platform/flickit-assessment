@@ -25,6 +25,9 @@ public class FileProperties {
     DataSize dslMaxSize = DataSize.ofMegabytes(5);
 
     @NotNull
+    DataSize excelKitMaxSize = DataSize.ofMegabytes(5);
+
+    @NotNull
     DataSize attachmentMaxSize = DataSize.ofMegabytes(5);
 
     @NotNull
@@ -65,4 +68,6 @@ public class FileProperties {
     );
 
     private List<String> kitDslContentTypes = Arrays.asList("application/zip", "application/x-zip", "application/x-zip-compressed");
+
+    private String excelKitContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 }
