@@ -35,10 +35,10 @@ public class GetKitSubjectDetailService implements GetKitSubjectDetailUseCase {
         var subject = loadSubjectPort.load(param.getSubjectId(), kitVersionId);
         var attributes = subject.getAttributes().stream().map(this::toAttribute).toList();
         var questionsCount = countSubjectQuestionsPort.countBySubjectId(param.getSubjectId(), kitVersionId);
-        return new Result(questionsCount, subject.getDescription(), attributes);
+        return new Result(questionsCount, subject.getDescription(), subject.getWeight(), attributes, subject.getTranslations());
     }
 
     private Attribute toAttribute(org.flickit.assessment.kit.application.domain.Attribute attribute) {
-        return new Attribute(attribute.getId(), attribute.getIndex(), attribute.getTitle());
+        return new Attribute(attribute.getId(), attribute.getIndex(), attribute.getTitle(), attribute.getWeight());
     }
 }

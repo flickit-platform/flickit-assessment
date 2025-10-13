@@ -40,6 +40,7 @@ public class GetKitAttributeDetailRestController {
             result.questionCount(),
             result.weight(),
             result.description(),
-            result.maturityLevels());
+            result.maturityLevels(),
+            result.translations());
     }
 }
