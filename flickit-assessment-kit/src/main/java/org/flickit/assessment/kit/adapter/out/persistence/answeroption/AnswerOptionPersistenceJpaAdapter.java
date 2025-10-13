@@ -13,11 +13,9 @@ import org.flickit.assessment.kit.application.port.out.answeroption.CreateAnswer
 import org.flickit.assessment.kit.application.port.out.answeroption.DeleteAnswerOptionPort;
 import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOptionsPort;
 import org.flickit.assessment.kit.application.port.out.answeroption.UpdateAnswerOptionPort;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Set;
 
 import static org.flickit.assessment.kit.common.ErrorMessageKey.ANSWER_OPTION_ID_NOT_FOUND;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.QUESTION_ID_NOT_FOUND;
@@ -67,21 +65,6 @@ public class AnswerOptionPersistenceJpaAdapter implements
             return List.of();
 
         return repository.findAllByAnswerRangeIdAndKitVersionIdOrderByIndex(question.getAnswerRangeId(), kitVersionId).stream()
-            .map(AnswerOptionMapper::mapToDomainModel)
-            .toList();
-    }
-
-    @Override
-    public List<AnswerOption> loadByRangeIds(Set<Long> rangeIds, long kitVersionId) {
-        Sort sortByIndex = Sort.by(AnswerOptionJpaEntity.Fields.index);
-        return repository.findAllByAnswerRangeIdInAndKitVersionId(rangeIds, kitVersionId, sortByIndex).stream()
-            .map(AnswerOptionMapper::mapToDomainModel)
-            .toList();
-    }
-
-    @Override
-    public List<AnswerOption> loadByRangeId(long rangeId, long kitVersionId) {
-        return repository.findAllByAnswerRangeIdAndKitVersionIdOrderByIndex(rangeId, kitVersionId).stream()
             .map(AnswerOptionMapper::mapToDomainModel)
             .toList();
     }
