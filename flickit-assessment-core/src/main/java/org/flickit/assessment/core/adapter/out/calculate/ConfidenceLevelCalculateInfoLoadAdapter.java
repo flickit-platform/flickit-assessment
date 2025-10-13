@@ -97,7 +97,7 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
         Map<Long, Map<Long, List<QuestionImpactJpaEntity>>> impactfulQuestions = mapQuestionToImpacts(allQuestionsJoinImpactViews);
 
         // load all answers submitted with this assessmentResult
-        var allAnswerEntities = answerRepo.findByAssessmentResultId(assessmentResultId);
+        var allAnswerEntities = answerRepo.findByAssessmentResultIdAndDeletedFalse(assessmentResultId);
 
         Context context = new Context(
             allAnswerEntities,

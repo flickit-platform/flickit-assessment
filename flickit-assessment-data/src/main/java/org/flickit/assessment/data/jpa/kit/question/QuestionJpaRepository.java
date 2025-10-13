@@ -123,6 +123,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
                         SELECT MAX(sq_ans.index) FROM AnswerOptionJpaEntity sq_ans
                         WHERE sq_ans.answerRangeId = anso.answerRangeId AND sq_ans.kitVersionId = :kitVersionId
                     )))
+            AND ans.deleted = false
         """)
     List<QuestionIdWithAnsweredOptionIndexView> findImprovableQuestions(@Param("assessmentResultId") UUID assessmentResultId,
                                                                         @Param("kitVersionId") long kitVersionId,
@@ -152,14 +153,14 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
                     SELECT fq.id
                     FROM QuestionJpaEntity fq
                     JOIN QuestionnaireJpaEntity qsn ON fq.questionnaireId = qsn.id AND fq.kitVersionId = qsn.kitVersionId
-                    JOIN AnswerJpaEntity ans ON ans.questionId = fq.id
+                    JOIN AnswerJpaEntity ans ON ans.questionId = fq.id AND ans.deleted = false
                     WHERE ans.assessmentResult.id = :assessmentResultId
                         AND (ans.answerOptionId IS NOT NULL OR ans.isNotApplicable = TRUE)
                         AND qsn.kitVersionId = ans.assessmentResult.kitVersionId)
                 AND qn.id IN (
                     SELECT fqn.id
                     FROM QuestionnaireJpaEntity fqn
-                    JOIN AnswerJpaEntity fans ON fans.questionnaireId = fqn.id
+                    JOIN AnswerJpaEntity fans ON fans.questionnaireId = fqn.id AND fans.deleted = false
                     WHERE fans.assessmentResult.id = :assessmentResultId AND qn.kitVersionId = fans.assessmentResult.kitVersionId)
             GROUP BY qn.id, qn.kitVersionId
             ORDER BY qn.id
@@ -174,7 +175,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
                     SELECT fq.id
                     FROM QuestionJpaEntity fq
                     JOIN QuestionnaireJpaEntity qsn ON fq.questionnaireId = qsn.id AND fq.kitVersionId = qsn.kitVersionId
-                    JOIN AnswerJpaEntity ans ON ans.questionId = fq.id
+                    JOIN AnswerJpaEntity ans ON ans.questionId = fq.id AND ans.deleted = false
                     WHERE ans.assessmentResult.id = :assessmentResultId
                         AND (ans.answerOptionId IS NOT NULL OR ans.isNotApplicable = TRUE)
                         AND qsn.kitVersionId = ans.assessmentResult.kitVersionId)

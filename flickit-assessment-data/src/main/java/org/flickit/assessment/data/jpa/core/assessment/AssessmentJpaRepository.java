@@ -174,7 +174,7 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
                 qi AS questionImpact,
                 ao AS answerOption
             FROM QuestionJpaEntity qsn
-            LEFT JOIN AnswerJpaEntity ans on ans.questionId = qsn.id and ans.assessmentResult.id = :assessmentResultId
+            LEFT JOIN AnswerJpaEntity ans on ans.questionId = qsn.id and ans.assessmentResult.id = :assessmentResultId and ans.deleted = false
             LEFT JOIN AnswerOptionJpaEntity ao on ans.answerOptionId = ao.id and ao.kitVersionId = :kitVersionId
             LEFT JOIN QuestionImpactJpaEntity qi on qsn.id = qi.questionId and qsn.kitVersionId = qi.kitVersionId
             WHERE qsn.kitVersionId = :kitVersionId

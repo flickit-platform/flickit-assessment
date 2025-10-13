@@ -9,11 +9,11 @@ import java.util.*;
 
 public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID> {
 
-    Optional<AnswerJpaEntity> findByAssessmentResultIdAndQuestionId(UUID assessmentResultId, Long questionId);
+    Optional<AnswerJpaEntity> findByAssessmentResultIdAndQuestionIdAndDeletedFalse(UUID assessmentResultId, Long questionId);
 
-    List<AnswerJpaEntity> findByAssessmentResultIdAndQuestionIdIn(UUID assessmentResultId, List<Long> questionId);
+    List<AnswerJpaEntity> findByAssessmentResultIdAndDeletedFalseAndQuestionIdIn(UUID assessmentResultId, List<Long> questionId);
 
-    List<AnswerJpaEntity> findByAssessmentResultId(UUID assessmentResultId);
+    List<AnswerJpaEntity> findByAssessmentResultIdAndDeletedFalse(UUID assessmentResultId);
 
     @Query("""
             SELECT COUNT(a) as answerCount
@@ -21,6 +21,7 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
             WHERE a.assessmentResult.id=:assessmentResultId
                 AND a.questionId IN :questionIds
                 AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
+                AND a.deleted = false
         """)
     int getCountByQuestionIds(@Param("assessmentResultId") UUID assessmentResultId, @Param("questionIds") List<Long> questionIds);
 
@@ -29,6 +30,7 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
             FROM AnswerJpaEntity a
             WHERE a.assessmentResult.id=:assessmentResultId
                 AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
+                AND a.deleted = false
         """)
     int getCountByAssessmentResultId(@Param("assessmentResultId") UUID assessmentResultId);
 
@@ -40,7 +42,7 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
                 a.isNotApplicable = :isNotApplicable,
                 a.status = :status,
                 a.lastModifiedBy = :lastModifiedBy
-            WHERE a.id = :answerId
+            WHERE a.id = :answerId AND a.deleted = false
         """)
     void update(@Param("answerId") UUID answerId,
                 @Param("answerOptionId") Long answerOptionId,
@@ -56,6 +58,7 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
             WHERE a.assessmentResult.id=:assessmentResultId
                 AND a.questionnaireId IN :questionnaireIds
                 AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
+                AND a.deleted = false
             GROUP BY a.questionnaireId
         """)
     List<QuestionnaireIdAndAnswerCountView> getQuestionnairesProgressByAssessmentResultId(
@@ -68,6 +71,7 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
             WHERE a.assessmentResult.id=:assessmentResultId
                 AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
                 AND a.confidenceLevelId < :confidence
+                AND a.deleted = false
         """)
     int countWithConfidenceLessThan(@Param("assessmentResultId") UUID assessmentResultId,
                                     @Param("confidence") int confidence);
@@ -82,6 +86,7 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
                 AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
                 AND a.confidenceLevelId < :confidence
                 AND a.questionnaireId in :questionnaireIds
+                AND a.deleted = false
             GROUP BY q.questionnaireId
         """)
     List<QuestionnaireIdAndAnswerCountView> countByQuestionnaireIdWithConfidenceLessThan(@Param("assessmentResultId") UUID assessmentResultId,
@@ -94,6 +99,7 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
             SET a.status = :approvedStatusId,
                 a.lastModifiedBy = :approvedBy
             WHERE a.id = :answerId
+            AND a.deleted = false
         """)
     void approve(@Param("answerId") UUID answerId,
                  @Param("approvedBy") UUID approvedBy,
@@ -105,6 +111,7 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
             WHERE a.assessmentResult.id = :assessmentResultId
                 AND (a.status = :status)
                 AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
+                AND a.deleted = false
         """)
     int countUnapprovedAnswersByAssessmentResultId(@Param("assessmentResultId") UUID assessmentResultId,
                                                    @Param("status") Integer status);
@@ -119,6 +126,7 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
                 AND q.questionnaireId IN :questionnaireIds
                 AND (a.status = :status)
                 AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
+                AND a.deleted = false
             GROUP BY questionnaireId
         """)
     List<AnswersQuestionnaireAndCountView> countQuestionnairesUnapprovedAnswers(@Param("assessmentResultId") UUID assessmentResultId,
@@ -131,6 +139,7 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
             SET a.status = :status,
                 a.lastModifiedBy = :approvedBy
             WHERE a.id IN :answerIds
+            AND a.deleted = false
         """)
     void approveByAnswerIds(@Param("answerIds") List<UUID> answerIds,
                             @Param("approvedBy") UUID approvedBy,
@@ -142,6 +151,7 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
             WHERE a.assessmentResult.id = :assessmentResultId
                 AND (a.status = :status)
                 AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
+                AND a.deleted = false
         """)
     List<AnswerJpaEntity> findAnswersByAssessmentResultIdAndStatus(@Param("assessmentResultId") UUID assessmentResultId,
                                                                    @Param("status") Integer status);
