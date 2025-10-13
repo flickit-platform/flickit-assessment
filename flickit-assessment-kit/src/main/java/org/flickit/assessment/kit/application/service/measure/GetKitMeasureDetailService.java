@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -61,14 +62,19 @@ public class GetKitMeasureDetailService implements GetKitMeasureDetailUseCase {
             .collect(Collectors.toMap(AnswerRange::getId, Function.identity()));
 
         return questions.stream()
-            .sorted(Comparator.comparingInt(Question::getIndex))
-            .map(question -> new MeasureDetailQuestion(question.getTitle(),
-                MeasureDetailAnswerRange.of(answerRangeIdToAnswerRangeMap.get(question.getAnswerRangeId())),
-                MeasureDetailQuestionnaire.of(questionnaireIdToQuestionnaireMap.get(question.getQuestionnaireId())),
-                answerRangeIdToAnswerRangeMap.get(question.getAnswerRangeId()).getAnswerOptions().stream()
-                    .map(MeasureDetailAnswerOption::of)
-                    .toList())
+            .sorted(Comparator.comparingLong(Question::getQuestionnaireId))
+            .map(question -> buildQuestion(question, answerRangeIdToAnswerRangeMap, questionnaireIdToQuestionnaireMap)
             )
             .toList();
+    }
+
+    private static MeasureDetailQuestion buildQuestion(Question question, Map<Long, AnswerRange> answerRangeIdToAnswerRangeMap, Map<Long, Questionnaire> questionnaireIdToQuestionnaireMap) {
+        var answerRange = answerRangeIdToAnswerRangeMap.get(question.getAnswerRangeId());
+        return new MeasureDetailQuestion(question.getTitle(),
+            answerRange.isReusable() ? MeasureDetailAnswerRange.of(answerRange) : null,
+            MeasureDetailQuestionnaire.of(questionnaireIdToQuestionnaireMap.get(question.getQuestionnaireId())),
+            answerRange.isReusable() ? null : answerRange.getAnswerOptions().stream()
+                .map(MeasureDetailAnswerOption::of)
+                .toList());
     }
 }

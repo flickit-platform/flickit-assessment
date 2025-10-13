@@ -12,7 +12,6 @@ import org.flickit.assessment.kit.application.port.out.measure.LoadMeasurePort;
 import org.flickit.assessment.kit.application.port.out.question.LoadQuestionsPort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairesPort;
 import org.flickit.assessment.kit.test.fixture.application.*;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -27,6 +26,7 @@ import java.util.function.Consumer;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_MEASURE_DETAIL_MEASURE_ID_NOT_FOUND;
+import static org.flickit.assessment.kit.test.fixture.application.AnswerRangeMother.createNonReusableAnswerRangeWithTwoOptions;
 import static org.flickit.assessment.kit.test.fixture.application.AnswerRangeMother.createReusableAnswerRangeWithTwoOptions;
 import static org.flickit.assessment.kit.test.fixture.application.QuestionMother.createQuestion;
 import static org.flickit.assessment.kit.test.fixture.application.QuestionnaireMother.questionnaireWithTitle;
@@ -95,7 +95,7 @@ class GetKitMeasureDetailServiceTest {
     }
 
     @Test
-    void testGetKitMeasureDetail_whenParamsAreValid_thenReturnResult() {
+    void testGetKitMeasureDetail_whenParamsAreValidAndIsAndAnswerRagesAreReusable_thenReturnResult() {
         var measure = MeasureMother.measureWithTitle("Measure");
         var answerRanges = List.of(AnswerRangeMother.createAnswerRangeWithFourOptions(), createReusableAnswerRangeWithTwoOptions());
         var questionnaires = List.of(questionnaireWithTitle("Questionnaire1"), questionnaireWithTitle("Questionnaire2"));
@@ -123,9 +123,44 @@ class GetKitMeasureDetailServiceTest {
             .zipSatisfy(questions, (actual, expected) -> {
                 assertEquals(expected.getTitle(), actual.title());
                 assertEquals(expected.getAnswerRangeId(), actual.answerRange().id());
-                Assertions.assertNotNull(actual.answerRange().title());
+                assertNotNull(actual.answerRange().title());
                 assertEquals(expected.getQuestionnaireId(), actual.questionnaire().id());
-                Assertions.assertNotNull(actual.questionnaire().title());
+                assertNotNull(actual.questionnaire().title());
+                assertNull(actual.options());
+            });
+    }
+
+    @Test
+    void testGetKitMeasureDetail_whenParamsAreValidAndAnswerRangesAreNotReusable_thenReturnResult() {
+        var measure = MeasureMother.measureWithTitle("Measure");
+        var answerRanges = List.of(createNonReusableAnswerRangeWithTwoOptions(), createNonReusableAnswerRangeWithTwoOptions());
+        var questionnaires = List.of(questionnaireWithTitle("Questionnaire1"), questionnaireWithTitle("Questionnaire2"));
+        var questions = List.of(createQuestion(answerRanges.getFirst().getId(), questionnaires.getLast().getId()),
+            createQuestion(answerRanges.getLast().getId(), questionnaires.getFirst().getId()),
+            createQuestion(answerRanges.getFirst().getId(), questionnaires.getLast().getId()));
+        questions.getFirst().setOptions(answerRanges.getFirst().getAnswerOptions());
+        questions.get(1).setOptions(answerRanges.getLast().getAnswerOptions());
+        questions.getLast().setOptions(answerRanges.getFirst().getAnswerOptions());
+
+        when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
+        when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
+        when(loadActiveKitVersionIdPort.loadKitVersionId(param.getKitId())).thenReturn(kitVersionId);
+        when(loadMeasurePort.load(param.getMeasureId(), kitVersionId)).thenReturn(Optional.of(measure));
+        when(loadQuestionsPort.loadAllByMeasureIdAndKitVersionId(measure.getId(), kitVersionId)).thenReturn(questions);
+        when(loadQuestionnairesPort.loadByKitId(param.getKitId())).thenReturn(questionnaires);
+        when(loadAnswerRangesPort.loadAll(kitVersionId)).thenReturn(answerRanges);
+
+        var result = service.getKitMeasureDetail(param);
+        assertEquals(measure.getTitle(), result.title());
+        assertEquals(measure.getDescription(), result.description());
+        assertEquals(questions.size(), result.questionsCount());
+        assertEquals(measure.getTranslations(), result.translations());
+        assertThat(result.questions())
+            .zipSatisfy(questions, (actual, expected) -> {
+                assertEquals(expected.getTitle(), actual.title());
+                assertNull(actual.answerRange());
+                assertEquals(expected.getQuestionnaireId(), actual.questionnaire().id());
+                assertNotNull(actual.questionnaire().title());
                 assertThat(actual.options())
                     .zipSatisfy(expected.getOptions(), (actualOptions, expectedOption) -> {
                         assertEquals(expectedOption.getId(), actualOptions.id());
