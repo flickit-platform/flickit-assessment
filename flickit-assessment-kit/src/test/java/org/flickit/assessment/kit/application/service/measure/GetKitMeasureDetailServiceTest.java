@@ -105,6 +105,7 @@ class GetKitMeasureDetailServiceTest {
         questions.getFirst().setOptions(answerRanges.getFirst().getAnswerOptions());
         questions.get(1).setOptions(answerRanges.getLast().getAnswerOptions());
         questions.getLast().setOptions(answerRanges.getFirst().getAnswerOptions());
+        var expectedQuestions = List.of(questions.get(1), questions.getFirst(), questions.getLast());
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
@@ -120,7 +121,7 @@ class GetKitMeasureDetailServiceTest {
         assertEquals(questions.size(), result.questionsCount());
         assertEquals(measure.getTranslations(), result.translations());
         assertThat(result.questions())
-            .zipSatisfy(questions, (actual, expected) -> {
+            .zipSatisfy(expectedQuestions, (actual, expected) -> {
                 assertEquals(expected.getTitle(), actual.title());
                 assertEquals(expected.getAnswerRangeId(), actual.answerRange().id());
                 assertNotNull(actual.answerRange().title());
@@ -141,6 +142,7 @@ class GetKitMeasureDetailServiceTest {
         questions.getFirst().setOptions(answerRanges.getFirst().getAnswerOptions());
         questions.get(1).setOptions(answerRanges.getLast().getAnswerOptions());
         questions.getLast().setOptions(answerRanges.getFirst().getAnswerOptions());
+        var expectedQuestions = List.of(questions.get(1), questions.getFirst(), questions.getLast());
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
@@ -156,7 +158,7 @@ class GetKitMeasureDetailServiceTest {
         assertEquals(questions.size(), result.questionsCount());
         assertEquals(measure.getTranslations(), result.translations());
         assertThat(result.questions())
-            .zipSatisfy(questions, (actual, expected) -> {
+            .zipSatisfy(expectedQuestions, (actual, expected) -> {
                 assertEquals(expected.getTitle(), actual.title());
                 assertNull(actual.answerRange());
                 assertEquals(expected.getQuestionnaireId(), actual.questionnaire().id());
