@@ -3,7 +3,10 @@ package org.flickit.assessment.kit.application.service.measure;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.kit.application.domain.*;
+import org.flickit.assessment.kit.application.domain.AnswerRange;
+import org.flickit.assessment.kit.application.domain.ExpertGroup;
+import org.flickit.assessment.kit.application.domain.Question;
+import org.flickit.assessment.kit.application.domain.Questionnaire;
 import org.flickit.assessment.kit.application.port.in.measure.GetKitMeasureDetailUseCase;
 import org.flickit.assessment.kit.application.port.out.answerrange.LoadAnswerRangesPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadActiveKitVersionIdPort;
@@ -17,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -63,16 +65,16 @@ public class GetKitMeasureDetailService implements GetKitMeasureDetailUseCase {
 
         return questions.stream()
             .sorted(Comparator.comparingLong(Question::getQuestionnaireId))
-            .map(question -> buildQuestion(question, answerRangeIdToAnswerRangeMap, questionnaireIdToQuestionnaireMap)
-            )
+            .map(question -> buildQuestion(question,
+                answerRangeIdToAnswerRangeMap.get(question.getAnswerRangeId()),
+                questionnaireIdToQuestionnaireMap.get(question.getQuestionnaireId())))
             .toList();
     }
 
-    private static MeasureDetailQuestion buildQuestion(Question question, Map<Long, AnswerRange> answerRangeIdToAnswerRangeMap, Map<Long, Questionnaire> questionnaireIdToQuestionnaireMap) {
-        var answerRange = answerRangeIdToAnswerRangeMap.get(question.getAnswerRangeId());
+    private static MeasureDetailQuestion buildQuestion(Question question, AnswerRange answerRange, Questionnaire questionnaire) {
         return new MeasureDetailQuestion(question.getTitle(),
             answerRange.isReusable() ? MeasureDetailAnswerRange.of(answerRange) : null,
-            MeasureDetailQuestionnaire.of(questionnaireIdToQuestionnaireMap.get(question.getQuestionnaireId())),
+            MeasureDetailQuestionnaire.of(questionnaire),
             answerRange.isReusable() ? null : answerRange.getAnswerOptions().stream()
                 .map(MeasureDetailAnswerOption::of)
                 .toList());
