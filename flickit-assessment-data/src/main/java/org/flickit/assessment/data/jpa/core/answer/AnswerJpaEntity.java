@@ -47,6 +47,9 @@ public class AnswerJpaEntity {
     @Column(name = "status")
     private Integer status;
 
+    @Column(name = "deleted")
+    private boolean deleted;
+
     @Column(name = "created_by", nullable = false)
     private UUID createdBy;
 
