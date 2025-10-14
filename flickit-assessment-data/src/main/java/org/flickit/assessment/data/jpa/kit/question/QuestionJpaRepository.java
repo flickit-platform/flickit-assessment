@@ -113,7 +113,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
                 q.id AS questionId,
                 anso.index AS answeredOptionIndex
             FROM QuestionJpaEntity q
-            LEFT JOIN AnswerJpaEntity ans ON ans.assessmentResult.id = :assessmentResultId AND q.id = ans.questionId
+            LEFT JOIN AnswerJpaEntity ans ON ans.assessmentResult.id = :assessmentResultId AND q.id = ans.questionId AND ans.deleted = false
             LEFT JOIN AnswerOptionJpaEntity anso ON ans.answerOptionId = anso.id AND q.kitVersionId = anso.kitVersionId
             WHERE
                 q.id IN :questionIds
@@ -123,7 +123,6 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
                         SELECT MAX(sq_ans.index) FROM AnswerOptionJpaEntity sq_ans
                         WHERE sq_ans.answerRangeId = anso.answerRangeId AND sq_ans.kitVersionId = :kitVersionId
                     )))
-            AND ans.deleted = false
         """)
     List<QuestionIdWithAnsweredOptionIndexView> findImprovableQuestions(@Param("assessmentResultId") UUID assessmentResultId,
                                                                         @Param("kitVersionId") long kitVersionId,
