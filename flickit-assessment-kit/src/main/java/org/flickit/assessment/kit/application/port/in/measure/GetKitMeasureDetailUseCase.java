@@ -51,7 +51,8 @@ public interface GetKitMeasureDetailUseCase {
                   Map<KitLanguage, MeasureTranslation> translations) {
     }
 
-    record MeasureDetailQuestion(String title,
+    record MeasureDetailQuestion(long id,
+                                 String title,
                                  MeasureDetailAnswerRange answerRange,
                                  MeasureDetailQuestionnaire questionnaire,
                                  List<MeasureDetailAnswerOption> options) {
