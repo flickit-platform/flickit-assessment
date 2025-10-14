@@ -8,10 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, QuestionJpaEntity.EntityId> {
 
@@ -28,6 +25,8 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
     boolean existsByAnswerRangeIdAndKitVersionId(long answerRangeId, long kitVersionId);
 
     List<QuestionJpaEntity> findAllByIdInAndKitVersionIdAndQuestionnaireId(List<Long> ids, long kitVersionId, long questionnaireId);
+
+    Set<Long> findIdByKitVersionId(long kitVersionId);
 
     @Modifying
     @Query("""

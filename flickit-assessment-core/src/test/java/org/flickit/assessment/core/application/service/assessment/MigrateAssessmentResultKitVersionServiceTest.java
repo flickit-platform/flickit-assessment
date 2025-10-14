@@ -6,9 +6,11 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.port.in.assessment.MigrateAssessmentResultKitVersionUseCase;
 import org.flickit.assessment.core.application.port.in.assessment.MigrateAssessmentResultKitVersionUseCase.Param;
+import org.flickit.assessment.core.application.port.out.answer.DeleteAnswerPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.InvalidateAssessmentResultCalculatePort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.UpdateAssessmentResultPort;
+import org.flickit.assessment.core.application.port.out.question.LoadQuestionPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -47,10 +49,10 @@ class MigrateAssessmentResultKitVersionServiceTest {
     @Mock
     private UpdateAssessmentResultPort updateAssessmentResultPort;
 
-    @Test
-    void testMigrateAssessmentResultKitVersionService_CurrentUserDoesNotHaveAccess_ShouldThrowAccessDeniedException() {
-        var param = createParam(MigrateAssessmentResultKitVersionUseCase.Param.ParamBuilder::build);
+    private final MigrateAssessmentResultKitVersionUseCase.Param param = createParam(MigrateAssessmentResultKitVersionUseCase.Param.ParamBuilder::build);
 
+    @Test
+    void testMigrateAssessmentResultKitVersionService_whenCurrentUserDoesNotHaveRequiredAccess_thenShouldThrowAccessDeniedException() {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MIGRATE_KIT_VERSION))
             .thenReturn(false);
 
@@ -61,9 +63,7 @@ class MigrateAssessmentResultKitVersionServiceTest {
     }
 
     @Test
-    void testMigrateAssessmentResultKitVersionService_AssessmentResultNotExists_ShouldThrowResourceNotFoundException() {
-        var param = createParam(MigrateAssessmentResultKitVersionUseCase.Param.ParamBuilder::build);
-
+    void testMigrateAssessmentResultKitVersionService_whenAssessmentResultDoesNotExists_thenShouldThrowResourceNotFoundException() {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MIGRATE_KIT_VERSION))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.empty());
@@ -75,8 +75,7 @@ class MigrateAssessmentResultKitVersionServiceTest {
     }
 
     @Test
-    void testMigrateAssessmentResultKitVersionService_ActiveKitVersionNotExists_ShouldThrowValidationException() {
-        var param = createParam(MigrateAssessmentResultKitVersionUseCase.Param.ParamBuilder::build);
+    void testMigrateAssessmentResultKitVersionService_whenActiveKitVersionDoesNotExists_thenShouldThrowValidationException() {
         var assessmentResult = validResultWithoutActiveVersion();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MIGRATE_KIT_VERSION))
@@ -90,11 +89,9 @@ class MigrateAssessmentResultKitVersionServiceTest {
     }
 
     @Test
-    void testMigrateAssessmentResultKitVersionService_ValidParameters_SuccessfulUpdate() {
+    void testMigrateAssessmentResultKitVersionService_whenParametersAreValid_thenSuccessfulUpdate() {
         var assessmentResult = validResult();
         var activeKitVersionId = assessmentResult.getAssessment().getAssessmentKit().getKitVersion();
-
-        var param = createParam(b -> b.assessmentId(assessmentResult.getAssessment().getId()));
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MIGRATE_KIT_VERSION))
             .thenReturn(true);
