@@ -2,10 +2,7 @@ package org.flickit.assessment.kit.adapter.out.excel.dsl.converter;
 
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.flickit.assessment.kit.application.domain.dsl.AnswerOptionDslModel;
-import org.flickit.assessment.kit.application.domain.dsl.AttributeDslModel;
-import org.flickit.assessment.kit.application.domain.dsl.MaturityLevelDslModel;
-import org.flickit.assessment.kit.application.domain.dsl.QuestionDslModel;
+import org.flickit.assessment.kit.application.domain.dsl.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,9 +11,7 @@ import org.testcontainers.shaded.org.apache.commons.io.IOUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -31,28 +26,27 @@ class QuestionsConverterTest {
     MaturityLevelDslModel level2 = MaturityLevelDslModel.builder().value(2).code("Prepared").index(2).title("Prepared Title").description("Prepared Description").build();
     MaturityLevelDslModel level3 = MaturityLevelDslModel.builder().value(3).code("WellEquipped").index(3).title("Well Equipped Title").description("Well Equipped Description").build();
     MaturityLevelDslModel level4 = MaturityLevelDslModel.builder().value(4).code("SateOfTheArt").index(4).title("State of The Art Title").description("State of The Art Description").build();
-    Map<String, MaturityLevelDslModel> maturityLevelCodeToMaturityLevelDslMap = new HashMap<>();
 
     AnswerOptionDslModel option1 = AnswerOptionDslModel.builder().index(1).caption("Never").value(0.0).build();
     AnswerOptionDslModel option2 = AnswerOptionDslModel.builder().index(2).caption("Often").value(0.8).build();
     AnswerOptionDslModel option3 = AnswerOptionDslModel.builder().index(3).caption("Always").value(1.0).build();
     AnswerOptionDslModel option4 = AnswerOptionDslModel.builder().index(1).caption("No").value(0.0).build();
     AnswerOptionDslModel option5 = AnswerOptionDslModel.builder().index(2).caption("Yes").value(1.0).build();
-    Map<String, List<AnswerOptionDslModel>> answerRangeCodeToAnswerOptionsMap = new HashMap<>();
 
     @Test
     void testQuestionsConverter() throws IOException {
-        maturityLevelCodeToMaturityLevelDslMap.put("Unprepared", level1);
-        maturityLevelCodeToMaturityLevelDslMap.put("Prepared", level2);
-        maturityLevelCodeToMaturityLevelDslMap.put("WellEquipped", level3);
-        maturityLevelCodeToMaturityLevelDslMap.put("SateOfTheArt", level4);
-
-        answerRangeCodeToAnswerOptionsMap.put("UsageRange", List.of(option1, option2, option3));
-        answerRangeCodeToAnswerOptionsMap.put("YesNo", List.of(option4, option5));
+        var levels = List.of(level1, level2, level3, level4);
+        var answerRanges = List.of(
+            AnswerRangeDslModel.builder().title("UsageRange").code("UsageRange").answerOptions(List.of(option1, option2, option3)).build(),
+            AnswerRangeDslModel.builder().title("YesNo").code("YesNo").answerOptions(List.of(option4, option5)).build());
 
         Workbook workbook = createWorkbook();
         var questionsSheet = workbook.getSheet("Questions");
-        var questions = QuestionsConverter.convert(questionsSheet, workbook.getCreationHelper().createFormulaEvaluator(), answerRangeCodeToAnswerOptionsMap, maturityLevelCodeToMaturityLevelDslMap, attributes);
+        var questions = QuestionsConverter.convert(questionsSheet,
+            workbook.getCreationHelper().createFormulaEvaluator(),
+            answerRanges,
+            levels,
+            attributes);
 
         assertEquals(5, questions.size());
         //Assert Question 1

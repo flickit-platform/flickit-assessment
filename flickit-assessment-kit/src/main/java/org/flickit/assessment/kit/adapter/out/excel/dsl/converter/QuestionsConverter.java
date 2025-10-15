@@ -9,6 +9,7 @@ import org.flickit.assessment.kit.application.domain.dsl.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -31,10 +32,16 @@ public class QuestionsConverter {
 
     public static List<QuestionDslModel> convert(Sheet sheet,
                                                  FormulaEvaluator formulaEvaluator,
-                                                 Map<String, List<AnswerOptionDslModel>> answerRangeCodeToAnswerOptionsMap,
-                                                 Map<String, MaturityLevelDslModel> maturityLevelCodeToMaturityLevelDslMap,
+                                                 List<AnswerRangeDslModel> answerRanges,
+                                                 List<MaturityLevelDslModel> levels,
                                                  List<AttributeDslModel> attributeDslModels) {
         var columnMap = getSheetHeaderWithFormula(sheet, formulaEvaluator, HEADER_ROW_INDEX);
+
+        var maturityLevelsCodeToMaturityLevelDslModel = levels.stream()
+            .collect(Collectors.toMap(MaturityLevelDslModel::getCode, Function.identity()));
+
+        var answerRangeCodeToAnswerOptionsMap = answerRanges.stream()
+            .collect(Collectors.toMap(AnswerRangeDslModel::getCode, AnswerRangeDslModel::getAnswerOptions));
 
         return IntStream.rangeClosed(HEADER_ROW_INDEX + 1, sheet.getLastRowNum())
             .filter(i -> !isBlankRow(sheet.getRow(i)))
@@ -43,11 +50,14 @@ public class QuestionsConverter {
                 var answerRangeCode = getCellString(row, columnMap.get(ANSWER_RANGE));
                 var answerOptions = answerRangeCodeToAnswerOptionsMap.get(answerRangeCode);
 
+                var maturityLevelCode = getCellString(row, columnMap.get(MATURITY_LEVEL));
+                var maturityLevel = maturityLevelsCodeToMaturityLevelDslModel.get(maturityLevelCode);
+
                 List<QuestionImpactDslModel> questionImpacts = createImpacts(row,
                         columnMap,
                         answerOptions,
                         attributeDslModels,
-                        maturityLevelCodeToMaturityLevelDslMap.get(getCellString(row, columnMap.get(MATURITY_LEVEL))));
+                    maturityLevel);
 
                 return QuestionDslModel.builder()
                     .title(getCellString(row, columnMap.get(TITLE)))
