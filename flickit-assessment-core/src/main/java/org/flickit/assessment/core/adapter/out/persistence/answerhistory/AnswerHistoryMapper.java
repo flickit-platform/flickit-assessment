@@ -33,6 +33,7 @@ public class AnswerHistoryMapper {
             answerHistory.getAnswer().getAnswerStatus() != null
                 ? answerHistory.getAnswer().getAnswerStatus().getId()
                 : null,
+            answerHistory.getAnswerOptionIndex(),
             answerHistory.getCreatedBy().getId(),
             answerHistory.getCreationTime(),
             answerHistory.getHistoryType().ordinal()
@@ -49,7 +50,8 @@ public class AnswerHistoryMapper {
             entity.getAssessmentResult().getId(),
             UserMapper.mapToFullDomain(createdBy),
             entity.getCreationTime(),
-            HistoryType.values()[entity.getType()]);
+            HistoryType.values()[entity.getType()],
+            entity.getAnswerOptionIndex());
     }
 
     private static Answer mapToAnswer(AnswerHistoryJpaEntity entity,
