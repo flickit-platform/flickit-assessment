@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+    <changeSet id="0.72-01" author="Maziyar Gerami">
+        <addColumn tableName="fac_answer_history">
+            <column name="answer_option_index" type="int">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.72-02" author="Maziyar Gerami">
+        <sql>
+            UPDATE fac_answer_history fah
+            SET answer_option_index = ao.index
+                FROM fak_answer_option ao, fac_assessment_result ar
+            WHERE ar.id = fah.assessment_result_id
+              AND fah.answer_option_id = ao.id
+              AND ao.kit_version_id = ar.kit_version_id
+              AND fah.answer_option_id IS NOT NULL;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
