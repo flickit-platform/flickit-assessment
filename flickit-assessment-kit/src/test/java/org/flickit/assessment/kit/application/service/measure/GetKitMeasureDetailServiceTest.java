@@ -122,6 +122,7 @@ class GetKitMeasureDetailServiceTest {
         assertEquals(measure.getTranslations(), result.translations());
         assertThat(result.questions())
             .zipSatisfy(expectedQuestions, (actual, expected) -> {
+                assertEquals(expected.getId(), actual.id());
                 assertEquals(expected.getTitle(), actual.title());
                 assertEquals(expected.getAnswerRangeId(), actual.answerRange().id());
                 assertNotNull(actual.answerRange().title());
@@ -159,6 +160,7 @@ class GetKitMeasureDetailServiceTest {
         assertEquals(measure.getTranslations(), result.translations());
         assertThat(result.questions())
             .zipSatisfy(expectedQuestions, (actual, expected) -> {
+                assertEquals(expected.getId(), actual.id());
                 assertEquals(expected.getTitle(), actual.title());
                 assertNull(actual.answerRange());
                 assertEquals(expected.getQuestionnaireId(), actual.questionnaire().id());
