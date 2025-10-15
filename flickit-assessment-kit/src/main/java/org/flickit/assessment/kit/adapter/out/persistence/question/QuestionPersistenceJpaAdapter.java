@@ -10,7 +10,6 @@ import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepositor
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.AttributeLevelImpactfulQuestionsView;
-import org.flickit.assessment.data.jpa.kit.question.QuestionJoinQuestionImpactView;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaRepository;
@@ -114,24 +113,9 @@ public class QuestionPersistenceJpaAdapter implements
     }
 
     @Override
-    public List<Question> loadAllByKitVersionId(long kitVersionId) {
-        var questionWithImpactsViews = repository.loadByKitVersionId(kitVersionId);
-        var questionEntityToViews = questionWithImpactsViews.stream()
-            .collect(Collectors.groupingBy(QuestionJoinQuestionImpactView::getQuestion));
-
-        return questionEntityToViews.entrySet().stream()
-            .map(e -> {
-                Question question = QuestionMapper.mapToDomainModel(e.getKey());
-                List<QuestionImpact> qImpacts = e.getValue().stream()
-                    .map(v -> {
-                        if (v.getQuestionImpact() == null)
-                            return null;
-                        return QuestionImpactMapper.mapToDomainModel(v.getQuestionImpact());
-                    })
-                    .toList();
-                question.setImpacts(qImpacts);
-                return question;
-            })
+    public List<Question> loadAllByMeasureIdAndKitVersionId(long measureId, long kitVersionId) {
+        return repository.findAllByMeasureIdAndKitVersionId(measureId, kitVersionId).stream()
+            .map(QuestionMapper::mapToDomainModel)
             .toList();
     }
 

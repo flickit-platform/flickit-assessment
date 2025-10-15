@@ -49,7 +49,7 @@ public class GetKitDetailService implements GetKitDetailUseCase {
         var subjects = loadSubjectsPort.loadByKitVersionId(kitVersionId);
         var questionnaires = loadQuestionnairesPort.loadByKitId(param.getKitId());
         var measures = loadMeasurePort.loadAll(kitVersionId);
-        var answerRanges = loadAnswerRangesPort.loadAll(kitVersionId);
+        var answerRanges = loadAnswerRangesPort.loadAllReusable(kitVersionId);
 
         return mapToResult(maturityLevels, subjects, questionnaires, measures, answerRanges);
     }

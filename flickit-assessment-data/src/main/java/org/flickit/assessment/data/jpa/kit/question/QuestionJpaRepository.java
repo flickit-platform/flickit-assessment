@@ -26,6 +26,8 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
 
     List<QuestionJpaEntity> findAllByIdInAndKitVersionIdAndQuestionnaireId(List<Long> ids, long kitVersionId, long questionnaireId);
 
+    List<QuestionJpaEntity> findAllByMeasureIdAndKitVersionId(long measureId, long kitVersionId);
+
     Set<Long> findIdByKitVersionId(long kitVersionId);
 
     @Modifying
