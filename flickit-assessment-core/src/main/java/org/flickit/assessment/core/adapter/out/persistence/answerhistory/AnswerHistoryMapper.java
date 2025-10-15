@@ -19,7 +19,7 @@ import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AnswerHistoryMapper {
 
-    public static AnswerHistoryJpaEntity mapCreateParamToJpaEntity(AnswerHistory answerHistory, AssessmentResultJpaEntity assessmentResult, AnswerJpaEntity answer) {
+    public static AnswerHistoryJpaEntity mapCreateParamToJpaEntity(AnswerHistory answerHistory, AssessmentResultJpaEntity assessmentResult, AnswerJpaEntity answer, int answerOptionIndex) {
         return new AnswerHistoryJpaEntity(
             null,
             answer,
@@ -33,7 +33,7 @@ public class AnswerHistoryMapper {
             answerHistory.getAnswer().getAnswerStatus() != null
                 ? answerHistory.getAnswer().getAnswerStatus().getId()
                 : null,
-            answerHistory.getAnswerOptionIndex(),
+            answerOptionIndex,
             answerHistory.getCreatedBy().getId(),
             answerHistory.getCreationTime(),
             answerHistory.getHistoryType().ordinal()
@@ -50,8 +50,7 @@ public class AnswerHistoryMapper {
             entity.getAssessmentResult().getId(),
             UserMapper.mapToFullDomain(createdBy),
             entity.getCreationTime(),
-            HistoryType.values()[entity.getType()],
-            entity.getAnswerOptionIndex());
+            HistoryType.values()[entity.getType()]);
     }
 
     private static Answer mapToAnswer(AnswerHistoryJpaEntity entity,
