@@ -145,4 +145,12 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
         """)
     List<AnswerJpaEntity> findAnswersByAssessmentResultIdAndStatus(@Param("assessmentResultId") UUID assessmentResultId,
                                                                    @Param("status") Integer status);
+
+    @Modifying
+    @Query("""
+            UPDATE AnswerJpaEntity a
+            SET a.deleted = true
+            WHERE a.questionId IN :questionIds
+        """)
+    void deleteByQuestionsIdIn(@Param("questionIds") Set<Long> questionId);
 }
