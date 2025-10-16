@@ -374,7 +374,7 @@ class AssessmentCalculateInfoLoadAdapterTest {
             .thenReturn(questionJoinImpactView(context.questionEntities, context.questionIdToImpactsMap));
         when(attributeRepository.findAllBySubjectIdInAndKitVersionId(context.subjects.stream().map(SubjectJpaEntity::getId).toList(), kitVersionId))
             .thenReturn(context.attributes);
-        when(answerRepo.findByAssessmentResultId(context.assessmentResultEntity().getId()))
+        when(answerRepo.findByAssessmentResultIdAndDeletedFalse(context.assessmentResultEntity().getId()))
             .thenReturn(context.answerEntities());
         when(answerOptionRepository.findAllByIdInAndKitVersionId(any(), anyLong()))
             .thenReturn(context.answerOptionEntities());

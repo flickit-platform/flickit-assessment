@@ -77,7 +77,7 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
                 END AS missedScore,
                 COUNT(e.id) AS evidenceCount
             FROM QuestionJpaEntity qsn
-            LEFT JOIN AnswerJpaEntity ans on ans.questionId = qsn.id and ans.assessmentResult.id = :assessmentResultId
+            LEFT JOIN AnswerJpaEntity ans on ans.questionId = qsn.id and ans.assessmentResult.id = :assessmentResultId and ans.deleted = false
             LEFT JOIN EvidenceJpaEntity e on ans.questionId = e.questionId and e.assessmentId = :assessmentId and e.deleted = false and e.type IS NOT NULL
             LEFT JOIN AnswerOptionJpaEntity ao on ans.answerOptionId = ao.id and ao.kitVersionId = :kitVersionId
             LEFT JOIN QuestionnaireJpaEntity qr on qsn.questionnaireId = qr.id and qsn.kitVersionId = qr.kitVersionId
@@ -130,7 +130,7 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
                 ao.value as optionValue,
                 ans.isNotApplicable as isNotApplicable
             FROM QuestionJpaEntity qsn
-            LEFT JOIN AnswerJpaEntity ans on ans.questionId = qsn.id and ans.assessmentResult.id = :assessmentResultId
+            LEFT JOIN AnswerJpaEntity ans on ans.questionId = qsn.id and ans.assessmentResult.id = :assessmentResultId and ans.deleted = false
             LEFT JOIN AnswerOptionJpaEntity ao on ans.answerOptionId = ao.id and ao.kitVersionId = :kitVersionId
             LEFT JOIN QuestionImpactJpaEntity qi on qsn.id = qi.questionId and qsn.kitVersionId = qi.kitVersionId
             WHERE qi.attributeId = :attributeId
@@ -163,7 +163,7 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
                 qi AS questionImpact,
                 ao AS answerOption
             FROM QuestionJpaEntity qsn
-            LEFT JOIN AnswerJpaEntity ans on ans.questionId = qsn.id and ans.assessmentResult.id = :assessmentResultId
+            LEFT JOIN AnswerJpaEntity ans on ans.questionId = qsn.id and ans.assessmentResult.id = :assessmentResultId and ans.deleted = false
             LEFT JOIN AnswerOptionJpaEntity ao on ans.answerOptionId = ao.id and ao.kitVersionId = :kitVersionId
             LEFT JOIN QuestionImpactJpaEntity qi on qsn.id = qi.questionId and qsn.kitVersionId = qi.kitVersionId
             WHERE qi.attributeId = :attributeId
@@ -203,7 +203,7 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
                 ao AS answerOption
             FROM AssessmentResultJpaEntity ar
             JOIN QuestionJpaEntity qsn ON qsn.kitVersionId = ar.kitVersionId
-            LEFT JOIN AnswerJpaEntity ans ON ans.questionId = qsn.id AND ans.assessmentResult.id = ar.id
+            LEFT JOIN AnswerJpaEntity ans ON ans.questionId = qsn.id AND ans.assessmentResult.id = ar.id and ans.deleted = false
             LEFT JOIN AnswerOptionJpaEntity ao ON ans.answerOptionId = ao.id AND ao.kitVersionId = ar.kitVersionId
             LEFT JOIN QuestionImpactJpaEntity qi ON qsn.id = qi.questionId AND qsn.kitVersionId = qi.kitVersionId
             WHERE qi.attributeId = :attributeId

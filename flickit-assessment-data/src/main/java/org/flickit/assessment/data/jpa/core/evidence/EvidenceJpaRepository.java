@@ -93,7 +93,7 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
     @Query("""
             SELECT COUNT(DISTINCT e.questionId)
             FROM EvidenceJpaEntity e
-            LEFT JOIN AnswerJpaEntity a ON e.questionId = a.questionId AND a.assessmentResult.assessment.id = :assessmentId
+            LEFT JOIN AnswerJpaEntity a ON e.questionId = a.questionId AND a.assessmentResult.assessment.id = :assessmentId and a.deleted = false
             LEFT JOIN AssessmentResultJpaEntity ar on a.assessmentResult.assessment.id = e.assessmentId
             WHERE e.assessmentId = :assessmentId
                 AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
@@ -114,6 +114,7 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
                 AND q.questionnaireId  IN :questionnaireIds
                 AND e.type IS NOT NULL
                 AND e.deleted = false
+                AND a.deleted = false
             GROUP BY q.questionnaireId
         """)
     List<EvidencesQuestionnaireAndCountView> countQuestionnairesQuestionsHavingEvidence(@Param("assessmentId") UUID assessmentId,
@@ -131,6 +132,7 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
                 AND e.type IS NOT NULL
                 AND e.deleted = false
                 AND q.questionnaireId  = :questionnaireId
+                AND a.deleted = false
             GROUP BY q.id
         """)
     List<EvidencesQuestionAndCountView> countQuestionnaireQuestionsEvidences(@Param("assessmentId") UUID assessmentId,

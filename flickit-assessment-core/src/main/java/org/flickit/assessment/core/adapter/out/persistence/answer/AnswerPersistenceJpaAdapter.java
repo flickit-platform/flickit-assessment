@@ -80,7 +80,7 @@ public class AnswerPersistenceJpaAdapter implements
 
     @Override
     public Optional<Answer> load(UUID assessmentResultId, Long questionId) {
-        return repository.findByAssessmentResultIdAndQuestionId(assessmentResultId, questionId)
+        return repository.findByAssessmentResultIdAndQuestionIdAndDeletedFalse(assessmentResultId, questionId)
             .map(AnswerMapper::mapToDomainModel);
     }
 
@@ -119,7 +119,7 @@ public class AnswerPersistenceJpaAdapter implements
         var assessmentResult = assessmentResultRepo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND));
 
-        return repository.findByAssessmentResultIdAndQuestionIdIn(assessmentResult.getId(), questionIds).stream()
+        return repository.findByAssessmentResultIdAndDeletedFalseAndQuestionIdIn(assessmentResult.getId(), questionIds).stream()
             .map(AnswerMapper::mapToDomainModel)
             .toList();
     }
