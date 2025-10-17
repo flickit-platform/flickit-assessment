@@ -86,9 +86,13 @@ public class AnswerHistoryPersistenceJpaAdapter implements
 
         var answerHistoryEntities = answerHistories.stream()
             .map(e -> {
-                assert e.getAnswer().getSelectedOption() != null;
+                var answer = e.getAnswer();
+                var answerOptionId = Optional.ofNullable(answer.getSelectedOption())
+                    .map(AnswerOption::getId)
+                    .orElse(null);
+
                 return mapCreateParamToJpaEntity(e, assessmentResult, answerIdToEntityMap.get(e.getAnswer().getId()),
-                    answerOptionsIdToAnswerOptionIndex.get(e.getAnswer().getSelectedOption().getId()));
+                    answerOptionsIdToAnswerOptionIndex.get(answerOptionId));
             })
             .toList();
 
