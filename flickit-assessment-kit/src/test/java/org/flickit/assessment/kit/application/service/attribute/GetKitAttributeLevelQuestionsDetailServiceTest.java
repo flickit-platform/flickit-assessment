@@ -123,6 +123,10 @@ class GetKitAttributeLevelQuestionsDetailServiceTest {
         var question1 = QuestionMother.createQuestionWithOptions();
         var question2 = QuestionMother.createQuestionWithOptions();
         var question3 = QuestionMother.createQuestionWithOptions();
+        var measure1 = MeasureMother.measureWithTitle("Measure1");
+        var measure2 = MeasureMother.measureWithTitle("Measure2");
+        var answerRange1 = AnswerRangeMother.createAnswerRangeWithFourOptions();
+        var answerRange2 = AnswerRangeMother.createNonReusableAnswerRangeWithTwoOptions();
 
         var impact1 = createQuestionImpact(attr1.getId(), maturityLevel2.getId(), 1, question1.getId());
         var impact2 = createQuestionImpact(attr1.getId(), maturityLevel2.getId(), 1, question2.getId());
@@ -141,8 +145,8 @@ class GetKitAttributeLevelQuestionsDetailServiceTest {
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
 
-        var portResult = List.of(new LoadAttributeLevelQuestionsPort.Result(question1, QuestionnaireMother.questionnaireWithTitle("title")),
-            new LoadAttributeLevelQuestionsPort.Result(question2, QuestionnaireMother.questionnaireWithTitle("title")));
+        var portResult = List.of(new LoadAttributeLevelQuestionsPort.Result(question1, QuestionnaireMother.questionnaireWithTitle("title1"), measure1, answerRange1),
+            new LoadAttributeLevelQuestionsPort.Result(question2, QuestionnaireMother.questionnaireWithTitle("title2"), measure2, answerRange2));
 
         when(loadAttributeLevelQuestionsPort.loadAttributeLevelQuestions(kitVersionId, attr1.getId(), maturityLevel2.getId()))
             .thenReturn(portResult);
@@ -153,6 +157,7 @@ class GetKitAttributeLevelQuestionsDetailServiceTest {
 
         assertNotNull(result);
         assertEquals(2, result.questionsCount());
+
         var resultQuestion1 = result.questions().getFirst();
         assertNotNull(resultQuestion1);
         assertEquals(question1.getTitle(), resultQuestion1.title());
@@ -160,12 +165,27 @@ class GetKitAttributeLevelQuestionsDetailServiceTest {
         assertTrue(resultQuestion1.mayNotBeApplicable());
         assertTrue(resultQuestion1.advisable());
         assertEquals(impact1.getWeight(), resultQuestion1.weight());
-        assertEquals("title", resultQuestion1.questionnaire());
+        assertEquals("title1", resultQuestion1.questionnaire());
         var question1AnswerOption = resultQuestion1.answerOptions().getFirst();
         assertNotNull(question1AnswerOption);
         assertEquals(question1.getOptions().size(), resultQuestion1.answerOptions().size());
         assertEquals(question1.getOptions().getFirst().getTitle(), question1AnswerOption.title());
         assertEquals(question1.getOptions().getFirst().getIndex(), question1AnswerOption.index());
         assertEquals(question1.getOptions().getFirst().getValue(), question1AnswerOption.value());
+
+        var resultQuestion2 = result.questions().getLast();
+        assertNotNull(resultQuestion2);
+        assertEquals(question2.getTitle(), resultQuestion2.title());
+        assertEquals(question2.getIndex(), resultQuestion2.index());
+        assertTrue(resultQuestion2.mayNotBeApplicable());
+        assertTrue(resultQuestion2.advisable());
+        assertEquals(impact2.getWeight(), resultQuestion2.weight());
+        assertEquals("title2", resultQuestion2.questionnaire());
+        var question2AnswerOption = resultQuestion2.answerOptions().getFirst();
+        assertNotNull(question2AnswerOption);
+        assertEquals(question2.getOptions().size(), resultQuestion2.answerOptions().size());
+        assertEquals(question2.getOptions().getFirst().getTitle(), question2AnswerOption.title());
+        assertEquals(question2.getOptions().getFirst().getIndex(), question2AnswerOption.index());
+        assertEquals(question2.getOptions().getFirst().getValue(), question2AnswerOption.value());
     }
 }
