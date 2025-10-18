@@ -49,9 +49,17 @@ public interface GetKitAttributeLevelQuestionsDetailUseCase {
             boolean advisable,
             int weight,
             String questionnaire,
-            List<AnswerOption> answerOptions) {
+            List<AnswerOption> answerOptions,
+            Measure measure,
+            AnswerًRange answerًRange) {
 
             public record AnswerOption(int index, String title, double value) {
+            }
+
+            public record AnswerًRange(String title) {
+            }
+
+            public record Measure(String title) {
             }
         }
     }
