@@ -43,7 +43,7 @@ class GetAnswerHistoryListServiceTest {
     private CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
     @Test
-    void testGetAnswerHistoryList_WhenCurrentUserDoesNotHaveTheRequiredPermission_ThenThrowAccessDeniedException() {
+    void testGetAnswerHistoryList_whenCurrentUserDoesNotHaveTheRequiredPermission_thenThrowAccessDeniedException() {
         UUID assessmentId = UUID.randomUUID();
         long questionId = 1L;
         UUID currentUserId = UUID.randomUUID();
@@ -58,7 +58,7 @@ class GetAnswerHistoryListServiceTest {
     }
 
     @Test
-    void testGetAnswerHistoryList_WhenCurrentUserHasTheRequiredPermission_ThenReturnAnswerHistoryList() {
+    void testGetAnswerHistoryList_whenCurrentUserHasTheRequiredPermission_thenReturnAnswerHistoryList() {
         UUID assessmentId = UUID.randomUUID();
         long questionId = 1L;
         UUID currentUserId = UUID.randomUUID();
