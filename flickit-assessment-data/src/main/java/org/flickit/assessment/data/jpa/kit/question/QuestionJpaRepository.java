@@ -28,8 +28,6 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
 
     List<QuestionJpaEntity> findAllByMeasureIdAndKitVersionId(long measureId, long kitVersionId);
 
-    Set<Long> findIdByKitVersionId(long kitVersionId);
-
     @Modifying
     @Query("""
             UPDATE QuestionJpaEntity q
@@ -126,6 +124,13 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
     List<QuestionIdWithAnsweredOptionIndexView> findImprovableQuestions(@Param("assessmentResultId") UUID assessmentResultId,
                                                                         @Param("kitVersionId") long kitVersionId,
                                                                         @Param("questionIds") Collection<Long> questionIds);
+
+    @Query("""
+            SELECT q.id
+            FROM QuestionJpaEntity q
+            WHERE q.kitVersionId = :kitVersionId
+        """)
+    Set<Long> findIdByKitVersionId(@Param("kitVersionId") long kitVersionId);
 
     @Query("""
             SELECT
