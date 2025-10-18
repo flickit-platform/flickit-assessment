@@ -80,7 +80,7 @@ public class AnswerHistoryPersistenceJpaAdapter implements
             .map(AnswerOption::getId)
             .toList();
 
-        var answerOptionsIdToAnswerOptionIndex = answerOptionRepository.findAllByIdInAndKitVersionId(answerOptionsIds, assessmentResult.getKitVersionId())
+        var answerOptionIdToAnswerOptionIndexMap = answerOptionRepository.findAllByIdInAndKitVersionId(answerOptionsIds, assessmentResult.getKitVersionId())
             .stream()
             .collect(Collectors.toMap(AnswerOptionJpaEntity::getId, AnswerOptionJpaEntity::getIndex));
 
@@ -92,7 +92,7 @@ public class AnswerHistoryPersistenceJpaAdapter implements
                     .orElse(null);
 
                 return mapCreateParamToJpaEntity(e, assessmentResult, answerIdToEntityMap.get(e.getAnswer().getId()),
-                    answerOptionsIdToAnswerOptionIndex.get(answerOptionId));
+                    answerOptionIdToAnswerOptionIndexMap.get(answerOptionId));
             })
             .toList();
 
