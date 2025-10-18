@@ -5,7 +5,9 @@ import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.error.ErrorMessageKey;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.domain.Answer;
 import org.flickit.assessment.core.application.domain.AnswerHistory;
+import org.flickit.assessment.core.application.domain.AnswerOption;
 import org.flickit.assessment.core.application.port.out.answerhistory.CreateAnswerHistoryPort;
 import org.flickit.assessment.core.application.port.out.answerhistory.LoadAnswerHistoryListPort;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
@@ -23,10 +25,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -55,8 +54,10 @@ public class AnswerHistoryPersistenceJpaAdapter implements
             .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ASSESSMENT_RESULT_NOT_FOUND));
         var answer = answerRepository.findById(answerHistory.getAnswer().getId())
             .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ANSWER_ID_NOT_FOUND));
+        var answerOption = answerOptionRepository.findByIdAndKitVersionId(answer.getAnswerOptionId(), assessmentResult.getKitVersionId())
+            .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ANSWER_ID_NOT_FOUND));
 
-        AnswerHistoryJpaEntity savedEntity = repository.save(mapCreateParamToJpaEntity(answerHistory, assessmentResult, answer));
+        AnswerHistoryJpaEntity savedEntity = repository.save(mapCreateParamToJpaEntity(answerHistory, assessmentResult, answer, answerOption.getIndex()));
         return savedEntity.getId();
     }
 
@@ -72,8 +73,27 @@ public class AnswerHistoryPersistenceJpaAdapter implements
         var answerIdToEntityMap = answerRepository.findAllById(answerIds).stream()
             .collect(toMap(AnswerJpaEntity::getId, Function.identity()));
 
+        var answerOptionsIds = answerHistories.stream()
+            .map(AnswerHistory::getAnswer)
+            .map(Answer::getSelectedOption)
+            .filter(Objects::nonNull)
+            .map(AnswerOption::getId)
+            .toList();
+
+        var answerOptionIdToAnswerOptionIndexMap = answerOptionRepository.findAllByIdInAndKitVersionId(answerOptionsIds, assessmentResult.getKitVersionId())
+            .stream()
+            .collect(Collectors.toMap(AnswerOptionJpaEntity::getId, AnswerOptionJpaEntity::getIndex));
+
         var answerHistoryEntities = answerHistories.stream()
-            .map(e -> mapCreateParamToJpaEntity(e, assessmentResult, answerIdToEntityMap.get(e.getAnswer().getId())))
+            .map(e -> {
+                var answer = e.getAnswer();
+                var answerOptionId = Optional.ofNullable(answer.getSelectedOption())
+                    .map(AnswerOption::getId)
+                    .orElse(null);
+
+                return mapCreateParamToJpaEntity(e, assessmentResult, answerIdToEntityMap.get(e.getAnswer().getId()),
+                    answerOptionIdToAnswerOptionIndexMap.get(answerOptionId));
+            })
             .toList();
 
         repository.saveAll(answerHistoryEntities);
