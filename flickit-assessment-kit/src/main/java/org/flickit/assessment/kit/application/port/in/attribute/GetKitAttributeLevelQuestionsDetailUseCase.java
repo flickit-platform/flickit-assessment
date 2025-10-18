@@ -51,12 +51,12 @@ public interface GetKitAttributeLevelQuestionsDetailUseCase {
             String questionnaire,
             List<AnswerOption> answerOptions,
             Measure measure,
-            AnswerًRange answerًRange) {
+            AnswerRange answerRange) {
 
             public record AnswerOption(int index, String title, double value) {
             }
 
-            public record AnswerًRange(String title) {
+            public record AnswerRange(String title) {
             }
 
             public record Measure(String title) {

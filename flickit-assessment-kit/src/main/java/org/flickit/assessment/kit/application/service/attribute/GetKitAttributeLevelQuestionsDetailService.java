@@ -56,7 +56,7 @@ public class GetKitAttributeLevelQuestionsDetailService implements GetKitAttribu
             questionnaire.getTitle(),
             options,
             new Result.Question.Measure(measure.getTitle()),
-            new Result.Question.AnswerًRange(answerRange.getTitle())
+            new Result.Question.AnswerRange(answerRange.getTitle())
         );
     }
 
