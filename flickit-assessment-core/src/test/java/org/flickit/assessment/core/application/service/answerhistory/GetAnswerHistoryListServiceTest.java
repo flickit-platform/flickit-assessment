@@ -4,7 +4,8 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentAcc
 import org.flickit.assessment.common.application.domain.assessment.AssessmentPermission;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.core.application.domain.AnswerHistory;
+import org.flickit.assessment.core.application.domain.Answer;
+import org.flickit.assessment.core.application.domain.FullUser;
 import org.flickit.assessment.core.application.port.in.answerhistory.GetAnswerHistoryListUseCase;
 import org.flickit.assessment.core.application.port.out.answerhistory.LoadAnswerHistoryListPort;
 import org.flickit.assessment.core.application.port.out.minio.CreateFileDownloadLinkPort;
@@ -14,10 +15,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import static org.flickit.assessment.core.test.fixture.application.AnswerHistoryMother.history;
 import static org.flickit.assessment.core.test.fixture.application.AnswerMother.answerWithNotApplicableFalse;
 import static org.flickit.assessment.core.test.fixture.application.AnswerMother.answerWithQuestionIdAndNotApplicableTrue;
 import static org.flickit.assessment.core.test.fixture.application.AnswerOptionMother.optionOne;
@@ -65,8 +66,8 @@ class GetAnswerHistoryListServiceTest {
         int page = 1;
         var param = new GetAnswerHistoryListUseCase.Param(assessmentId, questionId, currentUserId, size, page);
 
-        AnswerHistory history1 = history(answerWithNotApplicableFalse(optionOne()));
-        AnswerHistory history2 = history(answerWithQuestionIdAndNotApplicableTrue(questionId));
+        var history1 = history(answerWithNotApplicableFalse(optionOne()));
+        var history2 = history(answerWithQuestionIdAndNotApplicableTrue(questionId));
 
         var expected = new PaginatedResponse<>(List.of(history2, history1), page, size, "desc", "creationTime", 2);
 
@@ -81,18 +82,17 @@ class GetAnswerHistoryListServiceTest {
 
         assertEquals(expected.getItems().size(), result.getItems().size());
         assertNull(result.getItems().getFirst().answer().selectedOption());
-        assertEquals(history2.getAnswer().getConfidenceLevelId(), result.getItems().getFirst().answer().confidenceLevel().getId());
-        assertEquals(history2.getCreatedBy().getId(), result.getItems().getFirst().createdBy().id());
-        assertEquals(history2.getCreatedBy().getDisplayName(), result.getItems().getFirst().createdBy().displayName());
+        assertEquals(history2.answer().getConfidenceLevelId(), result.getItems().getFirst().answer().confidenceLevel().getId());
+        assertEquals(history2.createdBy().getId(), result.getItems().getFirst().createdBy().id());
+        assertEquals(history2.createdBy().getDisplayName(), result.getItems().getFirst().createdBy().displayName());
         assertEquals(picDownloadLink, result.getItems().getFirst().createdBy().pictureLink());
 
         assertNotNull(result.getItems().get(1).answer().selectedOption());
-        assertEquals(history1.getAnswer().getSelectedOption().getId(), result.getItems().get(1).answer().selectedOption().id());
-        assertEquals(history1.getAnswer().getSelectedOption().getIndex(), result.getItems().get(1).answer().selectedOption().index());
-        assertEquals(history1.getAnswer().getSelectedOption().getTitle(), result.getItems().get(1).answer().selectedOption().title());
-        assertEquals(history1.getAnswer().getConfidenceLevelId(), result.getItems().get(1).answer().confidenceLevel().getId());
-        assertEquals(history1.getCreatedBy().getId(), result.getItems().get(1).createdBy().id());
-        assertEquals(history1.getCreatedBy().getDisplayName(), result.getItems().get(1).createdBy().displayName());
+        assertEquals(history1.answer().getSelectedOption().getId(), result.getItems().get(1).answer().selectedOption().id());
+        assertEquals(history1.answer().getSelectedOption().getIndex(), result.getItems().get(1).answer().selectedOption().index());
+        assertEquals(history1.answer().getConfidenceLevelId(), result.getItems().get(1).answer().confidenceLevel().getId());
+        assertEquals(history1.createdBy().getId(), result.getItems().get(1).createdBy().id());
+        assertEquals(history1.createdBy().getDisplayName(), result.getItems().get(1).createdBy().displayName());
         assertEquals(picDownloadLink, result.getItems().get(1).createdBy().pictureLink());
 
         assertEquals(2, result.getTotal());
@@ -100,5 +100,13 @@ class GetAnswerHistoryListServiceTest {
         assertEquals(param.getPage(), result.getPage());
         assertEquals(expected.getSort(), result.getSort());
         assertEquals(expected.getOrder(), result.getOrder());
+    }
+
+    private LoadAnswerHistoryListPort.Result history(Answer answer) {
+        return new LoadAnswerHistoryListPort.Result(answer,
+            new FullUser(UUID.randomUUID(), "displayName", "email@gmail.com", "path/path"),
+            LocalDateTime.now(),
+            answer != null && answer.getSelectedOption() != null ? answer.getSelectedOption().getId() : null,
+            answer != null && answer.getSelectedOption() != null ? answer.getSelectedOption().getIndex() : null);
     }
 }
