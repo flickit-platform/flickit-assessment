@@ -50,6 +50,9 @@ public class AnswerHistoryJpaEntity {
     @Column(name = "status")
     private Integer status;
 
+    @Column(name = "answer_option_index")
+    private Integer answerOptionIndex;
+
     @Column(name = "created_by", nullable = false)
     private UUID createdBy;
 

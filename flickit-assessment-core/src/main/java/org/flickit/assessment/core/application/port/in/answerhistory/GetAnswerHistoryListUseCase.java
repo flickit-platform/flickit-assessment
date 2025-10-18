@@ -3,11 +3,11 @@ package org.flickit.assessment.core.application.port.in.answerhistory;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
-import org.flickit.assessment.core.application.domain.AnswerOption;
 import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 
 import java.time.LocalDateTime;
@@ -41,6 +41,7 @@ public interface GetAnswerHistoryListUseCase {
         @Min(value = 0, message = GET_ANSWER_HISTORY_LIST_PAGE_MIN)
         int page;
 
+        @Builder
         public Param(UUID assessmentId, Long questionId, UUID currentUserId, int size, int page) {
             this.assessmentId = assessmentId;
             this.questionId = questionId;
@@ -57,19 +58,15 @@ public interface GetAnswerHistoryListUseCase {
         User createdBy) {
     }
 
-    record Answer(Option selectedOption, ConfidenceLevel confidenceLevel, Boolean isNotApplicable) {
-
-        public static Answer of(org.flickit.assessment.core.application.domain.Answer answer) {
-            return new Answer(answer.getSelectedOption() != null ? Option.of(answer.getSelectedOption()) : null,
-                answer.getConfidenceLevelId() != null ? ConfidenceLevel.valueOfById(answer.getConfidenceLevelId()) : ConfidenceLevel.getDefault(),
-                answer.getIsNotApplicable());
-        }
+    record Answer(Option selectedOption,
+                  ConfidenceLevel confidenceLevel,
+                  Boolean isNotApplicable) {
     }
 
-    record Option(long id, int index, String title) {
+    record Option(long id, int index) {
 
-        static Option of(AnswerOption option){
-            return new Option(option.getId(), option.getIndex(), option.getTitle());
+        public static Option of(long id, int index) {
+            return new Option(id, index);
         }
     }
 
