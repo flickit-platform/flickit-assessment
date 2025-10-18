@@ -121,7 +121,7 @@ public class QuestionPersistenceJpaAdapter implements
     }
 
     @Override
-    public Set<Long> loadIdsByKitVersionId(Long kitVersionId) {
+    public Set<Long> loadIdsByKitVersionId(long kitVersionId) {
         return repository.findIdByKitVersionId(kitVersionId);
     }
 

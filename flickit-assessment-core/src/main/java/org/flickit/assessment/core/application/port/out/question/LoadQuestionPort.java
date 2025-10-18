@@ -11,5 +11,5 @@ public interface LoadQuestionPort {
 
     int loadFirstUnansweredQuestionIndex(long questionnaireId, UUID assessmentResultId);
 
-    Set<Long> loadIdsByKitVersionId(Long kitVersionId);
+    Set<Long> loadIdsByKitVersionId(long kitVersionId);
 }
