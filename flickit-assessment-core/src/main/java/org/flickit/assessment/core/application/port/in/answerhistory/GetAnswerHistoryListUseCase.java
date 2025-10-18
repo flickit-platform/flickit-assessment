@@ -3,6 +3,7 @@ package org.flickit.assessment.core.application.port.in.answerhistory;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
@@ -40,6 +41,7 @@ public interface GetAnswerHistoryListUseCase {
         @Min(value = 0, message = GET_ANSWER_HISTORY_LIST_PAGE_MIN)
         int page;
 
+        @Builder
         public Param(UUID assessmentId, Long questionId, UUID currentUserId, int size, int page) {
             this.assessmentId = assessmentId;
             this.questionId = questionId;
