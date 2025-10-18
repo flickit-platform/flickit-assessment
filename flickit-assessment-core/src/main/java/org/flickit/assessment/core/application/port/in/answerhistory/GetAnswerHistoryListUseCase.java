@@ -7,7 +7,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
-import org.flickit.assessment.core.application.domain.AnswerOption;
 import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 
 import java.time.LocalDateTime;
@@ -57,19 +56,15 @@ public interface GetAnswerHistoryListUseCase {
         User createdBy) {
     }
 
-    record Answer(Option selectedOption, ConfidenceLevel confidenceLevel, Boolean isNotApplicable) {
-
-        public static Answer of(org.flickit.assessment.core.application.domain.Answer answer) {
-            return new Answer(answer.getSelectedOption() != null ? Option.of(answer.getSelectedOption()) : null,
-                answer.getConfidenceLevelId() != null ? ConfidenceLevel.valueOfById(answer.getConfidenceLevelId()) : ConfidenceLevel.getDefault(),
-                answer.getIsNotApplicable());
-        }
+    record Answer(Option selectedOption,
+                  ConfidenceLevel confidenceLevel,
+                  Boolean isNotApplicable) {
     }
 
-    record Option(long id, int index, String title) {
+    record Option(long id, int index) {
 
-        static Option of(AnswerOption option){
-            return new Option(option.getId(), option.getIndex(), option.getTitle());
+        public static Option of(long id, int index) {
+            return new Option(id, index);
         }
     }
 
