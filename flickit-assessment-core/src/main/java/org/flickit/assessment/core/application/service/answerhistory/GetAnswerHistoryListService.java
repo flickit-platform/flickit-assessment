@@ -5,6 +5,7 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentAcc
 import org.flickit.assessment.common.application.domain.assessment.AssessmentPermission;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 import org.flickit.assessment.core.application.domain.FullUser;
 import org.flickit.assessment.core.application.port.in.answerhistory.GetAnswerHistoryListUseCase;
 import org.flickit.assessment.core.application.port.out.answerhistory.LoadAnswerHistoryListPort;
@@ -41,9 +42,9 @@ public class GetAnswerHistoryListService implements GetAnswerHistoryListUseCase 
             param.getSize());
 
         List<AnswerHistoryListItem> items = paginatedResponse.getItems().stream()
-            .map(e -> new AnswerHistoryListItem(Answer.of(e.getAnswer()),
-                e.getCreationTime(),
-                getAnswerUserInfo(e.getCreatedBy())))
+            .map(e -> new AnswerHistoryListItem(toAnswer(e),
+                e.creationTime(),
+                getAnswerUserInfo(e.createdBy())))
             .toList();
 
         return new PaginatedResponse<>(items,
@@ -52,6 +53,13 @@ public class GetAnswerHistoryListService implements GetAnswerHistoryListUseCase 
             paginatedResponse.getSort(),
             paginatedResponse.getOrder(),
             paginatedResponse.getTotal());
+    }
+
+    public static Answer toAnswer(LoadAnswerHistoryListPort.Result answerHistory) {
+        var answer = answerHistory.Answer();
+        return new Answer(answer.getSelectedOption() != null ? Option.of(answerHistory.answerOptionId(), answerHistory.answerOptionIndex()) : null,
+            answer.getConfidenceLevelId() != null ? ConfidenceLevel.valueOfById(answer.getConfidenceLevelId()) : ConfidenceLevel.getDefault(),
+            answer.getIsNotApplicable());
     }
 
     private GetAnswerHistoryListUseCase.User getAnswerUserInfo(FullUser user) {
