@@ -2,8 +2,6 @@ package org.flickit.assessment.core.adapter.out.persistence.answerhistory;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
-import org.flickit.assessment.common.application.domain.kit.KitLanguage;
-import org.flickit.assessment.common.error.ErrorMessageKey;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.Answer;
 import org.flickit.assessment.core.application.domain.AnswerHistory;
@@ -14,11 +12,9 @@ import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaRepository;
 import org.flickit.assessment.data.jpa.core.answerhistory.AnswerHistoryJpaEntity;
 import org.flickit.assessment.data.jpa.core.answerhistory.AnswerHistoryJpaRepository;
-import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepository;
-import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 import org.flickit.assessment.data.jpa.users.user.UserJpaRepository;
 import org.springframework.data.domain.PageRequest;
@@ -45,7 +41,6 @@ public class AnswerHistoryPersistenceJpaAdapter implements
     private final AssessmentResultJpaRepository assessmentResultRepository;
     private final UserJpaRepository userRepository;
     private final AnswerOptionJpaRepository answerOptionRepository;
-    private final AssessmentKitJpaRepository assessmentKitRepository;
 
     @Override
     public UUID persist(AnswerHistory answerHistory) {
