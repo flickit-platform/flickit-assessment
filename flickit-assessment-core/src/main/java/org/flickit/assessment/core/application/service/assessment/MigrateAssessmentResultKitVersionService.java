@@ -14,6 +14,7 @@ import org.flickit.assessment.core.application.port.out.question.LoadQuestionPor
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.MIGRATE_KIT_VERSION;
@@ -40,9 +41,8 @@ public class MigrateAssessmentResultKitVersionService implements MigrateAssessme
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(MIGRATE_ASSESSMENT_RESULT_KIT_VERSION_ASSESSMENT_RESULT_ID_NOT_FOUND));
 
-        var activeKitVersionId = assessmentResult.getAssessment().getAssessmentKit().getKitVersion();
-        if (activeKitVersionId == null)
-            throw new ValidationException(MIGRATE_ASSESSMENT_RESULT_KIT_VERSION_ACTIVE_VERSION_NOT_FOUND);
+        var activeKitVersionId = Optional.ofNullable(assessmentResult.getAssessment().getAssessmentKit().getKitVersion())
+            .orElseThrow(() -> new ValidationException(MIGRATE_ASSESSMENT_RESULT_KIT_VERSION_ACTIVE_VERSION_NOT_FOUND));
 
         var currentKitVersionQuestionsIds = loadQuestionPort.loadIdsByKitVersionId(assessmentResult.getKitVersionId());
         var activeKitVersionQuestionsIds = loadQuestionPort.loadIdsByKitVersionId(activeKitVersionId);
