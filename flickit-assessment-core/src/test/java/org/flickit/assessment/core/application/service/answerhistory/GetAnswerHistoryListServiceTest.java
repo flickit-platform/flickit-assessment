@@ -18,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import static org.flickit.assessment.core.test.fixture.application.AnswerMother.answerWithNotApplicableFalse;
 import static org.flickit.assessment.core.test.fixture.application.AnswerMother.answerWithQuestionIdAndNotApplicableTrue;
@@ -42,16 +43,11 @@ class GetAnswerHistoryListServiceTest {
     @Mock
     private CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
+    private final GetAnswerHistoryListUseCase.Param param = createParam(GetAnswerHistoryListUseCase.Param.ParamBuilder::build);
+
     @Test
     void testGetAnswerHistoryList_whenCurrentUserDoesNotHaveTheRequiredPermission_thenThrowAccessDeniedException() {
-        UUID assessmentId = UUID.randomUUID();
-        long questionId = 1L;
-        UUID currentUserId = UUID.randomUUID();
-        int size = 5;
-        int page = 1;
-        var param = new GetAnswerHistoryListUseCase.Param(assessmentId, questionId, currentUserId, size, page);
-
-        when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, AssessmentPermission.VIEW_ANSWER_HISTORY_LIST))
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.VIEW_ANSWER_HISTORY_LIST))
             .thenReturn(false);
 
         assertThrows(AccessDeniedException.class, () -> getAnswerHistoryListService.getAnswerHistoryList(param));
@@ -59,21 +55,14 @@ class GetAnswerHistoryListServiceTest {
 
     @Test
     void testGetAnswerHistoryList_whenCurrentUserHasTheRequiredPermission_thenReturnAnswerHistoryList() {
-        UUID assessmentId = UUID.randomUUID();
-        long questionId = 1L;
-        UUID currentUserId = UUID.randomUUID();
-        int size = 5;
-        int page = 1;
-        var param = new GetAnswerHistoryListUseCase.Param(assessmentId, questionId, currentUserId, size, page);
-
         var history1 = history(answerWithNotApplicableFalse(optionOne()));
-        var history2 = history(answerWithQuestionIdAndNotApplicableTrue(questionId));
+        var history2 = history(answerWithQuestionIdAndNotApplicableTrue(param.getQuestionId()));
 
-        var expected = new PaginatedResponse<>(List.of(history2, history1), page, size, "desc", "creationTime", 2);
+        var expected = new PaginatedResponse<>(List.of(history2, history1), param.getPage(), param.getSize(), "desc", "creationTime", 2);
 
-        when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, AssessmentPermission.VIEW_ANSWER_HISTORY_LIST))
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.VIEW_ANSWER_HISTORY_LIST))
             .thenReturn(true);
-        when(loadAnswerHistoryListPort.load(assessmentId, questionId, page, size)).thenReturn(expected);
+        when(loadAnswerHistoryListPort.load(param.getAssessmentId(), param.getQuestionId(), param.getPage(), param.getSize())).thenReturn(expected);
 
         String picDownloadLink = "downloadLink";
         when(createFileDownloadLinkPort.createDownloadLinkSafe(anyString(), any())).thenReturn(picDownloadLink);
@@ -108,5 +97,20 @@ class GetAnswerHistoryListServiceTest {
             LocalDateTime.now(),
             answer != null && answer.getSelectedOption() != null ? answer.getSelectedOption().getId() : null,
             answer != null && answer.getSelectedOption() != null ? answer.getSelectedOption().getIndex() : null);
+    }
+
+    private GetAnswerHistoryListUseCase.Param createParam(Consumer<GetAnswerHistoryListUseCase.Param.ParamBuilder> changer) {
+        var paramBuilder = paramBuilder();
+        changer.accept(paramBuilder);
+        return paramBuilder.build();
+    }
+
+    private GetAnswerHistoryListUseCase.Param.ParamBuilder paramBuilder() {
+        return GetAnswerHistoryListUseCase.Param.builder()
+            .assessmentId(UUID.randomUUID())
+            .questionId(2L)
+            .size(10)
+            .page(1)
+            .currentUserId(UUID.randomUUID());
     }
 }
