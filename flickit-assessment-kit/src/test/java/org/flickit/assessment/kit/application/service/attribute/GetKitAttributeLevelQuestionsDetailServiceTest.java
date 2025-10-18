@@ -127,7 +127,7 @@ class GetKitAttributeLevelQuestionsDetailServiceTest {
         var question3 = QuestionMother.createQuestionWithOptions();
         var measure1 = MeasureMother.measureWithTitle("Measure1");
         var measure2 = MeasureMother.measureWithTitle("Measure2");
-        var answerRange1 = AnswerRangeMother.createAnswerRangeWithFourOptions();
+        var answerRange1 = AnswerRangeMother.createReusableAnswerRangeWithTwoOptions();
         var answerRange2 = AnswerRangeMother.createNonReusableAnswerRangeWithTwoOptions();
 
         var impact1 = createQuestionImpact(attr1.getId(), maturityLevel2.getId(), 1, question1.getId());
@@ -156,10 +156,22 @@ class GetKitAttributeLevelQuestionsDetailServiceTest {
 
         var result = service.getKitAttributeLevelQuestionsDetail(param);
 
-        assertNotNull(result);
         assertEquals(2, result.questionsCount());
+        //Assert Question 1
+        var resultQuestion1 = result.questions().getFirst();
+        assertNull(resultQuestion1.answerOptions());
+        assertEquals(resultQuestion1.answerRange().title(), answerRange1.getTitle());
         assertQuestion(result.questions().getFirst(), question1, impact1, "title1");
+        //Assert Question 2
         assertQuestion(result.questions().getLast(), question2, impact2, "title2");
+        var resultQuestion2 = result.questions().getLast();
+        assertNull(resultQuestion2.answerRange());
+        var question2AnswerOption = resultQuestion2.answerOptions().getFirst();
+        assertNotNull(question2AnswerOption);
+        assertEquals(question2.getOptions().size(), resultQuestion2.answerOptions().size());
+        assertEquals(question2.getOptions().getFirst().getTitle(), question2AnswerOption.title());
+        assertEquals(question2.getOptions().getFirst().getIndex(), question2AnswerOption.index());
+        assertEquals(question2.getOptions().getFirst().getValue(), question2AnswerOption.value());
     }
 
     private static void assertQuestion(GetKitAttributeLevelQuestionsDetailUseCase.Result.Question resultQuestion, Question question, QuestionImpact impact, String title) {
@@ -170,11 +182,5 @@ class GetKitAttributeLevelQuestionsDetailServiceTest {
         assertTrue(resultQuestion.advisable());
         assertEquals(impact.getWeight(), resultQuestion.weight());
         assertEquals(title, resultQuestion.questionnaire());
-        var question1AnswerOption = resultQuestion.answerOptions().getFirst();
-        assertNotNull(question1AnswerOption);
-        assertEquals(question.getOptions().size(), resultQuestion.answerOptions().size());
-        assertEquals(question.getOptions().getFirst().getTitle(), question1AnswerOption.title());
-        assertEquals(question.getOptions().getFirst().getIndex(), question1AnswerOption.index());
-        assertEquals(question.getOptions().getFirst().getValue(), question1AnswerOption.value());
     }
 }
