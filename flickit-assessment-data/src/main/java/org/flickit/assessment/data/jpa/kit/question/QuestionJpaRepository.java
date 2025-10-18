@@ -130,7 +130,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
             FROM QuestionJpaEntity q
             WHERE q.kitVersionId = :kitVersionId
         """)
-    Set<Long> findIdByKitVersionId(@Param("kitVersionId") long kitVersionId);
+    Set<Long> findIdsByKitVersionId(@Param("kitVersionId") long kitVersionId);
 
     @Query("""
             SELECT

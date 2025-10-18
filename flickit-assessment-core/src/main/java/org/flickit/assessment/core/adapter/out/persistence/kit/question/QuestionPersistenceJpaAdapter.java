@@ -122,7 +122,7 @@ public class QuestionPersistenceJpaAdapter implements
 
     @Override
     public Set<Long> loadIdsByKitVersionId(long kitVersionId) {
-        return repository.findIdByKitVersionId(kitVersionId);
+        return repository.findIdsByKitVersionId(kitVersionId);
     }
 
     private @Nullable KitLanguage resolveLanguage(AssessmentResultJpaEntity assessmentResult) {
