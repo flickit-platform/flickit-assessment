@@ -97,6 +97,10 @@ public class AssessmentResultMother {
         return assessmentResult;
     }
 
+    public static AssessmentResult resultWithDeprecatedKitVersion() {
+        return resultWithDeprecatedKitVersion(false, false, LocalDateTime.MIN, LocalDateTime.MIN);
+    }
+
     public static AssessmentResult validResultWithLanguage(KitLanguage kitLanguage, KitLanguage assessmentLanguage) {
         var assessment = AssessmentMother.assessmentWithKitLanguage(kitLanguage);
         var assessmentResult = new AssessmentResult(UUID.randomUUID(),
