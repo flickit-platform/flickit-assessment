@@ -58,18 +58,18 @@ class GetAnswerHistoryListServiceTest {
         var history1 = history(answerWithNotApplicableFalse(optionOne()));
         var history2 = history(answerWithQuestionIdAndNotApplicableTrue(param.getQuestionId()));
 
-        var expected = new PaginatedResponse<>(List.of(history2, history1), param.getPage(), param.getSize(), "desc", "creationTime", 2);
+        var expectedHistory = new PaginatedResponse<>(List.of(history2, history1), param.getPage(), param.getSize(), "desc", "creationTime", 2);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.VIEW_ANSWER_HISTORY_LIST))
             .thenReturn(true);
-        when(loadAnswerHistoryListPort.load(param.getAssessmentId(), param.getQuestionId(), param.getPage(), param.getSize())).thenReturn(expected);
+        when(loadAnswerHistoryListPort.load(param.getAssessmentId(), param.getQuestionId(), param.getPage(), param.getSize())).thenReturn(expectedHistory);
 
         String picDownloadLink = "downloadLink";
         when(createFileDownloadLinkPort.createDownloadLinkSafe(anyString(), any())).thenReturn(picDownloadLink);
 
         var result = getAnswerHistoryListService.getAnswerHistoryList(param);
 
-        assertEquals(expected.getItems().size(), result.getItems().size());
+        assertEquals(expectedHistory.getItems().size(), result.getItems().size());
         assertNull(result.getItems().getFirst().answer().selectedOption());
         assertEquals(history2.answer().getConfidenceLevelId(), result.getItems().getFirst().answer().confidenceLevel().getId());
         assertEquals(history2.createdBy().getId(), result.getItems().getFirst().createdBy().id());
@@ -87,8 +87,8 @@ class GetAnswerHistoryListServiceTest {
         assertEquals(2, result.getTotal());
         assertEquals(param.getSize(), result.getSize());
         assertEquals(param.getPage(), result.getPage());
-        assertEquals(expected.getSort(), result.getSort());
-        assertEquals(expected.getOrder(), result.getOrder());
+        assertEquals(expectedHistory.getSort(), result.getSort());
+        assertEquals(expectedHistory.getOrder(), result.getOrder());
     }
 
     private LoadAnswerHistoryListPort.Result history(Answer answer) {
