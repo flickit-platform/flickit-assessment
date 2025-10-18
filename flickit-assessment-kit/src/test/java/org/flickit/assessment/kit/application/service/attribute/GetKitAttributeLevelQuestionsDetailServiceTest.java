@@ -3,6 +3,8 @@ package org.flickit.assessment.kit.application.service.attribute;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.domain.ExpertGroup;
+import org.flickit.assessment.kit.application.domain.Question;
+import org.flickit.assessment.kit.application.domain.QuestionImpact;
 import org.flickit.assessment.kit.application.port.in.attribute.GetKitAttributeLevelQuestionsDetailUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadActiveKitVersionIdPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
@@ -123,6 +125,10 @@ class GetKitAttributeLevelQuestionsDetailServiceTest {
         var question1 = QuestionMother.createQuestionWithOptions();
         var question2 = QuestionMother.createQuestionWithOptions();
         var question3 = QuestionMother.createQuestionWithOptions();
+        var measure1 = MeasureMother.measureWithTitle("Measure1");
+        var measure2 = MeasureMother.measureWithTitle("Measure2");
+        var answerRange1 = AnswerRangeMother.createReusableAnswerRangeWithTwoOptions();
+        var answerRange2 = AnswerRangeMother.createNonReusableAnswerRangeWithTwoOptions();
 
         var impact1 = createQuestionImpact(attr1.getId(), maturityLevel2.getId(), 1, question1.getId());
         var impact2 = createQuestionImpact(attr1.getId(), maturityLevel2.getId(), 1, question2.getId());
@@ -141,31 +147,40 @@ class GetKitAttributeLevelQuestionsDetailServiceTest {
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
 
-        var portResult = List.of(new LoadAttributeLevelQuestionsPort.Result(question1, QuestionnaireMother.questionnaireWithTitle("title")),
-            new LoadAttributeLevelQuestionsPort.Result(question2, QuestionnaireMother.questionnaireWithTitle("title")));
+        var portResult = List.of(new LoadAttributeLevelQuestionsPort.Result(question1, QuestionnaireMother.questionnaireWithTitle("title1"), measure1, answerRange1),
+            new LoadAttributeLevelQuestionsPort.Result(question2, QuestionnaireMother.questionnaireWithTitle("title2"), measure2, answerRange2));
 
         when(loadAttributeLevelQuestionsPort.loadAttributeLevelQuestions(kitVersionId, attr1.getId(), maturityLevel2.getId()))
             .thenReturn(portResult);
         when(loadActiveKitVersionIdPort.loadKitVersionId(kitId)).thenReturn(kitVersionId);
 
-
         var result = service.getKitAttributeLevelQuestionsDetail(param);
 
-        assertNotNull(result);
         assertEquals(2, result.questionsCount());
+        //Assert Question 1
         var resultQuestion1 = result.questions().getFirst();
-        assertNotNull(resultQuestion1);
-        assertEquals(question1.getTitle(), resultQuestion1.title());
-        assertEquals(question1.getIndex(), resultQuestion1.index());
-        assertTrue(resultQuestion1.mayNotBeApplicable());
-        assertTrue(resultQuestion1.advisable());
-        assertEquals(impact1.getWeight(), resultQuestion1.weight());
-        assertEquals("title", resultQuestion1.questionnaire());
-        var question1AnswerOption = resultQuestion1.answerOptions().getFirst();
-        assertNotNull(question1AnswerOption);
-        assertEquals(question1.getOptions().size(), resultQuestion1.answerOptions().size());
-        assertEquals(question1.getOptions().getFirst().getTitle(), question1AnswerOption.title());
-        assertEquals(question1.getOptions().getFirst().getIndex(), question1AnswerOption.index());
-        assertEquals(question1.getOptions().getFirst().getValue(), question1AnswerOption.value());
+        assertNull(resultQuestion1.answerOptions());
+        assertEquals(resultQuestion1.answerRange().title(), answerRange1.getTitle());
+        assertQuestion(result.questions().getFirst(), question1, impact1, "title1");
+        //Assert Question 2
+        assertQuestion(result.questions().getLast(), question2, impact2, "title2");
+        var resultQuestion2 = result.questions().getLast();
+        assertNull(resultQuestion2.answerRange());
+        var question2AnswerOption = resultQuestion2.answerOptions().getFirst();
+        assertNotNull(question2AnswerOption);
+        assertEquals(question2.getOptions().size(), resultQuestion2.answerOptions().size());
+        assertEquals(question2.getOptions().getFirst().getTitle(), question2AnswerOption.title());
+        assertEquals(question2.getOptions().getFirst().getIndex(), question2AnswerOption.index());
+        assertEquals(question2.getOptions().getFirst().getValue(), question2AnswerOption.value());
+    }
+
+    private static void assertQuestion(GetKitAttributeLevelQuestionsDetailUseCase.Result.Question resultQuestion, Question question, QuestionImpact impact, String title) {
+        assertNotNull(resultQuestion);
+        assertEquals(question.getTitle(), resultQuestion.title());
+        assertEquals(question.getIndex(), resultQuestion.index());
+        assertTrue(resultQuestion.mayNotBeApplicable());
+        assertTrue(resultQuestion.advisable());
+        assertEquals(impact.getWeight(), resultQuestion.weight());
+        assertEquals(title, resultQuestion.questionnaire());
     }
 }
