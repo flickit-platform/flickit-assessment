@@ -11,7 +11,7 @@ public interface LoadAnswerHistoryListPort {
 
     PaginatedResponse<Result> load(UUID assessmentId, long questionId, int page, int size);
 
-    record Result(Answer Answer,
+    record Result(Answer answer,
                   FullUser createdBy,
                   LocalDateTime creationTime,
                   Long answerOptionId,
