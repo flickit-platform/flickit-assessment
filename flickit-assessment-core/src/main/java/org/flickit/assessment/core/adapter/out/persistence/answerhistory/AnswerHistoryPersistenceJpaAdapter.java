@@ -31,8 +31,7 @@ import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
-import static org.flickit.assessment.core.adapter.out.persistence.answerhistory.AnswerHistoryMapper.mapCreateParamToJpaEntity;
-import static org.flickit.assessment.core.adapter.out.persistence.answerhistory.AnswerHistoryMapper.mapToDomainModel;
+import static org.flickit.assessment.core.adapter.out.persistence.answerhistory.AnswerHistoryMapper.*;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 @Component
@@ -100,10 +99,9 @@ public class AnswerHistoryPersistenceJpaAdapter implements
     }
 
     @Override
-    public PaginatedResponse<AnswerHistory> load(UUID assessmentId, long questionId, int page, int size) {
+    public PaginatedResponse<LoadAnswerHistoryListPort.Result> load(UUID assessmentId, long questionId, int page, int size) {
         var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(GET_ANSWER_HISTORY_LIST_ASSESSMENT_RESULT_NOT_FOUND));
-        var translationLanguage = resolveLanguage(assessmentResult);
 
         var order = Sort.Direction.DESC;
         var sort = AnswerHistoryJpaEntity.Fields.creationTime;
@@ -120,10 +118,9 @@ public class AnswerHistoryPersistenceJpaAdapter implements
             .collect(toMap(AnswerOptionJpaEntity::getId, Function.identity()));
 
         var items = pageResult.getContent().stream()
-            .map(e -> mapToDomainModel(e,
+            .map(e -> mapToResul(e,
                 userIdToUserMap.get(e.getCreatedBy()),
-                idToOption.get(e.getAnswerOptionId()),
-                translationLanguage))
+                idToOption.get(e.getAnswerOptionId())))
             .toList();
 
         return new PaginatedResponse<>(items,
@@ -132,13 +129,5 @@ public class AnswerHistoryPersistenceJpaAdapter implements
             sort,
             order.name().toLowerCase(),
             (int) pageResult.getTotalElements());
-    }
-
-    private KitLanguage resolveLanguage(AssessmentResultJpaEntity assessmentResult) {
-        var assessmentKit = assessmentKitRepository.findByKitVersionId(assessmentResult.getKitVersionId())
-            .orElseThrow(() -> new ResourceNotFoundException(ErrorMessageKey.COMMON_ASSESSMENT_KIT_NOT_FOUND));
-        return Objects.equals(assessmentResult.getLangId(), assessmentKit.getLanguageId())
-            ? null
-            : KitLanguage.valueOfById(assessmentResult.getLangId());
     }
 }
