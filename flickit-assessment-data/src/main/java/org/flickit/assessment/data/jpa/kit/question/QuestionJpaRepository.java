@@ -117,6 +117,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
             LEFT JOIN AnswerOptionJpaEntity anso ON ans.answerOptionId = anso.id AND q.kitVersionId = anso.kitVersionId
             WHERE
                 q.id IN :questionIds
+                AND ans.isNotApplicable IS NOT TRUE
                 AND q.kitVersionId = :kitVersionId
                 AND (ans.answerOptionId IS NULL
                     OR (anso.index != (
