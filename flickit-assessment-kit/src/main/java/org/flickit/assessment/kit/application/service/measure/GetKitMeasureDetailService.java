@@ -65,9 +65,7 @@ public class GetKitMeasureDetailService implements GetKitMeasureDetailUseCase {
 
         return questions.stream()
             .sorted(Comparator
-                .comparing((Question question) ->
-                    questionnaireIdToQuestionnaireMap.get(question.getQuestionnaireId()).getTitle()
-                )
+                .comparing((Question q) -> questionnaireIdToQuestionnaireMap.get(q.getQuestionnaireId()).getTitle())
                 .thenComparing(Question::getIndex)
             )
             .map(question -> buildQuestion(question,
