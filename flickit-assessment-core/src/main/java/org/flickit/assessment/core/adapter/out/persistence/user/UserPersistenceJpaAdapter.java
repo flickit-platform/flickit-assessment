@@ -5,6 +5,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.User;
 import org.flickit.assessment.core.application.port.out.user.LoadUserEmailByUserIdPort;
 import org.flickit.assessment.core.application.port.out.user.LoadUserPort;
+import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 import org.flickit.assessment.data.jpa.users.user.UserJpaRepository;
 import org.springframework.stereotype.Component;
 
@@ -21,6 +22,8 @@ public class UserPersistenceJpaAdapter implements
 
     private final UserJpaRepository repository;
 
+    private static final String SYSTEM_USER_EMAIL = "system@flickit.org";
+
     @Override
     public Optional<User> loadById(UUID userId) {
         return repository.findById(userId).map(UserMapper::mapToDomainModel);
@@ -29,6 +32,12 @@ public class UserPersistenceJpaAdapter implements
     @Override
     public Optional<User> loadByEmail(String email) {
         return repository.findByEmail(email).map(UserMapper::mapToDomainModel);
+    }
+
+    @Override
+    public Optional<UUID> loadSystemUserId() {
+        return repository.findByEmail(SYSTEM_USER_EMAIL)
+            .map(UserJpaEntity::getId);
     }
 
     @Override

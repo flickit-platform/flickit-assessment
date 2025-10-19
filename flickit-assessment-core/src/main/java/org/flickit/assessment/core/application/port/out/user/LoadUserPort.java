@@ -10,4 +10,6 @@ public interface LoadUserPort {
     Optional<User> loadById(UUID createdBy);
 
     Optional<User> loadByEmail(String email);
+
+    Optional<UUID> loadSystemUserId();
 }
