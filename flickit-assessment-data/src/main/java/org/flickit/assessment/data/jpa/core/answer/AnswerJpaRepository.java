@@ -153,4 +153,16 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
         """)
     Set<UUID> findAllAnswerIdsByAnswerRangeIdIn(Set<Long> answerRangeIds);
 
+    @Modifying
+    @Query("""
+            UPDATE AnswerJpaEntity a
+            SET a.confidenceLevelId = :confidenceLevelId,
+                a.answerOptionId = :answerOptionId,
+                a.status = :answeStatus
+            WHERE a.id IN :answerIds
+        """)
+    void updateSelectedAnswerOptionByAnswerIdIn(@Param("answerIds") Set<UUID> answerIds,
+                                                @Param("confidenceLevelId") Integer confidenceLevelId,
+                                                @Param("answerOptionId") Long answerOptionId,
+                                                @Param("answerStatus") int answerStatus);
 }
