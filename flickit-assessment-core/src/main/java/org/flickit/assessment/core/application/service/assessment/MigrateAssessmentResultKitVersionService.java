@@ -12,6 +12,7 @@ import org.flickit.assessment.core.application.port.out.assessmentresult.Invalid
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.UpdateAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.answer.DeleteAnswerPort;
+import org.flickit.assessment.core.application.port.out.user.LoadUserPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +34,7 @@ public class MigrateAssessmentResultKitVersionService implements MigrateAssessme
     private final LoadAnswerRangePort loadAnswerRangePort;
     private final LoadAnswerPort loadAnswerPort;
     private final DeleteAnswerPort deleteAnswerPort;
+    private final LoadUserPort loadUserPort;
 
     @Override
     public void migrateKitVersion(Param param) {
@@ -54,7 +56,7 @@ public class MigrateAssessmentResultKitVersionService implements MigrateAssessme
 
         var answerIdsOfQuestionsWithMissingAnswerRange = loadAnswerPort.loadIdsByAnswerRangeIds(missingAnswerRangeIds);
         if (!answerIdsOfQuestionsWithMissingAnswerRange.isEmpty())
-            deleteAnswerPort.deleteSelectedOptionFromAnswers(answerIdsOfQuestionsWithMissingAnswerRange);
+            deleteAnswerPort.deleteSelectedOptionFromAnswers(answerIdsOfQuestionsWithMissingAnswerRange, loadUserPort.loadSystemUserId());
 
         updateAssessmentResultPort.updateKitVersionId(assessmentResult.getId(), activeKitVersionId);
         loadAssessmentResultCalculatePort.invalidateCalculate(assessmentResult.getId());

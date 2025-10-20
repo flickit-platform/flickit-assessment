@@ -12,6 +12,7 @@ import org.flickit.assessment.core.application.port.out.answerrange.LoadAnswerRa
 import org.flickit.assessment.core.application.port.out.assessmentresult.InvalidateAssessmentResultCalculatePort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.UpdateAssessmentResultPort;
+import org.flickit.assessment.core.application.port.out.user.LoadUserPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -56,6 +57,9 @@ class MigrateAssessmentResultKitVersionServiceTest {
 
     @Mock
     private DeleteAnswerPort deleteAnswerPort;
+
+    @Mock
+    private LoadUserPort loadUserPort;
 
     @Test
     void testMigrateAssessmentResultKitVersionService_CurrentUserDoesNotHaveAccess_ShouldThrowAccessDeniedException() {
@@ -107,6 +111,7 @@ class MigrateAssessmentResultKitVersionServiceTest {
         var activeAnswerRangeIds = Set.of(1L, 2L, 4L, 6L);
         var deletedAnswerRangeIds = Set.of(3L, 5L);
         var answersWithMissingAnswerRangeIds = Set.of(UUID.randomUUID(), UUID.randomUUID());
+        var systemUserId = UUID.randomUUID();
 
         var param = createParam(b -> b.assessmentId(assessmentResult.getAssessment().getId()));
 
@@ -116,12 +121,13 @@ class MigrateAssessmentResultKitVersionServiceTest {
         when(loadAnswerRangePort.loadIdsByKitVersionId(assessmentResult.getKitVersionId())).thenReturn(currentAnswerRangeIds);
         when(loadAnswerRangePort.loadIdsByKitVersionId(assessmentResult.getAssessment().getAssessmentKit().getKitVersion())).thenReturn(activeAnswerRangeIds);
         when(loadAnswerPort.loadIdsByAnswerRangeIds(deletedAnswerRangeIds)).thenReturn(answersWithMissingAnswerRangeIds);
+        when(loadUserPort.loadSystemUserId()).thenReturn(systemUserId);
 
         service.migrateKitVersion(param);
 
         verify(updateAssessmentResultPort, times(1)).updateKitVersionId(assessmentResult.getId(), activeKitVersionId);
         verify(invalidateAssessmentResultCalculatePort, times(1)).invalidateCalculate(assessmentResult.getId());
-        verify(deleteAnswerPort).deleteSelectedOptionFromAnswers(answersWithMissingAnswerRangeIds);
+        verify(deleteAnswerPort).deleteSelectedOptionFromAnswers(answersWithMissingAnswerRangeIds, systemUserId);
     }
 
     private MigrateAssessmentResultKitVersionUseCase.Param createParam(Consumer<Param.ParamBuilder> changer) {
