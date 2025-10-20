@@ -94,8 +94,8 @@ public class AnswerPersistenceJpaAdapter implements
     }
 
     @Override
-    public Set<UUID> loadIdsByAnswerRangeIds(Set<Long> answerRangeIds) {
-        return repository.findAllAnswerIdsByAnswerRangeIdIn(answerRangeIds);
+    public Set<UUID> loadIdsByQuestionIds(List<Long> questionIds) {
+        return repository.findAllAnswerIdsQuestionIdIn(questionIds);
     }
 
     @Override

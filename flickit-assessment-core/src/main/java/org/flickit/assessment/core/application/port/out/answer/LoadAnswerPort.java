@@ -13,5 +13,5 @@ public interface LoadAnswerPort {
 
     List<Answer> loadAllUnapproved(UUID assessmentResultId);
 
-    Set<UUID> loadIdsByAnswerRangeIds(Set<Long> answerRangeIds);
+    Set<UUID> loadIdsByQuestionIds(List<Long> questionIds);
 }

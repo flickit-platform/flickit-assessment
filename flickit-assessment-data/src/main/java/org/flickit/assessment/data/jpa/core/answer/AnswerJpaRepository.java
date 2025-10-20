@@ -15,6 +15,8 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
 
     List<AnswerJpaEntity> findByAssessmentResultId(UUID assessmentResultId);
 
+    Set<UUID> findAllAnswerIdsQuestionIdIn(List<Long> questionId);
+
     @Query("""
             SELECT COUNT(a) as answerCount
             FROM AnswerJpaEntity a
@@ -145,13 +147,6 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
         """)
     List<AnswerJpaEntity> findAnswersByAssessmentResultIdAndStatus(@Param("assessmentResultId") UUID assessmentResultId,
                                                                    @Param("status") Integer status);
-    @Query("""
-            SELECT a.id
-            FROM AnswerJpaEntity a
-            JOIN QuestionJpaEntity q ON a.questionId = q.id
-            WHERE q.answerRangeId IN :answerRangeIds
-        """)
-    Set<UUID> findAllAnswerIdsByAnswerRangeIdIn(Set<Long> answerRangeIds);
 
     @Modifying
     @Query("""
