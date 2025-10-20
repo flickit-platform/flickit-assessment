@@ -158,7 +158,7 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
             UPDATE AnswerJpaEntity a
             SET a.confidenceLevelId = :confidenceLevelId,
                 a.answerOptionId = :answerOptionId,
-                a.status = :answeStatus
+                a.status = :answerStatus
             WHERE a.id IN :answerIds
         """)
     void updateSelectedAnswerOptionByAnswerIdIn(@Param("answerIds") Set<UUID> answerIds,
