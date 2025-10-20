@@ -10,16 +10,16 @@ import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepositor
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.AttributeLevelImpactfulQuestionsView;
-import org.flickit.assessment.data.jpa.kit.question.QuestionJoinQuestionImpactView;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaRepository;
 import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
 import org.flickit.assessment.kit.adapter.out.persistence.answeroption.AnswerOptionMapper;
+import org.flickit.assessment.kit.adapter.out.persistence.answerrange.AnswerRangeMapper;
+import org.flickit.assessment.kit.adapter.out.persistence.measure.MeasureMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.questionimpact.QuestionImpactMapper;
-import org.flickit.assessment.kit.application.domain.Question;
-import org.flickit.assessment.kit.application.domain.QuestionImpact;
-import org.flickit.assessment.kit.application.domain.Questionnaire;
+import org.flickit.assessment.kit.adapter.out.persistence.questionnaire.QuestionnaireMapper;
+import org.flickit.assessment.kit.application.domain.*;
 import org.flickit.assessment.kit.application.port.out.question.*;
 import org.flickit.assessment.kit.application.port.out.subject.CountSubjectQuestionsPort;
 import org.springframework.data.domain.PageRequest;
@@ -34,7 +34,6 @@ import java.util.stream.Collectors;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.kit.adapter.out.persistence.question.QuestionMapper.mapToJpaEntity;
-import static org.flickit.assessment.kit.adapter.out.persistence.questionnaire.QuestionnaireMapper.mapToDomainModel;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 @Component
@@ -114,24 +113,9 @@ public class QuestionPersistenceJpaAdapter implements
     }
 
     @Override
-    public List<Question> loadAllByKitVersionId(long kitVersionId) {
-        var questionWithImpactsViews = repository.loadByKitVersionId(kitVersionId);
-        var questionEntityToViews = questionWithImpactsViews.stream()
-            .collect(Collectors.groupingBy(QuestionJoinQuestionImpactView::getQuestion));
-
-        return questionEntityToViews.entrySet().stream()
-            .map(e -> {
-                Question question = QuestionMapper.mapToDomainModel(e.getKey());
-                List<QuestionImpact> qImpacts = e.getValue().stream()
-                    .map(v -> {
-                        if (v.getQuestionImpact() == null)
-                            return null;
-                        return QuestionImpactMapper.mapToDomainModel(v.getQuestionImpact());
-                    })
-                    .toList();
-                question.setImpacts(qImpacts);
-                return question;
-            })
+    public List<Question> loadAllByMeasureIdAndKitVersionId(long measureId, long kitVersionId) {
+        return repository.findAllByMeasureIdAndKitVersionId(measureId, kitVersionId).stream()
+            .map(QuestionMapper::mapToDomainModel)
             .toList();
     }
 
@@ -174,7 +158,9 @@ public class QuestionPersistenceJpaAdapter implements
         return myMap.entrySet().stream()
             .map(entry -> {
                 Question question = QuestionMapper.mapToDomainModel(entry.getKey());
-                Questionnaire questionnaire = mapToDomainModel(entry.getValue().getFirst().getQuestionnaire());
+                Questionnaire questionnaire = QuestionnaireMapper.mapToDomainModel(entry.getValue().getFirst().getQuestionnaire());
+                Measure measure = MeasureMapper.mapToDomainModel(entry.getValue().getFirst().getMeasure());
+                AnswerRange answerRange = AnswerRangeMapper.toDomainModel(entry.getValue().getFirst().getAnswerRange(), null);
 
                 var answerOptionEntities = entry.getValue().stream()
                     .collect(toMap(e -> e.getAnswerOption().getId(), AttributeLevelImpactfulQuestionsView::getAnswerOption,
@@ -190,7 +176,7 @@ public class QuestionPersistenceJpaAdapter implements
                 question.setImpacts(List.of(impact));
                 question.setOptions(options);
 
-                return new LoadAttributeLevelQuestionsPort.Result(question, questionnaire);
+                return new LoadAttributeLevelQuestionsPort.Result(question, questionnaire, measure, answerRange);
             }).toList();
     }
 

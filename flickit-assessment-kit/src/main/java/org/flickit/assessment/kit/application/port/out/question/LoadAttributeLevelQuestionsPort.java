@@ -1,5 +1,7 @@
 package org.flickit.assessment.kit.application.port.out.question;
 
+import org.flickit.assessment.kit.application.domain.AnswerRange;
+import org.flickit.assessment.kit.application.domain.Measure;
 import org.flickit.assessment.kit.application.domain.Question;
 import org.flickit.assessment.kit.application.domain.Questionnaire;
 
@@ -9,6 +11,9 @@ public interface LoadAttributeLevelQuestionsPort {
 
     List<Result> loadAttributeLevelQuestions(long kitVersionId, long attributeId, long maturityLevelId);
 
-    record Result(Question question, Questionnaire questionnaire) {
+    record Result(Question question,
+                  Questionnaire questionnaire,
+                  Measure measure,
+                  AnswerRange answerRange) {
     }
 }

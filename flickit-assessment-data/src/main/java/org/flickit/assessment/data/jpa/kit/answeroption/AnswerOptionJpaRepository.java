@@ -30,7 +30,6 @@ public interface AnswerOptionJpaRepository extends JpaRepository<AnswerOptionJpa
 
     List<AnswerOptionJpaEntity> findAllByAnswerRangeIdInAndKitVersionId(Collection<Long> answerRangeIds, Long kitVersionId, Sort sort);
 
-
     @Query("""
             SELECT a
             FROM QuestionJpaEntity q

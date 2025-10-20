@@ -29,6 +29,8 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
 
     List<QuestionJpaEntity> findAllByIdInAndKitVersionIdAndQuestionnaireId(List<Long> ids, long kitVersionId, long questionnaireId);
 
+    List<QuestionJpaEntity> findAllByMeasureIdAndKitVersionId(long measureId, long kitVersionId);
+
     @Modifying
     @Query("""
             UPDATE QuestionJpaEntity q
@@ -115,6 +117,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
             LEFT JOIN AnswerOptionJpaEntity anso ON ans.answerOptionId = anso.id AND q.kitVersionId = anso.kitVersionId
             WHERE
                 q.id IN :questionIds
+                AND ans.isNotApplicable IS NOT TRUE
                 AND q.kitVersionId = :kitVersionId
                 AND (ans.answerOptionId IS NULL
                     OR (anso.index != (
@@ -186,11 +189,15 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
                 qr as questionnaire,
                 qsn as question,
                 qi as questionImpact,
-                ao as answerOption
+                ao as answerOption,
+                ar as answerRange,
+                mr as measure
             FROM QuestionJpaEntity qsn
             LEFT JOIN AnswerOptionJpaEntity ao on qsn.answerRangeId = ao.answerRangeId AND qsn.kitVersionId = ao.kitVersionId
             LEFT JOIN QuestionnaireJpaEntity qr on qsn.questionnaireId = qr.id AND qsn.kitVersionId = qr.kitVersionId
             LEFT JOIN QuestionImpactJpaEntity qi on qsn.id = qi.questionId AND qsn.kitVersionId = qi.kitVersionId
+            LEFT JOIN AnswerRangeJpaEntity ar on qsn.answerRangeId = ar.id AND qsn.kitVersionId = ar.kitVersionId
+            LEFT JOIN MeasureJpaEntity mr on qsn.measureId = mr.id AND qsn.kitVersionId = mr.kitVersionId
             WHERE qi.attributeId = :attributeId
                 AND qi.maturityLevelId = :maturityLevelId
                 AND qi.kitVersionId = :kitVersionId

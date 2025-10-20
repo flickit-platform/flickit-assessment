@@ -2970,12 +2970,40 @@
 						}
 					},
 					"response": []
-				}
-			]
-		},
-		{
-			"name": "Measure",
-			"item": [
+				},
+				{
+					"name": "Get Kit Measure Detail",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessment-kits/363/details/measures/2659",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessment-kits",
+								"363",
+								"details",
+								"measures",
+								"2659"
+							]
+						}
+					},
+					"response": []
+				},
 				{
 					"name": "Update Measure",
 					"request": {

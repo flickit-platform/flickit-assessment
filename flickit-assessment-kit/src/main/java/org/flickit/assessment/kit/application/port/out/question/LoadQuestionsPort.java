@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface LoadQuestionsPort {
 
-    List<Question> loadAllByKitVersionId(long kitVersionId);
+    List<Question> loadAllByMeasureIdAndKitVersionId (long measureId, long kitVersionId);
 
     List<Result> loadQuestionsWithoutAnswerRange(long kitVersionId);
 
