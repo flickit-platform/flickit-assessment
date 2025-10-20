@@ -21,6 +21,7 @@ public class AnswerMapper {
             param.confidenceLevelId(),
             param.isNotApplicable(),
             param.status() != null ? param.status().getId() : null,
+            false,
             param.currentUserId(),
             param.currentUserId()
         );
