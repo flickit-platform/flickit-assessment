@@ -72,7 +72,8 @@ public class GetKitMeasureDetailService implements GetKitMeasureDetailUseCase {
     }
 
     private static MeasureDetailQuestion buildQuestion(Question question, AnswerRange answerRange, Questionnaire questionnaire) {
-        return new MeasureDetailQuestion(question.getTitle(),
+        return new MeasureDetailQuestion(question.getId(),
+            question.getTitle(),
             answerRange.isReusable() ? MeasureDetailAnswerRange.of(answerRange) : null,
             MeasureDetailQuestionnaire.of(questionnaire),
             answerRange.isReusable() ? null : answerRange.getAnswerOptions().stream()
