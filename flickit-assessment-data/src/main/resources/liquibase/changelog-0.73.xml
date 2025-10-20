@@ -12,4 +12,18 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="0.73-02" author="Maziyar Gerami">
+        <insert tableName="fau_user" schemaName="public">
+            <column name="password" valueComputed="gen_random_uuid()"/>
+            <column name="is_superuser" valueBoolean="false"/>
+            <column name="is_staff" valueBoolean="false"/>
+            <column name="is_active" valueBoolean="true"/>
+            <column name="email" value="system@flickit.org"/>
+            <column name="display_name" value="System User"/>
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="creation_time" valueComputed="NOW()"/>
+            <column name="last_modification_time" valueComputed="NOW()"/>
+        </insert>
+    </changeSet>
+
 </databaseChangeLog>
