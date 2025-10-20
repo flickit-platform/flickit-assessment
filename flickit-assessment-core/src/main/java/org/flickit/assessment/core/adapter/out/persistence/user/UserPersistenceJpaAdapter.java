@@ -1,10 +1,12 @@
 package org.flickit.assessment.core.adapter.out.persistence.user;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.exception.InvalidStateException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.User;
 import org.flickit.assessment.core.application.port.out.user.LoadUserEmailByUserIdPort;
 import org.flickit.assessment.core.application.port.out.user.LoadUserPort;
+import org.flickit.assessment.core.common.ErrorMessageKey;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 import org.flickit.assessment.data.jpa.users.user.UserJpaRepository;
 import org.springframework.stereotype.Component;
@@ -35,9 +37,10 @@ public class UserPersistenceJpaAdapter implements
     }
 
     @Override
-    public Optional<UUID> loadSystemUserId() {
+    public UUID loadSystemUserId() {
         return repository.findByEmail(SYSTEM_USER_EMAIL)
-            .map(UserJpaEntity::getId);
+            .map(UserJpaEntity::getId)
+            .orElseThrow(() -> new InvalidStateException(ErrorMessageKey.SYSTEM_USER_NOT_FOUND));
     }
 
     @Override

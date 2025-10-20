@@ -11,5 +11,5 @@ public interface LoadUserPort {
 
     Optional<User> loadByEmail(String email);
 
-    Optional<UUID> loadSystemUserId();
+    UUID loadSystemUserId();
 }
