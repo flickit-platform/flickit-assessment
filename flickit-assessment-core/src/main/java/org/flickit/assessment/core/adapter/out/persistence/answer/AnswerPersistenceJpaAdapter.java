@@ -92,6 +92,11 @@ public class AnswerPersistenceJpaAdapter implements
     }
 
     @Override
+    public Set<UUID> loadIdsByAnswerRangeIds(Set<Long> answerRangeIds) {
+        return repository.findAllAnswerIdsByAnswerRangeIdIn(answerRangeIds);
+    }
+
+    @Override
     public void update(UpdateAnswerPort.Param param) {
         var answer = repository.findById(param.answerId())
             .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ANSWER_ID_NOT_FOUND));
