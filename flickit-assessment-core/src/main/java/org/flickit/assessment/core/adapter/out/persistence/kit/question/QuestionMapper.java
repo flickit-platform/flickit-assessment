@@ -10,6 +10,7 @@ import org.flickit.assessment.core.application.domain.Measure;
 import org.flickit.assessment.core.application.domain.Question;
 import org.flickit.assessment.core.application.domain.QuestionImpact;
 import org.flickit.assessment.core.application.domain.Questionnaire;
+import org.flickit.assessment.core.application.port.out.question.LoadQuestionPort;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
 
 import java.util.List;
@@ -91,5 +92,10 @@ public class QuestionMapper {
             translation = translations.getOrDefault(language, translation);
         }
         return translation;
+    }
+
+    public static LoadQuestionPort.Result mapToResult(QuestionJpaEntity entity) {
+        return new LoadQuestionPort.Result(entity.getId(),
+            entity.getAnswerRangeId());
     }
 }

@@ -3,10 +3,15 @@ package org.flickit.assessment.core.application.port.out.question;
 import org.flickit.assessment.core.application.domain.Question;
 
 import java.util.UUID;
+import java.util.List;
 
 public interface LoadQuestionPort {
 
     Question loadByIdAndKitVersionId(Long id, Long kitVersionId);
 
     int loadFirstUnansweredQuestionIndex(long questionnaireId, UUID assessmentResultId);
+
+    List<Result> loadByKitVersionId(long kitVersionId);
+
+    record Result(long id, long answerRangeId){}
 }
