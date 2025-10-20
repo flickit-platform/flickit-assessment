@@ -47,6 +47,7 @@ public class GetKitAttributeLevelQuestionsDetailService implements GetKitAttribu
     private Result.Question mapToResultQuestion(Question question, Questionnaire questionnaire, Measure measure, AnswerRange answerRange) {
         var impact = question.getImpacts().getFirst();
         return new Result.Question(
+            question.getId(),
             question.getIndex(),
             question.getTitle(),
             question.getMayNotBeApplicable(),

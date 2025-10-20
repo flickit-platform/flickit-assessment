@@ -43,6 +43,7 @@ public interface GetKitAttributeLevelQuestionsDetailUseCase {
     record Result(int questionsCount, List<Question> questions) {
 
         public record Question(
+            long id,
             int index,
             String title,
             boolean mayNotBeApplicable,

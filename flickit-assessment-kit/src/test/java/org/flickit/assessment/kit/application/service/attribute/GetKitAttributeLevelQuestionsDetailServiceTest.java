@@ -176,6 +176,7 @@ class GetKitAttributeLevelQuestionsDetailServiceTest {
 
     private static void assertQuestion(GetKitAttributeLevelQuestionsDetailUseCase.Result.Question resultQuestion, Question question, QuestionImpact impact, String title) {
         assertNotNull(resultQuestion);
+        assertEquals(question.getId(), resultQuestion.id());
         assertEquals(question.getTitle(), resultQuestion.title());
         assertEquals(question.getIndex(), resultQuestion.index());
         assertTrue(resultQuestion.mayNotBeApplicable());
