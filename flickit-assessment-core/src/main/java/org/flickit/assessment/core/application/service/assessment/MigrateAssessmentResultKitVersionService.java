@@ -7,15 +7,18 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.port.in.assessment.MigrateAssessmentResultKitVersionUseCase;
 import org.flickit.assessment.core.application.port.out.answer.LoadAnswerPort;
-import org.flickit.assessment.core.application.port.out.answerrange.LoadAnswerRangePort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.InvalidateAssessmentResultCalculatePort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.UpdateAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.answer.DeleteAnswerPort;
+import org.flickit.assessment.core.application.port.out.question.LoadQuestionPort;
 import org.flickit.assessment.core.application.port.out.user.LoadUserPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.MIGRATE_KIT_VERSION;
@@ -31,10 +34,10 @@ public class MigrateAssessmentResultKitVersionService implements MigrateAssessme
     private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final InvalidateAssessmentResultCalculatePort loadAssessmentResultCalculatePort;
     private final UpdateAssessmentResultPort updateAssessmentResultPort;
-    private final LoadAnswerRangePort loadAnswerRangePort;
     private final LoadAnswerPort loadAnswerPort;
     private final DeleteAnswerPort deleteAnswerPort;
     private final LoadUserPort loadUserPort;
+    private final LoadQuestionPort loadQuestionPort;
 
     @Override
     public void migrateKitVersion(Param param) {
@@ -48,17 +51,27 @@ public class MigrateAssessmentResultKitVersionService implements MigrateAssessme
         if (activeKitVersionId == null)
             throw new ValidationException(MIGRATE_ASSESSMENT_RESULT_KIT_VERSION_ACTIVE_VERSION_NOT_FOUND);
 
-        var currentAnswerRangeIds = loadAnswerRangePort.loadIdsByKitVersionId(assessmentResult.getKitVersionId());
-        var activeAnswerRangeIds = loadAnswerRangePort.loadIdsByKitVersionId(activeKitVersionId);
-        var deletedAnswerRangeIds = currentAnswerRangeIds.stream()
-            .filter(id -> !activeAnswerRangeIds.contains(id))
-            .collect(Collectors.toSet());
+        var currentQuestions = loadQuestionPort.loadByKitVersionId(assessmentResult.getKitVersionId());
+        var activeQuestions = loadQuestionPort.loadByKitVersionId(activeKitVersionId);
+        var questionIdsWithChangedAnswerRangeIds = findChangedAnswerRanges(currentQuestions, activeQuestions);
 
-        var answerIdsOfQuestionsWithMissingAnswerRange = loadAnswerPort.loadIdsByAnswerRangeIds(deletedAnswerRangeIds);
+        var answerIdsOfQuestionsWithMissingAnswerRange = loadAnswerPort.loadIdsByQuestionIds(questionIdsWithChangedAnswerRangeIds);
         if (!answerIdsOfQuestionsWithMissingAnswerRange.isEmpty())
             deleteAnswerPort.deleteSelectedOptionFromAnswers(answerIdsOfQuestionsWithMissingAnswerRange, loadUserPort.loadSystemUserId());
 
         updateAssessmentResultPort.updateKitVersionId(assessmentResult.getId(), activeKitVersionId);
         loadAssessmentResultCalculatePort.invalidateCalculate(assessmentResult.getId());
+    }
+
+
+    public static List<Long> findChangedAnswerRanges(List<LoadQuestionPort.Result> currentQuestions, List<LoadQuestionPort.Result> activeQuestions) {
+        Map<Long, Long> currentQuestionIdToAnswerRageIdMap = currentQuestions.stream()
+            .collect(Collectors.toMap(LoadQuestionPort.Result::id, LoadQuestionPort.Result::answerRangeId));
+
+        return activeQuestions.stream()
+            .filter(q -> currentQuestionIdToAnswerRageIdMap.containsKey(q.id()))
+            .filter(q -> !Objects.equals(currentQuestionIdToAnswerRageIdMap.get(q.id()), q.answerRangeId()))
+            .map(LoadQuestionPort.Result::id)
+            .toList();
     }
 }
