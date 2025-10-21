@@ -228,6 +228,14 @@ public class QuestionPersistenceJpaAdapter implements
     }
 
     @Override
+    public void reindexQuestionsAfter(long questionId, long kitVersionId) {
+        var question = repository.findByIdAndKitVersionId(questionId, kitVersionId)
+            .orElseThrow(() -> new ResourceNotFoundException(QUESTION_ID_NOT_FOUND));
+
+        repository.updateQuestionIndexesAfter(question.getIndex(), question.getQuestionnaireId());
+    }
+
+    @Override
     public PaginatedResponse<Question> loadQuestionnaireQuestions(LoadQuestionnaireQuestionsPort.Param param) {
         var pageResult = repository.findAllByQuestionnaireIdAndKitVersionIdOrderByIndex(param.questionnaireId(),
             param.kitVersionId(),
