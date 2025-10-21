@@ -52,12 +52,35 @@ public class AnswerHistoryPersistenceJpaAdapter implements
     public UUID persist(AnswerHistory answerHistory) {
         var assessmentResult = assessmentResultRepository.findById(answerHistory.getAssessmentResultId())
             .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ASSESSMENT_RESULT_NOT_FOUND));
-        var answer = answerRepository.findById(answerHistory.getAnswer().getId())
-            .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ANSWER_ID_NOT_FOUND));
-        var answerOption = answerOptionRepository.findByIdAndKitVersionId(answer.getAnswerOptionId(), assessmentResult.getKitVersionId())
-            .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ANSWER_ID_NOT_FOUND));
+        var answerOptionId = answerHistory.getAnswer().getSelectedOption() != null
+            ? answerHistory.getAnswer().getSelectedOption().getId()
+            : null;
+        AnswerOptionJpaEntity loadedOption;
+        Integer answerOptionIndex = null;
+        if (answerOptionId != null) {
+            loadedOption = answerOptionRepository.findByIdAndKitVersionId(answerOptionId, assessmentResult.getKitVersionId())
+                .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ANSWER_ID_NOT_FOUND));
+            answerOptionIndex = loadedOption.getIndex();
+        }
 
-        AnswerHistoryJpaEntity savedEntity = repository.save(mapCreateParamToJpaEntity(answerHistory, assessmentResult, answer, answerOption.getIndex()));
+        var entity = new AnswerHistoryJpaEntity(
+            null,
+            new AnswerJpaEntity(answerHistory.getAnswer().getId()),
+            new AssessmentResultJpaEntity(answerHistory.getAssessmentResultId()),
+            answerHistory.getAnswer().getQuestionId(),
+            answerOptionId,
+            answerHistory.getAnswer().getConfidenceLevelId(),
+            answerHistory.getAnswer().getIsNotApplicable(),
+            answerHistory.getAnswer().getAnswerStatus() != null
+                ? answerHistory.getAnswer().getAnswerStatus().getId()
+                : null,
+            answerOptionIndex,
+            answerHistory.getCreatedBy().getId(),
+            answerHistory.getCreationTime(),
+            answerHistory.getHistoryType().ordinal()
+        );
+
+        AnswerHistoryJpaEntity savedEntity = repository.save(entity);
         return savedEntity.getId();
     }
 

@@ -19,7 +19,10 @@ import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AnswerHistoryMapper {
 
-    public static AnswerHistoryJpaEntity mapCreateParamToJpaEntity(AnswerHistory answerHistory, AssessmentResultJpaEntity assessmentResult, AnswerJpaEntity answer, Integer answerOptionIndex) {
+    public static AnswerHistoryJpaEntity mapCreateParamToJpaEntity(AnswerHistory answerHistory,
+                                                                   AssessmentResultJpaEntity assessmentResult,
+                                                                   AnswerJpaEntity answer,
+                                                                   Integer answerOptionIndex) {
         return new AnswerHistoryJpaEntity(
             null,
             answer,
