@@ -10,38 +10,12 @@ import org.flickit.assessment.core.application.domain.Answer;
 import org.flickit.assessment.core.application.domain.AnswerHistory;
 import org.flickit.assessment.core.application.domain.AnswerStatus;
 import org.flickit.assessment.core.application.domain.HistoryType;
-import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 import org.flickit.assessment.data.jpa.core.answerhistory.AnswerHistoryJpaEntity;
-import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AnswerHistoryMapper {
-
-    public static AnswerHistoryJpaEntity mapCreateParamToJpaEntity(AnswerHistory answerHistory,
-                                                                   AssessmentResultJpaEntity assessmentResult,
-                                                                   AnswerJpaEntity answer,
-                                                                   Integer answerOptionIndex) {
-        return new AnswerHistoryJpaEntity(
-            null,
-            answer,
-            assessmentResult,
-            answerHistory.getAnswer().getQuestionId(),
-            answerHistory.getAnswer().getSelectedOption() != null
-                ? answerHistory.getAnswer().getSelectedOption().getId()
-                : null,
-            answerHistory.getAnswer().getConfidenceLevelId(),
-            answerHistory.getAnswer().getIsNotApplicable(),
-            answerHistory.getAnswer().getAnswerStatus() != null
-                ? answerHistory.getAnswer().getAnswerStatus().getId()
-                : null,
-            answerOptionIndex,
-            answerHistory.getCreatedBy().getId(),
-            answerHistory.getCreationTime(),
-            answerHistory.getHistoryType().ordinal()
-        );
-    }
 
     public static AnswerHistory mapToDomainModel(AnswerHistoryJpaEntity entity,
                                                  UserJpaEntity createdBy,
