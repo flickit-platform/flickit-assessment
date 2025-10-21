@@ -42,7 +42,7 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
                 a.isNotApplicable = :isNotApplicable,
                 a.status = :status,
                 a.lastModifiedBy = :lastModifiedBy
-            WHERE a.id = :answerId AND a.deleted = false
+            WHERE a.id = :answerId
         """)
     void update(@Param("answerId") UUID answerId,
                 @Param("answerOptionId") Long answerOptionId,
@@ -99,7 +99,6 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
             SET a.status = :approvedStatusId,
                 a.lastModifiedBy = :approvedBy
             WHERE a.id = :answerId
-            AND a.deleted = false
         """)
     void approve(@Param("answerId") UUID answerId,
                  @Param("approvedBy") UUID approvedBy,
@@ -139,7 +138,6 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
             SET a.status = :status,
                 a.lastModifiedBy = :approvedBy
             WHERE a.id IN :answerIds
-            AND a.deleted = false
         """)
     void approveByAnswerIds(@Param("answerIds") List<UUID> answerIds,
                             @Param("approvedBy") UUID approvedBy,
