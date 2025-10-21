@@ -6,6 +6,7 @@ import org.flickit.assessment.core.application.domain.Answer;
 import org.flickit.assessment.core.application.domain.AnswerStatus;
 import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 import org.flickit.assessment.core.application.port.out.answer.*;
+import org.flickit.assessment.core.application.port.out.answer.DeleteAnswerPort;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaRepository;
 import org.flickit.assessment.data.jpa.core.answer.AnswersQuestionnaireAndCountView;
@@ -17,6 +18,7 @@ import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
@@ -30,7 +32,8 @@ public class AnswerPersistenceJpaAdapter implements
     UpdateAnswerPort,
     LoadQuestionsAnswerListPort,
     CountLowConfidenceAnswersPort,
-    ApproveAnswerPort {
+    ApproveAnswerPort,
+    DeleteAnswerPort {
 
     private final AnswerJpaRepository repository;
     private final AssessmentResultJpaRepository assessmentResultRepo;
@@ -92,6 +95,13 @@ public class AnswerPersistenceJpaAdapter implements
     }
 
     @Override
+    public Set<UUID> loadIdsByQuestionIds(List<Long> questionIds) {
+        return repository.findAllByQuestionIdIn(questionIds).stream()
+            .map(AnswerJpaEntity::getId)
+            .collect(Collectors.toSet());
+    }
+
+    @Override
     public void update(UpdateAnswerPort.Param param) {
         var answer = repository.findById(param.answerId())
             .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ANSWER_ID_NOT_FOUND));
@@ -145,5 +155,14 @@ public class AnswerPersistenceJpaAdapter implements
     @Override
     public void approveAll(List <UUID> answerIds, UUID approvedBy) {
         repository.approveByAnswerIds(answerIds, approvedBy ,AnswerStatus.APPROVED.getId());
+    }
+
+    @Override
+    public void deleteSelectedOption(Set<UUID> answerIds, UUID lastModifiedBy) {
+        repository.updateSelectedAnswerOptionByAnswerIdIn(answerIds,
+            null,
+            null,
+            AnswerStatus.UNAPPROVED.getId(),
+            lastModifiedBy);
     }
 }

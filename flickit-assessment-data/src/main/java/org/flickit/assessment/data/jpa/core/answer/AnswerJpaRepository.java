@@ -15,6 +15,8 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
 
     List<AnswerJpaEntity> findByAssessmentResultIdAndDeletedFalse(UUID assessmentResultId);
 
+    List<AnswerJpaEntity> findAllByQuestionIdIn(List<Long> questionId);
+
     @Query("""
             SELECT COUNT(a) as answerCount
             FROM AnswerJpaEntity a
@@ -153,4 +155,19 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
         """)
     List<AnswerJpaEntity> findAnswersByAssessmentResultIdAndStatus(@Param("assessmentResultId") UUID assessmentResultId,
                                                                    @Param("status") Integer status);
+
+    @Modifying
+    @Query("""
+            UPDATE AnswerJpaEntity a
+            SET a.confidenceLevelId = :confidenceLevelId,
+                a.answerOptionId = :answerOptionId,
+                a.status = :answerStatus,
+                a.lastModifiedBy = :lastModifiedBy
+            WHERE a.id IN :answerIds
+        """)
+    void updateSelectedAnswerOptionByAnswerIdIn(@Param("answerIds") Set<UUID> answerIds,
+                                                @Param("confidenceLevelId") Integer confidenceLevelId,
+                                                @Param("answerOptionId") Long answerOptionId,
+                                                @Param("answerStatus") int answerStatus,
+                                                @Param("lastModifiedBy") UUID lastModifiedBy);
 }

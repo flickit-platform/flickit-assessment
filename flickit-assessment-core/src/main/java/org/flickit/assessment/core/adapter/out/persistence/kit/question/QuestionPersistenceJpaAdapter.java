@@ -119,6 +119,13 @@ public class QuestionPersistenceJpaAdapter implements
         return repository.findQuestionnaireFirstUnansweredQuestion(questionnaireId, assessmentResultId);
     }
 
+    @Override
+    public List<Result> loadByKitVersionId(long kitVersionId) {
+        return repository.findAllByKitVersionId(kitVersionId).stream()
+            .map(QuestionMapper::mapToResult)
+            .toList();
+    }
+
     private @Nullable KitLanguage resolveLanguage(AssessmentResultJpaEntity assessmentResult) {
         var assessmentKit = assessmentKitRepository.findByKitVersionId(assessmentResult.getKitVersionId())
             .orElseThrow(() -> new ResourceNotFoundException(ErrorMessageKey.COMMON_ASSESSMENT_KIT_NOT_FOUND));

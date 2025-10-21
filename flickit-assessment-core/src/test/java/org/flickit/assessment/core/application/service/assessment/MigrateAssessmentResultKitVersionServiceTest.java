@@ -6,25 +6,27 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.port.in.assessment.MigrateAssessmentResultKitVersionUseCase;
 import org.flickit.assessment.core.application.port.in.assessment.MigrateAssessmentResultKitVersionUseCase.Param;
+import org.flickit.assessment.core.application.port.out.answer.DeleteAnswerPort;
+import org.flickit.assessment.core.application.port.out.answer.LoadAnswerPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.InvalidateAssessmentResultCalculatePort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.UpdateAssessmentResultPort;
+import org.flickit.assessment.core.application.port.out.question.LoadQuestionPort;
+import org.flickit.assessment.core.application.port.out.user.LoadUserPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.MIGRATE_KIT_VERSION;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.MIGRATE_ASSESSMENT_RESULT_KIT_VERSION_ACTIVE_VERSION_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.MIGRATE_ASSESSMENT_RESULT_KIT_VERSION_ASSESSMENT_RESULT_ID_NOT_FOUND;
-import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.validResult;
-import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.validResultWithoutActiveVersion;
+import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
@@ -47,6 +49,18 @@ class MigrateAssessmentResultKitVersionServiceTest {
     @Mock
     private UpdateAssessmentResultPort updateAssessmentResultPort;
 
+    @Mock
+    private LoadAnswerPort loadAnswerPort;
+
+    @Mock
+    private DeleteAnswerPort deleteAnswerPort;
+
+    @Mock
+    private LoadUserPort loadUserPort;
+
+    @Mock
+    private LoadQuestionPort loadQuestionPort;
+
     @Test
     void testMigrateAssessmentResultKitVersionService_CurrentUserDoesNotHaveAccess_ShouldThrowAccessDeniedException() {
         var param = createParam(MigrateAssessmentResultKitVersionUseCase.Param.ParamBuilder::build);
@@ -57,7 +71,8 @@ class MigrateAssessmentResultKitVersionServiceTest {
         var throwable = assertThrows(AccessDeniedException.class, () -> service.migrateKitVersion(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
-        verifyNoInteractions(loadAssessmentResultPort, loadAssessmentResultPort, invalidateAssessmentResultCalculatePort, updateAssessmentResultPort);
+        verifyNoInteractions(loadAssessmentResultPort, loadAssessmentResultPort, invalidateAssessmentResultCalculatePort, updateAssessmentResultPort,
+            loadQuestionPort, loadAnswerPort);
     }
 
     @Test
@@ -71,7 +86,7 @@ class MigrateAssessmentResultKitVersionServiceTest {
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.migrateKitVersion(param));
         assertEquals(MIGRATE_ASSESSMENT_RESULT_KIT_VERSION_ASSESSMENT_RESULT_ID_NOT_FOUND, throwable.getMessage());
 
-        verifyNoInteractions(invalidateAssessmentResultCalculatePort, updateAssessmentResultPort);
+        verifyNoInteractions(invalidateAssessmentResultCalculatePort, updateAssessmentResultPort, loadQuestionPort, loadAnswerPort);
     }
 
     @Test
@@ -86,24 +101,84 @@ class MigrateAssessmentResultKitVersionServiceTest {
         var throwable = assertThrows(ValidationException.class, () -> service.migrateKitVersion(param));
         assertEquals(MIGRATE_ASSESSMENT_RESULT_KIT_VERSION_ACTIVE_VERSION_NOT_FOUND, throwable.getMessageKey());
 
-        verifyNoInteractions(invalidateAssessmentResultCalculatePort, updateAssessmentResultPort);
+        verifyNoInteractions(invalidateAssessmentResultCalculatePort, updateAssessmentResultPort, loadQuestionPort, loadAnswerPort);
     }
 
     @Test
     void testMigrateAssessmentResultKitVersionService_ValidParameters_SuccessfulUpdate() {
-        var assessmentResult = validResult();
+        var assessmentResult = resultWithDeprecatedKitVersion();
         var activeKitVersionId = assessmentResult.getAssessment().getAssessmentKit().getKitVersion();
+        var currentQuestions = List.of(new LoadQuestionPort.Result(1, 11),
+            (new LoadQuestionPort.Result(2, 22)), new LoadQuestionPort.Result(3, 33));
+        var activeAnswerRanges = List.of(new LoadQuestionPort.Result(1, 11), new LoadQuestionPort.Result(2, 44));
+        var questionIdsWithChangedAnswerRangeIds = List.of(2L);
+        var answersWithMissingAnswerRangeIds = Set.of(UUID.randomUUID(), UUID.randomUUID());
+        var systemUserId = UUID.randomUUID();
 
         var param = createParam(b -> b.assessmentId(assessmentResult.getAssessment().getId()));
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MIGRATE_KIT_VERSION))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(assessmentResult.getAssessment().getId())).thenReturn(Optional.of(assessmentResult));
+        when(loadQuestionPort.loadByKitVersionId(assessmentResult.getKitVersionId())).thenReturn(currentQuestions);
+        when(loadQuestionPort.loadByKitVersionId(assessmentResult.getAssessment().getAssessmentKit().getKitVersion())).thenReturn(activeAnswerRanges);
+        when(loadAnswerPort.loadIdsByQuestionIds(questionIdsWithChangedAnswerRangeIds)).thenReturn(answersWithMissingAnswerRangeIds);
+        when(loadUserPort.loadSystemUserId()).thenReturn(systemUserId);
 
         service.migrateKitVersion(param);
 
         verify(updateAssessmentResultPort, times(1)).updateKitVersionId(assessmentResult.getId(), activeKitVersionId);
         verify(invalidateAssessmentResultCalculatePort, times(1)).invalidateCalculate(assessmentResult.getId());
+        verify(deleteAnswerPort).deleteSelectedOption(answersWithMissingAnswerRangeIds, systemUserId);
+    }
+
+    @Test
+    void testMigrateAssessmentResultKitVersionService_whenAnswerRangeChangeNotFound_thenSuccessfulMigrateWithoutAnswerDelete() {
+        var assessmentResult = resultWithDeprecatedKitVersion();
+        var activeKitVersionId = assessmentResult.getAssessment().getAssessmentKit().getKitVersion();
+        var currentQuestions = List.of(new LoadQuestionPort.Result(1, 11),
+            (new LoadQuestionPort.Result(2, 22)), new LoadQuestionPort.Result(3, 33));
+        var activeAnswerRanges = List.of(new LoadQuestionPort.Result(1, 11),
+            (new LoadQuestionPort.Result(2, 22)), new LoadQuestionPort.Result(3, 33));
+
+        var param = createParam(b -> b.assessmentId(assessmentResult.getAssessment().getId()));
+
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MIGRATE_KIT_VERSION))
+            .thenReturn(true);
+        when(loadAssessmentResultPort.loadByAssessmentId(assessmentResult.getAssessment().getId())).thenReturn(Optional.of(assessmentResult));
+        when(loadQuestionPort.loadByKitVersionId(assessmentResult.getKitVersionId())).thenReturn(currentQuestions);
+        when(loadQuestionPort.loadByKitVersionId(assessmentResult.getAssessment().getAssessmentKit().getKitVersion())).thenReturn(activeAnswerRanges);
+
+        service.migrateKitVersion(param);
+
+        verify(updateAssessmentResultPort, times(1)).updateKitVersionId(assessmentResult.getId(), activeKitVersionId);
+        verify(invalidateAssessmentResultCalculatePort, times(1)).invalidateCalculate(assessmentResult.getId());
+        verifyNoInteractions(deleteAnswerPort, loadUserPort, loadAnswerPort);
+    }
+
+    @Test
+    void testMigrateAssessmentResultKitVersionService_whenUnusedAnswerRangeChanged_thenSuccessfulMigrateWithoutAnswerDelete() {
+        var assessmentResult = resultWithDeprecatedKitVersion();
+        var activeKitVersionId = assessmentResult.getAssessment().getAssessmentKit().getKitVersion();
+        var currentQuestions = List.of(new LoadQuestionPort.Result(1, 11),
+            (new LoadQuestionPort.Result(2, 22)), new LoadQuestionPort.Result(3, 33));
+        var activeAnswerRanges = List.of(new LoadQuestionPort.Result(1, 11), new LoadQuestionPort.Result(2, 44));
+        var questionIdsWithChangedAnswerRangeIds = List.of(2L);
+
+        var param = createParam(b -> b.assessmentId(assessmentResult.getAssessment().getId()));
+
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MIGRATE_KIT_VERSION))
+            .thenReturn(true);
+        when(loadAssessmentResultPort.loadByAssessmentId(assessmentResult.getAssessment().getId())).thenReturn(Optional.of(assessmentResult));
+        when(loadQuestionPort.loadByKitVersionId(assessmentResult.getKitVersionId())).thenReturn(currentQuestions);
+        when(loadQuestionPort.loadByKitVersionId(assessmentResult.getAssessment().getAssessmentKit().getKitVersion())).thenReturn(activeAnswerRanges);
+        when(loadAnswerPort.loadIdsByQuestionIds(questionIdsWithChangedAnswerRangeIds)).thenReturn(Set.of());
+
+        service.migrateKitVersion(param);
+
+        verify(updateAssessmentResultPort, times(1)).updateKitVersionId(assessmentResult.getId(), activeKitVersionId);
+        verify(invalidateAssessmentResultCalculatePort, times(1)).invalidateCalculate(assessmentResult.getId());
+        verifyNoInteractions(deleteAnswerPort, loadUserPort);
     }
 
     private MigrateAssessmentResultKitVersionUseCase.Param createParam(Consumer<Param.ParamBuilder> changer) {
