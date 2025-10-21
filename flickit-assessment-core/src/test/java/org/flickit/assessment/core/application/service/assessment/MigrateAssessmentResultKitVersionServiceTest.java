@@ -132,6 +132,55 @@ class MigrateAssessmentResultKitVersionServiceTest {
         verify(deleteAnswerPort).deleteSelectedOption(answersWithMissingAnswerRangeIds, systemUserId);
     }
 
+    @Test
+    void testMigrateAssessmentResultKitVersionService_whenAnswerRangeChangeNotFound_thenSuccessfulMigrateWithoutAnswerDelete() {
+        var assessmentResult = resultWithDeprecatedKitVersion();
+        var activeKitVersionId = assessmentResult.getAssessment().getAssessmentKit().getKitVersion();
+        var currentQuestions = List.of(new LoadQuestionPort.Result(1, 11),
+            (new LoadQuestionPort.Result(2, 22)), new LoadQuestionPort.Result(3, 33));
+        var activeAnswerRanges = List.of(new LoadQuestionPort.Result(1, 11),
+            (new LoadQuestionPort.Result(2, 22)), new LoadQuestionPort.Result(3, 33));
+
+        var param = createParam(b -> b.assessmentId(assessmentResult.getAssessment().getId()));
+
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MIGRATE_KIT_VERSION))
+            .thenReturn(true);
+        when(loadAssessmentResultPort.loadByAssessmentId(assessmentResult.getAssessment().getId())).thenReturn(Optional.of(assessmentResult));
+        when(loadQuestionPort.loadByKitVersionId(assessmentResult.getKitVersionId())).thenReturn(currentQuestions);
+        when(loadQuestionPort.loadByKitVersionId(assessmentResult.getAssessment().getAssessmentKit().getKitVersion())).thenReturn(activeAnswerRanges);
+
+        service.migrateKitVersion(param);
+
+        verify(updateAssessmentResultPort, times(1)).updateKitVersionId(assessmentResult.getId(), activeKitVersionId);
+        verify(invalidateAssessmentResultCalculatePort, times(1)).invalidateCalculate(assessmentResult.getId());
+        verifyNoInteractions(deleteAnswerPort, loadUserPort, loadAnswerPort);
+    }
+
+    @Test
+    void testMigrateAssessmentResultKitVersionService_whenUnusedAnswerRangeChanged_thenSuccessfulMigrateWithoutAnswerDelete() {
+        var assessmentResult = resultWithDeprecatedKitVersion();
+        var activeKitVersionId = assessmentResult.getAssessment().getAssessmentKit().getKitVersion();
+        var currentQuestions = List.of(new LoadQuestionPort.Result(1, 11),
+            (new LoadQuestionPort.Result(2, 22)), new LoadQuestionPort.Result(3, 33));
+        var activeAnswerRanges = List.of(new LoadQuestionPort.Result(1, 11), new LoadQuestionPort.Result(2, 44));
+        var questionIdsWithChangedAnswerRangeIds = List.of(2L);
+
+        var param = createParam(b -> b.assessmentId(assessmentResult.getAssessment().getId()));
+
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MIGRATE_KIT_VERSION))
+            .thenReturn(true);
+        when(loadAssessmentResultPort.loadByAssessmentId(assessmentResult.getAssessment().getId())).thenReturn(Optional.of(assessmentResult));
+        when(loadQuestionPort.loadByKitVersionId(assessmentResult.getKitVersionId())).thenReturn(currentQuestions);
+        when(loadQuestionPort.loadByKitVersionId(assessmentResult.getAssessment().getAssessmentKit().getKitVersion())).thenReturn(activeAnswerRanges);
+        when(loadAnswerPort.loadIdsByQuestionIds(questionIdsWithChangedAnswerRangeIds)).thenReturn(Set.of());
+
+        service.migrateKitVersion(param);
+
+        verify(updateAssessmentResultPort, times(1)).updateKitVersionId(assessmentResult.getId(), activeKitVersionId);
+        verify(invalidateAssessmentResultCalculatePort, times(1)).invalidateCalculate(assessmentResult.getId());
+        verifyNoInteractions(deleteAnswerPort, loadUserPort);
+    }
+
     private MigrateAssessmentResultKitVersionUseCase.Param createParam(Consumer<Param.ParamBuilder> changer) {
         var paramBuilder = paramBuilder();
         changer.accept(paramBuilder);
