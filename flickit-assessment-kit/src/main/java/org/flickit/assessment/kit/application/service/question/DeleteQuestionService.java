@@ -8,6 +8,7 @@ import org.flickit.assessment.kit.application.port.in.question.DeleteQuestionUse
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.question.DeleteQuestionPort;
+import org.flickit.assessment.kit.application.port.out.question.UpdateQuestionPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +23,7 @@ public class DeleteQuestionService implements DeleteQuestionUseCase {
     private final LoadKitVersionPort loadKitVersionPort;
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
     private final DeleteQuestionPort deleteQuestionPort;
+    private final UpdateQuestionPort updateQuestionPort;
 
     @Override
     public void deleteQuestion(Param param) {
@@ -33,6 +35,7 @@ public class DeleteQuestionService implements DeleteQuestionUseCase {
         if (!kitVersion.getStatus().equals(KitVersionStatus.UPDATING))
             throw new ValidationException(DELETE_QUESTION_NOT_ALLOWED);
 
+        updateQuestionPort.reindexQuestionsAfter(param.getQuestionId(), param.getKitVersionId());
         deleteQuestionPort.delete(param.getQuestionId(), param.getKitVersionId());
     }
 }

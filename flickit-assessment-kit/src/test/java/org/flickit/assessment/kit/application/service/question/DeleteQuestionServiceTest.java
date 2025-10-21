@@ -7,6 +7,7 @@ import org.flickit.assessment.kit.application.port.in.question.DeleteQuestionUse
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.question.DeleteQuestionPort;
+import org.flickit.assessment.kit.application.port.out.question.UpdateQuestionPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -40,47 +41,45 @@ class DeleteQuestionServiceTest {
     @Mock
     private DeleteQuestionPort deleteQuestionPort;
 
-    private final UUID ownerId = UUID.randomUUID();
+    @Mock
+    private UpdateQuestionPort updateQuestionPort;
+
+    private final DeleteQuestionUseCase.Param param = createParam(DeleteQuestionUseCase.Param.ParamBuilder::build);
     private KitVersion kitVersion = createKitVersion(simpleKit());
 
     @Test
-    void testDeleteQuestion_WhenCurrentUserIsNotExpertGroupOwner_ThenThrowAccessDeniedException() {
-        var param = createParam(DeleteQuestionUseCase.Param.ParamBuilder::build);
-
+    void testDeleteQuestion_whenCurrentUserIsNotExpertGroupOwner_thenThrowAccessDeniedException() {
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
-        when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
+        when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(UUID.randomUUID());
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.deleteQuestion(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
-        verifyNoInteractions(deleteQuestionPort);
+        verifyNoInteractions(deleteQuestionPort, updateQuestionPort);
     }
 
     @Test
-    void testDeleteQuestion_WhenCurrentUserIsExpertGroupOwnerAndKitVersionIsNotInUpdatingState_ThenThrowValidationException() {
-        var param = createParam(b -> b.currentUserId(ownerId));
+    void testDeleteQuestion_whenCurrentUserIsExpertGroupOwnerAndKitVersionIsNotInUpdatingState_thenThrowValidationException() {
         kitVersion = createActiveKitVersion(simpleKit());
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
-        when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
+        when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(param.getCurrentUserId());
 
         var throwable = assertThrows(ValidationException.class, () -> service.deleteQuestion(param));
         assertEquals(DELETE_QUESTION_NOT_ALLOWED, throwable.getMessageKey());
 
-        verifyNoInteractions(deleteQuestionPort);
+        verifyNoInteractions(deleteQuestionPort, updateQuestionPort);
     }
 
     @Test
-    void testDeleteQuestion_WhenCurrentUserIsExpertGroupOwnerAndKitVersionIsInUpdatingState_ThenDeleteQuestion() {
-        var param = createParam(b -> b.currentUserId(ownerId));
-
+    void testDeleteQuestion_whenCurrentUserIsExpertGroupOwnerAndKitVersionIsInUpdatingState_thenDeleteQuestion() {
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
-        when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
-        doNothing().when(deleteQuestionPort).delete(param.getQuestionId(), param.getKitVersionId());
+        when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(param.getCurrentUserId());
 
         service.deleteQuestion(param);
 
         verify(deleteQuestionPort).delete(param.getQuestionId(), param.getKitVersionId());
+        verify(updateQuestionPort).reindexQuestionsAfter(param.getQuestionId(), param.getKitVersionId());
     }
 
     private DeleteQuestionUseCase.Param createParam(Consumer<DeleteQuestionUseCase.Param.ParamBuilder> changer) {
