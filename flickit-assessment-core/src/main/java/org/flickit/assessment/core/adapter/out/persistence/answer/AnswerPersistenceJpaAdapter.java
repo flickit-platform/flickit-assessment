@@ -18,6 +18,7 @@ import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
@@ -95,7 +96,9 @@ public class AnswerPersistenceJpaAdapter implements
 
     @Override
     public Set<UUID> loadIdsByQuestionIds(List<Long> questionIds) {
-        return repository.findAllAnswerIdsQuestionIdIn(questionIds);
+        return repository.findAllByQuestionIdIn(questionIds).stream()
+            .map(AnswerJpaEntity::getId)
+            .collect(Collectors.toSet());
     }
 
     @Override
