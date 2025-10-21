@@ -279,7 +279,11 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
     @Query("""
             UPDATE QuestionJpaEntity q
             SET q.index = q.index - 1
-            WHERE q.questionnaireId = :questionnaireId AND q.index > :startIndex
+            WHERE q.index > :fromIndex AND
+                  q.questionnaireId = :questionnaireId AND
+                  q.kitVersionId = :kitVersionId
         """)
-    void updateQuestionIndexesAfter(@Param("startIndex") int startIndex, @Param("questionnaireId") long questionnaireId);
+    void updateQuestionIndexesAfter(@Param("fromIndex") int fromIndex,
+                                    @Param("questionnaireId") long questionnaireId,
+                                    @Param("kitVersionId") long kitVersionId);
 }

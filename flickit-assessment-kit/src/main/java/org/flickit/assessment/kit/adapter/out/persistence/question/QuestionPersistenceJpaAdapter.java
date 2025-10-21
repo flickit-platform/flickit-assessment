@@ -228,11 +228,8 @@ public class QuestionPersistenceJpaAdapter implements
     }
 
     @Override
-    public void reindexQuestionsAfter(long questionId, long kitVersionId) {
-        var question = repository.findByIdAndKitVersionId(questionId, kitVersionId)
-            .orElseThrow(() -> new ResourceNotFoundException(QUESTION_ID_NOT_FOUND));
-
-        repository.updateQuestionIndexesAfter(question.getIndex(), question.getQuestionnaireId());
+    public void reindexQuestionsAfter(int fromIndex, long questionnaireId, long kitVersionId) {
+        repository.updateQuestionIndexesAfter(fromIndex, questionnaireId, kitVersionId);
     }
 
     @Override

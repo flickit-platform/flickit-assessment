@@ -67,13 +67,12 @@ public interface UpdateQuestionPort {
     }
 
     /**
-     * Reindex all questions of a questionnaire that come after the specified question.
+     * Reindex all questions of a questionnaire that come after the specified index.
      * <p>
-     * This method shifts the indexes of all questions whose index is greater than
-     * the question with the given ID.
+     * Shifts the indexes of all questions whose index is greater than the given one.
      *
-     * @param questionId   the ID of the question after which reindexing should start
-     * @param kitVersionId the ID of the kit version to which the questions belong
+     * @param questionIndex   the index of the question after which reindexing should start
+     * @param questionnaireId the ID of the questionnaire to which the questions belong
      */
-    void reindexQuestionsAfter(long questionId, long kitVersionId);
+    void reindexQuestionsAfter(int questionIndex, long questionnaireId, long kitVersionId);
 }

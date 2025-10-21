@@ -7,6 +7,7 @@ import org.flickit.assessment.kit.application.port.in.question.DeleteQuestionUse
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.question.DeleteQuestionPort;
+import org.flickit.assessment.kit.application.port.out.question.LoadQuestionPort;
 import org.flickit.assessment.kit.application.port.out.question.UpdateQuestionPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,6 +23,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.DELETE_QUESTION_
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
 import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createActiveKitVersion;
 import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createKitVersion;
+import static org.flickit.assessment.kit.test.fixture.application.QuestionMother.createQuestion;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
@@ -44,6 +46,9 @@ class DeleteQuestionServiceTest {
     @Mock
     private UpdateQuestionPort updateQuestionPort;
 
+    @Mock
+    private LoadQuestionPort loadQuestionPort;
+
     private final DeleteQuestionUseCase.Param param = createParam(DeleteQuestionUseCase.Param.ParamBuilder::build);
     private KitVersion kitVersion = createKitVersion(simpleKit());
 
@@ -55,7 +60,7 @@ class DeleteQuestionServiceTest {
         var throwable = assertThrows(AccessDeniedException.class, () -> service.deleteQuestion(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
-        verifyNoInteractions(deleteQuestionPort, updateQuestionPort);
+        verifyNoInteractions(deleteQuestionPort, updateQuestionPort, loadQuestionPort);
     }
 
     @Test
@@ -68,18 +73,20 @@ class DeleteQuestionServiceTest {
         var throwable = assertThrows(ValidationException.class, () -> service.deleteQuestion(param));
         assertEquals(DELETE_QUESTION_NOT_ALLOWED, throwable.getMessageKey());
 
-        verifyNoInteractions(deleteQuestionPort, updateQuestionPort);
+        verifyNoInteractions(deleteQuestionPort, updateQuestionPort, loadQuestionPort);
     }
 
     @Test
     void testDeleteQuestion_whenCurrentUserIsExpertGroupOwnerAndKitVersionIsInUpdatingState_thenDeleteQuestion() {
+        var question = createQuestion();
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(param.getCurrentUserId());
+        when(loadQuestionPort.load(param.getQuestionId(), param.getKitVersionId())).thenReturn(question);
 
         service.deleteQuestion(param);
 
         verify(deleteQuestionPort).delete(param.getQuestionId(), param.getKitVersionId());
-        verify(updateQuestionPort).reindexQuestionsAfter(param.getQuestionId(), param.getKitVersionId());
+        verify(updateQuestionPort).reindexQuestionsAfter(question.getIndex(), question.getQuestionnaireId(), param.getKitVersionId());
     }
 
     private DeleteQuestionUseCase.Param createParam(Consumer<DeleteQuestionUseCase.Param.ParamBuilder> changer) {
