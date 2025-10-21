@@ -73,6 +73,7 @@ public interface UpdateQuestionPort {
      *
      * @param questionIndex   the index of the question after which reindexing should start
      * @param questionnaireId the ID of the questionnaire to which the questions belong
+     * @param kitVersionId the ID of the kit version to which the questions belong
      */
     void reindexQuestionsAfter(int questionIndex, long questionnaireId, long kitVersionId);
 }
