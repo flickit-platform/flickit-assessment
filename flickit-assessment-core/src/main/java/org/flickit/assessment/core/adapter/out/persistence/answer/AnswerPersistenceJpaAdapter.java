@@ -158,7 +158,7 @@ public class AnswerPersistenceJpaAdapter implements
     }
 
     @Override
-    public void deleteSelectedOptionFromAnswers(Set<UUID> answerIds, UUID lastModifiedBy) {
+    public void deleteSelectedOption(Set<UUID> answerIds, UUID lastModifiedBy) {
         repository.updateSelectedAnswerOptionByAnswerIdIn(answerIds,
             null,
             null,

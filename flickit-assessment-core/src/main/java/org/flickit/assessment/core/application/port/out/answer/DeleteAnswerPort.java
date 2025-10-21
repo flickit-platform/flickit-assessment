@@ -5,5 +5,5 @@ import java.util.UUID;
 
 public interface DeleteAnswerPort {
 
-    void deleteSelectedOptionFromAnswers(Set<UUID> answerIds, UUID modifiedBy);
+    void deleteSelectedOption(Set<UUID> answerIds, UUID modifiedBy);
 }

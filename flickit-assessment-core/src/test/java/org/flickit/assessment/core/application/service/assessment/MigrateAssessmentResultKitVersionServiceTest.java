@@ -129,7 +129,7 @@ class MigrateAssessmentResultKitVersionServiceTest {
 
         verify(updateAssessmentResultPort, times(1)).updateKitVersionId(assessmentResult.getId(), activeKitVersionId);
         verify(invalidateAssessmentResultCalculatePort, times(1)).invalidateCalculate(assessmentResult.getId());
-        verify(deleteAnswerPort).deleteSelectedOptionFromAnswers(answersWithMissingAnswerRangeIds, systemUserId);
+        verify(deleteAnswerPort).deleteSelectedOption(answersWithMissingAnswerRangeIds, systemUserId);
     }
 
     private MigrateAssessmentResultKitVersionUseCase.Param createParam(Consumer<Param.ParamBuilder> changer) {

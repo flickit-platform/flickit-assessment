@@ -57,7 +57,7 @@ public class MigrateAssessmentResultKitVersionService implements MigrateAssessme
 
         var answerIdsOfQuestionsWithMissingAnswerRange = loadAnswerPort.loadIdsByQuestionIds(questionIdsWithChangedAnswerRangeIds);
         if (!answerIdsOfQuestionsWithMissingAnswerRange.isEmpty())
-            deleteAnswerPort.deleteSelectedOptionFromAnswers(answerIdsOfQuestionsWithMissingAnswerRange, loadUserPort.loadSystemUserId());
+            deleteAnswerPort.deleteSelectedOption(answerIdsOfQuestionsWithMissingAnswerRange, loadUserPort.loadSystemUserId());
 
         updateAssessmentResultPort.updateKitVersionId(assessmentResult.getId(), activeKitVersionId);
         loadAssessmentResultCalculatePort.invalidateCalculate(assessmentResult.getId());
