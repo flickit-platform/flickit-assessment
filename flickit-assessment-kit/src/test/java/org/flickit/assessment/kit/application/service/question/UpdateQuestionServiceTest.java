@@ -86,30 +86,7 @@ class UpdateQuestionServiceTest {
     }
 
     @Test
-    void testUpdateQuestion_whenAnswerRangeIdUpdatedAndKitIsNotUsedInAssessments_thenUpdateQuestion() {
-        when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
-        when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
-
-        service.updateQuestion(param);
-
-        verify(updateQuestionPort).update(outPortParam.capture());
-        assertNotNull(outPortParam.getValue());
-        assertEquals(param.getQuestionId(), outPortParam.getValue().id());
-        assertEquals(param.getKitVersionId(), outPortParam.getValue().kitVersionId());
-        assertEquals(param.getIndex(), outPortParam.getValue().index());
-        assertEquals(param.getTitle(), outPortParam.getValue().title());
-        assertEquals(param.getHint(), outPortParam.getValue().hint());
-        assertEquals(param.getMayNotBeApplicable(), outPortParam.getValue().mayNotBeApplicable());
-        assertEquals(param.getAdvisable(), outPortParam.getValue().advisable());
-        assertEquals(param.getAnswerRangeId(), outPortParam.getValue().answerRangeId());
-        assertEquals(param.getMeasureId(), outPortParam.getValue().measureId());
-        assertEquals(param.getTranslations(), outPortParam.getValue().translations());
-        assertEquals(param.getCurrentUserId(), outPortParam.getValue().lastModifiedBy());
-        assertNotNull(outPortParam.getValue().lastModificationTime());
-    }
-
-    @Test
-    void testUpdateQuestion_whenAnswerRangeIdOfQuestionIsNUll_thenUpdateQuestion() {
+    void testUpdateQuestion_whenParamsAreValid_thenUpdateQuestion() {
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
 
