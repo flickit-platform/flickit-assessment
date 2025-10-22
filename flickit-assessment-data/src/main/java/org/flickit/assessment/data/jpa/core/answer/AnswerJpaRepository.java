@@ -9,6 +9,8 @@ import java.util.*;
 
 public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID> {
 
+    Optional<AnswerJpaEntity> findByAssessmentResultIdAndQuestionIdAndDeletedFalse(UUID assessmentResultId, Long questionId);
+
     List<AnswerJpaEntity> findByAssessmentResultIdAndDeletedFalseAndQuestionIdIn(UUID assessmentResultId, List<Long> questionId);
 
     List<AnswerJpaEntity> findByAssessmentResultIdAndDeletedFalse(UUID assessmentResultId);
@@ -153,6 +155,16 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
     void approveByAnswerIds(@Param("answerIds") List<UUID> answerIds,
                             @Param("approvedBy") UUID approvedBy,
                             @Param("status") Integer status);
+
+    @Modifying
+    @Query("""
+            UPDATE AnswerJpaEntity a
+            SET a.deleted = true
+            WHERE a.assessmentResult.id = :assessmentResultId
+                    AND a.questionId IN :questionIds
+        """)
+    void deleteByAssessmentResultIdAndQuestionIdIn(@Param("assessmentResultId") UUID assessmentResultId,
+                                                   @Param("questionIds") Set<Long> questionId);
 
     @Query("""
             SELECT a as answer,

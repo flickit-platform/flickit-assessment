@@ -32,7 +32,8 @@ public class AnswerPersistenceJpaAdapter implements
     UpdateAnswerPort,
     LoadQuestionsAnswerListPort,
     CountLowConfidenceAnswersPort,
-    ApproveAnswerPort {
+    ApproveAnswerPort,
+    DeleteAnswerPort {
 
     private final AnswerJpaRepository repository;
     private final AssessmentResultJpaRepository assessmentResultRepo;
@@ -154,5 +155,10 @@ public class AnswerPersistenceJpaAdapter implements
     @Override
     public void approveAll(List <UUID> answerIds, UUID approvedBy) {
         repository.approveByAnswerIds(answerIds, approvedBy ,AnswerStatus.APPROVED.getId());
+    }
+
+    @Override
+    public void delete(UUID assessmentResultId, Set<Long> questionIds) {
+        repository.deleteByAssessmentResultIdAndQuestionIdIn(assessmentResultId, questionIds);
     }
 }
