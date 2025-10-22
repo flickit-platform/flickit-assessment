@@ -9,8 +9,6 @@ import java.util.*;
 
 public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID> {
 
-    Optional<AnswerJpaEntity> findByAssessmentResultIdAndQuestionIdAndDeletedFalse(UUID assessmentResultId, Long questionId);
-
     List<AnswerJpaEntity> findByAssessmentResultIdAndDeletedFalseAndQuestionIdIn(UUID assessmentResultId, List<Long> questionId);
 
     List<AnswerJpaEntity> findByAssessmentResultIdAndDeletedFalse(UUID assessmentResultId);
@@ -145,6 +143,17 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
                                                                                 @Param("questionnaireIds") Set<Long> questionnaireIds,
                                                                                 @Param("status") Integer status);
 
+    @Query("""
+            SELECT a
+            FROM AnswerJpaEntity a
+            WHERE a.assessmentResult.id = :assessmentResultId
+                AND (a.status = :status)
+                AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
+                AND a.deleted = false
+        """)
+    List<AnswerJpaEntity> findAnswersByAssessmentResultIdAndStatus(@Param("assessmentResultId") UUID assessmentResultId,
+                                                                   @Param("status") Integer status);
+
     @Modifying
     @Query("""
             UPDATE AnswerJpaEntity a
@@ -165,18 +174,4 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
         """)
     void deleteByAssessmentResultIdAndQuestionIdIn(@Param("assessmentResultId") UUID assessmentResultId,
                                                    @Param("questionIds") Set<Long> questionId);
-
-    @Query("""
-            SELECT a as answer,
-                op as option
-            FROM AnswerJpaEntity a
-            JOIN AssessmentResultJpaEntity ar ON a.assessmentResult.id = ar.id
-            LEFT JOIN AnswerOptionJpaEntity op ON a.answerOptionId = op.id AND op.kitVersionId = ar.kitVersionId
-            WHERE a.assessmentResult.id = :assessmentResultId
-                AND (a.status = :status)
-                AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
-                AND a.deleted = false
-        """)
-    List<AnswerWithOptionView> findAnswersByAssessmentResultIdAndStatus(@Param("assessmentResultId") UUID assessmentResultId,
-                                                                        @Param("status") Integer status);
 }
