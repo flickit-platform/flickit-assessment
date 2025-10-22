@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.application.service.answerrange;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.port.in.answerrange.DeleteAnswerRangeUseCase;
+import org.flickit.assessment.kit.application.port.out.answerrange.DeleteAnswerRangePort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
@@ -18,7 +19,7 @@ import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class DeleteAnswerRangeServiceTest {
@@ -32,6 +33,9 @@ class DeleteAnswerRangeServiceTest {
     @Mock
     private LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
 
+    @Mock
+    private DeleteAnswerRangePort deleteAnswerRangePort;
+
     private final DeleteAnswerRangeService.Param param = createParam(DeleteAnswerRangeUseCase.Param.ParamBuilder::build);
     private final KitVersion kitVersion = KitVersionMother.createKitVersion(AssessmentKitMother.simpleKit());
 
@@ -42,6 +46,18 @@ class DeleteAnswerRangeServiceTest {
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.deleteAnswerRange(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+
+        verifyNoInteractions(deleteAnswerRangePort);
+    }
+
+    @Test
+    void deleteAnswerRange_whenParamsAreValid_thenSuccessfulDelete() {
+        when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
+        when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(param.getCurrentUserId());
+
+        service.deleteAnswerRange(param);
+
+        verify(deleteAnswerRangePort).delete(param.getAnswerRangeId(), kitVersion.getId());
     }
 
     private DeleteAnswerRangeUseCase.Param createParam(Consumer<DeleteAnswerRangeUseCase.Param.ParamBuilder> changer) {
