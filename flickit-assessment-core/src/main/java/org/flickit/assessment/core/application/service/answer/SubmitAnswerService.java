@@ -14,6 +14,7 @@ import org.flickit.assessment.core.application.port.out.answer.CreateAnswerPort;
 import org.flickit.assessment.core.application.port.out.answer.LoadAnswerPort;
 import org.flickit.assessment.core.application.port.out.answer.UpdateAnswerPort;
 import org.flickit.assessment.core.application.port.out.answerhistory.CreateAnswerHistoryPort;
+import org.flickit.assessment.core.application.port.out.answeroption.LoadAnswerOptionPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.InvalidateAssessmentResultCalculatePort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.InvalidateAssessmentResultConfidencePort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
@@ -23,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.ANSWER_QUESTION;
@@ -50,6 +52,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
     private final InvalidateAssessmentResultCalculatePort invalidateAssessmentResultCalculatePort;
     private final InvalidateAssessmentResultConfidencePort invalidateAssessmentResultConfidencePort;
     private final AssessmentAccessChecker assessmentAccessChecker;
+    private final LoadAnswerOptionPort loadAnswerOptionPort;
 
     @Override
     @SendNotification
@@ -64,10 +67,15 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
         var loadedAnswer = loadAnswerPort.load(assessmentResult.getId(), param.getQuestionId());
         var answerOptionId = Boolean.TRUE.equals(param.getIsNotApplicable()) ? null : param.getAnswerOptionId();
         var confidenceLevelId = resolveConfidenceLevelId(param, answerOptionId);
+        Integer answerOptionIndex = Optional.ofNullable(answerOptionId)
+            .flatMap(id -> loadAnswerOptionPort.load(id, assessmentResult.getKitVersionId()))
+            .map(AnswerOption::getIndex)
+            .orElse(null);
+
 
         return loadedAnswer
-            .map(answer -> handleExistingAnswer(assessmentResult, answer, param, answerOptionId, confidenceLevelId))
-            .orElseGet(() -> handelNewAnswer(assessmentResult, param, answerOptionId, confidenceLevelId));
+            .map(answer -> handleExistingAnswer(assessmentResult, answer, param, answerOptionId, answerOptionIndex, confidenceLevelId))
+            .orElseGet(() -> handelNewAnswer(assessmentResult, param, answerOptionId, answerOptionIndex, confidenceLevelId));
     }
 
     private void checkUserAccess(Param param) {
@@ -95,6 +103,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
                                         Answer loadedAnswer,
                                         Param param,
                                         Long answerOptionId,
+                                        Integer answerOptionIndex,
                                         Integer confidenceLevelId) {
         var loadedAnswerOptionId = loadedAnswer.getSelectedOption() == null
             ? null
@@ -121,6 +130,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
             param,
             assessmentResult.getId(),
             answerOptionId,
+            answerOptionIndex,
             confidenceLevelId,
             status,
             UPDATE));
@@ -173,19 +183,20 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
     private Result handelNewAnswer(AssessmentResult assessmentResult,
                                    Param param,
                                    Long answerOptionId,
+                                   Integer answerOptionIndex,
                                    Integer confidenceLevelId) {
         if (answerOptionId == null && !Boolean.TRUE.equals(param.getIsNotApplicable()))
             return NotAffected.EMPTY;
         var status = assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), APPROVE_ANSWER)
             ? APPROVED
             : UNAPPROVED;
-        var createdAnswerId = createAnswer(param, assessmentResult.getId(), answerOptionId, confidenceLevelId, status);
+        var createdAnswerId = createAnswer(param, assessmentResult.getId(), answerOptionId, answerOptionIndex, confidenceLevelId, status);
         var notificationCmd = new SubmitAnswerNotificationCmd(param.getAssessmentId(), param.getCurrentUserId(), true);
         log.info("Answer submitted for assessmentId=[{}] with answerId=[{}].", param.getAssessmentId(), createdAnswerId);
         return new Submitted(createdAnswerId, notificationCmd);
     }
 
-    private UUID createAnswer(Param param, UUID assessmentResultId, Long answerOptionId, Integer confidenceLevelId, AnswerStatus status) {
+    private UUID createAnswer(Param param, UUID assessmentResultId, Long answerOptionId, Integer answerOptionIndex, Integer confidenceLevelId, AnswerStatus status) {
         UUID createdAnswerId = createAnswerPort.persist(toCreateParam(param,
             assessmentResultId,
             answerOptionId,
@@ -195,6 +206,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
             param,
             assessmentResultId,
             answerOptionId,
+            answerOptionIndex,
             confidenceLevelId,
             status,
             PERSIST));
@@ -224,11 +236,12 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
                                           Param param,
                                           UUID assessmentResultId,
                                           Long answerOptionId,
+                                          Integer answerOptionIndex,
                                           Integer confidenceLevelId,
                                           AnswerStatus status,
                                           HistoryType historyType) {
         return new AnswerHistory(null,
-            toAnswer(answerId, param, answerOptionId, confidenceLevelId, status),
+            toAnswer(answerId, param, answerOptionId, answerOptionIndex, confidenceLevelId, status),
             assessmentResultId,
             new FullUser(param.getCurrentUserId(), null, null, null),
             LocalDateTime.now(),
@@ -236,11 +249,11 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
         );
     }
 
-    private Answer toAnswer(UUID answerId, Param param, Long answerOptionId, Integer confidenceLevelId, AnswerStatus status) {
+    private Answer toAnswer(UUID answerId, Param param, Long answerOptionId, Integer answerOptionIndex, Integer confidenceLevelId, AnswerStatus status) {
         return new Answer(
             answerId,
             answerOptionId != null
-                ? new AnswerOption(answerOptionId, null, null, null)
+                ? new AnswerOption(answerOptionId, answerOptionIndex, null, null)
                 : null,
             param.getQuestionId(),
             confidenceLevelId,
