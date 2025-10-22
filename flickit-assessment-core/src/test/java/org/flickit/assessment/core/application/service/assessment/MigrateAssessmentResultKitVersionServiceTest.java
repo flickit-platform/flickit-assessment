@@ -142,7 +142,7 @@ class MigrateAssessmentResultKitVersionServiceTest {
 
         service.migrateKitVersion(param);
 
-        verify(deleteAnswerPort, times(1)).delete(deleteArgumentCaptor.capture());
+        verify(deleteAnswerPort, times(1)).delete(eq(assessmentResult.getId()), deleteArgumentCaptor.capture());
         Set<Long> deletedQuestions = deleteArgumentCaptor.getValue();
 
         assertEquals(Set.of(2L, 4L), deletedQuestions);

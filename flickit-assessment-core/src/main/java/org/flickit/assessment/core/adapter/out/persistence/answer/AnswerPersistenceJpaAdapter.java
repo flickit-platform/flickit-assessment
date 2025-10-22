@@ -149,7 +149,7 @@ public class AnswerPersistenceJpaAdapter implements
     }
 
     @Override
-    public void delete(Set<Long> questionIds) {
-        repository.deleteByQuestionsIdIn(questionIds);
+    public void delete(UUID assessmentResultId, Set<Long> questionIds) {
+        repository.deleteByAssessmentResultIdAndQuestionIdIn(assessmentResultId, questionIds);
     }
 }

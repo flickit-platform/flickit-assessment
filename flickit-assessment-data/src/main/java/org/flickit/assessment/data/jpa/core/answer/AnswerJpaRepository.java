@@ -158,7 +158,9 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
     @Query("""
             UPDATE AnswerJpaEntity a
             SET a.deleted = true
-            WHERE a.questionId IN :questionIds
+            WHERE a.assessmentResult.id = :assessmentResultId
+                    AND a.questionId IN :questionIds
         """)
-    void deleteByQuestionsIdIn(@Param("questionIds") Set<Long> questionId);
+    void deleteByAssessmentResultIdAndQuestionIdIn(@Param("assessmentResultId") UUID assessmentResultId,
+                                                   @Param("questionIds") Set<Long> questionId);
 }

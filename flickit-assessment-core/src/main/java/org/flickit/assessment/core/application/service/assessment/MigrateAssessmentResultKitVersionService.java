@@ -50,9 +50,8 @@ public class MigrateAssessmentResultKitVersionService implements MigrateAssessme
             filter(q -> !activeKitVersionQuestionsIds.contains(q))
             .collect(Collectors.toSet());
 
-        if (!misingQuestionIds.isEmpty())
-            deleteAnswerPort.delete(misingQuestionIds);
         if (!missingQuestionIds.isEmpty())
+            deleteAnswerPort.delete(assessmentResult.getId(), missingQuestionIds);
 
         updateAssessmentResultPort.updateKitVersionId(assessmentResult.getId(), activeKitVersionId);
         loadAssessmentResultCalculatePort.invalidateCalculate(assessmentResult.getId());
