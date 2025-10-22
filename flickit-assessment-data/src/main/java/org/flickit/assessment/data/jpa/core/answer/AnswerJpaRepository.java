@@ -143,17 +143,6 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
                                                                                 @Param("questionnaireIds") Set<Long> questionnaireIds,
                                                                                 @Param("status") Integer status);
 
-    @Query("""
-            SELECT a
-            FROM AnswerJpaEntity a
-            WHERE a.assessmentResult.id = :assessmentResultId
-                AND (a.status = :status)
-                AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
-                AND a.deleted = false
-        """)
-    List<AnswerJpaEntity> findAnswersByAssessmentResultIdAndStatus(@Param("assessmentResultId") UUID assessmentResultId,
-                                                                   @Param("status") Integer status);
-
     @Modifying
     @Query("""
             UPDATE AnswerJpaEntity a
@@ -164,6 +153,17 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
     void approveByAnswerIds(@Param("answerIds") List<UUID> answerIds,
                             @Param("approvedBy") UUID approvedBy,
                             @Param("status") Integer status);
+
+    @Query("""
+            SELECT a
+            FROM AnswerJpaEntity a
+            WHERE a.assessmentResult.id = :assessmentResultId
+                AND (a.status = :status)
+                AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
+                AND a.deleted = false
+        """)
+    List<AnswerJpaEntity> findAnswersByAssessmentResultIdAndStatus(@Param("assessmentResultId") UUID assessmentResultId,
+                                                                   @Param("status") Integer status);
 
     @Modifying
     @Query("""
