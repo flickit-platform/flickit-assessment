@@ -404,7 +404,6 @@ class SubmitAnswerServiceTest {
     @Test
     void testSubmitAnswer_whenNotApplicableOfAnswerChangedForExistsAnswer_thenUpdateAnswerAndInvalidateAssessmentResult() {
         var savedAnswerHistoryId = UUID.randomUUID();
-        var answerOption = optionOne();
         var existAnswer = AnswerMother.answerWithNotApplicableTrue(answerOption);
         param = createParam(b -> b.answerOptionId(answerOption.getId()));
 
@@ -504,7 +503,6 @@ class SubmitAnswerServiceTest {
     @Test
     void testSubmitAnswer_whenConfidenceIdChangedForExistsApplicableAnswer_thenUpdateAnswerAndInvalidateAssessmentResult() {
         var newConfidenceLevelId = 3;
-        var answerOption = optionOne();
         var existAnswer = answerWithNotApplicableFalse(answerOption);
         param = createParam(b -> b
             .answerOptionId(answerOption.getId())
@@ -552,7 +550,6 @@ class SubmitAnswerServiceTest {
 
     @Test
     void testSubmitAnswer_whenNullAnswerOptionWithApplicableAnswerSubmittedForExistsAnswer_thenUpdateAnswerAndInvalidateAssessmentResult() {
-        var answerOption = optionOne();
         var existAnswer = answerWithNotApplicableFalse(answerOption);
         param = createParam(b -> b.answerOptionId(null));
 
