@@ -67,15 +67,10 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
         var loadedAnswer = loadAnswerPort.load(assessmentResult.getId(), param.getQuestionId());
         var answerOptionId = Boolean.TRUE.equals(param.getIsNotApplicable()) ? null : param.getAnswerOptionId();
         var confidenceLevelId = resolveConfidenceLevelId(param, answerOptionId);
-        Integer answerOptionIndex = Optional.ofNullable(answerOptionId)
-            .flatMap(id -> loadAnswerOptionPort.load(id, assessmentResult.getKitVersionId()))
-            .map(AnswerOption::getIndex)
-            .orElse(null);
-
 
         return loadedAnswer
-            .map(answer -> handleExistingAnswer(assessmentResult, answer, param, answerOptionId, answerOptionIndex, confidenceLevelId))
-            .orElseGet(() -> handelNewAnswer(assessmentResult, param, answerOptionId, answerOptionIndex, confidenceLevelId));
+            .map(answer -> handleExistingAnswer(assessmentResult, answer, param, answerOptionId, confidenceLevelId))
+            .orElseGet(() -> handelNewAnswer(assessmentResult, param, answerOptionId, confidenceLevelId));
     }
 
     private void checkUserAccess(Param param) {
@@ -103,7 +98,6 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
                                         Answer loadedAnswer,
                                         Param param,
                                         Long answerOptionId,
-                                        Integer answerOptionIndex,
                                         Integer confidenceLevelId) {
         var loadedAnswerOptionId = loadedAnswer.getSelectedOption() == null
             ? null
@@ -117,6 +111,14 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
 
         if (!(isNotApplicableChanged || isAnswerOptionChanged || isConfidenceLevelChanged))
             return new NotAffected(loadedAnswerId);
+
+        Integer answerOptionIndex = isAnswerOptionChanged && answerOptionId != null
+            ? loadAnswerOptionPort.load(answerOptionId, assessmentResult.getKitVersionId())
+                .map(AnswerOption::getIndex)
+                .orElse(null)
+            : Optional.ofNullable(loadedAnswer.getSelectedOption())
+                .map(AnswerOption::getIndex)
+                .orElse(null);
 
         var status = resolveAnswerStatus(param, answerOptionId);
 
@@ -183,8 +185,12 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
     private Result handelNewAnswer(AssessmentResult assessmentResult,
                                    Param param,
                                    Long answerOptionId,
-                                   Integer answerOptionIndex,
                                    Integer confidenceLevelId) {
+        Integer answerOptionIndex = Optional.ofNullable(answerOptionId)
+            .flatMap(id -> loadAnswerOptionPort.load(id, assessmentResult.getKitVersionId()))
+            .map(AnswerOption::getIndex)
+            .orElse(null);
+
         if (answerOptionId == null && !Boolean.TRUE.equals(param.getIsNotApplicable()))
             return NotAffected.EMPTY;
         var status = assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), APPROVE_ANSWER)
