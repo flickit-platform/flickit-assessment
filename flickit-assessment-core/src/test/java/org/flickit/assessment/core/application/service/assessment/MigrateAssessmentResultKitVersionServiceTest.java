@@ -13,12 +13,13 @@ import org.flickit.assessment.core.application.port.out.assessmentresult.UpdateA
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.*;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.MIGRATE_KIT_VERSION;
@@ -54,10 +55,10 @@ class MigrateAssessmentResultKitVersionServiceTest {
     @Mock
     private DeleteAnswerPort deleteAnswerPort;
 
-    private final MigrateAssessmentResultKitVersionUseCase.Param param = createParam(MigrateAssessmentResultKitVersionUseCase.Param.ParamBuilder::build);
+    private final Param param = createParam(Param.ParamBuilder::build);
 
     @Test
-    void testMigrateAssessmentResultKitVersionService_whenCurrentUserDoesNotHaveRequiredAccess_thenShouldThrowAccessDeniedException() {
+    void testMigrate_whenCurrentUserDoesNotHaveRequiredAccess_thenThrowAccessDeniedException() {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MIGRATE_KIT_VERSION))
             .thenReturn(false);
 
@@ -73,7 +74,7 @@ class MigrateAssessmentResultKitVersionServiceTest {
     }
 
     @Test
-    void testMigrateAssessmentResultKitVersionService_whenAssessmentResultDoesNotExists_thenShouldThrowResourceNotFoundException() {
+    void testMigrate_whenAssessmentResultDoesNotExist_thenThrowResourceNotFoundException() {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MIGRATE_KIT_VERSION))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.empty());
@@ -88,7 +89,7 @@ class MigrateAssessmentResultKitVersionServiceTest {
     }
 
     @Test
-    void testMigrateAssessmentResultKitVersionService_whenActiveKitVersionDoesNotExists_thenShouldThrowValidationException() {
+    void testMigrate_whenActiveKitVersionDoesNotExist_thenThrowValidationException() {
         var assessmentResult = validResultWithoutActiveVersion();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MIGRATE_KIT_VERSION))
@@ -105,7 +106,7 @@ class MigrateAssessmentResultKitVersionServiceTest {
     }
 
     @Test
-    void testMigrateAssessmentResultKitVersionService_whenParametersAreValidAndThereAreNotAnyDeletedQuestions_thenSuccessfulUpdate() {
+    void testMigrate_whenParametersAreValidAndThereAreNotAnyDeletedQuestions_thenSuccessfulUpdate() {
         var assessmentResult = validResult();
         var activeKitVersionId = assessmentResult.getAssessment().getAssessmentKit().getKitVersion();
 
@@ -123,11 +124,11 @@ class MigrateAssessmentResultKitVersionServiceTest {
     }
 
     @Test
-    void testMigrateAssessmentResultKitVersionService_whenParametersAreValidAndThereAreDeletedQuestions_thenSuccessfulUpdate() {
+    void testMigrate_whenParametersAreValidAndThereAreDeletedQuestions_thenSuccessfulUpdate() {
         var assessmentResult = resultWithDeprecatedKitVersion();
         var activeKitVersionId = assessmentResult.getAssessment().getAssessmentKit().getKitVersion();
         Set<Long> currentVersionQuestionIds = Set.of(1L, 2L, 3L, 4L, 5L);
-        Set<Long> currentVersionQuestions = Set.of(1L, 3L, 5L, 6L);
+        Set<Long> activeVersionQuestionIds = Set.of(1L, 3L, 5L, 6L);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MIGRATE_KIT_VERSION))
             .thenReturn(true);
@@ -136,16 +137,11 @@ class MigrateAssessmentResultKitVersionServiceTest {
         when(loadQuestionPort.loadIdsByKitVersionId(assessmentResult.getKitVersionId()))
             .thenReturn(currentVersionQuestionIds);
         when(loadQuestionPort.loadIdsByKitVersionId(activeKitVersionId))
-            .thenReturn(currentVersionQuestions);
-
-        ArgumentCaptor<Set<Long>> deleteArgumentCaptor = ArgumentCaptor.forClass(Set.class);
+            .thenReturn(activeVersionQuestionIds);
 
         service.migrateKitVersion(param);
 
-        verify(deleteAnswerPort, times(1)).delete(eq(assessmentResult.getId()), deleteArgumentCaptor.capture());
-        Set<Long> deletedQuestions = deleteArgumentCaptor.getValue();
-
-        assertEquals(Set.of(2L, 4L), deletedQuestions);
+        verify(deleteAnswerPort, times(1)).delete(assessmentResult.getId(), Set.of(2L, 4L));
 
         verify(updateAssessmentResultPort, times(1))
             .updateKitVersionId(assessmentResult.getId(), activeKitVersionId);
