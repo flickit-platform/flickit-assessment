@@ -8,10 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, QuestionJpaEntity.EntityId> {
 
@@ -128,6 +125,13 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
     List<QuestionIdWithAnsweredOptionIndexView> findImprovableQuestions(@Param("assessmentResultId") UUID assessmentResultId,
                                                                         @Param("kitVersionId") long kitVersionId,
                                                                         @Param("questionIds") Collection<Long> questionIds);
+
+    @Query("""
+            SELECT q.id
+            FROM QuestionJpaEntity q
+            WHERE q.kitVersionId = :kitVersionId
+        """)
+    Set<Long> findIdsByKitVersionId(@Param("kitVersionId") long kitVersionId);
 
     @Query("""
             SELECT

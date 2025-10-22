@@ -28,6 +28,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 import static java.util.stream.Collectors.groupingBy;
@@ -117,6 +118,11 @@ public class QuestionPersistenceJpaAdapter implements
     @Override
     public int loadFirstUnansweredQuestionIndex(long questionnaireId, UUID assessmentResultId) {
         return repository.findQuestionnaireFirstUnansweredQuestion(questionnaireId, assessmentResultId);
+    }
+
+    @Override
+    public Set<Long> loadIdsByKitVersionId(long kitVersionId) {
+        return repository.findIdsByKitVersionId(kitVersionId);
     }
 
     private @Nullable KitLanguage resolveLanguage(AssessmentResultJpaEntity assessmentResult) {
