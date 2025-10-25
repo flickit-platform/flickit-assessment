@@ -11,7 +11,6 @@ import org.flickit.assessment.core.application.domain.AnswerHistory;
 import org.flickit.assessment.core.application.domain.AnswerStatus;
 import org.flickit.assessment.core.application.domain.HistoryType;
 import org.flickit.assessment.core.application.port.out.answerhistory.LoadAnswerHistoryListPort;
-import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 import org.flickit.assessment.data.jpa.core.answerhistory.AnswerHistoryJpaEntity;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;

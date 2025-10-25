@@ -9,6 +9,7 @@ import org.flickit.assessment.core.application.port.out.answerhistory.LoadAnswer
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 import org.flickit.assessment.data.jpa.core.answerhistory.AnswerHistoryJpaEntity;
 import org.flickit.assessment.data.jpa.core.answerhistory.AnswerHistoryJpaRepository;
+import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepository;
@@ -19,18 +20,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
-import static org.flickit.assessment.core.adapter.out.persistence.answerhistory.AnswerHistoryMapper.mapToDomainModel;
+import static org.flickit.assessment.core.adapter.out.persistence.answerhistory.AnswerHistoryMapper.mapToResul;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ANSWER_HISTORY_LIST_ASSESSMENT_RESULT_NOT_FOUND;
-import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
-import static org.flickit.assessment.core.adapter.out.persistence.answerhistory.AnswerHistoryMapper.*;
-import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 @Component
 @RequiredArgsConstructor
