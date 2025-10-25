@@ -23,7 +23,7 @@ public class DeleteAnswerRangeRestController {
                                                   @PathVariable("answerRangeId") Long answerRangeId) {
         UUID currentUserId = userContext.getUser().id();
         useCase.deleteAnswerRange(toParam(kitVersionId, answerRangeId, currentUserId));
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     private static Param toParam(Long kitVersionId, Long answerRangeId, UUID currentUserId) {
