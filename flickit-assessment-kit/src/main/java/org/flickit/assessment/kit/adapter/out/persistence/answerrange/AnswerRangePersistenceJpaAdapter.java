@@ -174,6 +174,9 @@ public class AnswerRangePersistenceJpaAdapter implements
 
     @Override
     public void delete(long id, long kitVersionId) {
+        if(!repository.existsByIdAndKitVersionId(id, kitVersionId))
+            throw new ResourceNotFoundException(ANSWER_RANGE_ID_NOT_FOUND);
+
         repository.deleteByIdAndKitVersionId(id, kitVersionId);
     }
 }
