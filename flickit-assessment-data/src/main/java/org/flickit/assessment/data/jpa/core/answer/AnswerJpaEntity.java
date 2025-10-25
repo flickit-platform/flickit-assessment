@@ -47,9 +47,16 @@ public class AnswerJpaEntity {
     @Column(name = "status")
     private Integer status;
 
+    @Column(name = "deleted", nullable = false)
+    private boolean deleted;
+
     @Column(name = "created_by", nullable = false)
     private UUID createdBy;
 
     @Column(name = "last_modified_by", nullable = false)
     private UUID lastModifiedBy;
+
+    public AnswerJpaEntity(UUID id) {
+        this.id = id;
+    }
 }

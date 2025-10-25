@@ -27,11 +27,11 @@ public class AnswerHistoryJpaEntity {
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "answer_id", referencedColumnName = "id", nullable = false)
     private AnswerJpaEntity answer;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "assessment_result_id", referencedColumnName = "id", nullable = false)
     private AssessmentResultJpaEntity assessmentResult;
 

@@ -36,7 +36,7 @@ public class GetKitAttributeLevelQuestionsDetailService implements GetKitAttribu
         var result = loadAttributeLevelQuestionsPort.loadAttributeLevelQuestions(kitVersionId, param.getAttributeId(), param.getMaturityLevelId());
 
         List<Result.Question> questions = result.stream()
-            .map(e -> mapToResultQuestion(e.question(), e.questionnaire()))
+            .map(e -> mapToResultQuestion(e.question(), e.questionnaire(), e.measure(), e.answerRange()))
             .sorted(Comparator.comparing(Result.Question::questionnaire)
                 .thenComparing(Result.Question::index))
             .toList();
@@ -44,17 +44,19 @@ public class GetKitAttributeLevelQuestionsDetailService implements GetKitAttribu
         return new Result(questions.size(), questions);
     }
 
-    private Result.Question mapToResultQuestion(Question question, Questionnaire questionnaire) {
+    private Result.Question mapToResultQuestion(Question question, Questionnaire questionnaire, Measure measure, AnswerRange answerRange) {
         var impact = question.getImpacts().getFirst();
-        List<Result.Question.AnswerOption> options = mapToAnswerOptions(question);
         return new Result.Question(
+            question.getId(),
             question.getIndex(),
             question.getTitle(),
             question.getMayNotBeApplicable(),
             question.getAdvisable(),
             impact.getWeight(),
             questionnaire.getTitle(),
-            options
+            answerRange.isReusable() ? null : mapToAnswerOptions(question),
+            new Result.Question.Measure(measure.getTitle()),
+            answerRange.isReusable() ? new Result.Question.AnswerRange(answerRange.getTitle()) : null
         );
     }
 
