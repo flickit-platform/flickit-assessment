@@ -24,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.ANSWER_QUESTION;
@@ -112,13 +111,18 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
         if (!(isNotApplicableChanged || isAnswerOptionChanged || isConfidenceLevelChanged))
             return new NotAffected(loadedAnswerId);
 
-        Integer answerOptionIndex = isAnswerOptionChanged && answerOptionId != null
-            ? loadAnswerOptionPort.load(answerOptionId, assessmentResult.getKitVersionId())
-                .map(AnswerOption::getIndex)
-                .orElse(null)
-            : Optional.ofNullable(loadedAnswer.getSelectedOption())
-                .map(AnswerOption::getIndex)
-                .orElse(null);
+        Integer answerOptionIndex;
+
+        if (isAnswerOptionChanged)
+            answerOptionIndex = answerOptionId != null
+                ? loadAnswerOptionPort.load(answerOptionId, assessmentResult.getKitVersionId())
+                    .map(AnswerOption::getIndex)
+                    .orElse(null)
+                : null;
+        else
+            answerOptionIndex = loadedAnswer.getSelectedOption() != null
+                ? loadedAnswer.getSelectedOption().getIndex()
+                : null;
 
         var status = resolveAnswerStatus(param, answerOptionId);
 
@@ -186,16 +190,18 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
                                    Param param,
                                    Long answerOptionId,
                                    Integer confidenceLevelId) {
-        Integer answerOptionIndex = Optional.ofNullable(answerOptionId)
-            .flatMap(id -> loadAnswerOptionPort.load(id, assessmentResult.getKitVersionId()))
-            .map(AnswerOption::getIndex)
-            .orElse(null);
-
         if (answerOptionId == null && !Boolean.TRUE.equals(param.getIsNotApplicable()))
             return NotAffected.EMPTY;
         var status = assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), APPROVE_ANSWER)
             ? APPROVED
             : UNAPPROVED;
+
+        Integer answerOptionIndex = null;
+
+        if (answerOptionId != null)
+            answerOptionIndex = loadAnswerOptionPort.load(answerOptionId, assessmentResult.getKitVersionId())
+                .map(AnswerOption::getIndex)
+                .orElse(null);
         var createdAnswerId = createAnswer(param, assessmentResult.getId(), answerOptionId, answerOptionIndex, confidenceLevelId, status);
         var notificationCmd = new SubmitAnswerNotificationCmd(param.getAssessmentId(), param.getCurrentUserId(), true);
         log.info("Answer submitted for assessmentId=[{}] with answerId=[{}].", param.getAssessmentId(), createdAnswerId);
