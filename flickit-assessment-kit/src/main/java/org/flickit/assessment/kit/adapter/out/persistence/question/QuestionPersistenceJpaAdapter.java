@@ -189,6 +189,15 @@ public class QuestionPersistenceJpaAdapter implements
     }
 
     @Override
+    public void updateAllAnswerRanges(UpdateQuestionPort.UpdateAllAnswerRangesParam param) {
+        repository.updateAnswerRangesByAnswerRangeIdAndKitVersionId(param.answerRangeId(),
+            param.kitVersionId(),
+            param.newAnswerRangeId(),
+            param.lastModificationTime(),
+            param.lastModifiedBy());
+    }
+
+    @Override
     public void updateOrders(UpdateOrderParam param) {
         List<Long> ids = param.orders().stream()
             .map(UpdateOrderParam.QuestionOrder::questionId)

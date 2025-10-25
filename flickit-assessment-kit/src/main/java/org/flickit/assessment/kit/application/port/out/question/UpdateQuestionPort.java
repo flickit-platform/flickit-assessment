@@ -65,4 +65,16 @@ public interface UpdateQuestionPort {
                                   LocalDateTime lastModificationTime,
                                   UUID lastModifiedBy) {
     }
+
+    /**
+     * Updates the Answer range of all questions based on the provided {@link UpdateAllAnswerRangesParam} object.
+     */
+    void updateAllAnswerRanges(UpdateAllAnswerRangesParam param);
+
+    record UpdateAllAnswerRangesParam(long answerRangeId,
+                                  long kitVersionId,
+                                  Long newAnswerRangeId,
+                                  LocalDateTime lastModificationTime,
+                                  UUID lastModifiedBy) {
+    }
 }

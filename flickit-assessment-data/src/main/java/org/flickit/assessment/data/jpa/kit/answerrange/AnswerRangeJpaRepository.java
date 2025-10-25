@@ -25,6 +25,8 @@ public interface AnswerRangeJpaRepository extends JpaRepository<AnswerRangeJpaEn
 
     Optional<AnswerRangeJpaEntity> findByIdAndKitVersionId(long id, long kitVersionId);
 
+    void deleteByIdAndKitVersionId(long id, long kitVersionId);
+
     @Modifying
     @Query("""
             UPDATE AnswerRangeJpaEntity a

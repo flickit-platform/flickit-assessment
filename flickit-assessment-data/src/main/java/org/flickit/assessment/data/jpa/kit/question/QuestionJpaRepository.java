@@ -278,4 +278,18 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
             WHERE q.kitVersionId = :kitVersionId and q.measureId IS NULL
         """)
     List<QuestionQuestionnaireView> findAllByKitVersionIdAndWithoutMeasure(@Param("kitVersionId") long kitVersionId);
+
+    @Modifying
+    @Query("""
+            UPDATE QuestionJpaEntity q
+            SET q.answerRangeId = :newAnswerRangeId,
+                q.lastModificationTime = :lastModificationTime,
+                q.lastModifiedBy = :lastModifiedBy
+            WHERE q.kitVersionId = :kitVersionId AND q.answerRangeId = :answerRangeId
+        """)
+    void updateAnswerRangesByAnswerRangeIdAndKitVersionId(@Param("answerRangeId") long answerRangeId,
+                                                          @Param("kitVersionId") long kitVersionId,
+                                                          @Param("newAnswerRangeId") Long newAnswerRangeId,
+                                                          @Param("lastModificationTime") LocalDateTime lastModificationTime,
+                                                          @Param("lastModifiedBy") UUID lastModifiedBy);
 }

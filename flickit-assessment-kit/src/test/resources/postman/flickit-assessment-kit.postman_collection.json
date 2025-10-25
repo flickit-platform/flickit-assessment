@@ -2725,6 +2725,47 @@
 					"response": []
 				},
 				{
+					"name": "Delete Answer Range",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"alpha\",\n    \"reusable\": true,\n    \"translations\": {\n        \"EN\" : {\n            \"title\" : \"new title\"\n        }\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/393/answer-ranges/3345",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"kit-versions",
+								"393",
+								"answer-ranges",
+								"3345"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Create Answer Range",
 					"request": {
 						"method": "POST",
