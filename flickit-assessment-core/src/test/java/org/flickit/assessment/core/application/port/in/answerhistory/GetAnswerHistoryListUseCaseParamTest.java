@@ -4,6 +4,7 @@ import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
@@ -13,55 +14,56 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class GetAnswerHistoryListUseCaseParamTest {
 
     @Test
-    void testGetAnswerHistoryList_assessmentIdIsNull_ErrorMessage() {
-        UUID assessmentId = null;
-        UUID currentUserId = UUID.randomUUID();
+    void testGetAnswerHistoryList_AssessmentIdParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new GetAnswerHistoryListUseCase.Param(assessmentId, 123L, currentUserId, 5, 1));
+            () -> createParam(b -> b.assessmentId(null)));
         assertThat(throwable).hasMessage("assessmentId: " + GET_ANSWER_HISTORY_LIST_ASSESSMENT_ID_NOT_NULL);
     }
 
     @Test
-    void testGetAnswerHistoryList_questionIdIsNull_ErrorMessage() {
-        UUID assessmentId = UUID.randomUUID();
-        UUID currentUserId = UUID.randomUUID();
+    void testGetAnswerHistoryList_questionIdParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new GetAnswerHistoryListUseCase.Param(assessmentId, null, currentUserId, 5, 1));
+            () -> createParam(b -> b.questionId(null)));
         assertThat(throwable).hasMessage("questionId: " + GET_ANSWER_HISTORY_LIST_QUESTION_ID_NOT_NULL);
     }
 
     @Test
-    void testGetAnswerHistoryList_currentUserIdIsNull_ErrorMessage() {
-        UUID assessmentId = UUID.randomUUID();
+    void testGetAnswerHistoryList_CurrentUserIdParamViolatesConstrains_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new GetAnswerHistoryListUseCase.Param(assessmentId, 123L, null, 5, 1));
+            () -> createParam(b -> b.currentUserId(null)));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 
     @Test
-    void testGetAnswerHistoryList_PageSizeIsLessThanMin_ErrorMessage() {
-        UUID assessmentId = UUID.randomUUID();
-        UUID currentUserId = UUID.randomUUID();
+    void testGetAnswerHistoryList_SizeParamViolateConstrains_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new GetAnswerHistoryListUseCase.Param(assessmentId, 123L, currentUserId, 0, 1));
+            () -> createParam(b -> b.size(0)));
         assertThat(throwable).hasMessage("size: " + GET_ANSWER_HISTORY_LIST_SIZE_MIN);
-    }
 
-    @Test
-    void testGetAnswerHistoryList_PageSizeIsGreaterThanMax_ErrorMessage() {
-        UUID assessmentId = UUID.randomUUID();
-        UUID currentUserId = UUID.randomUUID();
-        var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new GetAnswerHistoryListUseCase.Param(assessmentId, 123L, currentUserId, 101, 1));
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.size(101)));
         assertThat(throwable).hasMessage("size: " + GET_ANSWER_HISTORY_LIST_SIZE_MAX);
     }
 
     @Test
-    void testGetAnswerHistoryList_PageNumberIsLessThanMin_ErrorMessage() {
-        UUID assessmentId = UUID.randomUUID();
-        UUID currentUserId = UUID.randomUUID();
+    void testGetAnswerHistoryList_PageParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new GetAnswerHistoryListUseCase.Param(assessmentId, 123L, currentUserId, 5, -1));
+            () -> createParam(b -> b.page(-1)));
         assertThat(throwable).hasMessage("page: " + GET_ANSWER_HISTORY_LIST_PAGE_MIN);
+    }
+
+    private void createParam(Consumer<GetAnswerHistoryListUseCase.Param.ParamBuilder> changer) {
+        var paramBuilder = paramBuilder();
+        changer.accept(paramBuilder);
+        paramBuilder.build();
+    }
+
+    private GetAnswerHistoryListUseCase.Param.ParamBuilder paramBuilder() {
+        return GetAnswerHistoryListUseCase.Param.builder()
+            .assessmentId(UUID.randomUUID())
+            .questionId(2L)
+            .size(10)
+            .page(1)
+            .currentUserId(UUID.randomUUID());
     }
 }

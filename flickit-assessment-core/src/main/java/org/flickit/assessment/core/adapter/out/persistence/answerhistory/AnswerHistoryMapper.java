@@ -10,6 +10,7 @@ import org.flickit.assessment.core.application.domain.Answer;
 import org.flickit.assessment.core.application.domain.AnswerHistory;
 import org.flickit.assessment.core.application.domain.AnswerStatus;
 import org.flickit.assessment.core.application.domain.HistoryType;
+import org.flickit.assessment.core.application.port.out.answerhistory.LoadAnswerHistoryListPort;
 import org.flickit.assessment.data.jpa.core.answerhistory.AnswerHistoryJpaEntity;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
@@ -28,6 +29,17 @@ public class AnswerHistoryMapper {
             UserMapper.mapToFullDomain(createdBy),
             entity.getCreationTime(),
             HistoryType.values()[entity.getType()]);
+    }
+
+    public static LoadAnswerHistoryListPort.Result mapToResul(AnswerHistoryJpaEntity entity,
+                                                              UserJpaEntity createdBy,
+                                                              AnswerOptionJpaEntity selectedOption) {
+        return new LoadAnswerHistoryListPort.Result(
+            mapToAnswer(entity, selectedOption, null),
+            UserMapper.mapToFullDomain(createdBy),
+            entity.getCreationTime(),
+            entity.getAnswerOptionId(),
+            entity.getAnswerOptionIndex());
     }
 
     private static Answer mapToAnswer(AnswerHistoryJpaEntity entity,
