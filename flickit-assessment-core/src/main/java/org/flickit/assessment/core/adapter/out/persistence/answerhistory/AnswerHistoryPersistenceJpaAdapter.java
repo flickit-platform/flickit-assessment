@@ -9,7 +9,6 @@ import org.flickit.assessment.core.application.domain.AnswerHistory;
 import org.flickit.assessment.core.application.port.out.answerhistory.CreateAnswerHistoryPort;
 import org.flickit.assessment.core.application.port.out.answerhistory.LoadAnswerHistoryListPort;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
-import org.flickit.assessment.data.jpa.core.answer.AnswerJpaRepository;
 import org.flickit.assessment.data.jpa.core.answerhistory.AnswerHistoryJpaEntity;
 import org.flickit.assessment.data.jpa.core.answerhistory.AnswerHistoryJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
@@ -31,10 +30,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
-import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
-import static org.flickit.assessment.core.adapter.out.persistence.answerhistory.AnswerHistoryMapper.mapCreateParamToJpaEntity;
 import static org.flickit.assessment.core.adapter.out.persistence.answerhistory.AnswerHistoryMapper.mapToDomainModel;
-import static org.flickit.assessment.core.common.ErrorMessageKey.*;
+import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ANSWER_HISTORY_LIST_ASSESSMENT_RESULT_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
@@ -43,7 +40,6 @@ public class AnswerHistoryPersistenceJpaAdapter implements
     LoadAnswerHistoryListPort {
 
     private final AnswerHistoryJpaRepository repository;
-    private final AnswerJpaRepository answerRepository;
     private final AssessmentResultJpaRepository assessmentResultRepository;
     private final UserJpaRepository userRepository;
     private final AnswerOptionJpaRepository answerOptionRepository;
@@ -51,29 +47,62 @@ public class AnswerHistoryPersistenceJpaAdapter implements
 
     @Override
     public UUID persist(AnswerHistory answerHistory) {
-        var assessmentResult = assessmentResultRepository.findById(answerHistory.getAssessmentResultId())
-            .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ASSESSMENT_RESULT_NOT_FOUND));
-        var answer = answerRepository.findById(answerHistory.getAnswer().getId())
-            .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ANSWER_ID_NOT_FOUND));
+        Long answerOptionId = null;
+        Integer answerOptionIndex = null;
+        if (answerHistory.getAnswer().getSelectedOption() != null) {
+            answerOptionId = answerHistory.getAnswer().getSelectedOption().getId();
+            answerOptionIndex = answerHistory.getAnswer().getSelectedOption().getIndex();
+        }
 
-        AnswerHistoryJpaEntity savedEntity = repository.save(mapCreateParamToJpaEntity(answerHistory, assessmentResult, answer));
+        var entity = new AnswerHistoryJpaEntity(
+            null,
+            new AnswerJpaEntity(answerHistory.getAnswer().getId()),
+            new AssessmentResultJpaEntity(answerHistory.getAssessmentResultId()),
+            answerHistory.getAnswer().getQuestionId(),
+            answerOptionId,
+            answerHistory.getAnswer().getConfidenceLevelId(),
+            answerHistory.getAnswer().getIsNotApplicable(),
+            answerHistory.getAnswer().getAnswerStatus() != null
+                ? answerHistory.getAnswer().getAnswerStatus().getId()
+                : null,
+            answerOptionIndex,
+            answerHistory.getCreatedBy().getId(),
+            answerHistory.getCreationTime(),
+            answerHistory.getHistoryType().ordinal()
+        );
+
+        AnswerHistoryJpaEntity savedEntity = repository.save(entity);
         return savedEntity.getId();
     }
 
     @Override
     public void persistAll(List<AnswerHistory> answerHistories, UUID assessmentResultId) {
-        var assessmentResult = assessmentResultRepository.findById(assessmentResultId)
-            .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
-
-        var answerIds = answerHistories.stream()
-            .map(history -> history.getAnswer().getId())
-            .toList();
-
-        var answerIdToEntityMap = answerRepository.findAllById(answerIds).stream()
-            .collect(toMap(AnswerJpaEntity::getId, Function.identity()));
-
         var answerHistoryEntities = answerHistories.stream()
-            .map(e -> mapCreateParamToJpaEntity(e, assessmentResult, answerIdToEntityMap.get(e.getAnswer().getId())))
+            .map(e -> {
+                Long answerOptionId = null;
+                Integer answerOptionIndex = null;
+                if (e.getAnswer().getSelectedOption() != null) {
+                    answerOptionId = e.getAnswer().getSelectedOption().getId();
+                    answerOptionIndex = e.getAnswer().getSelectedOption().getIndex();
+                }
+
+                return new AnswerHistoryJpaEntity(
+                    null,
+                    new AnswerJpaEntity(e.getAnswer().getId()),
+                    new AssessmentResultJpaEntity(e.getAssessmentResultId()),
+                    e.getAnswer().getQuestionId(),
+                    answerOptionId,
+                    e.getAnswer().getConfidenceLevelId(),
+                    e.getAnswer().getIsNotApplicable(),
+                    e.getAnswer().getAnswerStatus() != null
+                        ? e.getAnswer().getAnswerStatus().getId()
+                        : null,
+                    answerOptionIndex,
+                    e.getCreatedBy().getId(),
+                    e.getCreationTime(),
+                    e.getHistoryType().ordinal()
+                );
+            })
             .toList();
 
         repository.saveAll(answerHistoryEntities);

@@ -2,7 +2,9 @@ package org.flickit.assessment.core.adapter.out.persistence.answer;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.adapter.out.persistence.kit.answeroption.AnswerOptionMapper;
 import org.flickit.assessment.core.application.domain.Answer;
+import org.flickit.assessment.core.application.domain.AnswerOption;
 import org.flickit.assessment.core.application.domain.AnswerStatus;
 import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 import org.flickit.assessment.core.application.port.out.answer.*;
@@ -81,14 +83,21 @@ public class AnswerPersistenceJpaAdapter implements
 
     @Override
     public Optional<Answer> load(UUID assessmentResultId, Long questionId) {
-        return repository.findByAssessmentResultIdAndQuestionIdAndDeletedFalse(assessmentResultId, questionId)
-            .map(AnswerMapper::mapToDomainModel);
+        var answerWithOptionView = repository.findByAssessmentResultIdAndQuestionId(assessmentResultId, questionId);
+
+        return answerWithOptionView.map(view -> {
+            AnswerOption answerOption = view.getOption() != null ? AnswerOptionMapper.mapToDomainModel(view.getOption()) : null;
+            return AnswerMapper.mapToDomainModel(view.getAnswer(), answerOption);
+        });
     }
 
     @Override
     public List<Answer> loadAllUnapproved(UUID assessmentResultId) {
         return repository.findAnswersByAssessmentResultIdAndStatus(assessmentResultId, AnswerStatus.UNAPPROVED.getId()).stream()
-            .map(AnswerMapper::mapToDomainModel)
+            .map(view -> {
+                AnswerOption answerOption = view.getOption() != null ? AnswerOptionMapper.mapToDomainModel(view.getOption()) : null;
+                return AnswerMapper.mapToDomainModel(view.getAnswer(), answerOption);
+            })
             .toList();
     }
 
