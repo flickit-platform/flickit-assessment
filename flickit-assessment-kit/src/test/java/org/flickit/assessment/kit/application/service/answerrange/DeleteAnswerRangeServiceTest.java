@@ -73,9 +73,9 @@ class DeleteAnswerRangeServiceTest {
     }
 
     private DeleteAnswerRangeUseCase.Param createParam(Consumer<DeleteAnswerRangeUseCase.Param.ParamBuilder> changer) {
-        var param = paramBuilder();
-        changer.accept(param);
-        return param.build();
+        var paramBuilder = paramBuilder();
+        changer.accept(paramBuilder);
+        return paramBuilder.build();
     }
 
     private DeleteAnswerRangeUseCase.Param.ParamBuilder paramBuilder() {
