@@ -228,6 +228,11 @@ public class QuestionPersistenceJpaAdapter implements
     }
 
     @Override
+    public void reindexQuestionsAfter(int fromIndex, long questionnaireId, long kitVersionId) {
+        repository.updateQuestionIndexesAfter(fromIndex, questionnaireId, kitVersionId);
+    }
+
+    @Override
     public PaginatedResponse<Question> loadQuestionnaireQuestions(LoadQuestionnaireQuestionsPort.Param param) {
         var pageResult = repository.findAllByQuestionnaireIdAndKitVersionIdOrderByIndex(param.questionnaireId(),
             param.kitVersionId(),
