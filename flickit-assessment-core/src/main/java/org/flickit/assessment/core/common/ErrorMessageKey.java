@@ -24,6 +24,7 @@ public class ErrorMessageKey {
     public static final String SUBJECT_NOT_FOUND = "subjectId.notFound";
     public static final String ASSESSMENT_REPORT_LINK_HASH_NOT_FOUND = "assessmentReport.linkHash.notFound";
     public static final String ADVICE_ITEM_ID_NOT_FOUND = "advice-item-id.notFound";
+    public static final String SYSTEM_USER_NOT_FOUND  = "system-user.notFound";
 
     public static final String CREATE_ASSESSMENT_TITLE_NOT_BLANK = "create-assessment.title.notBlank";
     public static final String CREATE_ASSESSMENT_TITLE_SIZE_MIN = "create-assessment.title.size.min";
