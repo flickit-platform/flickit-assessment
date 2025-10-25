@@ -6,7 +6,7 @@ import org.flickit.assessment.kit.application.port.in.answerrange.DeleteAnswerRa
 import org.flickit.assessment.kit.application.port.out.answerrange.DeleteAnswerRangePort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
-import org.flickit.assessment.kit.application.port.out.question.DeleteQuestionPort;
+import org.flickit.assessment.kit.application.port.out.question.UpdateQuestionPort;
 import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
 import org.flickit.assessment.kit.test.fixture.application.KitVersionMother;
 import org.junit.jupiter.api.Test;
@@ -39,7 +39,7 @@ class DeleteAnswerRangeServiceTest {
     private DeleteAnswerRangePort deleteAnswerRangePort;
 
     @Mock
-    private DeleteQuestionPort deleteQuestionPort;
+    private UpdateQuestionPort updateQuestionPort;
 
     private final DeleteAnswerRangeService.Param param = createParam(DeleteAnswerRangeUseCase.Param.ParamBuilder::build);
     private final KitVersion kitVersion = KitVersionMother.createKitVersion(AssessmentKitMother.simpleKit());
@@ -59,15 +59,17 @@ class DeleteAnswerRangeServiceTest {
     void deleteAnswerRange_whenParamsAreValid_thenSuccessfulDelete() {
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(param.getCurrentUserId());
-        ArgumentCaptor<DeleteQuestionPort.Param> deletQuestionArgumentCaptor = ArgumentCaptor.forClass(DeleteQuestionPort.Param.class);
+        ArgumentCaptor<UpdateQuestionPort.UpdateAllAnswerRangesParam> updateQuestionArgumentCaptor = ArgumentCaptor.forClass(UpdateQuestionPort.UpdateAllAnswerRangesParam.class);
 
         service.deleteAnswerRange(param);
-        verify(deleteQuestionPort).deleteQuestionAnswerRange(deletQuestionArgumentCaptor.capture());
+        verify(updateQuestionPort).updateAllAnswerRanges(updateQuestionArgumentCaptor.capture());
         verify(deleteAnswerRangePort).delete(param.getAnswerRangeId(), kitVersion.getId());
 
-        assertEquals(param.getAnswerRangeId(), deletQuestionArgumentCaptor.getValue().answerRangeId());
-        assertEquals(param.getKitVersionId(), deletQuestionArgumentCaptor.getValue().kitVersionId());
-        assertNotNull(deletQuestionArgumentCaptor.getValue().lastModificationTime());
+        assertEquals(param.getAnswerRangeId(), updateQuestionArgumentCaptor.getValue().answerRangeId());
+        assertEquals(param.getKitVersionId(), updateQuestionArgumentCaptor.getValue().kitVersionId());
+        assertNull(updateQuestionArgumentCaptor.getValue().newAnswerRangeId());
+        assertNotNull(updateQuestionArgumentCaptor.getValue().lastModificationTime());
+        assertEquals(param.getCurrentUserId(), updateQuestionArgumentCaptor.getValue().lastModifiedBy());
     }
 
     private DeleteAnswerRangeUseCase.Param createParam(Consumer<DeleteAnswerRangeUseCase.Param.ParamBuilder> changer) {

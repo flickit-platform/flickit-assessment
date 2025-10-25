@@ -189,10 +189,10 @@ public class QuestionPersistenceJpaAdapter implements
     }
 
     @Override
-    public void deleteQuestionAnswerRange(DeleteQuestionPort.Param param) {
+    public void updateAllAnswerRanges(UpdateQuestionPort.UpdateAllAnswerRangesParam param) {
         repository.updateAnswerRangesByAnswerRangeIdAndKitVersionId(param.answerRangeId(),
             param.kitVersionId(),
-            null,
+            param.newAnswerRangeId(),
             param.lastModificationTime(),
             param.lastModifiedBy());
     }
