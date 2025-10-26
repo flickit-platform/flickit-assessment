@@ -215,7 +215,7 @@ class CalculateAssessmentServiceTest {
     }
 
     @Test
-    void testCalculateMaturityLevel_whenCalculationTimeIsNull_thenCreateNewAttributeAnSubjectValuesAndCalculate() {
+    void testCalculateMaturityLevel_whenCalculationTimeIsNull_thenCreateNewAttributeAndSubjectValuesAndCalculate() {
         List<AttributeValue> s1AttributeValues = List.of(
             hasFullScoreOnLevel24WithWeight(2, 1533),
             hasFullScoreOnLevel24WithWeight(2, 1534),
@@ -262,7 +262,7 @@ class CalculateAssessmentServiceTest {
     }
 
     @Test
-    void testCalculateMaturityLevel_whenKitCustomHasChanged_thenCreateNewAttributeAnSubjectValuesAndCalculate() {
+    void testCalculateMaturityLevel_whenKitCustomHasChanged_thenCreateNewAttributeAndSubjectValuesAndCalculate() {
         List<AttributeValue> s1AttributeValues = List.of(
             hasFullScoreOnLevel24WithWeight(2, 1533),
             hasFullScoreOnLevel24WithWeight(2, 1534),
