@@ -2,10 +2,10 @@ package org.flickit.assessment.core.adapter.out.persistence.answerhistory;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
-import org.flickit.assessment.common.application.domain.kit.KitLanguage;
-import org.flickit.assessment.common.error.ErrorMessageKey;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.adapter.out.persistence.user.UserMapper;
 import org.flickit.assessment.core.application.domain.AnswerHistory;
+import org.flickit.assessment.core.application.domain.AnswerStatus;
 import org.flickit.assessment.core.application.port.out.answerhistory.CreateAnswerHistoryPort;
 import org.flickit.assessment.core.application.port.out.answerhistory.LoadAnswerHistoryListPort;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
@@ -13,9 +13,6 @@ import org.flickit.assessment.data.jpa.core.answerhistory.AnswerHistoryJpaEntity
 import org.flickit.assessment.data.jpa.core.answerhistory.AnswerHistoryJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
-import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
-import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepository;
-import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 import org.flickit.assessment.data.jpa.users.user.UserJpaRepository;
 import org.springframework.data.domain.PageRequest;
@@ -23,14 +20,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
-import static org.flickit.assessment.core.adapter.out.persistence.answerhistory.AnswerHistoryMapper.mapToDomainModel;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ANSWER_HISTORY_LIST_ASSESSMENT_RESULT_NOT_FOUND;
 
 @Component
@@ -42,8 +37,6 @@ public class AnswerHistoryPersistenceJpaAdapter implements
     private final AnswerHistoryJpaRepository repository;
     private final AssessmentResultJpaRepository assessmentResultRepository;
     private final UserJpaRepository userRepository;
-    private final AnswerOptionJpaRepository answerOptionRepository;
-    private final AssessmentKitJpaRepository assessmentKitRepository;
 
     @Override
     public UUID persist(AnswerHistory answerHistory) {
@@ -109,10 +102,9 @@ public class AnswerHistoryPersistenceJpaAdapter implements
     }
 
     @Override
-    public PaginatedResponse<AnswerHistory> load(UUID assessmentId, long questionId, int page, int size) {
+    public PaginatedResponse<LoadAnswerHistoryListPort.Result> load(UUID assessmentId, long questionId, int page, int size) {
         var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(GET_ANSWER_HISTORY_LIST_ASSESSMENT_RESULT_NOT_FOUND));
-        var translationLanguage = resolveLanguage(assessmentResult);
 
         var order = Sort.Direction.DESC;
         var sort = AnswerHistoryJpaEntity.Fields.creationTime;
@@ -125,14 +117,15 @@ public class AnswerHistoryPersistenceJpaAdapter implements
         var userIdToUserMap = userRepository.findAllById(userIds).stream()
             .collect(toMap(UserJpaEntity::getId, Function.identity()));
 
-        var idToOption = answerOptionRepository.findByQuestionIdAndKitVersionId(questionId, assessmentResult.getKitVersionId()).stream()
-            .collect(toMap(AnswerOptionJpaEntity::getId, Function.identity()));
-
         var items = pageResult.getContent().stream()
-            .map(e -> mapToDomainModel(e,
-                userIdToUserMap.get(e.getCreatedBy()),
-                idToOption.get(e.getAnswerOptionId()),
-                translationLanguage))
+            .map(e -> new LoadAnswerHistoryListPort.Result(
+                e.getAnswerOptionId(),
+                e.getAnswerOptionIndex(),
+                e.getConfidenceLevelId(),
+                e.getIsNotApplicable(),
+                e.getStatus() != null ? AnswerStatus.valueOfById(e.getStatus()) : null,
+                UserMapper.mapToFullDomain(userIdToUserMap.get(e.getCreatedBy())),
+                e.getCreationTime()))
             .toList();
 
         return new PaginatedResponse<>(items,
@@ -141,13 +134,5 @@ public class AnswerHistoryPersistenceJpaAdapter implements
             sort,
             order.name().toLowerCase(),
             (int) pageResult.getTotalElements());
-    }
-
-    private KitLanguage resolveLanguage(AssessmentResultJpaEntity assessmentResult) {
-        var assessmentKit = assessmentKitRepository.findByKitVersionId(assessmentResult.getKitVersionId())
-            .orElseThrow(() -> new ResourceNotFoundException(ErrorMessageKey.COMMON_ASSESSMENT_KIT_NOT_FOUND));
-        return Objects.equals(assessmentResult.getLangId(), assessmentKit.getLanguageId())
-            ? null
-            : KitLanguage.valueOfById(assessmentResult.getLangId());
     }
 }
