@@ -56,10 +56,9 @@ public class GetAnswerHistoryListService implements GetAnswerHistoryListUseCase 
     }
 
     public static Answer toAnswer(LoadAnswerHistoryListPort.Result answerHistory) {
-        var answer = answerHistory.answer();
-        return new Answer(answer.getSelectedOption() != null ? Option.of(answerHistory.answerOptionId(), answerHistory.answerOptionIndex()) : null,
-            answer.getConfidenceLevelId() != null ? ConfidenceLevel.valueOfById(answer.getConfidenceLevelId()) : ConfidenceLevel.getDefault(),
-            answer.getIsNotApplicable());
+        return new Answer(answerHistory.answerOptionId() != null ? Option.of(answerHistory.answerOptionId(), answerHistory.answerOptionIndex()) : null,
+            answerHistory.confidenceLevelId() != null ? ConfidenceLevel.valueOfById(answerHistory.confidenceLevelId()) : ConfidenceLevel.getDefault(),
+            answerHistory.isNotApplicable());
     }
 
     private GetAnswerHistoryListUseCase.User getAnswerUserInfo(FullUser user) {

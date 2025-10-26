@@ -1,5 +1,6 @@
 package org.flickit.assessment.core.application.service.answerhistory;
 
+import jakarta.validation.constraints.NotNull;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentPermission;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
@@ -55,48 +56,61 @@ class GetAnswerHistoryListServiceTest {
 
     @Test
     void testGetAnswerHistoryList_whenCurrentUserHasTheRequiredPermission_thenReturnAnswerHistoryList() {
-        var history1 = history(answerWithNotApplicableFalse(optionOne()));
-        var history2 = history(answerWithQuestionIdAndNotApplicableTrue(param.getQuestionId()));
+        var history1 = toHistory(answerWithNotApplicableFalse(optionOne()));
+        var history2 = toHistory(answerWithQuestionIdAndNotApplicableTrue(param.getQuestionId()));
 
-        var expectedHistory = new PaginatedResponse<>(List.of(history2, history1), param.getPage(), param.getSize(), "desc", "creationTime", 2);
+        var expectedHistories = new PaginatedResponse<>(List.of(history2, history1),
+            param.getPage(),
+            param.getSize(),
+            "desc",
+            "creationTime",
+            2);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.VIEW_ANSWER_HISTORY_LIST))
             .thenReturn(true);
-        when(loadAnswerHistoryListPort.load(param.getAssessmentId(), param.getQuestionId(), param.getPage(), param.getSize())).thenReturn(expectedHistory);
+        when(loadAnswerHistoryListPort.load(param.getAssessmentId(), param.getQuestionId(), param.getPage(), param.getSize())).thenReturn(expectedHistories);
 
         String picDownloadLink = "downloadLink";
         when(createFileDownloadLinkPort.createDownloadLinkSafe(anyString(), any())).thenReturn(picDownloadLink);
 
         var result = getAnswerHistoryListService.getAnswerHistoryList(param);
 
-        assertEquals(expectedHistory.getItems().size(), result.getItems().size());
+        assertEquals(expectedHistories.getItems().size(), result.getItems().size());
+
         assertNull(result.getItems().getFirst().answer().selectedOption());
-        assertEquals(history2.answer().getConfidenceLevelId(), result.getItems().getFirst().answer().confidenceLevel().getId());
+        assertEquals(history2.confidenceLevelId(), result.getItems().getFirst().answer().confidenceLevel().getId());
         assertEquals(history2.createdBy().getId(), result.getItems().getFirst().createdBy().id());
         assertEquals(history2.createdBy().getDisplayName(), result.getItems().getFirst().createdBy().displayName());
         assertEquals(picDownloadLink, result.getItems().getFirst().createdBy().pictureLink());
 
         assertNotNull(result.getItems().get(1).answer().selectedOption());
-        assertEquals(history1.answer().getSelectedOption().getId(), result.getItems().get(1).answer().selectedOption().id());
-        assertEquals(history1.answer().getSelectedOption().getIndex(), result.getItems().get(1).answer().selectedOption().index());
-        assertEquals(history1.answer().getConfidenceLevelId(), result.getItems().get(1).answer().confidenceLevel().getId());
+        assertEquals(history1.answerOptionId(), result.getItems().get(1).answer().selectedOption().id());
+        assertEquals(history1.answerOptionIndex(), result.getItems().get(1).answer().selectedOption().index());
+        assertEquals(history1.confidenceLevelId(), result.getItems().get(1).answer().confidenceLevel().getId());
         assertEquals(history1.createdBy().getId(), result.getItems().get(1).createdBy().id());
         assertEquals(history1.createdBy().getDisplayName(), result.getItems().get(1).createdBy().displayName());
         assertEquals(picDownloadLink, result.getItems().get(1).createdBy().pictureLink());
 
+        assertPaginationProps(result, expectedHistories);
+    }
+
+    private void assertPaginationProps(PaginatedResponse<GetAnswerHistoryListUseCase.AnswerHistoryListItem> result,
+                                       PaginatedResponse<LoadAnswerHistoryListPort.Result> expectedHistories) {
         assertEquals(2, result.getTotal());
         assertEquals(param.getSize(), result.getSize());
         assertEquals(param.getPage(), result.getPage());
-        assertEquals(expectedHistory.getSort(), result.getSort());
-        assertEquals(expectedHistory.getOrder(), result.getOrder());
+        assertEquals(expectedHistories.getSort(), result.getSort());
+        assertEquals(expectedHistories.getOrder(), result.getOrder());
     }
 
-    private LoadAnswerHistoryListPort.Result history(Answer answer) {
-        return new LoadAnswerHistoryListPort.Result(answer,
+    private LoadAnswerHistoryListPort.Result toHistory(@NotNull Answer answer) {
+        return new LoadAnswerHistoryListPort.Result(answer.getSelectedOption() != null ? answer.getSelectedOption().getId() : null,
+            answer.getSelectedOption() != null ? answer.getSelectedOption().getIndex() : null,
+            answer.getConfidenceLevelId(),
+            answer.getIsNotApplicable(),
+            answer.getAnswerStatus(),
             new FullUser(UUID.randomUUID(), "displayName", "email@gmail.com", "path/path"),
-            LocalDateTime.now(),
-            answer != null && answer.getSelectedOption() != null ? answer.getSelectedOption().getId() : null,
-            answer != null && answer.getSelectedOption() != null ? answer.getSelectedOption().getIndex() : null);
+            LocalDateTime.now());
     }
 
     private GetAnswerHistoryListUseCase.Param createParam(Consumer<GetAnswerHistoryListUseCase.Param.ParamBuilder> changer) {
