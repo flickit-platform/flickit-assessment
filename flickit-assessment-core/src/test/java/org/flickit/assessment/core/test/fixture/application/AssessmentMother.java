@@ -46,6 +46,25 @@ public class AssessmentMother {
         );
     }
 
+    public static Assessment assessmentWithKitCustomId(Long kitCustomId) {
+        counter++;
+        return new Assessment(
+            UUID.randomUUID(),
+            "my-assessment-" + counter,
+            "My Assessment " + counter,
+            "Short title" + counter,
+            AssessmentKitMother.kitWithLanguage(KitLanguage.EN),
+            SpaceMother.createBasicSpace(),
+            kitCustomId,
+            AssessmentMode.ADVANCED,
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            0L,
+            false,
+            UUID.randomUUID()
+        );
+    }
+
     public static Assessment assessmentWithoutActiveVersion() {
         counter++;
         return new Assessment(
