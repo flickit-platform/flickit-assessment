@@ -115,7 +115,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
         Map<Long, Map<Long, QuestionWithImpacts>> impactfulQuestions = mapQuestionToImpacts(allQuestionsJoinImpactViews);
 
         // load all answers submitted with this assessmentResult
-        List<AnswerJpaEntity> allAnswerEntities = answerRepo.findByAssessmentResultId(assessmentResultId);
+        List<AnswerJpaEntity> allAnswerEntities = answerRepo.findByAssessmentResultIdAndDeletedFalse(assessmentResultId);
 
         /*
         based on answers, extract all selected options
