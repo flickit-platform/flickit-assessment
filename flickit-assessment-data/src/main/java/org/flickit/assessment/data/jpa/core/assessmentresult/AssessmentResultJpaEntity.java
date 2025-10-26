@@ -56,4 +56,8 @@ public class AssessmentResultJpaEntity {
 
     @Column(name = "last_confidence_calculation_time")
     private LocalDateTime lastConfidenceCalculationTime;
+
+    public AssessmentResultJpaEntity(UUID id) {
+        this.id = id;
+    }
 }

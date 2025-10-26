@@ -185,7 +185,7 @@ public class AttributeValuePersistenceJpaAdapter implements
 
     private List<Answer> loadAnswersByAssessmentResultIdAndQuestionIdIn(AssessmentResultJpaEntity assessmentResult, List<Long> questionIds) {
         var kitVersionId = assessmentResult.getKitVersionId();
-        var answerEntities = answerRepository.findByAssessmentResultIdAndQuestionIdIn(assessmentResult.getId(), questionIds);
+        var answerEntities = answerRepository.findByAssessmentResultIdAndDeletedFalseAndQuestionIdIn(assessmentResult.getId(), questionIds);
 
         var answerOptionIds = answerEntities.stream()
             .map(AnswerJpaEntity::getAnswerOptionId)

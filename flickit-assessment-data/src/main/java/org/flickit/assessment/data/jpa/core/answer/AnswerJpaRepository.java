@@ -9,11 +9,22 @@ import java.util.*;
 
 public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID> {
 
-    Optional<AnswerJpaEntity> findByAssessmentResultIdAndQuestionId(UUID assessmentResultId, Long questionId);
+    List<AnswerJpaEntity> findByAssessmentResultIdAndDeletedFalseAndQuestionIdIn(UUID assessmentResultId, List<Long> questionId);
 
-    List<AnswerJpaEntity> findByAssessmentResultIdAndQuestionIdIn(UUID assessmentResultId, List<Long> questionId);
+    List<AnswerJpaEntity> findByAssessmentResultIdAndDeletedFalse(UUID assessmentResultId);
 
-    List<AnswerJpaEntity> findByAssessmentResultId(UUID assessmentResultId);
+    @Query("""
+            SELECT ans as answer,
+                op as option
+            FROM AnswerJpaEntity ans
+            JOIN AssessmentResultJpaEntity ar ON ans.assessmentResult.id = ar.id
+            LEFT JOIN AnswerOptionJpaEntity op ON ans.answerOptionId = op.id AND op.kitVersionId = ar.kitVersionId
+            WHERE ans.assessmentResult.id = :assessmentResultId
+                AND ans.questionId = :questionId
+                AND ans.deleted = false
+        """)
+    Optional<AnswerWithOptionView> findByAssessmentResultIdAndQuestionId(@Param("assessmentResultId") UUID assessmentResultId,
+                                                                         @Param("questionId") Long questionId);
 
     @Query("""
             SELECT COUNT(a) as answerCount
@@ -21,6 +32,7 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
             WHERE a.assessmentResult.id=:assessmentResultId
                 AND a.questionId IN :questionIds
                 AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
+                AND a.deleted = false
         """)
     int getCountByQuestionIds(@Param("assessmentResultId") UUID assessmentResultId, @Param("questionIds") List<Long> questionIds);
 
@@ -29,6 +41,7 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
             FROM AnswerJpaEntity a
             WHERE a.assessmentResult.id=:assessmentResultId
                 AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
+                AND a.deleted = false
         """)
     int getCountByAssessmentResultId(@Param("assessmentResultId") UUID assessmentResultId);
 
@@ -56,6 +69,7 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
             WHERE a.assessmentResult.id=:assessmentResultId
                 AND a.questionnaireId IN :questionnaireIds
                 AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
+                AND a.deleted = false
             GROUP BY a.questionnaireId
         """)
     List<QuestionnaireIdAndAnswerCountView> getQuestionnairesProgressByAssessmentResultId(
@@ -68,6 +82,7 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
             WHERE a.assessmentResult.id=:assessmentResultId
                 AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
                 AND a.confidenceLevelId < :confidence
+                AND a.deleted = false
         """)
     int countWithConfidenceLessThan(@Param("assessmentResultId") UUID assessmentResultId,
                                     @Param("confidence") int confidence);
@@ -82,6 +97,7 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
                 AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
                 AND a.confidenceLevelId < :confidence
                 AND a.questionnaireId in :questionnaireIds
+                AND a.deleted = false
             GROUP BY q.questionnaireId
         """)
     List<QuestionnaireIdAndAnswerCountView> countByQuestionnaireIdWithConfidenceLessThan(@Param("assessmentResultId") UUID assessmentResultId,
@@ -105,6 +121,7 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
             WHERE a.assessmentResult.id = :assessmentResultId
                 AND (a.status = :status)
                 AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
+                AND a.deleted = false
         """)
     int countUnapprovedAnswersByAssessmentResultId(@Param("assessmentResultId") UUID assessmentResultId,
                                                    @Param("status") Integer status);
@@ -119,6 +136,7 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
                 AND q.questionnaireId IN :questionnaireIds
                 AND (a.status = :status)
                 AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
+                AND a.deleted = false
             GROUP BY questionnaireId
         """)
     List<AnswersQuestionnaireAndCountView> countQuestionnairesUnapprovedAnswers(@Param("assessmentResultId") UUID assessmentResultId,
@@ -136,13 +154,27 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
                             @Param("approvedBy") UUID approvedBy,
                             @Param("status") Integer status);
 
+    @Modifying
     @Query("""
-            SELECT a
+            UPDATE AnswerJpaEntity a
+            SET a.deleted = true
+            WHERE a.assessmentResult.id = :assessmentResultId
+                    AND a.questionId IN :questionIds
+        """)
+    void deleteByAssessmentResultIdAndQuestionIdIn(@Param("assessmentResultId") UUID assessmentResultId,
+                                                   @Param("questionIds") Set<Long> questionId);
+
+    @Query("""
+            SELECT a as answer,
+                op as option
             FROM AnswerJpaEntity a
+            JOIN AssessmentResultJpaEntity ar ON a.assessmentResult.id = ar.id
+            LEFT JOIN AnswerOptionJpaEntity op ON a.answerOptionId = op.id AND op.kitVersionId = ar.kitVersionId
             WHERE a.assessmentResult.id = :assessmentResultId
                 AND (a.status = :status)
                 AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
+                AND a.deleted = false
         """)
-    List<AnswerJpaEntity> findAnswersByAssessmentResultIdAndStatus(@Param("assessmentResultId") UUID assessmentResultId,
-                                                                   @Param("status") Integer status);
+    List<AnswerWithOptionView> findAnswersByAssessmentResultIdAndStatus(@Param("assessmentResultId") UUID assessmentResultId,
+                                                                        @Param("status") Integer status);
 }
