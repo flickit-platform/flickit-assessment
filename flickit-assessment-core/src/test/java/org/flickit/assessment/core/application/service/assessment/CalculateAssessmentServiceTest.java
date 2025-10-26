@@ -26,8 +26,7 @@ import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CALCULATE_ASSESSMENT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.invalidResultWithSubjectValues;
-import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.validResult;
+import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.*;
 import static org.flickit.assessment.core.test.fixture.application.AttributeValueMother.hasFullScoreOnLevel23WithWeight;
 import static org.flickit.assessment.core.test.fixture.application.AttributeValueMother.hasFullScoreOnLevel24WithWeight;
 import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.levelThree;
@@ -110,6 +109,27 @@ class CalculateAssessmentServiceTest {
             loadCalculateInfoPort,
             createSubjectValuePort,
             createAttributeValuePort);
+    }
+
+    @Test
+    void testCalculateMaturityLevel_whenAssessmentResultIsValidAndKitCustomIdIsNull_thenDoNotCalculateAndReturnResultAffectedAsFalse() {
+        AssessmentResult assessmentResult = validResultWithKitCustomId(null);
+        assessmentResult.setLastCalculationTime(LocalDateTime.now());
+
+        var param = createParam(b -> b.assessmentId(assessmentResult.getAssessment().getId()));
+
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CALCULATE_ASSESSMENT)).thenReturn(true);
+        when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(assessmentResult.getAssessment().getAssessmentKit().getId()))
+            .thenReturn(assessmentResult.getLastCalculationTime().minusHours(1));
+
+        var result = service.calculateMaturityLevel(param);
+        assertNotNull(result);
+        assertEquals(assessmentResult.getMaturityLevel().getValue(), result.maturityLevel().getValue());
+        assertFalse(result.resultAffected());
+
+        verify(loadKitLastMajorModificationTimePort, times(1)).loadLastMajorModificationTime(any());
+        verifyNoInteractions(updateCalculatedResultPort, loadKitCustomLastModificationTimePort, updateAssessmentPort);
     }
 
     @Test
@@ -234,7 +254,7 @@ class CalculateAssessmentServiceTest {
         subjects.add(newSubjectValue.getSubject());
 
         // weighted mean scores of subjectValues on levels: 1:0, 2:100, 3: ((75*5)+25+(100*2))/8=75,  4: ((40*5)+5+0)/8=25.6, 5:0 => level three passes
-        AssessmentResult assessmentResult = invalidResultWithSubjectValues(subjectValues);
+        AssessmentResult assessmentResult = invalidResultWithSubjectValuesAndKitCustomId(subjectValues, null);
         assessmentResult.setLastCalculationTime(LocalDateTime.now());
 
         var param = createParam(b -> b.assessmentId(assessmentResult.getAssessment().getId()));
@@ -248,8 +268,6 @@ class CalculateAssessmentServiceTest {
         when(createSubjectValuePort.persistAll(List.of(newSubjectValue.getSubject().getId()), assessmentResult.getId()))
             .thenReturn(List.of(newSubjectValue));
         when(createAttributeValuePort.persistAll(Set.of(), assessmentResult.getId())).thenReturn(List.of(newAttributeValue));
-        when(loadKitCustomLastModificationTimePort.loadLastModificationTime(assessmentResult.getAssessment().getKitCustomId()))
-            .thenReturn(assessmentResult.getLastCalculationTime().minusHours(2));
 
         var result = service.calculateMaturityLevel(param);
         assertNotNull(result);
@@ -259,6 +277,7 @@ class CalculateAssessmentServiceTest {
         verify(loadKitLastMajorModificationTimePort, times(1)).loadLastMajorModificationTime(any());
         verify(updateCalculatedResultPort, times(1)).updateCalculatedResult(any(AssessmentResult.class));
         verify(updateAssessmentPort, times(1)).updateLastModificationTime(any(), any());
+        verifyNoInteractions(loadKitCustomLastModificationTimePort);
     }
 
     @Test

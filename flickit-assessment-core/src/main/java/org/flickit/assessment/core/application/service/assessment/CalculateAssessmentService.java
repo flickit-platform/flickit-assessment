@@ -52,7 +52,11 @@ public class CalculateAssessmentService implements CalculateAssessmentUseCase {
 
         var kitId = assessmentResult.getAssessment().getAssessmentKit().getId();
         var kitLastMajorModificationTime = loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(kitId);
-        var lastKitCustomModificationTime = loadKitCustomLastModificationTimePort.loadLastModificationTime(assessmentResult.getAssessment().getKitCustomId());
+
+        LocalDateTime lastKitCustomModificationTime = null;
+        Long kitCustomId = assessmentResult.getAssessment().getKitCustomId();
+        if (kitCustomId != null)
+            lastKitCustomModificationTime = loadKitCustomLastModificationTimePort.loadLastModificationTime(kitCustomId);
 
         if (isCalculationValid(assessmentResult, kitLastMajorModificationTime, lastKitCustomModificationTime))
             return new Result(assessmentResult.getMaturityLevel(), false);
@@ -68,12 +72,18 @@ public class CalculateAssessmentService implements CalculateAssessmentUseCase {
         return new Result(calcResult, true);
     }
 
-    boolean isCalculationValid(AssessmentResult assessmentResult, LocalDateTime kitLastMajorModificationTime, LocalDateTime lastKitCustomModificationTime) {
+    boolean isCalculationValid(AssessmentResult assessmentResult,
+                               LocalDateTime kitLastMajorModificationTime,
+                               LocalDateTime lastKitCustomModificationTime) {
         var calculationTime = assessmentResult.getLastCalculationTime();
-        return Boolean.TRUE.equals(assessmentResult.getIsCalculateValid())
-            && calculationTime != null
-            && calculationTime.isAfter(kitLastMajorModificationTime)
-            && calculationTime.isAfter(lastKitCustomModificationTime);
+        if (!Boolean.TRUE.equals(assessmentResult.getIsCalculateValid()) || calculationTime == null)
+            return false;
+
+        boolean isAfterKitMajorModificationTime = calculationTime.isAfter(kitLastMajorModificationTime);
+        boolean isAfterKitCustomModificationTime = lastKitCustomModificationTime == null
+            || calculationTime.isAfter(lastKitCustomModificationTime);
+
+        return isAfterKitMajorModificationTime && isAfterKitCustomModificationTime;
     }
 
     private static MaturityLevel calculate(AssessmentResult assessmentResult) {
