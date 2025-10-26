@@ -72,10 +72,10 @@ class CalculateAssessmentServiceTest {
     @Mock
     private LoadKitCustomLastModificationTimePort loadKitCustomLastModificationTimePort;
 
-    private final CalculateAssessmentUseCase.Param param = createParam(CalculateAssessmentUseCase.Param.ParamBuilder::build);
-
     @Test
     void testCalculateMaturityLevel_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
+        var param = createParam(CalculateAssessmentUseCase.Param.ParamBuilder::build);
+
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CALCULATE_ASSESSMENT)).thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.calculateMaturityLevel(param));
