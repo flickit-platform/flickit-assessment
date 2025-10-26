@@ -261,7 +261,6 @@ class CalculateAssessmentServiceTest {
         verify(updateAssessmentPort, times(1)).updateLastModificationTime(any(), any());
     }
 
-
     @Test
     void testCalculateMaturityLevel_whenKitCustomHasChanged_thenCreateNewAttributeAnSubjectValuesAndCalculate() {
         List<AttributeValue> s1AttributeValues = List.of(
