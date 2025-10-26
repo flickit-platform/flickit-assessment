@@ -57,8 +57,7 @@ public class CalculateAssessmentService implements CalculateAssessmentUseCase {
         if (isCalculationValid(assessmentResult, kitLastMajorModificationTime, lastKitCustomModificationTime))
             return new Result(assessmentResult.getMaturityLevel(), false);
 
-        if (assessmentResult.getLastCalculationTime() == null || assessmentResult.getLastCalculationTime().isBefore(kitLastMajorModificationTime) ||
-                assessmentResult.getLastCalculationTime().isBefore(lastKitCustomModificationTime))
+        if (assessmentResult.getLastCalculationTime() == null || assessmentResult.getLastCalculationTime().isBefore(kitLastMajorModificationTime))
             reinitializeAssessmentResult(assessmentResult);
 
         var assessmentResultCalculateInfo = loadCalculateInfoPort.load(param.getAssessmentId());
