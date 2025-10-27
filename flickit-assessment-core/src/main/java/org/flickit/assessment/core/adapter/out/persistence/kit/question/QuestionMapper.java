@@ -57,19 +57,6 @@ public class QuestionMapper {
         );
     }
 
-    public static Question mapToDomainWithQuestionnaire(QuestionJpaEntity entity, Questionnaire questionnaire) {
-        return new Question(
-            entity.getId(),
-            entity.getTitle(),
-            entity.getIndex(),
-            entity.getHint(),
-            entity.getMayNotBeApplicable(),
-            null,
-            questionnaire,
-            null
-        );
-    }
-
     public static Question mapToDomainModel(QuestionJpaEntity entity, @Nullable KitLanguage language) {
         var translation = getTranslation(entity, language);
         return new Question(

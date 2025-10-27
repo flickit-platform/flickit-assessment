@@ -7,7 +7,6 @@ import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.application.domain.kit.translation.QuestionnaireTranslation;
 import org.flickit.assessment.common.application.domain.kit.translation.SubjectTranslation;
 import org.flickit.assessment.common.util.JsonUtils;
-import org.flickit.assessment.core.application.domain.Questionnaire;
 import org.flickit.assessment.core.application.domain.QuestionnaireListItem;
 import org.flickit.assessment.core.application.domain.report.QuestionnaireReportItem;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaEntity;
@@ -53,10 +52,6 @@ public class QuestionnaireMapper {
             subjects,
             null
         );
-    }
-
-    public static Questionnaire mapToDomainModel(QuestionnaireJpaEntity entity) {
-        return new Questionnaire(entity.getId(), entity.getTitle());
     }
 
     public static QuestionnaireReportItem mapToReportItem(QuestionnaireListItemView itemView, @Nullable KitLanguage language) {
