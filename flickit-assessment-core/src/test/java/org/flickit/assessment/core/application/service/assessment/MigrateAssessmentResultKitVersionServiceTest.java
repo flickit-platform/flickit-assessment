@@ -58,7 +58,7 @@ class MigrateAssessmentResultKitVersionServiceTest {
     @Mock
     private DeleteAnswerPort deleteAnswerPort;
 
-    private final Param param = createParam(Param.ParamBuilder::build);
+    private Param param = createParam(Param.ParamBuilder::build);
 
     @Mock
     private LoadAnswerPort loadAnswerPort;
@@ -169,8 +169,7 @@ class MigrateAssessmentResultKitVersionServiceTest {
             (new LoadQuestionPort.Result(2, 22)), new LoadQuestionPort.Result(3, 33));
         var activeAnswerRanges = List.of(new LoadQuestionPort.Result(1, 11),
             (new LoadQuestionPort.Result(2, 22)), new LoadQuestionPort.Result(3, 33));
-
-        var param = createParam(b -> b.assessmentId(assessmentResult.getAssessment().getId()));
+        param = createParam(b -> b.assessmentId(assessmentResult.getAssessment().getId()));
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MIGRATE_KIT_VERSION))
             .thenReturn(true);
@@ -194,8 +193,7 @@ class MigrateAssessmentResultKitVersionServiceTest {
         var activeAnswerRanges = List.of(new LoadQuestionPort.Result(1, 11),
             (new LoadQuestionPort.Result(2, 11)), new LoadQuestionPort.Result(3, 33));
         Set<UUID> answerIds = Set.of(UUID.randomUUID(), UUID.randomUUID());
-
-        var param = createParam(b -> b.assessmentId(assessmentResult.getAssessment().getId()));
+        param = createParam(b -> b.assessmentId(assessmentResult.getAssessment().getId()));
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MIGRATE_KIT_VERSION))
             .thenReturn(true);
@@ -221,8 +219,7 @@ class MigrateAssessmentResultKitVersionServiceTest {
             (new LoadQuestionPort.Result(2, 22)), new LoadQuestionPort.Result(3, 33));
         var activeAnswerRanges = List.of(new LoadQuestionPort.Result(1, 11), new LoadQuestionPort.Result(2, 44));
         var questionIdsWithChangedAnswerRangeIds = List.of(2L);
-
-        var param = createParam(b -> b.assessmentId(assessmentResult.getAssessment().getId()));
+        param = createParam(b -> b.assessmentId(assessmentResult.getAssessment().getId()));
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MIGRATE_KIT_VERSION))
             .thenReturn(true);
