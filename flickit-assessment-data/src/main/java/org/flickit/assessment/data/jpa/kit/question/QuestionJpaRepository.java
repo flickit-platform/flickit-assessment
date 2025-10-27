@@ -278,4 +278,16 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
             WHERE q.kitVersionId = :kitVersionId and q.measureId IS NULL
         """)
     List<QuestionQuestionnaireView> findAllByKitVersionIdAndWithoutMeasure(@Param("kitVersionId") long kitVersionId);
+
+    @Modifying
+    @Query("""
+            UPDATE QuestionJpaEntity q
+            SET q.index = q.index - 1
+            WHERE q.index > :fromIndex AND
+                  q.questionnaireId = :questionnaireId AND
+                  q.kitVersionId = :kitVersionId
+        """)
+    void updateQuestionIndexesAfter(@Param("fromIndex") int fromIndex,
+                                    @Param("questionnaireId") long questionnaireId,
+                                    @Param("kitVersionId") long kitVersionId);
 }
