@@ -2,9 +2,9 @@ package org.flickit.assessment.core.application.port.out.question;
 
 import org.flickit.assessment.core.application.domain.Question;
 
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.List;
 
 public interface LoadQuestionPort {
 
@@ -12,9 +12,8 @@ public interface LoadQuestionPort {
 
     int loadFirstUnansweredQuestionIndex(long questionnaireId, UUID assessmentResultId);
 
-    Set<Long> loadIdsByKitVersionId(long kitVersionId);
+    List<IdAndAnswerRange> loadIdAndAnswerRangeIdByKitVersionId(long kitVersionId);
 
-    List<Result> loadByKitVersionId(long kitVersionId);
-
-    record Result(long id, long answerRangeId){}
+    record IdAndAnswerRange(long id, long answerRangeId) {
+    }
 }

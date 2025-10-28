@@ -183,15 +183,14 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
     @Modifying
     @Query("""
             UPDATE AnswerJpaEntity a
-            SET a.confidenceLevelId = :confidenceLevelId,
-                a.answerOptionId = :answerOptionId,
-                a.status = :answerStatus,
+            SET a.confidenceLevelId = null,
+                a.answerOptionId = null,
+                a.status = null,
                 a.lastModifiedBy = :lastModifiedBy
-            WHERE a.id IN :answerIds
+            WHERE assessmentResult.id = :assessmentResultId
+                AND a.questionId IN :questionIds
         """)
-    void updateSelectedAnswerOptionByAnswerIdIn(@Param("answerIds") Set<UUID> answerIds,
-                                                @Param("confidenceLevelId") Integer confidenceLevelId,
-                                                @Param("answerOptionId") Long answerOptionId,
-                                                @Param("answerStatus") int answerStatus,
-                                                @Param("lastModifiedBy") UUID lastModifiedBy);
+    void clearAnswers(@Param("assessmentResultId") UUID assessmentResultId,
+                      @Param("questionIds") Collection<Long> questionIds,
+                      @Param("lastModifiedBy") UUID lastModifiedBy);
 }

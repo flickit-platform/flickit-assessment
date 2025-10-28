@@ -28,7 +28,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.UUID;
 
 import static java.util.stream.Collectors.groupingBy;
@@ -121,14 +120,9 @@ public class QuestionPersistenceJpaAdapter implements
     }
 
     @Override
-    public Set<Long> loadIdsByKitVersionId(long kitVersionId) {
-        return repository.findIdsByKitVersionId(kitVersionId);
-    }
-
-    @Override
-    public List<Result> loadByKitVersionId(long kitVersionId) {
-        return repository.findAllByKitVersionId(kitVersionId).stream()
-            .map(QuestionMapper::mapToResult)
+    public List<IdAndAnswerRange> loadIdAndAnswerRangeIdByKitVersionId(long kitVersionId) {
+        return repository.findIdAndAnswerRangeIdByKitVersionId(kitVersionId).stream()
+            .map(entity -> new IdAndAnswerRange(entity.getQuestionId(), entity.getAnswerRangeId()))
             .toList();
     }
 

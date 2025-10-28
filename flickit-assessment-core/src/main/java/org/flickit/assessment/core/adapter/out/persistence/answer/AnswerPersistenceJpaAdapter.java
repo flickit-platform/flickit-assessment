@@ -8,7 +8,6 @@ import org.flickit.assessment.core.application.domain.AnswerOption;
 import org.flickit.assessment.core.application.domain.AnswerStatus;
 import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 import org.flickit.assessment.core.application.port.out.answer.*;
-import org.flickit.assessment.core.application.port.out.answer.DeleteAnswerPort;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaRepository;
 import org.flickit.assessment.data.jpa.core.answer.AnswersQuestionnaireAndCountView;
@@ -172,11 +171,7 @@ public class AnswerPersistenceJpaAdapter implements
     }
 
     @Override
-    public void deleteSelectedOption(Set<UUID> answerIds, UUID lastModifiedBy) {
-        repository.updateSelectedAnswerOptionByAnswerIdIn(answerIds,
-            null,
-            null,
-            AnswerStatus.UNAPPROVED.getId(),
-            lastModifiedBy);
+    public void clearAnswers(UUID assessmentResultId, List<Long> questionIds, UUID lastModifiedBy) {
+        repository.clearAnswers(assessmentResultId, questionIds, lastModifiedBy);
     }
 }
