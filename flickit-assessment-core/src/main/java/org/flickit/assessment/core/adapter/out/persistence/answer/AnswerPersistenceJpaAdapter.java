@@ -19,6 +19,7 @@ import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
@@ -102,6 +103,13 @@ public class AnswerPersistenceJpaAdapter implements
     }
 
     @Override
+    public Set<UUID> loadIdsByQuestionIds(List<Long> questionIds) {
+        return repository.findAllByQuestionIdIn(questionIds).stream()
+            .map(AnswerJpaEntity::getId)
+            .collect(Collectors.toSet());
+    }
+
+    @Override
     public void update(UpdateAnswerPort.Param param) {
         var answer = repository.findById(param.answerId())
             .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ANSWER_ID_NOT_FOUND));
@@ -160,5 +168,10 @@ public class AnswerPersistenceJpaAdapter implements
     @Override
     public void delete(UUID assessmentResultId, Set<Long> questionIds) {
         repository.deleteByAssessmentResultIdAndQuestionIdIn(assessmentResultId, questionIds);
+    }
+
+    @Override
+    public void clearAnswers(UUID assessmentResultId, List<Long> questionIds, UUID lastModifiedBy) {
+        repository.clearAnswers(assessmentResultId, questionIds, lastModifiedBy);
     }
 }

@@ -26,6 +26,8 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
     Optional<AnswerWithOptionView> findByAssessmentResultIdAndQuestionId(@Param("assessmentResultId") UUID assessmentResultId,
                                                                          @Param("questionId") Long questionId);
 
+    List<AnswerJpaEntity> findAllByQuestionIdIn(List<Long> questionId);
+
     @Query("""
             SELECT COUNT(a) as answerCount
             FROM AnswerJpaEntity a
@@ -177,4 +179,18 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
         """)
     List<AnswerWithOptionView> findAnswersByAssessmentResultIdAndStatus(@Param("assessmentResultId") UUID assessmentResultId,
                                                                         @Param("status") Integer status);
+
+    @Modifying
+    @Query("""
+            UPDATE AnswerJpaEntity a
+            SET a.confidenceLevelId = null,
+                a.answerOptionId = null,
+                a.status = null,
+                a.lastModifiedBy = :lastModifiedBy
+            WHERE assessmentResult.id = :assessmentResultId
+                AND a.questionId IN :questionIds
+        """)
+    void clearAnswers(@Param("assessmentResultId") UUID assessmentResultId,
+                      @Param("questionIds") Collection<Long> questionIds,
+                      @Param("lastModifiedBy") UUID lastModifiedBy);
 }
