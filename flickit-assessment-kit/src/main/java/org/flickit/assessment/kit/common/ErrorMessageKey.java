@@ -557,6 +557,9 @@ public class ErrorMessageKey {
     public static final String GET_KIT_MEASURE_DETAIL_MEASURE_ID_NOT_NULL = "get-kit-measure-detail.measureId.notNull";
     public static final String GET_KIT_MEASURE_DETAIL_MEASURE_ID_NOT_FOUND = "get-kit-measure-detail.measureId.notFound";
 
+    public static final String DELETE_ANSWER_RANGE_ANSWER_RANGE_ID_NOT_NULL= "delete-answer-range.answerRangeId.notNull";
+    public static final String DELETE_ANSWER_RANGE_KIT_VERSION_ID_NOT_NULL= "delete-answer-range.kitVersionId.notNull";
+
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
     }

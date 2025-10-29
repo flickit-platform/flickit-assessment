@@ -65,4 +65,20 @@ public interface UpdateQuestionPort {
                                   LocalDateTime lastModificationTime,
                                   UUID lastModifiedBy) {
     }
+
+    /**
+     * Clears the {@code answerRangeId} (sets it to {@code null}) for all questions
+     * that currently reference the specified {@code answerRangeId}.
+     * <p>
+     * The update applies only to questions belonging to the given kit version.
+     */
+    void clearAnswerRange(ClearAnswerRangeParam param);
+
+    record ClearAnswerRangeParam(
+        long answerRangeId,
+        long kitVersionId,
+        LocalDateTime lastModificationTime,
+        UUID lastModifiedBy) {
+    }
+
 }

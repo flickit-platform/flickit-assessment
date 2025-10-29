@@ -189,6 +189,14 @@ public class QuestionPersistenceJpaAdapter implements
     }
 
     @Override
+    public void clearAnswerRange(ClearAnswerRangeParam param) {
+        repository.updateToRemoveQuestionAnswerRangeByAnswerRangeIdAndKitVersionId(param.answerRangeId(),
+            param.kitVersionId(),
+            param.lastModificationTime(),
+            param.lastModifiedBy());
+    }
+
+    @Override
     public void updateOrders(UpdateOrderParam param) {
         List<Long> ids = param.orders().stream()
             .map(UpdateOrderParam.QuestionOrder::questionId)
