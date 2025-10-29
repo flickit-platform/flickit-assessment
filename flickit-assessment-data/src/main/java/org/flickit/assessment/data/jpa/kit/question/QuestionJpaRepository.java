@@ -127,13 +127,6 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
                                                                         @Param("questionIds") Collection<Long> questionIds);
 
     @Query("""
-            SELECT q.id
-            FROM QuestionJpaEntity q
-            WHERE q.kitVersionId = :kitVersionId
-        """)
-    Set<Long> findIdsByKitVersionId(@Param("kitVersionId") long kitVersionId);
-
-    @Query("""
             SELECT
                 q AS question,
                 ao AS option,
@@ -278,6 +271,15 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
             WHERE q.kitVersionId = :kitVersionId and q.measureId IS NULL
         """)
     List<QuestionQuestionnaireView> findAllByKitVersionIdAndWithoutMeasure(@Param("kitVersionId") long kitVersionId);
+
+    @Query("""
+            SELECT
+                q.id as questionId,
+                q.answerRangeId as answerRangeId
+            FROM QuestionJpaEntity q
+            WHERE q.kitVersionId = :kitVersionId
+        """)
+    List<QuestionIdAndAnswerRangeIdView> findIdAndAnswerRangeIdByKitVersionId(@Param("kitVersionId") long kitVersionId);
 
     @Modifying
     @Query("""

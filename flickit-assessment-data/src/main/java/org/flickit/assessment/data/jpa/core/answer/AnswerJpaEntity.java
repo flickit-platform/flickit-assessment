@@ -55,4 +55,8 @@ public class AnswerJpaEntity {
 
     @Column(name = "last_modified_by", nullable = false)
     private UUID lastModifiedBy;
+
+    public AnswerJpaEntity(UUID id) {
+        this.id = id;
+    }
 }

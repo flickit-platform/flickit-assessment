@@ -7,16 +7,20 @@ import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.port.in.assessment.MigrateAssessmentResultKitVersionUseCase;
 import org.flickit.assessment.core.application.port.in.assessment.MigrateAssessmentResultKitVersionUseCase.Param;
 import org.flickit.assessment.core.application.port.out.answer.DeleteAnswerPort;
+import org.flickit.assessment.core.application.port.out.answer.UpdateAnswerPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.InvalidateAssessmentResultCalculatePort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.UpdateAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionPort;
+import org.flickit.assessment.core.application.port.out.question.LoadQuestionPort.IdAndAnswerRange;
+import org.flickit.assessment.core.application.port.out.user.LoadUserPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -55,6 +59,12 @@ class MigrateAssessmentResultKitVersionServiceTest {
     @Mock
     private DeleteAnswerPort deleteAnswerPort;
 
+    @Mock
+    private UpdateAnswerPort updateAnswerPort;
+
+    @Mock
+    private LoadUserPort loadUserPort;
+
     private final Param param = createParam(Param.ParamBuilder::build);
 
     @Test
@@ -70,6 +80,7 @@ class MigrateAssessmentResultKitVersionServiceTest {
             invalidateAssessmentResultCalculatePort,
             updateAssessmentResultPort,
             loadQuestionPort,
+            updateAnswerPort,
             deleteAnswerPort);
     }
 
@@ -85,7 +96,8 @@ class MigrateAssessmentResultKitVersionServiceTest {
         verifyNoInteractions(invalidateAssessmentResultCalculatePort,
             updateAssessmentResultPort,
             loadQuestionPort,
-            deleteAnswerPort);
+            deleteAnswerPort,
+            updateAnswerPort);
     }
 
     @Test
@@ -102,46 +114,67 @@ class MigrateAssessmentResultKitVersionServiceTest {
         verifyNoInteractions(invalidateAssessmentResultCalculatePort,
             updateAssessmentResultPort,
             loadQuestionPort,
-            deleteAnswerPort);
+            deleteAnswerPort,
+            updateAnswerPort);
     }
 
     @Test
     void testMigrate_whenParametersAreValidAndThereAreNotAnyDeletedQuestions_thenSuccessfulUpdate() {
         var assessmentResult = validResult();
         var activeKitVersionId = assessmentResult.getAssessment().getAssessmentKit().getKitVersion();
+        List<IdAndAnswerRange> currentVersionQuestionIds = List.of(
+            new IdAndAnswerRange(1L, 1L),
+            new IdAndAnswerRange(2L, 2L),
+            new IdAndAnswerRange(3L, 3L));
+        List<IdAndAnswerRange> activeVersionQuestionIds = List.of(
+            new IdAndAnswerRange(1L, 1L),
+            new IdAndAnswerRange(2L, 2L),
+            new IdAndAnswerRange(3L, 3L));
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MIGRATE_KIT_VERSION))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
-        when(loadQuestionPort.loadIdsByKitVersionId(assessmentResult.getKitVersionId())).thenReturn(Set.of(1L, 2L, 3L, 4L, 5L));
-        when(loadQuestionPort.loadIdsByKitVersionId(activeKitVersionId)).thenReturn(Set.of(1L, 2L, 3L, 4L, 5L));
+        when(loadQuestionPort.loadIdAndAnswerRangeIdByKitVersionId(assessmentResult.getKitVersionId())).thenReturn(currentVersionQuestionIds);
+        when(loadQuestionPort.loadIdAndAnswerRangeIdByKitVersionId(activeKitVersionId)).thenReturn(activeVersionQuestionIds);
 
         service.migrateKitVersion(param);
 
         verify(updateAssessmentResultPort, times(1)).updateKitVersionId(assessmentResult.getId(), activeKitVersionId);
         verify(invalidateAssessmentResultCalculatePort, times(1)).invalidateCalculate(assessmentResult.getId());
-        verifyNoInteractions(deleteAnswerPort);
+        verifyNoInteractions(deleteAnswerPort, updateAnswerPort);
     }
 
     @Test
-    void testMigrate_whenParametersAreValidAndThereAreDeletedQuestions_thenSuccessfulUpdate() {
+    void testMigrate_whenThereAreDeletedQuestionsAndChangeAnswerRanges_thenSuccessfulUpdate() {
         var assessmentResult = resultWithDeprecatedKitVersion();
         var activeKitVersionId = assessmentResult.getAssessment().getAssessmentKit().getKitVersion();
-        Set<Long> currentVersionQuestionIds = Set.of(1L, 2L, 3L, 4L, 5L);
-        Set<Long> activeVersionQuestionIds = Set.of(1L, 3L, 5L, 6L);
+        List<IdAndAnswerRange> currentVersionQuestionIds = List.of(
+            new IdAndAnswerRange(1L, 1L),
+            new IdAndAnswerRange(2L, 2L),
+            new IdAndAnswerRange(3L, 3L),
+            new IdAndAnswerRange(4L, 4L),
+            new IdAndAnswerRange(5L, 5L));
+        List<IdAndAnswerRange> activeVersionQuestionIds = List.of(
+            new IdAndAnswerRange(1L, 1L),
+            new IdAndAnswerRange(3L, 3L),
+            new IdAndAnswerRange(5L, 15L),
+            new IdAndAnswerRange(6L, 6L));
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MIGRATE_KIT_VERSION))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
             .thenReturn(Optional.of(assessmentResult));
-        when(loadQuestionPort.loadIdsByKitVersionId(assessmentResult.getKitVersionId()))
+        when(loadQuestionPort.loadIdAndAnswerRangeIdByKitVersionId(assessmentResult.getKitVersionId()))
             .thenReturn(currentVersionQuestionIds);
-        when(loadQuestionPort.loadIdsByKitVersionId(activeKitVersionId))
-            .thenReturn(activeVersionQuestionIds);
+        when(loadQuestionPort.loadIdAndAnswerRangeIdByKitVersionId(activeKitVersionId)).thenReturn(activeVersionQuestionIds);
+        UUID systemUserId = UUID.randomUUID();
+        when(loadUserPort.loadSystemUserId()).thenReturn(systemUserId);
 
         service.migrateKitVersion(param);
 
         verify(deleteAnswerPort, times(1)).delete(assessmentResult.getId(), Set.of(2L, 4L));
+        verify(updateAnswerPort, times(1))
+            .clearAnswers(assessmentResult.getId(), List.of(5L), systemUserId);
 
         verify(updateAssessmentResultPort, times(1))
             .updateKitVersionId(assessmentResult.getId(), activeKitVersionId);

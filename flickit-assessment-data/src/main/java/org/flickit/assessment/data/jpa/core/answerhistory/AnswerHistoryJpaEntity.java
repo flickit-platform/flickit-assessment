@@ -27,11 +27,11 @@ public class AnswerHistoryJpaEntity {
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "answer_id", referencedColumnName = "id", nullable = false)
     private AnswerJpaEntity answer;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "assessment_result_id", referencedColumnName = "id", nullable = false)
     private AssessmentResultJpaEntity assessmentResult;
 
@@ -49,6 +49,9 @@ public class AnswerHistoryJpaEntity {
 
     @Column(name = "status")
     private Integer status;
+
+    @Column(name = "answer_option_index")
+    private Integer answerOptionIndex;
 
     @Column(name = "created_by", nullable = false)
     private UUID createdBy;
