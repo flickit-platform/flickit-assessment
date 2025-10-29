@@ -59,15 +59,14 @@ class DeleteAnswerRangeServiceTest {
     void deleteAnswerRange_whenParamsAreValid_thenSuccessfulDelete() {
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(param.getCurrentUserId());
-        ArgumentCaptor<UpdateQuestionPort.UpdateAllAnswerRangesParam> updateQuestionArgumentCaptor = ArgumentCaptor.forClass(UpdateQuestionPort.UpdateAllAnswerRangesParam.class);
+        ArgumentCaptor<UpdateQuestionPort.ClearAnswerRangeParam> updateQuestionArgumentCaptor = ArgumentCaptor.forClass(UpdateQuestionPort.ClearAnswerRangeParam.class);
 
         service.deleteAnswerRange(param);
-        verify(updateQuestionPort).updateAllAnswerRanges(updateQuestionArgumentCaptor.capture());
+        verify(updateQuestionPort).clearAnswerRange(updateQuestionArgumentCaptor.capture());
         verify(deleteAnswerRangePort).delete(param.getAnswerRangeId(), kitVersion.getId());
 
         assertEquals(param.getAnswerRangeId(), updateQuestionArgumentCaptor.getValue().answerRangeId());
         assertEquals(param.getKitVersionId(), updateQuestionArgumentCaptor.getValue().kitVersionId());
-        assertNull(updateQuestionArgumentCaptor.getValue().newAnswerRangeId());
         assertNotNull(updateQuestionArgumentCaptor.getValue().lastModificationTime());
         assertEquals(param.getCurrentUserId(), updateQuestionArgumentCaptor.getValue().lastModifiedBy());
     }

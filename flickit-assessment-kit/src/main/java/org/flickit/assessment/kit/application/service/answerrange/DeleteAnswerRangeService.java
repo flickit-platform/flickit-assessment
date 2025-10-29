@@ -34,13 +34,12 @@ public class DeleteAnswerRangeService implements DeleteAnswerRangeUseCase {
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         deleteAnswerRangePort.delete(param.getAnswerRangeId(), kitVersion.getId());
-        updateQuestionPort.updateAllAnswerRanges(toParam(param.getAnswerRangeId(), param.getKitVersionId(), param.getCurrentUserId()));
+        updateQuestionPort.clearAnswerRange(toParam(param.getAnswerRangeId(), param.getKitVersionId(), param.getCurrentUserId()));
     }
 
-    UpdateQuestionPort.UpdateAllAnswerRangesParam toParam(long answerRangeId, long kitVersionId, UUID lastModifiedBy) {
-        return new UpdateQuestionPort.UpdateAllAnswerRangesParam(answerRangeId,
+    UpdateQuestionPort.ClearAnswerRangeParam toParam(long answerRangeId, long kitVersionId, UUID lastModifiedBy) {
+        return new UpdateQuestionPort.ClearAnswerRangeParam(answerRangeId,
             kitVersionId,
-            null,
             LocalDateTime.now(),
             lastModifiedBy);
     }

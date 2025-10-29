@@ -67,14 +67,18 @@ public interface UpdateQuestionPort {
     }
 
     /**
-     * Updates the Answer range of all questions based on the provided {@link UpdateAllAnswerRangesParam} object.
+     * Clears the {@code answerRangeId} (sets it to {@code null}) for all questions
+     * that currently reference the specified {@code answerRangeId}.
+     * <p>
+     * The update applies only to questions belonging to the given kit version.
      */
-    void updateAllAnswerRanges(UpdateAllAnswerRangesParam param);
+    void clearAnswerRange(ClearAnswerRangeParam param);
 
-    record UpdateAllAnswerRangesParam(long answerRangeId,
-                                  long kitVersionId,
-                                  Long newAnswerRangeId,
-                                  LocalDateTime lastModificationTime,
-                                  UUID lastModifiedBy) {
+    record ClearAnswerRangeParam(
+        long answerRangeId,
+        long kitVersionId,
+        LocalDateTime lastModificationTime,
+        UUID lastModifiedBy) {
     }
+
 }
