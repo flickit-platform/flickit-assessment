@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.application.service.measure;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.domain.ExpertGroup;
+import org.flickit.assessment.kit.application.domain.Question;
 import org.flickit.assessment.kit.application.port.in.measure.GetKitMeasureDetailUseCase;
 import org.flickit.assessment.kit.application.port.out.answerrange.LoadAnswerRangesPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadActiveKitVersionIdPort;
@@ -98,14 +99,15 @@ class GetKitMeasureDetailServiceTest {
     void testGetKitMeasureDetail_whenParamsAreValidAndIsAndAnswerRagesAreReusable_thenReturnResult() {
         var measure = MeasureMother.measureWithTitle("Measure");
         var answerRanges = List.of(AnswerRangeMother.createAnswerRangeWithFourOptions(), createReusableAnswerRangeWithTwoOptions());
-        var questionnaires = List.of(questionnaireWithTitle("Questionnaire1"), questionnaireWithTitle("Questionnaire2"));
-        var questions = List.of(createQuestion(answerRanges.getFirst().getId(), questionnaires.getLast().getId()),
-            createQuestion(answerRanges.getLast().getId(), questionnaires.getFirst().getId()),
-            createQuestion(answerRanges.getFirst().getId(), questionnaires.getLast().getId()));
-        questions.getFirst().setOptions(answerRanges.getFirst().getAnswerOptions());
-        questions.get(1).setOptions(answerRanges.getLast().getAnswerOptions());
-        questions.getLast().setOptions(answerRanges.getFirst().getAnswerOptions());
-        var expectedQuestions = List.of(questions.get(1), questions.getFirst(), questions.getLast());
+        var questionnaires = List.of(questionnaireWithTitle("QuestionnaireB"), questionnaireWithTitle("QuestionnaireA"));
+        Question question1 = createQuestion(answerRanges.getFirst().getId(), questionnaires.getLast().getId());
+        Question question2 = createQuestion(answerRanges.getLast().getId(), questionnaires.getFirst().getId());
+        Question question3 = createQuestion(answerRanges.getFirst().getId(), questionnaires.getLast().getId());
+        var questions = List.of(question3, question2, question1);
+        question1.setOptions(answerRanges.getFirst().getAnswerOptions());
+        question2.setOptions(answerRanges.getLast().getAnswerOptions());
+        question3.setOptions(answerRanges.getFirst().getAnswerOptions());
+        var expectedQuestions = List.of(question1, question3, question2);
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
@@ -136,14 +138,14 @@ class GetKitMeasureDetailServiceTest {
     void testGetKitMeasureDetail_whenParamsAreValidAndAnswerRangesAreNotReusable_thenReturnResult() {
         var measure = MeasureMother.measureWithTitle("Measure");
         var answerRanges = List.of(createNonReusableAnswerRangeWithTwoOptions(), createNonReusableAnswerRangeWithTwoOptions());
-        var questionnaires = List.of(questionnaireWithTitle("Questionnaire1"), questionnaireWithTitle("Questionnaire2"));
+        var questionnaires = List.of(questionnaireWithTitle("QuestionnaireB"), questionnaireWithTitle("QuestionnaireA"));
         var questions = List.of(createQuestion(answerRanges.getFirst().getId(), questionnaires.getLast().getId()),
             createQuestion(answerRanges.getLast().getId(), questionnaires.getFirst().getId()),
             createQuestion(answerRanges.getFirst().getId(), questionnaires.getLast().getId()));
         questions.getFirst().setOptions(answerRanges.getFirst().getAnswerOptions());
         questions.get(1).setOptions(answerRanges.getLast().getAnswerOptions());
         questions.getLast().setOptions(answerRanges.getFirst().getAnswerOptions());
-        var expectedQuestions = List.of(questions.get(1), questions.getFirst(), questions.getLast());
+        var expectedQuestions = List.of(questions.getFirst(), questions.getLast(), questions.get(1));
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);

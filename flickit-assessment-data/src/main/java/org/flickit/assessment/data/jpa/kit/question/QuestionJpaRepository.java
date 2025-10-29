@@ -8,10 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, QuestionJpaEntity.EntityId> {
 
@@ -274,4 +271,13 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
             WHERE q.kitVersionId = :kitVersionId and q.measureId IS NULL
         """)
     List<QuestionQuestionnaireView> findAllByKitVersionIdAndWithoutMeasure(@Param("kitVersionId") long kitVersionId);
+
+    @Query("""
+            SELECT
+                q.id as questionId,
+                q.answerRangeId as answerRangeId
+            FROM QuestionJpaEntity q
+            WHERE q.kitVersionId = :kitVersionId
+        """)
+    List<QuestionIdAndAnswerRangeIdView> findIdAndAnswerRangeIdByKitVersionId(@Param("kitVersionId") long kitVersionId);
 }

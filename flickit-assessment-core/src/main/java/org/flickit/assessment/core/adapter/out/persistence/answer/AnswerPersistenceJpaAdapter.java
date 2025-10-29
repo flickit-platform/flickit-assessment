@@ -2,7 +2,9 @@ package org.flickit.assessment.core.adapter.out.persistence.answer;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.adapter.out.persistence.kit.answeroption.AnswerOptionMapper;
 import org.flickit.assessment.core.application.domain.Answer;
+import org.flickit.assessment.core.application.domain.AnswerOption;
 import org.flickit.assessment.core.application.domain.AnswerStatus;
 import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 import org.flickit.assessment.core.application.port.out.answer.*;
@@ -17,6 +19,7 @@ import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
@@ -30,7 +33,8 @@ public class AnswerPersistenceJpaAdapter implements
     UpdateAnswerPort,
     LoadQuestionsAnswerListPort,
     CountLowConfidenceAnswersPort,
-    ApproveAnswerPort {
+    ApproveAnswerPort,
+    DeleteAnswerPort {
 
     private final AnswerJpaRepository repository;
     private final AssessmentResultJpaRepository assessmentResultRepo;
@@ -80,15 +84,29 @@ public class AnswerPersistenceJpaAdapter implements
 
     @Override
     public Optional<Answer> load(UUID assessmentResultId, Long questionId) {
-        return repository.findByAssessmentResultIdAndQuestionIdAndDeletedFalse(assessmentResultId, questionId)
-            .map(AnswerMapper::mapToDomainModel);
+        var answerWithOptionView = repository.findByAssessmentResultIdAndQuestionId(assessmentResultId, questionId);
+
+        return answerWithOptionView.map(view -> {
+            AnswerOption answerOption = view.getOption() != null ? AnswerOptionMapper.mapToDomainModel(view.getOption()) : null;
+            return AnswerMapper.mapToDomainModel(view.getAnswer(), answerOption);
+        });
     }
 
     @Override
     public List<Answer> loadAllUnapproved(UUID assessmentResultId) {
         return repository.findAnswersByAssessmentResultIdAndStatus(assessmentResultId, AnswerStatus.UNAPPROVED.getId()).stream()
-            .map(AnswerMapper::mapToDomainModel)
+            .map(view -> {
+                AnswerOption answerOption = view.getOption() != null ? AnswerOptionMapper.mapToDomainModel(view.getOption()) : null;
+                return AnswerMapper.mapToDomainModel(view.getAnswer(), answerOption);
+            })
             .toList();
+    }
+
+    @Override
+    public Set<UUID> loadIdsByQuestionIds(List<Long> questionIds) {
+        return repository.findAllByQuestionIdIn(questionIds).stream()
+            .map(AnswerJpaEntity::getId)
+            .collect(Collectors.toSet());
     }
 
     @Override
@@ -145,5 +163,15 @@ public class AnswerPersistenceJpaAdapter implements
     @Override
     public void approveAll(List <UUID> answerIds, UUID approvedBy) {
         repository.approveByAnswerIds(answerIds, approvedBy ,AnswerStatus.APPROVED.getId());
+    }
+
+    @Override
+    public void delete(UUID assessmentResultId, Set<Long> questionIds) {
+        repository.deleteByAssessmentResultIdAndQuestionIdIn(assessmentResultId, questionIds);
+    }
+
+    @Override
+    public void clearAnswers(UUID assessmentResultId, List<Long> questionIds, UUID lastModifiedBy) {
+        repository.clearAnswers(assessmentResultId, questionIds, lastModifiedBy);
     }
 }

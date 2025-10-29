@@ -12,6 +12,7 @@ import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAss
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadCalculateInfoPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.UpdateCalculatedResultPort;
 import org.flickit.assessment.core.application.port.out.attributevalue.CreateAttributeValuePort;
+import org.flickit.assessment.core.application.port.out.kitcustom.LoadKitCustomLastModificationTimePort;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectsPort;
 import org.flickit.assessment.core.application.port.out.subjectvalue.CreateSubjectValuePort;
 import org.springframework.stereotype.Service;
@@ -39,6 +40,7 @@ public class CalculateAssessmentService implements CalculateAssessmentUseCase {
     private final LoadSubjectsPort loadSubjectsPort;
     private final CreateSubjectValuePort createSubjectValuePort;
     private final CreateAttributeValuePort createAttributeValuePort;
+    private final LoadKitCustomLastModificationTimePort loadKitCustomLastModificationTimePort;
 
     @Override
     public Result calculateMaturityLevel(Param param) {
@@ -51,7 +53,12 @@ public class CalculateAssessmentService implements CalculateAssessmentUseCase {
         var kitId = assessmentResult.getAssessment().getAssessmentKit().getId();
         var kitLastMajorModificationTime = loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(kitId);
 
-        if (isCalculationValid(assessmentResult, kitLastMajorModificationTime))
+        LocalDateTime lastKitCustomModificationTime = null;
+        Long kitCustomId = assessmentResult.getAssessment().getKitCustomId();
+        if (kitCustomId != null)
+            lastKitCustomModificationTime = loadKitCustomLastModificationTimePort.loadLastModificationTime(kitCustomId);
+
+        if (isCalculationValid(assessmentResult, kitLastMajorModificationTime, lastKitCustomModificationTime))
             return new Result(assessmentResult.getMaturityLevel(), false);
 
         if (assessmentResult.getLastCalculationTime() == null || assessmentResult.getLastCalculationTime().isBefore(kitLastMajorModificationTime))
@@ -65,11 +72,18 @@ public class CalculateAssessmentService implements CalculateAssessmentUseCase {
         return new Result(calcResult, true);
     }
 
-    boolean isCalculationValid(AssessmentResult assessmentResult, LocalDateTime kitLastMajorModificationTime) {
+    boolean isCalculationValid(AssessmentResult assessmentResult,
+                               LocalDateTime kitLastMajorModificationTime,
+                               LocalDateTime lastKitCustomModificationTime) {
         var calculationTime = assessmentResult.getLastCalculationTime();
-        return Boolean.TRUE.equals(assessmentResult.getIsCalculateValid())
-            && calculationTime != null
-            && calculationTime.isAfter(kitLastMajorModificationTime);
+        if (!Boolean.TRUE.equals(assessmentResult.getIsCalculateValid()) || calculationTime == null)
+            return false;
+
+        boolean isAfterKitMajorModificationTime = calculationTime.isAfter(kitLastMajorModificationTime);
+        boolean isAfterKitCustomModificationTime = lastKitCustomModificationTime == null
+            || calculationTime.isAfter(lastKitCustomModificationTime);
+
+        return isAfterKitMajorModificationTime && isAfterKitCustomModificationTime;
     }
 
     private static MaturityLevel calculate(AssessmentResult assessmentResult) {

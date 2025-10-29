@@ -2,6 +2,7 @@ package org.flickit.assessment.core.application.port.out.answer;
 
 import org.flickit.assessment.core.application.domain.AnswerStatus;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface UpdateAnswerPort {
@@ -15,4 +16,6 @@ public interface UpdateAnswerPort {
                  AnswerStatus status,
                  UUID currentUserId) {
     }
+
+    void clearAnswers(UUID assessmentResultId, List<Long> answerIds, UUID modifiedBy);
 }

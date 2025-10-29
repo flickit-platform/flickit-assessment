@@ -18,12 +18,35 @@ public class AssessmentResultMother {
             subjectValues, LocalDateTime.now(), LocalDateTime.now());
     }
 
+    public static AssessmentResult invalidResultWithSubjectValuesAndKitCustomId(List<SubjectValue> subjectValues, Long kitCustomId) {
+        Assessment assessment = AssessmentMother.assessmentWithKitCustomId(kitCustomId);
+        return new AssessmentResult(UUID.randomUUID(), assessment, assessment.getAssessmentKit().getKitVersion(),
+            subjectValues, LocalDateTime.now(), LocalDateTime.now());
+    }
+
     public static AssessmentResult validResultWithSubjectValuesAndMaturityLevel(List<SubjectValue> subjectValues, MaturityLevel maturityLevel) {
         Assessment assessment = AssessmentMother.assessment();
         AssessmentResult assessmentResult = new AssessmentResult(UUID.randomUUID(), assessment, assessment.getAssessmentKit().getKitVersion(),
             subjectValues, LocalDateTime.now(), LocalDateTime.now());
         assessmentResult.setIsCalculateValid(true);
         assessmentResult.setMaturityLevel(maturityLevel);
+        assessmentResult.setLanguage(KitLanguage.EN);
+        assessmentResult.setLastCalculationTime(LocalDateTime.now());
+        assessmentResult.setLastConfidenceCalculationTime(LocalDateTime.now());
+        return assessmentResult;
+    }
+
+    public static AssessmentResult validResultWithKitCustomId(Long kitCustomId) {
+        Assessment assessment = AssessmentMother.assessmentWithKitCustomId(kitCustomId);
+        var assessmentResult = new AssessmentResult(UUID.randomUUID(),
+            assessment,
+            assessment.getAssessmentKit().getKitVersion(),
+            new ArrayList<>(),
+            LocalDateTime.now(),
+            LocalDateTime.now());
+
+        assessmentResult.setIsCalculateValid(true);
+        assessmentResult.setMaturityLevel(levelFour());
         assessmentResult.setLanguage(KitLanguage.EN);
         assessmentResult.setLastCalculationTime(LocalDateTime.now());
         assessmentResult.setLastConfidenceCalculationTime(LocalDateTime.now());
@@ -95,6 +118,10 @@ public class AssessmentResultMother {
         assessmentResult.setLastCalculationTime(lastCalculationTime);
         assessmentResult.setLastConfidenceCalculationTime(lastConfCalculationTime);
         return assessmentResult;
+    }
+
+    public static AssessmentResult resultWithDeprecatedKitVersion() {
+        return resultWithDeprecatedKitVersion(false, false, LocalDateTime.MIN, LocalDateTime.MIN);
     }
 
     public static AssessmentResult validResultWithLanguage(KitLanguage kitLanguage, KitLanguage assessmentLanguage) {
