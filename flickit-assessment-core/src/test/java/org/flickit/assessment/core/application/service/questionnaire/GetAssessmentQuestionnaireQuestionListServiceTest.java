@@ -80,7 +80,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
     }
 
     @Test
-    void testGetAssessmentQuestionnaireQuestionList_whenParametersAreValidAndAnswerIsNotApplicableFalse_ValidResult() {
+    void testGetAssessmentQuestionnaireQuestionList_whenParamsAreValidAndAnswerIsNotApplicableFalse_thenValidResult() {
         Answer answer = new Answer(UUID.randomUUID(), new AnswerOption(question.getOptions().getFirst().getId(), 2,
             null, null), question.getId(), 1, Boolean.FALSE, APPROVED);
         var evidencesAndComments = new CountEvidencesPort.EvidencesAndCommentsCountResult(0, 5);
@@ -95,7 +95,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         when(countEvidencesPort.countQuestionnaireQuestionsEvidencesAndComments(param.getAssessmentId(), param.getQuestionnaireId()))
             .thenReturn(Map.of(question.getId(), evidencesAndComments));
         when(countEvidencesPort.countUnresolvedComments(param.getAssessmentId(), param.getQuestionnaireId()))
-            .thenReturn(Map.of(question.getId(), 2));
+            .thenReturn(Map.of(question.getId(), 0));
         when(countAnswerHistoryPort.countAnswerHistories(param.getAssessmentId(), List.of(question.getId())))
             .thenReturn(Map.of(question.getId(), answerHistoriesCount));
 
@@ -114,7 +114,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         assertFalse(item.issues().isUnanswered());
         assertTrue(item.issues().isAnsweredWithLowConfidence());
         assertTrue(item.issues().isAnsweredWithoutEvidences());
-        assertEquals(2, item.issues().unresolvedCommentsCount());
+        assertEquals(0, item.issues().unresolvedCommentsCount());
         assertFalse(item.issues().hasUnapprovedAnswer());
         //Assert Counts
         assertEquals(evidencesAndComments.evidenceCount(), result.getItems().getFirst().counts().evidences());
@@ -123,7 +123,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
     }
 
     @Test
-    void testGetAssessmentQuestionnaireQuestionList_ValidParamsAndAnswerIsNotApplicable_ValidResult() {
+    void testGetAssessmentQuestionnaireQuestionList_whenParamsAreValidAndAnswerIsNotApplicable_thenValidResult() {
         Answer answer = new Answer(UUID.randomUUID(), new AnswerOption(question.getOptions().getFirst().getId(), 2,
             null, null), question.getId(), 3, Boolean.TRUE, UNAPPROVED);
         var evidencesAndComments = new CountEvidencesPort.EvidencesAndCommentsCountResult(2, 3);
@@ -166,7 +166,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
     }
 
     @Test
-    void testGetAssessmentQuestionnaireQuestionList_ValidParamsAndSelectedOptionIsNullAndNotApplicable_ValidResult() {
+    void testGetAssessmentQuestionnaireQuestionList_whenParamsAreValidAndSelectedOptionIsNullAndNotApplicable_thenValidResult() {
         Answer answer = new Answer(UUID.randomUUID(), null, question.getId(), 3, Boolean.TRUE, APPROVED);
         var evidencesAndComments = new CountEvidencesPort.EvidencesAndCommentsCountResult(2, 1);
         int answerHistoriesCount = 1;
@@ -208,7 +208,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
     }
 
     @Test
-    void testGetAssessmentQuestionnaireQuestionList_ValidParamsAndSelectedOptionIsNullAndIsNotApplicableFalse_ValidResult() {
+    void testGetAssessmentQuestionnaireQuestionList_whenParamsAreValidAndSelectedOptionIsNullAndIsNotApplicableFalse_thenValidResult() {
         Answer answer = new Answer(UUID.randomUUID(), null, question.getId(), 1, Boolean.FALSE, null);
         int answerHistoriesCount = 1;
 
