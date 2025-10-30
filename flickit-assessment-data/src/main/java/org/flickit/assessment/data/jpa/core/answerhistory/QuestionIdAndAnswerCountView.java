@@ -4,5 +4,5 @@ public interface QuestionIdAndAnswerCountView {
 
     Long getQuestionId();
 
-    Integer getAnswerCount();
+    Integer getAnswerHistoryCount();
 }
