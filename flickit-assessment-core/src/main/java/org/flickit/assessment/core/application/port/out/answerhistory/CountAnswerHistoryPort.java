@@ -6,5 +6,5 @@ import java.util.UUID;
 
 public interface CountAnswerHistoryPort {
 
-    Map<Long, Integer> countAnswerHistories(UUID assessmentResultId, List<Long> questionIds);
+    Map<Long, Integer> countAnswerHistories(UUID assessmentId, List<Long> questionIds);
 }
