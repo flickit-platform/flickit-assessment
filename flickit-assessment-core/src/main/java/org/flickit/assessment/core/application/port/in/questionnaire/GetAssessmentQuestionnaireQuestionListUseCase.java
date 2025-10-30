@@ -58,7 +58,8 @@ public interface GetAssessmentQuestionnaireQuestionListUseCase {
                   Boolean mayNotBeApplicable,
                   List<Option> options,
                   QuestionAnswer answer,
-                  Issues issues) {
+                  Issues issues,
+                  Counts counts) {
     }
 
     record Option(Long id, Integer index, String title) {
@@ -75,5 +76,10 @@ public interface GetAssessmentQuestionnaireQuestionListUseCase {
                   boolean isAnsweredWithoutEvidences,
                   int unresolvedCommentsCount,
                   boolean hasUnapprovedAnswer) {
+    }
+
+    record Counts(int evidences,
+                  int comments,
+                  int answerHistories){
     }
 }
