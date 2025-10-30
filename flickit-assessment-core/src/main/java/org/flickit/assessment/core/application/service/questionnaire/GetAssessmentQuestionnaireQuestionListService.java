@@ -7,6 +7,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetAssessmentQuestionnaireQuestionListUseCase;
 import org.flickit.assessment.core.application.port.out.answer.LoadQuestionsAnswerListPort;
+import org.flickit.assessment.core.application.port.out.answerhistory.CountAnswerHistoryPort;
 import org.flickit.assessment.core.application.port.out.evidence.CountEvidencesPort;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionnaireQuestionListPort;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,7 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
     private final LoadQuestionnaireQuestionListPort loadQuestionnaireQuestionListPort;
     private final LoadQuestionsAnswerListPort loadQuestionsAnswerListPort;
     private final CountEvidencesPort countEvidencesPort;
+    private final CountAnswerHistoryPort countAnswerHistoryPort;
 
     @Override
     public PaginatedResponse<Result> getQuestionnaireQuestionList(Param param) {
@@ -48,13 +50,15 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
             .stream()
             .collect(toMap(Answer::getQuestionId, Function.identity()));
 
-        var questionIdToEvidencesCountMap = countEvidencesPort.countQuestionnaireQuestionsEvidences(param.getAssessmentId(), param.getQuestionnaireId());
+        var questionIdToAnswerCountMap = countAnswerHistoryPort.countAnswerHistories(param.getAssessmentId(), questionIds);
+        var questionIdToEvidencesCountMap = countEvidencesPort.countQuestionnaireQuestionsEvidencesAndComments(param.getAssessmentId(), param.getQuestionnaireId());
         var questionIdToUnresolvedCommentsCountMap = countEvidencesPort.countUnresolvedComments(param.getAssessmentId(), param.getQuestionnaireId());
         var items = pageResult.getItems().stream()
             .map((Question q) -> mapToResult(q,
                 questionIdToAnswerMap.get(q.getId()),
-                questionIdToEvidencesCountMap.getOrDefault(q.getId(), 0),
-                questionIdToUnresolvedCommentsCountMap.getOrDefault(q.getId(), 0)))
+                questionIdToEvidencesCountMap.getOrDefault(q.getId(), new CountEvidencesPort.EvidencesAndCommentsCountResult(0, 0)),
+                questionIdToUnresolvedCommentsCountMap.getOrDefault(q.getId(), 0),
+                questionIdToAnswerCountMap.getOrDefault(q.getId(), 0)))
             .toList();
 
         return new PaginatedResponse<>(
@@ -66,7 +70,7 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
             pageResult.getTotal());
     }
 
-    private Result mapToResult(Question question, Answer answer, int evidencesCount, int unresolvedCommentsCount) {
+    private Result mapToResult(Question question, Answer answer, CountEvidencesPort.EvidencesAndCommentsCountResult evidencesAndCommentsCount, int unresolvedCommentsCount, int answerHistoryCount) {
         QuestionAnswer answerDto = null;
         if (answer != null) {
             Option answerOption = null;
@@ -98,10 +102,12 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
             new Issues(
                 !hasAnswer(answer),
                 hasAnswer(answer) && answer.getConfidenceLevelId() < ConfidenceLevel.SOMEWHAT_UNSURE.getId(),
-                hasAnswer(answer) && evidencesCount == 0,
+                hasAnswer(answer) && evidencesAndCommentsCount.evidenceCount() == 0,
                 unresolvedCommentsCount,
-                answerDto != null && answerDto.approved() != null && !answerDto.approved()
-            ));
+                answerDto != null && answerDto.approved() != null && !answerDto.approved()),
+            new Counts(evidencesAndCommentsCount.evidenceCount(),
+                evidencesAndCommentsCount.commentCount(),
+                answerHistoryCount));
     }
 
     private boolean hasAnswer(Answer answer) {
