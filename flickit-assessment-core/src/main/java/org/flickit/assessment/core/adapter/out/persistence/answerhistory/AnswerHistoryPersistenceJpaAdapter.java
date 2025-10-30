@@ -6,9 +6,11 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.adapter.out.persistence.user.UserMapper;
 import org.flickit.assessment.core.application.domain.AnswerHistory;
 import org.flickit.assessment.core.application.domain.AnswerStatus;
+import org.flickit.assessment.core.application.port.out.answerhistory.CountAnswerHistoryPort;
 import org.flickit.assessment.core.application.port.out.answerhistory.CreateAnswerHistoryPort;
 import org.flickit.assessment.core.application.port.out.answerhistory.LoadAnswerHistoryListPort;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
+import org.flickit.assessment.data.jpa.core.answerhistory.QuestionIdAndAnswerCountView;
 import org.flickit.assessment.data.jpa.core.answerhistory.AnswerHistoryJpaEntity;
 import org.flickit.assessment.data.jpa.core.answerhistory.AnswerHistoryJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
@@ -20,19 +22,22 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ANSWER_HISTORY_LIST_ASSESSMENT_RESULT_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
 public class AnswerHistoryPersistenceJpaAdapter implements
     CreateAnswerHistoryPort,
-    LoadAnswerHistoryListPort {
+    LoadAnswerHistoryListPort,
+    CountAnswerHistoryPort {
 
     private final AnswerHistoryJpaRepository repository;
     private final AssessmentResultJpaRepository assessmentResultRepository;
@@ -134,5 +139,16 @@ public class AnswerHistoryPersistenceJpaAdapter implements
             sort,
             order.name().toLowerCase(),
             (int) pageResult.getTotalElements());
+    }
+
+    @Override
+    public Map<Long, Integer> countAnswerHistories(UUID assessmentId, List<Long> questionIds) {
+        var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
+            .orElseThrow(()-> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
+
+        return repository.countByAssessmentResultIdAndQuestionIdIn(assessmentResult.getId(), questionIds)
+            .stream()
+            .collect(Collectors.toMap(QuestionIdAndAnswerCountView::getQuestionId, QuestionIdAndAnswerCountView::getAnswerCount));
+
     }
 }
