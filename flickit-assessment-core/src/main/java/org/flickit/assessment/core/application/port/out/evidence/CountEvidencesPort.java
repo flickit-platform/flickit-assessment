@@ -26,14 +26,17 @@ public interface CountEvidencesPort {
     Map<Long, Integer> countAnsweredQuestionsHavingEvidence(UUID assessmentId, Set<Long> questionnaireIds);
 
     /**
-     * Counts the evidences associated with answered questions
+     * Counts the evidences and comments associated with answered questions
      * for a given questionnaire within an assessment.
      *
      * @param assessmentId    the unique identifier of the assessment
      * @param questionnaireId the unique identifier of the questionnaire
      * @return a map where the key is the question ID of the answered question, and the value is the count of evidences for that question
      */
-    Map<Long, Integer> countQuestionnaireQuestionsEvidences(UUID assessmentId, long questionnaireId);
+    Map<Long, EvidencesAndCommentsCountResult> countQuestionnaireQuestionsEvidencesAndComments(UUID assessmentId, long questionnaireId);
+
+    record EvidencesAndCommentsCountResult(int evidenceCount, int commentCount){
+    }
 
     /**
      * Counts the number of evidences
