@@ -2,6 +2,7 @@ package org.flickit.assessment.core.application.service.questionnaire;
 
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.domain.Answer;
 import org.flickit.assessment.core.application.domain.AnswerOption;
@@ -30,8 +31,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 import static org.flickit.assessment.core.application.domain.AnswerStatus.APPROVED;
 import static org.flickit.assessment.core.application.domain.AnswerStatus.UNAPPROVED;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class GetAssessmentQuestionnaireQuestionListServiceTest {
@@ -41,6 +41,9 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
 
     @Mock
     private AssessmentAccessChecker assessmentAccessChecker;
+
+    @Mock
+    private ValidateAssessmentResultPort validateAssessmentResultPort;
 
     @Mock
     private LoadQuestionnaireQuestionListPort loadQuestionnaireQuestionListPort;
@@ -89,6 +92,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
             .thenReturn(true);
+        doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
         when(loadQuestionnaireQuestionListPort.loadByQuestionnaireId(param.getQuestionnaireId(), param.getAssessmentId(), param.getSize(), param.getPage()))
             .thenReturn(expectedPaginatedResponse);
         when(loadQuestionsAnswerListPort.loadByQuestionIds(param.getAssessmentId(), List.of(question.getId())))
@@ -132,6 +136,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
             .thenReturn(true);
+        doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
         when(loadQuestionnaireQuestionListPort.loadByQuestionnaireId(param.getQuestionnaireId(), param.getAssessmentId(), param.getSize(), param.getPage()))
             .thenReturn(expectedPaginatedResponse);
         when(loadQuestionsAnswerListPort.loadByQuestionIds(param.getAssessmentId(), List.of(question.getId())))
@@ -175,6 +180,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
             .thenReturn(true);
+        doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
         when(loadQuestionnaireQuestionListPort.loadByQuestionnaireId(param.getQuestionnaireId(), param.getAssessmentId(), param.getSize(), param.getPage()))
             .thenReturn(expectedPaginatedResponse);
         when(loadQuestionsAnswerListPort.loadByQuestionIds(param.getAssessmentId(), List.of(question.getId())))
@@ -216,6 +222,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
             .thenReturn(true);
+        doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
         when(loadQuestionnaireQuestionListPort.loadByQuestionnaireId(param.getQuestionnaireId(), param.getAssessmentId(), param.getSize(), param.getPage()))
             .thenReturn(expectedPaginatedResponse);
         when(loadQuestionsAnswerListPort.loadByQuestionIds(param.getAssessmentId(), List.of(question.getId())))
