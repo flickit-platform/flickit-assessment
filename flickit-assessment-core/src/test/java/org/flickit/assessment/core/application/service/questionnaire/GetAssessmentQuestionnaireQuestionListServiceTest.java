@@ -11,7 +11,7 @@ import org.flickit.assessment.core.application.domain.Question;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetAssessmentQuestionnaireQuestionListUseCase;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetAssessmentQuestionnaireQuestionListUseCase.Param;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetAssessmentQuestionnaireQuestionListUseCase.Result;
-import org.flickit.assessment.core.application.port.out.answer.LoadQuestionsAnswerListPort;
+import org.flickit.assessment.core.application.port.out.answer.LoadAnswerPort;
 import org.flickit.assessment.core.application.port.out.answerhistory.LoadAnswerHistoryPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.evidence.CountEvidencesPort;
@@ -58,7 +58,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
     private LoadQuestionnaireQuestionListPort loadQuestionnaireQuestionListPort;
 
     @Mock
-    private LoadQuestionsAnswerListPort loadQuestionsAnswerListPort;
+    private LoadAnswerPort loadAnswerPort;
 
     @Mock
     private CountEvidencesPort countEvidencesPort;
@@ -91,7 +91,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
         verifyNoInteractions(loadQuestionnaireQuestionListPort,
-            loadQuestionsAnswerListPort,
+            loadAnswerPort,
             countEvidencesPort,
             loadAnswerHistoryPort);
     }
@@ -109,7 +109,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(loadQuestionnaireQuestionListPort.loadByQuestionnaireId(any()))
             .thenReturn(expectedPaginatedResponse);
-        when(loadQuestionsAnswerListPort.loadByQuestionIds(param.getAssessmentId(), List.of(question.getId())))
+        when(loadAnswerPort.loadByQuestionnaireId(assessmentResult.getId(), param.getQuestionnaireId()))
             .thenReturn(List.of(answer));
         when(countEvidencesPort.countQuestionnaireQuestionsEvidences(param.getAssessmentId(), param.getQuestionnaireId()))
             .thenReturn(Map.of(question.getId(), evidencesCount));
@@ -156,7 +156,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(loadQuestionnaireQuestionListPort.loadByQuestionnaireId(any()))
             .thenReturn(expectedPaginatedResponse);
-        when(loadQuestionsAnswerListPort.loadByQuestionIds(param.getAssessmentId(), List.of(question.getId())))
+        when(loadAnswerPort.loadByQuestionnaireId(assessmentResult.getId(), param.getQuestionnaireId()))
             .thenReturn(List.of(answer));
         when(countEvidencesPort.countQuestionnaireQuestionsEvidences(param.getAssessmentId(), param.getQuestionnaireId()))
             .thenReturn(Map.of(question.getId(), evidencesCount));
@@ -203,7 +203,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(loadQuestionnaireQuestionListPort.loadByQuestionnaireId(any()))
             .thenReturn(expectedPaginatedResponse);
-        when(loadQuestionsAnswerListPort.loadByQuestionIds(param.getAssessmentId(), List.of(question.getId())))
+        when(loadAnswerPort.loadByQuestionnaireId(assessmentResult.getId(), param.getQuestionnaireId()))
             .thenReturn(List.of(answer));
         when(countEvidencesPort.countQuestionnaireQuestionsEvidences(param.getAssessmentId(), param.getQuestionnaireId()))
             .thenReturn(Map.of(question.getId(), evidencesCount));
@@ -248,7 +248,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(loadQuestionnaireQuestionListPort.loadByQuestionnaireId(any()))
             .thenReturn(expectedPaginatedResponse);
-        when(loadQuestionsAnswerListPort.loadByQuestionIds(param.getAssessmentId(), List.of(question.getId())))
+        when(loadAnswerPort.loadByQuestionnaireId(assessmentResult.getId(), param.getQuestionnaireId()))
             .thenReturn(List.of(answer));
         when(countEvidencesPort.countQuestionnaireQuestionsEvidences(param.getAssessmentId(), param.getQuestionnaireId()))
             .thenReturn(Map.of());

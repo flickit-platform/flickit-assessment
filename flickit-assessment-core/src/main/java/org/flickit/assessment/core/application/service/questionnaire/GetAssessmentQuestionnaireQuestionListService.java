@@ -8,7 +8,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetAssessmentQuestionnaireQuestionListUseCase;
-import org.flickit.assessment.core.application.port.out.answer.LoadQuestionsAnswerListPort;
+import org.flickit.assessment.core.application.port.out.answer.LoadAnswerPort;
 import org.flickit.assessment.core.application.port.out.answerhistory.LoadAnswerHistoryPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.evidence.CountEvidencesPort;
@@ -16,7 +16,6 @@ import org.flickit.assessment.core.application.port.out.question.LoadQuestionnai
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
@@ -34,7 +33,7 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
     private final ValidateAssessmentResultPort validateAssessmentResultPort;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final LoadQuestionnaireQuestionListPort loadQuestionnaireQuestionListPort;
-    private final LoadQuestionsAnswerListPort loadQuestionsAnswerListPort;
+    private final LoadAnswerPort loadAnswerPort;
     private final CountEvidencesPort countEvidencesPort;
     private final LoadAnswerHistoryPort loadAnswerHistoryPort;
 
@@ -50,11 +49,7 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
 
         var questionsPage = loadQuestions(param, assessmentResult);
 
-        List<Long> questionIds = questionsPage.getItems().stream()
-            .map(Question::getId)
-            .toList();
-
-        var questionIdToAnswerMap = loadQuestionsAnswerListPort.loadByQuestionIds(param.getAssessmentId(), questionIds).stream()
+        var questionIdToAnswerMap = loadAnswerPort.loadByQuestionnaireId(assessmentResult.getId(), param.getQuestionnaireId()).stream()
             .collect(toMap(Answer::getQuestionId, Function.identity()));
 
         var questionIdToAnswerHistoriesCountMap = loadAnswerHistoryPort.countAnswerHistories(param.getAssessmentId(), questionIds);

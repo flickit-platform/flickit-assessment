@@ -30,7 +30,6 @@ public class AnswerPersistenceJpaAdapter implements
     CountAnswersPort,
     LoadAnswerPort,
     UpdateAnswerPort,
-    LoadQuestionsAnswerListPort,
     CountLowConfidenceAnswersPort,
     ApproveAnswerPort,
     DeleteAnswerPort {
@@ -102,6 +101,13 @@ public class AnswerPersistenceJpaAdapter implements
     }
 
     @Override
+    public List<Answer> loadByQuestionnaireId(UUID assessmentResultId, Long questionnaireId) {
+        return repository.findByAssessmentResultIdAndQuestionnaireId(assessmentResultId, questionnaireId).stream()
+            .map(AnswerMapper::mapToDomainModel)
+            .toList();
+    }
+
+    @Override
     public void update(UpdateAnswerPort.Param param) {
         var answer = repository.findById(param.answerId())
             .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ANSWER_ID_NOT_FOUND));
@@ -122,16 +128,6 @@ public class AnswerPersistenceJpaAdapter implements
             param.isNotApplicable(),
             param.status() != null ? param.status().getId() : null,
             param.currentUserId());
-    }
-
-    @Override
-    public List<Answer> loadByQuestionIds(UUID assessmentId, List<Long> questionIds) {
-        var assessmentResult = assessmentResultRepo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
-            .orElseThrow(() -> new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND));
-
-        return repository.findByAssessmentResultIdAndDeletedFalseAndQuestionIdIn(assessmentResult.getId(), questionIds).stream()
-            .map(AnswerMapper::mapToDomainModel)
-            .toList();
     }
 
     @Override

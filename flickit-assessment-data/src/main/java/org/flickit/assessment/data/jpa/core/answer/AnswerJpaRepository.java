@@ -26,7 +26,16 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
     Optional<AnswerWithOptionView> findByAssessmentResultIdAndQuestionId(@Param("assessmentResultId") UUID assessmentResultId,
                                                                          @Param("questionId") Long questionId);
 
-    List<AnswerJpaEntity> findAllByQuestionIdIn(List<Long> questionId);
+    @Query("""
+            SELECT ans as answer
+            FROM AnswerJpaEntity ans
+            JOIN AssessmentResultJpaEntity ar ON ans.assessmentResult.id = ar.id
+            WHERE ans.assessmentResult.id = :assessmentResultId
+                AND ans.questionnaireId = :questionnaireId
+                AND ans.deleted = false
+        """)
+    Optional<AnswerJpaEntity> findByAssessmentResultIdAndQuestionnaireId(@Param("assessmentResultId") UUID assessmentResultId,
+                                                                         @Param("questionnaireId") Long questionnaireId);
 
     @Query("""
             SELECT COUNT(a) as answerCount
