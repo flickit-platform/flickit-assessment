@@ -19,7 +19,6 @@ import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
@@ -31,7 +30,6 @@ public class AnswerPersistenceJpaAdapter implements
     CountAnswersPort,
     LoadAnswerPort,
     UpdateAnswerPort,
-    LoadQuestionsAnswerListPort,
     CountLowConfidenceAnswersPort,
     ApproveAnswerPort,
     DeleteAnswerPort {
@@ -103,10 +101,10 @@ public class AnswerPersistenceJpaAdapter implements
     }
 
     @Override
-    public Set<UUID> loadIdsByQuestionIds(List<Long> questionIds) {
-        return repository.findAllByQuestionIdIn(questionIds).stream()
-            .map(AnswerJpaEntity::getId)
-            .collect(Collectors.toSet());
+    public List<Answer> loadByQuestionnaireId(UUID assessmentResultId, Long questionnaireId) {
+        return repository.findByAssessmentResultIdAndQuestionnaireId(assessmentResultId, questionnaireId).stream()
+            .map(AnswerMapper::mapToDomainModel)
+            .toList();
     }
 
     @Override
@@ -130,16 +128,6 @@ public class AnswerPersistenceJpaAdapter implements
             param.isNotApplicable(),
             param.status() != null ? param.status().getId() : null,
             param.currentUserId());
-    }
-
-    @Override
-    public List<Answer> loadByQuestionIds(UUID assessmentId, List<Long> questionIds) {
-        var assessmentResult = assessmentResultRepo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
-            .orElseThrow(() -> new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND));
-
-        return repository.findByAssessmentResultIdAndDeletedFalseAndQuestionIdIn(assessmentResult.getId(), questionIds).stream()
-            .map(AnswerMapper::mapToDomainModel)
-            .toList();
     }
 
     @Override

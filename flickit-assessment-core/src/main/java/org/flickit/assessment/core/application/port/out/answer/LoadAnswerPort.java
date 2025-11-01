@@ -4,7 +4,6 @@ import org.flickit.assessment.core.application.domain.Answer;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 
 public interface LoadAnswerPort {
@@ -13,5 +12,5 @@ public interface LoadAnswerPort {
 
     List<Answer> loadAllUnapproved(UUID assessmentResultId);
 
-    Set<UUID> loadIdsByQuestionIds(List<Long> questionIds);
+    List<Answer> loadByQuestionnaireId(UUID assessmentResultId, Long questionnaireId);
 }

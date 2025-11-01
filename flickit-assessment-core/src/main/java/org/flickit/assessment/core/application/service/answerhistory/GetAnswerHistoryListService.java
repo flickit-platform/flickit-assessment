@@ -8,7 +8,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 import org.flickit.assessment.core.application.domain.FullUser;
 import org.flickit.assessment.core.application.port.in.answerhistory.GetAnswerHistoryListUseCase;
-import org.flickit.assessment.core.application.port.out.answerhistory.LoadAnswerHistoryListPort;
+import org.flickit.assessment.core.application.port.out.answerhistory.LoadAnswerHistoryPort;
 import org.flickit.assessment.core.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +25,7 @@ public class GetAnswerHistoryListService implements GetAnswerHistoryListUseCase 
 
     private static final Duration EXPIRY_DURATION = Duration.ofDays(1);
 
-    private final LoadAnswerHistoryListPort loadAnswerHistoryListPort;
+    private final LoadAnswerHistoryPort loadAnswerHistoryPort;
     private final AssessmentAccessChecker assessmentAccessChecker;
     private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
@@ -36,7 +36,7 @@ public class GetAnswerHistoryListService implements GetAnswerHistoryListUseCase 
             AssessmentPermission.VIEW_ANSWER_HISTORY_LIST))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        var paginatedResponse = loadAnswerHistoryListPort.load(param.getAssessmentId(),
+        var paginatedResponse = loadAnswerHistoryPort.load(param.getAssessmentId(),
             param.getQuestionId(),
             param.getPage(),
             param.getSize());
@@ -55,7 +55,7 @@ public class GetAnswerHistoryListService implements GetAnswerHistoryListUseCase 
             paginatedResponse.getTotal());
     }
 
-    public static Answer toAnswer(LoadAnswerHistoryListPort.Result answerHistory) {
+    public static Answer toAnswer(LoadAnswerHistoryPort.Result answerHistory) {
         return new Answer(answerHistory.answerOptionId() != null ? Option.of(answerHistory.answerOptionId(), answerHistory.answerOptionIndex()) : null,
             answerHistory.confidenceLevelId() != null ? ConfidenceLevel.valueOfById(answerHistory.confidenceLevelId()) : ConfidenceLevel.getDefault(),
             answerHistory.isNotApplicable());

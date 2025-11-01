@@ -8,7 +8,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.domain.Answer;
 import org.flickit.assessment.core.application.domain.FullUser;
 import org.flickit.assessment.core.application.port.in.answerhistory.GetAnswerHistoryListUseCase;
-import org.flickit.assessment.core.application.port.out.answerhistory.LoadAnswerHistoryListPort;
+import org.flickit.assessment.core.application.port.out.answerhistory.LoadAnswerHistoryPort;
 import org.flickit.assessment.core.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,7 +39,7 @@ class GetAnswerHistoryListServiceTest {
     private AssessmentAccessChecker assessmentAccessChecker;
 
     @Mock
-    private LoadAnswerHistoryListPort loadAnswerHistoryListPort;
+    private LoadAnswerHistoryPort loadAnswerHistoryPort;
 
     @Mock
     private CreateFileDownloadLinkPort createFileDownloadLinkPort;
@@ -68,7 +68,7 @@ class GetAnswerHistoryListServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.VIEW_ANSWER_HISTORY_LIST))
             .thenReturn(true);
-        when(loadAnswerHistoryListPort.load(param.getAssessmentId(), param.getQuestionId(), param.getPage(), param.getSize())).thenReturn(expectedHistories);
+        when(loadAnswerHistoryPort.load(param.getAssessmentId(), param.getQuestionId(), param.getPage(), param.getSize())).thenReturn(expectedHistories);
 
         String picDownloadLink = "downloadLink";
         when(createFileDownloadLinkPort.createDownloadLinkSafe(anyString(), any())).thenReturn(picDownloadLink);
@@ -95,7 +95,7 @@ class GetAnswerHistoryListServiceTest {
     }
 
     private void assertPaginationProps(PaginatedResponse<GetAnswerHistoryListUseCase.AnswerHistoryListItem> result,
-                                       PaginatedResponse<LoadAnswerHistoryListPort.Result> expectedHistories) {
+                                       PaginatedResponse<LoadAnswerHistoryPort.Result> expectedHistories) {
         assertEquals(2, result.getTotal());
         assertEquals(param.getSize(), result.getSize());
         assertEquals(param.getPage(), result.getPage());
@@ -103,8 +103,8 @@ class GetAnswerHistoryListServiceTest {
         assertEquals(expectedHistories.getOrder(), result.getOrder());
     }
 
-    private LoadAnswerHistoryListPort.Result toHistory(@NotNull Answer answer) {
-        return new LoadAnswerHistoryListPort.Result(answer.getSelectedOption() != null ? answer.getSelectedOption().getId() : null,
+    private LoadAnswerHistoryPort.Result toHistory(@NotNull Answer answer) {
+        return new LoadAnswerHistoryPort.Result(answer.getSelectedOption() != null ? answer.getSelectedOption().getId() : null,
             answer.getSelectedOption() != null ? answer.getSelectedOption().getIndex() : null,
             answer.getConfidenceLevelId(),
             answer.getIsNotApplicable(),
