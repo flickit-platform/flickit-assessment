@@ -153,11 +153,11 @@ public class EvidencePersistenceJpaAdapter implements
     }
 
     @Override
-    public Map<Long, CountEvidencesPort.EvidencesAndCommentsCountResult> countQuestionnaireQuestionsEvidencesAndComments(UUID assessmentId, long questionnaireId) {
+    public Map<Long, Integer> countQuestionnaireQuestionsEvidences(UUID assessmentId, long questionnaireId) {
         return repository.countQuestionnaireQuestionsEvidences(assessmentId, questionnaireId).stream()
             .collect(toMap(
-                QuestionEvidenceCommentCountView::getQuestionId, v ->
-                    new CountEvidencesPort.EvidencesAndCommentsCountResult(v.getEvidenceCount(), v.getCommentCount())
+                EvidencesQuestionAndCountView::getQuestionId,
+                EvidencesQuestionAndCountView::getCount
             ));
     }
 

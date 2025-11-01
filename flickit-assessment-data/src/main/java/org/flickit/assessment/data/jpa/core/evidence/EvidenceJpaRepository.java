@@ -122,21 +122,21 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
 
     @Query("""
             SELECT q.id  AS questionId,
-                COUNT(CASE WHEN e.type IS NOT NULL THEN 1 END) AS evidenceCount,
-                COUNT(CASE WHEN e.type IS NULL THEN 1 END) AS commentCount
+                COUNT(e) AS count
             FROM AnswerJpaEntity a
             JOIN EvidenceJpaEntity e ON e.questionId  = a.questionId
             JOIN AssessmentResultJpaEntity ar ON ar.assessment.id = e.assessmentId AND ar.id = a.assessmentResult.id
             JOIN QuestionJpaEntity q ON e.questionId = q.id and ar.kitVersionId = q.kitVersionId
             WHERE e.assessmentId  = :assessmentId
                 AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
+                AND e.type IS NOT NULL
                 AND e.deleted = false
                 AND q.questionnaireId  = :questionnaireId
                 AND a.deleted = false
             GROUP BY q.id
         """)
-    List<QuestionEvidenceCommentCountView> countQuestionnaireQuestionsEvidences(@Param("assessmentId") UUID assessmentId,
-                                                                                @Param("questionnaireId") long questionnaireId);
+    List<EvidencesQuestionAndCountView> countQuestionnaireQuestionsEvidences(@Param("assessmentId") UUID assessmentId,
+                                                                             @Param("questionnaireId") long questionnaireId);
 
     @Query("""
             SELECT COUNT(e.id)
