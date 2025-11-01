@@ -28,7 +28,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
-import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ANSWER_HISTORY_LIST_ASSESSMENT_RESULT_NOT_FOUND;
 
 @Component
@@ -140,11 +139,8 @@ public class AnswerHistoryPersistenceJpaAdapter implements
     }
 
     @Override
-    public Map<Long, Integer> countAnswerHistories(UUID assessmentId, List<Long> questionIds) {
-        var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
-            .orElseThrow(()-> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
-
-        return repository.countByAssessmentResultIdAndQuestionIdIn(assessmentResult.getId(), questionIds).stream()
+    public Map<Long, Integer> countAnswerHistories(UUID assessmentResultId, Long questionnaireId) {
+        return repository.countByAssessmentResultIdAndQuestionIdIn(assessmentResultId, questionnaireId).stream()
             .collect(toMap(QuestionIdAndAnswerCountView::getQuestionId, QuestionIdAndAnswerCountView::getAnswerHistoryCount));
     }
 }

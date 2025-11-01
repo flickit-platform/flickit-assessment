@@ -52,7 +52,7 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
         var questionIdToAnswerMap = loadAnswerPort.loadByQuestionnaireId(assessmentResult.getId(), param.getQuestionnaireId()).stream()
             .collect(toMap(Answer::getQuestionId, Function.identity()));
 
-        var questionIdToAnswerHistoriesCountMap = loadAnswerHistoryPort.countAnswerHistories(param.getAssessmentId(), questionIds);
+        var questionIdToAnswerHistoriesCountMap = loadAnswerHistoryPort.countAnswerHistories(assessmentResult.getId(), param.getQuestionnaireId());
         var questionIdToEvidencesCountMap = countEvidencesPort.countQuestionnaireQuestionsEvidences(param.getAssessmentId(), param.getQuestionnaireId());
         var questionIdToUnresolvedCommentsCountMap = countEvidencesPort.countUnresolvedComments(param.getAssessmentId(), param.getQuestionnaireId());
         var items = questionsPage.getItems().stream()
