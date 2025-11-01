@@ -6,23 +6,29 @@ import org.flickit.assessment.common.application.port.out.ValidateAssessmentResu
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.domain.Answer;
 import org.flickit.assessment.core.application.domain.AnswerOption;
+import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.Question;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetAssessmentQuestionnaireQuestionListUseCase;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetAssessmentQuestionnaireQuestionListUseCase.Param;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetAssessmentQuestionnaireQuestionListUseCase.Result;
 import org.flickit.assessment.core.application.port.out.answer.LoadQuestionsAnswerListPort;
 import org.flickit.assessment.core.application.port.out.answerhistory.LoadAnswerHistoryPort;
+import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.evidence.CountEvidencesPort;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionnaireQuestionListPort;
+import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.flickit.assessment.core.test.fixture.application.QuestionMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -46,6 +52,9 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
     private ValidateAssessmentResultPort validateAssessmentResultPort;
 
     @Mock
+    private LoadAssessmentResultPort loadAssessmentResultPort;
+
+    @Mock
     private LoadQuestionnaireQuestionListPort loadQuestionnaireQuestionListPort;
 
     @Mock
@@ -57,8 +66,12 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
     @Mock
     private LoadAnswerHistoryPort loadAnswerHistoryPort;
 
+    @Captor
+    private ArgumentCaptor<LoadQuestionnaireQuestionListPort.LoadQuestionsParam> loadQuestionsCaptor;
+
     private final Question question = QuestionMother.withOptions();
     private final Param param = createParam(GetAssessmentQuestionnaireQuestionListUseCase.Param.ParamBuilder::build);
+    private final AssessmentResult assessmentResult = AssessmentResultMother.validResult();
 
     private final PaginatedResponse<Question> expectedPaginatedResponse = new PaginatedResponse<>(
         List.of(question),
@@ -84,7 +97,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
     }
 
     @Test
-    void testGetAssessmentQuestionnaireQuestionList_whenParamsAreValidAndAnswerIsNotApplicableFalse_thenValidResult() {
+    void testGetQuestionList_whenParamsAreValidAndAnswerIsNotApplicableFalse_thenValidResult() {
         Answer answer = new Answer(UUID.randomUUID(), new AnswerOption(question.getOptions().getFirst().getId(), 2,
             null, null), question.getId(), 1, Boolean.FALSE, APPROVED);
         var evidencesCount = 0;
@@ -93,7 +106,8 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
             .thenReturn(true);
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
-        when(loadQuestionnaireQuestionListPort.loadByQuestionnaireId(param.getQuestionnaireId(), param.getAssessmentId(), param.getSize(), param.getPage()))
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        when(loadQuestionnaireQuestionListPort.loadByQuestionnaireId(any()))
             .thenReturn(expectedPaginatedResponse);
         when(loadQuestionsAnswerListPort.loadByQuestionIds(param.getAssessmentId(), List.of(question.getId())))
             .thenReturn(List.of(answer));
@@ -125,6 +139,8 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         assertEquals(evidencesCount, result.getItems().getFirst().counts().evidences());
         assertEquals(0, result.getItems().getFirst().counts().comments());
         assertEquals(answerHistoriesCount, result.getItems().getFirst().counts().answerHistories());
+
+        assertLoadQuestionsParam();
     }
 
     @Test
@@ -137,7 +153,8 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
             .thenReturn(true);
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
-        when(loadQuestionnaireQuestionListPort.loadByQuestionnaireId(param.getQuestionnaireId(), param.getAssessmentId(), param.getSize(), param.getPage()))
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        when(loadQuestionnaireQuestionListPort.loadByQuestionnaireId(any()))
             .thenReturn(expectedPaginatedResponse);
         when(loadQuestionsAnswerListPort.loadByQuestionIds(param.getAssessmentId(), List.of(question.getId())))
             .thenReturn(List.of(answer));
@@ -169,6 +186,8 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         assertEquals(evidencesCount, result.getItems().getFirst().counts().evidences());
         assertEquals(3, result.getItems().getFirst().counts().comments());
         assertEquals(answerHistoriesCount, result.getItems().getFirst().counts().answerHistories());
+
+        assertLoadQuestionsParam();
     }
 
     @Test
@@ -181,7 +200,8 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
             .thenReturn(true);
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
-        when(loadQuestionnaireQuestionListPort.loadByQuestionnaireId(param.getQuestionnaireId(), param.getAssessmentId(), param.getSize(), param.getPage()))
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        when(loadQuestionnaireQuestionListPort.loadByQuestionnaireId(any()))
             .thenReturn(expectedPaginatedResponse);
         when(loadQuestionsAnswerListPort.loadByQuestionIds(param.getAssessmentId(), List.of(question.getId())))
             .thenReturn(List.of(answer));
@@ -213,6 +233,8 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         assertEquals(evidencesCount, result.getItems().getFirst().counts().evidences());
         assertEquals(commentsCount, result.getItems().getFirst().counts().comments());
         assertEquals(answerHistoriesCount, result.getItems().getFirst().counts().answerHistories());
+
+        assertLoadQuestionsParam();
     }
 
     @Test
@@ -223,7 +245,8 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
             .thenReturn(true);
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
-        when(loadQuestionnaireQuestionListPort.loadByQuestionnaireId(param.getQuestionnaireId(), param.getAssessmentId(), param.getSize(), param.getPage()))
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        when(loadQuestionnaireQuestionListPort.loadByQuestionnaireId(any()))
             .thenReturn(expectedPaginatedResponse);
         when(loadQuestionsAnswerListPort.loadByQuestionIds(param.getAssessmentId(), List.of(question.getId())))
             .thenReturn(List.of(answer));
@@ -255,6 +278,8 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         assertEquals(0, result.getItems().getFirst().counts().evidences());
         assertEquals(1, result.getItems().getFirst().counts().comments());
         assertEquals(answerHistoriesCount, result.getItems().getFirst().counts().answerHistories());
+
+        assertLoadQuestionsParam();
     }
 
     private void assertPaginationProperties(PaginatedResponse<Result> result) {
@@ -265,6 +290,16 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
             () -> assertEquals(expectedPaginatedResponse.getPage(), result.getPage()),
             () -> assertEquals(expectedPaginatedResponse.getSort(), result.getSort())
         );
+    }
+
+    private void assertLoadQuestionsParam() {
+        verify(loadQuestionnaireQuestionListPort).loadByQuestionnaireId(loadQuestionsCaptor.capture());
+        var loadQuestionsParam = loadQuestionsCaptor.getValue();
+        assertEquals(param.getQuestionnaireId(), loadQuestionsParam.questionnaireId());
+        assertEquals(assessmentResult.getKitVersionId(), loadQuestionsParam.kitVersionId());
+        assertEquals(assessmentResult.getLanguage().getId(), loadQuestionsParam.langId());
+        assertEquals(param.getPage(), loadQuestionsParam.page());
+        assertEquals(param.getSize(), loadQuestionsParam.size());
     }
 
     private void assertQuestionProperties(Result item) {

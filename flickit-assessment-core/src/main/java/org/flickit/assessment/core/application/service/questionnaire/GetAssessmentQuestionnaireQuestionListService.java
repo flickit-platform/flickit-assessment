@@ -5,10 +5,12 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentAcc
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetAssessmentQuestionnaireQuestionListUseCase;
 import org.flickit.assessment.core.application.port.out.answer.LoadQuestionsAnswerListPort;
 import org.flickit.assessment.core.application.port.out.answerhistory.LoadAnswerHistoryPort;
+import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.evidence.CountEvidencesPort;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionnaireQuestionListPort;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,7 @@ import java.util.function.Function;
 
 import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_QUESTIONNAIRE_QUESTIONS;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
 @Service
@@ -29,6 +32,7 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
 
     private final AssessmentAccessChecker assessmentAccessChecker;
     private final ValidateAssessmentResultPort validateAssessmentResultPort;
+    private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final LoadQuestionnaireQuestionListPort loadQuestionnaireQuestionListPort;
     private final LoadQuestionsAnswerListPort loadQuestionsAnswerListPort;
     private final CountEvidencesPort countEvidencesPort;
@@ -41,12 +45,12 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
 
         validateAssessmentResultPort.validate(param.getAssessmentId());
 
-        var pageResult = loadQuestionnaireQuestionListPort.loadByQuestionnaireId(param.getQuestionnaireId(),
-            param.getAssessmentId(),
-            param.getSize(),
-            param.getPage());
+        var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
+            .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
 
-        List<Long> questionIds = pageResult.getItems().stream()
+        var questionsPage = loadQuestions(param, assessmentResult);
+
+        List<Long> questionIds = questionsPage.getItems().stream()
             .map(Question::getId)
             .toList();
 
@@ -56,7 +60,7 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
         var questionIdToAnswerHistoriesCountMap = loadAnswerHistoryPort.countAnswerHistories(param.getAssessmentId(), questionIds);
         var questionIdToEvidencesCountMap = countEvidencesPort.countQuestionnaireQuestionsEvidences(param.getAssessmentId(), param.getQuestionnaireId());
         var questionIdToUnresolvedCommentsCountMap = countEvidencesPort.countUnresolvedComments(param.getAssessmentId(), param.getQuestionnaireId());
-        var items = pageResult.getItems().stream()
+        var items = questionsPage.getItems().stream()
             .map((Question q) -> mapToResult(q,
                 questionIdToAnswerMap.get(q.getId()),
                 questionIdToEvidencesCountMap.getOrDefault(q.getId(), 0),
@@ -66,11 +70,20 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
 
         return new PaginatedResponse<>(
             items,
-            pageResult.getPage(),
-            pageResult.getSize(),
-            pageResult.getSort(),
-            pageResult.getOrder(),
-            pageResult.getTotal());
+            questionsPage.getPage(),
+            questionsPage.getSize(),
+            questionsPage.getSort(),
+            questionsPage.getOrder(),
+            questionsPage.getTotal());
+    }
+
+    private PaginatedResponse<Question> loadQuestions(Param param, AssessmentResult assessmentResult) {
+        var loadQuestionnaireQuestionsParam = new LoadQuestionnaireQuestionListPort.LoadQuestionsParam(param.getQuestionnaireId(),
+            assessmentResult.getKitVersionId(),
+            assessmentResult.getLanguage().getId(),
+            param.getSize(),
+            param.getPage());
+        return loadQuestionnaireQuestionListPort.loadByQuestionnaireId(loadQuestionnaireQuestionsParam);
     }
 
     private Result mapToResult(Question question, Answer answer, int evidencesCount, int unresolvedCommentsCount, int answerHistoryCount) {
