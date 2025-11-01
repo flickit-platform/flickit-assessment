@@ -20,7 +20,7 @@ public interface AnswerHistoryJpaRepository extends JpaRepository<AnswerHistoryJ
             SELECT a.questionId AS questionId,
                     COUNT(a) as answerHistoryCount
             FROM AnswerHistoryJpaEntity a
-            WHERE a.assessmentResult.id=:assessmentResultId AND a.questionId IN :questionIds
+            WHERE a.assessmentResult.id = :assessmentResultId AND a.questionId IN :questionIds
             GROUP BY a.questionId
         """)
     List<QuestionIdAndAnswerCountView> countByAssessmentResultIdAndQuestionIdIn(@Param("assessmentResultId") UUID assessmentResultId,

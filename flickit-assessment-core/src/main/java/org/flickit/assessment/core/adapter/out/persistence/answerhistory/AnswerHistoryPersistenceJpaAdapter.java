@@ -6,7 +6,6 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.adapter.out.persistence.user.UserMapper;
 import org.flickit.assessment.core.application.domain.AnswerHistory;
 import org.flickit.assessment.core.application.domain.AnswerStatus;
-import org.flickit.assessment.core.application.port.out.answerhistory.CountAnswerHistoryPort;
 import org.flickit.assessment.core.application.port.out.answerhistory.CreateAnswerHistoryPort;
 import org.flickit.assessment.core.application.port.out.answerhistory.LoadAnswerHistoryListPort;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
@@ -36,8 +35,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ANSWER_HIST
 @RequiredArgsConstructor
 public class AnswerHistoryPersistenceJpaAdapter implements
     CreateAnswerHistoryPort,
-    LoadAnswerHistoryListPort,
-    CountAnswerHistoryPort {
+    LoadAnswerHistoryListPort {
 
     private final AnswerHistoryJpaRepository repository;
     private final AssessmentResultJpaRepository assessmentResultRepository;

@@ -5,6 +5,8 @@ import org.flickit.assessment.core.application.domain.AnswerStatus;
 import org.flickit.assessment.core.application.domain.FullUser;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public interface LoadAnswerHistoryListPort {
@@ -19,4 +21,6 @@ public interface LoadAnswerHistoryListPort {
                   FullUser createdBy,
                   LocalDateTime creationTime) {
     }
+
+    Map<Long, Integer> countAnswerHistories(UUID assessmentId, List<Long> questionIds);
 }
