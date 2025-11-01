@@ -50,7 +50,7 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
             .stream()
             .collect(toMap(Answer::getQuestionId, Function.identity()));
 
-        var questionIdToAnswerCountMap = loadAnswerHistoryPort.countAnswerHistories(param.getAssessmentId(), questionIds);
+        var questionIdToAnswerHistoriesCountMap = loadAnswerHistoryPort.countAnswerHistories(param.getAssessmentId(), questionIds);
         var questionIdToEvidencesCountMap = countEvidencesPort.countQuestionnaireQuestionsEvidencesAndComments(param.getAssessmentId(), param.getQuestionnaireId());
         var questionIdToUnresolvedCommentsCountMap = countEvidencesPort.countUnresolvedComments(param.getAssessmentId(), param.getQuestionnaireId());
         var items = pageResult.getItems().stream()
@@ -58,7 +58,7 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
                 questionIdToAnswerMap.get(q.getId()),
                 questionIdToEvidencesCountMap.getOrDefault(q.getId(), new CountEvidencesPort.EvidencesAndCommentsCountResult(0, 0)),
                 questionIdToUnresolvedCommentsCountMap.getOrDefault(q.getId(), 0),
-                questionIdToAnswerCountMap.getOrDefault(q.getId(), 0)))
+                questionIdToAnswerHistoriesCountMap.getOrDefault(q.getId(), 0)))
             .toList();
 
         return new PaginatedResponse<>(

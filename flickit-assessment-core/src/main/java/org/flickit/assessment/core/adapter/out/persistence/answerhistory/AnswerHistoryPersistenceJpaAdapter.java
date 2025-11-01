@@ -9,9 +9,9 @@ import org.flickit.assessment.core.application.domain.AnswerStatus;
 import org.flickit.assessment.core.application.port.out.answerhistory.CreateAnswerHistoryPort;
 import org.flickit.assessment.core.application.port.out.answerhistory.LoadAnswerHistoryPort;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
-import org.flickit.assessment.data.jpa.core.answerhistory.QuestionIdAndAnswerCountView;
 import org.flickit.assessment.data.jpa.core.answerhistory.AnswerHistoryJpaEntity;
 import org.flickit.assessment.data.jpa.core.answerhistory.AnswerHistoryJpaRepository;
+import org.flickit.assessment.data.jpa.core.answerhistory.QuestionIdAndAnswerCountView;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
@@ -144,8 +144,7 @@ public class AnswerHistoryPersistenceJpaAdapter implements
         var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(()-> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
 
-        return repository.countByAssessmentResultIdAndQuestionIdIn(assessmentResult.getId(), questionIds)
-            .stream()
-            .collect(Collectors.toMap(QuestionIdAndAnswerCountView::getQuestionId, QuestionIdAndAnswerCountView::getAnswerHistoryCount));
+        return repository.countByAssessmentResultIdAndQuestionIdIn(assessmentResult.getId(), questionIds).stream()
+            .collect(toMap(QuestionIdAndAnswerCountView::getQuestionId, QuestionIdAndAnswerCountView::getAnswerHistoryCount));
     }
 }
