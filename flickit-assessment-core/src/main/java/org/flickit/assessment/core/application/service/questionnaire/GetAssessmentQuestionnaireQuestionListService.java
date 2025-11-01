@@ -51,12 +51,12 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
             .collect(toMap(Answer::getQuestionId, Function.identity()));
 
         var questionIdToAnswerHistoriesCountMap = loadAnswerHistoryPort.countAnswerHistories(param.getAssessmentId(), questionIds);
-        var questionIdToEvidencesCountMap = countEvidencesPort.countQuestionnaireQuestionsEvidencesAndComments(param.getAssessmentId(), param.getQuestionnaireId());
+        var questionIdToEvidencesCountMap = countEvidencesPort.countQuestionnaireQuestionsEvidences(param.getAssessmentId(), param.getQuestionnaireId());
         var questionIdToUnresolvedCommentsCountMap = countEvidencesPort.countUnresolvedComments(param.getAssessmentId(), param.getQuestionnaireId());
         var items = pageResult.getItems().stream()
             .map((Question q) -> mapToResult(q,
                 questionIdToAnswerMap.get(q.getId()),
-                questionIdToEvidencesCountMap.getOrDefault(q.getId(), new CountEvidencesPort.EvidencesAndCommentsCountResult(0, 0)),
+                questionIdToEvidencesCountMap.getOrDefault(q.getId(), 0),
                 questionIdToUnresolvedCommentsCountMap.getOrDefault(q.getId(), 0),
                 questionIdToAnswerHistoriesCountMap.getOrDefault(q.getId(), 0)))
             .toList();
@@ -70,7 +70,7 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
             pageResult.getTotal());
     }
 
-    private Result mapToResult(Question question, Answer answer, CountEvidencesPort.EvidencesAndCommentsCountResult evidencesAndCommentsCount, int unresolvedCommentsCount, int answerHistoryCount) {
+    private Result mapToResult(Question question, Answer answer, int evidencesCount, int unresolvedCommentsCount, int answerHistoryCount) {
         QuestionAnswer answerDto = null;
         if (answer != null) {
             Option answerOption = null;
@@ -102,11 +102,11 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
             new Issues(
                 !hasAnswer(answer),
                 hasAnswer(answer) && answer.getConfidenceLevelId() < ConfidenceLevel.SOMEWHAT_UNSURE.getId(),
-                hasAnswer(answer) && evidencesAndCommentsCount.evidenceCount() == 0,
+                hasAnswer(answer) && evidencesCount == 0,
                 unresolvedCommentsCount,
                 answerDto != null && answerDto.approved() != null && !answerDto.approved()),
-            new Counts(evidencesAndCommentsCount.evidenceCount(),
-                evidencesAndCommentsCount.commentCount(),
+            new Counts(evidencesCount,
+                unresolvedCommentsCount,
                 answerHistoryCount));
     }
 

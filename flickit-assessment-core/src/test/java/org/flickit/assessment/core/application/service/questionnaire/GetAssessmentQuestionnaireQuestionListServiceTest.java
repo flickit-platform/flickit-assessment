@@ -84,7 +84,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
     void testGetAssessmentQuestionnaireQuestionList_whenParamsAreValidAndAnswerIsNotApplicableFalse_thenValidResult() {
         Answer answer = new Answer(UUID.randomUUID(), new AnswerOption(question.getOptions().getFirst().getId(), 2,
             null, null), question.getId(), 1, Boolean.FALSE, APPROVED);
-        var evidencesAndComments = new CountEvidencesPort.EvidencesAndCommentsCountResult(0, 5);
+        var evidencesCount = 0;
         int answerHistoriesCount = 2;
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
@@ -93,8 +93,8 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
             .thenReturn(expectedPaginatedResponse);
         when(loadQuestionsAnswerListPort.loadByQuestionIds(param.getAssessmentId(), List.of(question.getId())))
             .thenReturn(List.of(answer));
-        when(countEvidencesPort.countQuestionnaireQuestionsEvidencesAndComments(param.getAssessmentId(), param.getQuestionnaireId()))
-            .thenReturn(Map.of(question.getId(), evidencesAndComments));
+        when(countEvidencesPort.countQuestionnaireQuestionsEvidences(param.getAssessmentId(), param.getQuestionnaireId()))
+            .thenReturn(Map.of(question.getId(), evidencesCount));
         when(countEvidencesPort.countUnresolvedComments(param.getAssessmentId(), param.getQuestionnaireId()))
             .thenReturn(Map.of(question.getId(), 0));
         when(loadAnswerHistoryPort.countAnswerHistories(param.getAssessmentId(), List.of(question.getId())))
@@ -118,8 +118,8 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         assertEquals(0, item.issues().unresolvedCommentsCount());
         assertFalse(item.issues().hasUnapprovedAnswer());
         //Assert Counts
-        assertEquals(evidencesAndComments.evidenceCount(), result.getItems().getFirst().counts().evidences());
-        assertEquals(evidencesAndComments.commentCount(), result.getItems().getFirst().counts().comments());
+        assertEquals(evidencesCount, result.getItems().getFirst().counts().evidences());
+        assertEquals(0, result.getItems().getFirst().counts().comments());
         assertEquals(answerHistoriesCount, result.getItems().getFirst().counts().answerHistories());
     }
 
@@ -127,7 +127,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
     void testGetAssessmentQuestionnaireQuestionList_whenParamsAreValidAndAnswerIsNotApplicable_thenValidResult() {
         Answer answer = new Answer(UUID.randomUUID(), new AnswerOption(question.getOptions().getFirst().getId(), 2,
             null, null), question.getId(), 3, Boolean.TRUE, UNAPPROVED);
-        var evidencesAndComments = new CountEvidencesPort.EvidencesAndCommentsCountResult(2, 3);
+        var evidencesCount = 2;
         int answerHistoriesCount = 5;
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
@@ -136,10 +136,10 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
             .thenReturn(expectedPaginatedResponse);
         when(loadQuestionsAnswerListPort.loadByQuestionIds(param.getAssessmentId(), List.of(question.getId())))
             .thenReturn(List.of(answer));
-        when(countEvidencesPort.countQuestionnaireQuestionsEvidencesAndComments(param.getAssessmentId(), param.getQuestionnaireId()))
-            .thenReturn(Map.of(question.getId(), evidencesAndComments));
+        when(countEvidencesPort.countQuestionnaireQuestionsEvidences(param.getAssessmentId(), param.getQuestionnaireId()))
+            .thenReturn(Map.of(question.getId(), evidencesCount));
         when(countEvidencesPort.countUnresolvedComments(param.getAssessmentId(), param.getQuestionnaireId()))
-            .thenReturn(Map.of(question.getId(), 2));
+            .thenReturn(Map.of(question.getId(), 3));
         when(loadAnswerHistoryPort.countAnswerHistories(param.getAssessmentId(), List.of(question.getId())))
             .thenReturn(Map.of(question.getId(), answerHistoriesCount));
 
@@ -158,18 +158,19 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         assertFalse(item.issues().isUnanswered());
         assertFalse(item.issues().isAnsweredWithLowConfidence());
         assertFalse(item.issues().isAnsweredWithoutEvidences());
-        assertEquals(2, item.issues().unresolvedCommentsCount());
+        assertEquals(3, item.issues().unresolvedCommentsCount());
         assertTrue(item.issues().hasUnapprovedAnswer());
         //Assert Counts
-        assertEquals(evidencesAndComments.evidenceCount(), result.getItems().getFirst().counts().evidences());
-        assertEquals(evidencesAndComments.commentCount(), result.getItems().getFirst().counts().comments());
+        assertEquals(evidencesCount, result.getItems().getFirst().counts().evidences());
+        assertEquals(3, result.getItems().getFirst().counts().comments());
         assertEquals(answerHistoriesCount, result.getItems().getFirst().counts().answerHistories());
     }
 
     @Test
     void testGetAssessmentQuestionnaireQuestionList_whenParamsAreValidAndSelectedOptionIsNullAndNotApplicable_thenValidResult() {
         Answer answer = new Answer(UUID.randomUUID(), null, question.getId(), 3, Boolean.TRUE, APPROVED);
-        var evidencesAndComments = new CountEvidencesPort.EvidencesAndCommentsCountResult(2, 1);
+        var evidencesCount = 2;
+        var commentsCount = 1;
         int answerHistoriesCount = 1;
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
@@ -178,10 +179,10 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
             .thenReturn(expectedPaginatedResponse);
         when(loadQuestionsAnswerListPort.loadByQuestionIds(param.getAssessmentId(), List.of(question.getId())))
             .thenReturn(List.of(answer));
-        when(countEvidencesPort.countQuestionnaireQuestionsEvidencesAndComments(param.getAssessmentId(), param.getQuestionnaireId()))
-            .thenReturn(Map.of(question.getId(), evidencesAndComments));
+        when(countEvidencesPort.countQuestionnaireQuestionsEvidences(param.getAssessmentId(), param.getQuestionnaireId()))
+            .thenReturn(Map.of(question.getId(), evidencesCount));
         when(countEvidencesPort.countUnresolvedComments(param.getAssessmentId(), param.getQuestionnaireId()))
-            .thenReturn(Map.of());
+            .thenReturn(Map.of(question.getId(), commentsCount));
         when(loadAnswerHistoryPort.countAnswerHistories(param.getAssessmentId(), List.of(question.getId())))
             .thenReturn(Map.of(question.getId(), answerHistoriesCount));
 
@@ -200,11 +201,11 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         assertFalse(item.issues().isUnanswered());
         assertFalse(item.issues().isAnsweredWithLowConfidence());
         assertFalse(item.issues().isAnsweredWithoutEvidences());
-        assertEquals(0, item.issues().unresolvedCommentsCount());
+        assertEquals(1, item.issues().unresolvedCommentsCount());
         assertFalse(item.issues().hasUnapprovedAnswer());
         //Assert Counts
-        assertEquals(evidencesAndComments.evidenceCount(), result.getItems().getFirst().counts().evidences());
-        assertEquals(evidencesAndComments.commentCount(), result.getItems().getFirst().counts().comments());
+        assertEquals(evidencesCount, result.getItems().getFirst().counts().evidences());
+        assertEquals(commentsCount, result.getItems().getFirst().counts().comments());
         assertEquals(answerHistoriesCount, result.getItems().getFirst().counts().answerHistories());
     }
 
@@ -219,7 +220,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
             .thenReturn(expectedPaginatedResponse);
         when(loadQuestionsAnswerListPort.loadByQuestionIds(param.getAssessmentId(), List.of(question.getId())))
             .thenReturn(List.of(answer));
-        when(countEvidencesPort.countQuestionnaireQuestionsEvidencesAndComments(param.getAssessmentId(), param.getQuestionnaireId()))
+        when(countEvidencesPort.countQuestionnaireQuestionsEvidences(param.getAssessmentId(), param.getQuestionnaireId()))
             .thenReturn(Map.of());
         when(countEvidencesPort.countUnresolvedComments(param.getAssessmentId(), param.getQuestionnaireId()))
             .thenReturn(Map.of(question.getId(), 1));
@@ -245,7 +246,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         assertFalse(item.issues().hasUnapprovedAnswer());
         //Assert Counts
         assertEquals(0, result.getItems().getFirst().counts().evidences());
-        assertEquals(0, result.getItems().getFirst().counts().comments());
+        assertEquals(1, result.getItems().getFirst().counts().comments());
         assertEquals(answerHistoriesCount, result.getItems().getFirst().counts().answerHistories());
     }
 
