@@ -7,7 +7,7 @@ import org.flickit.assessment.core.adapter.out.persistence.user.UserMapper;
 import org.flickit.assessment.core.application.domain.AnswerHistory;
 import org.flickit.assessment.core.application.domain.AnswerStatus;
 import org.flickit.assessment.core.application.port.out.answerhistory.CreateAnswerHistoryPort;
-import org.flickit.assessment.core.application.port.out.answerhistory.LoadAnswerHistoryListPort;
+import org.flickit.assessment.core.application.port.out.answerhistory.LoadAnswerHistoryPort;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 import org.flickit.assessment.data.jpa.core.answerhistory.QuestionIdAndAnswerCountView;
 import org.flickit.assessment.data.jpa.core.answerhistory.AnswerHistoryJpaEntity;
@@ -35,7 +35,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ANSWER_HIST
 @RequiredArgsConstructor
 public class AnswerHistoryPersistenceJpaAdapter implements
     CreateAnswerHistoryPort,
-    LoadAnswerHistoryListPort {
+    LoadAnswerHistoryPort {
 
     private final AnswerHistoryJpaRepository repository;
     private final AssessmentResultJpaRepository assessmentResultRepository;
@@ -105,7 +105,7 @@ public class AnswerHistoryPersistenceJpaAdapter implements
     }
 
     @Override
-    public PaginatedResponse<LoadAnswerHistoryListPort.Result> load(UUID assessmentId, long questionId, int page, int size) {
+    public PaginatedResponse<LoadAnswerHistoryPort.Result> load(UUID assessmentId, long questionId, int page, int size) {
         var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(GET_ANSWER_HISTORY_LIST_ASSESSMENT_RESULT_NOT_FOUND));
 
@@ -121,7 +121,7 @@ public class AnswerHistoryPersistenceJpaAdapter implements
             .collect(toMap(UserJpaEntity::getId, Function.identity()));
 
         var items = pageResult.getContent().stream()
-            .map(e -> new LoadAnswerHistoryListPort.Result(
+            .map(e -> new LoadAnswerHistoryPort.Result(
                 e.getAnswerOptionId(),
                 e.getAnswerOptionIndex(),
                 e.getConfidenceLevelId(),

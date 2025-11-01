@@ -10,7 +10,7 @@ import org.flickit.assessment.core.application.port.in.questionnaire.GetAssessme
 import org.flickit.assessment.core.application.port.in.questionnaire.GetAssessmentQuestionnaireQuestionListUseCase.Param;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetAssessmentQuestionnaireQuestionListUseCase.Result;
 import org.flickit.assessment.core.application.port.out.answer.LoadQuestionsAnswerListPort;
-import org.flickit.assessment.core.application.port.out.answerhistory.LoadAnswerHistoryListPort;
+import org.flickit.assessment.core.application.port.out.answerhistory.LoadAnswerHistoryPort;
 import org.flickit.assessment.core.application.port.out.evidence.CountEvidencesPort;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionnaireQuestionListPort;
 import org.flickit.assessment.core.test.fixture.application.QuestionMother;
@@ -52,7 +52,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
     private CountEvidencesPort countEvidencesPort;
 
     @Mock
-    private LoadAnswerHistoryListPort loadAnswerHistoryListPort;
+    private LoadAnswerHistoryPort loadAnswerHistoryPort;
 
     private final Question question = QuestionMother.withOptions();
     private final Param param = createParam(GetAssessmentQuestionnaireQuestionListUseCase.Param.ParamBuilder::build);
@@ -77,7 +77,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         verifyNoInteractions(loadQuestionnaireQuestionListPort,
             loadQuestionsAnswerListPort,
             countEvidencesPort,
-            loadAnswerHistoryListPort);
+            loadAnswerHistoryPort);
     }
 
     @Test
@@ -97,7 +97,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
             .thenReturn(Map.of(question.getId(), evidencesAndComments));
         when(countEvidencesPort.countUnresolvedComments(param.getAssessmentId(), param.getQuestionnaireId()))
             .thenReturn(Map.of(question.getId(), 0));
-        when(loadAnswerHistoryListPort.countAnswerHistories(param.getAssessmentId(), List.of(question.getId())))
+        when(loadAnswerHistoryPort.countAnswerHistories(param.getAssessmentId(), List.of(question.getId())))
             .thenReturn(Map.of(question.getId(), answerHistoriesCount));
 
         PaginatedResponse<Result> result = service.getQuestionnaireQuestionList(param);
@@ -140,7 +140,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
             .thenReturn(Map.of(question.getId(), evidencesAndComments));
         when(countEvidencesPort.countUnresolvedComments(param.getAssessmentId(), param.getQuestionnaireId()))
             .thenReturn(Map.of(question.getId(), 2));
-        when(loadAnswerHistoryListPort.countAnswerHistories(param.getAssessmentId(), List.of(question.getId())))
+        when(loadAnswerHistoryPort.countAnswerHistories(param.getAssessmentId(), List.of(question.getId())))
             .thenReturn(Map.of(question.getId(), answerHistoriesCount));
 
         PaginatedResponse<Result> result = service.getQuestionnaireQuestionList(param);
@@ -182,7 +182,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
             .thenReturn(Map.of(question.getId(), evidencesAndComments));
         when(countEvidencesPort.countUnresolvedComments(param.getAssessmentId(), param.getQuestionnaireId()))
             .thenReturn(Map.of());
-        when(loadAnswerHistoryListPort.countAnswerHistories(param.getAssessmentId(), List.of(question.getId())))
+        when(loadAnswerHistoryPort.countAnswerHistories(param.getAssessmentId(), List.of(question.getId())))
             .thenReturn(Map.of(question.getId(), answerHistoriesCount));
 
         PaginatedResponse<Result> result = service.getQuestionnaireQuestionList(param);
@@ -223,7 +223,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
             .thenReturn(Map.of());
         when(countEvidencesPort.countUnresolvedComments(param.getAssessmentId(), param.getQuestionnaireId()))
             .thenReturn(Map.of(question.getId(), 1));
-        when(loadAnswerHistoryListPort.countAnswerHistories(param.getAssessmentId(), List.of(question.getId())))
+        when(loadAnswerHistoryPort.countAnswerHistories(param.getAssessmentId(), List.of(question.getId())))
             .thenReturn(Map.of(question.getId(), answerHistoriesCount));
 
         PaginatedResponse<Result> result = service.getQuestionnaireQuestionList(param);

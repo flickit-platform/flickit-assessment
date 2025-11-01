@@ -7,7 +7,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetAssessmentQuestionnaireQuestionListUseCase;
 import org.flickit.assessment.core.application.port.out.answer.LoadQuestionsAnswerListPort;
-import org.flickit.assessment.core.application.port.out.answerhistory.LoadAnswerHistoryListPort;
+import org.flickit.assessment.core.application.port.out.answerhistory.LoadAnswerHistoryPort;
 import org.flickit.assessment.core.application.port.out.evidence.CountEvidencesPort;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionnaireQuestionListPort;
 import org.springframework.stereotype.Service;
@@ -30,7 +30,7 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
     private final LoadQuestionnaireQuestionListPort loadQuestionnaireQuestionListPort;
     private final LoadQuestionsAnswerListPort loadQuestionsAnswerListPort;
     private final CountEvidencesPort countEvidencesPort;
-    private final LoadAnswerHistoryListPort loadAnswerHistoryListPort;
+    private final LoadAnswerHistoryPort loadAnswerHistoryPort;
 
     @Override
     public PaginatedResponse<Result> getQuestionnaireQuestionList(Param param) {
@@ -50,7 +50,7 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
             .stream()
             .collect(toMap(Answer::getQuestionId, Function.identity()));
 
-        var questionIdToAnswerCountMap = loadAnswerHistoryListPort.countAnswerHistories(param.getAssessmentId(), questionIds);
+        var questionIdToAnswerCountMap = loadAnswerHistoryPort.countAnswerHistories(param.getAssessmentId(), questionIds);
         var questionIdToEvidencesCountMap = countEvidencesPort.countQuestionnaireQuestionsEvidencesAndComments(param.getAssessmentId(), param.getQuestionnaireId());
         var questionIdToUnresolvedCommentsCountMap = countEvidencesPort.countUnresolvedComments(param.getAssessmentId(), param.getQuestionnaireId());
         var items = pageResult.getItems().stream()

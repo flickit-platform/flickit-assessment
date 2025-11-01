@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public interface LoadAnswerHistoryListPort {
+public interface LoadAnswerHistoryPort {
 
     PaginatedResponse<Result> load(UUID assessmentId, long questionId, int page, int size);
 
