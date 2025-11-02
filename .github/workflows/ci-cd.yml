@@ -14,6 +14,7 @@ env:
   IMAGE_NAME: flickit-platform/flickit-assessment
   JIB_OPT: -Djib.httpTimeout=240000 -Dmaven.test.skip=true
   JIB_CMD: clean install jib:build
+  DOCKER_AUTH_CONFIG: ${{ secrets.DOCKER_AUTH_CONFIG }}
 
 jobs:
   build:
@@ -130,12 +131,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Build and push image using Darkube
+      - name: Build and push image with Darkube
         run: |
           darkube build --push \
-            -t ghcr.io/${{ env.IMAGE_NAME }}:${GITHUB_SHA:0:7} \
-            -t ghcr.io/${{ env.IMAGE_NAME }}:${GITHUB_REF_NAME} \
-            --docker-auth-config ${{ secrets.DOCKER_AUTH_CONFIG }} \
+            -t $IMAGE_NAME:${GITHUB_SHA:0:7} \
+            -t $IMAGE_NAME:${GITHUB_REF_NAME} \
             --workdir . \
             --file ./Dockerfile \
             --build-context .
