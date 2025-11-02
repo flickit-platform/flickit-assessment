@@ -134,8 +134,8 @@ jobs:
       - name: Build and push image with Darkube
         run: |
           darkube build --push \
-            -t $IMAGE_NAME:${GITHUB_SHA:0:7} \
-            -t $IMAGE_NAME:${GITHUB_REF_NAME} \
+            -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${GITHUB_SHA:0:7} \
+            -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${GITHUB_REF_NAME} \
             --workdir . \
             --file ./Dockerfile \
             --build-context .
