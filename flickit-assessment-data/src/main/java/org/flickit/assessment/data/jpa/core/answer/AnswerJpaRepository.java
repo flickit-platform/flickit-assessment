@@ -11,6 +11,8 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
 
     List<AnswerJpaEntity> findByAssessmentResultIdAndDeletedFalseAndQuestionIdIn(UUID assessmentResultId, List<Long> questionId);
 
+    List<AnswerJpaEntity> findByAssessmentResultIdAndQuestionIdIn(UUID assessmentResultId, List<Long> questionId);
+
     List<AnswerJpaEntity> findByAssessmentResultIdAndDeletedFalse(UUID assessmentResultId);
 
     @Query("""
