@@ -107,10 +107,10 @@ public class AnswerHistoryPersistenceJpaAdapter implements
 
     @Override
     public void persistOnClearAnswers(PersistOnClearAnswersParam param) {
-        var AnswerIdToQuestionId = answerRepository.findByAssessmentResultIdAndQuestionIdIn(param.assessmentResultId(), param.questionIds()).stream()
+        var answerIdToQuestionId = answerRepository.findByAssessmentResultIdAndQuestionIdIn(param.assessmentResultId(), param.questionIds()).stream()
             .collect(toMap(AnswerJpaEntity::getId, AnswerJpaEntity::getQuestionId));
 
-        var answerHistoryEntities = AnswerIdToQuestionId.entrySet().stream()
+        var answerHistoryEntities = answerIdToQuestionId.entrySet().stream()
             .map(a ->
                 new AnswerHistoryJpaEntity(
                     null,
