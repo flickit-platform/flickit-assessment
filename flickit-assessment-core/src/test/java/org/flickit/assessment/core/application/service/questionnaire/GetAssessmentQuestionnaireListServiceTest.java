@@ -3,6 +3,7 @@ package org.flickit.assessment.core.application.service.questionnaire;
 import org.assertj.core.api.Assertions;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.ConfidenceLevel;
@@ -27,8 +28,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_QUESTIONNAIRE_LIST_ASSESSMENT_RESULT_ID_NOT_FOUND;
 import static org.flickit.assessment.core.test.fixture.application.QuestionnaireListItemMother.createQuestionnaireListItem;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class GetAssessmentQuestionnaireListServiceTest {
@@ -36,23 +36,13 @@ class GetAssessmentQuestionnaireListServiceTest {
     @InjectMocks
     private GetAssessmentQuestionnaireListService service;
 
-    @Mock
-    private AssessmentAccessChecker assessmentAccessChecker;
-
-    @Mock
-    private LoadQuestionnairesPort loadQuestionnairesPort;
-
-    @Mock
-    private LoadAssessmentResultPort loadAssessmentResultPort;
-
-    @Mock
-    private CountLowConfidenceAnswersPort countLowConfidenceAnswersPort;
-
-    @Mock
-    private CountEvidencesPort countEvidencesPort;
-
-    @Mock
-    private CountAnswersPort countAnswersPort;
+    @Mock private AssessmentAccessChecker assessmentAccessChecker;
+    @Mock private ValidateAssessmentResultPort validateAssessmentResultPort;
+    @Mock private LoadQuestionnairesPort loadQuestionnairesPort;
+    @Mock private LoadAssessmentResultPort loadAssessmentResultPort;
+    @Mock private CountLowConfidenceAnswersPort countLowConfidenceAnswersPort;
+    @Mock private CountEvidencesPort countEvidencesPort;
+    @Mock private CountAnswersPort countAnswersPort;
 
     @Test
     void testGetQuestionnaireList_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
@@ -63,7 +53,8 @@ class GetAssessmentQuestionnaireListServiceTest {
         var throwable = assertThrows(AccessDeniedException.class, () -> service.getAssessmentQuestionnaireList(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
-        verifyNoInteractions(loadQuestionnairesPort,
+        verifyNoInteractions(validateAssessmentResultPort,
+            loadQuestionnairesPort,
             loadAssessmentResultPort,
             countEvidencesPort,
             countLowConfidenceAnswersPort,
@@ -75,6 +66,7 @@ class GetAssessmentQuestionnaireListServiceTest {
         var param = createParam(Param.ParamBuilder::build);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_QUESTIONNAIRE_LIST))
             .thenReturn(true);
+        doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.empty());
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.getAssessmentQuestionnaireList(param));
@@ -112,6 +104,7 @@ class GetAssessmentQuestionnaireListServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_QUESTIONNAIRE_LIST))
             .thenReturn(true);
+        doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
         when(loadQuestionnairesPort.loadAllByAssessmentId(portParam))
             .thenReturn(loadPortResult);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
