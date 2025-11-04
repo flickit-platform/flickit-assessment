@@ -9,6 +9,7 @@ import org.flickit.assessment.core.application.domain.AnswerStatus;
 import org.flickit.assessment.core.application.port.out.answerhistory.CreateAnswerHistoryPort;
 import org.flickit.assessment.core.application.port.out.answerhistory.LoadAnswerHistoryPort;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
+import org.flickit.assessment.data.jpa.core.answer.AnswerJpaRepository;
 import org.flickit.assessment.data.jpa.core.answerhistory.AnswerHistoryJpaEntity;
 import org.flickit.assessment.data.jpa.core.answerhistory.AnswerHistoryJpaRepository;
 import org.flickit.assessment.data.jpa.core.answerhistory.QuestionIdAndAnswerCountView;
@@ -38,6 +39,7 @@ public class AnswerHistoryPersistenceJpaAdapter implements
 
     private final AnswerHistoryJpaRepository repository;
     private final AssessmentResultJpaRepository assessmentResultRepository;
+    private final AnswerJpaRepository answerRepository;
     private final UserJpaRepository userRepository;
 
     @Override
@@ -100,6 +102,31 @@ public class AnswerHistoryPersistenceJpaAdapter implements
             })
             .toList();
 
+        repository.saveAll(answerHistoryEntities);
+    }
+
+    @Override
+    public void persistOnClearAnswers(PersistOnClearAnswersParam param) {
+        var AnswerIdToQuestionId = answerRepository.findByAssessmentResultIdAndQuestionIdIn(param.assessmentResultId(), param.questionIds()).stream()
+            .collect(toMap(AnswerJpaEntity::getId, AnswerJpaEntity::getQuestionId));
+
+        var answerHistoryEntities = AnswerIdToQuestionId.entrySet().stream()
+            .map(a ->
+                new AnswerHistoryJpaEntity(
+                    null,
+                    new AnswerJpaEntity(a.getKey()),
+                    new AssessmentResultJpaEntity(param.assessmentResultId()),
+                    a.getValue(),
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    param.createdBy(),
+                    param.creationTime(),
+                    param.type().ordinal()
+                )
+            ).toList();
         repository.saveAll(answerHistoryEntities);
     }
 

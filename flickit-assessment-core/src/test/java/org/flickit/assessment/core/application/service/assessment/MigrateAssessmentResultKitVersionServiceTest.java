@@ -4,10 +4,12 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentAcc
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.exception.ValidationException;
+import org.flickit.assessment.core.application.domain.HistoryType;
 import org.flickit.assessment.core.application.port.in.assessment.MigrateAssessmentResultKitVersionUseCase;
 import org.flickit.assessment.core.application.port.in.assessment.MigrateAssessmentResultKitVersionUseCase.Param;
 import org.flickit.assessment.core.application.port.out.answer.DeleteAnswerPort;
 import org.flickit.assessment.core.application.port.out.answer.UpdateAnswerPort;
+import org.flickit.assessment.core.application.port.out.answerhistory.CreateAnswerHistoryPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.InvalidateAssessmentResultCalculatePort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.UpdateAssessmentResultPort;
@@ -16,6 +18,8 @@ import org.flickit.assessment.core.application.port.out.question.LoadQuestionPor
 import org.flickit.assessment.core.application.port.out.user.LoadUserPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -31,8 +35,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 import static org.flickit.assessment.core.common.ErrorMessageKey.MIGRATE_ASSESSMENT_RESULT_KIT_VERSION_ACTIVE_VERSION_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.MIGRATE_ASSESSMENT_RESULT_KIT_VERSION_ASSESSMENT_RESULT_ID_NOT_FOUND;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -41,29 +44,17 @@ class MigrateAssessmentResultKitVersionServiceTest {
     @InjectMocks
     private MigrateAssessmentResultKitVersionService service;
 
-    @Mock
-    private AssessmentAccessChecker assessmentAccessChecker;
+    @Mock private AssessmentAccessChecker assessmentAccessChecker;
+    @Mock private LoadAssessmentResultPort loadAssessmentResultPort;
+    @Mock private InvalidateAssessmentResultCalculatePort invalidateAssessmentResultCalculatePort;
+    @Mock private UpdateAssessmentResultPort updateAssessmentResultPort;
+    @Mock private LoadQuestionPort loadQuestionPort;
+    @Mock private DeleteAnswerPort deleteAnswerPort;
+    @Mock private UpdateAnswerPort updateAnswerPort;
+    @Mock private CreateAnswerHistoryPort createAnswerHistoryPort;
+    @Mock private LoadUserPort loadUserPort;
 
-    @Mock
-    private LoadAssessmentResultPort loadAssessmentResultPort;
-
-    @Mock
-    private InvalidateAssessmentResultCalculatePort invalidateAssessmentResultCalculatePort;
-
-    @Mock
-    private UpdateAssessmentResultPort updateAssessmentResultPort;
-
-    @Mock
-    private LoadQuestionPort loadQuestionPort;
-
-    @Mock
-    private DeleteAnswerPort deleteAnswerPort;
-
-    @Mock
-    private UpdateAnswerPort updateAnswerPort;
-
-    @Mock
-    private LoadUserPort loadUserPort;
+    @Captor private ArgumentCaptor<CreateAnswerHistoryPort.PersistOnClearAnswersParam> persistOnClearAnswersParamCaptor;
 
     private final Param param = createParam(Param.ParamBuilder::build);
 
@@ -80,8 +71,10 @@ class MigrateAssessmentResultKitVersionServiceTest {
             invalidateAssessmentResultCalculatePort,
             updateAssessmentResultPort,
             loadQuestionPort,
+            deleteAnswerPort,
             updateAnswerPort,
-            deleteAnswerPort);
+            createAnswerHistoryPort,
+            loadUserPort);
     }
 
     @Test
@@ -97,7 +90,9 @@ class MigrateAssessmentResultKitVersionServiceTest {
             updateAssessmentResultPort,
             loadQuestionPort,
             deleteAnswerPort,
-            updateAnswerPort);
+            updateAnswerPort,
+            createAnswerHistoryPort,
+            loadUserPort);
     }
 
     @Test
@@ -115,7 +110,9 @@ class MigrateAssessmentResultKitVersionServiceTest {
             updateAssessmentResultPort,
             loadQuestionPort,
             deleteAnswerPort,
-            updateAnswerPort);
+            updateAnswerPort,
+            createAnswerHistoryPort,
+            loadUserPort);
     }
 
     @Test
@@ -139,9 +136,13 @@ class MigrateAssessmentResultKitVersionServiceTest {
 
         service.migrateKitVersion(param);
 
-        verify(updateAssessmentResultPort, times(1)).updateKitVersionId(assessmentResult.getId(), activeKitVersionId);
-        verify(invalidateAssessmentResultCalculatePort, times(1)).invalidateCalculate(assessmentResult.getId());
-        verifyNoInteractions(deleteAnswerPort, updateAnswerPort);
+        verify(updateAssessmentResultPort).updateKitVersionId(assessmentResult.getId(), activeKitVersionId);
+        verify(invalidateAssessmentResultCalculatePort).invalidateCalculate(assessmentResult.getId());
+
+        verifyNoInteractions(deleteAnswerPort,
+            updateAnswerPort,
+            createAnswerHistoryPort,
+            loadUserPort);
     }
 
     @Test
@@ -176,10 +177,17 @@ class MigrateAssessmentResultKitVersionServiceTest {
         verify(updateAnswerPort, times(1))
             .clearAnswers(assessmentResult.getId(), List.of(5L), systemUserId);
 
-        verify(updateAssessmentResultPort, times(1))
-            .updateKitVersionId(assessmentResult.getId(), activeKitVersionId);
-        verify(invalidateAssessmentResultCalculatePort, times(1))
-            .invalidateCalculate(assessmentResult.getId());
+        verify(updateAssessmentResultPort).updateKitVersionId(assessmentResult.getId(), activeKitVersionId);
+        verify(invalidateAssessmentResultCalculatePort).invalidateCalculate(assessmentResult.getId());
+
+        verify(createAnswerHistoryPort).persistOnClearAnswers(persistOnClearAnswersParamCaptor.capture());
+
+        var persistAnswerHistoryParam = persistOnClearAnswersParamCaptor.getValue();
+        assertEquals(assessmentResult.getId(), persistAnswerHistoryParam.assessmentResultId());
+        assertEquals(List.of(5L), persistAnswerHistoryParam.questionIds());
+        assertEquals(systemUserId, persistAnswerHistoryParam.createdBy());
+        assertNotNull(persistAnswerHistoryParam.creationTime());
+        assertEquals(HistoryType.DELETE, persistAnswerHistoryParam.type());
     }
 
     private MigrateAssessmentResultKitVersionUseCase.Param createParam(Consumer<Param.ParamBuilder> changer) {
