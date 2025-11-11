@@ -128,7 +128,6 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
             JOIN AssessmentResultJpaEntity ar ON ar.assessment.id = e.assessmentId AND ar.id = a.assessmentResult.id
             JOIN QuestionJpaEntity q ON e.questionId = q.id and ar.kitVersionId = q.kitVersionId
             WHERE e.assessmentId  = :assessmentId
-                AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
                 AND e.type IS NOT NULL
                 AND e.deleted = false
                 AND q.questionnaireId  = :questionnaireId
