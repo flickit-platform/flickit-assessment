@@ -14,6 +14,7 @@ env:
   IMAGE_NAME: flickit-platform/flickit-assessment
   JIB_OPT: -Djib.httpTimeout=240000 -Dmaven.test.skip=true
   JIB_CMD: clean install jib:build
+  DOCKER_AUTH_CONFIG: ${{ secrets.DOCKER_AUTH_CONFIG }}
 
 jobs:
   build:
@@ -116,7 +117,7 @@ jobs:
     name: deploy latest image
     runs-on: ubuntu-latest
     if: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
-      github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true }}
+      (github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true) }}
 
     permissions:
       contents: write
@@ -124,51 +125,55 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
         id: vars
 
-      - name: Set output
+      - name: Set output tag
         run: echo "tag=${GITHUB_REF#refs/*/}" >> $GITHUB_OUTPUT
 
-      - name: login to GitHub Container Registry
-        uses: docker/login-action@v3
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
         with:
           registry: ${{ env.REGISTRY }}
           username: flickit-platform
           password: ${{ secrets.GH_PACKAGES_TOKEN }}
 
       - name: Set up JDK 21
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v3
         with:
           java-version: 21
-          distribution: temurin
+          distribution: adopt
 
       - name: Extract GitHub SHA
         run: echo sha=${GITHUB_SHA:0:7} >> $GITHUB_OUTPUT
         id: github_sha7
 
-      - name: Check output
+      - name: Check SHA output
         env:
           GITHUB_SHA_7: ${{ steps.github_sha7.outputs.sha }}
         run: |
           echo $GITHUB_SHA_7
 
-      - name: Build and push image
+      - name: Build and push image with Jib
         run: mvn ${{ env.JIB_OPT }} -Djib.to.image="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.github_sha7.outputs.sha }}" ${{ env.JIB_CMD }}
 
   deploy-latest:
     needs: [ build-and-push-latest-image ]
     name: deploy latest
     runs-on: ubuntu-latest
-    steps:
-      - name: Deploy service on Webhook
-        run: |
-          status_code=$(curl --silent --output /dev/null --write-out "%{http_code}" -X POST "${{ secrets.DEPLOY_WEBHOOK_URL }}?ASSESSMENT_VERSION=${GITHUB_SHA:0:7}")
-          if [ "$status_code" -ne 204 ]; then
-            echo "Unexpected status code: $status_code"
-            exit 1
-          fi
 
+    container:
+      image: hamravesh/darkube-cli:v1.1
+      options: --user root
+
+    steps:
+      - name: Deploy using Darkube
+        run: |
+          darkube deploy \
+            --token ${{ secrets.DEPLOY_TOKEN_ASSESSMENT_FLICKIT_STAGE_HAMRAVESH_C13 }} \
+            --app-id ${{ secrets.APP_ID_ASSESSMENT_FLICKIT_STAGE_HAMRAVESH_C13 }} \
+            --image-tag ${GITHUB_SHA:0:7} \
+            --job-id ${GITHUB_RUN_ID}
 
   tag-and-release:
     needs: [ sonar ]

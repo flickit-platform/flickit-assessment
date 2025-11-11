@@ -5,9 +5,10 @@ import org.flickit.assessment.core.application.domain.AnswerStatus;
 import org.flickit.assessment.core.application.domain.FullUser;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.UUID;
 
-public interface LoadAnswerHistoryListPort {
+public interface LoadAnswerHistoryPort {
 
     PaginatedResponse<Result> load(UUID assessmentId, long questionId, int page, int size);
 
@@ -19,4 +20,6 @@ public interface LoadAnswerHistoryListPort {
                   FullUser createdBy,
                   LocalDateTime creationTime) {
     }
+
+    Map<Long, Integer> countAnswerHistories(UUID assessmentResultId, Long questionnaireId);
 }

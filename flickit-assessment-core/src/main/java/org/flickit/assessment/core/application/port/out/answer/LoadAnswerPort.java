@@ -11,4 +11,6 @@ public interface LoadAnswerPort {
     Optional<Answer> load(UUID assessmentResultId, Long questionId);
 
     List<Answer> loadAllUnapproved(UUID assessmentResultId);
+
+    List<Answer> loadByQuestionnaireId(UUID assessmentResultId, Long questionnaireId);
 }

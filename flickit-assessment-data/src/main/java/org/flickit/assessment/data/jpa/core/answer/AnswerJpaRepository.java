@@ -11,6 +11,8 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
 
     List<AnswerJpaEntity> findByAssessmentResultIdAndDeletedFalseAndQuestionIdIn(UUID assessmentResultId, List<Long> questionId);
 
+    List<AnswerJpaEntity> findByAssessmentResultIdAndQuestionIdIn(UUID assessmentResultId, List<Long> questionId);
+
     List<AnswerJpaEntity> findByAssessmentResultIdAndDeletedFalse(UUID assessmentResultId);
 
     @Query("""
@@ -25,6 +27,17 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
         """)
     Optional<AnswerWithOptionView> findByAssessmentResultIdAndQuestionId(@Param("assessmentResultId") UUID assessmentResultId,
                                                                          @Param("questionId") Long questionId);
+
+    @Query("""
+            SELECT ans as answer
+            FROM AnswerJpaEntity ans
+            JOIN AssessmentResultJpaEntity ar ON ans.assessmentResult.id = ar.id
+            WHERE ans.assessmentResult.id = :assessmentResultId
+                AND ans.questionnaireId = :questionnaireId
+                AND ans.deleted = false
+        """)
+    List<AnswerJpaEntity> findByAssessmentResultIdAndQuestionnaireId(@Param("assessmentResultId") UUID assessmentResultId,
+                                                                     @Param("questionnaireId") Long questionnaireId);
 
     @Query("""
             SELECT COUNT(a) as answerCount
@@ -177,4 +190,18 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
         """)
     List<AnswerWithOptionView> findAnswersByAssessmentResultIdAndStatus(@Param("assessmentResultId") UUID assessmentResultId,
                                                                         @Param("status") Integer status);
+
+    @Modifying
+    @Query("""
+            UPDATE AnswerJpaEntity a
+            SET a.confidenceLevelId = null,
+                a.answerOptionId = null,
+                a.status = null,
+                a.lastModifiedBy = :lastModifiedBy
+            WHERE assessmentResult.id = :assessmentResultId
+                AND a.questionId IN :questionIds
+        """)
+    void clearAnswers(@Param("assessmentResultId") UUID assessmentResultId,
+                      @Param("questionIds") Collection<Long> questionIds,
+                      @Param("lastModifiedBy") UUID lastModifiedBy);
 }

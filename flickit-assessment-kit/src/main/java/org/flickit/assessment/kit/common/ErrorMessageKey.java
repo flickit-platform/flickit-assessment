@@ -378,7 +378,6 @@ public class ErrorMessageKey {
     public static final String UPDATE_QUESTION_HINT_SIZE_MAX = "update-question.hint.size.max";
     public static final String UPDATE_QUESTION_MAY_NOT_BE_APPLICABLE_NOT_NULL = "update-question.myNotBeApplicable.notNull";
     public static final String UPDATE_QUESTION_ADVISABLE_NOT_NULL = "update-question.advisable.notNull";
-    public static final String UPDATE_QUESTION_ANSWER_RANGE_ID_NOT_UPDATABLE = "update-question.answerRangeId.notUpdatable";
 
     public static final String UPDATE_QUESTIONS_ORDER_KIT_VERSION_ID_NOT_NULL = "update-questions-order.kitVersionId.notNull";
     public static final String UPDATE_QUESTIONS_ORDER_ORDERS_NOT_NULL = "update-questions-order.orders.notNull";
@@ -557,6 +556,9 @@ public class ErrorMessageKey {
     public static final String GET_KIT_MEASURE_DETAIL_KIT_ID_NOT_NULL = "get-kit-measure-detail.kitId.notNull";
     public static final String GET_KIT_MEASURE_DETAIL_MEASURE_ID_NOT_NULL = "get-kit-measure-detail.measureId.notNull";
     public static final String GET_KIT_MEASURE_DETAIL_MEASURE_ID_NOT_FOUND = "get-kit-measure-detail.measureId.notFound";
+
+    public static final String DELETE_ANSWER_RANGE_ANSWER_RANGE_ID_NOT_NULL= "delete-answer-range.answerRangeId.notNull";
+    public static final String DELETE_ANSWER_RANGE_KIT_VERSION_ID_NOT_NULL= "delete-answer-range.kitVersionId.notNull";
 
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);

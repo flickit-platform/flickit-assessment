@@ -1,10 +1,10 @@
-package org.flickit.assessment.kit.application.service.question;
+package org.flickit.assessment.kit.application.service.answerrange;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.KitVersion;
-import org.flickit.assessment.kit.application.domain.Question;
-import org.flickit.assessment.kit.application.port.in.question.UpdateQuestionUseCase;
+import org.flickit.assessment.kit.application.port.in.answerrange.DeleteAnswerRangeUseCase;
+import org.flickit.assessment.kit.application.port.out.answerrange.DeleteAnswerRangePort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.question.UpdateQuestionPort;
@@ -19,32 +19,28 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class UpdateQuestionService implements UpdateQuestionUseCase {
+public class DeleteAnswerRangeService implements DeleteAnswerRangeUseCase {
 
-    private final UpdateQuestionPort updateQuestionPort;
     private final LoadKitVersionPort loadKitVersionPort;
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
+    private final DeleteAnswerRangePort deleteAnswerRangePort;
+    private final UpdateQuestionPort updateQuestionPort;
 
     @Override
-    public void updateQuestion(Param param) {
+    public void deleteAnswerRange(Param param) {
         KitVersion kitVersion = loadKitVersionPort.load(param.getKitVersionId());
         UUID ownerId = loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId());
         if (!ownerId.equals(param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        String code = Question.generateCode(param.getIndex());
-        updateQuestionPort.update(new UpdateQuestionPort.Param(param.getQuestionId(),
-            param.getKitVersionId(),
-            code,
-            param.getTitle(),
-            param.getIndex(),
-            param.getHint(),
-            param.getMayNotBeApplicable(),
-            param.getAdvisable(),
-            param.getAnswerRangeId(),
-            param.getMeasureId(),
-            param.getTranslations(),
+        deleteAnswerRangePort.delete(param.getAnswerRangeId(), kitVersion.getId());
+        updateQuestionPort.clearAnswerRange(toParam(param.getAnswerRangeId(), param.getKitVersionId(), param.getCurrentUserId()));
+    }
+
+    UpdateQuestionPort.ClearAnswerRangeParam toParam(long answerRangeId, long kitVersionId, UUID lastModifiedBy) {
+        return new UpdateQuestionPort.ClearAnswerRangeParam(answerRangeId,
+            kitVersionId,
             LocalDateTime.now(),
-            param.getCurrentUserId()));
+            lastModifiedBy);
     }
 }

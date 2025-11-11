@@ -7,18 +7,30 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.port.in.assessment.MigrateAssessmentResultKitVersionUseCase;
 import org.flickit.assessment.core.application.port.out.answer.DeleteAnswerPort;
+import org.flickit.assessment.core.application.port.out.answer.UpdateAnswerPort;
+import org.flickit.assessment.core.application.port.out.answerhistory.CreateAnswerHistoryPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.InvalidateAssessmentResultCalculatePort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.UpdateAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionPort;
+import org.flickit.assessment.core.application.port.out.question.LoadQuestionPort.IdAndAnswerRange;
+import org.flickit.assessment.core.application.port.out.user.LoadUserPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toSet;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.MIGRATE_KIT_VERSION;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.core.common.ErrorMessageKey.*;
+import static org.flickit.assessment.core.application.domain.HistoryType.DELETE;
+import static org.flickit.assessment.core.common.ErrorMessageKey.MIGRATE_ASSESSMENT_RESULT_KIT_VERSION_ACTIVE_VERSION_NOT_FOUND;
+import static org.flickit.assessment.core.common.ErrorMessageKey.MIGRATE_ASSESSMENT_RESULT_KIT_VERSION_ASSESSMENT_RESULT_ID_NOT_FOUND;
 
 @Service
 @Transactional
@@ -31,6 +43,9 @@ public class MigrateAssessmentResultKitVersionService implements MigrateAssessme
     private final UpdateAssessmentResultPort updateAssessmentResultPort;
     private final LoadQuestionPort loadQuestionPort;
     private final DeleteAnswerPort deleteAnswerPort;
+    private final CreateAnswerHistoryPort createAnswerHistoryPort;
+    private final UpdateAnswerPort updateAnswerPort;
+    private final LoadUserPort loadUserPort;
 
     @Override
     public void migrateKitVersion(Param param) {
@@ -44,16 +59,52 @@ public class MigrateAssessmentResultKitVersionService implements MigrateAssessme
         if (activeKitVersionId == null)
             throw new ValidationException(MIGRATE_ASSESSMENT_RESULT_KIT_VERSION_ACTIVE_VERSION_NOT_FOUND);
 
-        var currentKitVersionQuestionsIds = loadQuestionPort.loadIdsByKitVersionId(assessmentResult.getKitVersionId());
-        var activeKitVersionQuestionsIds = loadQuestionPort.loadIdsByKitVersionId(activeKitVersionId);
-        var missingQuestionIds = currentKitVersionQuestionsIds.stream().
-            filter(q -> !activeKitVersionQuestionsIds.contains(q))
-            .collect(Collectors.toSet());
+        List<IdAndAnswerRange> currentQuestions = loadQuestionPort.loadIdAndAnswerRangeIdByKitVersionId(assessmentResult.getKitVersionId());
+        List<IdAndAnswerRange> activeVersionQuestions = loadQuestionPort.loadIdAndAnswerRangeIdByKitVersionId(activeKitVersionId);
 
-        if (!missingQuestionIds.isEmpty())
-            deleteAnswerPort.delete(assessmentResult.getId(), missingQuestionIds);
+        Map<Long, Long> activeQuestionsMap = activeVersionQuestions.stream()
+            .collect(Collectors.toMap(IdAndAnswerRange::id, IdAndAnswerRange::answerRangeId));
+
+        deleteAnswersOfDeletedQuestions(currentQuestions, activeQuestionsMap, assessmentResult.getId());
+        clearAnswersOfChangedQuestions(currentQuestions, activeQuestionsMap, assessmentResult.getId());
 
         updateAssessmentResultPort.updateKitVersionId(assessmentResult.getId(), activeKitVersionId);
         loadAssessmentResultCalculatePort.invalidateCalculate(assessmentResult.getId());
+    }
+
+    private void deleteAnswersOfDeletedQuestions(List<IdAndAnswerRange> currentQuestions,
+                                                 Map<Long, Long> activeQuestionsMap,
+                                                 UUID assessmentResultId) {
+        Set<Long> missingQuestionsInActiveVersion = currentQuestions.stream()
+            .map(IdAndAnswerRange::id)
+            .filter(id -> !activeQuestionsMap.containsKey(id))
+            .collect(toSet());
+
+        if (!missingQuestionsInActiveVersion.isEmpty())
+            deleteAnswerPort.delete(assessmentResultId, missingQuestionsInActiveVersion);
+    }
+
+    private void clearAnswersOfChangedQuestions(List<IdAndAnswerRange> currentQuestions,
+                                                Map<Long, Long> activeQuestionsMap,
+                                                UUID assessmentResultId) {
+        List<Long> questionIdsWithChangedAnswerRange = currentQuestions.stream()
+            .filter(q -> {
+                Long activeAnswerRangeId = activeQuestionsMap.get(q.id());
+                return activeAnswerRangeId != null && activeAnswerRangeId != q.answerRangeId();
+            })
+            .map(IdAndAnswerRange::id)
+            .toList();
+
+        if (!questionIdsWithChangedAnswerRange.isEmpty()) {
+            var systemUserId = loadUserPort.loadSystemUserId();
+            updateAnswerPort.clearAnswers(assessmentResultId, questionIdsWithChangedAnswerRange, systemUserId);
+
+            var persistOnClearAnswersParam = new CreateAnswerHistoryPort.PersistOnClearAnswersParam(assessmentResultId,
+                questionIdsWithChangedAnswerRange,
+                systemUserId,
+                LocalDateTime.now(),
+                DELETE);
+            createAnswerHistoryPort.persistOnClearAnswers(persistOnClearAnswersParam);
+        }
     }
 }

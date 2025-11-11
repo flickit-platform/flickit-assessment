@@ -12,7 +12,6 @@ import org.flickit.assessment.core.application.port.out.question.LoadQuestionMay
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionPort;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionnaireQuestionListPort;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionsBySubjectPort;
-import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepository;
@@ -26,12 +25,10 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.UUID;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
-import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 @Component("coreQuestionPersistenceJpaAdapter")
@@ -55,19 +52,17 @@ public class QuestionPersistenceJpaAdapter implements
     }
 
     @Override
-    public PaginatedResponse<Question> loadByQuestionnaireId(Long questionnaireId, UUID assessmentId, int size, int page) {
-        var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
-            .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
-        var language = resolveLanguage(assessmentResult);
+    public PaginatedResponse<Question> loadByQuestionnaireId(LoadQuestionsParam param) {
+        var language = resolveLanguage(param.kitVersionId(), param.langId());
 
-        var pageResult = repository.findAllByQuestionnaireIdAndKitVersionIdOrderByIndex(questionnaireId,
-            assessmentResult.getKitVersionId(),
-            PageRequest.of(page, size));
+        var pageResult = repository.findAllByQuestionnaireIdAndKitVersionIdOrderByIndex(param.questionnaireId(),
+            param.kitVersionId(),
+            PageRequest.of(param.page(), param.size()));
         List<Long> answerRangeIds = pageResult.getContent().stream()
             .map(QuestionJpaEntity::getAnswerRangeId)
             .toList();
         var answerRangeIdToAnswerOptionsMap = answerOptionRepository.findAllByAnswerRangeIdInAndKitVersionId(answerRangeIds,
-                assessmentResult.getKitVersionId(),
+                param.kitVersionId(),
                 Sort.by(AnswerOptionJpaEntity.Fields.index)).stream()
             .collect(groupingBy(AnswerOptionJpaEntity::getAnswerRangeId, toList()));
 
@@ -105,15 +100,17 @@ public class QuestionPersistenceJpaAdapter implements
     }
 
     @Override
-    public Set<Long> loadIdsByKitVersionId(long kitVersionId) {
-        return repository.findIdsByKitVersionId(kitVersionId);
+    public List<IdAndAnswerRange> loadIdAndAnswerRangeIdByKitVersionId(long kitVersionId) {
+        return repository.findIdAndAnswerRangeIdByKitVersionId(kitVersionId).stream()
+            .map(entity -> new IdAndAnswerRange(entity.getQuestionId(), entity.getAnswerRangeId()))
+            .toList();
     }
 
-    private @Nullable KitLanguage resolveLanguage(AssessmentResultJpaEntity assessmentResult) {
-        var assessmentKit = assessmentKitRepository.findByKitVersionId(assessmentResult.getKitVersionId())
+    private @Nullable KitLanguage resolveLanguage(long kitVersionId, int resultLangId) {
+        var assessmentKit = assessmentKitRepository.findByKitVersionId(kitVersionId)
             .orElseThrow(() -> new ResourceNotFoundException(ErrorMessageKey.COMMON_ASSESSMENT_KIT_NOT_FOUND));
-        return Objects.equals(assessmentResult.getLangId(), assessmentKit.getLanguageId())
+        return Objects.equals(resultLangId, assessmentKit.getLanguageId())
             ? null
-            : KitLanguage.valueOfById(assessmentResult.getLangId());
+            : KitLanguage.valueOfById(resultLangId);
     }
 }

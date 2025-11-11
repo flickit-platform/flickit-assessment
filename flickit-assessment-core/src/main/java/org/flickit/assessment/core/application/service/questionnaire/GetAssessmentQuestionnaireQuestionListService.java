@@ -3,21 +3,25 @@ package org.flickit.assessment.core.application.service.questionnaire;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetAssessmentQuestionnaireQuestionListUseCase;
-import org.flickit.assessment.core.application.port.out.answer.LoadQuestionsAnswerListPort;
+import org.flickit.assessment.core.application.port.out.answer.LoadAnswerPort;
+import org.flickit.assessment.core.application.port.out.answerhistory.LoadAnswerHistoryPort;
+import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.evidence.CountEvidencesPort;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionnaireQuestionListPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
 import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_QUESTIONNAIRE_QUESTIONS;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
 @Service
@@ -26,47 +30,58 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 public class GetAssessmentQuestionnaireQuestionListService implements GetAssessmentQuestionnaireQuestionListUseCase {
 
     private final AssessmentAccessChecker assessmentAccessChecker;
+    private final ValidateAssessmentResultPort validateAssessmentResultPort;
+    private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final LoadQuestionnaireQuestionListPort loadQuestionnaireQuestionListPort;
-    private final LoadQuestionsAnswerListPort loadQuestionsAnswerListPort;
+    private final LoadAnswerPort loadAnswerPort;
     private final CountEvidencesPort countEvidencesPort;
+    private final LoadAnswerHistoryPort loadAnswerHistoryPort;
 
     @Override
     public PaginatedResponse<Result> getQuestionnaireQuestionList(Param param) {
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        var pageResult = loadQuestionnaireQuestionListPort.loadByQuestionnaireId(param.getQuestionnaireId(),
-            param.getAssessmentId(),
-            param.getSize(),
-            param.getPage());
+        validateAssessmentResultPort.validate(param.getAssessmentId());
 
-        List<Long> questionIds = pageResult.getItems().stream()
-            .map(Question::getId)
-            .toList();
+        var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
+            .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
 
-        var questionIdToAnswerMap = loadQuestionsAnswerListPort.loadByQuestionIds(param.getAssessmentId(), questionIds)
-            .stream()
+        var questionsPage = loadQuestions(param, assessmentResult);
+
+        var questionIdToAnswerMap = loadAnswerPort.loadByQuestionnaireId(assessmentResult.getId(), param.getQuestionnaireId()).stream()
             .collect(toMap(Answer::getQuestionId, Function.identity()));
 
+        var questionIdToAnswerHistoriesCountMap = loadAnswerHistoryPort.countAnswerHistories(assessmentResult.getId(), param.getQuestionnaireId());
         var questionIdToEvidencesCountMap = countEvidencesPort.countQuestionnaireQuestionsEvidences(param.getAssessmentId(), param.getQuestionnaireId());
         var questionIdToUnresolvedCommentsCountMap = countEvidencesPort.countUnresolvedComments(param.getAssessmentId(), param.getQuestionnaireId());
-        var items = pageResult.getItems().stream()
+        var items = questionsPage.getItems().stream()
             .map((Question q) -> mapToResult(q,
                 questionIdToAnswerMap.get(q.getId()),
                 questionIdToEvidencesCountMap.getOrDefault(q.getId(), 0),
-                questionIdToUnresolvedCommentsCountMap.getOrDefault(q.getId(), 0)))
+                questionIdToUnresolvedCommentsCountMap.getOrDefault(q.getId(), 0),
+                questionIdToAnswerHistoriesCountMap.getOrDefault(q.getId(), 0)))
             .toList();
 
         return new PaginatedResponse<>(
             items,
-            pageResult.getPage(),
-            pageResult.getSize(),
-            pageResult.getSort(),
-            pageResult.getOrder(),
-            pageResult.getTotal());
+            questionsPage.getPage(),
+            questionsPage.getSize(),
+            questionsPage.getSort(),
+            questionsPage.getOrder(),
+            questionsPage.getTotal());
     }
 
-    private Result mapToResult(Question question, Answer answer, int evidencesCount, int unresolvedCommentsCount) {
+    private PaginatedResponse<Question> loadQuestions(Param param, AssessmentResult assessmentResult) {
+        var loadQuestionnaireQuestionsParam = new LoadQuestionnaireQuestionListPort.LoadQuestionsParam(param.getQuestionnaireId(),
+            assessmentResult.getKitVersionId(),
+            assessmentResult.getLanguage().getId(),
+            param.getSize(),
+            param.getPage());
+        return loadQuestionnaireQuestionListPort.loadByQuestionnaireId(loadQuestionnaireQuestionsParam);
+    }
+
+    private Result mapToResult(Question question, Answer answer, int evidencesCount, int unresolvedCommentsCount, int answerHistoryCount) {
         QuestionAnswer answerDto = null;
         if (answer != null) {
             Option answerOption = null;
@@ -100,8 +115,10 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
                 hasAnswer(answer) && answer.getConfidenceLevelId() < ConfidenceLevel.SOMEWHAT_UNSURE.getId(),
                 hasAnswer(answer) && evidencesCount == 0,
                 unresolvedCommentsCount,
-                answerDto != null && answerDto.approved() != null && !answerDto.approved()
-            ));
+                answerDto != null && answerDto.approved() != null && !answerDto.approved()),
+            new Counts(evidencesCount,
+                unresolvedCommentsCount,
+                answerHistoryCount));
     }
 
     private boolean hasAnswer(Answer answer) {

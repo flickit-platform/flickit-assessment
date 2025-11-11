@@ -2,25 +2,33 @@ package org.flickit.assessment.core.application.service.questionnaire;
 
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.domain.Answer;
 import org.flickit.assessment.core.application.domain.AnswerOption;
+import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.Question;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetAssessmentQuestionnaireQuestionListUseCase;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetAssessmentQuestionnaireQuestionListUseCase.Param;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetAssessmentQuestionnaireQuestionListUseCase.Result;
-import org.flickit.assessment.core.application.port.out.answer.LoadQuestionsAnswerListPort;
+import org.flickit.assessment.core.application.port.out.answer.LoadAnswerPort;
+import org.flickit.assessment.core.application.port.out.answerhistory.LoadAnswerHistoryPort;
+import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.evidence.CountEvidencesPort;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionnaireQuestionListPort;
+import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.flickit.assessment.core.test.fixture.application.QuestionMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -41,15 +49,29 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
     private AssessmentAccessChecker assessmentAccessChecker;
 
     @Mock
+    private ValidateAssessmentResultPort validateAssessmentResultPort;
+
+    @Mock
+    private LoadAssessmentResultPort loadAssessmentResultPort;
+
+    @Mock
     private LoadQuestionnaireQuestionListPort loadQuestionnaireQuestionListPort;
 
     @Mock
-    private LoadQuestionsAnswerListPort loadQuestionsAnswerListPort;
+    private LoadAnswerPort loadAnswerPort;
 
     @Mock
     private CountEvidencesPort countEvidencesPort;
 
+    @Mock
+    private LoadAnswerHistoryPort loadAnswerHistoryPort;
+
+    @Captor
+    private ArgumentCaptor<LoadQuestionnaireQuestionListPort.LoadQuestionsParam> loadQuestionsCaptor;
+
     private final Question question = QuestionMother.withOptions();
+    private final Param param = createParam(GetAssessmentQuestionnaireQuestionListUseCase.Param.ParamBuilder::build);
+    private final AssessmentResult assessmentResult = AssessmentResultMother.validResult();
 
     private final PaginatedResponse<Question> expectedPaginatedResponse = new PaginatedResponse<>(
         List.of(question),
@@ -62,30 +84,39 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
 
     @Test
     void testGetAssessmentQuestionnaireQuestionList_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
-        Param param = createParam(GetAssessmentQuestionnaireQuestionListUseCase.Param.ParamBuilder::build);
-
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
             .thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.getQuestionnaireQuestionList(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
-        verifyNoInteractions(loadQuestionnaireQuestionListPort, loadQuestionsAnswerListPort);
+        verifyNoInteractions(loadQuestionnaireQuestionListPort,
+            loadAnswerPort,
+            countEvidencesPort,
+            loadAnswerHistoryPort);
     }
 
     @Test
-    void testGetAssessmentQuestionnaireQuestionList_ValidParamsAndAnswerIsNotApplicableFalse_ValidResult() {
-        Param param = createParam(GetAssessmentQuestionnaireQuestionListUseCase.Param.ParamBuilder::build);
-
+    void testGetQuestionList_whenParamsAreValidAndAnswerIsNotApplicableFalse_thenValidResult() {
         Answer answer = new Answer(UUID.randomUUID(), new AnswerOption(question.getOptions().getFirst().getId(), 2,
             null, null), question.getId(), 1, Boolean.FALSE, APPROVED);
+        var evidencesCount = 0;
+        int answerHistoriesCount = 2;
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
             .thenReturn(true);
-        when(loadQuestionnaireQuestionListPort.loadByQuestionnaireId(param.getQuestionnaireId(), param.getAssessmentId(), param.getSize(), param.getPage()))
+        doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        when(loadQuestionnaireQuestionListPort.loadByQuestionnaireId(any()))
             .thenReturn(expectedPaginatedResponse);
-        when(loadQuestionsAnswerListPort.loadByQuestionIds(param.getAssessmentId(), List.of(question.getId())))
+        when(loadAnswerPort.loadByQuestionnaireId(assessmentResult.getId(), param.getQuestionnaireId()))
             .thenReturn(List.of(answer));
+        when(countEvidencesPort.countQuestionnaireQuestionsEvidences(param.getAssessmentId(), param.getQuestionnaireId()))
+            .thenReturn(Map.of(question.getId(), evidencesCount));
+        when(countEvidencesPort.countUnresolvedComments(param.getAssessmentId(), param.getQuestionnaireId()))
+            .thenReturn(Map.of(question.getId(), 0));
+        when(loadAnswerHistoryPort.countAnswerHistories(assessmentResult.getId(), param.getQuestionnaireId()))
+            .thenReturn(Map.of(question.getId(), answerHistoriesCount));
 
         PaginatedResponse<Result> result = service.getQuestionnaireQuestionList(param);
         //Assert Pagination params
@@ -104,26 +135,35 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         assertTrue(item.issues().isAnsweredWithoutEvidences());
         assertEquals(0, item.issues().unresolvedCommentsCount());
         assertFalse(item.issues().hasUnapprovedAnswer());
+        //Assert Counts
+        assertEquals(evidencesCount, result.getItems().getFirst().counts().evidences());
+        assertEquals(0, result.getItems().getFirst().counts().comments());
+        assertEquals(answerHistoriesCount, result.getItems().getFirst().counts().answerHistories());
 
-        verify(countEvidencesPort).countQuestionnaireQuestionsEvidences(param.getAssessmentId(), param.getQuestionnaireId());
+        assertLoadQuestionsParam();
     }
 
     @Test
-    void testGetAssessmentQuestionnaireQuestionList_ValidParamsAndAnswerIsNotApplicable_ValidResult() {
-        Param param = createParam(GetAssessmentQuestionnaireQuestionListUseCase.Param.ParamBuilder::build);
+    void testGetAssessmentQuestionnaireQuestionList_whenParamsAreValidAndAnswerIsNotApplicable_thenValidResult() {
         Answer answer = new Answer(UUID.randomUUID(), new AnswerOption(question.getOptions().getFirst().getId(), 2,
             null, null), question.getId(), 3, Boolean.TRUE, UNAPPROVED);
+        var evidencesCount = 2;
+        int answerHistoriesCount = 5;
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
             .thenReturn(true);
-        when(loadQuestionnaireQuestionListPort.loadByQuestionnaireId(param.getQuestionnaireId(), param.getAssessmentId(), param.getSize(), param.getPage()))
+        doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        when(loadQuestionnaireQuestionListPort.loadByQuestionnaireId(any()))
             .thenReturn(expectedPaginatedResponse);
-        when(loadQuestionsAnswerListPort.loadByQuestionIds(param.getAssessmentId(), List.of(question.getId())))
+        when(loadAnswerPort.loadByQuestionnaireId(assessmentResult.getId(), param.getQuestionnaireId()))
             .thenReturn(List.of(answer));
         when(countEvidencesPort.countQuestionnaireQuestionsEvidences(param.getAssessmentId(), param.getQuestionnaireId()))
-            .thenReturn(Map.of(question.getId(), 1));
+            .thenReturn(Map.of(question.getId(), evidencesCount));
         when(countEvidencesPort.countUnresolvedComments(param.getAssessmentId(), param.getQuestionnaireId()))
-            .thenReturn(Map.of(question.getId(), 2));
+            .thenReturn(Map.of(question.getId(), 3));
+        when(loadAnswerHistoryPort.countAnswerHistories(assessmentResult.getId(), param.getQuestionnaireId()))
+            .thenReturn(Map.of(question.getId(), answerHistoriesCount));
 
         PaginatedResponse<Result> result = service.getQuestionnaireQuestionList(param);
         //Assert Pagination params
@@ -140,25 +180,37 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         assertFalse(item.issues().isUnanswered());
         assertFalse(item.issues().isAnsweredWithLowConfidence());
         assertFalse(item.issues().isAnsweredWithoutEvidences());
-        assertEquals(2, item.issues().unresolvedCommentsCount());
+        assertEquals(3, item.issues().unresolvedCommentsCount());
         assertTrue(item.issues().hasUnapprovedAnswer());
+        //Assert Counts
+        assertEquals(evidencesCount, result.getItems().getFirst().counts().evidences());
+        assertEquals(3, result.getItems().getFirst().counts().comments());
+        assertEquals(answerHistoriesCount, result.getItems().getFirst().counts().answerHistories());
+
+        assertLoadQuestionsParam();
     }
 
     @Test
-    void testGetAssessmentQuestionnaireQuestionList_ValidParamsAndSelectedOptionIsNullAndNotApplicable_ValidResult() {
-        Param param = createParam(GetAssessmentQuestionnaireQuestionListUseCase.Param.ParamBuilder::build);
+    void testGetAssessmentQuestionnaireQuestionList_whenParamsAreValidAndSelectedOptionIsNullAndNotApplicable_thenValidResult() {
         Answer answer = new Answer(UUID.randomUUID(), null, question.getId(), 3, Boolean.TRUE, APPROVED);
+        var evidencesCount = 2;
+        var commentsCount = 1;
+        int answerHistoriesCount = 1;
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
             .thenReturn(true);
-        when(loadQuestionnaireQuestionListPort.loadByQuestionnaireId(param.getQuestionnaireId(), param.getAssessmentId(), param.getSize(), param.getPage()))
+        doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        when(loadQuestionnaireQuestionListPort.loadByQuestionnaireId(any()))
             .thenReturn(expectedPaginatedResponse);
-        when(loadQuestionsAnswerListPort.loadByQuestionIds(param.getAssessmentId(), List.of(question.getId())))
+        when(loadAnswerPort.loadByQuestionnaireId(assessmentResult.getId(), param.getQuestionnaireId()))
             .thenReturn(List.of(answer));
         when(countEvidencesPort.countQuestionnaireQuestionsEvidences(param.getAssessmentId(), param.getQuestionnaireId()))
-            .thenReturn(Map.of(question.getId(), 1));
+            .thenReturn(Map.of(question.getId(), evidencesCount));
         when(countEvidencesPort.countUnresolvedComments(param.getAssessmentId(), param.getQuestionnaireId()))
-            .thenReturn(Map.of());
+            .thenReturn(Map.of(question.getId(), commentsCount));
+        when(loadAnswerHistoryPort.countAnswerHistories(assessmentResult.getId(), param.getQuestionnaireId()))
+            .thenReturn(Map.of(question.getId(), answerHistoriesCount));
 
         PaginatedResponse<Result> result = service.getQuestionnaireQuestionList(param);
         //Assert Pagination params
@@ -175,25 +227,35 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         assertFalse(item.issues().isUnanswered());
         assertFalse(item.issues().isAnsweredWithLowConfidence());
         assertFalse(item.issues().isAnsweredWithoutEvidences());
-        assertEquals(0, item.issues().unresolvedCommentsCount());
+        assertEquals(1, item.issues().unresolvedCommentsCount());
         assertFalse(item.issues().hasUnapprovedAnswer());
+        //Assert Counts
+        assertEquals(evidencesCount, result.getItems().getFirst().counts().evidences());
+        assertEquals(commentsCount, result.getItems().getFirst().counts().comments());
+        assertEquals(answerHistoriesCount, result.getItems().getFirst().counts().answerHistories());
+
+        assertLoadQuestionsParam();
     }
 
     @Test
-    void testGetAssessmentQuestionnaireQuestionList_ValidParamsAndSelectedOptionIsNullAndIsNotApplicableFalse_ValidResult() {
-        Param param = createParam(GetAssessmentQuestionnaireQuestionListUseCase.Param.ParamBuilder::build);
+    void testGetAssessmentQuestionnaireQuestionList_whenParamsAreValidAndSelectedOptionIsNullAndIsNotApplicableFalse_thenValidResult() {
         Answer answer = new Answer(UUID.randomUUID(), null, question.getId(), 1, Boolean.FALSE, null);
+        int answerHistoriesCount = 1;
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
             .thenReturn(true);
-        when(loadQuestionnaireQuestionListPort.loadByQuestionnaireId(param.getQuestionnaireId(), param.getAssessmentId(), param.getSize(), param.getPage()))
+        doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        when(loadQuestionnaireQuestionListPort.loadByQuestionnaireId(any()))
             .thenReturn(expectedPaginatedResponse);
-        when(loadQuestionsAnswerListPort.loadByQuestionIds(param.getAssessmentId(), List.of(question.getId())))
+        when(loadAnswerPort.loadByQuestionnaireId(assessmentResult.getId(), param.getQuestionnaireId()))
             .thenReturn(List.of(answer));
         when(countEvidencesPort.countQuestionnaireQuestionsEvidences(param.getAssessmentId(), param.getQuestionnaireId()))
             .thenReturn(Map.of());
         when(countEvidencesPort.countUnresolvedComments(param.getAssessmentId(), param.getQuestionnaireId()))
             .thenReturn(Map.of(question.getId(), 1));
+        when(loadAnswerHistoryPort.countAnswerHistories(assessmentResult.getId(), param.getQuestionnaireId()))
+            .thenReturn(Map.of(question.getId(), answerHistoriesCount));
 
         PaginatedResponse<Result> result = service.getQuestionnaireQuestionList(param);
         //Assert Pagination params
@@ -212,6 +274,12 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         assertFalse(item.issues().isAnsweredWithoutEvidences());
         assertEquals(1, item.issues().unresolvedCommentsCount());
         assertFalse(item.issues().hasUnapprovedAnswer());
+        //Assert Counts
+        assertEquals(0, result.getItems().getFirst().counts().evidences());
+        assertEquals(1, result.getItems().getFirst().counts().comments());
+        assertEquals(answerHistoriesCount, result.getItems().getFirst().counts().answerHistories());
+
+        assertLoadQuestionsParam();
     }
 
     private void assertPaginationProperties(PaginatedResponse<Result> result) {
@@ -222,6 +290,16 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
             () -> assertEquals(expectedPaginatedResponse.getPage(), result.getPage()),
             () -> assertEquals(expectedPaginatedResponse.getSort(), result.getSort())
         );
+    }
+
+    private void assertLoadQuestionsParam() {
+        verify(loadQuestionnaireQuestionListPort).loadByQuestionnaireId(loadQuestionsCaptor.capture());
+        var loadQuestionsParam = loadQuestionsCaptor.getValue();
+        assertEquals(param.getQuestionnaireId(), loadQuestionsParam.questionnaireId());
+        assertEquals(assessmentResult.getKitVersionId(), loadQuestionsParam.kitVersionId());
+        assertEquals(assessmentResult.getLanguage().getId(), loadQuestionsParam.langId());
+        assertEquals(param.getPage(), loadQuestionsParam.page());
+        assertEquals(param.getSize(), loadQuestionsParam.size());
     }
 
     private void assertQuestionProperties(Result item) {

@@ -43,4 +43,21 @@
             <column name="last_modification_time" valueComputed="NOW()"/>
         </insert>
     </changeSet>
+
+    <changeSet id="0.73-05" author="Maziyar Gerami">
+        <dropForeignKeyConstraint
+                baseTableName="fak_question"
+                constraintName="fk_fak_question_answerrange"/>
+    </changeSet>
+
+    <changeSet id="0.73-06" author="Maziyar Gerami">
+        <addForeignKeyConstraint baseTableName="fak_question"
+                                 baseColumnNames="answer_range_id, kit_version_id"
+                                 constraintName="fk_fak_question_answerrange"
+                                 referencedTableName="fak_answer_range"
+                                 referencedColumnNames="id, kit_version_id"
+                                 deferrable="true"
+                                 initiallyDeferred="true"/>
+    </changeSet>
+
 </databaseChangeLog>

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
@@ -31,9 +32,10 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_
 @RequiredArgsConstructor
 public class GetAssessmentQuestionnaireListService implements GetAssessmentQuestionnaireListUseCase {
 
-    private final LoadQuestionnairesPort loadQuestionnairesPort;
     private final AssessmentAccessChecker assessmentAccessChecker;
+    private final ValidateAssessmentResultPort validateAssessmentResultPort;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
+    private final LoadQuestionnairesPort loadQuestionnairesPort;
     private final CountLowConfidenceAnswersPort lowConfidenceAnswersPort;
     private final CountEvidencesPort countEvidencesPort;
     private final CountAnswersPort countAnswersPort;
@@ -42,6 +44,8 @@ public class GetAssessmentQuestionnaireListService implements GetAssessmentQuest
     public PaginatedResponse<QuestionnaireListItem> getAssessmentQuestionnaireList(Param param) {
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_QUESTIONNAIRE_LIST))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
+
+        validateAssessmentResultPort.validate(param.getAssessmentId());
 
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_QUESTIONNAIRE_LIST_ASSESSMENT_RESULT_ID_NOT_FOUND));

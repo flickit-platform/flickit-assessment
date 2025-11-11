@@ -124,6 +124,8 @@ public enum AssessmentUserRole {
             MOVE_ASSESSMENT)),
         ASSOCIATE_PERMISSIONS(Set.of(
             VIEW_ASSESSMENT_LIST,
+            CALCULATE_ASSESSMENT,
+            CALCULATE_CONFIDENCE,
             VIEW_ASSESSMENT_PROGRESS,
             VIEW_ASSESSMENT,
             VIEW_SUBJECT_PROGRESS,

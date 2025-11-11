@@ -8,7 +8,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, QuestionJpaEntity.EntityId> {
 
@@ -125,13 +128,6 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
     List<QuestionIdWithAnsweredOptionIndexView> findImprovableQuestions(@Param("assessmentResultId") UUID assessmentResultId,
                                                                         @Param("kitVersionId") long kitVersionId,
                                                                         @Param("questionIds") Collection<Long> questionIds);
-
-    @Query("""
-            SELECT q.id
-            FROM QuestionJpaEntity q
-            WHERE q.kitVersionId = :kitVersionId
-        """)
-    Set<Long> findIdsByKitVersionId(@Param("kitVersionId") long kitVersionId);
 
     @Query("""
             SELECT
@@ -278,4 +274,26 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
             WHERE q.kitVersionId = :kitVersionId and q.measureId IS NULL
         """)
     List<QuestionQuestionnaireView> findAllByKitVersionIdAndWithoutMeasure(@Param("kitVersionId") long kitVersionId);
+
+    @Query("""
+            SELECT
+                q.id as questionId,
+                q.answerRangeId as answerRangeId
+            FROM QuestionJpaEntity q
+            WHERE q.kitVersionId = :kitVersionId
+        """)
+    List<QuestionIdAndAnswerRangeIdView> findIdAndAnswerRangeIdByKitVersionId(@Param("kitVersionId") long kitVersionId);
+
+    @Modifying
+    @Query("""
+            UPDATE QuestionJpaEntity q
+            SET q.answerRangeId = NULL,
+                q.lastModificationTime = :lastModificationTime,
+                q.lastModifiedBy = :lastModifiedBy
+            WHERE q.kitVersionId = :kitVersionId AND q.answerRangeId = :answerRangeId
+        """)
+    void updateToRemoveQuestionAnswerRangeByAnswerRangeIdAndKitVersionId(@Param("answerRangeId") long answerRangeId,
+                                                                         @Param("kitVersionId") long kitVersionId,
+                                                                         @Param("lastModificationTime") LocalDateTime lastModificationTime,
+                                                                         @Param("lastModifiedBy") UUID lastModifiedBy);
 }
