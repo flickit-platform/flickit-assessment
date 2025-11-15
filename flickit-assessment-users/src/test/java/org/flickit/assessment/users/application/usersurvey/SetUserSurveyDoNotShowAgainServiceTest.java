@@ -11,11 +11,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-import static org.flickit.assessment.users.test.fixture.application.UserSurveyMother.simpleUserSurvey;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -38,7 +36,7 @@ class SetUserSurveyDoNotShowAgainServiceTest {
 
     @Test
     void testSetDoNotShowAgain_whenUserSurveyDoesNotExist_thenCreateUserSurveyAndSetAsDontShowAgain() {
-        when(loadUserSurveyPort.loadByUserId(param.getCurrentUserId())).thenReturn(Optional.empty());
+        when(loadUserSurveyPort.existsByUserId(param.getCurrentUserId())).thenReturn(false);
 
         service.setDontShowAgain(param);
 
@@ -55,8 +53,7 @@ class SetUserSurveyDoNotShowAgainServiceTest {
 
     @Test
     void testSetDoNotShowAgain_whenUserSurveyExists_thenSetAsDontShowAgain() {
-        var userSurvey = simpleUserSurvey();
-        when(loadUserSurveyPort.loadByUserId(param.getCurrentUserId())).thenReturn(Optional.of(userSurvey));
+        when(loadUserSurveyPort.existsByUserId(param.getCurrentUserId())).thenReturn(true);
 
         service.setDontShowAgain(param);
 
