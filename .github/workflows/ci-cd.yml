@@ -244,13 +244,18 @@ jobs:
     needs: [ build-and-push-image ]
     name: deploy
     runs-on: ubuntu-latest
+
+    container:
+      image: hamravesh/darkube-cli:v1.1
+      options: --user root
+
     steps:
-      - name: Deploy service on Webhook
+      - name: darkube-cli deploy
         run: |
-          status_code=$(curl --silent --output /dev/null --write-out "%{http_code}" -X POST "${{ secrets.ASSESSMENT_VERSION }}?ASSESSMENT_VERSION=${PROJECT_VERSION}")
-          if [ "$status_code" -ne 204 ]; then
-            echo "Unexpected status code: $status_code"
-            exit 1
-          fi
+          darkube deploy \
+            --token ${{ secrets.DEPLOY_TOKEN_ASSESSMENT_FLICKIT_HAMRAVESH_C13 }} \
+            --app-id ${{ secrets.APP_ID_ASSESSMENT_FLICKIT_HAMRAVESH_C13 }} \
+            --image-tag ${PROJECT_VERSION} \
+            --job-id ${GITHUB_RUN_ID}
         env:
           PROJECT_VERSION: ${{ needs.build-and-push-image.outputs.project_version }}
