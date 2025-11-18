@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_SPACE_ID_NOT_FOUND;
 import static org.flickit.assessment.core.adapter.out.persistence.space.SpaceMapper.mapToDomain;
 import static org.flickit.assessment.core.common.ErrorMessageKey.ASSESSMENT_ID_NOT_FOUND;
 
@@ -26,12 +25,6 @@ public class SpacePersistenceJpaAdapter implements
     LoadSpaceListPort {
 
     private final SpaceJpaRepository repository;
-
-    @Override
-    public UUID loadOwnerId(long spaceId) {
-        return repository.loadOwnerIdById(spaceId)
-            .orElseThrow(() -> new ResourceNotFoundException(COMMON_SPACE_ID_NOT_FOUND));
-    }
 
     @Override
     public UUID loadOwnerId(UUID assessmentId) {

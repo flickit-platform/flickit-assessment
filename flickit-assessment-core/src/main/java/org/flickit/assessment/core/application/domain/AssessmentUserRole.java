@@ -64,9 +64,6 @@ public enum AssessmentUserRole {
     enum PermissionGroup {
 
         VIEWER_PERMISSIONS(Set.of(
-            VIEW_ASSESSMENT_LIST,
-            VIEW_ASSESSMENT_PROGRESS,
-            VIEW_SUBJECT_PROGRESS,
             VIEW_SUBJECT_REPORT,
             VIEW_ASSESSMENT_QUESTIONNAIRE_LIST,
             VIEW_EVIDENCE_ATTACHMENT,
@@ -112,7 +109,6 @@ public enum AssessmentUserRole {
             VIEW_ATTRIBUTE_MEASURE_QUESTIONS,
             APPROVE_ADVICE_NARRATION)),
         MANAGER_PERMISSIONS(Set.of(
-            CREATE_ASSESSMENT,
             DELETE_ASSESSMENT,
             UPDATE_ASSESSMENT,
             GRANT_USER_ASSESSMENT_ROLE,
@@ -123,12 +119,10 @@ public enum AssessmentUserRole {
             DELETE_ASSESSMENT_INVITE,
             MOVE_ASSESSMENT)),
         ASSOCIATE_PERMISSIONS(Set.of(
-            VIEW_ASSESSMENT_LIST,
             CALCULATE_ASSESSMENT,
             CALCULATE_CONFIDENCE,
             VIEW_ASSESSMENT_PROGRESS,
             VIEW_ASSESSMENT,
-            VIEW_SUBJECT_PROGRESS,
             ADD_EVIDENCE,
             DELETE_EVIDENCE,
             VIEW_EVIDENCE_LIST,
@@ -145,6 +139,7 @@ public enum AssessmentUserRole {
             VIEW_ASSESSMENT_NEXT_QUESTIONNAIRE)),
         REPORT_VIEWER_PERMISSIONS(Set.of(
             VIEW_ASSESSMENT,
+            VIEW_ASSESSMENT_PROGRESS,
             REFRESH_ASSESSMENT_ADVICE,
             GRANT_ACCESS_TO_REPORT,
             VIEW_GRAPHICAL_REPORT,

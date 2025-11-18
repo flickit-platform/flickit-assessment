@@ -71,15 +71,6 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
     List<QuestionJoinQuestionImpactView> loadByKitVersionId(@Param("kitVersionId") Long kitVersionId);
 
     @Query("""
-            SELECT DISTINCT q
-            FROM QuestionJpaEntity q
-            LEFT JOIN QuestionImpactJpaEntity qi ON q.id = qi.questionId AND q.kitVersionId = qi.kitVersionId
-            LEFT JOIN AttributeJpaEntity at ON qi.attributeId = at.id AND qi.kitVersionId = at.kitVersionId
-            WHERE at.subjectId = :subjectId AND at.kitVersionId = :kitVersionId
-        """)
-    List<QuestionJpaEntity> findBySubjectId(@Param("subjectId") long subjectId, @Param("kitVersionId") Long kitVersionId);
-
-    @Query("""
             SELECT COUNT (DISTINCT q.id)
             FROM QuestionJpaEntity q
             LEFT JOIN QuestionImpactJpaEntity qi ON q.id = qi.questionId AND q.kitVersionId = qi.kitVersionId
