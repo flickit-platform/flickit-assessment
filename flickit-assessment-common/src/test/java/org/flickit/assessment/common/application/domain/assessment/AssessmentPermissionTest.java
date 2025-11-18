@@ -14,20 +14,17 @@ class AssessmentPermissionTest {
     @Test
     void testAssessmentPermission_PermissionCodesShouldNotBeChanged() {
         Map<AssessmentPermission, String> permissionCodesMap = Map.ofEntries(
-            Map.entry(CREATE_ASSESSMENT, "createAssessment"),
             Map.entry(VIEW_ASSESSMENT, "viewAssessment"),
             Map.entry(UPDATE_ASSESSMENT, "updateAssessment"),
             Map.entry(UPDATE_ASSESSMENT_MODE, "updateAssessmentMode"),
             Map.entry(PREPARE_ASSESSMENT_REPORT, "prepareAssessmentReport"),
             Map.entry(DELETE_ASSESSMENT, "deleteAssessment"),
-            Map.entry(VIEW_ASSESSMENT_LIST, "viewAssessmentList"),
             Map.entry(VIEW_ASSESSMENT_PROGRESS, "viewAssessmentProgress"),
             Map.entry(VIEW_ASSESSMENT_REPORT, "viewAssessmentReport"),
             Map.entry(CALCULATE_ASSESSMENT, "calculateAssessment"),
             Map.entry(MIGRATE_KIT_VERSION, "migrateKitVersion"),
             Map.entry(CALCULATE_CONFIDENCE, "calculateConfidence"),
             Map.entry(VIEW_ATTRIBUTE_SCORE_DETAIL, "viewAttributeScoreDetail"),
-            Map.entry(VIEW_SUBJECT_PROGRESS, "viewSubjectProgress"),
             Map.entry(VIEW_SUBJECT_REPORT, "viewSubjectReport"),
             Map.entry(CREATE_ADVICE, "createAdvice"),
             Map.entry(ADD_EVIDENCE, "addEvidence"),
@@ -86,6 +83,6 @@ class AssessmentPermissionTest {
         Arrays.stream(AssessmentPermission.values()).forEach(e ->
             assertTrue(permissionCodesMap.containsValue(e.getCode()))
         );
-        assertEquals(67, AssessmentPermission.values().length);
+        assertEquals(64, AssessmentPermission.values().length);
     }
 }
