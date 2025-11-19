@@ -7,13 +7,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum AssessmentPermission {
 
-    CREATE_ASSESSMENT("createAssessment"),
     VIEW_ASSESSMENT("viewAssessment"),
     UPDATE_ASSESSMENT("updateAssessment"),
     UPDATE_ASSESSMENT_MODE("updateAssessmentMode"),
     PREPARE_ASSESSMENT_REPORT("prepareAssessmentReport"),
     DELETE_ASSESSMENT("deleteAssessment"),
-    VIEW_ASSESSMENT_LIST("viewAssessmentList"),
     VIEW_ASSESSMENT_PROGRESS("viewAssessmentProgress"),
     VIEW_ASSESSMENT_REPORT("viewAssessmentReport"),
     CREATE_ATTRIBUTE_INSIGHT("createAttributeInsight"),
@@ -21,7 +19,6 @@ public enum AssessmentPermission {
     MIGRATE_KIT_VERSION("migrateKitVersion"),
     CALCULATE_CONFIDENCE("calculateConfidence"),
     VIEW_ATTRIBUTE_SCORE_DETAIL("viewAttributeScoreDetail"),
-    VIEW_SUBJECT_PROGRESS("viewSubjectProgress"),
     VIEW_SUBJECT_REPORT("viewSubjectReport"),
     CREATE_ADVICE("createAdvice"),
     ADD_EVIDENCE("addEvidence"),

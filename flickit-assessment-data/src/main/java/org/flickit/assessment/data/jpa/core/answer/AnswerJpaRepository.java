@@ -40,16 +40,6 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
                                                                      @Param("questionnaireId") Long questionnaireId);
 
     @Query("""
-            SELECT COUNT(a) as answerCount
-            FROM AnswerJpaEntity a
-            WHERE a.assessmentResult.id=:assessmentResultId
-                AND a.questionId IN :questionIds
-                AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
-                AND a.deleted = false
-        """)
-    int getCountByQuestionIds(@Param("assessmentResultId") UUID assessmentResultId, @Param("questionIds") List<Long> questionIds);
-
-    @Query("""
             SELECT COUNT(a)
             FROM AnswerJpaEntity a
             WHERE a.assessmentResult.id=:assessmentResultId
