@@ -448,4 +448,5 @@ public class ErrorMessageKey {
 
     public static final String GET_ASSESSMENT_QUESTION_ASSESSMENT_ID_NOT_NULL = "get-assessment-question.assessmentId.notNull";
     public static final String GET_ASSESSMENT_QUESTION_QUESTION_ID_NOT_NULL = "get-assessment-question.questionId.notNull";
+    public static final String GET_ASSESSMENT_QUESTION_QUESTION_ID_NOT_FOUND = "get-assessment-question.questionId.notFound";
 }
