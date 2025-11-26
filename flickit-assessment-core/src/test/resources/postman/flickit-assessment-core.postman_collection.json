@@ -2580,6 +2580,37 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Get Assessment Question",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/cf3dca27-5943-462c-bfbb-2cf99a4398e4/questions/12725",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"cf3dca27-5943-462c-bfbb-2cf99a4398e4",
+								"questions",
+								"12725"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
