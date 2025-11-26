@@ -23,6 +23,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 import static java.util.stream.Collectors.groupingBy;
@@ -86,6 +87,14 @@ public class QuestionPersistenceJpaAdapter implements
     @Override
     public int loadFirstUnansweredQuestionIndex(long questionnaireId, UUID assessmentResultId) {
         return repository.findQuestionnaireFirstUnansweredQuestion(questionnaireId, assessmentResultId);
+    }
+
+    @Override
+    public Optional<Question> loadQuestion(long questionId, long kitVersionId, int langId) {
+        var language = resolveLanguage(kitVersionId, langId);
+
+        return repository.findByIdAndKitVersionId(questionId, kitVersionId)
+            .map(q -> QuestionMapper.mapToDomainModel(q, language));
     }
 
     @Override
