@@ -93,8 +93,18 @@ public class QuestionPersistenceJpaAdapter implements
     public Optional<Question> loadQuestion(long questionId, long kitVersionId, int langId) {
         var language = resolveLanguage(kitVersionId, langId);
 
-        return repository.findByIdAndKitVersionId(questionId, kitVersionId)
-            .map(q -> QuestionMapper.mapToDomainModel(q, language));
+        var questionEntity = repository.findByIdAndKitVersionId(questionId, kitVersionId)
+            .get();
+
+        var question = repository.findByIdAndKitVersionId(questionId, kitVersionId)
+            .map(q -> QuestionMapper.mapToDomainModel(q, language))
+            .get();
+
+        var answerOptions = answerOptionRepository.findAllByAnswerRangeIdAndKitVersionIdOrderByIndex(questionEntity.getAnswerRangeId(), kitVersionId)
+            .stream().map(e -> AnswerOptionMapper.mapToDomainModel(e, language))
+            .toList();
+        question.setOptions(answerOptions);
+        return Optional.of(question);
     }
 
     @Override
