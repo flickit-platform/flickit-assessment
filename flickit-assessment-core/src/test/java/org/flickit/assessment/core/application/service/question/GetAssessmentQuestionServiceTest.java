@@ -265,7 +265,6 @@ class GetAssessmentQuestionServiceTest {
                 assertEquals(expected.getIndex(), actual.index());
                 assertEquals(expected.getTitle(), actual.title());
             });
-        System.out.println(result.answer());
         //Assert Answer
         assertEquals(answer.getConfidenceLevelId(), result.answer().confidenceLevel().getId());
         assertEquals(answer.getIsNotApplicable(), result.answer().isNotApplicable());
