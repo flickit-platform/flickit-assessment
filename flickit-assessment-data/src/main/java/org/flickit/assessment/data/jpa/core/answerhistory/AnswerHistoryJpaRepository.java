@@ -16,6 +16,8 @@ public interface AnswerHistoryJpaRepository extends JpaRepository<AnswerHistoryJ
                                                                         long questionId,
                                                                         Pageable pageable);
 
+    int countByAssessmentResultIdAndQuestionId(UUID assessmentResultId, long questionId);
+
     @Query("""
             SELECT a.questionId AS questionId,
                     COUNT(a) as answerHistoryCount

@@ -170,4 +170,9 @@ public class AnswerHistoryPersistenceJpaAdapter implements
         return repository.countByAssessmentResultIdAndQuestionIdIn(assessmentResultId, questionnaireId).stream()
             .collect(toMap(QuestionIdAndAnswerCountView::getQuestionId, QuestionIdAndAnswerCountView::getAnswerHistoryCount));
     }
+
+    @Override
+    public int countQuestionAnswerHistories(UUID assessmentResultId, Long questionId) {
+        return repository.countByAssessmentResultIdAndQuestionId(assessmentResultId, questionId);
+    }
 }
