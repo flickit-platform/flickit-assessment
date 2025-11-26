@@ -22,7 +22,6 @@ import static org.flickit.assessment.common.application.domain.assessment.Assess
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_QUESTIONNAIRE_QUESTIONS;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_QUESTION_QUESTION_ID_NOT_FOUND;
 
 @Service
 @Transactional(readOnly = true)
@@ -47,8 +46,8 @@ public class GetAssessmentQuestionService implements GetAssessmentQuestionUseCas
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
 
-        var question = loadQuestionPort.loadQuestion(param.getQuestionId(), assessmentResult.getKitVersionId(), assessmentResult.getLanguage().getId())
-            .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_QUESTION_QUESTION_ID_NOT_FOUND));
+        var question = loadQuestionPort.loadQuestion(param.getQuestionId(),
+            assessmentResult.getKitVersionId(), assessmentResult.getLanguage().getId());
 
         var answer = loadAnswerPort.load(assessmentResult.getId(), param.getQuestionId())
             .orElse(null);
