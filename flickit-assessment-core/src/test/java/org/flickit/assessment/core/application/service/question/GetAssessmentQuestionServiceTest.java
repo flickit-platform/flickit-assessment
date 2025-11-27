@@ -3,20 +3,16 @@ package org.flickit.assessment.core.application.service.question;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.application.domain.AnswerOption;
 import org.flickit.assessment.core.application.domain.AnswerStatus;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.Question;
 import org.flickit.assessment.core.application.port.in.question.GetAssessmentQuestionUseCase;
 import org.flickit.assessment.core.application.port.out.answer.LoadAnswerPort;
 import org.flickit.assessment.core.application.port.out.answerhistory.LoadAnswerHistoryPort;
-import org.flickit.assessment.core.application.port.out.answeroption.LoadAnswerOptionPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.evidence.CountEvidencesPort;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionPort;
 import org.flickit.assessment.core.test.fixture.application.AnswerMother;
-import org.flickit.assessment.core.test.fixture.application.AnswerOptionMother;
 import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.flickit.assessment.core.test.fixture.application.QuestionMother;
 import org.junit.jupiter.api.Test;
@@ -25,7 +21,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -34,7 +29,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.*;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_DASHBOARD;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_QUESTION_QUESTION_ID_NOT_FOUND;
 import static org.flickit.assessment.core.test.fixture.application.AnswerMother.answerWithNotApplicableTrue;
 import static org.flickit.assessment.core.test.fixture.application.AnswerOptionMother.optionFour;
 import static org.junit.jupiter.api.Assertions.*;
@@ -59,9 +53,6 @@ class GetAssessmentQuestionServiceTest {
     private LoadQuestionPort loadQuestionPort;
 
     @Mock
-    private LoadAnswerOptionPort loadAnswerOptionPort;
-
-    @Mock
     private LoadAnswerPort loadAnswerPort;
 
     @Mock
@@ -72,8 +63,7 @@ class GetAssessmentQuestionServiceTest {
 
     private final AssessmentResult assessmentResult = AssessmentResultMother.validResult();
     private final GetAssessmentQuestionUseCase.Param param = createParam(b -> b.assessmentId(assessmentResult.getAssessment().getId()));
-    private final Question question = QuestionMother.withNoOption();
-    private final List<AnswerOption> answerOptions = List.of(AnswerOptionMother.optionOne(), AnswerOptionMother.optionFour());
+    private final Question question = QuestionMother.withOptions();
 
     @Test
     void getAssessmentQuestion_whenUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
@@ -86,28 +76,11 @@ class GetAssessmentQuestionServiceTest {
         verifyNoInteractions(validateAssessmentResultPort,
             loadAssessmentResultPort,
             loadQuestionPort,
-            loadAnswerOptionPort,
             loadAnswerPort,
             countEvidencesPort,
             loadAnswerHistoryPort);
     }
 
-    @Test
-    void getAssessmentQuestion_whenQuestionDoseNotExist_thenThrowResourceNotFoundException() {
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
-            .thenReturn(true);
-        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
-        when(loadQuestionPort.loadQuestionWithOptions(param.getQuestionId(), assessmentResult.getKitVersionId(), assessmentResult.getLanguage().getId()))
-            .thenReturn(Optional.empty());
-
-        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.getQuestion(param));
-        assertEquals(GET_ASSESSMENT_QUESTION_QUESTION_ID_NOT_FOUND, throwable.getMessage());
-
-        verifyNoInteractions(loadAnswerOptionPort,
-            loadAnswerPort,
-            countEvidencesPort,
-            loadAnswerHistoryPort);
-    }
     @Test
     void getAssessmentQuestion_whenAnswerDoesNotExist_thenValidResult() {
         int answerHistoriesCount = 0;
@@ -115,9 +88,8 @@ class GetAssessmentQuestionServiceTest {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
-        when(loadQuestionPort.loadQuestionWithOptions(param.getQuestionId(), assessmentResult.getKitVersionId(), assessmentResult.getLanguage().getId()))
-            .thenReturn(Optional.of(question));
-        when(loadAnswerOptionPort.loadAll(param.getQuestionId(), assessmentResult.getKitVersionId())).thenReturn(answerOptions);
+        when(loadQuestionPort.loadQuestion(param.getQuestionId(), assessmentResult.getKitVersionId(), assessmentResult.getLanguage().getId()))
+            .thenReturn(question);
         when(loadAnswerPort.load(assessmentResult.getId(), param.getQuestionId())).thenReturn(Optional.empty());
         when(countEvidencesPort.countQuestionEvidences(param.getAssessmentId(), param.getQuestionId())).thenReturn(answerHistoriesCount);
 
@@ -136,9 +108,8 @@ class GetAssessmentQuestionServiceTest {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
-        when(loadQuestionPort.loadQuestionWithOptions(param.getQuestionId(), assessmentResult.getKitVersionId(), assessmentResult.getLanguage().getId()))
-            .thenReturn(Optional.of(question));
-        when(loadAnswerOptionPort.loadAll(param.getQuestionId(), assessmentResult.getKitVersionId())).thenReturn(answerOptions);
+        when(loadQuestionPort.loadQuestion(param.getQuestionId(), assessmentResult.getKitVersionId(), assessmentResult.getLanguage().getId()))
+            .thenReturn(question);
         when(loadAnswerPort.load(assessmentResult.getId(), param.getQuestionId())).thenReturn(Optional.empty());
         when(countEvidencesPort.countQuestionEvidences(param.getAssessmentId(), param.getQuestionId())).thenReturn(evidencesCount);
         when(countEvidencesPort.countQuestionUnresolvedComments(param.getAssessmentId(), param.getQuestionId())).thenReturn(commentsCount);
@@ -147,7 +118,7 @@ class GetAssessmentQuestionServiceTest {
         var result = service.getQuestion(param);
         //Assert AnswerOptions
         assertThat(result.options())
-            .zipSatisfy(answerOptions, (actual, expected) -> {
+            .zipSatisfy(question.getOptions(), (actual, expected) -> {
                 assertEquals(expected.getId(), actual.id());
                 assertEquals(expected.getIndex(), actual.index());
                 assertEquals(expected.getTitle(), actual.title());
@@ -175,9 +146,8 @@ class GetAssessmentQuestionServiceTest {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
-        when(loadQuestionPort.loadQuestionWithOptions(param.getQuestionId(), assessmentResult.getKitVersionId(), assessmentResult.getLanguage().getId()))
-            .thenReturn(Optional.of(question));
-        when(loadAnswerOptionPort.loadAll(param.getQuestionId(), assessmentResult.getKitVersionId())).thenReturn(answerOptions);
+        when(loadQuestionPort.loadQuestion(param.getQuestionId(), assessmentResult.getKitVersionId(), assessmentResult.getLanguage().getId()))
+            .thenReturn(question);
         when(countEvidencesPort.countQuestionEvidences(param.getAssessmentId(), param.getQuestionId())).thenReturn(evidencesCount);
         when(countEvidencesPort.countQuestionUnresolvedComments(param.getAssessmentId(), param.getQuestionId())).thenReturn(commentsCount);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_DASHBOARD)).thenReturn(true);
@@ -216,9 +186,8 @@ class GetAssessmentQuestionServiceTest {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
-        when(loadQuestionPort.loadQuestionWithOptions(param.getQuestionId(), assessmentResult.getKitVersionId(), assessmentResult.getLanguage().getId()))
-            .thenReturn(Optional.of(question));
-        when(loadAnswerOptionPort.loadAll(param.getQuestionId(), assessmentResult.getKitVersionId())).thenReturn(answerOptions);
+        when(loadQuestionPort.loadQuestion(param.getQuestionId(), assessmentResult.getKitVersionId(), assessmentResult.getLanguage().getId()))
+            .thenReturn(question);
         when(countEvidencesPort.countQuestionEvidences(param.getAssessmentId(), param.getQuestionId())).thenReturn(evidencesCount);
         when(countEvidencesPort.countQuestionUnresolvedComments(param.getAssessmentId(), param.getQuestionId())).thenReturn(commentsCount);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_DASHBOARD)).thenReturn(false);
@@ -229,7 +198,7 @@ class GetAssessmentQuestionServiceTest {
         //Assert AnswerOptions
         assertNotNull(answer.getSelectedOption());
         assertThat(result.options())
-            .zipSatisfy(answerOptions, (actual, expected) -> {
+            .zipSatisfy(question.getOptions(), (actual, expected) -> {
                 assertEquals(expected.getId(), actual.id());
                 assertEquals(expected.getIndex(), actual.index());
                 assertEquals(expected.getTitle(), actual.title());
@@ -259,9 +228,8 @@ class GetAssessmentQuestionServiceTest {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
-        when(loadQuestionPort.loadQuestionWithOptions(param.getQuestionId(), assessmentResult.getKitVersionId(), assessmentResult.getLanguage().getId()))
-            .thenReturn(Optional.of(question));
-        when(loadAnswerOptionPort.loadAll(param.getQuestionId(), assessmentResult.getKitVersionId())).thenReturn(answerOptions);
+        when(loadQuestionPort.loadQuestion(param.getQuestionId(), assessmentResult.getKitVersionId(), assessmentResult.getLanguage().getId()))
+            .thenReturn(question);
         when(countEvidencesPort.countQuestionEvidences(param.getAssessmentId(), param.getQuestionId())).thenReturn(evidencesCount);
         when(countEvidencesPort.countQuestionUnresolvedComments(param.getAssessmentId(), param.getQuestionId())).thenReturn(commentsCount);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_DASHBOARD)).thenReturn(false);
@@ -272,7 +240,7 @@ class GetAssessmentQuestionServiceTest {
         //Assert AnswerOptions
         assertNotNull(answer.getSelectedOption());
         assertThat(result.options())
-            .zipSatisfy(answerOptions, (actual, expected) -> {
+            .zipSatisfy(question.getOptions(), (actual, expected) -> {
                 assertEquals(expected.getId(), actual.id());
                 assertEquals(expected.getIndex(), actual.index());
                 assertEquals(expected.getTitle(), actual.title());
