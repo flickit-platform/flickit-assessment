@@ -9,6 +9,7 @@ import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.port.in.question.GetAssessmentQuestionUseCase;
 import org.flickit.assessment.core.application.port.out.answer.LoadAnswerPort;
 import org.flickit.assessment.core.application.port.out.answerhistory.LoadAnswerHistoryPort;
+import org.flickit.assessment.core.application.port.out.answeroption.LoadAnswerOptionPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.evidence.CountEvidencesPort;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionPort;
@@ -22,6 +23,7 @@ import static org.flickit.assessment.common.application.domain.assessment.Assess
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_QUESTIONNAIRE_QUESTIONS;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_QUESTION_QUESTION_ID_NOT_FOUND;
 
 @Service
 @Transactional(readOnly = true)
@@ -32,6 +34,7 @@ public class GetAssessmentQuestionService implements GetAssessmentQuestionUseCas
     private final ValidateAssessmentResultPort validateAssessmentResultPort;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final LoadQuestionPort loadQuestionPort;
+    private final LoadAnswerOptionPort loadAnswerOptionPort;
     private final LoadAnswerPort loadAnswerPort;
     private final CountEvidencesPort countEvidencesPort;
     private final LoadAnswerHistoryPort loadAnswerHistoryPort;
@@ -44,10 +47,12 @@ public class GetAssessmentQuestionService implements GetAssessmentQuestionUseCas
         validateAssessmentResultPort.validate(param.getAssessmentId());
 
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
-            .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
+            .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND)); // Can't happen
 
-        var question = loadQuestionPort.loadQuestionWithOptions(param.getQuestionId(),
-            assessmentResult.getKitVersionId(), assessmentResult.getLanguage().getId());
+        var question = loadQuestionPort.loadQuestionWithOptions(param.getQuestionId(), assessmentResult.getKitVersionId(), assessmentResult.getLanguage().getId())
+            .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_QUESTION_QUESTION_ID_NOT_FOUND));
+        var answerOptions = loadAnswerOptionPort.loadAll(param.getQuestionId(), assessmentResult.getKitVersionId());
+        question.setOptions(answerOptions);
 
         var answer = loadAnswerPort.load(assessmentResult.getId(), param.getQuestionId())
             .orElse(null);

@@ -52,7 +52,7 @@ public class QuestionMother {
             MeasureMother.createMeasure());
     }
 
-    public static Question withNoImpact() {
+    public static Question withNoOption() {
         return new Question(id++, "question" + id, index++, null, Boolean.FALSE, null,
             QuestionnaireMother.createQuestionnaire(),
             MeasureMother.createMeasure());
