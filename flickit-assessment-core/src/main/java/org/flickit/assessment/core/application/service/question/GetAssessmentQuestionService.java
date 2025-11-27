@@ -46,7 +46,7 @@ public class GetAssessmentQuestionService implements GetAssessmentQuestionUseCas
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
 
-        var question = loadQuestionPort.loadQuestion(param.getQuestionId(),
+        var question = loadQuestionPort.loadQuestionWithOptions(param.getQuestionId(),
             assessmentResult.getKitVersionId(), assessmentResult.getLanguage().getId());
 
         var answer = loadAnswerPort.load(assessmentResult.getId(), param.getQuestionId())

@@ -9,7 +9,7 @@ public interface LoadQuestionPort {
 
     int loadFirstUnansweredQuestionIndex(long questionnaireId, UUID assessmentResultId);
 
-    Question loadQuestion(long questionId, long kitVersionId, int langId);
+    Question loadQuestionWithOptions(long questionId, long kitVersionId, int langId);
 
     List<IdAndAnswerRange> loadIdAndAnswerRangeIdByKitVersionId(long kitVersionId);
 

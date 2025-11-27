@@ -90,7 +90,7 @@ public class QuestionPersistenceJpaAdapter implements
     }
 
     @Override
-    public Question loadQuestion(long questionId, long kitVersionId, int langId) {
+    public Question loadQuestionWithOptions(long questionId, long kitVersionId, int langId) {
         var language = resolveLanguage(kitVersionId, langId);
 
         var questionEntity = repository.findByIdAndKitVersionId(questionId, kitVersionId)
