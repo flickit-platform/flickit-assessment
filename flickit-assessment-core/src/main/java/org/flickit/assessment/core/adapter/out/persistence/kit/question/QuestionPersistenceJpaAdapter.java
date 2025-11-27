@@ -23,11 +23,11 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
-import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_QUESTION_QUESTION_ID_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.SUBMIT_ANSWER_QUESTION_ID_NOT_FOUND;
 
 @Component("coreQuestionPersistenceJpaAdapter")
@@ -90,18 +90,11 @@ public class QuestionPersistenceJpaAdapter implements
     }
 
     @Override
-    public Question loadQuestionWithOptions(long questionId, long kitVersionId, int langId) {
+    public Optional<Question> loadQuestionWithOptions(long questionId, long kitVersionId, int langId) {
         var language = resolveLanguage(kitVersionId, langId);
 
-        var questionEntity = repository.findByIdAndKitVersionId(questionId, kitVersionId)
-            .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_QUESTION_QUESTION_ID_NOT_FOUND));
-        var question = QuestionMapper.mapToDomainModel(questionEntity, language);
-
-        var answerOptions = answerOptionRepository.findAllByAnswerRangeIdAndKitVersionIdOrderByIndex(questionEntity.getAnswerRangeId(), kitVersionId).stream()
-            .map(e -> AnswerOptionMapper.mapToDomainModel(e, language))
-            .toList();
-        question.setOptions(answerOptions);
-        return question;
+        return repository.findByIdAndKitVersionId(questionId, kitVersionId)
+            .map(q -> QuestionMapper.mapToDomainModel(q, language));
     }
 
     @Override
