@@ -172,7 +172,7 @@ public class AnswerHistoryPersistenceJpaAdapter implements
     }
 
     @Override
-    public int countQuestionAnswerHistories(UUID assessmentResultId, Long questionId) {
+    public int countQuestionAnswerHistories(UUID assessmentResultId, long questionId) {
         return repository.countByAssessmentResultIdAndQuestionId(assessmentResultId, questionId);
     }
 }

@@ -23,5 +23,5 @@ public interface LoadAnswerHistoryPort {
 
     Map<Long, Integer> countAnswerHistories(UUID assessmentResultId, Long questionnaireId);
 
-    int countQuestionAnswerHistories(UUID assessmentResultId, Long questionId);
+    int countQuestionAnswerHistories(UUID assessmentResultId, long questionId);
 }
