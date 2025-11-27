@@ -6,7 +6,6 @@ import org.flickit.assessment.core.application.port.out.answeroption.LoadAnswerO
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepository;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.Optional;
 
 @Component("coreAnswerOptionPersistenceJpaAdapter")
@@ -20,12 +19,5 @@ public class AnswerOptionPersistenceJpaAdapter implements
     public Optional<AnswerOption> load(long answerOptionId, long kitVersionId) {
         return repository.findByIdAndKitVersionId(answerOptionId, kitVersionId)
             .map(AnswerOptionMapper::mapToDomainModel);
-    }
-
-    @Override
-    public List<AnswerOption> loadAll(long questionId, long kitVersionId) {
-        return repository.findByQuestionIdAndKitVersionId(questionId, kitVersionId).stream()
-            .map(AnswerOptionMapper::mapToDomainModel)
-            .toList();
     }
 }
