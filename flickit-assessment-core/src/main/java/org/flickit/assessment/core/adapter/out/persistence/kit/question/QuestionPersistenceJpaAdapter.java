@@ -98,10 +98,7 @@ public class QuestionPersistenceJpaAdapter implements
                 var question = QuestionMapper.mapToDomainModel(questionEntity, language);
 
                 var answerOptions = answerOptionRepository
-                    .findAllByAnswerRangeIdAndKitVersionIdOrderByIndex(
-                        questionEntity.getAnswerRangeId(),
-                        kitVersionId
-                    ).stream()
+                    .findAllByAnswerRangeIdAndKitVersionIdOrderByIndex(questionEntity.getAnswerRangeId(), kitVersionId).stream()
                     .map(e -> AnswerOptionMapper.mapToDomainModel(e, language))
                     .toList();
 
