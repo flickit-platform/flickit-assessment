@@ -43,13 +43,11 @@ public class GetAssessmentQuestionService implements GetAssessmentQuestionUseCas
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         validateAssessmentResultPort.validate(param.getAssessmentId());
-
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
 
         var question = loadQuestionPort.loadQuestionWithOptions(param.getQuestionId(), assessmentResult.getKitVersionId(), assessmentResult.getLanguage().getId())
             .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_QUESTION_QUESTION_ID_NOT_FOUND));
-
         var answer = loadAnswerPort.load(assessmentResult.getId(), param.getQuestionId())
             .orElse(null);
 
