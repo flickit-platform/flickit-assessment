@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
 
-import static org.flickit.assessment.core.application.port.in.question.GetAssessmentQuestionUseCase.*;
+import static org.flickit.assessment.core.application.port.in.question.GetAssessmentQuestionUseCase.Param;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,8 +22,8 @@ public class GetAssessmentQuestionRestController {
     private final UserContext userContext;
 
     @GetMapping("/assessments/{assessmentId}/questions/{questionId}")
-    public ResponseEntity<Result> getAssessmentQuestion(@PathVariable UUID assessmentId,
-                                                        @PathVariable Long questionId) {
+    public ResponseEntity<Result> getQuestion(@PathVariable("assessmentId") UUID assessmentId,
+                                              @PathVariable("questionId") Long questionId) {
         var currentUserId = userContext.getUser().id();
         var result = useCase.getQuestion(toParam(assessmentId, questionId, currentUserId));
         return new ResponseEntity<>(result, HttpStatus.OK);

@@ -25,8 +25,8 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_QUESTION_QUESTION_ID_NOT_FOUND;
 
 @Service
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class GetAssessmentQuestionService implements GetAssessmentQuestionUseCase {
 
     private final AssessmentAccessChecker assessmentAccessChecker;

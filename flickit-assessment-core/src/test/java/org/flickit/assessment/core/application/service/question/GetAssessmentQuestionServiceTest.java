@@ -4,7 +4,6 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentAcc
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.application.domain.AnswerStatus;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.Question;
 import org.flickit.assessment.core.application.port.in.question.GetAssessmentQuestionUseCase;
@@ -27,12 +26,11 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.*;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_DASHBOARD;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_QUESTIONNAIRE_QUESTIONS;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_QUESTION_QUESTION_ID_NOT_FOUND;
-import static org.flickit.assessment.core.test.fixture.application.AnswerMother.answerWithNotApplicableTrue;
-import static org.flickit.assessment.core.test.fixture.application.AnswerOptionMother.optionFour;
+import static org.flickit.assessment.core.test.fixture.application.AnswerMother.answerWithNullNotApplicable;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -101,26 +99,7 @@ class GetAssessmentQuestionServiceTest {
     }
 
     @Test
-    void getAssessmentQuestion_whenAnswerDoesNotExist_thenValidResult() {
-        int answerHistoriesCount = 0;
-
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
-            .thenReturn(true);
-        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
-        when(loadQuestionPort.loadQuestionWithOptions(param.getQuestionId(), assessmentResult.getKitVersionId(), assessmentResult.getLanguage().getId()))
-            .thenReturn(Optional.of(question));
-        when(loadAnswerPort.load(assessmentResult.getId(), param.getQuestionId())).thenReturn(Optional.empty());
-        when(countEvidencesPort.countQuestionEvidences(param.getAssessmentId(), param.getQuestionId())).thenReturn(answerHistoriesCount);
-
-        var result = service.getQuestion(param);
-        assertEquals(answerHistoriesCount, result.counts().answerHistories());
-
-        verify(validateAssessmentResultPort).validate(param.getAssessmentId());
-        verifyNoInteractions(loadAnswerHistoryPort);
-    }
-
-    @Test
-    void getAssessmentQuestion_whenAnswerDoesNotExistAndNotSubmittedYet_thenValidResult() {
+    void getAssessmentQuestion_whenAnswerDoesNotExistAndUserDoesNotHaveViewIssuePermission_thenReturnResultWithNullAnswerAndIssues() {
         int evidencesCount = 2;
         int commentsCount = 3;
 
@@ -135,28 +114,24 @@ class GetAssessmentQuestionServiceTest {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_DASHBOARD)).thenReturn(false);
 
         var result = service.getQuestion(param);
-        //Assert AnswerOptions
-        assertThat(result.options())
-            .zipSatisfy(question.getOptions(), (actual, expected) -> {
-                assertEquals(expected.getId(), actual.id());
-                assertEquals(expected.getIndex(), actual.index());
-                assertEquals(expected.getTitle(), actual.title());
-            });
-        //Assert Answer
+
+        assertNotNull(result);
+        assertQuestionAndOptions(result);
+
         assertNull(result.answer());
-        //Assert Issues
+
         assertNull(result.issues());
-        //Assert counts
+
+        assertEquals(0, result.counts().answerHistories());
         assertEquals(evidencesCount, result.counts().evidences());
         assertEquals(commentsCount, result.counts().comments());
-        assertEquals(0, result.counts().answerHistories());
 
         verify(validateAssessmentResultPort).validate(param.getAssessmentId());
         verifyNoInteractions(loadAnswerHistoryPort);
     }
 
     @Test
-    void getAssessmentQuestion_whenAnswerIsNullAndSubmittedBefore_thenValidResult() {
+    void getAssessmentQuestion_whenAnswerIsNotApplicableAndUnapproved_thenReturnValidResult() {
         int evidencesCount = 2;
         int commentsCount = 3;
         int answerHistoriesCount = 1;
@@ -174,12 +149,14 @@ class GetAssessmentQuestionServiceTest {
         when(loadAnswerHistoryPort.countQuestionAnswerHistories(assessmentResult.getId(), param.getQuestionId())).thenReturn(answerHistoriesCount);
 
         var result = service.getQuestion(param);
-        //Assert AnswerOptions
+
+        assertQuestionAndOptions(result);
+
         assertNull(answer.getSelectedOption());
-        //Assert Answer
         assertEquals(answer.getConfidenceLevelId(), result.answer().confidenceLevel().getId());
-        assertEquals(answer.getIsNotApplicable(), result.answer().isNotApplicable());
-        assertEquals(AnswerStatus.UNAPPROVED.getId(), answer.getAnswerStatus().getId());
+        assertTrue(result.answer().isNotApplicable());
+        assertFalse(result.answer().approved());
+
         //Assert Issues
         assertFalse(result.issues().isUnanswered());
         assertTrue(result.issues().isAnsweredWithLowConfidence());
@@ -195,12 +172,12 @@ class GetAssessmentQuestionServiceTest {
     }
 
     @Test
-    void getAssessmentQuestion_whenNotApplicableAnswerExist_thenValidResult() {
+    void getAssessmentQuestion_whenApplicableAnswerExists_thenReturnValidResult() {
         int evidencesCount = 1;
         int commentsCount = 4;
         int answerHistoriesCount = 1;
-        var answerOption = optionFour();
-        var answer = AnswerMother.answerWithNullNotApplicable(answerOption);
+        var answerOption = question.getOptions().getFirst();
+        var answer = answerWithNullNotApplicable(answerOption);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
             .thenReturn(true);
@@ -209,73 +186,51 @@ class GetAssessmentQuestionServiceTest {
             .thenReturn(Optional.of(question));
         when(countEvidencesPort.countQuestionEvidences(param.getAssessmentId(), param.getQuestionId())).thenReturn(evidencesCount);
         when(countEvidencesPort.countQuestionUnresolvedComments(param.getAssessmentId(), param.getQuestionId())).thenReturn(commentsCount);
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_DASHBOARD)).thenReturn(false);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_DASHBOARD)).thenReturn(true);
         when(loadAnswerPort.load(assessmentResult.getId(), param.getQuestionId())).thenReturn(Optional.of(answer));
         when(loadAnswerHistoryPort.countQuestionAnswerHistories(assessmentResult.getId(), param.getQuestionId())).thenReturn(answerHistoriesCount);
 
         var result = service.getQuestion(param);
-        //Assert AnswerOptions
+
+        assertQuestionAndOptions(result);
+
         assertNotNull(answer.getSelectedOption());
-        assertThat(result.options())
-            .zipSatisfy(question.getOptions(), (actual, expected) -> {
-                assertEquals(expected.getId(), actual.id());
-                assertEquals(expected.getIndex(), actual.index());
-                assertEquals(expected.getTitle(), actual.title());
-            });
-        //Assert Answer
-        assertNull(result.answer().confidenceLevel());
+        assertEquals(answerOption.getId(), result.answer().selectedOption().id());
+        assertEquals(answerOption.getIndex(), result.answer().selectedOption().index());
+        assertEquals(answerOption.getTitle(), result.answer().selectedOption().title());
+        assertEquals(answer.getConfidenceLevelId(), result.answer().confidenceLevel().getId());
         assertNull(result.answer().isNotApplicable());
-        assertNull(result.answer().selectedOption());
+        assertTrue(result.answer().approved());
+
         //Assert Issues
-        assertNull(result.issues());
+        assertFalse(result.issues().isUnanswered());
+        assertTrue(result.issues().isAnsweredWithLowConfidence());
+        assertFalse(result.issues().isAnsweredWithoutEvidences());
+        assertEquals(commentsCount, result.counts().comments());
+        assertFalse(result.issues().hasUnapprovedAnswer());
         //Assert counts
         assertEquals(evidencesCount, result.counts().evidences());
         assertEquals(commentsCount, result.counts().comments());
         assertEquals(answerHistoriesCount, result.counts().answerHistories());
+
+        verify(validateAssessmentResultPort).validate(param.getAssessmentId());
 
         verify(validateAssessmentResultPort).validate(param.getAssessmentId());
     }
 
-    @Test
-    void getAssessmentQuestion_whenApplicableAnswerExist_thenValidResult() {
-        int evidencesCount = 1;
-        int commentsCount = 4;
-        int answerHistoriesCount = 1;
-        var answerOption = optionFour();
-        var answer = answerWithNotApplicableTrue(answerOption);
+    private void assertQuestionAndOptions(GetAssessmentQuestionUseCase.Result result) {
+        assertEquals(question.getId(), result.id());
+        assertEquals(question.getTitle(), result.title());
+        assertEquals(question.getIndex(), result.index());
+        assertEquals(question.getHint(), result.hint());
+        assertEquals(question.getMayNotBeApplicable(), result.mayNotBeApplicable());
 
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
-            .thenReturn(true);
-        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
-        when(loadQuestionPort.loadQuestionWithOptions(param.getQuestionId(), assessmentResult.getKitVersionId(), assessmentResult.getLanguage().getId()))
-            .thenReturn(Optional.of(question));
-        when(countEvidencesPort.countQuestionEvidences(param.getAssessmentId(), param.getQuestionId())).thenReturn(evidencesCount);
-        when(countEvidencesPort.countQuestionUnresolvedComments(param.getAssessmentId(), param.getQuestionId())).thenReturn(commentsCount);
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_DASHBOARD)).thenReturn(false);
-        when(loadAnswerPort.load(assessmentResult.getId(), param.getQuestionId())).thenReturn(Optional.of(answer));
-        when(loadAnswerHistoryPort.countQuestionAnswerHistories(assessmentResult.getId(), param.getQuestionId())).thenReturn(answerHistoriesCount);
-
-        var result = service.getQuestion(param);
-        //Assert AnswerOptions
-        assertNotNull(answer.getSelectedOption());
         assertThat(result.options())
             .zipSatisfy(question.getOptions(), (actual, expected) -> {
                 assertEquals(expected.getId(), actual.id());
                 assertEquals(expected.getIndex(), actual.index());
                 assertEquals(expected.getTitle(), actual.title());
             });
-        //Assert Answer
-        assertEquals(answer.getConfidenceLevelId(), result.answer().confidenceLevel().getId());
-        assertEquals(answer.getIsNotApplicable(), result.answer().isNotApplicable());
-        assertEquals(AnswerStatus.APPROVED.getId(), answer.getAnswerStatus().getId());
-        //Assert Issues
-        assertNull(result.issues());
-        //Assert counts
-        assertEquals(evidencesCount, result.counts().evidences());
-        assertEquals(commentsCount, result.counts().comments());
-        assertEquals(answerHistoriesCount, result.counts().answerHistories());
-
-        verify(validateAssessmentResultPort).validate(param.getAssessmentId());
     }
 
     private GetAssessmentQuestionUseCase.Param createParam(Consumer<GetAssessmentQuestionUseCase.Param.ParamBuilder> changer) {
