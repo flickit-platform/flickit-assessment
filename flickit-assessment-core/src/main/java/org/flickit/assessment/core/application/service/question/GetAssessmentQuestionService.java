@@ -2,7 +2,6 @@ package org.flickit.assessment.core.application.service.question;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
-import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.*;
@@ -30,7 +29,6 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_
 public class GetAssessmentQuestionService implements GetAssessmentQuestionUseCase {
 
     private final AssessmentAccessChecker assessmentAccessChecker;
-    private final ValidateAssessmentResultPort validateAssessmentResultPort;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final LoadQuestionPort loadQuestionPort;
     private final LoadAnswerPort loadAnswerPort;
@@ -42,7 +40,6 @@ public class GetAssessmentQuestionService implements GetAssessmentQuestionUseCas
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        validateAssessmentResultPort.validate(param.getAssessmentId());
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
 

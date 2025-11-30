@@ -1,7 +1,6 @@
 package org.flickit.assessment.core.application.service.question;
 
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
-import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
@@ -32,7 +31,8 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_QUESTION_QUESTION_ID_NOT_FOUND;
 import static org.flickit.assessment.core.test.fixture.application.AnswerMother.answerWithNullNotApplicable;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
 class GetAssessmentQuestionServiceTest {
@@ -42,9 +42,6 @@ class GetAssessmentQuestionServiceTest {
 
     @Mock
     private AssessmentAccessChecker assessmentAccessChecker;
-
-    @Mock
-    private ValidateAssessmentResultPort validateAssessmentResultPort;
 
     @Mock
     private LoadAssessmentResultPort loadAssessmentResultPort;
@@ -73,8 +70,7 @@ class GetAssessmentQuestionServiceTest {
         var throwable = assertThrows(AccessDeniedException.class, () -> service.getQuestion(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
-        verifyNoInteractions(validateAssessmentResultPort,
-            loadAssessmentResultPort,
+        verifyNoInteractions(loadAssessmentResultPort,
             loadQuestionPort,
             loadAnswerPort,
             countEvidencesPort,
@@ -92,7 +88,6 @@ class GetAssessmentQuestionServiceTest {
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.getQuestion(param));
         assertEquals(GET_ASSESSMENT_QUESTION_QUESTION_ID_NOT_FOUND, throwable.getMessage());
 
-        verify(validateAssessmentResultPort).validate(param.getAssessmentId());
         verifyNoInteractions(loadAnswerPort,
             loadAnswerHistoryPort,
             countEvidencesPort);
@@ -126,7 +121,6 @@ class GetAssessmentQuestionServiceTest {
         assertEquals(evidencesCount, result.counts().evidences());
         assertEquals(commentsCount, result.counts().comments());
 
-        verify(validateAssessmentResultPort).validate(param.getAssessmentId());
         verifyNoInteractions(loadAnswerHistoryPort);
     }
 
@@ -167,8 +161,6 @@ class GetAssessmentQuestionServiceTest {
         assertEquals(evidencesCount, result.counts().evidences());
         assertEquals(commentsCount, result.counts().comments());
         assertEquals(answerHistoriesCount, result.counts().answerHistories());
-
-        verify(validateAssessmentResultPort).validate(param.getAssessmentId());
     }
 
     @Test
@@ -212,10 +204,6 @@ class GetAssessmentQuestionServiceTest {
         assertEquals(evidencesCount, result.counts().evidences());
         assertEquals(commentsCount, result.counts().comments());
         assertEquals(answerHistoriesCount, result.counts().answerHistories());
-
-        verify(validateAssessmentResultPort).validate(param.getAssessmentId());
-
-        verify(validateAssessmentResultPort).validate(param.getAssessmentId());
     }
 
     private void assertQuestionAndOptions(GetAssessmentQuestionUseCase.Result result) {
