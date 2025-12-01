@@ -974,7 +974,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"title\": \"The title2\"\r\n}",
+							"raw": "{\r\n    \"title\": \"The title2\",\r\n    \"lang\" : \"EN\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
