@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+    <changeSet id="0.76-01" author="Khorsandi">
+        <modifyDataType
+                tableName="fac_evidence"
+                columnName="description"
+                newDataType="TEXT"/>
+    </changeSet>
+
+    <changeSet id="0.76-02" author="Khorsandi">
+        <modifyDataType
+                tableName="faa_advice_narration"
+                columnName="assessor_narration"
+                newDataType="TEXT"/>
+    </changeSet>
+
+    <changeSet id="0.76-03" author="Khorsandi">
+        <modifyDataType
+                tableName="faa_advice_item"
+                columnName="description"
+                newDataType="TEXT"/>
+    </changeSet>
+
+    <changeSet id="0.76-04" author="Khorsandi">
+        <modifyDataType
+                tableName="fac_assessment_insight"
+                columnName="insight"
+                newDataType="TEXT"/>
+    </changeSet>
+
+    <changeSet id="0.76-05" author="Khorsandi">
+        <modifyDataType
+                tableName="fac_attribute_insight"
+                columnName="assessor_insight"
+                newDataType="TEXT"/>
+    </changeSet>
+
+    <changeSet id="0.76-06" author="Khorsandi">
+        <modifyDataType
+                tableName="fac_subject_insight"
+                columnName="insight"
+                newDataType="TEXT"/>
+    </changeSet>
+
+    <changeSet id="0.76-07" author="Khorsandi">
+        <modifyDataType
+                tableName="fak_assessment_kit"
+                columnName="about"
+                newDataType="TEXT"/>
+    </changeSet>
+</databaseChangeLog>
