@@ -1,9 +1,9 @@
 package org.flickit.assessment.core.application.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.MessageBundle;
 
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -13,13 +13,11 @@ import java.util.stream.Stream;
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum ConfidenceLevel {
 
-    COMPLETELY_UNSURE("Completely unsure"),
-    FAIRLY_UNSURE("Fairly unsure"),
-    SOMEWHAT_UNSURE("Somewhat unsure"),
-    FAIRLY_SURE("Fairly sure"),
-    COMPLETELY_SURE("Completely sure");
-
-    private final String title;
+    COMPLETELY_UNSURE,
+    FAIRLY_UNSURE,
+    SOMEWHAT_UNSURE,
+    FAIRLY_SURE,
+    COMPLETELY_SURE;
 
     public static ConfidenceLevel valueOfById(Integer id) {
         return Stream.of(ConfidenceLevel.values())
@@ -49,6 +47,6 @@ public enum ConfidenceLevel {
     }
 
     public String getTitle() {
-        return this.title;
+        return MessageBundle.message("ConfidenceLevel_" + name());
     }
 }
