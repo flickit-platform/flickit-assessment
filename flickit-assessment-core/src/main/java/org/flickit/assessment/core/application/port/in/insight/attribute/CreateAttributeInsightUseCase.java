@@ -28,7 +28,7 @@ public interface CreateAttributeInsightUseCase {
         Long attributeId;
 
         @NotNull(message = CREATE_ATTRIBUTE_INSIGHT_ASSESSOR_INSIGHT_NOT_NULL)
-        @Size(max = 1000, message = CREATE_ATTRIBUTE_INSIGHT_ASSESSOR_INSIGHT_SIZE_MAX)
+        @Size(max = 3000, message = CREATE_ATTRIBUTE_INSIGHT_ASSESSOR_INSIGHT_SIZE_MAX)
         String assessorInsight;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
