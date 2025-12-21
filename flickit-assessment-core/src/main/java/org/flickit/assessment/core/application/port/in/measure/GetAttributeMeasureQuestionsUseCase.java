@@ -45,7 +45,7 @@ public interface GetAttributeMeasureQuestionsUseCase {
     record Result(List<MeasureQuestion> highScores, List<MeasureQuestion> lowScores) {
     }
 
-    record MeasureQuestion(Question question, Answer answer) {
+    record MeasureQuestion(Question question, Answer answer, Questionnaire questionnaire) {
 
         public record Question(long id, int index, String title) {
         }
@@ -54,6 +54,9 @@ public interface GetAttributeMeasureQuestionsUseCase {
                              String title,
                              Double gainedScore,
                              Double missedScore) {
+        }
+
+        public record Questionnaire(long id) {
         }
     }
 }
