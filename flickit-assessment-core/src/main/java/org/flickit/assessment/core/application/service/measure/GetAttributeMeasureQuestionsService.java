@@ -70,7 +70,8 @@ public class GetAttributeMeasureQuestionsService implements GetAttributeMeasureQ
 
         return new MeasureQuestion(
             new MeasureQuestion.Question(question.getId(), question.getIndex(), question.getTitle()),
-            new MeasureQuestion.Answer(optionIndex, optionTitle, gained, missed)
+            new MeasureQuestion.Answer(optionIndex, optionTitle, gained, missed),
+            new MeasureQuestion.Questionnaire(question.getQuestionnaire().getId())
         );
     }
 }
