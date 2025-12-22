@@ -121,6 +121,7 @@ public enum AssessmentUserRole {
         ASSOCIATE_PERMISSIONS(Set.of(
             CALCULATE_ASSESSMENT,
             CALCULATE_CONFIDENCE,
+            MIGRATE_KIT_VERSION,
             VIEW_ASSESSMENT_PROGRESS,
             VIEW_ASSESSMENT,
             ADD_EVIDENCE,
