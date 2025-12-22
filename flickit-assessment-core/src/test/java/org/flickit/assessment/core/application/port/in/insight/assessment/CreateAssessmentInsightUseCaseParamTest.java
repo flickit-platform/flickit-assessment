@@ -33,7 +33,7 @@ class CreateAssessmentInsightUseCaseParamTest {
         assertThat(throwable).hasMessage("insight: " + CREATE_ASSESSMENT_INSIGHT_INSIGHT_SIZE_MIN);
 
         throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.insight(RandomStringUtils.random(1001))));
+            () -> createParam(b -> b.insight(RandomStringUtils.random(3001))));
         assertThat(throwable).hasMessage("insight: " + CREATE_ASSESSMENT_INSIGHT_INSIGHT_SIZE_MAX);
     }
 

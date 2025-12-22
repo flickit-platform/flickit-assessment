@@ -30,7 +30,7 @@ class CreateAssessorAdviceNarrationUseCaseParamTest {
             () -> createParam(b->b.assessorNarration("na")));
         assertThat(throwable).hasMessage("assessorNarration: " + CREATE_ASSESSOR_ADVICE_NARRATION_ASSESSOR_NARRATION_SIZE_MIN);
 
-        String assessorNarration = RandomStringUtils.randomAlphabetic(1501);
+        String assessorNarration = RandomStringUtils.randomAlphabetic(3001);
         throwable = assertThrows(ConstraintViolationException.class,
             () -> new CreateAssessorAdviceNarrationUseCase.Param(assessmentId, assessorNarration,currentUserId));
         assertThat(throwable).hasMessage("assessorNarration: " + CREATE_ASSESSOR_ADVICE_NARRATION_ASSESSOR_NARRATION_SIZE_MAX);
