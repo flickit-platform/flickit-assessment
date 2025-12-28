@@ -13,14 +13,22 @@ public interface UserSurveyJpaRepository extends JpaRepository<UserSurveyJpaEnti
 
     Optional<UserSurveyJpaEntity> findByUserId(UUID userId);
 
+    boolean existsByUserId(UUID userId);
+
+    @Query("""
+            SELECT s.id
+            FROM UserSurveyJpaEntity s
+            WHERE s.userId = :userId
+        """)
+    Optional<Long> findIdByUserId(UUID userId);
+
     @Modifying
     @Query("""
             UPDATE UserSurveyJpaEntity s
             SET s.dontShowAgain = :dontShowAgain,
                 s.lastModificationTime = :lastModificationTime
             WHERE s.userId = :userId
-        """
-    )
+        """)
     void updateDontShowAgainByUserId(@Param("userId") UUID userId,
                                      @Param("dontShowAgain") boolean dontShowAgain,
                                      @Param("lastModificationTime") LocalDateTime lastModificationTime);

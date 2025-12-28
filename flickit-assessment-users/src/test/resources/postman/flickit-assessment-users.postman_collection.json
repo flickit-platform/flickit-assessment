@@ -1346,6 +1346,43 @@
 		{
 			"name": "UserSurvey",
 			"item": [
+              {
+                "name": "Init User Survey",
+                "request": {
+                  "method": "POST",
+                  "header": [
+                    {
+                      "key": "Authorization",
+                      "value": "{{authorization_header}}"
+                    },
+                    {
+                      "key": "Accept-Language",
+                      "value": "{{accept_language}}",
+                      "type": "text"
+                    }
+                  ],
+                  "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"assessmentId\": \"53028c27-83f5-4c10-9105-56e2a4f58a09\"\n}",
+                    "options": {
+                      "raw": {
+                        "language": "json"
+                      }
+                    }
+                  },
+                  "url": {
+                    "raw": "{{base_url}}/{{api_path}}/init-survey",
+                    "host": [
+                      "{{base_url}}"
+                    ],
+                    "path": [
+                      "{{api_path}}",
+                      "init-survey"
+                    ]
+                  }
+                },
+                "response": []
+              },
 				{
 					"name": "Set User Survey Don't Show Again",
 					"request": {

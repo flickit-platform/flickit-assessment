@@ -32,6 +32,16 @@ public class UserSurveyPersistenceJpaAdapter implements
     }
 
     @Override
+    public Optional<Long> loadIdByUserId(UUID userId) {
+        return repository.findIdByUserId(userId);
+    }
+
+    @Override
+    public boolean existsByUserId(UUID userid) {
+        return repository.existsByUserId(userid);
+    }
+
+    @Override
     public long persist(CreateUserSurveyPort.Param param) {
         if (!assessmentRepository.existsByIdAndDeletedFalse(param.assessmentId()))
             throw new ResourceNotFoundException(COMMON_ASSESSMENT_ID_NOT_FOUND);
