@@ -37,7 +37,7 @@ public interface CreateAssessmentKitUseCase {
 
         @NotBlank(message = CREATE_ASSESSMENT_KIT_ABOUT_NOT_NULL)
         @Size(min = 3, message = CREATE_ASSESSMENT_KIT_ABOUT_SIZE_MIN)
-        @Size(max = 1000, message = CREATE_ASSESSMENT_KIT_ABOUT_SIZE_MAX)
+        @Size(max = 3000, message = CREATE_ASSESSMENT_KIT_ABOUT_SIZE_MAX)
         String about;
 
         @EnumValue(enumClass = KitLanguage.class, message = CREATE_ASSESSMENT_KIT_LANGUAGE_INVALID)

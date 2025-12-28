@@ -29,7 +29,7 @@ public interface CreateSubjectInsightUseCase {
 
         @NotBlank(message = CREATE_SUBJECT_INSIGHT_INSIGHT_NOT_NULL)
         @Size(min = 3, message = CREATE_SUBJECT_INSIGHT_INSIGHT_SIZE_MIN)
-        @Size(max = 1000, message = CREATE_SUBJECT_INSIGHT_INSIGHT_SIZE_MAX)
+        @Size(max = 3000, message = CREATE_SUBJECT_INSIGHT_INSIGHT_SIZE_MAX)
         String insight;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
