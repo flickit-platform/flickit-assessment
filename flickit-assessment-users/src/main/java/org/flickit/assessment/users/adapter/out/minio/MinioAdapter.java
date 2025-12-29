@@ -39,6 +39,7 @@ public class MinioAdapter implements
 
     @SneakyThrows
     private void writeFile(String bucketName, String fileObjectName, InputStream fileInputStream, @Nullable String contentType) {
+        log.debug("writeFile [bucketName={}, objectName={}]", bucketName, fileObjectName);
         minioClient.putObject(PutObjectArgs.builder()
             .bucket(bucketName)
             .object(fileObjectName)
@@ -67,6 +68,8 @@ public class MinioAdapter implements
     @SneakyThrows
     @Override
     public String createDownloadLink(String filePath, Duration expiryDuration) {
+        log.debug("createDownloadLink for filePath=[{}]", filePath);
+
         if (filePath == null || filePath.isBlank())
             return null;
 
@@ -98,12 +101,14 @@ public class MinioAdapter implements
 
     @SneakyThrows
     private boolean checkFileExistence(String bucketName, String objectName) {
+        log.debug("checkFileExistence for [bucketName={}, objectName={}]", bucketName, objectName);
         try {
             minioClient.statObject(StatObjectArgs.builder()
                 .bucket(bucketName)
                 .object(objectName)
                 .build());
         } catch (ErrorResponseException e) {
+            log.error("Error in [statObject] for [bucketName={}, objectName={}]", bucketName, objectName, e);
             return false;
         }
         return true;

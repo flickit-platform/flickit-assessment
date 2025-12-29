@@ -129,6 +129,7 @@ public class MinioAdapter implements
 
     @SneakyThrows
     private void checkFileExistence(String bucketName, String objectName) {
+        log.debug("checkFileExistence for [bucketName={}, objectName={}]", bucketName, objectName);
         try {
             minioClient.statObject(StatObjectArgs.builder()
                 .bucket(bucketName)
