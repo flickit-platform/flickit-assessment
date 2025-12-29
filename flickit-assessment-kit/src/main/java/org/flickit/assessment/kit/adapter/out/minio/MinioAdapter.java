@@ -58,6 +58,7 @@ public class MinioAdapter implements
 
     @SneakyThrows
     private void writeFile(String bucketName, String fileObjectName, InputStream fileInputStream, @Nullable String contentType) {
+        log.debug("writeFile [bucketName={}, objectName={}]", bucketName, fileObjectName);
         minioClient.putObject(PutObjectArgs.builder()
             .bucket(bucketName)
             .object(fileObjectName)
