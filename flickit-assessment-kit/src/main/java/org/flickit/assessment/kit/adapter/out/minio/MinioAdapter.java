@@ -130,6 +130,7 @@ public class MinioAdapter implements
                 .object(objectName)
                 .build());
         } catch (ErrorResponseException e) {
+            log.error("File not found in MinIo[bucketName={}, objectName={}", bucketName, objectName);
             throw new ResourceNotFoundException(FILE_STORAGE_FILE_NOT_FOUND);
         }
     }

@@ -50,6 +50,7 @@ public class CreateKitByDslService implements CreateKitByDslUseCase {
 
     @Override
     public Long create(CreateKitByDslUseCase.Param param) {
+        log.debug("ReceivedParam: {}", param);
         validateCurrentUser(param.getExpertGroupId(), param.getCurrentUserId());
 
         String dslJsonPath = loadDslJsonPathPort.loadJsonPath(param.getKitDslId());
