@@ -73,6 +73,8 @@ public class MinioAdapter implements
     @SneakyThrows
     @Override
     public String loadDslJson(String dslJsonFullPath) {
+        log.debug("loadDslJson of filePath=[{}]", dslJsonFullPath);
+
         String bucketName = dslJsonFullPath.substring(0, dslJsonFullPath.indexOf(SLASH));
         String objectName = dslJsonFullPath.substring(dslJsonFullPath.indexOf(SLASH));
 
@@ -90,6 +92,8 @@ public class MinioAdapter implements
     @SneakyThrows
     @Override
     public String createDownloadLink(String filePath, Duration expiryDuration) {
+        log.debug("createDownloadLink for filePath=[{}]", filePath);
+
         if(filePath == null || filePath.isBlank())
             return null;
 
@@ -130,7 +134,7 @@ public class MinioAdapter implements
                 .object(objectName)
                 .build());
         } catch (ErrorResponseException e) {
-            log.error("File not found in MinIo[bucketName={}, objectName={}", bucketName, objectName);
+            log.error("Error in [statObject] for [bucketName={}, objectName={}]", bucketName, objectName, e);
             throw new ResourceNotFoundException(FILE_STORAGE_FILE_NOT_FOUND);
         }
     }
