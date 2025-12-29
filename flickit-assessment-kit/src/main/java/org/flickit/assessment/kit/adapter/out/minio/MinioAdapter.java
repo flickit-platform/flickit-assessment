@@ -77,7 +77,7 @@ public class MinioAdapter implements
         log.debug("loadDslJson of filePath=[{}]", dslJsonFullPath);
 
         String bucketName = dslJsonFullPath.substring(0, dslJsonFullPath.indexOf(SLASH));
-        String objectName = dslJsonFullPath.substring(dslJsonFullPath.indexOf(SLASH));
+        String objectName = dslJsonFullPath.substring(dslJsonFullPath.indexOf(SLASH) + 1);
 
         checkFileExistence(bucketName, objectName);
 
