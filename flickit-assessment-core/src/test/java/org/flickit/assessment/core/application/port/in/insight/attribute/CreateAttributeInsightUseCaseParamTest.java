@@ -31,7 +31,7 @@ class CreateAttributeInsightUseCaseParamTest {
     @Test
     void testCreateAttributeInsightUseCaseParam_assessorInsightParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.assessorInsight(RandomStringUtils.random(1001))));
+            () -> createParam(b -> b.assessorInsight(RandomStringUtils.random(3001))));
         assertThat(throwable).hasMessage("assessorInsight: " + CREATE_ATTRIBUTE_INSIGHT_ASSESSOR_INSIGHT_SIZE_MAX);
 
         throwable = assertThrows(ConstraintViolationException.class,

@@ -79,7 +79,7 @@ class CreateAssessmentKitUseCaseParamTest {
         assertThat(throwable).hasMessage("about: " + CREATE_ASSESSMENT_KIT_ABOUT_SIZE_MIN);
 
         throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.about(RandomStringUtils.randomAlphanumeric(1001))));
+            () -> createParam(b -> b.about(RandomStringUtils.randomAlphanumeric(3001))));
         assertThat(throwable).hasMessage("about: " + CREATE_ASSESSMENT_KIT_ABOUT_SIZE_MAX);
     }
 

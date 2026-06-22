@@ -24,7 +24,7 @@ public interface CreateAssessorAdviceNarrationUseCase {
         UUID assessmentId;
 
         @Size(min = 3, message = CREATE_ASSESSOR_ADVICE_NARRATION_ASSESSOR_NARRATION_SIZE_MIN)
-        @Size(max = 1500, message = CREATE_ASSESSOR_ADVICE_NARRATION_ASSESSOR_NARRATION_SIZE_MAX)
+        @Size(max = 3000, message = CREATE_ASSESSOR_ADVICE_NARRATION_ASSESSOR_NARRATION_SIZE_MAX)
         String assessorNarration;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
