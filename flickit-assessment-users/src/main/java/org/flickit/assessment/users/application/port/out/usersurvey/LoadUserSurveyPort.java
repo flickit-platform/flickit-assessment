@@ -8,4 +8,8 @@ import java.util.UUID;
 public interface LoadUserSurveyPort {
 
     Optional<UserSurvey> loadByUserId(UUID userId);
+
+    Optional<Long> loadIdByUserId(UUID userId);
+
+    boolean existsByUserId(UUID userid);
 }
