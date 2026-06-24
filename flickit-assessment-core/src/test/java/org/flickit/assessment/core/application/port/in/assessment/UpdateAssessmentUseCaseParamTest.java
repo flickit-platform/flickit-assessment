@@ -4,6 +4,7 @@ import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -15,84 +16,62 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class UpdateAssessmentUseCaseParamTest {
 
     @Test
-    void testUpdateAssessmentParam_IdIsNull_ErrorMessage() {
-        String title = "title";
-        UUID currentUserId = UUID.randomUUID();
+    void testUpdateAssessmentParam_shortTitleParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateAssessmentUseCase.Param(null, title, "shortTitle", currentUserId));
-        assertThat(throwable).hasMessage("id: " + UPDATE_ASSESSMENT_ID_NOT_NULL);
-    }
+            () -> createParam(b -> b.shortTitle(randomAlphabetic(21))));
+        assertThat(throwable).hasMessage("shortTitle: " + UPDATE_ASSESSMENT_SHORT_TITLE_SIZE_MAX);
 
-    @Test
-    void testUpdateAssessmentParam_ShortTitleSizeIsLessThanMin_ErrorMessage() {
-        UUID id = UUID.randomUUID();
-        UUID currentUserId = UUID.randomUUID();
-        var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateAssessmentUseCase.Param(id, "title", "ab", currentUserId));
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.shortTitle(" ab   ")));
         assertThat(throwable).hasMessage("shortTitle: " + UPDATE_ASSESSMENT_SHORT_TITLE_SIZE_MIN);
     }
 
     @Test
-    void testUpdateAssessmentParam_ShortTitleSizeIsGreaterThanMax_ErrorMessage() {
-        UUID id = UUID.randomUUID();
-        var shortTitle = randomAlphabetic(21);
-        UUID currentUserId = UUID.randomUUID();
+    void testUpdateAssessmentParam_titleParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateAssessmentUseCase.Param(id, "title", shortTitle, currentUserId));
-        assertThat(throwable).hasMessage("shortTitle: " + UPDATE_ASSESSMENT_SHORT_TITLE_SIZE_MAX);
-    }
+            () -> createParam(b -> b.title(randomAlphabetic(101))));
+        assertThat(throwable).hasMessage("title: " + UPDATE_ASSESSMENT_TITLE_SIZE_MAX);
 
-    @Test
-    void testUpdateAssessmentParam_TitleIsBlank_ErrorMessage() {
-        UUID id = UUID.randomUUID();
-        UUID currentUserId = UUID.randomUUID();
-        var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateAssessmentUseCase.Param(id, "    ", "shortTitle", currentUserId));
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.title("  ab  ")));
+        assertThat(throwable).hasMessage("title: " + UPDATE_ASSESSMENT_TITLE_SIZE_MIN);
+
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.title("   ")));
         assertThat(throwable).hasMessage("title: " + UPDATE_ASSESSMENT_TITLE_NOT_BLANK);
     }
 
     @Test
-    void testUpdateAssessmentParam_TitleSizeIsLessThanMin_ErrorMessage() {
-        UUID id = UUID.randomUUID();
-        UUID currentUserId = UUID.randomUUID();
+    void testUpdateAssessmentParam_langParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateAssessmentUseCase.Param(id, "ab", "shortTitle", currentUserId));
-        assertThat(throwable).hasMessage("title: " + UPDATE_ASSESSMENT_TITLE_SIZE_MIN);
+            () -> createParam(b -> b.lang("FR")));
+        assertThat(throwable).hasMessage("lang: " + UPDATE_ASSESSMENT_LANGUAGE_INVALID);
     }
 
     @Test
-    void testUpdateAssessmentParam_TitleSizeIsEqualToMin_ErrorMessage() {
-        UUID id = UUID.randomUUID();
-        UUID currentUserId = UUID.randomUUID();
-        assertDoesNotThrow(
-            () -> new UpdateAssessmentUseCase.Param(id, "abc", "shortTitle", currentUserId));
+    void testUpdateAssessmentUseCaseParam_langParamIsNull_Success() {
+        assertDoesNotThrow(() -> createParam(b -> b.lang(null)));
     }
 
     @Test
-    void testUpdateAssessmentParam_TitleSizeIsGreaterThanMax_ErrorMessage() {
-        UUID id = UUID.randomUUID();
-        var title = randomAlphabetic(101);
-        UUID currentUserId = UUID.randomUUID();
+    void testUpdateAssessmentParam_currentUserIdViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateAssessmentUseCase.Param(id, title, "shortTitle", currentUserId));
-        assertThat(throwable).hasMessage("title: " + UPDATE_ASSESSMENT_TITLE_SIZE_MAX);
-    }
-
-    @Test
-    void testUpdateAssessmentParam_TitleSizeIsEqualToMax_ErrorMessage() {
-        UUID id = UUID.randomUUID();
-        var title = randomAlphabetic(100);
-        UUID currentUserId = UUID.randomUUID();
-        assertDoesNotThrow(
-            () -> new UpdateAssessmentUseCase.Param(id, title, "shortTitle", currentUserId));
-    }
-
-    @Test
-    void testUpdateAssessmentParam_currentUserIdIsNull_ErrorMessage() {
-        UUID id = UUID.randomUUID();
-        String title = "title";
-        var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateAssessmentUseCase.Param(id, title, "shortTitle", null));
+            () -> createParam(b -> b.currentUserId(null)));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
+    }
+
+    private void createParam(Consumer<UpdateAssessmentUseCase.Param.ParamBuilder> changer) {
+        var paramBuilder = paramBuilder();
+        changer.accept(paramBuilder);
+        paramBuilder.build();
+    }
+
+    private UpdateAssessmentUseCase.Param.ParamBuilder paramBuilder() {
+        return UpdateAssessmentUseCase.Param.builder()
+            .id(UUID.randomUUID())
+            .title("title")
+            .shortTitle("shortTitle")
+            .lang("FA")
+            .currentUserId(UUID.randomUUID());
     }
 }

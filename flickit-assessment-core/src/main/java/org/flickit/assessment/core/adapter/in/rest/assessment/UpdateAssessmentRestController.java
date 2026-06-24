@@ -32,6 +32,7 @@ public class UpdateAssessmentRestController {
             id,
             request.title(),
             request.shortTitle(),
+            request.lang(),
             currentUserId
         );
     }
